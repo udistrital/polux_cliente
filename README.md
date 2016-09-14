@@ -12,4 +12,4 @@ Run `grunt` for building and `grunt serve` for preview.
 Running `grunt test` will run the unit tests with karma.
 "# Polux"
 
-Estructura propuesta para el desarrollo de polux en la oas
+Estructura propuesta para el desarrollo de polux en la oas cliente
