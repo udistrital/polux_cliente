@@ -1,0 +1,28 @@
+<input type="text" list="testList"
+ng-model='entidad.nombre'
+>
+<datalist class="selector" id="testList" >
+  <option ng-repeat="enti in entidades" value="{{enti.nombre}}">
+  </datalist>
+
+
+
+
+  <select ng-model='entidad' ng-options='enti.nombre for enti in entidades'>
+    </select>
+
+  <input class="input form-control" placeholder="Search Conf by Application ID"
+  list="app_ids" ng-model="entidad"/></th>
+  <datalist id="app_ids">
+    <select>
+      <option ng-repeat="ent in entidades" value="{{ent}}"></option>
+    </select>
+  </datalist>
+
+
+  <div class="jumbotron">
+    <p>{{entidad.nombre}}</p>
+    <p>nit: {{entidad.nit}}</p>
+  </div>
+
+  <p>This is the directives/busqueda-entidad view.</p>

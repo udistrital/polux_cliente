@@ -15,7 +15,8 @@ angular
     'ngMessages',
     'ngRoute',
     'ngTable',
-    'ejemploService'
+    'ejemploService',
+    'entidadService'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -33,6 +34,11 @@ angular
         templateUrl: 'views/ejemplo.html',
         controller: 'EjemploCtrl',
         controllerAs: 'ejemplov'
+      })
+      .when('/pasantia/carta_presentacion', {
+        templateUrl: 'views/pasantia/carta_presentacion.html',
+        controller: 'PasantiaCartaPresentacionCtrl',
+        controllerAs: 'cartaPresentacion'
       })
       .otherwise({
         redirectTo: '/'
