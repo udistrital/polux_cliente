@@ -15,8 +15,11 @@ angular
     'ngMessages',
     'ngRoute',
     'ngTable',
+    'ngMaterial',
     'ejemploService',
-    'entidadService'
+    'entidadService',
+    'materiasService'
+    
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -39,6 +42,11 @@ angular
         templateUrl: 'views/pasantia/carta_presentacion.html',
         controller: 'PasantiaCartaPresentacionCtrl',
         controllerAs: 'cartaPresentacion'
+      })
+      .when('/materiasPosgrado/publicarAsignaturas', {
+        templateUrl: 'views/materias posgrado/publicarasignaturas.html',
+        controller: 'PublicarasignaturasCtrl',
+        controllerAs: 'publicarAsignaturas'
       })
       .otherwise({
         redirectTo: '/'
