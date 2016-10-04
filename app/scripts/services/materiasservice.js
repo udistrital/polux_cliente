@@ -153,6 +153,18 @@ angular.module('materiasService',[])
 			  buscarAsignaturaElegible:function(carrera, pensum, asignatura){
 				  return $http.get("http://localhost:8080/v1/asignaturas_elegibles/?query=CodigoCarrera%3A"+carrera+"%2CAnio%3A"+servicio.anio+"%2CPeriodo%3A"+servicio.periodo+"%2CCodigoPensum%3A"+pensum+"%2CCodigoAsignatura%3A"+asignatura)
 			  },
+			  
+			//buscar nombre carrera
+			  buscarNombreCarrera:function(codCarrera){
+		      //  var defer = $q.defer();
+		          return $http.get("http://10.20.0.149/polux/index.php?data=s-hIgfMSsEEZLG-q2qQJDhLR8GcxN4QvfQ8FCrLXTGMfObyHk9IXkOUTsLTNiLsvkXVtvCjHILN-kmWa1ohBtV1UsPxDokDAP93YXtFSq_LCBeizHsab-l4f9p_9BolU&parametro="+codCarrera)
+		        /*  .then(function(response) {
+		            var data=response.data;
+		            var json = data.substring(data.indexOf("["),data.lastIndexOf('}<json>'));
+		            defer.resolve(json);
+		          });
+		          return defer.promise;*/
+		        },
 
 
 	  };
