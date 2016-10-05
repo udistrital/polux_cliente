@@ -1,0 +1,56 @@
+<div class="col-md-6" >
+  <div class="panel panel-primary" >
+    <div class="panel-heading" align="center"><h1>{{VistaPreviaEvaluacionCtrl.evaluacion.nombre}}</h1></div>
+    <div class="panel-heading">{{VistaPreviaEvaluacionCtrl.evaluacion.introduccion}} </div>
+    <div class="panel-body">
+
+      <div ng-repeat="pregunta in VistaPreviaEvaluacionCtrl.evaluacion.preguntas">
+
+        <div class="panel panel-primary" >
+
+          <div class="panel-heading">{{pregunta.id}}. {{pregunta.enunciado}}
+            <button type="submit" class="btn btn-danger btn-xs" ng-click="VistaPreviaEvaluacionCtrl.remover_pregunta(pregunta.id)">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div ng-if="pregunta.tipo === 'A'">
+            <div class="panel-body">
+              <textarea type="text" class="form-control" placeholder="Ingrese su respuesta aqui..."></textarea>
+            </div>
+          </div>
+
+          <div ng-if="pregunta.tipo === 'N'">
+            <div class="panel-body">
+              <div class="col-md-8">
+                <input type="range" min="0" max="50" ng_model="numeric" default="30"/>
+              </div>
+              <div class="col-md-4">
+                <input class="form-control" type="text" ng_model="numeric" disabled="true">
+              </div>
+            </div>
+          </div>
+
+          <div ng-if="pregunta.tipo === 'C'">
+            <div class="panel-body">
+              <div ng-repeat="paquetes in VistaPreviaEvaluacionCtrl.evaluacion.paquete_formato" >
+                <div class="col-lg-6" ng-if="paquetes.id - pregunta.id === 0">
+                  <div ng-repeat="opcion in paquetes.paquete">
+                    <input class="form-group" type="radio" name="name" >
+                    {{opcion.name}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer" align="right">
+      <button type="button" class="btn btn-info btn-lg" ng-click="VistaPreviaEvaluacionCtrl.enviar()">
+        <span class="glyphicon glyphicon-file" aria-hidden="true"></span>   Enviar Evaluación
+      </button>
+    </div>
+  </div>
+</div>
