@@ -18,8 +18,9 @@ angular
     'ngMaterial',
     'ejemploService',
     'entidadService',
-    'materiasService'
-    
+    'materiasService',
+    'areasService'
+
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -47,6 +48,11 @@ angular
         templateUrl: 'views/materias posgrado/publicarasignaturas.html',
         controller: 'PublicarasignaturasCtrl',
         controllerAs: 'publicarAsignaturas'
+      })
+      .when('/perfil', {
+        templateUrl: 'views/perfil.html',
+        controller: 'PerfilCtrl',
+        controllerAs: 'perfil'
       })
       .otherwise({
         redirectTo: '/'

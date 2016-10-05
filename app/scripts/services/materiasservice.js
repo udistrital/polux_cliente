@@ -157,5 +157,5 @@ angular.module('materiasService',[])
 
 	  };
 	  return servicio;
-	  
+
   });
