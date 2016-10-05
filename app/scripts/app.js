@@ -15,8 +15,10 @@ angular
     'ngMessages',
     'ngRoute',
     'ngTable',
+    'pdf',
     'ejemploService',
-    'entidadService'
+    'entidadService',
+    'documentoService'
   ])
   .config(function ($routeProvider) {
     $routeProvider

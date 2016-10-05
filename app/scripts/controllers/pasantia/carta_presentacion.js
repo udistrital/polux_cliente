@@ -8,13 +8,13 @@
  * Controller of the poluxApp
  */
 angular.module('poluxApp')
-  .controller('PasantiaCartaPresentacionCtrl', function (entidadRequest) {
+  .controller('PasantiaCartaPresentacionCtrl', function () {
     var cartapasantia =this;
-    cartapasantia.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
     cartapasantia.entidad ={};
-    cartapasantia.entidades = entidadRequest.getAll();
+    cartapasantia.estudiante ={
+      nombre: "pepe",
+      apellido: "castro",
+      codigo: "202020280080",
+      carrera: "ing sistemas"
+    };
   });
