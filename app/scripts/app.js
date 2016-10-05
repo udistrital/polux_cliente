@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -36,6 +37,9 @@ angular
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl',
         controllerAs: 'about'
+      })
+      .when('/evaluacion', {
+        templateUrl: 'views/evaluacion.html'
       })
       .when('/ejemplo', {
         templateUrl: 'views/ejemplo.html',
