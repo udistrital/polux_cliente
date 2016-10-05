@@ -1,28 +1,53 @@
-<input type="text" list="testList"
-ng-model='entidad.nombre'
->
-<datalist class="selector" id="testList" >
-  <option ng-repeat="enti in entidades" value="{{enti.nombre}}">
-  </datalist>
+<div class="col-md-12">
+
+<!--
+
+<input type="text" list="testList"  ng-model='entidad.nombre'/>
+
+
+  <datalist class="selector" id="testList" >
+  <option ng-repeat="enti in bentidad.entidades" value="{{enti.nombre}}">
+</datalist>
+
+-->
 
 
 
-
-  <select ng-model='entidad' ng-options='enti.nombre for enti in entidades'>
+<div>
+  <div class="input-group">
+    <select class="form-control" ng-model='entidad' ng-options='enti.nombre for enti in bentidad.entidades' ng-disabled="otra" ng-change="bentidad.mostrarinfo(entidad)">
+      <option ng-selected="otra" value="">Buscar en convenios con la universidad</option>
     </select>
+    <span class="input-group-addon">
+      Otra? <input type="checkbox" ng-model="otra" ng-click="entidad=null; bentidad.mostrarinfo(entidad)">
+    </span>
+  </div><!-- /input-group -->
+</div>
 
+<div class="panel panel-default" ng-show="bentidad.mostrar">
+  <div class="panel-body">
+    <h1> <small><center>{{entidad.nombre}}</center></small></h1>
+    <h2> <small>
+    <p class="nav-tabs">nit: {{entidad.nit}}</p>
+    <p class="nav-tabs">tipo: {{entidad.tipo_entidad.nombre}}</p>
+    <p class="nav-tabs">pais: {{entidad.pais}}</p>
+    <p class="nav-tabs">ciudad: {{entidad.ciudad}}</p>
+    <p class="nav-tabs">contacto:</p>
+    <p class="nav-tabs" ng-repeat="contacto in entidad.info_contacto"> {{contacto.tipo_contacto}}: {{contacto.contacto}}<p>
+    </small></h2>
+  </div>
+</div>
+
+  <!--
   <input class="input form-control" placeholder="Search Conf by Application ID"
   list="app_ids" ng-model="entidad"/></th>
   <datalist id="app_ids">
-    <select>
-      <option ng-repeat="ent in entidades" value="{{ent}}"></option>
-    </select>
-  </datalist>
+  <select>
+  <option ng-repeat="ent in entidades" value="{{ent}}"></option>
+</select>
+</datalist>-->
 
 
-  <div class="jumbotron">
-    <p>{{entidad.nombre}}</p>
-    <p>nit: {{entidad.nit}}</p>
-  </div>
 
-  <p>This is the directives/busqueda-entidad view.</p>
+
+</div>

@@ -19,8 +19,11 @@ angular
     'ejemploService',
     'entidadService',
     'materiasService',
-    'areasService'
-
+    'areasService',
+    'pdf',
+    'ejemploService',
+    'entidadService',
+    'documentoService'
   ])
   .config(function ($routeProvider) {
     $routeProvider

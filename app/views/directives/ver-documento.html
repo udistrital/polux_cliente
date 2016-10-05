@@ -1,0 +1,19 @@
+<div class="col-md-12">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{documento.titulo}}</h3>
+    </div>
+    <div class="panel-body">
+      <div>
+        <ng-pdf template-url="/views/directives/viewer.html" scale="page-fit"></ng-pdf>
+        <!--<iframe id="el_iframe" class="embed-responsive-item" src="{{documento.enlace}}"></iframe>-->
+      </div>
+    </div>
+    <div class="panel-footer">
+      {{documento.resumen}}
+    </div>
+  </div>
+  <div ng-show="false">{{selectpag=pageNum}}
+  {{pdfUrl =documento.enlace}}</div>
+</div>

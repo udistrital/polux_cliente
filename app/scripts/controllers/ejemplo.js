@@ -10,10 +10,12 @@
 angular.module('poluxApp')
   .controller('EjemploCtrl', function (ejemploRequest) {
     var self =this;
-    self.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+    self.documento = {id:1,
+    titulo:"titulo de un documento",
+    enlace:"images/dibujo.pdf",
+    estado:"registrado",
+    resumen:"este es el resumen"};
     self.servicio = ejemploRequest.metodoEjemplo();
+    self.pagina = 13;
+
   });
