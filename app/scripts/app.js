@@ -49,10 +49,16 @@ angular
         controller: 'PublicarasignaturasCtrl',
         controllerAs: 'publicarAsignaturas'
       })
+
       .when('/perfil', {
         templateUrl: 'views/perfil.html',
         controller: 'PerfilCtrl',
         controllerAs: 'perfil'
+      })
+      .when('/materiasPosgrado/solicitar', {
+        templateUrl: 'views/materias posgrado/solicitar.html',
+        controller: 'SolicitarCtrl',
+        controllerAs: 'solicitar'
       })
       .otherwise({
         redirectTo: '/'
