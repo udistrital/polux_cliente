@@ -1,0 +1,64 @@
+
+<!--
+  <pre>{{select.fabrica.pensums | json}}</pre>
+-->
+
+<div class="form-group">
+
+    <label for="anio" class="col-sm-2 control-label">Año:</label>
+    <label for="anioSel" class="col-sm-10 control-label">{{publicarAsignaturas.fabrica.anio}}</label>
+
+    <label for="periodo" class="col-sm-2 control-label">Periodo:</label>
+    <label for="anioSel" class="col-sm-10 control-label">{{publicarAsignaturas.fabrica.periodo}}</label>
+
+     <label for="carrera" class="col-sm-2 control-label">Carrera:</label>
+     <div  class="col-sm-10">
+       <form name="myForm">
+       <select ng-model="carreraSeleccionada" name="carrera"  class="form-control" required
+       ng-change="publicarAsignaturas.myFunc(carreraSeleccionada)">
+         <option ng-repeat="p in publicarAsignaturas.fabrica.carreras" ng-value="p.CODIGO">{{p.NOMBRE}} </option>
+       </select>
+       <span ng-show="myForm.carrera.$invalid" style="color: red">*Seleccione la carrera</span>
+       </form>
+     </div>
+
+     <label for="carrera" class="col-sm-2 control-label">Pensum:</label>
+     <div class="col-sm-10">
+       <form name="myForm2">
+       <select ng-model="pensumSeleccionado" name="pensum"  class="form-control" required
+       ng-change="publicarAsignaturas.myFunc2(pensumSeleccionado)">
+         <option ng-repeat="p in publicarAsignaturas.fabrica.pensums" ng-value="p.PEN_NRO">{{p.PEN_NRO}} </option>
+       </select>
+       <span ng-show="myForm2.pensum.$invalid" style="color: red">*Seleccione el pensum</span>
+
+       </form>
+       <br>
+     </div>
+
+</div>
+
+<br></br>
+
+<table ng-table="publicarAsignaturas.tableParams" class="table table-condensed table-bordered table-striped" >
+    <tr ng-repeat="asig in publicarAsignaturas.fabrica.mostrar">
+        <td data-title="'Código'" sortable="'asigatura'">
+            {{asig.asignatura}}</td>
+        <td data-title="'Nombre'" sortable="''">
+            {{asig.nombre}}</td>
+        <td data-title="'Créditos'" sortable="''">
+            {{asig.creditos}}</td>
+          <td>
+            <md-checkbox aria-label="Married" ng-model="asig.check" ng-click="publicarAsignaturas.toggle(asig, publicarAsignaturas.selected)" ng-disabled="habilitar=publicarAsignaturas.fabrica.habilitar">
+            </md-checkbox>
+        </td>
+    </tr>
+
+</table>
+
+  <div class="form-group">
+    <div class="">
+      <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
+      <input type="submit" ng-click="publicarAsignaturas.add()" value="Guardar" class="btn btn-success" ng-disabled="habilitar=publicarAsignaturas.fabrica.habilitar"/>
+      <input type="submit" ng-click="publicarAsignaturas.fabrica.cambiar()" value="Cambiar asignaturas" class="btn btn-primary" ng-disabled="habilitar=publicarAsignaturas.fabrica.habilitar2"/>
+    </div>
+  </div>

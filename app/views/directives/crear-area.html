@@ -1,0 +1,33 @@
+
+<div class="container-fluid">
+  <div class="row">
+    <br>
+    <div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="panel panel-info">
+            <div class="panel panel-heading">
+              <h1>
+                <!--p>Directiva crear-area view.<p-->
+                Agregar áreas
+              </h1>
+            </div>
+            <div class="panel panel-body">
+              <span><h3>De acuerdo a su perfil seleccione las áreas </h3>
+              </span><br/>
+              <input type="text" list="listaAreas" placeholder="Seleccione ..."/>
+              <datalist class="selector" id="listaAreas"  >
+              <option ng-repeat="a in newarea" value="{{a.Nombre}}">
+              </datalist>
+                <a href="" class="btn btn-info btn-md pull-right">Confirmar</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+
+</div>

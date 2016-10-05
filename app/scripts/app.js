@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -15,7 +16,14 @@ angular
     'ngMessages',
     'ngRoute',
     'ngTable',
-    'ejemploService'
+    'ngMaterial',
+    'ejemploService',
+    'entidadService',
+    'materiasService',
+    'areasService',
+    'pdf',
+    'entidadService',
+    'documentoService'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -33,7 +41,30 @@ angular
         templateUrl: 'views/evaluacion.html'
       })
       .when('/ejemplo', {
-        templateUrl: 'views/ejemplo.html'
+        templateUrl: 'views/ejemplo.html',
+        controller: 'EjemploCtrl',
+        controllerAs: 'ejemplov'
+      })
+      .when('/pasantia/carta_presentacion', {
+        templateUrl: 'views/pasantia/carta_presentacion.html',
+        controller: 'PasantiaCartaPresentacionCtrl',
+        controllerAs: 'cartaPresentacion'
+      })
+      .when('/materiasPosgrado/publicarAsignaturas', {
+        templateUrl: 'views/materias posgrado/publicarasignaturas.html',
+        controller: 'PublicarasignaturasCtrl',
+        controllerAs: 'publicarAsignaturas'
+      })
+
+      .when('/perfil', {
+        templateUrl: 'views/perfil.html',
+        controller: 'PerfilCtrl',
+        controllerAs: 'perfil'
+      })
+      .when('/materiasPosgrado/solicitar', {
+        templateUrl: 'views/materias posgrado/solicitar.html',
+        controller: 'SolicitarCtrl',
+        controllerAs: 'solicitar'
       })
       .otherwise({
         redirectTo: '/'

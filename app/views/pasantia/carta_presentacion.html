@@ -1,0 +1,65 @@
+<div class="col-md-12">
+
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h1> <small> <center>Solicitud carta de presentacion para pasantias {{cartaPresentacion.estudiante.carrera}}</center></small></h1>
+<div class="col-md-12">
+  <p>
+    <h2><small class="pull-left"> <strong>Nombre: </strong>{{cartaPresentacion.estudiante.nombre}} {{cartaPresentacion.estudiante.apellido}}</small>
+    <small class="pull-right"> <strong>Codigo: </strong>{{cartaPresentacion.estudiante.codigo}}</small></h2>
+  </p>
+</div>
+
+<div class="col-md-12">
+        <form>
+<br><br>
+          <div>
+            <p>Información empresa</p>
+            <busqueda-entidad
+            entidad="cartaPresentacion.entidad"/>
+
+          <div class="col-md-12" >
+          <div class="panel panel-default">
+          <div class="panel-body">
+          <spam>nombre:</spam>
+          <input type="text" class="form-control" placeholder="Nombre de la empresa">
+
+          <spam>direccion:</spam>
+          <input type="text" class="form-control" placeholder="Direccion empresa">
+
+          <spam>telefono:</spam>
+          <input type="text" class="form-control" placeholder="Telefono de la empresa">
+          </div>
+          </div>
+        </div>
+        </div>
+        <div>
+          <p>Información destinatario</p>
+
+        <div class="col-md-12">
+        <div class="panel panel-default">
+        <div class="panel-body">
+        <spam>nombre:</spam>
+        <input type="text" class="form-control" placeholder="Nombre del destinatario">
+
+        <spam>cargo:</spam>
+        <input type="text" class="form-control" placeholder="cargo del destinatario en la empresa">
+
+        </div>
+        </div>
+      </div>
+      </div>
+          <div class="input-group">
+            <input type="submit" class="btn btn-success" placeholder="aceptar">
+          </div>
+        </form>
+</div>
+      </div>
+
+    </div>
+
+
+  </div>
+
+</div>
