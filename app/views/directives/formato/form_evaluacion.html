@@ -1,0 +1,82 @@
+<div class="col-lg-6">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <br>
+      <div class="form-group">
+        <h4 align='center'>Ingrese el Nombre de la evaluación</h4>
+        <input type="text" class="form-control" ng-model="FormEvaluacionCtrl.evaluacion.nombre" name="nombre_evaluacion" id="nombre_evaluacion" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Ingrese la Introducción de la evaluación</label>
+        <textarea type="text" class="form-control" ng-model="FormEvaluacionCtrl.evaluacion.introduccion" name="introducción_evaluacion" id="introducción_evaluacion" required="" placeholder="* Introducción de la evaluación"autocomplete="off"></textarea>
+      </div>
+      <div class="panel panel-info">
+        <div class="panel-heading">Nueva Pregunta</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label>Ingrese el enunciado de la pregunta</label>
+            <textarea type="text" class="form-control" ng-model="FormEvaluacionCtrl.enunciado" name="enunciado_abierta" id="enunciado_abierta" required="" placeholder="* Enunciado" autocomplete="off"></textarea>
+          </div>
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-info " ng-click="FormEvaluacionCtrl.nueva_pregunta('A')">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Pregunta Abierta
+            </button>
+          </div>
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-info " ng-click="FormEvaluacionCtrl.nueva_pregunta('N')">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Pregunta Numérica
+            </button>
+          </div>
+          <div class="col-lg-4">
+            <button type="button" class="btn btn-info " ng-click="FormEvaluacionCtrl.nueva_pregunta('C')">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Pregunta Cerrada
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-info">
+        <div class="panel-heading">Banco de paquetes de opciones</div>
+        <div class="panel-body">
+          <form name="myForm">
+            <div class="col-lg-4">
+              <select class="form-control" name="repeatPaquete" id="repeatPaquete" ng-model="FormEvaluacionCtrl.paquete" ng-change="FormEvaluacionCtrl.actualizar();">
+                <option ng-repeat="option in FormEvaluacionCtrl.respuestas" value={{option.options}}>{{option.name_package}}</option>
+              </select>
+            </div>
+            <div class="col-lg-4">
+              <select class="form-control" name="repeatPreguntas" id="repeatPreguntas" ng-model="FormEvaluacionCtrl.pregunta">
+                <option ng-repeat="option in FormEvaluacionCtrl.id_cerradas" value="{{option}}">{{'pregunta No. ' + option}}</option>
+              </select>
+            </div>
+            <div class="col-lg-4">
+              <button type="button" class="btn btn-info " ng-click="FormEvaluacionCtrl.nuevo_paquete()">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Paquete de opciones
+              </button>
+            </div>
+
+          </form>
+<hr><hr>
+          <div class="row">
+
+            <div class="col-md-10 col-md-offset-1">
+              <div class="panel panel-info">
+                <div class="panel-body" >
+                  <div ng-repeat="respuesta in FormEvaluacionCtrl.paquete_ver" >
+                    <div class="col-lg-6">
+                      <input class="form-group" type="radio" name="name" >
+                      {{respuesta.name}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div><!--/col-lg-6 -->

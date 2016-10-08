@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -15,8 +16,12 @@ angular
     'ngMessages',
     'ngRoute',
     'ngTable',
-    'pdf',
+    'ngMaterial',
     'ejemploService',
+    'entidadService',
+    'materiasService',
+    'areasService',
+    'pdf',
     'entidadService',
     'documentoService'
   ])
@@ -32,6 +37,9 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
+      .when('/evaluacion', {
+        templateUrl: 'views/evaluacion.html'
+      })
       .when('/ejemplo', {
         templateUrl: 'views/ejemplo.html',
         controller: 'EjemploCtrl',
@@ -41,6 +49,22 @@ angular
         templateUrl: 'views/pasantia/carta_presentacion.html',
         controller: 'PasantiaCartaPresentacionCtrl',
         controllerAs: 'cartaPresentacion'
+      })
+      .when('/materiasPosgrado/publicarAsignaturas', {
+        templateUrl: 'views/materias posgrado/publicarasignaturas.html',
+        controller: 'PublicarasignaturasCtrl',
+        controllerAs: 'publicarAsignaturas'
+      })
+
+      .when('/perfil', {
+        templateUrl: 'views/perfil.html',
+        controller: 'PerfilCtrl',
+        controllerAs: 'perfil'
+      })
+      .when('/materiasPosgrado/solicitar', {
+        templateUrl: 'views/materias posgrado/solicitar.html',
+        controller: 'SolicitarCtrl',
+        controllerAs: 'solicitar'
       })
       .otherwise({
         redirectTo: '/'
