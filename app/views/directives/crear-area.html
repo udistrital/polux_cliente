@@ -1,33 +1,69 @@
-
 <div class="container-fluid">
-  <div class="row">
-    <br>
-    <div>
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="panel panel-info">
-            <div class="panel panel-heading">
-              <h1>
-                <!--p>Directiva crear-area view.<p-->
-                Agregar áreas
-              </h1>
-            </div>
-            <div class="panel panel-body">
-              <span><h3>De acuerdo a su perfil seleccione las áreas </h3>
-              </span><br/>
-              <input type="text" list="listaAreas" placeholder="Seleccione ..."/>
+<div class="row">
+<br>
+<div>
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="panel panel-info">
+      <div class="panel panel-heading">
+        <h1>
+          <!--p>Directiva crear-area view.<p-->
+          Agregar áreas
+        </h1>
+      </div>
+      <div class="panel panel-body">
+        <span><h3>De acuerdo a su perfil seleccione las áreas </h3>
+        </span><br/>
+        <div class="row">
+          <form class="col-md-10" role="form" name="formAsignar">
+            <div class="form-group" >
+
+              <input type="text" list="listaAreas"
+               ng-model="crearArea.Nombre" name="asignado"
+               ng-minlength="8"
+               ng-maxlength="25"
+               placeholder="Seleccione ..." required autocomplete="off"/>
               <datalist class="selector" id="listaAreas"  >
-              <option ng-repeat="a in newarea" value="{{a.Nombre}}">
+                <option ng-repeat="a in crearArea.fabrica.areas"  value="{{a.Nombre}}"></option>
               </datalist>
-                <a href="" class="btn btn-info btn-md pull-right">Confirmar</a>
+
+              <input type="submit" ng-click="crearArea.asignarArea()"
+               value="Agregar" class="btn btn-info btn-md" ng-disabled="formAsignar.$invalid" />
+               <div ng-show="formAsignar.asignado.$invalid ">
+                 <div ng-messages="formAsignar.asignado.$error" style="color:red"
+                       class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
+                    <div ng-message="required"> Ingrese una nueva área </div>
+                    <div ng-message="minlength"> Nombre muy corto</div>
+                    <div ng-message="maxlength"> Nombre muy extenso </div>
+                 </div>
+               </div>
             </div>
-          </div>
+          </form>
+          <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in crearArea.nuevaArea" >
+            <md-chip >{{a.Nombre}}</md-chip>
+
+          </md-chips>
+
         </div>
+        <input type="submit" ng-click="crearArea.asignarAreasDocente(crearArea.nuevaArea)" value="Confirmar" class="btn btn-info btn-md pull-right" />
 
       </div>
-
+      <div class="row ">
+        <div class="panel panel-body">
+          <h4>Areas actuales:</h4>
+          <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in crearArea.fabrica.areasDocente" >
+            <md-chip >{{a.IdAreaConocimiento.Nombre}}</md-chip>
+          </md-chips>
+          <span>Docente actual:{{crearArea.fabrica.coddocente}}</span>
+        </div>
+      </div>
     </div>
   </div>
+
+</div>
+
+</div>
+</div>
 
 
 </div>

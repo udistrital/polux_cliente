@@ -7,21 +7,33 @@
  * # mostrarArea
  */
 angular.module('poluxApp')
-  .directive('mostrarArea', function () {
+  .directive('mostrarArea', function (areasRequest) {
     return {
       restrict: "E",
       scope: {
-        areamostrada: '=',
-        areanueva:'='
+          areanueva:'='
       },
       templateUrl: "views/directives/mostrar-area.html",
       controller: function() {
-        var self=this;
-        self.menucreacion=false;
-        self.estadoboton=function(estado){
-          if (estado){ return false; }
-          else{ return true;}
+        var ctrl=this;
+        //se llaman los servicios y se guardan en una variable
+        ctrl.fabrica=areasRequest;
+        ctrl.areas=ctrl.fabrica.obtenerAreas();
+        //console.log(ctrl.areas);
+    
+
+        /*
+        Función que muestra el area por docente
+        docenteSeleccionado value:"p.coddocente":
+        recibe  la información del codigo del docente
+
+        */
+        ctrl.mostrarAreasDocente= function(docenteSeleccionado){
+          ctrl.docente=docenteSeleccionado;
+          ctrl.fabrica.listarAreasDocente(docenteSeleccionado);
         };
+
+
 
       },
       controllerAs: "mostrar"

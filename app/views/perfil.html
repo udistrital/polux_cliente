@@ -1,5 +1,49 @@
-<p>This is the perfil view llamando a</p>
 {{perfil.scopeareas}}
-<mostrar-area
-areanueva="perfil.scopearea"
-areamostrada="perfil.scopeareas"/>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6 col-xs-12">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="panel panel-info">
+            <div class="panel panel-heading">
+              <h1>
+                <!--p>Directiva mostrar-area view.<p-->
+                Áreas de Conocimiento
+              </h1>
+            </div>
+            <div class="panel panel-body">
+              <mostrar-area
+              areanueva=perfil.fabricadocentes
+              />
+              <div ng-if="perfil.estadoboton(perfil.menucreacion)">
+                <a href="" ng-click="perfil.menucreacion= !perfil.menucreacion"
+                class="btn btn-primary btn-md pull-right"
+                ng-show="perfil.estadoboton(perfil.menucreacion)"> Agregar Área</a>
+              </div>
+              <div ng-if="!perfil.estadoboton(perfil.menucreacion)">
+                <a href="" ng-click="perfil.menucreacion= !perfil.menucreacion"
+                class="btn btn-primary btn-md pull-right"
+                ng-show="!perfil.estadoboton(perfil.menucreacion)">Cancelar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--p>Directiva crear-area view.<p-->
+    <div class="col-md-6 col-xs-12" ng-show="perfil.menucreacion">
+      <crear-area
+      newarea=perfil.scopearea/>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel panel-heading">   <h1>
+            Otra sección
+          </h1></div>
+          <div class="panel-body">Mas info</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

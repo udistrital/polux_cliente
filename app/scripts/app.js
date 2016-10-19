@@ -21,6 +21,8 @@ angular
     'entidadService',
     'materiasService',
     'areasService',
+    'docentesService',
+    
     'pdf',
     'entidadService',
     'documentoService'

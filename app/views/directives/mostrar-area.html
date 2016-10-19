@@ -1,60 +1,24 @@
-
-<div class="container-fluid">
-  <div class="row">
-    <br>
-    <div class="col-md-6 col-xs-12">
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="panel panel-info">
-            <div class="panel panel-heading">
-              <h1>
-                <!--p>Directiva mostrar-area view.<p-->
-              Áreas de Conocimiento
-              </h1>
-            </div>
-            <div class="panel panel-body">
-              <h2>Areas del profesor</h2>
-
-              <md-chips  ng-repeat="a in areamostrada" >
-                <md-chip >{{a.Nombre}}</md-chip>
-              </md-chips>
-
-
-              <div ng-if="mostrar.estadoboton(mostrar.menucreacion)">
-                <a href="" ng-click="mostrar.menucreacion= !mostrar.menucreacion"
-                class="btn btn-primary btn-md pull-right"
-                ng-show="mostrar.estadoboton(mostrar.menucreacion)"> Agregar Área</a>
-              </div>
-              <div ng-if="!mostrar.estadoboton(mostrar.menucreacion)">
-                <a href="" ng-click="mostrar.menucreacion= !mostrar.menucreacion"
-                class="btn btn-primary btn-md pull-right"
-                ng-show="!mostrar.estadoboton(mostrar.menucreacion)">Cancelar</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="col-md-6 col-xs-12" ng-show="mostrar.menucreacion">
-      <crear-area
-      newarea=areanueva/>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12 col-xs-12">
-        <div class="panel panel-default">
-          <div class="panel panel-heading">   <h1>
-            Otra sección
-          </h1></div>
-          <div class="panel-body">Mas info</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-
+<br>
+<h2>Areas del profesor</h2>
+<label for="docente" class="col-md-2 control-label">Docente:</label>
+<div class="col-md-10">
+  <form  name="myForm">
+    <select ng-model="areanueva.docenteSeleccionado" name="docente" class="form-control" required
+    ng-change="mostrar.mostrarAreasDocente(areanueva.docenteSeleccionado)">
+    <option ng-repeat="p in areanueva.docentes" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
+  </select>
+</form>
 </div>
+<md-chips  class="col-md-6 col-sm-4" ng-repeat="a in mostrar.fabrica.areasDocente" >
+  <md-chip >{{a.IdAreaConocimiento.Nombre}}</md-chip>
+</md-chips>
+
+<table ng-table="mostrar.tableParams" class="table table-condensed table-bordered table-striped" >
+    <tr ng-repeat="ar in mostrar.fabrica.areasDocente">
+        <td data-title="'CódigoArea'" sortable="''">
+            {{ar.Id}}</td>
+        <td data-title="'Area'" sortable="''">
+            {{ar.IdAreaConocimiento.Nombre}}</td>
+    </tr>
+
+</table>

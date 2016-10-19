@@ -8,14 +8,81 @@
 * Factory in the poluxApp.
 */
 angular.module('areasService',[])
-.factory('areasService', function () {
+.factory('areasRequest', function ($http, $q) {
   // Service logic
-  // ...
-
-  var meaningOfLife = 42;
-
   // Public API here
-  return {
+
+  var servicio = {
+    areas:[],
+    areasDocente:[],
+    coddocente:0,
+
+    //listado de areas disponibles para el docente
+    obtenerAreas:function(){
+      $http.get("http://localhost:8080/v1/area_conocimiento/?limit=0")
+      .success(function(data){
+        servicio.areas=data;
+        console.log(servicio.areas[1].Nombre);
+      });
+      return servicio.areas;
+
+    },
+
+    /*listar las areas del Docente,
+    parametro del query: recibe el codigo del docente(IdentificacionDocente)
+    */
+    listarAreasDocente:function(codigoDocente){
+      $http.get("http://localhost:8080/v1/areas_docente/?query=IdentificacionDocente%3A"+codigoDocente)
+      .success(function(data){
+        servicio.areasDocente=data;
+        //console.log(servicio.areas[0].Nombre);
+        //console.log(servicio.areasDocente);
+      });
+      servicio.coddocente=codigoDocente;
+    },
+
+    /* Asigna areas a un docente dependiendo del codigo del docente
+     y de las nuevas areas
+
+    */
+    asignarAreas:function(nuevasAreas){
+
+    //1 area
+    var codigodocente=parseFloat(servicio.coddocente);
+    for (var i = 0; i < nuevasAreas.length; i++) {
+      console.log(nuevasAreas[i].Nombre);
+      console.log(nuevasAreas[i].Id);
+      if (nuevasAreas[i].Id==null) {
+        console.log("areasnulas: "+nuevasAreas[i].Id);
+        return;
+      }
+
+    if (nuevasAreas[i].Nombre==null) {
+      console.log("nombre de area nulo");
+      return;
+
+    }
+        var data = {
+          IdAreaConocimiento:{
+            Id:nuevasAreas[i].Id,
+            Nombre:nuevasAreas[i].Nombre},
+          IdentificacionDocente: codigodocente
+        };
+        $http.post('http://localhost:8080/v1/areas_docente',data);
+
+}
+
+    },
+
+    //modalidades de TG:
+    buscarModalidades:function(){
+      var defer = $q.defer();
+      $http.get("http://localhost:8080/v1/modalidad/")
+      .then(function(response) {
+        defer.resolve(response.data);
+      });
+      return defer.promise;
+    },
     getAll: function () {
       var areas = [
         {
@@ -46,6 +113,16 @@ angular.module('areasService',[])
         {
           "Id": 6,
           "Nombre": "Inteligencia Artificial",
+          "Descripcion": "string"
+        },
+        {
+          "Id": 19,
+          "Nombre": "Redes",
+          "Descripcion": "string"
+        },
+        {
+          "Id": 20,
+          "Nombre": "Multimedia",
           "Descripcion": "string"
         }
       ];
@@ -97,7 +174,10 @@ angular.module('areasService',[])
       return areas;
     }
 
+
   };
+  return servicio;
+
 });
 /*Base de datos
 Software

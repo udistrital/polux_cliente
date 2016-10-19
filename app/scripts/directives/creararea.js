@@ -7,19 +7,49 @@
  * # crearArea
  */
 angular.module('poluxApp')
-  .directive('crearArea', function () {
+  .directive('crearArea', function (areasRequest) {
     return {
       templateUrl: 'views/directives/crear-area.html',
       scope: {
-        areasc: '=',
-        newarea:'='
+          newarea:'='
       },
       restrict: 'E',
       controller: function() {
-        //var self=this;
+        var ctrl=this;
+        ctrl.fabrica=areasRequest;
+        ctrl.areas=areasRequest.obtenerAreas();
+       console.log(ctrl.areas);
+        //ásignar areas temporalmente
+        ctrl.nuevaArea = [];
+
+        ctrl.asignarArea = function() {
+      for (var i = 0; i < ctrl.fabrica.areas.length; i++) {
+        if (ctrl.fabrica.areas[i].Nombre==ctrl.Nombre) {
+          ctrl.Id=ctrl.fabrica.areas[i].Id;
+        }
+      }
+
+      console.log(ctrl.Id);
+              ctrl.nuevaArea.push(
+                { "Id":ctrl.Id,
+                  "Nombre": ctrl.Nombre
+
+                }
+              );
+              ctrl.Id='',
+              ctrl.Nombre='';
+              ctrl.Descripcion='';
+        };
+
+        ctrl.asignarAreasDocente= function(area){
+          ctrl.fabrica.mostrar=[];
+          ctrl.fabrica.asignarAreas(area);
+          ctrl.nuevaArea = [];
+        };
+
 
 
       },
-      controllerAs: "crear"
+      controllerAs: "crearArea"
     };
   });
