@@ -46,7 +46,10 @@ angular.module('poluxApp')
           ctrl.fabrica.asignarAreas(area);
           ctrl.nuevaArea = [];
         };
-
+        ctrl.compararAreas=function(id){
+          console.log(id);
+          return true;
+        };
 
 
       },
