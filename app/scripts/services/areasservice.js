@@ -23,7 +23,7 @@ angular.module('areasService',[])
       $http.get("http://localhost:8080/v1/area_conocimiento/?limit=0")
       .success(function(data){
         servicio.areas=data;
-        console.log(servicio.areas[1].Nombre);
+        //console.log(servicio.areas[1].Nombre);
       });
       return servicio.areas;
 
@@ -77,7 +77,15 @@ angular.module('areasService',[])
         }
 
       },
+      crearArea: function(areaCreada){
+console.log(areaCreada[0].Nombre);
+        var data = {
+            Nombre: areaCreada[0].Nombre
+          };
 
+          $http.post('http://localhost:8080/v1/area_conocimiento',data);
+          $http.get("http://localhost:8080/v1/area_conocimiento/");
+      },
       //modalidades de TG:
       buscarModalidades:function(){
         var defer = $q.defer();

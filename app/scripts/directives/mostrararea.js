@@ -20,7 +20,7 @@ angular.module('poluxApp')
         ctrl.fabrica=areasRequest;
         ctrl.areas=ctrl.fabrica.obtenerAreas();
         //console.log(ctrl.areas);
-    
+
 
         /*
         Función que muestra el area por docente

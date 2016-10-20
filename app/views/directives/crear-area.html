@@ -33,7 +33,8 @@
                  <div ng-messages="formAsignar.asignado.$error" style="color:red"
                        class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
                     <div ng-message="required"> Ingrese una nueva área </div>
-                    <div ng-message="minlength"> Nombre muy corto</div>
+                    <div ng-message="minlength"> Nombre muy corto <input type="submit" ng-click="crearArea.compararAreas()"
+                     value="Crear área" class="btn btn-info btn-md" /></div>
                     <div ng-message="maxlength"> Nombre muy extenso </div>
                  </div>
                </div>
