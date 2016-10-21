@@ -42,26 +42,31 @@ angular.module('poluxApp')
               ctrl.Nombre='';
               ctrl.Descripcion='';
         };
-
+/* Llama a la funcion de asignar areas pasando como parametro el JSON temporal de nuevaArea*/
         ctrl.asignarAreasDocente= function(area){
           ctrl.fabrica.mostrar=[];
           ctrl.fabrica.asignarAreas(area);
           ctrl.nuevaArea = [];
         };
-        ctrl.compararAreas=function(){
+        /* Permite registrar nuevas areas mediante un alert
+            Recibe como parametro: la área no encontrada
+
+        */
+        ctrl.registrarAreas=function(parametroArea){
           ctrl.areaCreada=[];
           var existe=false;
           swal({
           title: 'Ingrese el nombre del área',
           input: 'text',
+          inputValue: parametroArea,
           showCancelButton: true,
           confirmButtonText: 'Crear nueva área',
           showLoaderOnConfirm: true,
-          preConfirm: function(arean) {
+          preConfirm: function(parametroArea) {
             return new Promise(function(resolve, reject) {
               setTimeout(function() {
                 for (var i = 0; i < ctrl.areas.length ; i++) {
-                if (arean === ctrl.areas[i].Nombre) {
+                if (parametroArea === ctrl.areas[i].Nombre) {
                   i=ctrl.areas.length;
                   existe=true;
                   reject('Esta area ya existe')
@@ -73,7 +78,7 @@ angular.module('poluxApp')
                 if (existe==false) {
                   ctrl.areaCreada.push(
                     {
-                      "Nombre":arean
+                      "Nombre":parametroArea
                     });
                   ctrl.fabrica.crearArea(ctrl.areaCreada);
                   resolve()
@@ -86,14 +91,29 @@ angular.module('poluxApp')
         }).then(function(areans) {
           swal({
             type: 'success',
-            title: 'Ajax request finished!',
+            title: 'Registro Finalizado',
             html: 'Area agregada: ' + areans
           })
         })
 
 
         };
+        ctrl.verificarAreas=function(nombreArea){
+          console.log(nombreArea);
+          console.log(ctrl.areas);
+          for (var i = 0; i < ctrl.areas.length; i++) {
 
+            if (ctrl.areas[i].Nombre==nombreArea) {
+              return false;
+            }
+          }
+          if (nombreArea==null) {
+            return false;
+          }
+          else {
+            return true;
+          }
+        };
 
       },
       controllerAs: "crearArea"

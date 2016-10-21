@@ -21,10 +21,10 @@
               <input type="text" list="listaAreas"
                ng-model="crearArea.Nombre" name="asignado"
                ng-minlength="8"
-               ng-maxlength="25"
+               ng-maxlength="30"
                placeholder="Seleccione ..." required autocomplete="off"/>
               <datalist class="selector" id="listaAreas"  >
-                <option ng-repeat="a in crearArea.fabrica.areas" ng-if="crearArea.fabrica.idareas.indexOf(a.Id) == -1" value="{{a.Nombre}}"></option>
+                <option ng-repeat="a in crearArea.fabrica.areas"  ng-if="crearArea.fabrica.idareas.indexOf(a.Id) == -1" value="{{a.Nombre}}"></option>
               </datalist>
 
               <input type="submit" ng-click="crearArea.asignarArea()"
@@ -33,11 +33,16 @@
                  <div ng-messages="formAsignar.asignado.$error" style="color:red"
                        class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
                     <div ng-message="required"> Ingrese una nueva área </div>
-                    <div ng-message="minlength"> Nombre muy corto <input type="submit" ng-click="crearArea.compararAreas()"
-                     value="Crear área" class="btn btn-info btn-md" /></div>
+                    <div ng-message="minlength"> Nombre muy corto </div>
                     <div ng-message="maxlength"> Nombre muy extenso </div>
                  </div>
                </div>
+               <div  ng-if="crearArea.verificarAreas(crearArea.Nombre)">
+                 <label style="color:red"> El area no existe </label>
+                 <input type="submit"  ng-click="crearArea.registrarAreas(crearArea.Nombre)"
+                  value="Crear área" class="btn btn-info btn-md" />
+               </div>
+
             </div>
           </form>
           <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in crearArea.nuevaArea" >
