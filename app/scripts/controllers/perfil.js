@@ -13,7 +13,7 @@ angular.module('poluxApp')
     perfilctrl.fabricadocentes=docentesRequest;
     perfilctrl.fabricadocentes.obtenerDocentes();
     perfilctrl.scopearea=areasRequest.obtenerAreas();
-    console.log(perfilctrl.scopearea);
+    //console.log(perfilctrl.scopearea);
     //perfilctrl.scopeareas= areasService.obtenerAreas();
     //cambia el estado del boton que genera la nueva vista de creación de areas.
     perfilctrl.menucreacion=false;

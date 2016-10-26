@@ -35,16 +35,11 @@ angular.module('areasService',[])
     listarAreasDocente:function(codigoDocente){
       $http.get("http://localhost:8080/v1/areas_docente/?query=IdentificacionDocente%3A"+codigoDocente)
       .success(function(data){
-        if (data!=null){
         servicio.areasDocente=data;
         for (var i = 0; i < servicio.areasDocente.length; i++) {
           servicio.idareas.push(servicio.areasDocente[i].IdAreaConocimiento.Id);
         }
         console.log(servicio.idareas);
-        }
-        else {
-          console.log("No hay areas para el docente: ");
-        }
         //console.log(servicio.areasDocente);
       });
       servicio.coddocente=codigoDocente;

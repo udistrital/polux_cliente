@@ -20,7 +20,7 @@ angular.module('docentesService',[])
           var jsonDocente = data.substring(data.indexOf("["),data.lastIndexOf('}<json>'));
           var jsonObjDocente = JSON.parse(jsonDocente);
           servicio.docentes=jsonObjDocente;
-          console.log(jsonObjDocente);
+          //console.log(jsonObjDocente);
         });
       },
       //listar areas por docente
@@ -30,7 +30,7 @@ angular.module('docentesService',[])
           var jsonDocente = data.substring(data.indexOf("["),data.lastIndexOf('}<json>'));
           var jsonObjDocente = JSON.parse(jsonDocente);
           servicio.docentes=jsonObjDocente;
-          console.log(jsonObjDocente);
+          //console.log(jsonObjDocente);
         });
         return servicio.docentes;
       }
