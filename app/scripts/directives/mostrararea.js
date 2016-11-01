@@ -11,15 +11,22 @@ angular.module('poluxApp')
     return {
       restrict: "E",
       scope: {
-          areanueva:'='
+          areanueva:'=',
+          agregado:'='
       },
       templateUrl: "views/directives/mostrar-area.html",
-      controller: function() {
+      controller: function($scope) {
         var ctrl=this;
         //se llaman los servicios y se guardan en una variable
         ctrl.fabrica=areasRequest;
         ctrl.areas=ctrl.fabrica.obtenerAreas();
+
+
         //console.log(ctrl.areas);
+
+
+
+
 
 
         /*

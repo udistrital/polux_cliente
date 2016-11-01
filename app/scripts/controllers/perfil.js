@@ -11,7 +11,7 @@ angular.module('poluxApp')
   .controller('PerfilCtrl', function (areasRequest,docentesRequest) {
     var perfilctrl=this;
     perfilctrl.fabricadocentes=docentesRequest;
-    perfilctrl.fabricadocentes.obtenerDocentes();
+    perfilctrl.fabricadocentes.obtenerDocentesJson();
     perfilctrl.scopearea=areasRequest.obtenerAreas();
     //console.log(perfilctrl.scopearea);
     //perfilctrl.scopeareas= areasService.obtenerAreas();

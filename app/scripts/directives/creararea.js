@@ -1,85 +1,116 @@
 'use strict';
 
 /**
- * @ngdoc directive
- * @name poluxApp.directive:crearArea
- * @description
- * # crearArea
- */
+* @ngdoc directive
+* @name poluxApp.directive:crearArea
+* @description
+* # crearArea
+*/
 angular.module('poluxApp')
-  .directive('crearArea', function (areasRequest) {
-    return {
-      templateUrl: 'views/directives/crear-area.html',
-      scope: {
-          newarea:'='
-      },
-      restrict: 'E',
-      controller: function() {
-        var ctrl=this;
-        ctrl.fabrica=areasRequest;
-        ctrl.areas=areasRequest.obtenerAreas();
-       console.log(ctrl.areas);
-        //ásignar areas temporalmente
-        ctrl.nuevaArea = [];
+.directive('crearArea', function (areasRequest) {
+  return {
+    templateUrl: 'views/directives/crear-area.html',
+    scope: {
+      newarea:'='
+    },
+    restrict: 'E',
+    controller: function($scope) {
+      var ctrl=this;
+      ctrl.fabrica=areasRequest;
+      //ásignar areas temporalmente
+      ctrl.nuevaArea = [];
 
-        ctrl.asignarArea = function() {
-          //verifica que el Nombre sea el mismo y asigna el Id
-      for (var i = 0; i < ctrl.fabrica.areas.length; i++) {
-        if (ctrl.fabrica.areas[i].Nombre==ctrl.Nombre) {
-          ctrl.Id=ctrl.fabrica.areas[i].Id;
+      ctrl.asignarArea = function() {
+        ctrl.Nombre=ctrl.Nombre.toProperCase();
+        //verifica que el Nombre sea el mismo y asigna el Id
+        for (var i = 0; i < ctrl.fabrica.areas.length; i++) {
+          if (ctrl.fabrica.areas[i].Nombre==ctrl.Nombre) {
+            ctrl.Id=ctrl.fabrica.areas[i].Id;
+          }
         }
-      }
 
-      console.log(ctrl.Id);
-      //genera el JSON temporal en el cliente
-              ctrl.nuevaArea.push(
-                { "Id":ctrl.Id,
-                  "Nombre": ctrl.Nombre
+        console.log(ctrl.Id);
+        //genera el JSON temporal en el cliente
+        ctrl.nuevaArea.push(
+          { "Id":ctrl.Id,
+          "Nombre": ctrl.Nombre
 
-                }
-              );
-              ctrl.Id='',
-              ctrl.Nombre='';
-              ctrl.Descripcion='';
-        };
-/* Llama a la funcion de asignar areas pasando como parametro el JSON temporal de nuevaArea*/
-        ctrl.asignarAreasDocente= function(area){
-          ctrl.fabrica.mostrar=[];
-          ctrl.fabrica.asignarAreas(area);
-          ctrl.nuevaArea = [];
-        };
-        /* Permite registrar nuevas areas mediante un alert
-            Recibe como parametro: la área no encontrada
+        }
+      );
+      document.getElementById("formAsignar").reset();
 
-        */
-        ctrl.registrarAreas=function(parametroArea){
-          ctrl.areaCreada=[];
-          var existe=false;
-          swal({
-          title: 'Ingrese el nombre del área',
-          input: 'text',
-          inputValue: parametroArea,
-          showCancelButton: true,
-          confirmButtonText: 'Crear nueva área',
-          showLoaderOnConfirm: true,
-          preConfirm: function(parametroArea) {
-            return new Promise(function(resolve, reject) {
-              setTimeout(function() {
-                for (var i = 0; i < ctrl.areas.length ; i++) {
-                if (parametroArea === ctrl.areas[i].Nombre) {
-                  i=ctrl.areas.length;
-                  existe=true;
-                  reject('Esta area ya existe')
-                }
-                else {
-                  existe=false;
+    };
+    /* Llama a la funcion de asignar areas pasando como parametro el JSON temporal de nuevaArea*/
+    ctrl.asignarAreasDocente= function(area){
+      ctrl.fabrica.mostrar=[];
+      ctrl.fabrica.asignarAreas(area)
+
+      ctrl.nuevaArea = [];
+
+    };
+
+    /*
+    Permite transformar los strings a formatos de tipo titulo o Capitalize
+    */
+    String.prototype.toProperCase = function () {
+      var i, j, str, lowers;
+      str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      });
+
+      // Certain minor words should be left lowercase unless
+      // they are the first or last words in the string
+      lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
+      'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'DE', 'dE', 'de','De'];
+      for (i = 0, j = lowers.length; i < j; i++)
+      str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'),
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+      return str;
+    };
+
+    /* Permite registrar nuevas areas mediante un alert
+    Recibe como parametro: la área no encontrada
+
+    */
+    ctrl.registrarAreas=function(parametroArea){
+      ctrl.areaCreada=[];
+      ctrl.busqAreas=areasRequest.obtenerAreas();
+      parametroArea=parametroArea.toProperCase();
+      var existe=false;
+      swal({
+        title: 'Ingrese el nombre del área',
+        input: 'text',
+        inputValue: parametroArea,
+        showCancelButton: true,
+        confirmButtonText: 'Crear nueva área',
+        showLoaderOnConfirm: true,
+        preConfirm: function(parametroArea) {
+          parametroArea=parametroArea.toProperCase();
+          return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+              if (ctrl.busqAreas==null) {
+                existe=false;
+              }
+              else {
+                for (var i = 0; i < ctrl.busqAreas.length ; i++) {
+                  if (parametroArea === ctrl.busqAreas[i].Nombre) {
+                    i=ctrl.busqAreas.length;
+                    existe=true;
+                    reject('Esta area ya existe')
+                  }
+                  else {
+                    existe=false;
+                  }
                 }
               }
-                if (existe==false) {
-                  ctrl.areaCreada.push(
-                    {
-                      "Nombre":parametroArea
-                    });
+
+              if (existe==false) {
+                ctrl.areaCreada.push(
+                  {
+                    "Nombre":parametroArea
+                  });
                   ctrl.fabrica.crearArea(ctrl.areaCreada);
                   resolve()
                 }
@@ -97,25 +128,37 @@ angular.module('poluxApp')
         })
 
 
-        };
-        ctrl.verificarAreas=function(nombreArea){
-          console.log(nombreArea);
-          console.log(ctrl.areas);
-          for (var i = 0; i < ctrl.areas.length; i++) {
+      };
 
-            if (ctrl.areas[i].Nombre==nombreArea) {
+      /* verificarAreas: funcion que verifica el nombre del area exista
+      parametros: nombreArea:compara con el arreglo actual de áreas
+      */
+
+      ctrl.verificarAreas=function(nombreArea){
+        //console.log(nombreArea);
+        nombreArea=nombreArea.toProperCase();
+        if (ctrl.fabrica.areas==null) {
+          return true;
+        }
+        else {
+          for (var i = 0; i < ctrl.fabrica.areas.length; i++) {
+
+            if (ctrl.fabrica.areas[i].Nombre==nombreArea) {
               return false;
             }
-          }
-          if (nombreArea==null) {
-            return false;
-          }
-          else {
-            return true;
-          }
-        };
 
-      },
-      controllerAs: "crearArea"
-    };
-  });
+          }
+        }
+
+        if (nombreArea==null ) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      };
+
+    },
+    controllerAs: "crearArea"
+  };
+});

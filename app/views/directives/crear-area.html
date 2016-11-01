@@ -15,20 +15,20 @@
         <span><h3>De acuerdo a su perfil seleccione las áreas </h3>
         </span><br/>
         <div class="row">
-          <form class="col-md-10" role="form" name="formAsignar">
+          <form class="col-md-10" role="form" name="formAsignar" id="formAsignar">
             <div class="form-group" >
 
               <input type="text" list="listaAreas"
                ng-model="crearArea.Nombre" name="asignado"
                ng-minlength="8"
                ng-maxlength="30"
-               placeholder="Seleccione ..." required autocomplete="off"/>
+               placeholder="Seleccione ..." required autocomplete="off" />
               <datalist class="selector" id="listaAreas"  >
                 <option ng-repeat="a in crearArea.fabrica.areas"  ng-if="crearArea.fabrica.idareas.indexOf(a.Id) == -1" value="{{a.Nombre}}"></option>
               </datalist>
 
               <input type="submit" ng-click="crearArea.asignarArea()"
-               value="Agregar" class="btn btn-info btn-md" ng-disabled="formAsignar.$invalid" />
+               value="Agregar" class="btn btn-info btn-md" ng-disabled="formAsignar.$invalid || crearArea.verificarAreas(crearArea.Nombre) " />
                <div ng-show="formAsignar.asignado.$invalid ">
                  <div ng-messages="formAsignar.asignado.$error" style="color:red"
                        class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
@@ -38,7 +38,8 @@
                  </div>
                </div>
                <div  ng-if="crearArea.verificarAreas(crearArea.Nombre)">
-                 <label style="color:red"> El area no existe </label>
+                 <label style="color:blue" ng-if="crearArea.fabrica.areas!=null"> El area no existe </label>
+                 <label style="color:blue" ng-show="crearArea.fabrica.areas==null"> No existen áreas </label>
                  <input type="submit"  ng-click="crearArea.registrarAreas(crearArea.Nombre)"
                   value="Crear área" class="btn btn-info btn-md" />
                </div>

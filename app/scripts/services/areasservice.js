@@ -28,6 +28,14 @@ angular.module('areasService',[])
       return servicio.areas;
 
     },
+    actualizarAreas:function(){
+      $http.get("http://localhost:8080/v1/area_conocimiento/?limit=0")
+      .success(function(data){
+        servicio.areas=data;
+        //console.log("nuevasareas");
+        //console.log(servicio.areas);
+      });
+    },
 
     /*listar las areas del Docente,
     parametro del query: recibe el codigo del docente(IdentificacionDocente)
@@ -35,6 +43,7 @@ angular.module('areasService',[])
     listarAreasDocente:function(codigoDocente){
       $http.get("http://localhost:8080/v1/areas_docente/?query=IdentificacionDocente%3A"+codigoDocente)
       .success(function(data){
+        servicio.idareas=[];
         servicio.areasDocente=data;
         for (var i = 0; i < servicio.areasDocente.length; i++) {
           servicio.idareas.push(servicio.areasDocente[i].IdAreaConocimiento.Id);
@@ -42,7 +51,20 @@ angular.module('areasService',[])
         console.log(servicio.idareas);
         //console.log(servicio.areasDocente);
       });
+
       servicio.coddocente=codigoDocente;
+
+    },
+    actualizarAreasDocente:function(){
+      var codigodocente=parseFloat(servicio.coddocente);
+      console.log("codigodocente:");
+      console.log(codigodocente);
+      $http.get("http://localhost:8080/v1/areas_docente/?query=IdentificacionDocente%3A"+codigodocente)
+      .success(function(data){
+        servicio.areasDocente=data;
+        console.log(data);
+      });
+
     },
 
     /* Asigna areas a un docente dependiendo del codigo del docente
@@ -72,29 +94,29 @@ angular.module('areasService',[])
             Nombre:nuevasAreas[i].Nombre},
             IdentificacionDocente: codigodocente
           };
-          $http.post('http://localhost:8080/v1/areas_docente',data);
+          $http.post('http://localhost:8080/v1/areas_docente',data).then(function(response){
+            servicio.listarAreasDocente(response.data.IdentificacionDocente);
+          });
 
         }
 
+        console.log(codigodocente);
+        //servicio.listarAreasDocente(codigodocente);
+        return true;
       },
+
       crearArea: function(areaCreada){
-console.log(areaCreada[0].Nombre);
+      console.log(areaCreada[0].Nombre);
         var data = {
             Nombre: areaCreada[0].Nombre
           };
 
-          $http.post('http://localhost:8080/v1/area_conocimiento',data);
-          $http.get("http://localhost:8080/v1/area_conocimiento/");
+          $http.post('http://localhost:8080/v1/area_conocimiento',data).success(function(data){
+            servicio.actualizarAreas();
+          });
+          //$http.get("http://localhost:8080/v1/area_conocimiento/");
       },
-      //modalidades de TG:
-      buscarModalidades:function(){
-        var defer = $q.defer();
-        $http.get("http://localhost:8080/v1/modalidad/")
-        .then(function(response) {
-          defer.resolve(response.data);
-        });
-        return defer.promise;
-      },
+
       getAll: function () {
         var areas = [
           {

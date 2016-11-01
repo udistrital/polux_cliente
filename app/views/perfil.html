@@ -13,6 +13,7 @@
             <div class="panel panel-body">
               <mostrar-area
               areanueva=perfil.fabricadocentes
+
               />
               <div ng-if="perfil.estadoboton(perfil.menucreacion)">
                 <a href="" ng-click="perfil.menucreacion= !perfil.menucreacion"
@@ -31,7 +32,8 @@
     </div>
     <!--p>Directiva crear-area view.<p-->
     <div class="col-md-6 col-xs-12" ng-show="perfil.menucreacion">
-      <crear-area/>
+      <crear-area
+      />
     </div>
     <div class="row">
       <div class="col-sm-12 col-xs-12">

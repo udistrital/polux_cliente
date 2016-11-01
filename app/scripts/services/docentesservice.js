@@ -33,7 +33,48 @@ angular.module('docentesService',[])
           //console.log(jsonObjDocente);
         });
         return servicio.docentes;
+      },
+      obtenerDocentesJson:function(){
+        var docenteJson = [
+          {
+            "DOC_NRO_IDEN": 1,
+            "DOC_NOMBRE": "CARLOS ",
+            "DOC_APELLIDO": "MONTENEGRO"
+          },
+          {
+            "DOC_NRO_IDEN": 2,
+            "DOC_NOMBRE":"ALEJANDRO",
+            "DOC_APELLIDO": "DAZA"
+          },
+          {
+            "DOC_NRO_IDEN": 3,
+            "DOC_NOMBRE": "FREDY",
+            "DOC_APELLIDO": "PARRA"
+          },
+          {
+            "DOC_NRO_IDEN": 4,
+            "DOC_NOMBRE": "ALBA CONSUELO",
+            "DOC_APELLIDO": "NIETO"
+          },
+          {
+            "DOC_NRO_IDEN": 5,
+            "DOC_NOMBRE": "LUZ DEICY",
+            "DOC_APELLIDO": "ALVARADO"
+          },
+          {
+            "DOC_NRO_IDEN": 6,
+            "DOC_NOMBRE": "JULIO",
+            "DOC_APELLIDO": "BARON"
+          },
+          {
+            "DOC_NRO_IDEN": 19,
+            "DOC_NOMBRE": "JOSE NELSÓN",
+            "DOC_APELLIDO": "PEREZ"
+          }
+        ];
+        servicio.docentes=docenteJson;
       }
+
 
 
 
