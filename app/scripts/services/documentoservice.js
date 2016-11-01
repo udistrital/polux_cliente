@@ -8,16 +8,16 @@
  * Factory in the poluxApp.
  */
 angular.module('documentoService',[])
-  .factory('documentoRequest', function () {
+  .factory('documentoRequest', function ($http) {
     // Service logic
     // ...
 
-    var meaningOfLife = 42;
+    var path = "http://127.0.0.1:8080/v1/";
 
     // Public API here
     return {
-      someMethod: function () {
-        return meaningOfLife;
+      getDocumento: function (id) {
+        return $http.get(path+"documento/?query=Id%3A"+id);
       }
     };
   });

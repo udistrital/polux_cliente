@@ -23,7 +23,8 @@ angular
     'areasService',
     'pdf',
     'entidadService',
-    'documentoService'
+    'documentoService',
+    'revisionService'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -65,6 +66,21 @@ angular
         templateUrl: 'views/materias posgrado/solicitar.html',
         controller: 'SolicitarCtrl',
         controllerAs: 'solicitar'
+      })
+      .when('/docente/TGs/revision_documento', {
+        templateUrl: 'views/docente/tgs/revision_documento.html',
+        controller: 'DocenteTgsRevisionDocumentoCtrl',
+        controllerAs: 'docenterevision'
+      })
+      .when('/docente/tgs', {
+        templateUrl: 'views/docente/tgs.html',
+        controller: 'DocenteTgsCtrl',
+        controllerAs: 'docente/tgs'
+      })
+      .when('/docente/TGs/revisiones', {
+        templateUrl: 'views//docente/tgs/revisiones.html',
+        controller: 'DocenteTgsRevisionesCtrl',
+        controllerAs: '/docente/TGs/revisiones'
       })
       .otherwise({
         redirectTo: '/'

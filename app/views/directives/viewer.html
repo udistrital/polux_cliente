@@ -14,16 +14,16 @@
    {
      background: rgba(64, 255, 61, 0.4);
    }
-   .pdf-controls { width: 100%; display: block; background: #eee; padding: 1em;}
+   .pdf-controls { width: 100%; display: block; rgba(64, 255, 61, 0.4); padding: 1em;}
 
 </style>
 <nav ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}">
 
-  <button ng-click="goPrevious()"><</span></button>
-  <button ng-click="goNext()">></span></button>
-  <button ng-click="zoomIn()">+</span></button>
-  <button ng-click="fit()">100%</span></button>
-  <button ng-click="zoomOut()">-</span></button>
+  <button ng-click="goPrevious()"><</button>
+  <button ng-click="goNext()">></button>
+  <button ng-click="zoomIn()"><span class="glyphicon glyphicon-zoom-in"></span></button>
+  <button ng-click="fit()">100%</button>
+  <button ng-click="zoomOut()">-</button>
   <span>Page: </span><input type="text" min=1 ng-model="pageNum"><span> / {{pageCount}}</span>
 </nav>
 <div class="scrollit" id="bar1" >

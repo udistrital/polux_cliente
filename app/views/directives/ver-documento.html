@@ -1,8 +1,8 @@
 <div class="col-md-12">
 
-  <div class="panel panel-default">
+  <div class="panel panel-success">
     <div class="panel-heading">
-      <h3 class="panel-title">{{documento.titulo}}</h3>
+      <h3 class="panel-title">{{vdocumento.documento.Titulo}}</h3>
     </div>
     <div class="panel-body">
       <div>
@@ -10,10 +10,17 @@
         <!--<iframe id="el_iframe" class="embed-responsive-item" src="{{documento.enlace}}"></iframe>-->
       </div>
     </div>
-    <div class="panel-footer">
-      {{documento.resumen}}
+    <div class="panel-heading">
+      <p>
+        <span>Tipo:{{vdocumento.documento.IdTipoDocumento.Nombre}}</span>
+      <span class="pull-right">Categoria:{{vdocumento.documento.IdTipoDocumento.IdCategoria.Nombre}}</span>
+      </p>
+      <p>
+      <span class="panel-title">Resumen:</span><br>{{vdocumento.documento.Resumen}}
+      </p>
     </div>
   </div>
   <div ng-show="false">{{selectpag=pageNum}}
-  {{pdfUrl =documento.enlace}}</div>
+
+  {{pdfUrl =vdocumento.documento.Enlace}}</div>
 </div>
