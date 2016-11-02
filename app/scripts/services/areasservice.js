@@ -24,7 +24,9 @@ angular.module('areasService',[])
       .success(function(data){
         servicio.areas=data;
         //console.log(servicio.areas[1].Nombre);
+
       });
+
       return servicio.areas;
 
     },

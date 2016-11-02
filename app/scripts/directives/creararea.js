@@ -57,8 +57,7 @@ angular.module('poluxApp')
       str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       });
 
-      // Certain minor words should be left lowercase unless
-      // they are the first or last words in the string
+      //Palabras que deben ir en formato tipo lowercase
       lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
       'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'DE', 'dE', 'de','De'];
       for (i = 0, j = lowers.length; i < j; i++)

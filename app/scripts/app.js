@@ -22,7 +22,7 @@ angular
     'materiasService',
     'areasService',
     'docentesService',
-    
+
     'pdf',
     'entidadService',
     'documentoService'
@@ -67,6 +67,11 @@ angular
         templateUrl: 'views/materias posgrado/solicitar.html',
         controller: 'SolicitarCtrl',
         controllerAs: 'solicitar'
+      })
+      .when('/general/propuesta', {
+        templateUrl: 'views/general/propuesta.html',
+        controller: 'PropuestaCtrl',
+        controllerAs: 'propuesta'
       })
       .otherwise({
         redirectTo: '/'

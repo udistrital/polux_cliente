@@ -1,0 +1,93 @@
+<section class="col-md-12">
+  <div class="container-fluid">
+    <div class="row content">
+      <br>
+      <div class="col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="panel panel-info">
+              <div class="panel panel-heading">
+                <h2>
+                  Registrar Propuesta
+                </h2>
+              </div>
+              <div class="panel panel-body">
+                <!-- Seccion donde se muestra informacion suministrada por el web service de condor-->
+                <div class="row col-md-12 col-sm-12 col-xs-12" id="consumoInfo" >
+                  <div class="col-md-8 col-sm-8">
+                    <label> Modalidad seleccionada: <span class="text-muted">{{regProp.propuesta.modalidad}}</span>
+                    </label><br/>
+                    <label>Autores:
+                      <span class="text-muted" >
+                         {{regProp.estudiante.nombre}}
+                      Codigo: {{regProp.estudiante.codigo}}
+                      </span>
+                    </label>
+                  </div>
+                  <div class="col-md-3 col-sm-3 ">
+                    <span type="button" class="btn btn-md btn-info">Invitar estudiante</span>
+                  </div>
+                </div>
+
+
+                <!-- Formulario de registro zona de carga de archivos -->
+                <div class="row col-md-12 col-sm-12 col-xs-12" id="regPropInfo">
+                  <div class="col-md-6 col-sm-6">
+                    <div class="form-group">
+                      <span class="label label-default">Nombre de la propuesta</span><br/>
+                      <input type="text" ng-model="regProp.titulo" class="form-control" placeholder="titulo"><br/><br/>
+                      {{regProp.titulo}}
+                    </div>
+                  </div>
+                    <div class="col-md-6 col-sm-6">
+                    <div class="form-group ">
+                      <span class="label label-default">Archivo</span>
+                      <div class="btn btn-md btn-info form-control" ngf-select ng-model="regProp.file" ngf-multiple="false" >Subir propuesta</div>
+                    </div>
+                    <div ngf-drop ngf-select ng-model="regProp.files" class="drop-box"
+                    ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
+                    accept="image/*,application/pdf"
+                    ngf-pattern="'image/*,application/pdf'" >Arrastre el archivo o haga click para subir al servidor</div>
+                    <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+                    Documento:
+                    <div class="list-group" >
+                      <span class=" progress-bar progress-bar-striped active" ng-repeat="f in regProp.files" style="width: {{regProp.porcentaje}}%">{{regProp.porcentaje}}% {{f.name}} {{f.$error}} {{f.$errorParam}}</span>
+                    </div>
+                    </div>
+
+                    <br>
+                    <div>
+                    </div>
+                </div>
+
+                <!-- Fin de formulario de registro-->
+
+                <!-- Formulario de docentes asociados a un area de conocimiento -->
+
+                <div class="row col-md-12" id="docenteareainfo">
+
+                    <form  name="myForm">
+                      <span class="label label-default">Area de conocimiento</span><br/>
+                      <select ng-model="regProp.areaSeleccionada" name="areaname" class="form-control" required
+                      ng-change="regProp.mostrarDocentesArea(regProp.areaSeleccionada)">
+                      <option value="" disabled selected style="display: none;">Seleccione un área asociada a la propuesta</option>
+                      <option ng-repeat="p in regProp.fabricaAreas" value="{{p.Id}}">{{p.Nombre}}</option>
+                      </select>
+                      <br>
+                      <span class="label label-default">Vincular docente</span><br/>
+                      <select ng-model="docenteSeleccionado" name="docente" class="form-control" required
+                        ng-change="regProp.asignarDocente(docenteSeleccionado)">
+                      <option value="" disabled selected style="display: none;">Docentes relacionados con el área</option>
+                      <option ng-repeat="p in regProp.fabrica.docentesArea" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
+                      </select>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
