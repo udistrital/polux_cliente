@@ -1,14 +1,33 @@
-<div class="panel panel-info">
-  <div class="panel-heading">
+<div class="panel panel-danger" ng-if="rdocumento.revision.Estado != 'finalizada'">
+
+  <div class="panel-heading" ng-click="showc=!showc">
     <h3 class="panel-title">Revision {{rdocumento.revision.NumeroRevision}} {{rdocumento.revision.Estado}}
       <span class="pull-right">Fecha Recepcion:{{rdocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} | Fecha Revision: {{rdocumento.revision.FechaRevision | date:'dd-MMM-yyyy'}}</span></h3>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" ng-show="showc">
     <div ng-repeat="correccion in rdocumento.correcciones">
       <div class="panel panel-success">
         <div class="panel-heading">
           {{correccion.Observacion}} <span ng-click="rdocumento.verpag(correccion.pagina)">pag {{correccion.Pagina}}</span>
+          <button class="btn btn-xs btn-success pull-right" ng-click="showed =!showed" type="button">editar</button>
           <button class="btn btn-xs btn-success pull-right" ng-click="show =!show" type="button">ver</button>
+
+          <form name="modiForm3" ng-submit="modiForm3.$valid && rdocumento.agregar_correccion(rdocumento.correccion)" ng-if="showed" novalidate>
+            <fieldset class="form-group">
+              <input  class="form-control" type="text" placeholder="enunciado" ng-model="correccion.Observacion" required/>
+            </fieldset>
+            <fieldset class="form-group">
+              <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="correccion.Justificacion"></textarea>
+            </fieldset>
+            <fieldset class="form-group">
+              <input type="checkbox" class="checkbox checkbox-inline" ng-model="rdocumento.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>
+            </fieldset>
+            <div class=" pull-right">
+              <button class="btn btn-default" ng-click="showfm =!showfm; rdocumento.correccion={}" type="button" >Cancelar</button>
+              <input class="btn-primary btn" type="submit" value="Agregar" ></input>
+            </div>
+          </form>
+
         </div>
         <div class="panel-body" ng-show="show">
           {{correccion.Justificacion}}
@@ -16,10 +35,10 @@
       </div>
     </div>
 
-<!--<pre>{{rdocumento.revision | json}}-->
+<!--<pre>{{rdocumento.revision | json}}
 
 <button type="button" name="button" ng-click="rdocumento.postrev()">postera</button>
-</pre>
+</pre>-->
 
 
 
@@ -28,10 +47,10 @@
       <div class="panel-body">
         <form name="modiForm3" ng-submit="modiForm3.$valid && rdocumento.agregar_correccion(rdocumento.correccion)" novalidate>
           <fieldset class="form-group">
-            <input  class="form-control" type="text" placeholder="enunciado" ng-model="rdocumento.correccion.correccion" required/>
+            <input  class="form-control" type="text" placeholder="enunciado" ng-model="rdocumento.correccion.Observacion" required/>
           </fieldset>
           <fieldset class="form-group">
-            <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="rdocumento.correccion.descripcion"></textarea>
+            <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="rdocumento.correccion.Justificacion"></textarea>
           </fieldset>
           <fieldset class="form-group">
             <input type="checkbox" class="checkbox checkbox-inline" ng-model="rdocumento.agregarpag"> Agregar pagina de corrección: {{paginadoc}}</input>

@@ -18,12 +18,10 @@ angular.module('poluxApp')
     templateUrl: "views/directives/revision-documento.html",
     controller: function($scope) {
       var self = this;
-      self.test = "esto es una directiva revision";
-
-      revisionRequest.getRevision(1).success(function(data){
+      revisionRequest.getRevision($scope.revisionid).success(function(data){
         self.revision=data[0];
       });
-      revisionRequest.getAllCorreccionesRevision(1).success(function(data){
+      revisionRequest.getAllCorreccionesRevision($scope.revisionid).success(function(data){
         self.correcciones=data;
       });
 
@@ -41,18 +39,31 @@ angular.module('poluxApp')
       };*/
       self.correccion={};
       //self.correcciones=[];
+      //self.correcciones_nuevas=[];
+      //self.correcciones_editadas=[];
+      //self.correcciones_eliminadas=[];
       self.fecha= new Date();
       self.agregarpag=false;
       self.verpag= function(pag){
         $scope.paginaset=pag;
       };
-      self.agregar_correccion= function(data) {
+
+      self.agregar_correccion= function(correcion) {
         if (self.agregarpag) {
-          data.pagina=$scope.paginadoc;
+          correcion.Pagina=$scope.paginadoc;
         }
-        self.correcciones.push(data);
+        var idrev={};
+        idrev.Id = $scope.revisionid;
+        correcion.IdRevision=idrev;
+        revisionRequest.postCorreccionRevision(correcion).success(function(){
+          revisionRequest.getAllCorreccionesRevision($scope.revisionid).success(function(data){
+            self.correcciones=data;
+          });
+        });
+        //self.correcciones.push(data);
         self.correccion={};
       };
+
     },
     controllerAs: "rdocumento"
   };
