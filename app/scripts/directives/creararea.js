@@ -7,7 +7,7 @@
 * # crearArea
 */
 angular.module('poluxApp')
-.directive('crearArea', function (areasRequest) {
+.directive('crearArea', function (areasRequest,cadenaRequest) {
   return {
     templateUrl: 'views/directives/crear-area.html',
     scope: {
@@ -21,7 +21,7 @@ angular.module('poluxApp')
       ctrl.nuevaArea = [];
 
       ctrl.asignarArea = function() {
-        ctrl.Nombre=ctrl.Nombre.toProperCase();
+        ctrl.Nombre=cadenaRequest.cambiarTipoTitulo(ctrl.Nombre);
         //verifica que el Nombre sea el mismo y asigna el Id
         for (var i = 0; i < ctrl.fabrica.areas.length; i++) {
           if (ctrl.fabrica.areas[i].Nombre==ctrl.Nombre) {
@@ -49,34 +49,34 @@ angular.module('poluxApp')
 
     };
 
-    /*
-    Permite transformar los strings a formatos de tipo titulo o Capitalize
-    */
-    String.prototype.toProperCase = function () {
-      var i, j, str, lowers;
-      str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-      });
 
-      //Palabras que deben ir en formato tipo lowercase
-      lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
-      'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'DE', 'dE', 'de','De'];
-      for (i = 0, j = lowers.length; i < j; i++)
-      str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'),
-      function(txt) {
-        return txt.toLowerCase();
-      });
+  String.prototype.toProperCase = function () {
+          var i, j, str, lowers;
+          str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          });
 
-      return str;
-    };
+          //Palabras que deben ir en formato tipo lowercase
+          lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
+          'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'De','La'];
+          for (i = 0, j = lowers.length; i < j; i++)
+          str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'),
+          function(txt) {
+            return txt.toLowerCase();
+          });
+
+          return str;
+        };
 
     /* Permite registrar nuevas areas mediante un alert
     Recibe como parametro: la área no encontrada
 
     */
     ctrl.registrarAreas=function(parametroArea){
+      console.log(parametroArea);
       ctrl.areaCreada=[];
       ctrl.busqAreas=areasRequest.obtenerAreas();
-      parametroArea=parametroArea.toProperCase();
+      parametroArea=cadenaRequest.cambiarTipoTitulo(parametroArea);
+      console.log(parametroArea);
       var existe=false;
       swal({
         title: 'Ingrese el nombre del área',
@@ -86,7 +86,7 @@ angular.module('poluxApp')
         confirmButtonText: 'Crear nueva área',
         showLoaderOnConfirm: true,
         preConfirm: function(parametroArea) {
-          parametroArea=parametroArea.toProperCase();
+          parametroArea=cadenaRequest.cambiarTipoTitulo(parametroArea);
           return new Promise(function(resolve, reject) {
             setTimeout(function() {
               if (ctrl.busqAreas==null) {
@@ -135,7 +135,7 @@ angular.module('poluxApp')
 
       ctrl.verificarAreas=function(nombreArea){
         //console.log(nombreArea);
-        nombreArea=nombreArea.toProperCase();
+        nombreArea=cadenaRequest.cambiarTipoTitulo(nombreArea);
         if (ctrl.fabrica.areas==null) {
           return true;
         }

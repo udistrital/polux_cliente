@@ -22,7 +22,7 @@ angular
     'materiasService',
     'areasService',
     'docentesService',
-
+    'cadenaService',
     'pdf',
     'entidadService',
     'documentoService'

@@ -467,3 +467,11 @@ csmall2 {
 	padding-right: 15px;
 	font-size: 18px;
 }
+textarea.ng-invalid {
+    border:2px solid lightblue;
+		border-radius: 5px;
+}
+textarea.ng-valid {
+    border:2px solid lightgreen;
+		border-radius: 5px;
+}
