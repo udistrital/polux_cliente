@@ -18,6 +18,7 @@ angular.module('poluxApp')
       var ctrl=this;
       ctrl.fabrica=docentesRequest;
       ctrl.fabricaAreas=areasRequest;
+      ctrl.areas=ctrl.fabricaAreas.obtenerAreas(); //necesario para cargar las peticiones en el primer intento
       ctrl.string="registrarPropuesta";
       ctrl.nuevaArea = [];
       ctrl.propuesta=
@@ -98,7 +99,7 @@ angular.module('poluxApp')
       ctrl.asignarArea = function() {
 
         ctrl.Nombre=cadenaRequest.cambiarTipoTitulo(ctrl.Nombre);
-        //verifica que el Nombre sea el mismo y asigna el Id
+        //verifica que el Nombre sea el mismo y asigna el Id(necesario para tablas con llave compuesta)
         for (var i = 0; i < ctrl.fabricaAreas.areas.length; i++) {
           if (ctrl.fabricaAreas.areas[i].Nombre==ctrl.Nombre) {
             ctrl.Id=ctrl.fabricaAreas.areas[i].Id;

@@ -22,7 +22,7 @@ angular.module('poluxApp')
 
       ctrl.asignarArea = function() {
         ctrl.Nombre=cadenaRequest.cambiarTipoTitulo(ctrl.Nombre);
-        //verifica que el Nombre sea el mismo y asigna el Id
+        //verifica que el Nombre sea el mismo y asigna el Id(necesario para tablas con llave compuesta)
         for (var i = 0; i < ctrl.fabrica.areas.length; i++) {
           if (ctrl.fabrica.areas[i].Nombre==ctrl.Nombre) {
             ctrl.Id=ctrl.fabrica.areas[i].Id;
@@ -49,27 +49,8 @@ angular.module('poluxApp')
 
     };
 
-
-  String.prototype.toProperCase = function () {
-          var i, j, str, lowers;
-          str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          });
-
-          //Palabras que deben ir en formato tipo lowercase
-          lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At',
-          'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'De','La'];
-          for (i = 0, j = lowers.length; i < j; i++)
-          str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'),
-          function(txt) {
-            return txt.toLowerCase();
-          });
-
-          return str;
-        };
-
-    /* Permite registrar nuevas areas mediante un alert
+    /* registrarAreas:Permite registrar nuevas areas mediante un alert
     Recibe como parametro: la área no encontrada
-
     */
     ctrl.registrarAreas=function(parametroArea){
       console.log(parametroArea);

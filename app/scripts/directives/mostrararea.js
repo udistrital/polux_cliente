@@ -19,9 +19,9 @@ angular.module('poluxApp')
         var ctrl=this;
         //se llaman los servicios y se guardan en una variable
         ctrl.fabrica=areasRequest;
-        ctrl.areas=ctrl.fabrica.obtenerAreas();
+        ctrl.areas=ctrl.fabrica.obtenerAreas(); //necesario para cargar las peticiones en el primer intento
         //console.log(ctrl.areas);
-        
+
         /*
         Función que muestra el area por docente
         docenteSeleccionado value:"p.coddocente":

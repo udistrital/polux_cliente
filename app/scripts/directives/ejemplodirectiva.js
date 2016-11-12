@@ -17,6 +17,7 @@ angular.module('poluxApp')
       controller: function() {
         var ejemplo = this;
         ejemplo.test = "esto es una directiva ejemplo";
+        
       },
       controllerAs: "ejemplo"
     };
