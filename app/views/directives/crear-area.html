@@ -1,7 +1,5 @@
 <div class="container-fluid">
 <div class="row">
-<br>
-<div>
 <div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="panel panel-info">
@@ -12,10 +10,11 @@
         </h1>
       </div>
       <div class="panel panel-body">
-        <span><h3>De acuerdo a su perfil seleccione las áreas </h3>
+        <md-card md-colors="{background: 'White-A100', 'border-color': 'primary-600'}">
+        <span><h4>De acuerdo a su perfil seleccione las áreas </h4>
         </span><br/>
         <div class="row">
-          <form class="col-md-10" role="form" name="formAsignar" id="formAsignar">
+          <form class="col-md-12" role="form" name="formAsignar" id="formAsignar">
             <div class="form-group" >
 
               <input type="text" list="listaAreas"
@@ -45,31 +44,36 @@
                </div>
 
             </div>
+
           </form>
           <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in crearArea.nuevaArea" >
             <md-chip >{{a.Nombre}}</md-chip>
-
           </md-chips>
 
         </div>
-        <input type="submit" ng-click="crearArea.asignarAreasDocente(crearArea.nuevaArea)" value="Confirmar" class="btn btn-info btn-md pull-right" />
 
+      </md-card>
+            <input type="submit" ng-click="crearArea.asignarAreasDocente(crearArea.nuevaArea)" value="Confirmar" class="btn btn-info btn-md pull-right" />
       </div>
+      <div class="panel panel-body">
       <div class="row ">
-        <div class="panel panel-body">
+        <md-card md-colors="{background: 'White-A100', 'border-color': 'primary-600'}">
+          <form >
+          <span>Docente actual:{{crearArea.fabrica.coddocente}}</span>
           <h4>Areas actuales:</h4>
           <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in crearArea.fabrica.areasDocente" >
             <md-chip >{{a.IdAreaConocimiento.Nombre}}</md-chip>
           </md-chips>
-          <span>Docente actual:{{crearArea.fabrica.coddocente}}</span>
-        </div>
+          </form>
+        </md-card>
+      </div>
       </div>
     </div>
   </div>
 
 </div>
 
-</div>
+
 </div>
 
 

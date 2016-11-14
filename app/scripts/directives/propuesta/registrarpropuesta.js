@@ -30,6 +30,7 @@ angular.module('poluxApp')
       };
       ctrl.doclimpio={};
       ctrl.docregistrado=[];
+      ctrl.filtro=false;
       /*
       Función que muestra los docentes relacionados a un área
       areaSeleccionada toma como valor value:"p.Id":

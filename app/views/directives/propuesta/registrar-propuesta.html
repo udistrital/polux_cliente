@@ -70,6 +70,7 @@
                 <!-- Formulario de asignación de areas de conocimiento-->
 
                 <div class="row col-md-12" id="registroareas">
+                  <md-card md-colors="{background: 'White', 'border-color': 'primary-600'}">
                   <form class="col-md-12" role="form" name="formAsignar" id="formAsignar">
                     <br/>
                     <label>De acuerdo a su propuesta seleccione las áreas
@@ -94,31 +95,47 @@
                          </div>
                        </div>
                     </div>
+                    <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in regProp.nuevaArea" >
+                      <md-chip >{{a.Nombre}}</md-chip>
+                    </md-chips>
                   </form>
-                  <md-chips  class="col-md-6 col-sm-4" ng-repeat="a in regProp.nuevaArea" >
-                    <md-chip >{{a.Nombre}}</md-chip>
-                  </md-chips>
+                </md-card>
                 </div>
                 <!-- Formulario de docentes asociados a un area de conocimiento -->
                 <div class="row col-md-12" id="docenteareainfo">
-                    <form  class="col-md-12" name="myForm">
+                  <md-card md-colors="{background: 'White-A100', 'border-color': 'primary-600'}">
+                    <form  class="col-md-12 " name="myForm" >
                       <br/>
                       <label>Seleccione las opciones para vincular el docente
                       </label><br/>
-                      <span class="label label-default">Area de conocimiento</span><br/>
-                      <select ng-model="regProp.areaTG.areaSeleccionada" name="areaname" class="form-control" required
-                      ng-change="regProp.mostrarDocentesArea(regProp.areaTG.areaSeleccionada)">
-                      <option value="" disabled selected style="display: none;">Seleccione un área asociada a la propuesta</option>
-                      <option ng-repeat="p in regProp.fabricaAreas.areas" value="{{p.Id}}">{{p.Nombre}}</option>
-                      </select>
-                      <br>
+                        <md-input-container >
+                          <label ng-hide="regProp.filtro">Filtrando por:</label>
+                        <md-select ng-model="regProp.areaTG.areaSeleccionada" name="areaname" class="form-control "
+                        ng-disabled="regProp.filtro" placeholder="Seleccione un área asociada a la propuesta"
+                        ng-change="regProp.mostrarDocentesArea(regProp.areaTG.areaSeleccionada)">
+                        <md-option ng-repeat="p in regProp.fabricaAreas.areas" value="{{p.Id}}">{{p.Nombre}}      </md-option>
+                       </md-select>
+                       </md-input-container>
+                        <md-checkbox  aria-label="Filtrar docente por área" ng-model="regProp.filtro" class="md-primary">
+                           {{regProp.filtro ? "Listando todos los docentes " : "Vinculando docente por área "}}
+                           <label>(cambiar)</label>
+                        </md-checkbox>
+                      <br/>
                       <span class="label label-default">Vincular docente</span><br/>
-                      <select ng-model="docenteSeleccionado" name="docente" class="form-control" required
+                      <select ng-if="!regProp.filtro" ng-model="docenteSeleccionado" name="docente" class="form-control" required
                         ng-change="regProp.asignarDocente(docenteSeleccionado)">
                       <option value="" disabled selected style="display: none;">Docentes relacionados con el área</option>
                       <option ng-repeat="p in regProp.fabrica.docentesArea" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
                       </select>
+                      <select ng-if="regProp.filtro" ng-model="docenteSeleccionado" name="docente" class="form-control" required
+                        ng-change="regProp.asignarDocente(docenteSeleccionado)">
+                      <option value="" disabled selected style="display: none;">Docentes relacionados con el área</option>
+                      <option ng-repeat="p in regProp.fabrica.docentes" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
+                      </select>
+
+                      <br/>
                   </form>
+                </md-card>
                 </div>
 
                 <div class="row col-md-12 " id="botonesRegistro">
