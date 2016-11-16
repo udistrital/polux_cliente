@@ -15,8 +15,10 @@ angular.module('areasService',[])
   var servicio = {
     areas:[],
     areasDocente:[],
+    areasTrabajoGrado:[],
     idareas:[],
     coddocente:0,
+    i:0,
 
     //listado de areas disponibles para el docente
     obtenerAreas:function(){
@@ -55,6 +57,17 @@ angular.module('areasService',[])
       });
 
       servicio.coddocente=codigoDocente;
+
+    },
+    /* Actualiza cada area del trabajo de grado una vez registradas.
+    */
+
+    listarAreasTG:function(codigoTG){
+      $http.get("http://localhost:8080/v1/areas_trabajo_grado/?query=IdTrabajoGrado%3A"+codigoTG)
+      .success(function(data){
+        servicio.areasTrabajoGrado=data;
+      });
+
 
     },
     actualizarAreasDocente:function(){
@@ -107,6 +120,19 @@ angular.module('areasService',[])
         return true;
       },
 
+      /* Asigna areas a un trabajo de grado,
+       la función recursiva se detiene cuando no se encuentren mas áreas del arreglo
+       recibido por controlador.
+      */
+      asignarAreasTG: function(dataAreasTG){
+        if(servicio.i<dataAreasTG.length){
+        $http.post('http://localhost:8080/v1/areas_trabajo_grado',dataAreasTG[servicio.i]).then(function(response){
+          servicio.listarAreasTG(response.data.IdTrabajoGrado);
+        });
+        servicio.i++;
+        servicio.asignarAreasTG(dataAreasTG);
+        }
+      },
       crearArea: function(areaCreada){
       console.log(areaCreada[0].Nombre);
         var data = {

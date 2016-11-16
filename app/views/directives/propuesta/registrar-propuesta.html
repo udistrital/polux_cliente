@@ -35,23 +35,23 @@
                   <div class="col-md-6 col-sm-6">
                     <div class="form-group">
                       <span class="label label-default">Nombre de la propuesta</span><br/>
-                      <input type="text" ng-model="regProp.documento.titulo" class="form-control" placeholder="titulo"><br/><br/>
+                      <input type="text" ng-model="regProp.documento.titulo" class="form-control" placeholder="Titulo" required ><br/><br/>
 
                     </div>
                   </div>
                     <div class="col-md-6 col-sm-6">
                     <div class="form-group ">
                       <span class="label label-default">Archivo</span>
-                      <div class="btn btn-md btn-info form-control" ngf-select ng-model="regProp.documento.enlace" ngf-multiple="false" >Subir propuesta</div>
+                      <div class="btn btn-md btn-info form-control" ngf-select ng-model="regProp.documento.enlacependiente" ngf-multiple="false" >Subir propuesta</div>
                     </div>
-                    <div ngf-drop ngf-select ng-model="regProp.documento.enlace" class="drop-box"
+                    <div ngf-drop ngf-select ng-model="regProp.documento.enlacependiente" class="drop-box"
                     ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-allow-dir="true"
                     accept="image/*,application/pdf"
                     ngf-pattern="'image/*,application/pdf'" >Arrastre el archivo o haga click para subir al servidor</div>
                     <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
                     Documento:
                     <div class="list-group" >
-                      <span class=" progress-bar progress-bar-striped active" ng-repeat="f in regProp.documento.enlace" style="width: {{regProp.porcentaje}}%">{{regProp.porcentaje}}% {{f.name}} {{f.$error}} {{f.$errorParam}}</span>
+                      <span class=" progress-bar progress-bar-striped active" ng-repeat="f in regProp.documento.enlacependiente" style="width: {{regProp.porcentaje}}%">{{regProp.porcentaje}}% {{f.name}} {{f.$error}} {{f.$errorParam}}</span>
                     </div>
                     </div>
 
@@ -77,7 +77,7 @@
                     </label><br/>
                     <div class="form-group" >
                       <input type="text" list="listaAreas"
-                       ng-model="regProp.Nombre" name="asignado"
+                       ng-model="regProp.nombreArea" name="asignado"
                        ng-minlength="8"
                        ng-maxlength="30"
                        placeholder="Seleccione ..." required autocomplete="off" />
@@ -85,7 +85,7 @@
                         <option ng-repeat="a in regProp.fabricaAreas.areas"  value="{{a.Nombre}}"></option>
                       </datalist>
                       <input type="submit" ng-click="regProp.asignarArea()"
-                       value="Agregar" class="btn btn-info btn-md" ng-disabled="formAsignar.$invalid || regProp.verificarAreas(regProp.Nombre) " />
+                       value="Agregar" class="btn btn-info btn-md" ng-disabled="formAsignar.$invalid || regProp.verificarAreas(regProp.nombreArea) " />
                        <div ng-show="formAsignar.asignado.$invalid ">
                          <div ng-messages="formAsignar.asignado.$error" style="color:red"
                                class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
@@ -103,16 +103,16 @@
                 </div>
                 <!-- Formulario de docentes asociados a un area de conocimiento -->
                 <div class="row col-md-12" id="docenteareainfo">
-                  <md-card md-colors="{background: 'White-A100', 'border-color': 'primary-600'}">
+                  <md-card md-colors="{background: 'White', 'border-color': 'primary-600'}">
                     <form  class="col-md-12 " name="myForm" >
                       <br/>
                       <label>Seleccione las opciones para vincular el docente
                       </label><br/>
                         <md-input-container >
-                          <label ng-hide="regProp.filtro">Filtrando por:</label>
-                        <md-select ng-model="regProp.areaTG.areaSeleccionada" name="areaname" class="form-control "
+                          <label ng-hide="regProp.filtro"> Filtrando por:</label>
+                        <md-select ng-model="regProp.areaSeleccionada" name="areaname" class="form-control "
                         ng-disabled="regProp.filtro" placeholder="Seleccione un área asociada a la propuesta"
-                        ng-change="regProp.mostrarDocentesArea(regProp.areaTG.areaSeleccionada)">
+                        ng-change="regProp.mostrarDocentesArea(regProp.areaSeleccionada)">
                         <md-option ng-repeat="p in regProp.fabricaAreas.areas" value="{{p.Id}}">{{p.Nombre}}      </md-option>
                        </md-select>
                        </md-input-container>
@@ -122,17 +122,11 @@
                         </md-checkbox>
                       <br/>
                       <span class="label label-default">Vincular docente</span><br/>
-                      <select ng-if="!regProp.filtro" ng-model="docenteSeleccionado" name="docente" class="form-control" required
-                        ng-change="regProp.asignarDocente(docenteSeleccionado)">
+                      <select  ng-model="regProp.docenteSeleccionado" name="docente" class="form-control" required
+                        ng-change="regProp.asignarDocente(regProp.docenteSeleccionado)">
                       <option value="" disabled selected style="display: none;">Docentes relacionados con el área</option>
-                      <option ng-repeat="p in regProp.fabrica.docentesArea" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
+                      <option ng-repeat="p in regProp.establecerFiltroDocentes()" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
                       </select>
-                      <select ng-if="regProp.filtro" ng-model="docenteSeleccionado" name="docente" class="form-control" required
-                        ng-change="regProp.asignarDocente(docenteSeleccionado)">
-                      <option value="" disabled selected style="display: none;">Docentes relacionados con el área</option>
-                      <option ng-repeat="p in regProp.fabrica.docentes" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
-                      </select>
-
                       <br/>
                   </form>
                 </md-card>
@@ -142,9 +136,17 @@
                   <div class="col-md-12 ">
                     <br/>
                   <input type="button" class="btn btn-md btn-danger" ng-click="regProp.limpiar()" value="Cancelar" />
-                  <input type="button" class="btn btn-md btn-success"  ng-click="regProp.guardar(regProp.documento,regProp.areaTG)" value="Aceptar" />
+                  <input type="button" class="btn btn-md btn-info"  ng-click="regProp.guardar(regProp.documento,regProp.docenteSeleccionado)" value="Aceptar" />
+                  <input type="button" class="btn btn-md btn-success"  ng-click="regProp.guardarRegistro()" value="Guardar Registro" />
                   </div>
                 </div>
+                <div class="row col-md-12" ng-if="regProp.registroDocumento">
+                <md-card  md-colors="{background: 'White', 'border-color': 'primary-600'}">
+                  {{regProp.registroDocumento}}
+                </md-card>
+                </div>
+
+
               </div>
             </div>
           </div>
@@ -153,7 +155,6 @@
       <div class="col-sm-3">
         <pre> documentotemporal= {{regProp.documento |json}}</pre>
         <pre> docregistrado= {{regProp.docregistrado |json}}</pre>
-        <pre> Trabajo Grado= {{regProp.TGregistrado |json}}</pre>
         <pre> Areas_TrabajoGrado= {{regProp.areas_TG |json}}</pre>
         <pre> Vinculación docente= {{regProp.vinculaciondocente |json}}</pre>
       </div>

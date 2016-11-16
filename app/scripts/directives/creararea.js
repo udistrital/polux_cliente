@@ -43,7 +43,7 @@ angular.module('poluxApp')
     /* Llama a la funcion de asignar areas pasando como parametro el JSON temporal de nuevaArea*/
     ctrl.asignarAreasDocente= function(area){
       ctrl.fabrica.mostrar=[];
-      ctrl.fabrica.asignarAreas(area)
+      ctrl.fabrica.asignarAreas(area);
 
       ctrl.nuevaArea = [];
 
