@@ -40,6 +40,15 @@ angular.module('revisionService',[])
       },
       postComentarioCorreccion: function(comentario){
         return $http.post(path+"comentario",comentario);
+      },
+      updateRevision: function (revision) {
+        return $http.put(path+"revision/"+revision.Id,revision);
+      },
+      updateCorreccion: function (correccion) {
+        return $http.put(path+"correccion/"+correccion.Id,correccion);
+      },
+      deleteCorreccion: function (correccion_id) {
+        return $http.delete(path+"correccion/"+correccion_id);
       }
     };
   });

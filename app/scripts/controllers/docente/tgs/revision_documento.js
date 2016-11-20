@@ -15,10 +15,4 @@ angular.module('poluxApp')
   revisionRequest.getRevisionByVinculacionDocumentoTg(self.vncdocId,self.doctgId).success(function(data){
     self.revisionesd=data;
   });
-
-  self.documento = {id:1,
-    titulo:"titulo de un documento",
-    enlace:"images/dibujo.pdf",
-    estado:"registrado",
-    resumen:"este es el resumen"};
 });

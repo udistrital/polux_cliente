@@ -13,7 +13,8 @@ angular.module('poluxApp')
     scope: {
       revisionid: '=',
       paginadoc: '=',
-      paginaset: '='
+      paginaset: '=',
+      revisionestado: '='
     },
     templateUrl: "views/directives/revision-documento.html",
     controller: function($scope) {
@@ -25,23 +26,36 @@ angular.module('poluxApp')
         self.correcciones=data;
       });
 
-      /*self.postrev=function(){
-        var revisionp ={
-          "IdDocumentoTg": {Id: 1},
-          "IdVinculacionDocente":{Id: 2},
-          "NumeroRevision": 2,
-          "Estado": "pendiente",
-          "FechaRecepcion": "2016-10-17T19:00:00-05:00",
-          "FechaRevision": "0001-01-01T00:00:00Z"
-        };
-        revisionRequest.postRevision(revisionp);
+      self.copyObject=function(Obj){
+      /* //Opcion recursiva
+      if ( obj === null || typeof obj  !== 'object' ) {
+            return obj;
+        }
+        var temp = obj.constructor();
+        for ( var key in obj ) {
+            temp[ key ] = clone( obj[ key ] );
+        }
+        return temp;*/
+        //Opcion Json
+        return JSON.parse( JSON.stringify( Obj ) );
+      };
 
-      };*/
+      self.editar=function(correc, temp){
+        for ( var key in correc ) {
+            correc[ key ] =  temp[ key ];
+        }
+        if (temp.agregarpag) {
+          correc.Pagina=$scope.paginadoc;
+        }
+        if(correc.Cambio!="nuevo"){
+          correc.Cambio="editado";
+        }
+        /*correc.Observacion = temp.Observacion;
+        correc.Justificacion = temp.Justificacion;*/
+      };
+
       self.correccion={};
-      //self.correcciones=[];
-      //self.correcciones_nuevas=[];
-      //self.correcciones_editadas=[];
-      //self.correcciones_eliminadas=[];
+      self.correcciones_eliminadas=[];
       self.fecha= new Date();
       self.agregarpag=false;
       self.verpag= function(pag){
@@ -55,13 +69,51 @@ angular.module('poluxApp')
         var idrev={};
         idrev.Id = $scope.revisionid;
         correcion.IdRevision=idrev;
-        revisionRequest.postCorreccionRevision(correcion).success(function(){
-          revisionRequest.getAllCorreccionesRevision($scope.revisionid).success(function(data){
-            self.correcciones=data;
-          });
-        });
-        //self.correcciones.push(data);
+        correcion.Cambio="nuevo";
+        self.correcciones.push(correcion);
         self.correccion={};
+      };
+
+      self.eliminar_correccion= function(correcion) {
+        if (correcion.Id!=null) {
+          self.correcciones_eliminadas.push(correcion);
+        }
+        self.correcciones.splice(self.correcciones.indexOf(correcion),1);
+      };
+
+      self.cancelar_revisado= function() {
+        revisionRequest.getAllCorreccionesRevision($scope.revisionid).success(function(data){
+          self.correcciones=data;
+        });
+        self.correcciones_eliminadas=[];
+      };
+
+      self.guardar_revision= function(accion) {
+        switch(accion) {
+            case "borrador":
+                if (self.revision.Estado!="borrador") {
+                  self.revision.Estado="borrador";
+                  revisionRequest.updateRevision(self.revision);
+                }
+                break;
+            case "finalizar":
+                self.revision.Estado="finalizada";
+                self.revision.FechaRevision=new Date();
+                revisionRequest.updateRevision(self.revision);
+                $scope.revisionestado=self.revision.Estado;
+                break;
+        }
+        for (var i = 0; i < self.correcciones.length; i++) {
+          if (self.correcciones[i].Cambio=="nuevo") {
+            revisionRequest.postCorreccionRevision(self.correcciones[i]);
+          }
+          if (self.correcciones[i].Cambio=="editado") {
+            revisionRequest.updateCorreccion(self.correcciones[i]);
+          }
+        }
+        for (var i = 0; i < self.correcciones_eliminadas.length; i++) {
+          revisionRequest.deleteCorreccion(self.correcciones_eliminadas[i].Id);
+        }
       };
 
     },

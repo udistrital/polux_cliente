@@ -10,7 +10,8 @@
 
 <div ng-repeat="revision in docenterevision.revisionesd">
   <ver-revision revisionid="revision.Id"  paginaset="docenterevision.pagina" ng-if="revision.Estado != 'pendiente'"/>
-  <revision-documento revisionid="revision.Id"  paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
+  <revision-documento revisionid="revision.Id" revisionestado="revision.Estado"  paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
+  {{revision.Estado}}
 </div>
 
 

@@ -8,7 +8,7 @@
     <div ng-repeat="correccion in vrevision.correcciones">
       <div class="panel panel-success">
         <div class="panel-heading">
-          {{correccion.Observacion}} <span ng-click="vrevision.verpag(correccion.Pagina)" style="color: blue">pag {{correccion.Pagina}}</span>
+          {{correccion.Observacion}} <span ng-click="vrevision.verpag(correccion.Pagina)" style="color: blue" ng-if="correccion.Pagina != 0">pag {{correccion.Pagina}}</span>
           <button class="btn btn-xs btn-success pull-right" ng-click="show =!show; correccion.coments=vrevision.cargarComentarios(correccion.Id)" type="button">ver</button>
         </div>
         <div class="panel-body" ng-show="show">
