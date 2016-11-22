@@ -7,14 +7,11 @@
             <div class="panel panel-heading">
               <h1>
                 <!--p>Directiva mostrar-area view.<p-->
-                Áreas de Conocimiento
+                Áreas de Conocimiento 
               </h1>
             </div>
             <div class="panel panel-body">
-              <mostrar-area
-              areanueva=perfil.fabricadocentes
-
-              />
+              <mostrar-area areanueva="perfil.fabricadocentes"  />
               <div ng-if="perfil.estadoboton(perfil.menucreacion)">
                 <a href="" ng-click="perfil.menucreacion= !perfil.menucreacion"
                 class="btn btn-primary btn-md pull-right"

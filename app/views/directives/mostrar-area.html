@@ -1,6 +1,6 @@
 
 <br>
-<h2>Areas del profesor</h2>
+<h2>Areas del profesor </h2>
 <label for="docente" class="col-md-2 control-label">Docente:</label>
 <div class="col-md-10">
   <form  name="myForm">
@@ -11,16 +11,26 @@
 </form>
 </div>
 
-<md-chips  class="col-md-6 col-sm-4" ng-repeat="a in mostrar.fabrica.areasDocente" >
-  <md-chip >{{a.IdAreaConocimiento.Nombre}}</md-chip>
+<md-chips  class="custom-chips" ng-model="mostrar.fabrica.areasDocente " readonly="true"
+ md-removable="mostrar.removable" >
+  <md-chip-template ng-click="mostrar.removable=!mostrar.removable">
+          <span>
+            {{$chip.IdAreaConocimiento.Nombre}}
+          </span>
+        </md-chip-template>
+<input md-chip-remove  type="submit"  ng-click="mostrar.eliminarAreaDocente($chip.Id)"
+          value="X" class="btn btn-danger btn-xs"/>
 </md-chips>
 
-<table ng-table="mostrar.tableParams" class="table table-condensed table-bordered table-striped" >
-    <tr ng-repeat="ar in mostrar.fabrica.areasDocente">
-        <td data-title="'CódigoArea'" sortable="''">
-            {{ar.Id}}</td>
-        <td data-title="'Area'" sortable="''">
-            {{ar.IdAreaConocimiento.Nombre}}</td>
-    </tr>
+<div class="row col-md-12">
+  <br>
+  <br>
+<div  class=" col-md-6 col-sm-4" ng-repeat="a in mostrar.fabrica.areasDocente | orderBy:'IdAreaConocimiento.Nombre'" >
 
-</table>
+  <span style="background-color:lightgray" class="btn btn-default" ng-click="mostrar.removable=!mostrar.removable">
+    <input ng-show="mostrar.removable" type="submit"  ng-click="mostrar.eliminarAreaDocente(a.IdAreaConocimiento.Nombre)"
+                  value="X" class="btn btn-danger btn-xs" />
+    {{a.IdAreaConocimiento.Nombre}}
+  </span>
+</div>
+</div>

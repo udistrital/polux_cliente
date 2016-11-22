@@ -133,6 +133,9 @@ angular.module('areasService',[])
         servicio.asignarAreasTG(dataAreasTG);
         }
       },
+      /*
+      Función crearArea(): recipe como parametro el arreglo del areaCreada
+      */
       crearArea: function(areaCreada){
       console.log(areaCreada[0].Nombre);
         var data = {
@@ -143,6 +146,15 @@ angular.module('areasService',[])
             servicio.actualizarAreas();
           });
           //$http.get("http://localhost:8080/v1/area_conocimiento/");
+      },
+      /*
+        Función deleteAreasDocente(): recibe como parametro el Id principal de areasDocente
+        asociado al área seleccionada previamente
+      */
+      deleteAreasDocente:function(id){
+        $http.delete("http://localhost:8080/v1/areas_docente/"+id).then(function(response){
+          servicio.listarAreasDocente(servicio.coddocente);
+        });
       },
 
       getAll: function () {

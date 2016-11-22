@@ -159,6 +159,7 @@ angular.module('poluxApp')
         }
         console.log(ctrl.IdArea);
         //genera el JSON temporal en el cliente
+        
         ctrl.nuevaArea.push(
           { "Id":ctrl.IdArea,
           "Nombre": ctrl.nombreArea
