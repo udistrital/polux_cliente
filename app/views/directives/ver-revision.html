@@ -1,0 +1,49 @@
+<div class="panel panel-info" ng-if="vrevision.revision.Estado != 'borrador'" >
+  <div class="panel-heading" ng-click="showrev=!showrev">
+    <h3 class="panel-title">Revision {{vrevision.revision.NumeroRevision}} {{vrevision.revision.Estado}}
+      <em class="pull-right">Fecha Recepcion:{{vrevision.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} |
+        Fecha Revision: {{vrevision.revision.FechaRevision | date:'dd-MMM-yyyy'}}</em></h3>
+  </div>
+  <div class="panel-body" ng-show="showrev">
+    <div ng-repeat="correccion in vrevision.correcciones">
+      <div class="panel panel-success">
+        <div class="panel-heading">
+          {{correccion.Observacion}} <span ng-click="vrevision.verpag(correccion.Pagina)" style="color: blue" ng-if="correccion.Pagina != 0">pag {{correccion.Pagina}}</span>
+          <button class="btn btn-xs btn-success pull-right" ng-click="show =!show; correccion.coments=vrevision.cargarComentarios(correccion.Id)" type="button">ver</button>
+        </div>
+        <div class="panel-body" ng-show="show">
+          {{correccion.Justificacion}}
+          <div>
+            <div>
+<!--<PRE>{{correccion.coments[0] | json}}</PRRE>-->
+              <blockquote ng-repeat="comentario in correccion.coments[0]">
+                <p>{{comentario.Comentario}}</p>
+                <footer> {{comentario.Autor}} <cite title="Source Title">{{comentario.Fecha | date:'dd-MMM-yyyy'}}</cite></footer>
+              </blockquote>
+            </div>
+            <!--{{vrevision.pruebac}}-->
+
+            <div class="panel-body">
+              <form name="comentForm" ng-submit="correccion.coments=vrevision.comentarCorreccion(vrevision.coment,correccion.Id)">
+                <textarea class="form-control col-md-8 offset-2" title="respuesta" placeholder="Escribe un comentario..." ng-click="showf =true" ng-model="vrevision.coment"></textarea>
+
+                <div class="btn-group pull-right"  ng-show="showf">
+                  <button class="btn btn-default" ng-click="showf =!showf; vrevision.coment=null" type="button">Cancelar</button>
+                  <input class="btn-primary btn" type="submit" value="Publicar" ></input></div>
+                </form>
+              </div>
+
+          </div>
+
+
+
+
+        </div>
+      </div>
+    </div>
+
+<!--<pre>{{vrevision.revision | json}}</pre>-->
+
+<!--<button type="button" name="button" ng-click="vrevision.postrev()">postera</button>-->
+  </div>
+</div>

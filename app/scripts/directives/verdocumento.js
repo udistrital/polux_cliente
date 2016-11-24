@@ -7,17 +7,21 @@
  * # verDocumento
  */
 angular.module('poluxApp')
-  .directive('verDocumento', function () {
+  .directive('verDocumento', function (documentoRequest) {
     return {
       restrict: "E",
       scope: {
-        documento: '=',
+        documentoid: '=',
         selectpag: '=',
         loadpag: '='
       },
       templateUrl: "views/directives/ver-documento.html",
       controller: function($scope) {
         var self = this;
+
+        documentoRequest.getDocumento(1).success(function(data){
+          self.documento=data[0];
+        });
         self.paginax=$scope.pageNum;
 
         $scope.$watch('loadpag', function() {

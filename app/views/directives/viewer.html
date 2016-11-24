@@ -1,7 +1,7 @@
 <style>
 
   .scrollit {
-    max-height:600px;
+    max-height:700px;
     overflow-y:scroll;
    }
    #bar1::-webkit-scrollbar
@@ -12,19 +12,30 @@
    }
    #bar1::-webkit-scrollbar-thumb
    {
-     background: rgba(64, 255, 61, 0.4);
+     background: rgba(124, 212, 61, 0.4);
    }
-   .pdf-controls { width: 100%; display: block; background: #eee; padding: 1em;}
+   .pdf-controls { width: 100%; display: block; rgba(64, 255, 61, 0.4); padding: 1em;}
 
 </style>
-<nav ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}">
-
-  <button ng-click="goPrevious()"><</span></button>
-  <button ng-click="goNext()">></span></button>
-  <button ng-click="zoomIn()">+</span></button>
-  <button ng-click="fit()">100%</span></button>
-  <button ng-click="zoomOut()">-</span></button>
-  <span>Page: </span><input type="text" min=1 ng-model="pageNum"><span> / {{pageCount}}</span>
+<nav  class="text-center" ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}" >
+  <div class="row">
+  <div class="col-md-5 col-md-offset-1">
+  <button type="button" class="btn btn btn-primary" ng-click="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+  <button type="button" class="btn btn-primary" ng-click="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+  <button type="button" class="btn btn-primary" ng-click="zoomIn()"><span class="glyphicon glyphicon-zoom-in"></span></button>
+  <button type="button" class="btn btn-primary" ng-click="fit()">100%</button>
+  <button type="button" class="btn btn-primary" ng-click="zoomOut()"><span class="glyphicon glyphicon-zoom-out"></span></button>
+  </div>
+  <div class="col-md-1">
+  <h4>Página: </h4>
+  </div>
+  <div class="col-md-2">
+    <input  class="form-control" type="number" ng-model="pageNum">
+  </div>
+  <div class="col-md-1">
+    <h4>de {{pageCount}}</h4>
+  </div>
+</div>
 </nav>
 <div class="scrollit" id="bar1" >
 
