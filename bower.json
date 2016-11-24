@@ -8,7 +8,11 @@
     "angular-cookies": "^1.4.0",
     "angular-messages": "^1.4.0",
     "angular-route": "^1.4.0",
-    "angular-material": "^1.1.1"
+    "angular-material": "^1.1.1",
+    "angular-touch": "*",
+    "angular-ui-grid":"*",
+    "angular-sanitize":"*"
+
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

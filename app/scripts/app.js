@@ -11,19 +11,27 @@
  */
 angular
   .module('poluxApp', [
-    'ngAnimate',
     'ngCookies',
     'ngMessages',
     'ngRoute',
     'ngTable',
     'ngMaterial',
+    'ngAnimate',
     'ejemploService',
     'entidadService',
     'materiasService',
     'areasService',
-    'pdf',
     'entidadService',
-    'documentoService'
+    'documentoService',
+    'ngSanitize',
+    'ngTouch',
+    'ui.grid',
+    'ui.grid.edit',
+    'ui.grid.rowEdit',
+    'ui.grid.cellNav',
+    'ui.grid.treeView',
+    'ui.grid.selection',
+    'pdf'
   ])
   .config(function ($routeProvider) {
     $routeProvider
