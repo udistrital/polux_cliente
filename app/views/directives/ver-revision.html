@@ -1,10 +1,15 @@
 <div class="panel panel-info" ng-if="vrevision.revision.Estado != 'borrador'" >
   <div class="panel-heading" ng-click="showrev=!showrev">
-    <h3 class="panel-title">Revision {{vrevision.revision.NumeroRevision}} {{vrevision.revision.Estado}}
-      <em class="pull-right">Fecha Recepcion:{{vrevision.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} |
-        Fecha Revision: {{vrevision.revision.FechaRevision | date:'dd-MMM-yyyy'}}</em></h3>
+    <div>
+      <h3 class="panel-title ">Revision {{vrevision.revision.NumeroRevision}} {{vrevision.revision.Estado}}
+        </h3>
+    </div>
   </div>
+
   <div class="panel-body" ng-show="showrev">
+
+
+
     <div ng-repeat="correccion in vrevision.correcciones">
       <div class="panel panel-success">
         <div class="panel-heading">
@@ -41,6 +46,9 @@
         </div>
       </div>
     </div>
+
+    <div class="panel panel-warning">Fecha Recepcion:{{vrevision.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} |
+      Fecha Revision: {{vrevision.revision.FechaRevision | date:'dd-MMM-yyyy'}}</div>
 
 <!--<pre>{{vrevision.revision | json}}</pre>-->
 

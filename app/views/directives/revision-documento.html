@@ -1,10 +1,11 @@
+
 <div class="panel panel-danger" ng-if="rdocumento.revision.Estado != 'finalizada'">
 
   <div class="panel-heading" ng-click="showc=!showc">
-    <h3 class="panel-title">Revision {{rdocumento.revision.NumeroRevision}} {{rdocumento.revision.Estado}}
-      <span class="pull-right">Fecha Recepcion:{{rdocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} | Fecha Revision: {{rdocumento.revision.FechaRevision | date:'dd-MMM-yyyy'}}</span></h3>
+    <h3 class="panel-title">Revision {{rdocumento.revision.NumeroRevision}} {{rdocumento.revision.Estado}}</h3>
   </div>
   <div class="panel-body" ng-show="showc">
+
     <!--<pre>{{rdocumento.correcciones | json}}</pre>!-->
     <div ng-repeat="correccion in rdocumento.correcciones">
       <div class="panel panel-success">
@@ -53,7 +54,7 @@
 <button type="button" name="button" ng-click="rdocumento.postrev()">postera</button>
 </pre>-->
 
-
+<div class="panel panel-warning">Fecha Recepcion:{{rdocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}}</div>
 
 
     <div class="panel panel-success" ng-show="showfm">
@@ -84,3 +85,4 @@
 
   </div>
 </div>
+<pre>{{actualizarev}}</pre>

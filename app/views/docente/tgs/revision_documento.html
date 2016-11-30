@@ -2,18 +2,18 @@
 
 
 
-<div class="col-md-6">
+<div class="col-lg-6" style="position: relative">
   <ver-documento documentoid="docenterevision.doctgId" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2"/>
 <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
 </div>
-<div class="col-md-6">
+<div class="col-lg-6">
 
 <div ng-repeat="revision in docenterevision.revisionesd">
   <ver-revision revisionid="revision.Id"  paginaset="docenterevision.pagina" ng-if="revision.Estado != 'pendiente'"/>
-  <revision-documento revisionid="revision.Id" revisionestado="revision.Estado"  paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
-  {{revision.Estado}}
-</div>
+  <revision-documento revisionid="revision.Id" actualizarev  paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
 
+</div>
+{{actualizar}}
 
 
 

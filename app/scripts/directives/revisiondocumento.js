@@ -14,16 +14,19 @@ angular.module('poluxApp')
       revisionid: '=',
       paginadoc: '=',
       paginaset: '=',
-      revisionestado: '='
+      actualizarev: '='
     },
     templateUrl: "views/directives/revision-documento.html",
     controller: function($scope) {
       var self = this;
+      self.correcciones=[];
       revisionRequest.getRevision($scope.revisionid).success(function(data){
         self.revision=data[0];
       });
       revisionRequest.getAllCorreccionesRevision($scope.revisionid).success(function(data){
-        self.correcciones=data;
+        if (data!=null) {
+          self.correcciones=data;
+        }
       });
 
       self.copyObject=function(Obj){
@@ -100,7 +103,7 @@ angular.module('poluxApp')
                 self.revision.Estado="finalizada";
                 self.revision.FechaRevision=new Date();
                 revisionRequest.updateRevision(self.revision);
-                $scope.revisionestado=self.revision.Estado;
+                $scope.actualizarev=true;
                 break;
         }
         for (var i = 0; i < self.correcciones.length; i++) {
