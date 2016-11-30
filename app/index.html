@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.min.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
@@ -54,13 +56,12 @@
                 <li><a ng-href="#/evaluacion">EVALUACION</a></li>
                 <li><a ng-href="#/materiasPosgrado/solicitar">Solicitudes</a></li>
                 <li><a ng-href="#/docente/TGs/revision_documento">docente.tgs</a></li>
+
               </ul>
             </div>
           </div>
         </div>
       </div>
-
-
 
   <div class="container-fluid">
     <br>
@@ -93,6 +94,10 @@
     <script src="bower_components/angular-aria/angular-aria.js"></script>
     <script src="bower_components/angular-material/angular-material.js"></script>
     <script src="bower_components/ng-table/dist/ng-table.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
+    <script src="bower_components/angular-ui-grid/ui-grid.min.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -104,6 +109,7 @@
         <script src="scripts/controllers/ejemplo.js"></script>
         <script src="scripts/directives/ejemplodirectiva.js"></script>
         <script src="scripts/services/formato/evaluacion.js"></script>
+        <script src="scripts/directives/generador_pdf/botones.js"></script>
         <script src="scripts/directives/formato/form_evalucion.js"></script>
         <script src="scripts/directives/formato/vista_previa_evaluacion.js"></script>
         <script src="scripts/controllers/pasantia/carta_presentacion.js"></script>
@@ -116,16 +122,13 @@
         <script src="scripts/directives/creararea.js"></script>
         <script src="scripts/services/areasservice.js"></script>
         <script src="scripts/controllers/materias posgrado/solicitar.js"></script>
-
         <script src="scripts/directives/verdocumento.js"></script>
         <script src="scripts/services/documentoservice.js"></script>
-
         <script src="scripts/services/docentesservice.js"></script>
         <script src="scripts/controllers/general/propuesta.js"></script>
         <script src="scripts/directives/propuesta/registrarpropuesta.js"></script>
         <script src="scripts/services/cadena.js"></script>
         <script src="scripts/services/cadenaservice.js"></script>
-
         <script src="scripts/directives/revisiondocumento.js"></script>
         <script src="scripts/controllers/docente/tgs/revision_documento.js"></script>
         <script src="scripts/directives/verrevision.js"></script>
@@ -144,5 +147,8 @@
     </div>
   </div>
 
-</body>
+        <script src="bower_components/pdfmake/build/pdfmake.min.js"></script>
+        <script src="bower_components/pdfmake/build/vfs_fonts.js"></script>
+
+    </body>
 </html>
