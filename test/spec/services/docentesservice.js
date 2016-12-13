@@ -11,8 +11,8 @@ describe('Service: docentesService', function () {
     docentesService = _docentesService_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!docentesService).toBe(true);
-  });
+  });*/
 
 });

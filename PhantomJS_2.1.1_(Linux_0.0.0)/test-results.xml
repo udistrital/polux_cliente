@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<testsuite name="PhantomJS 2.1.1 (Linux 0.0.0)" package="" timestamp="2016-12-13T21:52:53" id="0" hostname="mafe.udistritaloas.edu.co" tests="2" errors="0" failures="0" time="0.384">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1"/>
+  </properties>
+  <testcase name="Controller: AboutCtrl should attach a list of awesomeThings to the scope" time="0.377" classname="PhantomJS_2_1_1_(Linux_0_0_0).Controller: AboutCtrl"/>
+  <testcase name="Controller: MainCtrl should attach a list of awesomeThings to the scope" time="0.007" classname="PhantomJS_2_1_1_(Linux_0_0_0).Controller: MainCtrl"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

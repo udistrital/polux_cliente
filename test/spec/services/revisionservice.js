@@ -11,8 +11,8 @@ describe('Service: revisionService', function () {
     revisionService = _revisionService_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!revisionService).toBe(true);
-  });
+  });*/
 
 });

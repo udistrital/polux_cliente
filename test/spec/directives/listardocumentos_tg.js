@@ -12,9 +12,9 @@ describe('Directive: listarDocumentosTg', function () {
     scope = $rootScope.$new();
   }));
 
-  it('should make hidden element visible', inject(function ($compile) {
+  /*it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<listar-documentos-tg></listar-documentos-tg>');
     element = $compile(element)(scope);
     expect(element.text()).toBe('this is the listarDocumentosTg directive');
-  }));
+  }));*/
 });

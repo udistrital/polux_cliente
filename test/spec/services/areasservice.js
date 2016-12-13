@@ -11,8 +11,8 @@ describe('Service: areasService', function () {
     areasService = _areasService_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!areasService).toBe(true);
-  });
+  });*/
 
 });

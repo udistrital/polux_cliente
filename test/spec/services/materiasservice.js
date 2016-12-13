@@ -11,8 +11,8 @@ describe('Service: materiasService', function () {
     materiasService = _materiasService_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!materiasService).toBe(true);
-  });
+  });*/
 
 });

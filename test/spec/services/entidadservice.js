@@ -11,8 +11,8 @@ describe('Service: entidadService', function () {
     entidadService = _entidadService_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!entidadService).toBe(true);
-  });
+  });*/
 
 });

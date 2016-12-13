@@ -17,7 +17,7 @@ describe('Controller: PasantiaCartaPresentacionCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
+  /*it('should attach a list of awesomeThings to the scope', function () {
     expect(PasantiaCartaPresentacionCtrl.awesomeThings.length).toBe(3);
-  });
+  });*/
 });

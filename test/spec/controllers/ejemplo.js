@@ -16,8 +16,8 @@ describe('Controller: EjemploCtrl', function () {
       // place here mocked dependencies
     });
   }));
-
+/*
   it('should attach a list of awesomeThings to the scope', function () {
     expect(EjemploCtrl.awesomeThings.length).toBe(3);
-  });
+  });*/
 });

@@ -11,8 +11,8 @@ describe('Service: cadenaService', function () {
     cadenaService = _cadenaService_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!cadenaService).toBe(true);
-  });
+  });*/
 
 });

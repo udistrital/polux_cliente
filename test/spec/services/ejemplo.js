@@ -11,8 +11,8 @@ describe('Service: ejemplo', function () {
     ejemplo = _ejemplo_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!ejemplo).toBe(true);
-  });
+  });*/
 
 });

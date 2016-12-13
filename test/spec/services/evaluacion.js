@@ -11,8 +11,8 @@ describe('Service: evaluacion', function () {
     evaluacion = _evaluacion_;
   }));
 
-  it('should do something', function () {
+  /*it('should do something', function () {
     expect(!!evaluacion).toBe(true);
-  });
+  });*/
 
 });

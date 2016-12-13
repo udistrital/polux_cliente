@@ -12,9 +12,9 @@ describe('Directive: ejemploDirectiva', function () {
     scope = $rootScope.$new();
   }));
 
-  it('should make hidden element visible', inject(function ($compile) {
+/*  it('should make hidden element visible', inject(function ($compile) {
     element = angular.element('<ejemplo-directiva></ejemplo-directiva>');
     element = $compile(element)(scope);
     expect(element.text()).toBe('this is the ejemploDirectiva directive');
-  }));
+  }));*/
 });
