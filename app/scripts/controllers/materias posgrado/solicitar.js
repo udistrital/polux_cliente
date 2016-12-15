@@ -9,10 +9,10 @@
  */
 angular.module('poluxApp')
   .controller('SolicitarCtrl', function ($http, materiasService) {
-    
+
 	  var ctrl = this;
 	  ctrl.fabrica = materiasService;
-	  
+
 	  ctrl.boton=true;
 	  ctrl.m=false;
 	  ctrl.asig=[];
@@ -21,17 +21,17 @@ angular.module('poluxApp')
 	  ctrl.solicitudes=[];
 	  ctrl.asign=[];
 	  ctrl.estudiante={
-	    "Codigo": "20102020009",
+	    "Codigo": "20102020007",
 	    "Nombre": "María Fernanda Avendaño"
 	  };
 	  ctrl.fabrica.obtenerCarreras();
 	  ctrl.fabrica.obtenerPeriodo();
-	  
+
 	  //periodo académico (año, periodo) inmediatamente siguiente
 	  ctrl.obtenerPeriodo = function(){
 		  return $http.get("http://10.20.0.149/polux/index.php?data=7ahS8WfGX337Xx3zJ1YUEAx6tfsY383P5LIzGYffecvVEk4D-_XRw2AMdwmVL0z3jL_h8ICqptQmbGbmka1siWypXuJCD3kPEhE-4YJTOXR-nf3m2xfG7TTOR1itS2t-")
 	  };
-	  
+
 	  this.consultarAsignaturas = function(solicitud){
 		  var resultado=[];
 	      //buscar asignaturas asociadas a la solicitud
@@ -49,10 +49,10 @@ angular.module('poluxApp')
 	      });
 	      return resultado;
 	   };
-	   
+
 	   //buscar si hay TG para el estudiante: estudiante_TG
 	   this.consultarTg = function(estudiante, anio, periodo){
-	      $http.get("http://localhost:8080/v1/estudiante_TG/?query=CodigoEstudiante%3A%20"+estudiante)
+	      $http.get("http://localhost:8080/v1/estudiante_tg/?query=CodigoEstudiante%3A"+estudiante)
 	      .success(function(data) {
 	        ctrl.hola=0;
 	        ////////////////por cada TG
@@ -105,7 +105,7 @@ angular.module('poluxApp')
 	        });
 	      });
 	    };
-	  
+
 	    ctrl.buscarSolicitudes = function(codigoEst) {
 	        var result= ctrl.obtenerPeriodo();
 	        result.then(function(periodo) {
@@ -116,7 +116,7 @@ angular.module('poluxApp')
 	          ctrl.consultarTg(codigoEst, anio, periodo);
 	        });
 	    };
-	    
+
 	    ctrl.buscarSolicitudes(ctrl.estudiante.Codigo);
 
 	      ctrl.myFunc = function(carreraSeleccionada) {
@@ -320,5 +320,5 @@ angular.module('poluxApp')
 	      };
 
 
-	    
+
   });
