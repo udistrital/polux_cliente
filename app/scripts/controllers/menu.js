@@ -53,50 +53,50 @@ angular.module('poluxApp')
       $scope.breadcrumb = [];
       $scope.menu_service = [{ //aqui va el servicio de el app de configuracion
           "Id": 1,
-          "Nombre": "FORMATO",
+          "Nombre": "Formato",
           "Url": "",
           "Opciones": [{
             "Id": 2,
-            "Nombre": "VER FORMATO",
+            "Nombre": "Ver formato",
             "Url": "formato_ver",
             "Opciones": null
           }, {
             "Id": 3,
-            "Nombre": "NUEVO FORMATO",
+            "Nombre": "Nuevo formato",
             "Url": "formato_nuevo",
             "Opciones": null
           }, {
             "Id": 4,
-            "Nombre": "EDITAR FORMATO",
+            "Nombre": "Editar formato",
             "Url": "formato_editar",
             "Opciones": null
           }]
         }, {
           "Id": 2,
-          "Nombre": "GENERAL",
+          "Nombre": "General",
           "Url": "",
           "Opciones": [{
             "Id": 2,
-            "Nombre": "PROPUESTA",
+            "Nombre": "Propuesta",
             "Url": "",
             "Opciones": [{
               "Id": 2,
-              "Nombre": "REGISTRAR PROPUESTA",
+              "Nombre": "Registrar propuesta",
               "Url": "general/propuesta",
               "Opciones": null
             }, {
               "Id": 3,
-              "Nombre": "CONSULTAR PROPUESTA",
+              "Nombre": "Consultar propuesta",
               "Url": "general/cons_prop",
               "Opciones": null
             }]
           }, {
             "Id": 3,
-            "Nombre": "TRABAJO DE GRADO",
+            "Nombre": "Trabajo de Grado",
             "Url": "",
             "Opciones": [{
               "Id": 2,
-              "Nombre": "REGISTRAR",
+              "Nombre": "Registrar",
               "Url": "general/reg_TG",
               "Opciones": null
             }]
@@ -104,15 +104,68 @@ angular.module('poluxApp')
         },
         {
           "Id": 2,
-          "Nombre": "POSTGRADO",
+          "Nombre": "Posgrado",
           "Url": "",
           "Opciones": [{
             "Id": 2,
-            "Nombre": "PROPUESTA",
-            "Url": "",
+            "Nombre": "Publicación de Espacios Académicos",
+            "Url": "materias_posgrado/publicar_asignaturas",
             "Opciones": null
-          }]
+          },
+          {
+            "Id": 3,
+            "Nombre": "Solicitar inscripción",
+            "Url": "materias_posgrado/solicitar_asignaturas",
+            "Opciones": null
+          },
+          {
+            "Id": 4,
+            "Nombre": "Listar inscritos",
+            "Url": "materias_posgrado/listar_solicitudes",
+            "Opciones": null
+          }
+
+        ]
+      },
+
+      {
+        "Id": 2,
+        "Nombre": "Profundización",
+        "Url": "",
+        "Opciones": [{
+          "Id": 2,
+          "Nombre": "Publicación de Espacios Académicos",
+          "Url": "materias_profundizacion/publicar_asignaturas",
+          "Opciones": null
+        },
+        {
+          "Id": 3,
+          "Nombre": "Solicitar inscripción",
+          "Url": "materias_profundizacion/solicitar_asignaturas",
+          "Opciones": null
+        },
+        {
+          "Id": 4,
+          "Nombre": "Listar inscritos",
+          "Url": "materias_profundizacion/listar_solicitudes",
+          "Opciones": null
         }
+
+      ]
+    },
+    {
+      "Id": 2,
+      "Nombre": "Perfil Docente",
+      "Url": "",
+      "Opciones": [{
+        "Id": 2,
+        "Nombre": "Áreas del conocimiento",
+        "Url": "perfil_docente/areas",
+        "Opciones": null
+      }]
+    },
+
+
       ];
 
     var recorrerArbol = function(item, padre) {
