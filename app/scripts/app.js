@@ -109,6 +109,11 @@ angular
         controller: 'MateriasProfundizacionListarSolicitudesCtrl',
         controllerAs: 'profundizacion_listarSolicitudes'
       })
+      .when('/docente/tgs/revision_documento', {
+        templateUrl: 'views/docente/tgs/revision_documento.html',
+        controller: 'DocenteTgsRevisionDocumentoCtrl',
+        controllerAs: 'docenterevision'
+      })
       .otherwise({
         redirectTo: '/'
       });

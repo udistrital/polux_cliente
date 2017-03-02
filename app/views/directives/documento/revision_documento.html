@@ -1,0 +1,86 @@
+<div class="panel panel-danger" ng-if="d_revisionDocumento.revision.Estado != 'finalizada'">
+
+  <div class="panel-heading" ng-click="showc=!showc">
+    <h3 class="panel-title">Revision {{d_revisionDocumento.revision.NumeroRevision}} {{d_revisionDocumento.revision.Estado}}
+      <span class="pull-right">Fecha Recepcion:{{d_revisionDocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} | Fecha Revision: {{d_revisionDocumento.revision.FechaRevision | date:'dd-MMM-yyyy'}}</span></h3>
+  </div>
+  <div class="panel-body" ng-show="showc">
+    <!--<pre>{{d_revisionDocumento.correcciones | json}}</pre>!-->
+    <div ng-repeat="correccion in d_revisionDocumento.correcciones">
+      <div class="panel panel-success">
+        <div class="panel-heading">
+          {{correccion.Observacion}} <span style="color: blue" ng-click="d_revisionDocumento.verpag(correccion.Pagina)" ng-if="correccion.Pagina != 0">pag {{correccion.Pagina}}</span>
+
+          <span class="btn-group pull-right">
+            <button class="btn btn-xs btn-warning " ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" type="button">editar</button>
+            <button class="btn btn-xs btn-success " ng-click="show =!show" type="button">ver</button>
+            <button class="btn btn-xs btn-danger " ng-click="d_revisionDocumento.eliminar_correccion(correccion)" type="button">eliminar</button>
+
+          </span>
+
+          <div class="panel panel-body" ng-show="showedit" >
+              <form name="editForm"  ng-submit="editForm.$valid && d_revisionDocumento.editar(correccion,correccion_temp)" novalidate>
+                <fieldset class="form-group">
+                  <input  class="form-control" type="text" placeholder="enunciado" ng-model="correccion_temp.Observacion" required/>
+                </fieldset>
+                <fieldset class="form-group">
+                  <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="correccion_temp.Justificacion"></textarea>
+                </fieldset>
+                <fieldset class="form-group">
+                  <input type="checkbox" class="checkbox checkbox-inline" ng-model="correccion_temp.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>
+                </fieldset>
+                <div class=" pull-right">
+                  <button class="btn btn-default" ng-click="showedit =!showedit" type="button" >Cancelar</button>
+                  <input class="btn-primary btn" type="submit" value="Editar" ng-click="showedit =!showedit"></input>
+                </div>
+              </form>
+
+                      <!--<pre>{{correccion_temp}}</pre>!-->
+          </div>
+
+
+
+
+        </div>
+        <div class="panel-body" ng-show="show">
+          {{correccion.Justificacion}}
+        </div>
+      </div>
+    </div>
+
+<!--<pre>{{d_revisionDocumento.revision | json}}
+
+<button type="button" name="button" ng-click="d_revisionDocumento.postrev()">postera</button>
+</pre>-->
+
+
+
+
+    <div class="panel panel-success" ng-show="showfm">
+      <div class="panel-body">
+        <form name="modiForm3" ng-submit="modiForm3.$valid && d_revisionDocumento.agregar_correccion(d_revisionDocumento.correccion)" novalidate>
+          <fieldset class="form-group">
+            <input  class="form-control" type="text" placeholder="enunciado" ng-model="d_revisionDocumento.correccion.Observacion" required/>
+          </fieldset>
+          <fieldset class="form-group">
+            <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="d_revisionDocumento.correccion.Justificacion"></textarea>
+          </fieldset>
+          <fieldset class="form-group">
+            <input type="checkbox" class="checkbox checkbox-inline" ng-model="d_revisionDocumento.agregarpag"> Agregar pagina de corrección: {{paginadoc}}</input>
+          </fieldset>
+          <div class=" pull-right">
+            <button class="btn btn-default" ng-click="showfm =!showfm; d_revisionDocumento.correccion={}" type="button" >Cancelar</button>
+            <input class="btn-primary btn" type="submit" value="Agregar" ></input>
+          </div>
+        </form>
+      </div>
+    </div>
+    <button class="btn btn-success" type="button" ng-click="showfm =!showfm">Agregar Correccion</button>
+    <span class="pull-right">
+    <button class="btn btn-danger" type="button" ng-click="d_revisionDocumento.cancelar_revisado()">Cancelar edicion</button>
+    <button class="btn btn-default" type="button" ng-click="d_revisionDocumento.guardar_revision('borrador')">Guardar Borrador</button>
+    <button class="btn btn-primary" type="button" ng-click="d_revisionDocumento.guardar_revision('finalizar')">Finalizar Revision</button>
+  </span>
+
+  </div>
+</div>

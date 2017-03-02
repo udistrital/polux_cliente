@@ -153,6 +153,13 @@ angular.module('poluxApp')
 
       ]
     },
+
+    {
+      "Id": 2,
+      "Nombre": "Revisión de documentos",
+      "Url": "docente/tgs/revision_documento",
+      "Opciones": null
+    },
     {
       "Id": 2,
       "Nombre": "Perfil Docente",
@@ -164,6 +171,7 @@ angular.module('poluxApp')
         "Opciones": null
       }]
     },
+
 
 
       ];

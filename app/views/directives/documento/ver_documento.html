@@ -1,0 +1,27 @@
+<div class="row" ng-show="documentoid">
+  <div class="panel panel-success">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{d_verDocumento.documento.Titulo}}</h3>
+    </div>
+    <div class="panel-body">
+      <div>
+        <ng-pdf template-url="/views/directives/documento/viewer.html" scale="page-fit"></ng-pdf>
+        <!--<iframe id="el_iframe" class="embed-responsive-item" src="{{documento.enlace}}"></iframe>-->
+      </div>
+    </div>
+    <div class="panel-heading">
+      <p>
+        <span>Tipo:{{d_verDocumento.documento.IdTipoDocumento.Nombre}}</span>
+        <span class="pull-right">Categoria:{{d_verDocumento.documento.IdTipoDocumento.IdCategoria.Nombre}}</span>
+        {{pageNum}}
+      </p>
+      <p>
+        <span class="panel-title">Resumen:</span><br>{{d_verDocumento.documento.Resumen}}
+      </p>
+    </div>
+  </div>
+  <div ng-show="false">
+    {{selectpag=pageNum}}
+    {{pdfUrl =d_verDocumento.documento.Enlace}}
+  </div>
+</div>
