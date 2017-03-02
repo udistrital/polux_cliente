@@ -1,0 +1,26 @@
+<br>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Áreas de Conocimiento
+  </div>
+  <div class="panel-body">
+    <div ng-class="{'row col-md-6': areasDocente.menucreacion,'row col-md-12':!areasDocente.menucreacion}">
+      <mostrar-area doc="areasDocente.docentes"
+      setid="areasDocente.idAreas"
+      docactual="areasDocente.docenteActual"
+      ardocente="areasDocente.ardocente"
+      />
+      <a href="" ng-model="areasDocente.buttonDirective"
+      class="btn btn-primary btn-md pull-right"
+      ng-click="areasDocente.estadoboton(areasDocente.buttonDirective)"> {{areasDocente.buttonDirective}}</a>
+    </div>
+    <div class="col-md-6 col-xs-12" ng-show="areasDocente.menucreacion">
+      <crear-area setarea="areasDocente.areas"
+      idareaparam="areasDocente.idAreas"
+      docactual="areasDocente.docenteActual"
+      aredoc="areasDocente.ardocente"/>
+    </div>
+  </div>
+  <div class="panel-footer">
+  </div>
+</div>

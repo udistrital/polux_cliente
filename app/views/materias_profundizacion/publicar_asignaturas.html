@@ -1,0 +1,45 @@
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Publicación de espacios académicos.
+    </div>
+    <div class="panel-body">
+
+          <label for="anio" class="col-sm-2 control-label">Año:</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_ANO}}</label>
+
+          <label for="periodo" class="col-sm-2 control-label">Periodo:</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_PER}}</label>
+
+
+          <label for="carrera" class="col-sm-2 control-label">Carrera:</label>
+          <div class="col-sm-10">
+            <form name="myForm">
+              <select ng-model="carreraSeleccionada" name="carrera"  class="form-control" required
+              ng-change="profundizacion_publicarAsignaturas.myFunc(carreraSeleccionada)">
+              <option ng-repeat="p in profundizacion_publicarAsignaturas.carreras" ng-value="p.CODIGO">{{p.NOMBRE}} </option>
+              </select>
+              <span ng-show="myForm.carrera.$invalid" style="color: red">*Seleccione la carrera</span>
+            </form>
+           </div>
+
+           <label for="carrera" class="col-sm-2 control-label">Pensum:</label>
+           <div class="col-sm-10">
+              <form name="myForm2">
+                  <select ng-model="pensumSeleccionado" name="pensum"  class="form-control" required
+                    ng-change="">
+                      <option ng-repeat="p in profundizacion_publicarAsignaturas.pensums" ng-value="p.PEN_NRO">{{p.PEN_NRO}} </option>
+                  </select>
+                  <span ng-show="myForm2.pensum.$invalid" style="color: red">*Seleccione el pensum</span>
+              </form>
+            </div>
+            <br>
+
+            <div class="col-sm-12">
+              <publicar-asignaturas anio="profundizacion_publicarAsignaturas.periodo.APE_ANO" periodo=profundizacion_publicarAsignaturas.periodo.APE_PER carrera=carreraSeleccionada pensum=pensumSeleccionado modalidad=profundizacion_publicarAsignaturas.modalidad/>
+            </div>
+    </div>
+    <div class="panel-footer">
+        Panel Footer
+    </div>
+</div>

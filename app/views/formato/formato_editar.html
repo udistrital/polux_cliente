@@ -1,0 +1,57 @@
+<div class="col-lg-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Nueva Evaluación
+    </div>
+    <div class="panel-body">
+      <div class="panel panel-default">
+          <div class="panel-heading">
+              Buscar Formatos
+          </div>
+          <div class="panel-body">
+            <div class="col-md-5">
+              <label>
+                Seleccione el Formato
+              </label>
+            </div>
+            <div class="col-md-7">
+              <input class="form-control" list="testList" type="" ng-model="SelectedFormat"/>
+                <datalist id="testList" >
+                    <option ng-repeat="formato in formatoEditar.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
+                </datalist>
+                <br>
+            </div>
+          </div>
+      </div>
+      <div class="form-group">
+        <label>Nombre del formato</label>
+        <input type="text" class="form-control" ng-model="nombre_formato" name="nombre_evaluacion" id="nombre_evaluacion" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Introducción del formato</label>
+        <textarea type="text" class="form-control" ng-model="introduccion_formato" name="introducción_evaluacion" id="introducción_evaluacion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
+      </div>
+      <div class="row">
+        <div class="col-lg-3" ng-show="mostrar_preguntas">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="nueva_pregunta()"> Nueva Pregunta</button>
+        </div>
+        <div class="col-lg-3" ng-show="mostrar_preguntas">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="nueva_opcion()">Nueva Opción</button>
+        </div>
+        <div class="col-lg-3" ng-show="mostrar_preguntas">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="borrar()">Borrar</button>
+        </div>
+        <div class="col-lg-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="guardar()">Guardar</button>
+        </div>
+      </div>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="col-lg-6">
+  <vista-previa-formato formato="SelectedFormat" />
+</div>

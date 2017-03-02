@@ -1,0 +1,41 @@
+<md-card md-colors="{ 'border-color': 'primary-600'}">
+    <form role="form" name="formAsignar" id="formAsignar">
+      <div class="form-group" >
+        <div class="input-group">
+        <input type="text" class="form-control" list="listaAreas"
+        ng-model="d_asignarArea.Nombre" name="asignado"
+        ng-minlength="8"
+        ng-maxlength="30"
+        placeholder="Seleccione ..." required autocomplete="off" />
+        <datalist class="selector" id="listaAreas"  >
+          <option ng-repeat="a in setareas" ng-if="idarea.indexOf(a.Id) == -1" value="{{a.Nombre}}"></option>
+        </datalist>
+        <span class="input-group-btn">
+        <input type="submit" ng-click="d_asignarArea.asignarArea()"
+        value="Agregar" class="btn btn-info btn-md "
+        ng-disabled="formAsignar.$invalid || d_asignarArea.verificarAreas(d_asignarArea.Nombre) " />
+        </span>
+        </div>
+        <div ng-show="formAsignar.asignado.$invalid ">
+          <div ng-messages="formAsignar.asignado.$error" style="color:red"
+          class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
+          <div ng-message="required"> Ingrese una nueva área </div>
+          <div ng-message="minlength"> Nombre muy corto </div>
+          <div ng-message="maxlength"> Nombre muy extenso </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+  <md-chips  class="custom-chips col-md-12" ng-model="d_asignarArea.nuevaArea" readonly="true"
+   md-removable="d_asignarArea.removable" >
+    <md-chip-template ng-click="d_asignarArea.removable=!d_asignarArea.removable">
+            <span>
+              {{$chip.Nombre}}
+            </span>
+          </md-chip-template>
+  <input md-chip-remove  type="submit"  
+            value="X" class="btn btn-primary btn-xs"/>
+  </md-chips>
+  </div>
+</md-card>

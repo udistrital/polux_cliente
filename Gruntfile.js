@@ -1,4 +1,4 @@
-// Generated on 2016-09-13 using generator-angular 0.15.1
+// Generated on 2017-02-07 using generator-oas 0.0.12
 'use strict';
 
 // # Globbing
@@ -38,7 +38,7 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/scripts/{,*/,*/*/,*/*/*/}*.js'],
         tasks: ['newer:jshint:all', 'newer:jscs:all'],
         options: {
           livereload: '<%= connect.options.livereload %>'
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
           livereload: '<%= connect.options.livereload %>'
         },
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
+          '<%= yeoman.app %>/{,*/,*/*/,*/*/*/}*.html',
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
@@ -70,17 +70,16 @@ module.exports = function (grunt) {
     // The actual grunt server settings
     connect: {
       options: {
-        port: 9000,
+        port: 9003,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: 'localhost',
-        livereload: 35729
+        livereload: 35731
       },
       livereload: {
         options: {
           open: true,
           middleware: function (connect) {
             return [
-
               connect.static('.tmp'),
               connect().use(
                 '/bower_components',
@@ -97,7 +96,7 @@ module.exports = function (grunt) {
       },
       test: {
         options: {
-          port: 9001,
+          port: 9002,
           middleware: function (connect) {
             return [
               connect.static('.tmp'),

@@ -1,0 +1,32 @@
+<br>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Asignar Área
+  </div>
+  <div class="panel-body">
+
+    <div class="row">
+      <blockquote >
+      <h4>De acuerdo a su perfil seleccione las áreas :
+      </h4>
+      <asignar-area setareas="areasParam"
+      idarea="idareaparam"
+      newarea="d_crearArea.nuevaArea"
+       />
+     </blockquote>
+    </div>
+    <div  ng-if="d_crearArea.verificarAreas(d_asignarArea.Nombre)">
+      <label style="color:blue" ng-if="setareas!=null"> El area no existe </label>
+      <label style="color:blue" ng-show="setareas==null"> No existen áreas </label>
+      <input type="submit"  ng-click="d_crearArea.registrarAreas(d_crearArea.Nombre)"
+      value="Crear área" class="btn btn-info btn-md" />
+    </div>
+    <input type="submit" ng-disabled="!d_crearArea.nuevaArea"
+     ng-click="d_crearArea.asignarAreasDocente(d_crearArea.nuevaArea)"
+     value="Confirmar" class="btn btn-primary btn-md pull-right" />
+
+</div>
+<div class="panel-footer">
+
+</div>
+</div>

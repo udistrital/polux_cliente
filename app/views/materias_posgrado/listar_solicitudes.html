@@ -1,0 +1,82 @@
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Listado de solicitudes
+    </div>
+    <div class="panel-body">
+      <!--<pre>{{listarsolicitudes.sols | json}}</pre>-->
+      <label for="anio" class="col-sm-2 control-label">Año:</label>
+      <label for="anioSel" class="col-sm-10 control-label">{{listarSolicitudes.periodo.APE_ANO}}</label>
+
+      <label for="periodo" class="col-sm-2 control-label">Periodo:</label>
+      <label for="anioSel" class="col-sm-10 control-label">{{listarSolicitudes.periodo.APE_PER}}</label>
+
+      <label for="carrera" class="col-sm-2 control-label">Carrera:</label>
+      <div class="col-sm-10">
+        <form name="myForm">
+          <select ng-model="carreraSeleccionada" name="carrera"  class="form-control" required
+          ng-change="listarSolicitudes.buscarSolicitudes(carreraSeleccionada)">
+          <option ng-repeat="p in listarSolicitudes.carreras" ng-value="p.CODIGO">{{p.NOMBRE}} </option>
+          </select>
+          <span ng-show="myForm.carrera.$invalid" style="color: red">*Seleccione la carrera</span>
+        </form>
+       </div>
+
+       <br></br>
+       <br></br>
+       <br></br>
+       <div ui-grid="listarSolicitudes.gridOptions" ui-grid-selection></div>
+
+       <div  layout="column" layout-align="center" >
+        <p>Admitidos por rendimiento: {{listarSolicitudes.rendimiento}}</p>
+        <p>Admitidos por economía: {{listarSolicitudes.economicas}}</p>
+
+      </div>
+
+      <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
+
+      <script type="text/ng-template" id="dialog.tmpl.html">
+
+      <md-dialog aria-label="Selección de Admitidos" class="col-sm-5" ng-cloak>
+      <md-toolbar>
+        <div class="md-toolbar-tools">
+
+          <h2>Selección de Admitidos</h2>
+          <span flex></span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+            <md-icon md-svg-src="images/icon_close.png" aria-label="Close dialog"></md-icon>
+          </md-button>
+        </div>
+      </md-toolbar>
+
+      <md-dialog-content>
+        <div class="md-dialog-content" >
+          <form role="form" name="formAdmitidos" id="formAdmitidos">
+
+                      <md-input-container  class="md-icon-float md-icon-right md-block">
+                        <label>Admitidos (Máx {{cupos_excelemcia}})</label>
+                        <input ng-model="dialog.rendimiento" name="rendimiento" size="30" placeholder="Ingrese el número de admitidos por excelencia académica y exentos de pago" type="number" min="0" max="{{cupos_excelemcia}}" step="1" required>
+                        <div ng-messages="formAdmitidos.rendimiento.$error" ng-show="formAdmitidos.rendimiento.$dirty">
+                          <div ng-message="required">Es requerido</div>
+                        </div>
+                      </md-input-container>
+                      <md-input-container class="md-icon-float md-icon-right md-block">
+                        <label>Admitidos (Máx {{cupos_adicionales}})</label>
+                        <input ng-model="dialog.economicas" size="30" placeholder="Ingrese el número de admitidos por condiciones económicas y calidades académicas" type="number" min="0" max="{{cupos_adicionales}}" step="1" required>
+                        <div ng-messages="formAdmitidos.economicas.$error">
+                          <div ng-message="required">This is required!</div>
+                        </div>
+                      </md-input-container>
+                      <md-button ng-disabled="dialog.rendimiento == null || dialog.economicas == null" ng-click="answer(dialog)" class="md-raised md-primary">Aceptar</md-button>
+
+                  </form>
+        </div>
+      </md-dialog-content>
+    </md-dialog>
+    </script>
+
+    </div>
+    <div class="panel-footer">
+        Panel Footer
+    </div>
+</div>

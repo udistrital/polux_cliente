@@ -1,0 +1,57 @@
+
+<div class="panel panel-default">
+  <div class="panel-heading" align="center">
+    <h2>{{formato_vista.Formato.Nombre}}</h2> {{formato_vista.Formato.Introduccion}}</div>
+  <div class="panel-body" ng-if="formato !== ''">
+
+    <div ng-repeat="pregunta in formato_vista.TrPreguntas">
+      <div class="panel panel-defaul">
+        <div class="panel-heading">{{pregunta.Pregunta.Orden}}. {{pregunta.Pregunta.IdPregunta.Enunciado}}
+        </div>
+
+        <div ng-if="pregunta.Pregunta.Tipo === 'abierto'">
+          <div class="panel-body">
+            <textarea type="text" class="form-control" placeholder="Ingrese su respuesta aqui..." /></textarea>
+          </div>
+        </div>
+
+        <div ng-if="pregunta.Pregunta.Tipo === 'calificado'">
+          <div class="panel-body">
+            <div class="col-md-8">
+              <input type="range" min="0" max="50" ng_model="numeric" ng-default="30" />
+            </div>
+            <div class="col-md-4">
+              <input class="form-control" type="text" ng_model="numeric" disabled="true">
+            </div>
+          </div>
+        </div>
+
+        <div ng-if="pregunta.Pregunta.Tipo === 'cerrado_unico'">
+          <div class="panel-body">
+            <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6">
+              <input class="form-group" type="radio" name="name"> {{respuesta.IdRespuesta.Descripcion}} <br>
+            </div>
+          </div>
+        </div>
+
+        <div ng-if="pregunta.Pregunta.Tipo === 'cerrado_multiple'">
+          <div class="panel-body">
+            <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6">
+              <input class="form-group" type="checkbox" name="name" > {{respuesta.IdRespuesta.Descripcion}} <br>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <ge-pdf datos=datos_pdf archivo="evaluacion_archivo" />
+      </div>
+      <div class="col-md-6">
+        <button type="button" class="btn btn-primary" ng-click="VistaPreviaEvaluacionCtrl.enviar()">
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span>   Enviar Evaluación
+            </button>
+      </div>
+    </div>
+  </div>

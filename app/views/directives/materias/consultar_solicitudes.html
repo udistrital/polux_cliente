@@ -1,0 +1,67 @@
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Solicitudes del estudiante
+        <!-- : {{estudiante}} (consultarSolicitudes directive) -->
+    </div>
+    <div class="panel-body">
+
+      <!-- si no tiene solicitudes -->
+      <div ng-if="d_consultarSolicitudes.solicitud.length==0 ">
+        Ninguna solicitud realizada.
+        <solicitar-asignaturas estudiante="estudiante" modalidad="modalidad"/>
+      </div>
+
+      <!-- si tiene solicitudes -->
+      <div ng-if="d_consultarSolicitudes.solicitud.length>=1 ">
+        <md-list flex>
+          <md-list-item class="md-3-line" ng-repeat="sol in d_consultarSolicitudes.solicitud" >
+
+         <div class="md-list-item-text" style="margin-top: 10px;">
+           Solicitud N° {{sol.Solicitud.Id}}<br>
+           Fecha: {{sol.Solicitud.Fecha | date:'yyyy-MM-dd'}}<br>
+           Carrera: {{sol.Solicitud.Carrera}}<br>
+           Estado: {{sol.Solicitud.Estado}}<br>
+           <div class="">
+             Formalización: {{sol.Solicitud.Formalizacion}}<br>
+             <input ng-if="(sol.Solicitud.Estado == 'aprobado' && sol.Solicitud.Formalizacion=='pendiente')  || (sol.Solicitud.Estado == 'aprobado con pago' && sol.Solicitud.Formalizacion=='pendiente')"
+             ng-click="d_consultarSolicitudes.formalizarSolicitud(sol.Solicitud) " value="Formalizar" class="btn btn-primary" type="submit">
+           </div>
+           <br>
+
+           <table class="table table-condensed table-bordered table-striped" >
+             <tr>
+               <th>Código</th>
+               <th>Nombre</th>
+               <th>Créditos</th>
+             </tr>
+             <tr ng-repeat="asig in sol.Asignaturas">
+                 <td data-title="'Código'" >
+                     {{asig.ASI_COD}}</td>
+                 <td data-title="'Nombre'" >
+                     {{asig.ASI_NOMBRE}}</td>
+                 <td data-title="'Créditos'" >
+                     {{asig.PEN_CRE}}</td>
+             </tr>
+         </table>
+
+            <div style="">
+             <md-divider style="border-top-style: none; "></md-divider>
+            </div>
+
+         </div>
+        </md-list-item>
+      </md-list>
+
+      <div ng-if="d_consultarSolicitudes.solicitud.length==1 ">
+        <div ng-show="solicitar.boton" ng-hide="m">
+          <input type="submit" ng-click="mostrar=true; m=true" value="Solicitar Opción 2" class="btn btn-primary"/>
+        </div>
+        <div ng-show="mostrar">
+          <solicitar-asignaturas estudiante="estudiante" modalidad="modalidad" l='d_consultarSolicitudes.carreras'/>
+        </div>
+      </div>
+      </div>
+
+    </div>
+</div>

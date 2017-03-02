@@ -1,0 +1,25 @@
+<br>
+<div class="col-lg-4">
+  <div class="panel panel-default">
+      <div class="panel-heading">
+          Buscar Formatos
+      </div>
+      <div class="panel-body">
+        <div class="col-md-5">
+          <label>
+            Seleccione el Formato
+          </label>
+        </div>
+        <div class="col-md-7">
+          <input class="form-control" list="testList" type="" ng-model="SelectedFormat"/>
+            <datalist id="testList" >
+                <option ng-repeat="formato in formatoVer.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
+            </datalist>
+            <br>
+        </div>
+      </div>
+  </div>
+</div>
+<div class="col-lg-6">
+  <vista-previa-formato formato="SelectedFormat"/>
+</div>

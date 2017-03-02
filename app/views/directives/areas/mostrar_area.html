@@ -1,0 +1,36 @@
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Áreas del Docente
+    </div>
+    <div class="panel-body">
+       <section class="row">
+        <label for="docente" class="col-md-2 control-label">Docente actual:</label>
+        <div class="col-md-10">
+          <form  name="myForm">
+            <select ng-model="docenteSeleccionado" name="docente" class="form-control" required
+            ng-change="d_mostrarArea.mostrarAreasDocente(docenteSeleccionado)">
+            <option ng-repeat="p in docenteParam"
+            value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE }} {{p.DOC_APELLIDO}}</option>
+          </select>
+        </form>
+        </div>
+        </section>
+        <br/>
+        <div class="row">
+          <md-chips  class="custom-chips" ng-model="ardocente" readonly="true"
+           md-removable="d_mostrarArea.removable" >
+            <md-chip-template ng-click="d_mostrarArea.removable=!d_mostrarArea.removable">
+                    <span>
+                      {{$chip.IdAreaConocimiento.Nombre}}
+                    </span>
+                  </md-chip-template>
+          <input md-chip-remove  type="submit"  ng-click="d_mostrarArea.eliminarAreaDocente($chip.Id)"
+                    value="X" class="btn btn-danger btn-xs"/>
+          </md-chips>
+        </div>
+    </div>
+    <div class="panel-footer">
+
+    </div>
+</div>

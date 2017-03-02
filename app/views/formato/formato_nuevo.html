@@ -1,0 +1,72 @@
+<div class="col-lg-5">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Nueva Evaluación
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label>Nombre del formato</label>
+        <input type="text" class="form-control" ng-model="nombre_formato" name="nombre_evaluacion" id="nombre_evaluacion" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
+        <label>Introducción del formato</label>
+        <textarea type="text" class="form-control" ng-model="introduccion_formato" name="introducción_evaluacion" id="introducción_evaluacion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
+        <label>Añadir Pregunta</label>
+        <div class="row">
+          <div class="col-md-9">
+            <input class="form-control" list="testList" type="" ng-model="pSeleccion" />
+            <datalist id="testList">
+                <option ng-repeat="pregunta in preguntas" value="{{pregunta.Enunciado}}" ></option>
+            </datalist>
+            <br>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_pregunta()"> + Pregunta</button>
+          </div>
+        </div>
+        <label>Añadir Opcion</label>
+        <div class="row">
+          <div class="col-md-9">
+            <input class="form-control" list="testList2" type="" ng-model="rSeleccion" />
+            <datalist id="testList2">
+                <option ng-repeat="respuesta in respuestas" value="{{respuesta.Descripcion}}" ></option>
+            </datalist>
+            <br>
+          </div>
+          <div class="col-md-3">
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_opcion()"> + Opción</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-7">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      Creación de la evaluación
+    </div>
+    <div class="panel-body">
+      <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="nueva_pregunta()"> Nueva Pregunta</button>
+        </div>
+        <div class="col-lg-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="nueva_opcion()">Nueva Opción</button>
+        </div>
+        <div class="col-lg-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="borrar()">Borrar</button>
+        </div>
+        <div class="col-lg-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="guardar()">Guardar</button>
+        </div>
+      </div>
+    </div>
+    <pre>
+      {{sumadre | json}}
+    </pre>

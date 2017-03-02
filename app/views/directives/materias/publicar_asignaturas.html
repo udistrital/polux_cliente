@@ -1,0 +1,18 @@
+<br>
+<div class="panel panel-default">
+<div class="panel-heading">
+    Directiva: publicar asignaturas.
+</div>
+
+    <div class="panel-body">
+    <div ui-grid="d_publicarAsignaturas.gridOptions"></div>
+
+      <div class="form-group">
+        <div class="">
+          <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
+          <input type="submit" ng-click="d_publicarAsignaturas.add()" value="Guardar" class="btn btn-success" ng-disabled="habilitar=d_publicarAsignaturas.habilitar"/>
+          <input type="submit" ng-click="d_publicarAsignaturas.cambiar()" value="Cambiar asignaturas" class="btn btn-primary" ng-disabled="habilitar=d_publicarAsignaturas.habilitar2"/>
+        </div>
+      </div>
+    </div>
+</div>

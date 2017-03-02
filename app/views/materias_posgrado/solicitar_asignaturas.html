@@ -1,0 +1,34 @@
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Solicitudes.
+    </div>
+    <div class="panel-body">
+      <p>Código: {{solicitarAsignaturas.estudiante.Codigo}}<br>
+          Nombre: {{solicitarAsignaturas.estudiante.Nombre}}<br>
+          <!-- Tipo: {{solicitarAsignaturas.estudiante.Tipo}}<br> -->
+          Modalidad: Espacios académicos de posgrado</p>
+
+      <div ng-if="solicitarAsignaturas.validar=='true'">
+        <consultar-solicitudes estudiante="solicitarAsignaturas.estudiante" s="0" modalidad="solicitarAsignaturas.modalidad"/>
+      </div>
+
+      <div ng-if="solicitarAsignaturas.validar!='true'" class="alert alert-danger" >
+          <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado
+          <br></br>
+          <p>
+            <ul>
+              <li>Estado: ACTIVO</li>
+              <li>Porcentaje cursado >= 80%</li>
+              <li>Promedio >= 3.8</li>
+              <li>Nivel de estudios: PREGRADO</li>
+              <li>Tipo carrera != TECNOLOGIA</li>
+            </ul>
+          </p>
+      </div>
+
+    </div>
+    <div class="panel-footer">
+        Panel Footer
+    </div>
+</div>
