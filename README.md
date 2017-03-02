@@ -1,5 +1,5 @@
 # polux
-
+Comentario de prueba para la sincronización
 This project is generated with [yo oas-generator](https://github.com/fabianLeon/oas)
 version 0.0.12.
 
