@@ -31,7 +31,8 @@ angular
     'academicaService',
     'cadenaService',
     'blueimp.fileupload',
-    'poluxMidService'
+    'poluxMidService',
+    'pdf'
 
   ])
   .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
