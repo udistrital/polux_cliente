@@ -20,7 +20,9 @@ angular.module('poluxApp')
     $scope.rSeleccion = "";
 
     //cargar todos los formatos de la base de datos
-    poluxRequest.get("pregunta", "").then(function(response) {
+    poluxRequest.get("pregunta", $.param({
+        limit: "0"
+      })).then(function(response) {
       $scope.preguntas = response.data;
     });
 
@@ -228,7 +230,7 @@ angular.module('poluxApp')
         formato: {
           Nombre: $scope.nombre_formato,
           Introduccion: $scope.introduccion_formato,
-          
+
           FechaRealizacion: new Date()
         },
         TrPreguntas: []

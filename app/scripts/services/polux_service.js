@@ -17,7 +17,6 @@ angular.module('poluxService',[])
     return {
       get: function(tabla, params) {
           var peticion = path + tabla + "?" + params;
-          console.log(peticion);
           return $http.get(peticion);
       },
       post: function(tabla, elemento) {
