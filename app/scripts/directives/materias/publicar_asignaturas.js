@@ -80,8 +80,6 @@ angular.module('poluxClienteApp')
               });
 
             });
-            console.log("ctrl.gridOptions.data.length: "+ ctrl.gridOptions.data.length);
-            console.log("ctrl.mostrar:  "+ ctrl.mostrar);
               ctrl.gridOptions = {
                 data: ctrl.mostrar,
                 minRowsToShow: ctrl.gridOptions.data.length,
@@ -104,46 +102,76 @@ angular.module('poluxClienteApp')
 
     //buscar si hay registros en asignaturas_elegibles
     ctrl.buscarAsignaturasElegibles=function(anio, periodo,carrera, pensum, asignatura){
+
       ctrl.anio=anio;
       ctrl.periodo=periodo;
       ctrl.carrera=carrera;
       ctrl.pensum=pensum;
 
+      /*Buscar carreras en carrera_elegible*/
       var parametros=$.param({
-        query:"CodigoCarrera:"+carrera+",Anio:"+anio+",Periodo:"+periodo+",CodigoPensum:"+pensum+",CodigoAsignatura:"+asignatura[0].ASI_COD
+        query:"CodigoCarrera:"+carrera+",Anio:"+anio+",Periodo:"+periodo+",CodigoPensum:"+pensum
       });
-      poluxRequest.get("asignaturas_elegibles",parametros).then(function(response){
+      poluxRequest.get("carrera_elegible",parametros).then(function(response){
         if(response.data!=null){
-          ctrl.habilitar=true;
-          ctrl.habilitar2=false;
+          ctrl.id=response.data[0].Id
 
-          var nuevo = {carrera: carrera,
-              año: anio,
-              periodo: periodo,
-              pensum: pensum,
-              asignatura: asignatura[0].ASI_COD,
-              nombre:asignatura[0].ASI_NOMBRE,
-              creditos:asignatura[0].PEN_CRE,
-              check: response.data[0].Activo
-          };
+          var parametros=$.param({
+            query:"IdCarreraElegible:"+ctrl.id+",CodigoAsignatura:"+asignatura[0].ASI_COD
+          });
 
-          var c = parseInt(asignatura[0].PEN_CRE, 10);
-          ctrl.totalCreditos=ctrl.totalCreditos+c;
-          ctrl.mostrar.push(nuevo);
+          poluxRequest.get("asignaturas_elegibles",parametros).then(function(response){
+            console.log(response.data);
 
-        }else{
-          var nuevo = {carrera: carrera,
-              año: anio,
-              periodo: periodo,
-              pensum: pensum,
-              asignatura: asignatura[0].ASI_COD,
-              nombre:asignatura[0].ASI_NOMBRE,
-              creditos:asignatura[0].PEN_CRE,
-              check: false
-          };
-          ctrl.mostrar.push(nuevo);
+            if(response.data!=null){
+              ctrl.habilitar=true;
+              ctrl.habilitar2=false;
+
+              var nuevo = {carrera: carrera,
+                  año: anio,
+                  periodo: periodo,
+                  pensum: pensum,
+                  asignatura: asignatura[0].ASI_COD,
+                  nombre:asignatura[0].ASI_NOMBRE,
+                  creditos:asignatura[0].PEN_CRE,
+                  check: response.data[0].Activo
+              };
+
+              var c = parseInt(asignatura[0].PEN_CRE, 10);
+              ctrl.totalCreditos=ctrl.totalCreditos+c;
+              ctrl.mostrar.push(nuevo);
+
+            }else{
+              var nuevo = {carrera: carrera,
+                  año: anio,
+                  periodo: periodo,
+                  pensum: pensum,
+                  asignatura: asignatura[0].ASI_COD,
+                  nombre:asignatura[0].ASI_NOMBRE,
+                  creditos:asignatura[0].PEN_CRE,
+                  check: false
+              };
+              ctrl.mostrar.push(nuevo);
+            }
+          });
+        }
+        //si la carrera no está en la tabla: carrera_elegible
+        else{
+
+              var nuevo = {carrera: carrera,
+                  año: anio,
+                  periodo: periodo,
+                  pensum: pensum,
+                  asignatura: asignatura[0].ASI_COD,
+                  nombre:asignatura[0].ASI_NOMBRE,
+                  creditos:asignatura[0].PEN_CRE,
+                  check: false
+              };
+              ctrl.mostrar.push(nuevo);
+
         }
       });
+
     };
 
     ctrl.toggle = function (item, list) {
@@ -167,73 +195,155 @@ angular.module('poluxClienteApp')
 
     ctrl.add = function(){
         console.log(ctrl.totalCreditos);
+
         if(ctrl.totalCreditos>=ctrl.creditosMinimos){
           ctrl.cambiar();
-          //guardar las asignaturas seleccionadas
-          angular.forEach(ctrl.selected, function(value) {
-            var n= parseInt(value.asignatura, 10);
-            var carrera= parseInt(ctrl.carrera, 10);
-            var pen= parseInt(value.pensum, 10);
-            var periodo=parseInt(ctrl.periodo, 10);
-            var anio=parseInt(ctrl.anio, 10);
 
-            var data = {
-                "Anio": anio,
-                "CodigoAsignatura": n,
-                "CodigoCarrera": carrera,
-                "CodigoPensum": pen,
-                "Periodo": periodo,
-                "Activo": true
-            };
+          //verificar que la carrera esté en la tabla: carrera_elegible
+          var parametros=$.param({
+            query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.anio+",Periodo:"+ctrl.periodo+",CodigoPensum:"+ctrl.pensum
+          });
+          poluxRequest.get("carrera_elegible",parametros).then(function(response){
+            console.log(response.data);
 
-            /*antes de guardar la asignatura, se debe verificar que no esté registrada
-            si no está registrada, guardarla
-            si está registrada, actualizar el estado*/
+            if(response.data==null){
+              var carrera= parseInt(ctrl.carrera, 10);
+              var pensum= parseInt(ctrl.pensum, 10);
+              var periodo=parseInt(ctrl.periodo, 10);
+              var anio=parseInt(ctrl.anio, 10);
 
-            var parametros=$.param({
-              query:"CodigoCarrera:"+carrera+",Anio:"+ctrl.anio+",Periodo:"+ctrl.periodo+",CodigoPensum:"+ctrl.pensum+",CodigoAsignatura:"+n
-            });
+              var data = {
+                  "CodigoCarrera": carrera,
+                  "Periodo": periodo,
+                  "Anio": anio,
+                  "CodigoPensum": pensum,
+              };
+              poluxRequest.post("carrera_elegible", data).then(function(response22){
+                console.log(response22.data.Id);
 
-            poluxRequest.get("asignaturas_elegibles",parametros).then(function(response){
-              console.log("rta:"+response.data);
+                //guardar las asignaturas seleccionadas
+                angular.forEach(ctrl.selected, function(value) {
+                  var asignatura= parseInt(value.asignatura, 10);
 
-              if(response.data==null){
-                console.log(data);
-                poluxRequest.post("asignaturas_elegibles", data).then(function(response){
-                  ctrl.habilitar=true;
-                  ctrl.habilitar2=false;
-                  console.log("Status respuesta ", response.data);
+                  var data = {
+                      "CodigoAsignatura": asignatura,
+                      "Activo": true,
+                      "IdCarreraElegible":response22.data
+                  };
+
+                  /*antes de guardar la asignatura, se debe verificar que no esté registrada
+                  si no está registrada, guardarla
+                  si está registrada, actualizar el estado*/
+                  var parametros=$.param({
+                    query: "CodigoAsignatura:"+asignatura+" ,IdCarreraElegible:"+response22.data.Id
+                  });
+
+                  poluxRequest.get("asignaturas_elegibles",parametros).then(function(response){
+                    console.log("rta:"+response.data);
+
+                    if(response.data==null){
+                      console.log(data);
+                      poluxRequest.post("asignaturas_elegibles", data).then(function(response){
+                        ctrl.habilitar=true;
+                        ctrl.habilitar2=false;
+                        console.log("Status respuesta ", response.data);
+                      });
+
+
+                    }else{
+                      //si está registrada, actualizar el estado
+                      var id = response.data[0].Id;
+                      var estado = response.data[0].Activo;
+                      if(estado===false){
+                        estado=true;
+                      }else{
+                        estado=false;
+                      }
+
+                      var dataModificado = {
+                          "CodigoAsignatura": asignatura,
+                          "Activo": estado,
+                          "IdCarreraElegible":response22.data
+                      };
+
+                      poluxRequest.put("asignaturas_elegibles", id, dataModificado).then(function(response){
+                        console.log("Status respuesta ", response.data);
+                      });
+
+                    }
+
+                  });
+
                 });
 
 
-              }else{
-                //si está registrada, actualizar el estado
-                var id = response.data[0].Id;
-                var estado = response.data[0].Activo;
-                if(estado===false){
-                  estado=true;
-                }else{
-                  estado=false;
-                }
+              });
 
-                var dataModificado = {
-                    "Anio": anio,
-                    "CodigoAsignatura": n,
-                    "CodigoCarrera": carrera,
-                    "CodigoPensum": pen,
-                    "Periodo": periodo,
-                    "Activo": estado
+            }
+            //si está en la tabla: carrera_elegible
+            else{
+              console.log(response.data[0]);
+
+              //guardar las asignaturas seleccionadas
+              angular.forEach(ctrl.selected, function(value) {
+                var asignatura= parseInt(value.asignatura, 10);
+
+                var data = {
+                    "CodigoAsignatura": asignatura,
+                    "Activo": true,
+                    "IdCarreraElegible":response.data[0]
                 };
 
-                poluxRequest.put("asignaturas_elegibles", id, dataModificado).then(function(response){
-                  console.log("Status respuesta ", response.data);
+                /*antes de guardar la asignatura, se debe verificar que no esté registrada
+                si no está registrada, guardarla
+                si está registrada, actualizar el estado*/
+
+                var parametros=$.param({
+                  query: "CodigoAsignatura:"+asignatura+" ,IdCarreraElegible:"+response.data[0].Id
                 });
 
-              }
+                poluxRequest.get("asignaturas_elegibles",parametros).then(function(response){
+                  console.log("rta:"+response.data);
 
-            });
+                  if(response.data==null){
+                    console.log(data);
+                    poluxRequest.post("asignaturas_elegibles", data).then(function(response){
+                      ctrl.habilitar=true;
+                      ctrl.habilitar2=false;
+                      console.log("Status respuesta ", response.data);
+                    });
 
+
+                  }else{
+                    //si está registrada, actualizar el estado
+                    var id = response.data[0].Id;
+                    var estado = response.data[0].Activo;
+                    if(estado===false){
+                      estado=true;
+                    }else{
+                      estado=false;
+                    }
+
+                    var dataModificado = {
+                        "CodigoAsignatura": asignatura,
+                        "Activo": estado,
+                        "IdCarreraElegible":response.data[0]
+                    };
+
+                    poluxRequest.put("asignaturas_elegibles", id, dataModificado).then(function(response){
+                      console.log("Status respuesta ", response.data);
+                    });
+
+                  }
+
+                });
+
+              });
+
+            }
           });
+
+
 
           alert("Asignaturas guardadas");
         }

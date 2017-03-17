@@ -25,7 +25,7 @@
        <br></br>
        <br></br>
        <br></br>
-       <div ui-grid="listarSolicitudes.gridOptions" ui-grid-selection></div>
+       <div ui-grid="listarSolicitudes.gridOptions"></div>
 
        <div  layout="column" layout-align="center" >
         <p>Admitidos por rendimiento: {{listarSolicitudes.rendimiento}}</p>
@@ -37,41 +37,40 @@
 
       <script type="text/ng-template" id="dialog.tmpl.html">
 
-      <md-dialog aria-label="Selección de Admitidos" class="col-sm-5" ng-cloak>
-      <md-toolbar>
-        <div class="md-toolbar-tools">
+      <md-dialog flex="60" aria-label="Selección de Admitidos" >
+        <form role="form" name="formAdmitidos" id="formAdmitidos">
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2 flex="95">Selección de Admitidos</h2>
+            <md-button class="md-icon-button" ng-click="cancel()">
+              <md-icon md-svg-src="images/icon_close.png" aria-label="Close dialog"></md-icon>
+            </md-button>
+          </div>
+        </md-toolbar>
 
-          <h2>Selección de Admitidos</h2>
-          <span flex></span>
-          <md-button class="md-icon-button" ng-click="cancel()">
-            <md-icon md-svg-src="images/icon_close.png" aria-label="Close dialog"></md-icon>
-          </md-button>
-        </div>
-      </md-toolbar>
+        <md-dialog-content >
+          <div class="md-dialog-content" >
+              <md-input-container class="md-icon-float md-icon-right md-block">
+                <label>Admitidos por excelencia académica y exentos de pago (Máx {{cupos_excelencia}})</label>
 
-      <md-dialog-content>
-        <div class="md-dialog-content" >
-          <form role="form" name="formAdmitidos" id="formAdmitidos">
+                <input ng-model="cupos_excelencia_ingresado" ng-disabled="cupos_excelencia_ingresado!=null" name="rendimiento" placeholder="Ingrese el número de admitidos por excelencia académica y exentos de pago" type="number" min="0" max="{{cupos_excelemcia}}" step="1" required="">
+                <div ng-messages="formAdmitidos.rendimiento.$error" ng-show="formAdmitidos.rendimiento.$dirty">
+                  <div ng-message="required">Es requerido</div>
+                </div>
+              </md-input-container>
 
-                      <md-input-container  class="md-icon-float md-icon-right md-block">
-                        <label>Admitidos (Máx {{cupos_excelemcia}})</label>
-                        <input ng-model="dialog.rendimiento" name="rendimiento" size="30" placeholder="Ingrese el número de admitidos por excelencia académica y exentos de pago" type="number" min="0" max="{{cupos_excelemcia}}" step="1" required>
-                        <div ng-messages="formAdmitidos.rendimiento.$error" ng-show="formAdmitidos.rendimiento.$dirty">
-                          <div ng-message="required">Es requerido</div>
-                        </div>
-                      </md-input-container>
-                      <md-input-container class="md-icon-float md-icon-right md-block">
-                        <label>Admitidos (Máx {{cupos_adicionales}})</label>
-                        <input ng-model="dialog.economicas" size="30" placeholder="Ingrese el número de admitidos por condiciones económicas y calidades académicas" type="number" min="0" max="{{cupos_adicionales}}" step="1" required>
-                        <div ng-messages="formAdmitidos.economicas.$error">
-                          <div ng-message="required">This is required!</div>
-                        </div>
-                      </md-input-container>
-                      <md-button ng-disabled="dialog.rendimiento == null || dialog.economicas == null" ng-click="answer(dialog)" class="md-raised md-primary">Aceptar</md-button>
+              <md-input-container class="md-icon-float md-icon-right md-block">
+                <label>Admitidos admitidos por condiciones económicas y calidades académicas (Máx {{cupos_adicionales}})</label>
+                <input ng-model="cupos_adicionales_ingresado" ng-disabled="cupos_adicionales_ingresado!=null" size="30" placeholder="Ingrese el número de admitidos por condiciones económicas y calidades académicas" type="number" min="0" max="{{cupos_adicionales}}" step="1" required>
+                <div ng-messages="formAdmitidos.economicas.$error">
+                  <div ng-message="required">Es requerido</div>
+                </div>
+              </md-input-container>
+              <md-button ng-disabled="cupos_excelencia_ingresado == null || cupos_adicionales_ingresado == null" ng-click="answer(dialog)" class="md-raised md-primary">Aceptar</md-button-->
 
-                  </form>
-        </div>
-      </md-dialog-content>
+          </div>
+        </md-dialog-content>
+    </form>
     </md-dialog>
     </script>
 

@@ -26,7 +26,7 @@ angular.module('poluxClienteApp')
         ctrl.estudiante = $scope.estudiante;
         ctrl.tipo = $scope.estudiante.Tipo;
         $scope.sols = [];
-       
+
 
         /*número de créditos mínimos, según la modalidad
           modalidad de espacios académicos de posgrado: 8 créditos,
@@ -46,14 +46,14 @@ angular.module('poluxClienteApp')
             query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER,
             fields: "CodigoCarrera,CodigoPensum"
           });
-          poluxRequest.get("asignaturas_elegibles", parametros).then(function(response) {
+          poluxRequest.get("carrera_elegible", parametros).then(function(response) {
             //carreras
+            console.log(response.data);
             angular.forEach(response.data, function(value) {
               var parametros = {
                 'codigo': value.CodigoCarrera,
                 'tipo': ctrl.tipo
               };
-              console.log(parametros);
               academicaRequest.obtenerCarreras(parametros).then(function(response2) {
                 if (response2 != null) {
                   var carrera = {
@@ -73,37 +73,46 @@ angular.module('poluxClienteApp')
 
 
         ctrl.myFunc = function(carreraSeleccionada) {
+          console.log("carrrera:"+carreraSeleccionada);
           ctrl.asignaturas2 = [];
           ctrl.carrera = carreraSeleccionada;
 
-          //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
+          //buscar la carrera en: carrera_elegible
           var parametros = $.param({
-            query: "CodigoCarrera:" + ctrl.carrera + ",Activo:true"
+            query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER +",CodigoCarrera:"+carreraSeleccionada
           });
-          poluxRequest.get("asignaturas_elegibles", parametros).then(function(response) {
-            //recorrer data y buscar datos de las asignaturas
-            angular.forEach(response.data, function(value) {
-              //buscar asignaturas
-              var parametros = {
-                'codigo': value.CodigoAsignatura
-              };
-              academicaRequest.buscarAsignaturas(parametros).then(function(response) {
+          poluxRequest.get("carrera_elegible", parametros).then(function(response) {
 
-                var data = {
-                  "Id": value.Id,
-                  "Anio": value.Anio,
-                  "CodigoAsignatura": value.CodigoAsignatura,
-                  "CodigoCarrera": value.CodigoCarrera,
-                  "CodigoPensum": value.CodigoPensum,
-                  "Periodo": value.Periodo,
-                  "Nombre": response[0].ASI_NOMBRE,
-                  "Creditos": response[0].PEN_CRE
+            //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
+            var parametros = $.param({
+              query: "IdCarreraElegible:" + response.data[0].Id
+            });
+            poluxRequest.get("asignaturas_elegibles", parametros).then(function(response) {
+              //recorrer data y buscar datos de las asignaturas
+              angular.forEach(response.data, function(value) {
+                //buscar asignaturas
+                var parametros = {
+                  'codigo': value.CodigoAsignatura
                 };
+                academicaRequest.buscarAsignaturas(parametros).then(function(response) {
 
-                ctrl.asignaturas2.push(data);
+                  var data = {
+                    "Id": value.Id,
+                    "Anio": value.Anio,
+                    "CodigoAsignatura": value.CodigoAsignatura,
+                    "CodigoCarrera": value.CodigoCarrera,
+                    "CodigoPensum": value.CodigoPensum,
+                    "Periodo": value.Periodo,
+                    "Nombre": response[0].ASI_NOMBRE,
+                    "Creditos": response[0].PEN_CRE
+                  };
 
+                  ctrl.asignaturas2.push(data);
+
+                });
               });
             });
+
           });
 
           //ui-grid
@@ -164,7 +173,6 @@ angular.module('poluxClienteApp')
             poluxRequest.get("estudiante_tg", parametros).then(function(response) {
               //console.log(response.data[0].Id);
 
-
 ///##########################################################################
                if (ctrl.creditos >= ctrl.creditosMinimos) {
                 //Modalidad 3: Espacios académicos de posgrado
@@ -172,7 +180,7 @@ angular.module('poluxClienteApp')
 
 
                 //si no hay registrados TG en modalidad #3
-              
+
                 if(!response.data){
                   console.log("NOOO Hay TG en la modalidad #3");
                   ctrl.datos = {
@@ -197,7 +205,7 @@ angular.module('poluxClienteApp')
 
                     //registrar TG
                     poluxRequest.post("tr_trabajo_grado", ctrl.datos).then(function(response) {
-
+                      console.log(response.data);
                       var fecha = new Date();
                       var car = parseInt(ctrl.carrera, 10);
                       var a = parseInt(ctrl.periodo.APE_ANO, 10);
@@ -244,7 +252,7 @@ angular.module('poluxClienteApp')
                 //si existen TG en la modalida #3
                 else{
                       console.log("Hay TG en la modalidad #3");
-                    
+
                       var fecha = new Date();
                       var car = parseInt(ctrl.carrera, 10);
                       var a = parseInt(ctrl.periodo.APE_ANO, 10);
@@ -285,7 +293,7 @@ angular.module('poluxClienteApp')
 
 
                 }
-                
+
                 alert("Solicitud realizada");
                 $route.reload();
               } else {

@@ -17,12 +17,12 @@ angular.module('poluxClienteApp')
   ctrl.gridOptions = {};
   ctrl.gridOptions.columnDefs = [
     { name: 'solicitud', displayName: 'Solicitud', width: "10%"  },
-    { name: 'fecha', displayName: 'Fecha', type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'', width: "15%"  },
-    { name: 'estudiante', displayName: 'Código', width: "15%"  },
-    { name: 'nombre', displayName: 'Nombre', width: "20%"  },
+    { name: 'fecha', displayName: 'Fecha', type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'', width: "10%"  },
+    { name: 'estudiante', displayName: 'Código', width: "10%"  },
+    { name: 'nombre', displayName: 'Nombre', width: "25%"  },
     { name: 'promedio', displayName: 'Promedio', width: "15%"  },
     { name: 'rendimiento', displayName: 'Rendimiento Académico', width: "15%"  },
-    { name: 'estado', displayName: 'Estado', width: "10%"  },
+    { name: 'estado', displayName: 'Estado', width: "15%"  },
   ];
 
 
@@ -38,6 +38,7 @@ angular.module('poluxClienteApp')
   });
 
   ctrl.buscarSolicitudes = function(carrera){
+    ctrl.carrera=carrera;
     $scope.carrera=carrera;
     if(carrera){
       $scope.sols=[];
@@ -94,13 +95,28 @@ angular.module('poluxClienteApp')
   ctrl.openDialog = function($event) {
     $mdDialog.show({
       controller: function ($timeout, $q, $scope, $mdDialog) {
-
+        $scope.cupos_excelencia_ingresado = null;
+        $scope.cupos_adicionales_ingresado = null;
         //Consultar cupos
         poluxMidRequest.post("cupos/Obtener?tdominio=2").then(function(response){
           console.log(response.data);
-          $scope.cupos_excelemcia=response.data.Cupos_excelencia;
+          $scope.cupos_excelencia=response.data.Cupos_excelencia;
           $scope.cupos_adicionales=response.data.Cupos_adicionales;
         });
+
+        var parametros=$.param({
+          query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+        });
+        poluxRequest.get("carrera_elegible",parametros).then(function(response){
+          console.log(response.data);
+          if(response.data[0].CuposExcelencia>0 && response.data[0].CuposAdicionales>0){
+            $scope.cupos_excelencia_ingresado=response.data[0].CuposExcelencia;
+            $scope.cupos_adicionales_ingresado=response.data[0].CuposAdicionales;
+
+          }
+
+        });
+
         var questList =this;
         $scope.cancel = function($event) {
           $mdDialog.cancel();
@@ -112,22 +128,24 @@ angular.module('poluxClienteApp')
           $mdDialog.hide(answer);
         };
       },
-      controllerAs: 'questList',
+
+      controllerAs: 'self',
       templateUrl: 'dialog.tmpl.html',
       parent: angular.element(document.body),
       targetEvent: $event,
       clickOutsideToClose:true,
       locals: {parent: $scope},
+      //bindToController: true,
+
+
+      scope: $scope,
+      preserveScope: true,
 
     })
     .then(function(answer) {
       ctrl.status = answer;
-      ctrl.allsQ.push({
-        rendimiento: answer.rendimiento ,
-        economicas: answer.economicas
-      });
-      ctrl.rendimiento = answer.rendimiento;
-      ctrl.economicas = answer.economicas;
+      ctrl.rendimiento = $scope.cupos_excelencia_ingresado;
+      ctrl.economicas = $scope.cupos_adicionales_ingresado;
 
       ctrl.rta ={
         'cupos_excelencia' : ctrl.rendimiento,
@@ -139,11 +157,31 @@ angular.module('poluxClienteApp')
         'Solicitudes' : $scope.sols
       };
 
+      //Guardar el # de cupos ingresados
+      /* buscar carrera en carrera_elegible*/
+      var parametros=$.param({
+        query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+      });
+      poluxRequest.get("carrera_elegible",parametros).then(function(response){
+
+        if(response.data[0].CuposExcelencia==0 && response.data[0].CuposAdicionales==0){
+          response.data[0].CuposExcelencia=ctrl.rendimiento;
+          response.data[0].CuposAdicionales=ctrl.economicas;
+
+          poluxRequest.put("carrera_elegible", response.data[0].Id, response.data[0]).then(function(response){
+            console.log(response.data);
+          });
+        }
+
+      });
+
       //Enviar las solicitudes y # Admitidos
       poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta2).then(function(response){
+
         alert("Solicitudes aprobadas");
+        console.log(response);
         //recargar datos
-        ctrl.buscarSolicitudes($scope.carrera);
+      //  ctrl.buscarSolicitudes($scope.carrera);
       });
     }, function() {
          ctrl.status = 'You cancelled the dialog.';
