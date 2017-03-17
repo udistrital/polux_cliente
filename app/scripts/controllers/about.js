@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:AboutCtrl
+ * @name poluxClienteApp.controller:AboutCtrl
  * @description
  * # AboutCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('AboutCtrl', function () {
     this.awesomeThings = [
       'HTML5 Boilerplate',

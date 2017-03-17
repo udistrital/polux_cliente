@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:FormatoNuevoCtrl
+ * @name poluxClienteApp.controller:FormatoNuevoCtrl
  * @description
  * # FormatoNuevoCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('FormatoNuevoCtrl', function(poluxRequest, $scope, uiGridTreeViewConstants) {
 
     var ctrl = this;

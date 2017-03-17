@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:registrarTrabajoGrado
+ * @name poluxClienteApp.directive:registrarTrabajoGrado
  * @description
  * # registrarTrabajoGrado
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('registrarTrabajoGrado', function (poluxRequest) {
     return {
       restrict: 'E',

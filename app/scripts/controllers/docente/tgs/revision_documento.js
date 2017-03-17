@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:DocenteTgsRevisionDocumentoCtrl
+ * @name poluxClienteApp.controller:DocenteTgsRevisionDocumentoCtrl
  * @description
  * # DocenteTgsRevisionDocumentoCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('DocenteTgsRevisionDocumentoCtrl', function (poluxRequest) {
     var self = this;
     self.doctgId=2;//viene por la sesión

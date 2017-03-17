@@ -1,5 +1,5 @@
 {
-  "name": "polux",
+  "name": "poluxcliente",
   "private": true,
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",
@@ -29,10 +29,12 @@
     "jasmine-core": "^2.5.2",
     "jit-grunt": "^0.9.1",
     "jshint-stylish": "^1.0.0",
-    "karma": "^1.4.1",
+    "karma": "^1.5.0",
+    "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-junit-reporter": "^1.2.0",
-    "karma-phantomjs-launcher": "^1.0.2",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "0.0.30",
     "phantomjs-prebuilt": "^2.1.14",
     "time-grunt": "^1.0.0"
   },
@@ -43,6 +45,8 @@
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
+    "angular-pdf": "^1.5.1",
+    "blueimp-file-upload": "^9.17.0",
     "blueimp-file-upload-node": "^2.1.0"
   }
 }

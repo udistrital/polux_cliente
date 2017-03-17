@@ -1,127 +1,117 @@
 'use strict';
+/**
+ * @ngdoc function
+ * @name poluxClienteApp.controller:menuCtrl
+ * @description
+ * # menuCtrl
+ * Controller of the poluxClienteApp
+ */
+angular.module('poluxClienteApp')
+.controller('menuCtrl', function($location, $http, $scope, token_service, notificacion) {
+    var paths = [];
+    $scope.notificacion = notificacion;
+    $scope.actual = "";
+    $scope.token_service = token_service;
+    $scope.breadcrumb = [];
+    $scope.menu_service = [
 
-angular.module('poluxApp')
-  .controller('menuCtrl', function($location, $http, $scope, token_service) {
-      //Notificaciones
-      $scope.log = [];
-      $scope.message = "";
-      if (!window["WebSocket"]) {
-        $scope.log.push("Your browser does not support WebSockets.");
-        return;
-      }
-      var conn = new WebSocket("ws://localhost:8080/ws?id=2&profile=admin");
-      conn.onclose = function(e) {
-        $scope.$apply(function() {
-          console.log("Connection closed.");
-        });
-      };
-      conn.onmessage = function(e) {
-        $scope.$apply(function() {
-          var data = JSON.parse(e.data);
-          $scope.log.unshift(data);
-          console.log(data);
-        })
-      };
-      conn.onopen = function(e) {
-        console.log("Connected");
-        $scope.$apply(function() {
-          console.log("Welcome to the chat!");
-        })
-      };
-
-      $scope.send = function() {
-        if (!conn) {
-          return;
-        }
-        if (!$scope.message) {
-          return;
-        }
-        conn.send(nick + ": " + $scope.message);
-        $scope.message = "";
-      }
-      $scope.no_vistos = function() {
-        var j = 0;
-        angular.forEach($scope.log, function(notificiacion) {
-          if (!notificiacion.visto) j += 1;
-        });
-        return j;
-      }
-      // fin notificaciones
-      var ctrl = this;
-      $scope.actual = "";
-      $scope.token_service = token_service;
-      $scope.breadcrumb = [];
-      $scope.menu_service = [{ //aqui va el servicio de el app de configuracion
-          "Id": 1,
-          "Nombre": "Formato",
-          "Url": "",
-          "Opciones": [{
-            "Id": 2,
-            "Nombre": "Ver formato",
-            "Url": "formato_ver",
-            "Opciones": null
-          }, {
-            "Id": 3,
-            "Nombre": "Nuevo formato",
-            "Url": "formato_nuevo",
-            "Opciones": null
-          }, {
-            "Id": 4,
-            "Nombre": "Editar formato",
-            "Url": "formato_editar",
-            "Opciones": null
-          }]
-        }, {
-          "Id": 2,
-          "Nombre": "General",
-          "Url": "",
-          "Opciones": [{
-            "Id": 2,
-            "Nombre": "Propuesta",
+        { //aqui va el servicio de el app de configuracion
+            "Id": 1,
+            "Nombre": "Formato",
             "Url": "",
             "Opciones": [{
               "Id": 2,
-              "Nombre": "Registrar propuesta",
-              "Url": "general/propuesta",
+              "Nombre": "Ver formato",
+              "Url": "formato_ver",
               "Opciones": null
             }, {
               "Id": 3,
-              "Nombre": "Consultar propuesta",
-              "Url": "general/cons_prop",
+              "Nombre": "Nuevo formato",
+              "Url": "formato_nuevo",
+              "Opciones": null
+            }, {
+              "Id": 4,
+              "Nombre": "Editar formato",
+              "Url": "formato_editar",
               "Opciones": null
             }]
           }, {
-            "Id": 3,
-            "Nombre": "Trabajo de Grado",
+            "Id": 2,
+            "Nombre": "General",
             "Url": "",
             "Opciones": [{
               "Id": 2,
-              "Nombre": "Registrar",
-              "Url": "general/reg_TG",
-              "Opciones": null
+              "Nombre": "Propuesta",
+              "Url": "",
+              "Opciones": [{
+                "Id": 2,
+                "Nombre": "Registrar propuesta",
+                "Url": "general/propuesta",
+                "Opciones": null
+              }, {
+                "Id": 3,
+                "Nombre": "Consultar propuesta",
+                "Url": "general/cons_prop",
+                "Opciones": null
+              }]
+            }, {
+              "Id": 3,
+              "Nombre": "Trabajo de Grado",
+              "Url": "",
+              "Opciones": [{
+                "Id": 2,
+                "Nombre": "Registrar",
+                "Url": "general/reg_TG",
+                "Opciones": null
+              }]
             }]
-          }]
+          },
+          {
+            "Id": 2,
+            "Nombre": "Posgrado",
+            "Url": "",
+            "Opciones": [{
+              "Id": 2,
+              "Nombre": "Publicación de Espacios Académicos",
+              "Url": "materias_posgrado/publicar_asignaturas",
+              "Opciones": null
+            },
+            {
+              "Id": 3,
+              "Nombre": "Solicitar inscripción",
+              "Url": "materias_posgrado/solicitar_asignaturas",
+              "Opciones": null
+            },
+            {
+              "Id": 4,
+              "Nombre": "Listar inscritos",
+              "Url": "materias_posgrado/listar_solicitudes",
+              "Opciones": null
+            }
+
+          ]
         },
+
         {
           "Id": 2,
-          "Nombre": "Posgrado",
+          "Nombre": "Profundización",
           "Url": "",
           "Opciones": [{
             "Id": 2,
             "Nombre": "Publicación de Espacios Académicos",
-            "Url": "materias_posgrado/publicar_asignaturas",
+            "Url": "materias_profundizacion/publicar_asignaturas",
             "Opciones": null
           },
           {
             "Id": 3,
             "Nombre": "Solicitar inscripción",
-            "Url": "materias_posgrado/solicitar_asignaturas",
+            "Url": "materias_profundizacion/solicitar_asignaturas",
             "Opciones": null
           },
           {
             "Id": 4,
             "Nombre": "Listar inscritos",
-            "Url": "materias_posgrado/listar_solicitudes",
+            "Url": "materias_profundizacion/listar_solicitudes",
             "Opciones": null
           }
 
@@ -130,51 +120,24 @@ angular.module('poluxApp')
 
       {
         "Id": 2,
-        "Nombre": "Profundización",
+        "Nombre": "Revisión de documentos",
+        "Url": "docente/tgs/revision_documento",
+        "Opciones": null
+      },
+      {
+        "Id": 2,
+        "Nombre": "Perfil Docente",
         "Url": "",
         "Opciones": [{
           "Id": 2,
-          "Nombre": "Publicación de Espacios Académicos",
-          "Url": "materias_profundizacion/publicar_asignaturas",
+          "Nombre": "Áreas del conocimiento",
+          "Url": "perfil_docente/areas",
           "Opciones": null
-        },
-        {
-          "Id": 3,
-          "Nombre": "Solicitar inscripción",
-          "Url": "materias_profundizacion/solicitar_asignaturas",
-          "Opciones": null
-        },
-        {
-          "Id": 4,
-          "Nombre": "Listar inscritos",
-          "Url": "materias_profundizacion/listar_solicitudes",
-          "Opciones": null
-        }
-
-      ]
-    },
-
-    {
-      "Id": 2,
-      "Nombre": "Revisión de documentos",
-      "Url": "docente/tgs/revision_documento",
-      "Opciones": null
-    },
-    {
-      "Id": 2,
-      "Nombre": "Perfil Docente",
-      "Url": "",
-      "Opciones": [{
-        "Id": 2,
-        "Nombre": "Áreas del conocimiento",
-        "Url": "perfil_docente/areas",
-        "Opciones": null
-      }]
-    },
+        }]
+      },
 
 
-
-      ];
+    ];
 
     var recorrerArbol = function(item, padre) {
       var padres = "";
@@ -192,7 +155,7 @@ angular.module('poluxApp')
       return padres;
     };
 
-    var paths = [];
+
 
     var update_url = function() {
       $scope.breadcrumb = [''];
@@ -203,15 +166,15 @@ angular.module('poluxApp')
           $scope.breadcrumb = [''];
         }
       }
-    }
+    };
     recorrerArbol($scope.menu_service, "");
+    paths.push({padre:["","Notificaciones","Ver Notificaciones"],path:"notificaciones"});
 
     $scope.$on('$routeChangeStart', function(next, current) {
       $scope.actual = $location.path();
       update_url();
+      console.log(next + current);
     });
-
-
     //Pendiente por definir json del menu
     (function($) {
       $(document).ready(function() {

@@ -3,7 +3,7 @@
 describe('Directive: documento/revisionDocumento', function () {
 
   // load the directive's module
-  beforeEach(module('poluxApp'));
+  beforeEach(module('poluxClienteApp'));
 
   var element,
     scope;

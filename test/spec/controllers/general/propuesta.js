@@ -3,7 +3,7 @@
 describe('Controller: PropuestaCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('poluxApp'));
+  beforeEach(module('poluxClienteApp'));
 
   var PropuestaCtrl,
     scope;

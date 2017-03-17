@@ -2,11 +2,11 @@
 
 /**
 * @ngdoc directive
-* @name poluxApp.directive:revisionDocumento
+* @name poluxClienteApp.directive:revisionDocumento
 * @description
 * # revisionDocumento
 */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
 .directive('revisionDocumento', function (poluxRequest) {
   return {
     restrict: "E",

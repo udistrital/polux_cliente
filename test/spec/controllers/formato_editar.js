@@ -3,7 +3,7 @@
 describe('Controller: FormatoEditarCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('poluxApp'));
+  beforeEach(module('poluxClienteApp'));
 
   var FormatoEditarCtrl,
     scope;

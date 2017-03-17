@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc service
- * @name poluxApp.academicaService
+ * @name poluxClienteApp.academicaService
  * @description
  * # academicaService
- * Factory in the poluxApp.
+ * Factory in the poluxClienteApp.
  */
 angular.module('academicaService', [])
   .factory('academicaRequest', function ($http) {

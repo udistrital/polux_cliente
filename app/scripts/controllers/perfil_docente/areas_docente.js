@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:PerfilDocenteAreasDocenteCtrl
+ * @name poluxClienteApp.controller:PerfilDocenteAreasDocenteCtrl
  * @description
  * # PerfilDocenteAreasDocenteCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('AreasDocenteCtrl', function (academicaRequest,poluxRequest) {
     var self=this;
     self.buttonDirective="Agregar Área"

@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:RegistrarTgCtrl
+ * @name poluxClienteApp.controller:RegistrarTgCtrl
  * @description
  * # RegistrarTgCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('RegistrarTgCtrl', function (academicaRequest) {
 
     var self=this;

@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc service
- * @name prototipoApp.token
+ * @name poluxClienteApp.token
  * @description
  * # token
- * Factory in the prototipoApp.
+ * Factory in the poluxClienteApp.
  */
 
 
@@ -14,11 +14,9 @@ var params = {},
   queryString = location.hash.substring(1),
   regex = /([^&=]+)=([^&]*)/g,
   m;
-while (m = regex.exec(queryString)) {
+while (!!(m = regex.exec(queryString))){
   params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
 }
-//console.log(params);
-//console.log(location.hash.substring(1));
 // And send the token over to the server
 var req = new XMLHttpRequest();
 // consider using POST so query isn't logged
@@ -27,6 +25,7 @@ var query = 'https://' + window.location.host + '?' + queryString;
 req.open('GET', query, true);
 
 req.onreadystatechange = function(e) {
+    console.log(e);
   if (req.readyState === 4) {
     if (req.status === 200) {
       window.location = params.state;
@@ -36,13 +35,11 @@ req.onreadystatechange = function(e) {
       //alert('something else other than 200 was returned');
       //console.log(req);
     }
+
   }
 };
-/*
-req.send(null);
-*/
 
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .factory('token_service', function($location, $http, $localStorage) {
     var service = {
       local: $localStorage.$default(params),
@@ -83,7 +80,6 @@ angular.module('poluxApp')
       logout: function() {
         service.token = null;
         $localStorage.$reset();
-        //$sessionStorage.$reset();
         window.location = $location.absUrl();
       }
     };

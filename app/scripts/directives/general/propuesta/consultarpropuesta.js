@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:general/propuesta/consultarPropuesta
+ * @name poluxClienteApp.directive:general/propuesta/consultarPropuesta
  * @description
  * # general/propuesta/consultarPropuesta
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('consultarPropuesta', function () {
     return {
       restrict: 'E',

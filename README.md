@@ -1,7 +1,8 @@
-# polux
+# polux-cliente
+
 This project is generated with [yo oas-generator](https://github.com/fabianLeon/oas)
-version 0.0.12.
-Modificación de prueba
+version 0.0.16.
+
 ## Build & development
 
 Run `grunt` for building and `grunt serve` for preview.

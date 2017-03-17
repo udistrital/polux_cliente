@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on 2017-02-07
+// Generated on 2017-03-16
 
 module.exports = function(config) {
   'use strict';
@@ -40,10 +40,15 @@ module.exports = function(config) {
       'bower_components/pdfmake/build/vfs_fonts.js',
       'bower_components/ngstorage/ngStorage.js',
       'bower_components/kjur-jsrsasign/jsrsasign-latest-all-min.js',
+      'bower_components/angular-websocket/dist/angular-websocket.js',
+      'bower_components/angular-input-masks/angular-input-masks-standalone.js',
+      'bower_components/moment/moment.js',
+      'bower_components/angular-moment/angular-moment.js',
       'bower_components/pdfjs-dist/build/pdf.js',
       'bower_components/pdfjs-dist/build/pdf.worker.js',
       'bower_components/angular-pdf/dist/angular-pdf.js',
       'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/blueimp-file-upload/js/jquery.fileupload.js',
       // endbower
       'app/scripts/**/*.js',
       'test/mock/**/*.js',
@@ -73,7 +78,9 @@ module.exports = function(config) {
     plugins: [
       'karma-phantomjs-launcher',
       'karma-jasmine',
-      'karma-junit-reporter'
+      'karma-junit-reporter',
+      'karma-coverage',
+      'karma-spec-reporter'
     ],
 
     // Continuous Integration mode
@@ -93,10 +100,23 @@ module.exports = function(config) {
     // URL root prevent conflicts with the site root
     // urlRoot: '_karma_'
 
-     reporters: ['progress', 'junit'],
+    reporters: ['junit', 'coverage','spec'],
+
+    preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      'test/spec/**/*.js': ['coverage']
+    },
+
      junitReporter: {
        outputFile: 'test-results.xml',
        suite: ''
-     }
+     },
+
+     coverageReporter: {
+      type : 'html',
+      dir : 'coverage/'
+    }
   });
 };

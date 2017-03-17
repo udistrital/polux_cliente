@@ -3,7 +3,7 @@
 describe('Controller: MateriasPosgradoPublicarAsignaturasCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('poluxApp'));
+  beforeEach(module('poluxClienteApp'));
 
   var MateriasPosgradoPublicarAsignaturasCtrl,
     scope;

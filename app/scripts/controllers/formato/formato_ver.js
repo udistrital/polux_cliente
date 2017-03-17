@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:FormatoVerCtrl
+ * @name poluxClienteApp.controller:FormatoVerCtrl
  * @description
  * # FormatoVerCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('FormatoVerCtrl', function(poluxRequest, $scope) {
     var ctrl = this;
     ctrl.request = poluxRequest;

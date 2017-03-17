@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:formato/vistaPreviaFormato
+ * @name poluxClienteApp.directive:formato/vistaPreviaFormato
  * @description
  * # formato/vistaPreviaFormato
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('vistaPreviaFormato', function() {
     return {
       restrict: 'E',

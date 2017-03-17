@@ -1,3 +1,11 @@
+/* NOTIFICATION*/
+
+.img-responsive{
+    max-width: 100px;
+    height: 80px;
+    background-color: #6C7A89;
+    margin: 1%
+}
 
 .notificacion_vista{
     color: #e74c3c;

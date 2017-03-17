@@ -2,22 +2,29 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:subirDocumento
+ * @name poluxClienteApp.directive:subirDocumento
  * @description
  * # subirDocumento
  */
+
+
+/*
+
 var isOnGitHub = true,
 url = 'http://localhost:9073/files';
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
 .config([
+
     '$httpProvider', 'fileUploadProvider',
     function ($httpProvider, fileUploadProvider) {
+
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
         fileUploadProvider.defaults.redirect = window.location.href.replace(
             /\/[^\/]*$/,
             '/cors/result.html?%s'
         );
         if (isOnGitHub) {
+
             // Demo settings:
             angular.extend(fileUploadProvider.defaults, {
                 // Enable image resizing, except for Android and Opera,
@@ -30,6 +37,7 @@ angular.module('poluxApp')
             });
 
         }
+
     }
 ])
   .directive('subirDocumento', function () {
@@ -94,3 +102,4 @@ angular.module('poluxApp')
       controllerAs:'d_subirDocumento'
     };
   });
+  */

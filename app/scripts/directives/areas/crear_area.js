@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:areas/crearArea
+ * @name poluxClienteApp.directive:areas/crearArea
  * @description
  * # areas/crearArea
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('crearArea', function (poluxRequest,cadenaRequest) {
     return {
       restrict: 'E',

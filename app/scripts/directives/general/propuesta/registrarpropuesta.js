@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:registrarPropuesta
+ * @name poluxClienteApp.directive:registrarPropuesta
  * @description
  * # registrarPropuesta
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('registrarPropuesta', function (academicaRequest,poluxRequest) {
     return {
       restrict: 'E',

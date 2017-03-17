@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:MateriasProfundizacionSolicitarAsignaturasCtrl
+ * @name poluxClienteApp.controller:MateriasProfundizacionSolicitarAsignaturasCtrl
  * @description
  * # MateriasProfundizacionSolicitarAsignaturasCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('MateriasProfundizacionSolicitarAsignaturasCtrl', function () {
     var ctrl = this;
 

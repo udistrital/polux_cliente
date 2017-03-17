@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxApp.controller:GeneralPropuestaCtrl
+ * @name poluxClienteApp.controller:GeneralPropuestaCtrl
  * @description
  * # GeneralPropuestaCtrl
- * Controller of the poluxApp
+ * Controller of the poluxClienteApp
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .controller('PropuestaCtrl', function (academicaRequest,poluxRequest) {
     var self=this;
     self.idAreas=[];

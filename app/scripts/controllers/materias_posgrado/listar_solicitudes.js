@@ -2,12 +2,12 @@
 
 /**
 * @ngdoc function
-* @name poluxApp.controller:MateriasPosgradoListarSolicitudesCtrl
+* @name poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
 * @description
 * # MateriasPosgradoListarSolicitudesCtrl
-* Controller of the poluxApp
+* Controller of the poluxClienteApp
 */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
 .controller('MateriasPosgradoListarSolicitudesCtrl', function (poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
   var ctrl = this;
   ctrl.periodo=[];

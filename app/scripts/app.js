@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name poluxApp
+ * @name poluxClienteApp
  * @description
- * # poluxApp
+ * # poluxClienteApp
  *
  * Main module of the application.
  */
 angular
-  .module('poluxApp', [
+  .module('poluxClienteApp', [
     'ngAnimate',
     'ngCookies',
     'ngResource',
@@ -27,22 +27,36 @@ angular
     'ui.grid.selection',
     'ui.grid.exporter',
     'ngStorage',
+    'ngWebSocket',
+    'angularMoment',
+    'ui.utils.masks',
     'poluxService',
     'academicaService',
     'cadenaService',
     'blueimp.fileupload',
     'poluxMidService',
     'pdf'
-
   ])
-  .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
-
-    $locationProvider.hashPrefix("");
-    $routeProvider
+    .run(function(amMoment) {
+      amMoment.changeLocale('es');
+    })
+    .config(['$locationProvider','$routeProvider', function($locationProvider, $routeProvider) {
+      $locationProvider.hashPrefix("");
+      $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
+      })
+      .when('/notificaciones', {
+        templateUrl: 'views/notificaciones.html',
+        controller: 'NotificacionesCtrl',
+        controllerAs: 'notificaciones'
+      })
+      .when('/about', {
+        templateUrl: 'views/about.html',
+        controller: 'AboutCtrl',
+        controllerAs: 'about'
       })
 
       .when('/materias_posgrado/listar_solicitudes', {
@@ -115,6 +129,7 @@ angular
         controller: 'DocenteTgsRevisionDocumentoCtrl',
         controllerAs: 'docenterevision'
       })
+
       .otherwise({
         redirectTo: '/'
       });

@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc service
- * @name poluxApp.poluxService
+ * @name poluxClienteApp.poluxService
  * @description
  * # poluxService
- * Factory in the poluxApp.
+ * Factory in the poluxClienteApp.
  */
 angular.module('poluxService',[])
   .factory('poluxRequest', function($http) {

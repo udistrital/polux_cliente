@@ -2,11 +2,11 @@
 
 /**
 * @ngdoc directive
-* @name poluxApp.directive:areas/mostrarArea
+* @name poluxClienteApp.directive:areas/mostrarArea
 * @description
 * # areas/mostrarArea
 */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
 .directive('mostrarArea', function (poluxRequest,academicaRequest) {
   return {
     restrict: 'E',

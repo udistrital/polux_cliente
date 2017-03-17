@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:materias/consultarSolicitudes
+ * @name poluxClienteApp.directive:materias/consultarSolicitudes
  * @description
  * # materias/consultarSolicitudes
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('consultarSolicitudes', function (poluxRequest, academicaRequest, $route) {
     return {
       restrict: 'E',

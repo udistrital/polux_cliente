@@ -3,7 +3,7 @@
 describe('Service: academicaService', function () {
 
   // load the service's module
-  beforeEach(module('poluxApp'));
+  beforeEach(module('poluxClienteApp'));
 
   // instantiate service
   var academicaService;

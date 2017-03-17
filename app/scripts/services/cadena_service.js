@@ -2,10 +2,10 @@
 
 /**
 * @ngdoc service
-* @name poluxApp.cadenaService
+* @name poluxClienteApp.cadenaService
 * @description
 * # cadenaService
-* Factory in the poluxApp.
+* Factory in the poluxClienteApp.
 */
 angular.module('cadenaService',[])
 .factory('cadenaRequest', function () {

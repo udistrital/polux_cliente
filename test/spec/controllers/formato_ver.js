@@ -3,7 +3,7 @@
 describe('Controller: FormatoVerCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('poluxApp'));
+  beforeEach(module('poluxClienteApp'));
 
   var FormatoVerCtrl,
     scope;

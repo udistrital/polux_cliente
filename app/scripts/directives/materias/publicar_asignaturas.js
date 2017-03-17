@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxApp.directive:materias/publicarAsignaturas
+ * @name poluxClienteApp.directive:materias/publicarAsignaturas
  * @description
  * # materias/publicarAsignaturas
  */
-angular.module('poluxApp')
+angular.module('poluxClienteApp')
   .directive('publicarAsignaturas', function (poluxRequest, academicaRequest) {
     return {
   restrict: 'E',
