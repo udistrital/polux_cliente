@@ -48,7 +48,6 @@ module.exports = function(config) {
       'bower_components/pdfjs-dist/build/pdf.worker.js',
       'bower_components/angular-pdf/dist/angular-pdf.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'bower_components/blueimp-file-upload/js/jquery.fileupload.js',
       // endbower
       'app/scripts/**/*.js',
       'test/mock/**/*.js',

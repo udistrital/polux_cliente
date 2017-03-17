@@ -33,7 +33,7 @@ angular
     'poluxService',
     'academicaService',
     'cadenaService',
-    'blueimp.fileupload',
+    //'blueimp.fileupload',
     'poluxMidService',
     'pdf'
   ])

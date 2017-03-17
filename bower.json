@@ -25,8 +25,7 @@
   "devDependencies": {
     "angular-mocks": "^1.4.0",
     "grunt-karma": "^2.0.0",
-    "karma-junit-reporter": "^1.2.0",
-    "blueimp-file-upload": "blueimp-file-upload-node#^9.17.0"
+    "karma-junit-reporter": "^1.2.0"
   },
   "appPath": "app",
   "moduleName": "poluxClienteApp",
