@@ -181,7 +181,7 @@ angular.module('poluxClienteApp')
         alert("Solicitudes aprobadas");
         console.log(response);
         //recargar datos
-      //  ctrl.buscarSolicitudes($scope.carrera);
+        ctrl.buscarSolicitudes($scope.carrera);
       });
     }, function() {
          ctrl.status = 'You cancelled the dialog.';
