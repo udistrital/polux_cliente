@@ -88,6 +88,38 @@ angular.module('poluxClienteApp')
     ctrl.gridApi= gridApi
   };
 
+  ctrl.solicitudes2 = function(){
+    console.log($scope.carrera);
+    if($scope.carrera){
+      ctrl.aprobadas=[];
+      ctrl.solsBase=[];
+
+      //buscar la solicitudes aprobadas y con Formalizacion:confirmado
+      var parametros=$.param({
+        query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+$scope.carrera+",Estado:aprobado,Formalizacion:confirmado"
+      });
+      poluxRequest.get("solicitud_materias",parametros).then(function(response){
+        console.log(response.data);
+        ctrl.aprobadas=response.data;
+      });
+
+      //banco de sols: Sols con estado!=rechazado, Sols con estado!=aprobado/aprobado con pago y Formalizacio:confirmado
+      var parametros=$.param({
+        query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+$scope.carrera+",Estado:aprobado,Formalizacion:confirmado"
+      });
+      poluxRequest.get("solicitud_materias",parametros).then(function(response){
+        console.log(response.data);
+        ctrl.aprobadas=response.data;
+      });
+
+    }
+
+  }
+
+  ctrl.solicitudes3 = function(){
+    console.log("Selección de admitidos 3");
+  }
+
   ctrl.allsQ = [];
   ctrl.rendimiento = 0;
   ctrl.economicas = 0;

@@ -34,6 +34,8 @@
       </div>
 
       <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
+      <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos 2</button>
+      <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos 3</button>
 
       <script type="text/ng-template" id="dialog.tmpl.html">
 
