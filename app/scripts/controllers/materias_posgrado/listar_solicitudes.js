@@ -10,20 +10,21 @@
 angular.module('poluxClienteApp')
 .controller('MateriasPosgradoListarSolicitudesCtrl', function (poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
   var ctrl = this;
-  ctrl.nintendo=[];
   ctrl.periodo=[];
   ctrl.carreras=[];
+  ctrl.otro=[];
 
   //uigrid
   ctrl.gridOptions = {};
   ctrl.gridOptions.columnDefs = [
-    { name: 'solicitud', displayName: 'Solicitud', width: "10%"  },
-    { name: 'fecha', displayName: 'Fecha', type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'', width: "10%"  },
+    { name: 'solicitud', displayName: 'Solicitud', width: "8%"  },
+    { name: 'fecha', displayName: 'Fecha', type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'', width: "8%"  },
     { name: 'estudiante', displayName: 'Código', width: "10%"  },
     { name: 'nombre', displayName: 'Nombre', width: "25%"  },
-    { name: 'promedio', displayName: 'Promedio', width: "15%"  },
-    { name: 'rendimiento', displayName: 'Rendimiento Académico', width: "15%"  },
-    { name: 'estado', displayName: 'Estado', width: "15%"  },
+    { name: 'promedio', displayName: 'Promedio', width: "8%"  },
+    { name: 'rendimiento', displayName: 'Rendimiento Académico', width: "17%"  },
+    { name: 'estado', displayName: 'Estado', width: "11%"  },
+    { name: 'formalizacion', displayName: 'Formalizacion', width: "13%"  }
   ];
 
 
@@ -56,32 +57,19 @@ angular.module('poluxClienteApp')
     }
   }
 
-  ctrl.buscarSolicitudesOpcionados = function(carrera){
+  ctrl.seleccionAdmitidos = function(sols, rta){
+    //Enviar las solicitudes y # Admitidos
+    $scope.rta3 ={
+      'NumAdmitidos' : rta,
+      'Solicitudes' : sols
+    };
+    console.log($scope.rta3);
 
-    var promise = new Promise(function (resolve, reject) {
-
-      ctrl.carrera=carrera;
-      $scope.carrera=carrera;
-      if(carrera){
-        ctrl.solsOpcionados=[];
-        var parametros=$.param({
-          query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera+",Estado:opcionado"
-        });
-        //buscar la solicitudes
-        poluxRequest.get("solicitud_materias",parametros).then(function(response){
-          angular.forEach(response.data, function(value) {
-            ctrl.buscarEstudianteTgOpcionados(value);
-          });
-          resolve(ctrl.solsOpcionados);
-        });
-
-      }
-
-      //console.log($scope.solsOpcionados);
-  })
-  //console.log(promise);
-  return promise
-
+    poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", $scope.rta3).then(function(response){
+      alert("Solicitudes aprobadas");
+      //recargar datos
+      ctrl.buscarSolicitudes($scope.carrera);
+    });
 
   }
 
@@ -105,7 +93,8 @@ angular.module('poluxClienteApp')
           "nombre": response2[0].NOMBRE,
           "promedio": response2[0].PROMEDIO,
           "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-          "estado": tg.Estado
+          "estado": tg.Estado,
+          "formalizacion": tg.Formalizacion
         };
         $scope.sols.push(solicitud);
       });
@@ -113,48 +102,33 @@ angular.module('poluxClienteApp')
     });
   }
 
-  ctrl.buscarPromedioEstudiante = function(tg, est){
-
+  ctrl.buscarEstudianteTgOpcionados = function(tg){
+    var parametros=$.param({
+      query:"IdTrabajoGrado:"+tg.IdTrabajoGrado.Id,
+      fields: "CodigoEstudiante"
+    });
+    //buscar la solicitud
+    poluxRequest.get("estudiante_tg",parametros).then(function(response){
       var parametros = {
-        'codigo' : est.data[0].CodigoEstudiante,
+        'codigo' : response.data[0].CodigoEstudiante,
         'ano' : 2014,
         'periodo' :1
       };
-
       academicaRequest.promedioEstudiante(parametros).then(function(response2){
-        console.log(response2);
-        ctrl.nintendo=response2[0];
-
-      });
-
-  };
-
-
-  ctrl.buscarEstudianteTgOpcionados = function(tg){
-    $scope.solsGuardadas=[];
-      var parametros=$.param({
-        query:"IdTrabajoGrado:"+tg.IdTrabajoGrado.Id,
-        fields: "CodigoEstudiante"
-      });
-      //buscar la solicitud
-      poluxRequest.get("estudiante_tg",parametros).then(function(response){
-        var rta=ctrl.buscarPromedioEstudiante(tg, response);
-        console.log(rta);
-        /*var solicitud = {
+        var solicitud = {
           "solicitud": tg.Id,
           "fecha": tg.Fecha,
-          "estudiante": est.data[0].CodigoEstudiante.toString(),
+          "estudiante": response.data[0].CodigoEstudiante.toString(),
           "nombre": response2[0].NOMBRE,
           "promedio": response2[0].PROMEDIO,
           "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
           "estado": tg.Estado
-        };*/
-
-
-        //ctrl.solsOpcionados.push(sol);
+        };
+        $scope.solsOpcionados.push(solicitud);
       });
 
-  };
+    });
+  }
 
   ctrl.gridOptions.onRegisterApi = function (gridApi) {
     ctrl.gridApi= gridApi
@@ -167,11 +141,9 @@ angular.module('poluxClienteApp')
       ctrl.aprobadasPago=[];
       ctrl.solsBase=[];
 
-      //var valores = ["aprobado","aprobado con pago"];
-      //var valores_json=JSON.stringify(valores)
+      /*Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
+        Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente*/
 
-      //Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
-      //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
       poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado").then(function(response){
         angular.forEach(response.data, function(value) {
           value.Estado='rechazado'
@@ -223,7 +195,7 @@ angular.module('poluxClienteApp')
             poluxRequest.get("solicitud_materias/SolicitudesPago").then(function(response){
               ctrl.aprobadasPago=response.data;
               if(ctrl.aprobadasPago!=null){
-                totalSolsPago=0;
+                totalSolsPago=ctrl.aprobadasPago.length;
               }
 
               var cuposDisponiblesPago=0;
@@ -235,56 +207,98 @@ angular.module('poluxClienteApp')
               }
 
               //buscar las solicitudes con estado:opcionado
-              ctrl.buscarSolicitudesOpcionados($scope.carrera).then(function (rta) {
-                console.log("promise then");
-                console.log(rta);
-                console.log(rta.length);
+              if($scope.carrera){
 
-
-                //Enviar las solicitudes y # Admitidos
-                ctrl.rta ={
-                  'cupos_excelencia' : cuposDisponibles,
-                  'cupos_adicionales' : cuposDisponiblesPago
-                };
-
-                ctrl.rta3 ={
-                  'NumAdmitidos' : ctrl.rta,
-                  'Solicitudes' : rta
-                };
-
-                poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta3).then(function(response){
-                  alert("Solicitudes aprobadas");
-                  console.log(response);
-
-                  //recargar datos
+                var parametros=$.param({
+                  query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+$scope.carrera+",Estado:opcionado"
                 });
-              })
-              .catch(err => console.log(err.message));
+                //buscar la solicitudes
+                $scope.solsOpcionados=[];
+                poluxRequest.get("solicitud_materias",parametros).then(function(responseSolicitudes){
 
+                  angular.forEach(responseSolicitudes.data, function(value) {
+                    var parametros=$.param({
+                      query:"IdTrabajoGrado:"+value.IdTrabajoGrado.Id,
+                      fields: "CodigoEstudiante"
+                    });
+                    //buscar la solicitud
+                    poluxRequest.get("estudiante_tg",parametros).then(function(response){
 
+                      var parametros = {
+                        'codigo' : response.data[0].CodigoEstudiante,
+                        'ano' : 2014,
+                        'periodo' :1
+                      };
+                      academicaRequest.promedioEstudiante(parametros).then(function(response2){
+                        var solicitud = {
+                          "solicitud": value.Id,
+                          "fecha": value.Fecha,
+                          "estudiante": response.data[0].CodigoEstudiante.toString(),
+                          "nombre": response2[0].NOMBRE,
+                          "promedio": response2[0].PROMEDIO,
+                          "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+                          "estado": value.Estado
+                        };
+
+                        ctrl.agregar($scope.solsOpcionados, solicitud);
+
+                        if($scope.solsOpcionados.length==responseSolicitudes.data.length){
+                          ctrl.rta ={
+                            'cupos_excelencia' : cuposDisponibles,
+                            'cupos_adicionales' : cuposDisponiblesPago
+                          };
+                          ctrl.seleccionAdmitidos($scope.solsOpcionados, ctrl.rta);
+                        }
+                      });
+                    });
+                  });
+
+                });
+
+              }
 
             });
-
           });
         }
       });
 
-
     }
-    console.log($scope.rta3);
-    /*
-    poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta3).then(function(response){
-      alert("Solicitudes aprobadas");
-      console.log($scope.solsOpcionados);
-      console.log(response);
 
-      //recargar datos
-    });*/
+  }
 
+  ctrl.agregar = function(arreglo, solicitud){
+    arreglo.push(solicitud);
+    console.log(arreglo);
   }
 
   ctrl.solicitudes3 = function(){
     console.log("Selección de admitidos 3");
+    //Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
+    //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
+    poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado").then(function(response){
+      angular.forEach(response.data, function(value) {
+        value.Estado='rechazado'
+        value.Formalizacion='rechazado';
+        poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
+          console.log("response.data confirmado: " + response.data);
+        });
+      });
+    });
+
+    /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
+    poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado con pago").then(function(response){
+      angular.forEach(response.data, function(value) {
+        value.Estado='rechazado'
+        value.Formalizacion='rechazado';
+        poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
+          console.log("response.data confirmado: " + response.data);
+          alert("Solicitudes aprobadas");
+          //recargar datos
+          ctrl.buscarSolicitudes($scope.carrera);
+        });
+      });
+    });
+
   }
 
   ctrl.allsQ = [];
@@ -388,7 +402,5 @@ angular.module('poluxClienteApp')
        }
     );
   };
-
-
 
 });
