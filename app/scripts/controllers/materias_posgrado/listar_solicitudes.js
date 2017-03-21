@@ -143,8 +143,10 @@ angular.module('poluxClienteApp')
 
       /*Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
         Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente*/
-
-      poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado").then(function(response){
+        var parametros=$.param({
+          query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado,Formalizacion:pendiente"
+        });
+      poluxRequest.get("solicitud_materias", parametros).then(function(response){
         angular.forEach(response.data, function(value) {
           value.Estado='rechazado'
           value.Formalizacion='rechazado';
@@ -155,7 +157,10 @@ angular.module('poluxClienteApp')
       });
 
       /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
-      poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado con pago").then(function(response){
+      var parametros=$.param({
+        query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado con pago,Formalizacion:pendiente"
+      });
+      poluxRequest.get("solicitud_materias", parametros).then(function(response){
         angular.forEach(response.data, function(value) {
           value.Estado='rechazado'
           value.Formalizacion='rechazado';
@@ -177,7 +182,11 @@ angular.module('poluxClienteApp')
 
           //sols aprobadas y con formalizacion:confirmado
           var totalSols=0;
-          poluxRequest.get("solicitud_materias/Solicitudes").then(function(response){
+
+          var parametros=$.param({
+            query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado,Formalizacion:confirmado"
+          });
+          poluxRequest.get("solicitud_materias", parametros).then(function(response){
             ctrl.aprobadas=response.data;
             if(ctrl.aprobadas!=null){
               totalSols=ctrl.aprobadas.length;
@@ -192,7 +201,10 @@ angular.module('poluxClienteApp')
 
             //sols aprobadas con pago y con formalizacion:confirmado
             var totalSolsPago=0;
-            poluxRequest.get("solicitud_materias/SolicitudesPago").then(function(response){
+            var parametros=$.param({
+              query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado con pago,Formalizacion:confirmado"
+            });
+            poluxRequest.get("solicitud_materias", parametros).then(function(response){
               ctrl.aprobadasPago=response.data;
               if(ctrl.aprobadasPago!=null){
                 totalSolsPago=ctrl.aprobadasPago.length;
@@ -275,7 +287,12 @@ angular.module('poluxClienteApp')
     console.log("Selección de admitidos 3");
     //Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
     //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
-    poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado").then(function(response){
+
+    var parametros=$.param({
+      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+"Estado:aprobado,Formalizacion:pendiente"
+    });
+
+    poluxRequest.get("solicitud_materias", parametros).then(function(response){
       angular.forEach(response.data, function(value) {
         value.Estado='rechazado'
         value.Formalizacion='rechazado';
@@ -286,7 +303,12 @@ angular.module('poluxClienteApp')
     });
 
     /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
-    poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado con pago").then(function(response){
+
+    var parametros=$.param({
+      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+"Estado:aprobado con pago,Formalizacion:pendiente"
+    });
+
+    poluxRequest.get("solicitud_materias", parametros).then(function(response){
       angular.forEach(response.data, function(value) {
         value.Estado='rechazado'
         value.Formalizacion='rechazado';
