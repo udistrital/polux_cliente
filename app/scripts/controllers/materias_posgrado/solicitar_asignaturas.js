@@ -12,7 +12,7 @@ angular.module('poluxClienteApp')
     var ctrl = this;
 
     ctrl.estudiante={
-      "Codigo": "20102020070",
+      "Codigo": "20102020009",
       "Nombre": "PARRA FUENTES FABIO ANDRES",
       "Tipo": "POSGRADO"
     };

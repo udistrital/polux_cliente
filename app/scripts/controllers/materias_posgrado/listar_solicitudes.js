@@ -10,6 +10,7 @@
 angular.module('poluxClienteApp')
 .controller('MateriasPosgradoListarSolicitudesCtrl', function (poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
   var ctrl = this;
+  ctrl.nintendo=[];
   ctrl.periodo=[];
   ctrl.carreras=[];
 
@@ -52,9 +53,37 @@ angular.module('poluxClienteApp')
         });
       });
       ctrl.gridOptions.data = $scope.sols;
-
     }
-  };
+  }
+
+  ctrl.buscarSolicitudesOpcionados = function(carrera){
+
+    var promise = new Promise(function (resolve, reject) {
+
+      ctrl.carrera=carrera;
+      $scope.carrera=carrera;
+      if(carrera){
+        ctrl.solsOpcionados=[];
+        var parametros=$.param({
+          query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera+",Estado:opcionado"
+        });
+        //buscar la solicitudes
+        poluxRequest.get("solicitud_materias",parametros).then(function(response){
+          angular.forEach(response.data, function(value) {
+            ctrl.buscarEstudianteTgOpcionados(value);
+          });
+          resolve(ctrl.solsOpcionados);
+        });
+
+      }
+
+      //console.log($scope.solsOpcionados);
+  })
+  //console.log(promise);
+  return promise
+
+
+  }
 
   ctrl.buscarEstudianteTg = function(tg){
     var parametros=$.param({
@@ -84,35 +113,173 @@ angular.module('poluxClienteApp')
     });
   }
 
+  ctrl.buscarPromedioEstudiante = function(tg, est){
+
+      var parametros = {
+        'codigo' : est.data[0].CodigoEstudiante,
+        'ano' : 2014,
+        'periodo' :1
+      };
+
+      academicaRequest.promedioEstudiante(parametros).then(function(response2){
+        console.log(response2);
+        ctrl.nintendo=response2[0];
+
+      });
+
+  };
+
+
+  ctrl.buscarEstudianteTgOpcionados = function(tg){
+    $scope.solsGuardadas=[];
+      var parametros=$.param({
+        query:"IdTrabajoGrado:"+tg.IdTrabajoGrado.Id,
+        fields: "CodigoEstudiante"
+      });
+      //buscar la solicitud
+      poluxRequest.get("estudiante_tg",parametros).then(function(response){
+        var rta=ctrl.buscarPromedioEstudiante(tg, response);
+        console.log(rta);
+        /*var solicitud = {
+          "solicitud": tg.Id,
+          "fecha": tg.Fecha,
+          "estudiante": est.data[0].CodigoEstudiante.toString(),
+          "nombre": response2[0].NOMBRE,
+          "promedio": response2[0].PROMEDIO,
+          "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+          "estado": tg.Estado
+        };*/
+
+
+        //ctrl.solsOpcionados.push(sol);
+      });
+
+  };
+
   ctrl.gridOptions.onRegisterApi = function (gridApi) {
     ctrl.gridApi= gridApi
   };
 
   ctrl.solicitudes2 = function(){
-    console.log($scope.carrera);
+
     if($scope.carrera){
       ctrl.aprobadas=[];
+      ctrl.aprobadasPago=[];
       ctrl.solsBase=[];
 
-      //buscar la solicitudes aprobadas y con Formalizacion:confirmado
-      var parametros=$.param({
-        query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+$scope.carrera+",Estado:aprobado,Formalizacion:confirmado"
-      });
-      poluxRequest.get("solicitud_materias",parametros).then(function(response){
-        console.log(response.data);
-        ctrl.aprobadas=response.data;
+      //var valores = ["aprobado","aprobado con pago"];
+      //var valores_json=JSON.stringify(valores)
+
+      //Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
+      //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
+      poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado").then(function(response){
+        angular.forEach(response.data, function(value) {
+          value.Estado='rechazado'
+          value.Formalizacion='rechazado';
+          poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
+            console.log("response.data confirmado: " + response.data);
+          });
+        });
       });
 
-      //banco de sols: Sols con estado!=rechazado, Sols con estado!=aprobado/aprobado con pago y Formalizacio:confirmado
+      /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
+      poluxRequest.get("solicitud_materias/FormalizacionesPendientes/aprobado con pago").then(function(response){
+        angular.forEach(response.data, function(value) {
+          value.Estado='rechazado'
+          value.Formalizacion='rechazado';
+          poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
+            console.log("response.data confirmado: " + response.data);
+          });
+        });
+      });
+
+      //obtener # de cupos
       var parametros=$.param({
-        query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+$scope.carrera+",Estado:aprobado,Formalizacion:confirmado"
+        query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
       });
-      poluxRequest.get("solicitud_materias",parametros).then(function(response){
-        console.log(response.data);
-        ctrl.aprobadas=response.data;
+      poluxRequest.get("carrera_elegible",parametros).then(function(response){
+
+        if(response.data[0].CuposExcelencia>0 && response.data[0].CuposAdicionales>0){
+          $scope.cupos_excelencia_ingresado=response.data[0].CuposExcelencia;
+          $scope.cupos_adicionales_ingresado=response.data[0].CuposAdicionales;
+
+          //sols aprobadas y con formalizacion:confirmado
+          var totalSols=0;
+          poluxRequest.get("solicitud_materias/Solicitudes").then(function(response){
+            ctrl.aprobadas=response.data;
+            if(ctrl.aprobadas!=null){
+              totalSols=ctrl.aprobadas.length;
+            }
+            var cuposDisponibles=0;
+            if($scope.cupos_excelencia_ingresado!= totalSols){
+              cuposDisponibles=$scope.cupos_excelencia_ingresado-totalSols;
+              console.log("HAY más cupos, Total:" + cuposDisponibles);
+            }else{
+              console.log("No hay más cupos");
+            }
+
+            //sols aprobadas con pago y con formalizacion:confirmado
+            var totalSolsPago=0;
+            poluxRequest.get("solicitud_materias/SolicitudesPago").then(function(response){
+              ctrl.aprobadasPago=response.data;
+              if(ctrl.aprobadasPago!=null){
+                totalSolsPago=0;
+              }
+
+              var cuposDisponiblesPago=0;
+              if($scope.cupos_adicionales_ingresado!= totalSolsPago){
+                cuposDisponiblesPago=$scope.cupos_adicionales_ingresado-totalSolsPago;
+                console.log("HAY más cupos, Total:" + cuposDisponiblesPago);
+              }else{
+                console.log("No hay más cupos");
+              }
+
+              //buscar las solicitudes con estado:opcionado
+              ctrl.buscarSolicitudesOpcionados($scope.carrera).then(function (rta) {
+                console.log("promise then");
+                console.log(rta);
+                console.log(rta.length);
+
+
+                //Enviar las solicitudes y # Admitidos
+                ctrl.rta ={
+                  'cupos_excelencia' : cuposDisponibles,
+                  'cupos_adicionales' : cuposDisponiblesPago
+                };
+
+                ctrl.rta3 ={
+                  'NumAdmitidos' : ctrl.rta,
+                  'Solicitudes' : rta
+                };
+
+                poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta3).then(function(response){
+                  alert("Solicitudes aprobadas");
+                  console.log(response);
+
+                  //recargar datos
+                });
+              })
+              .catch(err => console.log(err.message));
+
+
+
+            });
+
+          });
+        }
       });
+
 
     }
+    console.log($scope.rta3);
+    /*
+    poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta3).then(function(response){
+      alert("Solicitudes aprobadas");
+      console.log($scope.solsOpcionados);
+      console.log(response);
+
+      //recargar datos
+    });*/
 
   }
 
@@ -188,6 +355,7 @@ angular.module('poluxClienteApp')
         'NumAdmitidos' : ctrl.rta,
         'Solicitudes' : $scope.sols
       };
+      console.log($scope.sols);
 
       //Guardar el # de cupos ingresados
       /* buscar carrera en carrera_elegible*/

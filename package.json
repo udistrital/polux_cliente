@@ -45,6 +45,7 @@
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
+    "angular-async-await": "^1.1.2",
     "angular-pdf": "^1.5.1",
     "blueimp-file-upload": "^9.17.0",
     "blueimp-file-upload-node": "^2.1.0"
