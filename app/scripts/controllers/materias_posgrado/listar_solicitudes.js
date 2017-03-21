@@ -233,7 +233,7 @@ angular.module('poluxClienteApp')
                       query:"IdTrabajoGrado:"+value.IdTrabajoGrado.Id,
                       fields: "CodigoEstudiante"
                     });
-                    //buscar la solicitud
+              solicitudes3      //buscar la solicitud
                     poluxRequest.get("estudiante_tg",parametros).then(function(response){
 
                       var parametros = {
@@ -289,7 +289,7 @@ angular.module('poluxClienteApp')
     //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
 
     var parametros=$.param({
-      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+"Estado:aprobado,Formalizacion:pendiente"
+      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado,Formalizacion:pendiente"
     });
 
     poluxRequest.get("solicitud_materias", parametros).then(function(response){
@@ -305,7 +305,7 @@ angular.module('poluxClienteApp')
     /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
 
     var parametros=$.param({
-      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+"Estado:aprobado con pago,Formalizacion:pendiente"
+      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado con pago,Formalizacion:pendiente"
     });
 
     poluxRequest.get("solicitud_materias", parametros).then(function(response){
@@ -320,6 +320,10 @@ angular.module('poluxClienteApp')
         });
       });
     });
+
+    alert("Se cancelan las solicitudes aprobadas/aprobadas con pago que no estén formalizadas");
+    //recargar datos
+    ctrl.buscarSolicitudes($scope.carrera);
 
   }
 
@@ -413,7 +417,6 @@ angular.module('poluxClienteApp')
 
       //Enviar las solicitudes y # Admitidos
       poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta2).then(function(response){
-
         alert("Solicitudes aprobadas");
         console.log(response);
         //recargar datos
