@@ -15,7 +15,7 @@
               </label>
             </div>
             <div class="col-md-7">
-              <input class="form-control" list="testList" type="" ng-model="SelectedFormat"/>
+              <input class="form-control" list="testList" type="" ng-model="SelectedFormat" ng-change="formatoEditar.refresh_format_view()"/>
                 <datalist id="testList" >
                     <option ng-repeat="formato in formatoEditar.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
                 </datalist>
@@ -25,11 +25,11 @@
       </div>
       <div class="form-group">
         <label>Nombre del formato</label>
-        <input type="text" class="form-control" ng-model="nombre_formato" name="nombre_evaluacion" id="nombre_evaluacion" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
+        <input type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Nombre" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
       </div>
       <div class="form-group">
         <label>Introducción del formato</label>
-        <textarea type="text" class="form-control" ng-model="introduccion_formato" name="introducción_evaluacion" id="introducción_evaluacion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
+        <textarea type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Introduccion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
       </div>
       <div class="row">
         <div class="col-lg-3" ng-show="mostrar_preguntas">
@@ -54,4 +54,5 @@
 </div>
 <div class="col-lg-6">
   <vista-previa-formato formato="SelectedFormat" />
+  <pre> {{formatoEditar.formato_vista | json}}</pre>
 </div>

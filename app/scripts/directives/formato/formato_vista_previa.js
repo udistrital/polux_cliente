@@ -29,7 +29,6 @@ angular.module('poluxClienteApp')
           poluxRequest.get("tr_formato/" + id,'')
             .then(function(response) {
               $scope.formato_vista = response.data;
-              console.log($scope.formato_vista);
             });
         };
       },

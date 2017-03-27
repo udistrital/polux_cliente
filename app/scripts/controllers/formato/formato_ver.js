@@ -18,7 +18,7 @@ angular.module('poluxClienteApp')
       })).then(function(response) {
         ctrl.formatos = response.data;
         console.log(ctrl.formatos);
-      })
+      });
     };
     ctrl.get_all_format();
   });
