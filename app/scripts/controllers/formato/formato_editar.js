@@ -15,20 +15,38 @@ angular.module('poluxClienteApp')
 
     var ctrl = this;
     ctrl.request = poluxRequest;
-    ctrl.formatos = [];
+    ctrl.formatos = null;
     ctrl.formato_vista = null;
     $scope.SelectedFormat = null;
     $scope.copy_format = null;
-    //cargar todos los formatos de la base de datos
+    $scope.preguntas = null;
+    $scope.respuestas = null;
+
     ctrl.get_all_format = function() {
+      //cargar todos los formatos
       poluxRequest.get("formato", $.param({
         limit: "0"
       })).then(function(response) {
         ctrl.formatos = response.data;
+      });
 
+      //cargar todas las preguntas
+      poluxRequest.get("pregunta", $.param({
+        limit: "0"
+      })).then(function(response) {
+        $scope.preguntas = response.data;
+      });
+
+      //cargar todas las respuesta
+      poluxRequest.get("respuesta", $.param({
+        limit: "0"
+      })).then(function(response) {
+        $scope.respuestas = response.data;
       });
     };
+
     ctrl.get_all_format();
+
     ctrl.cargar_en_uigrid = function(data) {
       console.log(data);
       angular.forEach(data.TrPreguntas, function(fila) {
@@ -46,7 +64,10 @@ angular.module('poluxClienteApp')
           angular.forEach(fila.Respuestas, function(respuesta) {
             $scope.gridOptions.data.push({
               Orden: respuesta.Orden,
-              IdPregunta: {id:respuesta.IdRespuesta.Id, Enunciado: respuesta.IdRespuesta.Descripcion},
+              IdPregunta: {
+                id: respuesta.IdRespuesta.Id,
+                Enunciado: respuesta.IdRespuesta.Descripcion
+              },
               Peso: respuesta.Valoracion,
               Tipo: respuesta.Tipo,
               opcion: '',
@@ -68,6 +89,10 @@ angular.module('poluxClienteApp')
         });
     };
 
+
+
+
+    //Gestion de ui-grid
     $scope.evaluacion = {};
     $scope.id_formato = 0;
     $scope.mostrar_preguntas = false;
