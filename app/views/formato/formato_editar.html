@@ -5,53 +5,105 @@
     </div>
     <div class="panel-body">
       <div class="panel panel-default">
-          <div class="panel-heading">
-              Buscar Formatos
-          </div>
-          <div class="panel-body">
-            <div class="col-md-5">
-              <label>
+        <div class="panel-heading">
+          Buscar Formatos
+        </div>
+        <div class="panel-body">
+          <div class="col-md-5">
+            <label>
                 Seleccione el Formato
               </label>
-            </div>
-            <div class="col-md-7">
-              <input class="form-control" list="testList" type="" ng-model="SelectedFormat"/>
-                <datalist id="testList" >
+          </div>
+          <div class="col-md-7">
+            <input class="form-control" list="testList" type="" ng-model="SelectedFormat" ng-change="formatoEditar.refresh_format_view()" />
+            <datalist id="testList">
                     <option ng-repeat="formato in formatoEditar.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
                 </datalist>
-                <br>
-            </div>
+            <br>
           </div>
+        </div>
       </div>
+
       <div class="form-group">
         <label>Nombre del formato</label>
-        <input type="text" class="form-control" ng-model="nombre_formato" name="nombre_evaluacion" id="nombre_evaluacion" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
+        <input type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Nombre" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
       </div>
       <div class="form-group">
         <label>Introducción del formato</label>
-        <textarea type="text" class="form-control" ng-model="introduccion_formato" name="introducción_evaluacion" id="introducción_evaluacion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
+        <textarea type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Introduccion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
       </div>
+      <label>Añadir Pregunta</label>
       <div class="row">
-        <div class="col-lg-3" ng-show="mostrar_preguntas">
-          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="nueva_pregunta()"> Nueva Pregunta</button>
+        <div class="col-md-9">
+          <input class="form-control" list="testList1" type="" ng-model="pSeleccion" />
+          <datalist id="testList1">
+              <option ng-repeat="pregunta in preguntas" value="{{pregunta.Enunciado}}" ></option>
+          </datalist>
+          <br>
         </div>
-        <div class="col-lg-3" ng-show="mostrar_preguntas">
-          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="nueva_opcion()">Nueva Opción</button>
-        </div>
-        <div class="col-lg-3" ng-show="mostrar_preguntas">
-          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="borrar()">Borrar</button>
-        </div>
-        <div class="col-lg-3">
-          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="guardar()">Guardar</button>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_pregunta()"> + Pregunta</button>
         </div>
       </div>
-      <br>
-      <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">
+      <label>Añadir Opcion</label>
+      <div class="row">
+        <div class="col-md-9">
+          <input class="form-control" list="testList2" type="" ng-model="rSeleccion" />
+          <datalist id="testList2">
+              <option ng-repeat="respuesta in respuestas" value="{{respuesta.Descripcion}}" ></option>
+          </datalist>
+          <br>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_opcion()"> + Opción</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="col-lg-6">
+  <div class="panel-body">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Buscar Formatos
+      </div>
+      <div class="panel-body">
+        <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="borrar()">Borrar</button>
+          </div>
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="guardar()">Guardar</button>
+          </div>
+          <div class="col-lg-3">
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal"> Vista Previa</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Vista Previa</h4>
+      </div>
+      <div class="modal-body">
+        <vista-previa-formato formato="SelectedFormat"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
 
   </div>
-</div>
-<div class="col-lg-6">
-  <vista-previa-formato formato="SelectedFormat" />
 </div>

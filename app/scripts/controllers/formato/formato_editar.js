@@ -1,5 +1,8 @@
 'use strict';
 
+function fnClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
 /**
  * @ngdoc function
  * @name poluxClienteApp.controller:FormatoEditarCtrl
@@ -12,53 +15,78 @@ angular.module('poluxClienteApp')
 
     var ctrl = this;
     ctrl.request = poluxRequest;
-    ctrl.formatos = [];
-    //cargar todos los formatos de la base de datos
+    ctrl.formatos = null;
+    ctrl.formato_vista = null;
+    $scope.SelectedFormat = null;
+    $scope.copy_format = null;
+    $scope.preguntas = null;
+    $scope.respuestas = null;
+
     ctrl.get_all_format = function() {
-      poluxRequest.get("formato", "").then(function(response) {
+      //cargar todos los formatos
+      poluxRequest.get("formato", $.param({
+        limit: "0"
+      })).then(function(response) {
         ctrl.formatos = response.data;
-        console.log(ctrl.formatos);
-      })
+      });
+
+      //cargar todas las preguntas
+      poluxRequest.get("pregunta", $.param({
+        limit: "0"
+      })).then(function(response) {
+        $scope.preguntas = response.data;
+      });
+
+      //cargar todas las respuesta
+      poluxRequest.get("respuesta", $.param({
+        limit: "0"
+      })).then(function(response) {
+        $scope.respuestas = response.data;
+      });
     };
+
     ctrl.get_all_format();
 
-    $scope.refresh_format_view = function(id) {
-      $scope.respuestas_vista = [];
-      poluxRequest.get("formato", $.param({
-        query: "Id: " + id
-      })).then(function(response) {
-        $scope.formato_vista = response.data[0];
-        console.log("formato: ");
-        console.log($scope.formato_vista);
-      });
-      poluxRequest.get("pregunta_formato", $.param({
-        query: "IdFormato:" + id,
-        fields: "IdPregunta,Tipo,Valoracion,Orden",
-        sortby: "Orden",
-        order: "asc"
-      })).then(function(response) {
-        $scope.preguntas_vista = response.data;
-        console.log("preguntas: ");
-        console.log($scope.preguntas_vista);
-        $scope.respuestas_vista = [];
-        for (var i = 0; i < $scope.preguntas_vista.length; i++) {
-          if ($scope.preguntas_vista[i].Tipo.substring(0, 7) === "cerrado"){
-            $scope.respuesta_temp = [];
-            poluxRequest.get("respuesta_formato",
-              $.param({
-                query: "IdPreguntaFormato.IdPregunta.Id:" +
-                        $scope.preguntas_vista[i].IdPregunta.Id,
-                sortby: "Orden",
-                order: "asc"
-              })).then(function(response) {
-                $scope.respuesta_temp = response.data;
-                $scope.respuestas_vista.push($scope.respuesta_temp);
+    ctrl.cargar_en_uigrid = function(data) {
+      console.log(data);
+      angular.forEach(data.TrPreguntas, function(fila) {
+        console.log(fila);
+        $scope.gridOptions.data.push({
+          Orden: fila.Pregunta.Orden,
+          IdPregunta: fila.Pregunta.IdPregunta,
+          Peso: fila.Pregunta.Valoracion,
+          Tipo: fila.Pregunta.Tipo,
+          opcion: '',
+          $$treeLevel: 0,
+          opciones: []
+        });
+        if (fila.Respuestas.length !== 0) {
+          angular.forEach(fila.Respuestas, function(respuesta) {
+            $scope.gridOptions.data.push({
+              Orden: respuesta.Orden,
+              IdPregunta: {
+                id: respuesta.IdRespuesta.Id,
+                Enunciado: respuesta.IdRespuesta.Descripcion
+              },
+              Peso: respuesta.Valoracion,
+              Tipo: respuesta.Tipo,
+              opcion: '',
+              $$treeLevel: 1,
+              opciones: []
             });
-            console.log($scope.respuestas_vista);
-          }
+          });
         }
       });
-
+    };
+    ctrl.refresh_format_view = function() {
+      $scope.gridOptions.data = [];
+      console.log($scope.SelectedFormat);
+      poluxRequest.get("tr_formato/" + $scope.SelectedFormat, '')
+        .then(function(response) {
+          ctrl.formato_vista = response.data;
+          $scope.copy_format = fnClone(response.data);
+          ctrl.cargar_en_uigrid(ctrl.formato_vista);
+        });
     };
 
 
@@ -86,7 +114,7 @@ angular.module('poluxClienteApp')
         cellClass: 'aligncenter',
         displayName: 'ORDEN'
       }, {
-        field: 'Enunciado',
+        field: 'IdPregunta.Enunciado',
         width: '50%',
         enableCellEdit: true,
         enableSorting: false,
@@ -114,10 +142,10 @@ angular.module('poluxClienteApp')
           id: 'cerrado_multiple',
           tipo: 'Cerrada Multiple'
         }, {
-          id: 'abierta',
+          id: 'abierto',
           tipo: 'Abierta'
         }, {
-          id: 'numerica',
+          id: 'calificado',
           tipo: 'Numérica'
         }]
       }],
@@ -128,7 +156,6 @@ angular.module('poluxClienteApp')
           return false;
         };
       },
-
 
       onRegisterApi: function(gridApi) {
         $scope.gridApi = gridApi;
@@ -150,68 +177,92 @@ angular.module('poluxClienteApp')
       }
     }
 
-    $scope.nueva_opcion = function() {
-      var seleccion = $scope.gridApi.selection.getSelectedRows();
-      var pos = 0;
-      if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
-        var objeto = null;
-        for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-          if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey &&
-            ($scope.gridOptions.data[i].Tipo.substring(0, 7) === 'cerrado')) {
-            pos = i + 1;
-            objeto = {
-              Orden: pos,
-              Enunciado: "Ingrese Opcion ...",
-              Peso: "0",
-              $$treeLevel: 1,
-              padre: seleccion[0].$$hashKey
-            };
-            $scope.gridOptions.data[i].opciones.unshift(objeto);
-            $scope.gridOptions.data.splice(pos, 0, objeto);
-            console.log(objeto);
-            console.log($scope.gridOptions.data[i]);
-
+    $scope.anadir_opcion = function() {
+      if ($scope.rSeleccion !== '') {
+        var seleccion = $scope.gridApi.selection.getSelectedRows();
+        var pos = 0;
+        var respuesta = null;
+        for (var i = 0; i < $scope.respuestas.length; i++) {
+          if ($scope.respuestas[i].Descripcion === $scope.rSeleccion) {
+            respuesta = {
+              Id: $scope.respuestas[i].Id,
+              Enunciado: $scope.respuestas[i].Descripcion
+            }
           }
         }
-      } else {
-
+        if (respuesta === null) {
+          respuesta = {
+            Enunciado: $scope.rSeleccion
+          }
+        }
+        if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
+          var objeto = null;
+          for (var i = 0; i < $scope.gridOptions.data.length; i++) {
+            if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey &&
+              ($scope.gridOptions.data[i].Tipo.substring(0, 7) === 'cerrado')) {
+              pos = i + 1;
+              objeto = {
+                Orden: pos,
+                IdPregunta: respuesta,
+                Peso: "0",
+                $$treeLevel: 1,
+                padre: seleccion[0].$$hashKey
+              };
+              $scope.gridOptions.data[i].opciones.unshift(objeto);
+              $scope.gridOptions.data.splice(pos, 0, objeto);
+            }
+          }
+        }
+        $scope.ajustar_id();
+        $scope.rSeleccion = '';
       }
-      $scope.ajustar_id();
     }
-
-    $scope.nueva_pregunta = function() {
-
-      var pos = 0;
-      var seleccion = $scope.gridApi.selection.getSelectedRows();
-      if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
-        var objeto = null;
-        for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-          if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey) {
-            pos = i;
-            objeto = {
-              Orden: i,
-              Enunciado: "Ingrese el enunciado ...",
-              Peso: "0",
-              Tipo: "Seleccione ...",
-              opcion: '',
-              $$treeLevel: 0,
-              opciones: []
-            };
+    $scope.anadir_pregunta = function() {
+      if ($scope.pSeleccion !== '') {
+        var pos = 0;
+        var pregunta = null;
+        for (var i = 0; i < $scope.preguntas.length; i++) {
+          if ($scope.preguntas[i].Enunciado === $scope.pSeleccion) {
+            pregunta = $scope.preguntas[i];
           }
         }
-        $scope.gridOptions.data.splice(pos, 0, objeto);
-      } else {
-        $scope.gridOptions.data.push({
-          Orden: 1,
-          Enunciado: "Ingrese el enunciado ...",
-          Peso: "0",
-          Tipo: "Seleccione ...",
-          opcion: '',
-          $$treeLevel: 0,
-          opciones: []
-        });
+        if (pregunta === null) {
+          pregunta = {
+            Enunciado: $scope.pSeleccion
+          };
+        }
+        var seleccion = $scope.gridApi.selection.getSelectedRows();
+        if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
+          var objeto = null;
+          for (var i = 0; i < $scope.gridOptions.data.length; i++) {
+            if ($scope.gridOptions.data[i].$$hashKey === seleccion[0].$$hashKey) {
+              pos = i;
+              objeto = {
+                Orden: i,
+                IdPregunta: pregunta,
+                Peso: "0",
+                Tipo: "Seleccione ...",
+                opcion: '',
+                $$treeLevel: 0,
+                opciones: []
+              };
+            }
+          }
+          $scope.gridOptions.data.splice(pos, 0, objeto);
+        } else {
+          $scope.gridOptions.data.push({
+            Orden: 1,
+            IdPregunta: pregunta,
+            Peso: "0",
+            Tipo: "Seleccione ...",
+            opcion: '',
+            $$treeLevel: 0,
+            opciones: []
+          });
+        }
+        $scope.ajustar_id();
+        $scope.pSeleccion = '';
       }
-      $scope.ajustar_id();
     };
 
     $scope.borrar = function() {
@@ -226,7 +277,6 @@ angular.module('poluxClienteApp')
               if ($scope.gridOptions.data[j].padre === seleccion[0].$$hashKey) {
                 $scope.gridOptions.data.splice(j, 1);
                 j--;
-                console.log("borrado " + j);
               }
             }
 
@@ -238,18 +288,58 @@ angular.module('poluxClienteApp')
     };
 
     $scope.guardar = function() {
-      $scope.mostrar_preguntas = true;
-      var formato_post = {};
-      formato_post.Introduccion = $scope.introduccion_formato;
-      formato_post.Nombre = $scope.nombre_formato;
+      var formato_post = {
+        formato: {
+          Nombre: $scope.nombre_formato,
+          Introduccion: $scope.introduccion_formato,
 
+          FechaRealizacion: new Date()
+        },
+        TrPreguntas: []
+      };
+      var i = -1;
+      angular.forEach($scope.gridOptions.data, function(data) {
+        console.log(data);
+        if (data.$$treeLevel === 0) {
+          formato_post.TrPreguntas.push({
+            Pregunta: {
+              IdFormato: {
+                Id: 0
+              },
+              IdPregunta: data.IdPregunta,
+              Tipo: data.Tipo,
+              Activo: true,
+              Orden: parseInt(data.Orden),
+              Valoracion: parseInt(data.Peso)
+            },
+            Respuestas: []
+          });
+          i += 1;
+        } else {
+          var Resp = {};
+          Resp.Descripcion = data.IdPregunta.Enunciado;
+          if (data.IdPregunta.Id !== 'undefined') {
+            Resp.Id = data.IdPregunta.Id;
+          }
+          formato_post.TrPreguntas[i].Respuestas.push({
+            IdPreguntaFormato: {
+              Id: 0
+            },
+            IdRespuesta: Resp,
+            IdPaqueteRespuestas: null,
+            Orden: parseInt(data.Orden),
+            Valoracion: parseInt(data.Peso)
+          })
+        }
+      });
+      i += 1;
       console.log(formato_post);
-      //poluxRequest.post('formato', formato_post).then(function(response) {
-        //$scope.evaluacion = response.data;
-        //$scope.id_formato = $scope.evaluacion.Id;
-      //});
+      $scope.sumadre = formato_post;
+      poluxRequest.post("tr_formato", formato_post).then(function(response) {
+        console.log(response.data);
+      });
     };
 
-    //    $scope.gridOptions.data = evaluacion.preguntas;
+
 
   });
