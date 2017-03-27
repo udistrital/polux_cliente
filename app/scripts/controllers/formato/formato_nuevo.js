@@ -167,13 +167,13 @@ angular.module('poluxClienteApp')
         if (pregunta === null) {
           pregunta = {
             Enunciado: $scope.pSeleccion
-          }
+          };
         }
         var seleccion = $scope.gridApi.selection.getSelectedRows();
         if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
           var objeto = null;
           for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-            if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey) {
+            if ($scope.gridOptions.data[i].$$hashKey === seleccion[0].$$hashKey) {
               pos = i;
               objeto = {
                 Orden: i,
