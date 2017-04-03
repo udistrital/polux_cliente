@@ -1,4 +1,4 @@
-// Generated on 2017-02-06 using generator-oas 0.0.12
+// Generated on 2017-03-16 using generator-oas 0.0.16
 'use strict';
 
 // # Globbing
@@ -45,7 +45,7 @@ module.exports = function (grunt) {
         }
       },
       jsTest: {
-        files: ['test/spec/controllers/plan_cuentas/crear_cuentas.js'],
+        files: ['test/spec/{,*/}*.js'],
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       styles: {
@@ -338,7 +338,7 @@ module.exports = function (grunt) {
     ngtemplates: {
       dist: {
         options: {
-          module: 'financieraClienteApp',
+          module: 'poluxClienteApp',
           htmlmin: '<%= htmlmin.dist.options %>',
           usemin: 'scripts/scripts.js'
         },
