@@ -33,6 +33,12 @@
   "appPath": "app",
   "moduleName": "poluxClienteApp",
   "overrides": {
-    
+    "pdfjs-dist": {
+      "main": [
+        "build/pdf.js",
+        "build/pdf.worker.js",
+        "build/pdf.combined.js"
+      ]
+    }
   }
 }
