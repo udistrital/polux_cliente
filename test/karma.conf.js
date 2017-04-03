@@ -46,6 +46,7 @@ module.exports = function(config) {
       'bower_components/angular-moment/angular-moment.js',
       'bower_components/pdfjs-dist/build/pdf.js',
       'bower_components/pdfjs-dist/build/pdf.worker.js',
+      'bower_components/pdfjs-dist/build/pdf.combined.js',
       'bower_components/angular-pdf/dist/angular-pdf.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
