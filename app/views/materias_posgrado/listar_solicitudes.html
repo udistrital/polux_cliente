@@ -22,21 +22,20 @@
         </form>
        </div>
 
-       <br></br>
-       <br></br>
-       <br></br>
-       <div ui-grid="listarSolicitudes.gridOptions"></div>
+       <div class="panel panel-default panel-body col-md-12">
+         <div ui-grid="listarSolicitudes.gridOptions"></div>
 
-       <div  layout="column" layout-align="center" >
-        <p>Admitidos por rendimiento: {{listarSolicitudes.rendimiento}}</p>
-        <p>Admitidos por economía: {{listarSolicitudes.economicas}}</p>
+         <div  layout="column" layout-align="center" >
+          <p>Admitidos por rendimiento: {{listarSolicitudes.rendimiento}}</p>
+          <p>Admitidos por economía: {{listarSolicitudes.economicas}}</p>
 
+        </div>
+
+        <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
+        <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos 2</button>
+        <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos 3</button>
       </div>
-
-      <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
-      <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos 2</button>
-      <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos 3</button>
-
+      
       <script type="text/ng-template" id="dialog.tmpl.html">
 
       <md-dialog flex="60" aria-label="Selección de Admitidos" >

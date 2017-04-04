@@ -20,11 +20,9 @@
           </select><br>
         </div>
 
-        <br></br>
-        <br></br>
-        <br></br>
-        <div ui-grid="d_solicitarAsignaturas.gridOptions" ui-grid-cellNav class="grid" ui-grid-auto-resize  style="height: {{d_solicitarAsignaturas.desiredTableHeight + 'px'}}; width: {{d_solicitarAsignaturas.desiredTableWidth + 'px'}};"></div>
-
+        <div class="panel panel-default panel-body col-md-12">
+          <div ui-grid="d_solicitarAsignaturas.gridOptions" ui-grid-cellNav class="grid" ui-grid-auto-resize  style="height: {{d_solicitarAsignaturas.desiredTableHeight + 'px'}}; width: {{d_solicitarAsignaturas.desiredTableWidth + 'px'}};"></div>
+        </div>
         <div class="form-group">
           <div class="">
             <input type="submit" ng-click="d_solicitarAsignaturas.add()" value="Enviar Solicitud" class="btn btn-success"/>
