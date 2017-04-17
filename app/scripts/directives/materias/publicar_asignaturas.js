@@ -113,6 +113,7 @@ angular.module('poluxClienteApp')
         query:"CodigoCarrera:"+carrera+",Anio:"+anio+",Periodo:"+periodo+",CodigoPensum:"+pensum
       });
       poluxRequest.get("carrera_elegible",parametros).then(function(response){
+        console.log(response);
         if(response.data!=null){
           ctrl.id=response.data[0].Id
 
@@ -219,7 +220,7 @@ angular.module('poluxClienteApp')
                   "CodigoPensum": pensum,
               };
               poluxRequest.post("carrera_elegible", data).then(function(response22){
-                console.log(response22.data.Id);
+                console.log(response22);
 
                 //guardar las asignaturas seleccionadas
                 angular.forEach(ctrl.selected, function(value) {

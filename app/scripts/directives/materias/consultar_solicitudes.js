@@ -75,7 +75,8 @@ angular.module('poluxClienteApp')
 
           //buscar si hay TG para el estudiante en la modalidad de materias de posgrado
           var parametros=$.param({
-            query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:3"
+            query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:3",
+            related:"IdTrabajoGrado"
           });
           poluxRequest.get("estudiante_tg",parametros).then(function(response){
             console.log(response.data)
@@ -107,17 +108,16 @@ angular.module('poluxClienteApp')
                       ctrl.carreras.push(value.CodigoCarrera);
                       console.log(ctrl.carreras);
 
-
                       academicaRequest.obtenerCarreras(parametros).then(function(resp){
                         var parametros=$.param({
-                          query:"IdSolicitudMaterias:"+value.Id
+                          query:"IdSolicitudMaterias:"+value.Id,
+                          related:"IdAsignaturasElegibles"
                         });
 
                         //buscar asignaturas asociadas a la solicitud
                         poluxRequest.get("asignatura_inscrita",parametros).then(function(resp2){
 
                           angular.forEach(resp2.data, function(value) {
-
                             //buscar nombre-datos de la asignaturas
                             var parametros = {
                              'codigo': value.IdAsignaturasElegibles.CodigoAsignatura

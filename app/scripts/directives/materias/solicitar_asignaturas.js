@@ -18,7 +18,7 @@ angular.module('poluxClienteApp')
 
       templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
       controller: function($scope) {
-
+        console.log("carreras ya elegidas",$scope.l);
         var ctrl = this;
         ctrl.maxCreditos = 0;
         ctrl.carreras = [];
@@ -26,7 +26,7 @@ angular.module('poluxClienteApp')
         ctrl.estudiante = $scope.estudiante;
         ctrl.tipo = $scope.estudiante.Tipo;
         $scope.sols = [];
-
+        ctrl.listado=$scope.l;
 
         /*número de créditos mínimos, según la modalidad
           modalidad de espacios académicos de posgrado: 8 créditos,
@@ -41,6 +41,7 @@ angular.module('poluxClienteApp')
         academicaRequest.obtenerPeriodo().then(function(response) {
           ctrl.periodo = response[0];
 
+
           //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
           var parametros = $.param({
             query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER,
@@ -49,12 +50,17 @@ angular.module('poluxClienteApp')
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
             //carreras
             console.log(response.data);
+
+            if($scope.l){
             angular.forEach(response.data, function(value) {
-              var parametros = {
+
+              //si la carrera no ha sido solicitada
+             if($scope.l.indexOf(value.CodigoCarrera)!=0){
+               var parametros = {
                 'codigo': value.CodigoCarrera,
                 'tipo': ctrl.tipo
-              };
-              academicaRequest.obtenerCarreras(parametros).then(function(response2) {
+               };
+               academicaRequest.obtenerCarreras(parametros).then(function(response2) {
                 if (response2 != null) {
                   var carrera = {
                     "Codigo": value.CodigoCarrera,
@@ -62,11 +68,36 @@ angular.module('poluxClienteApp')
                     "Pensum": value.CodigoPensum
                   };
                   ctrl.carreras.push(carrera);
+                  console.log(ctrl.carreras);
                 }
 
-              });
+               });
+
+
+             }
+            });
+          }else{
+            angular.forEach(response.data, function(value) {
+
+               var parametros = {
+                'codigo': value.CodigoCarrera,
+                'tipo': ctrl.tipo
+               };
+               academicaRequest.obtenerCarreras(parametros).then(function(response2) {
+                if (response2 != null) {
+                  var carrera = {
+                    "Codigo": value.CodigoCarrera,
+                    "Nombre": response2[0].NOMBRE,
+                    "Pensum": value.CodigoPensum
+                  };
+                  ctrl.carreras.push(carrera);
+                  console.log(ctrl.carreras);
+                }
+
+               });
 
             });
+          }
           });
 
         });
