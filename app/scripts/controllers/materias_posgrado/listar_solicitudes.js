@@ -246,7 +246,7 @@ angular.module('poluxClienteApp')
                       query:"IdTrabajoGrado:"+value.IdTrabajoGrado.Id,
                       fields: "CodigoEstudiante"
                     });
-              solicitudes3      //buscar la solicitud
+                    //buscar la solicitud
                     poluxRequest.get("estudiante_tg",parametros).then(function(response){
 
                       var parametros = {
