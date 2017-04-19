@@ -27,6 +27,15 @@ angular.module('poluxClienteApp')
     { name: 'formalizacion', displayName: 'Formalizacion', width: "13%"  }
   ];
 
+  poluxMidRequest.get("fechas/ObtenerFechas").then(function(response){
+    console.log(response);
+    $scope.fechaActual = new Date();
+    $scope.fecha_inicio= new Date(response.data['inicio_proceso'].replace(/'/g, ""));
+    $scope.fecha_fin= new Date(response.data['fecha_fin'].replace(/'/g, ""));
+    $scope.segunda_fecha= new Date(response.data['segunda_fecha'].replace(/'/g, ""));
+  }).catch(function(rta) {
+    console.log(rta);
+  });
 
   academicaRequest.obtenerPeriodo().then(function(response){
     ctrl.periodo=response[0];
@@ -65,7 +74,7 @@ angular.module('poluxClienteApp')
     };
     console.log($scope.rta3);
 
-    poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", $scope.rta3).then(function(response){
+    poluxMidRequest.post("seleccion/Seleccionar", $scope.rta3).then(function(response){
       alert("Solicitudes aprobadas");
       //recargar datos
       ctrl.buscarSolicitudes($scope.carrera);
@@ -79,27 +88,31 @@ angular.module('poluxClienteApp')
       fields: "CodigoEstudiante"
     });
     //buscar la solicitudes
-    poluxRequest.get("estudiante_tg",parametros).then(function(response){
-      var parametros = {
-        'codigo' : response.data[0].CodigoEstudiante,
-        'ano' : 2014,
-        'periodo' :1
-      };
-      academicaRequest.promedioEstudiante(parametros).then(function(response2){
-        var solicitud = {
-          "solicitud": tg.Id,
-          "fecha": tg.Fecha,
-          "estudiante": response.data[0].CodigoEstudiante.toString(),
-          "nombre": response2[0].NOMBRE,
-          "promedio": response2[0].PROMEDIO,
-          "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-          "estado": tg.Estado,
-          "formalizacion": tg.Formalizacion
-        };
-        $scope.sols.push(solicitud);
-      });
 
+    academicaRequest.periodoAnterior().then(function(periodoAnterior){
+      poluxRequest.get("estudiante_tg",parametros).then(function(response){
+        var parametros = {
+          'codigo' : response.data[0].CodigoEstudiante,
+          'ano' : periodoAnterior[0].APE_ANO,
+          'periodo' :periodoAnterior[0].APE_PER
+        };
+        academicaRequest.promedioEstudiante(parametros).then(function(response2){
+          var solicitud = {
+            "solicitud": tg.Id,
+            "fecha": tg.Fecha,
+            "estudiante": response.data[0].CodigoEstudiante.toString(),
+            "nombre": response2[0].NOMBRE,
+            "promedio": response2[0].PROMEDIO,
+            "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+            "estado": tg.Estado,
+            "formalizacion": tg.Formalizacion
+          };
+          $scope.sols.push(solicitud);
+        });
+
+      });
     });
+
   }
 
   ctrl.buscarEstudianteTgOpcionados = function(tg){
@@ -337,7 +350,7 @@ angular.module('poluxClienteApp')
         $scope.cupos_excelencia_ingresado = null;
         $scope.cupos_adicionales_ingresado = null;
         //Consultar cupos
-        poluxMidRequest.post("cupos/Obtener?tdominio=2").then(function(response){
+        poluxMidRequest.get("cupos/Obtener").then(function(response){
           console.log(response.data);
           $scope.cupos_excelencia=response.data.Cupos_excelencia;
           $scope.cupos_adicionales=response.data.Cupos_adicionales;
@@ -416,7 +429,7 @@ angular.module('poluxClienteApp')
       });
 
       //Enviar las solicitudes y # Admitidos
-      poluxMidRequest.post("seleccion/Seleccionar?tdominio=2", ctrl.rta2).then(function(response){
+      poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function(response){
         alert("Solicitudes aprobadas");
         console.log(response);
         //recargar datos

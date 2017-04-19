@@ -31,11 +31,24 @@
 
         </div>
 
+        <!--
+          <button ng-disabled="fechaActual.toJSON() <= fecha_inicio.toJSON() || fechaActual.toJSON() >= segunda_fecha.toJSON() ||carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
+          <button ng-disabled="fechaActual.toJSON() <= segunda_fecha.toJSON() || fechaActual.toJSON()>=fecha_fin.toJSON() ||carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes2() || carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" class="btn btn-success">Seleccionar Admitidos 2</button>
+          <button ng-disabled="fechaActual.toJSON() <= fecha_fin.toJSON()||carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos 3</button>
+        -->
+
         <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos 2</button>
         <button ng-disabled="carreraSeleccionada == null || listarSolicitudes.gridOptions.data.length==0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos 3</button>
       </div>
-      
+
+      <pre>
+        Fecha actual: {{fechaActual| date:'dd-MM-yyyy'}}
+        Fecha inicio: {{fecha_inicio|date:'dd-MM-yyyy'}}
+        Segunda fecha: {{segunda_fecha| date:'dd-MM-yyyy'}}
+        Fecha fin: {{fecha_fin| date:'dd-MM-yyyy'}}
+      </pre>
+
       <script type="text/ng-template" id="dialog.tmpl.html">
 
       <md-dialog flex="60" aria-label="Selección de Admitidos" >

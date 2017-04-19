@@ -17,7 +17,7 @@ describe('Controller: MateriasPosgradoListarSolicitudesCtrl', function () {
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(MateriasPosgradoListarSolicitudesCtrl.awesomeThings.length).toBe(3);
+  it('los datos del periodo no deben estar definidos', function () {
+    expect(MateriasPosgradoListarSolicitudesCtrl.periodo.length).toBe(0);
   });
 });
