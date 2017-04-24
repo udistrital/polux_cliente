@@ -13,6 +13,10 @@
   "globals": {
     "angular": false,
     "$":false,
-    "$scope":false
+    "$scope":false,
+    "pdfMake": false,
+    "jQuery": false,
+    "KJUR": false,
+    "b64utoutf8": false
   }
 }

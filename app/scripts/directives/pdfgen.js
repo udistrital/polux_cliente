@@ -14,23 +14,30 @@ angular.module('poluxClienteApp')
       },
       link: function(scope) {
         scope.$watch('pdfjson', function(newValue, oldValue) {
+            console.log(oldValue);
           if (newValue !== oldValue) {
             scope.refresh_format_view(newValue);
           }
         }, true);
       },
       templateUrl: 'views/pdfgen.html',
-      controller: function() {
+      controller: function($scope) {
         var ctrl = this;
-        var docDefinition = { content: 'This is an sample PDF printed with pdfMake' };
+        console.log($scope.pdfjson);
+        ctrl.name = $scope.pdfjson.name;
+        ctrl.docDefinition = $scope.pdfjson.pdfgen;
+        $scope.refresh_format_view = function(pdfjson){
+            ctrl.name = pdfjson.name;
+            ctrl.name = pdfjson.pdfgen;
+        };
         ctrl.view_pdf = function(){
-            pdfMake.createPdf(docDefinition).open();
+            pdfMake.createPdf(ctrl.docDefinition).open();
         };
         ctrl.save_pdf = function(){
-            pdfMake.createPdf(docDefinition).download('name.pdf');
+            pdfMake.createPdf(ctrl.docDefinition).download(ctrl.name);
         };
         ctrl.print_pdf = function(){
-            pdfMake.createPdf(docDefinition).print();
+            pdfMake.createPdf(ctrl.docDefinition).print();
         };
 
       },
