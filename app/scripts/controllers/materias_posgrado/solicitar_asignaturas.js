@@ -51,7 +51,7 @@ angular.module('poluxClienteApp')
               console.log(ctrl.estudiante);
               ctrl.modalidad="MATERIAS POSGRADO";
 
-              poluxMidRequest.post("disponibilidad/Registrar", ctrl.estudiante).then(function(response){
+              poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
                   console.log(response);
                   ctrl.validar= response.data;
               });
