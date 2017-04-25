@@ -78,6 +78,7 @@ angular.module('poluxClienteApp')
         }
       });
     };
+
     ctrl.refresh_format_view = function() {
       $scope.gridOptions.data = [];
       console.log($scope.SelectedFormat);
@@ -149,6 +150,7 @@ angular.module('poluxClienteApp')
           tipo: 'Numérica'
         }]
       }],
+
       isRowSelectable: function(row) {
         if (row.treeLevel === 0) {
           return true;
@@ -161,6 +163,7 @@ angular.module('poluxClienteApp')
         $scope.gridApi = gridApi;
       }
     };
+
     $scope.gridOptions.multiSelect = false;
 
     $scope.ajustar_id = function() {
