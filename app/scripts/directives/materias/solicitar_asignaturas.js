@@ -104,8 +104,10 @@ angular.module('poluxClienteApp')
 
 
         ctrl.myFunc = function(carreraSeleccionada) {
+          ctrl.selected = [];
           console.log("carrrera:"+carreraSeleccionada);
           ctrl.asignaturas2 = [];
+
           ctrl.carrera = carreraSeleccionada;
 
           //buscar la carrera en: carrera_elegible
@@ -174,7 +176,11 @@ angular.module('poluxClienteApp')
 
         ctrl.selected = [];
         ctrl.creditos = 0;
+
         ctrl.toggle = function(item, list) {
+          if(ctrl.selected.length==0){
+            ctrl.creditos=0;
+          }
           var idx = list.indexOf(item);
           if (idx > -1) {
             list.splice(idx, 1);
@@ -187,10 +193,12 @@ angular.module('poluxClienteApp')
             ctrl.creditos = ctrl.creditos + c;
             console.log(ctrl.creditos);
           }
+          console.log(ctrl.selected);
 
         };
 
         ctrl.add = function() {
+
           ctrl.esta=-1;
           if($scope.l!=null){
             ctrl.esta=$scope.l.indexOf(ctrl.carrera);
