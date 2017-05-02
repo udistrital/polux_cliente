@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
       //Configuracion de parametros identificacion unica oas-wso2
 
       config: {
-        AUTORIZATION_URL: "https://wso2.udistritaloas.edu.co:9443/oauth2/authorizeToken",
+        AUTORIZATION_URL: "https://wso2.udistritaloas.edu.co:9443/oauth2/authorize",
         CLIENTE_ID: "3QSGwu9AsnyV69SNTPAIDQtb9A0a",
         REDIRECT_URL:  "http://10.20.0.254/polux",
         RESPONSE_TYPE: "id_token token",
