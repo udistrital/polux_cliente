@@ -16,7 +16,7 @@
    .pdf-controls { width: 100%; display: block; rgba(64, 255, 61, 0.4); padding: 1em;}
 
 </style>
-<nav  class="text-center" ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}" >
+<div  class="text-center" ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}" >
   <div class="row">
   <div>
   <a href="" ng-click="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>&nbsp;
@@ -26,11 +26,11 @@
   <a href="" ng-click="zoomOut()"><span class="glyphicon glyphicon-zoom-out"></span></a>
 &nbsp;&nbsp;&nbsp;&nbsp;
   <span class="text-info">Página:
-    <input ui-number-mask="0" ng-model="pageNum">
+    <input ui-number-mask="0" maxlength="4"  size="2" ng-model="pageNum">
      de {{pageCount}}</span>
   </div>
 </div>
-</nav>
+</div>
 <div class="scrollit" id="bar1" >
 
 <canvas id="pdf-canvas"></canvas>
