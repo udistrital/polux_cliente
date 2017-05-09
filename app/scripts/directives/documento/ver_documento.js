@@ -13,7 +13,8 @@ angular.module('poluxClienteApp')
       scope: {
         documentoid: '=',
         selectpag: '=?',
-        loadpag: '=?'
+        loadpag: '=?',
+        minified: '=?'
       },
       templateUrl: "views/directives/documento/ver_documento.html",
       controller: function($scope) {

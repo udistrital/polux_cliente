@@ -18,21 +18,16 @@
 </style>
 <nav  class="text-center" ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}" >
   <div class="row">
-  <div class="col-md-5 col-md-offset-1">
-  <button type="button" class="btn btn btn-primary" ng-click="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></button>
-  <button type="button" class="btn btn-primary" ng-click="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></button>
-  <button type="button" class="btn btn-primary" ng-click="zoomIn()"><span class="glyphicon glyphicon-zoom-in"></span></button>
-  <button type="button" class="btn btn-primary" ng-click="fit()">100%</button>
-  <button type="button" class="btn btn-primary" ng-click="zoomOut()"><span class="glyphicon glyphicon-zoom-out"></span></button>
-  </div>
-  <div class="col-md-1">
-  <h4>Página: </h4>
-  </div>
-  <div class="col-md-2">
-    <input  class="form-control" type="number" ng-model="pageNum">
-  </div>
-  <div class="col-md-1">
-    <h4>de {{pageCount}}</h4>
+  <div>
+  <a href="" ng-click="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>&nbsp;
+  <a href="" ng-click="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></a>&nbsp;
+  <a href="" ng-click="zoomIn()"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;
+  <a href="" ng-click="fit()">100%</a>&nbsp;
+  <a href="" ng-click="zoomOut()"><span class="glyphicon glyphicon-zoom-out"></span></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+  <span class="text-info">Página:
+    <input ui-number-mask="0" ng-model="pageNum">
+     de {{pageCount}}</span>
   </div>
 </div>
 </nav>

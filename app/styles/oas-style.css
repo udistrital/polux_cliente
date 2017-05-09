@@ -1,3 +1,49 @@
+/* UI-GRID*/
+
+ [ui-grid-row] {
+display: table-row;
+}
+
+.ui-grid-row, .ui-grid-cell {
+height: auto!important;
+}
+
+.ui-grid-cell {
+float: none;
+display: table-cell;
+}
+
+.ui-grid-header-cell, .ui-grid-cell-contents {
+white-space: normal;
+padding: 2px;
+word-break: break-word;
+}
+
+ /*BUTTONS OPTIONS*/
+
+.borrar > i:hover{
+  font-size: 20px;
+  color: #DB0A5B
+}
+
+.editar:hover{
+  font-size: 16px;
+  color: #9A12B3
+}
+
+.ver:hover{
+  font-size: 16px;
+  color: #00B16A
+}
+
+
+.page-header {
+    padding-bottom: 0px;
+    margin: 20px;
+    border-bottom: 1px solid #eee;
+    color:#31708F
+}
+
 /* NOTIFICATION*/
 
 .img-responsive{

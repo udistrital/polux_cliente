@@ -1,7 +1,11 @@
+<span ng-show="minified">
+  <span ng-click="minified=false"><i class="fa fa-file-text-o fa-2x" aria-hidden="true"></i> <span class="panel-title">{{d_verDocumento.documento.Titulo}}</span></span>
+</span>
 <div class="row" ng-show="documentoid">
-  <div class="panel panel-success">
+  <div class="panel panel-success" ng-show="!minified">
     <div class="panel-heading">
-      <h3 class="panel-title">{{d_verDocumento.documento.Titulo}}</h3>
+      <center><h3 class="panel-title">{{d_verDocumento.documento.Titulo}} <span class="pull-right" ng-click="minified=true"><i class="fa fa-minus-square-o" aria-hidden="true"></i>
+</span></h3></center>
     </div>
     <div class="panel-body">
       <div>
