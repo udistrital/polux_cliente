@@ -38,7 +38,7 @@ angular.module('poluxClienteApp')
           self.parametros=$.param({
             query:"CodigoEstudiante:"+codEstudiante
           });
-          poluxRequest.get("estudiante_TG",self.parametros).then(function(response){
+          poluxRequest.get("estudiante_tg",self.parametros).then(function(response){
 
             poluxRequest.get("trabajo_grado",$.param({
               query:"Id:"+response.data[0].IdTrabajoGrado.Id
@@ -115,7 +115,7 @@ angular.module('poluxClienteApp')
           self.estudiante_TG=[];
           self.docTG=[];
           console.log(doc.enlace);
-          poluxRequest.get("estudiante_TG",$.param({
+          poluxRequest.get("estudiante_tg",$.param({
             query:"CodigoEstudiante:"+codEstudiante
           })).then(function(response){
             console.log("respuesta: "+response.data[0].IdTrabajoGrado.Id);
