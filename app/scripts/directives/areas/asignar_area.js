@@ -42,7 +42,7 @@ angular.module('poluxClienteApp')
             "Nombre": self.Nombre
           }
         );
-        document.getElementById("formAsignar").reset();
+/*        document.getElementById("formAsignar").reset();*/
          $scope.newarea=self.nuevaArea;
         };
         /**/
