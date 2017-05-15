@@ -1,6 +1,4 @@
-<md-card md-colors="{ 'border-color': 'primary-600'}">
     <form role="form" name="formAsignar" id="formAsignar">
-      <div class="form-group" >
         <div class="input-group">
         <input type="text" class="form-control" list="listaAreas"
         ng-model="d_asignarArea.Nombre" name="asignado"
@@ -12,7 +10,7 @@
         </datalist>
         <span class="input-group-btn">
         <input type="submit" ng-click="d_asignarArea.asignarArea()"
-        value="Agregar" class="btn btn-info btn-md "
+        value="Agregar" class="btn btn-primary btn-md "
         ng-disabled="formAsignar.$invalid || d_asignarArea.verificarAreas(d_asignarArea.Nombre) " />
         </span>
         </div>
@@ -24,7 +22,6 @@
           <div ng-message="maxlength"> Nombre muy extenso </div>
         </div>
       </div>
-    </div>
   </form>
   <div class="row">
   <md-chips  class="custom-chips col-md-12" ng-model="d_asignarArea.nuevaArea" readonly="true"
@@ -38,4 +35,3 @@
             value="X" class="btn btn-primary btn-xs"/>
   </md-chips>
   </div>
-</md-card>

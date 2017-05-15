@@ -49,6 +49,7 @@ module.exports = function(config) {
       'bower_components/pdfjs-dist/build/pdf.combined.js',
       'bower_components/angular-pdf/dist/angular-pdf.js',
       'bower_components/sweetalert2/dist/sweetalert2.js',
+      'bower_components/bootstrap-fileinput/js/fileinput.min.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

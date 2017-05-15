@@ -8,48 +8,48 @@
  */
 
 
-/*
 
-var isOnGitHub = true,
-url = 'http://localhost:9073/files';
+
+/*var isOnGitHub = true,
+  url = 'http://localhost:9073/files';*/
 angular.module('poluxClienteApp')
-.config([
+  // .config([
 
-    '$httpProvider', 'fileUploadProvider',
-    function ($httpProvider, fileUploadProvider) {
+  //     '$httpProvider', 'fileUploadProvider',
+  //     function ($httpProvider, fileUploadProvider) {
 
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-        fileUploadProvider.defaults.redirect = window.location.href.replace(
-            /\/[^\/]*$/,
-            '/cors/result.html?%s'
-        );
-        if (isOnGitHub) {
+  //         delete $httpProvider.defaults.headers.common['X-Requested-With'];
+  //         fileUploadProvider.defaults.redirect = window.location.href.replace(
+  //             /\/[^\/]*$/,
+  //             '/cors/result.html?%s'
+  //         );
+  //         if (isOnGitHub) {
 
-            // Demo settings:
-            angular.extend(fileUploadProvider.defaults, {
-                // Enable image resizing, except for Android and Opera,
-                // which actually support image resizing, but fail to
-                // send Blob objects via XHR requests:
-                disableImageResize: /Android(?!.*Chrome)|Opera/
-                    .test(window.navigator.userAgent),
-                maxFileSize: 999000,
-                acceptFileTypes: /(\.|\/)(gif|jpe?g|png|pdf)$/i
-            });
+  //             // Demo settings:
+  //             angular.extend(fileUploadProvider.defaults, {
+  //                 // Enable image resizing, except for Android and Opera,
+  //                 // which actually support image resizing, but fail to
+  //                 // send Blob objects via XHR requests:
+  //                 disableImageResize: /Android(?!.*Chrome)|Opera/
+  //                     .test(window.navigator.userAgent),
+  //                 maxFileSize: 999000,
+  //                 acceptFileTypes: /(\.|\/)(gif|jpe?g|png|pdf)$/i
+  //             });
 
-        }
+  //         }
 
-    }
-])
+  //     }
+  // ])
   .directive('subirDocumento', function () {
     return {
       restrict: 'E',
       scope: {
-          enlaceurl: '=',
-          newdial:'&'
+        enlaceurl: '=',
+        newdial: '&'
       },
       templateUrl: 'views/directives/general/documento/subir-documento.html',
-      controller:function($scope, $http, $filter, $window){
-        var ctrl = this;
+      controller: function ($scope, $http, $filter, $window) {
+/*        var ctrl = this;
         var file = $scope.file;
         var state;
         $scope.options = {
@@ -57,7 +57,30 @@ angular.module('poluxClienteApp')
         };
 
 
-        $scope.enlaceurl= url;
+        $scope.enlaceurl = url;*/
+
+        $("#fileupload").fileinput({
+          language: 'es',
+          uploadUrl: 'http://localhost:9073/files',
+          uploadAsync: true,
+          maxFileCount: 5,
+          showBrowse: true,
+          browseOnZoneClick: true,
+          showAjaxErrorDetails: true,
+          elErrorContainer: '#errorBlock'
+        });
+
+
+        $('#fileupload').on('fileuploaderror', function (event, data, previewId, index) {
+          var form = data.form, files = data.files, extra = data.extra,
+            response = data.response, reader = data.reader;
+        });
+
+        $('#fileupload').on('fileuploaded', function (event, data, previewId, index) {
+          console.log(data);
+        });
+
+
         // if (!isOnGitHub) {
         //   $scope.loadingFiles = true;
         //   $http.get(url)
@@ -99,7 +122,7 @@ angular.module('poluxClienteApp')
         // ctrl.cargarArchivo($scope.options.url);
 
       },
-      controllerAs:'d_subirDocumento'
+      controllerAs: 'd_subirDocumento'
     };
   });
-  */
+
