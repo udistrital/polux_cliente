@@ -57,20 +57,20 @@ angular.module('poluxClienteApp')
 
         /*self.guardar:
         guarda temporalmente los registros necesarios para el registro de la propuesta*/
-        self.guardar = function (doc, docenteSeleccionado, estudiante, idModalidad) {
+        self.guardar = function (doc, estudiante, idModalidad) {
           var codEstudiante;
           codEstudiante = parseInt(estudiante);
-
+          console.log("titulo: "+doc.titulo+ " , modalidad: "+idModalidad);
           self.registro_TG = [];
           self.estudiante_TG = [];
-          self.preguardarTG(doc.titulo, idModalidad);
+          self.preguardarTG(doc.titulo, parseInt(idModalidad));
+          console.log("self.registro_TG"+self.registro_TG);
           self.guardarTG(self.registro_TG, estudiante);
-
+/*
           self.estudiante_TG = self.preguardarEstudianteTG(self.registro_TG, estudiante);
           self.docregistrado = [];
           self.TGregistrado = [];
           self.areas_TG = [];
-          self.vinculaciondocente = [];
           self.docTG = [];
           console.log(doc.enlace);
           poluxRequest.get("estudiante_TG", $.param({
@@ -83,11 +83,10 @@ angular.module('poluxClienteApp')
               }
             );
             self.areas_TG = self.preguardarAreasTG(self.TGregistrado);
-            self.vinculaciondocente = self.preguardarVinculacion(self.TGregistrado, docenteSeleccionado);
           });
           self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
           //self.file.$submit();
-          $scope.dialparent();
+          $scope.dialparent();*/
 
         };
 
@@ -102,11 +101,16 @@ angular.module('poluxClienteApp')
               "Titulo": title
             }
           );
-          console.log(self.registro_TG);
+         
 
 
 
         };
+        self.guardarTG = function (objTG, estudiante){
+          poluxRequest.post("trabajo_grado", objTG[0]).then(function (response) {
+             console.log("guardado exitoso con response : " + response);
+          });
+        }
 
         /**/
         self.preguardarDocumento = function (titulo, resumen, enlace) {

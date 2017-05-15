@@ -116,7 +116,12 @@
 
       <div class="col-md-8">
         <subir-documento newdial="d_regProp.guardarRegistro()" dialparent="newfuncion()" enlaceurl="d_regProp.documento.enlace"></subir-documento>
+
       </div>
+       <div class="col-md-4">
+          <input type="button" class="btn btn-md btn-outline btn-primary btn-block" 
+           ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)" value="Registrar propuesta" />
+        </div>
 
       <!-- Fin de formulario de zona de carga de archivos-->
 
