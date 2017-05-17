@@ -58,35 +58,39 @@ angular.module('poluxClienteApp')
         /*self.guardar:
         guarda temporalmente los registros necesarios para el registro de la propuesta*/
         self.guardar = function (doc, estudiante, idModalidad) {
-          var codEstudiante;
+          var codEstudiante, idTrabajoGrado;
           codEstudiante = parseInt(estudiante);
-          console.log("titulo: "+doc.titulo+ " , modalidad: "+idModalidad);
+          console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
           self.registro_TG = [];
           self.estudiante_TG = [];
           self.preguardarTG(doc.titulo, parseInt(idModalidad));
-          console.log("self.registro_TG"+self.registro_TG);
-          self.guardarTG(self.registro_TG, estudiante);
-/*
-          self.estudiante_TG = self.preguardarEstudianteTG(self.registro_TG, estudiante);
-          self.docregistrado = [];
-          self.TGregistrado = [];
-          self.areas_TG = [];
-          self.docTG = [];
-          console.log(doc.enlace);
-          poluxRequest.get("estudiante_TG", $.param({
-            query: "CodigoEstudiante:" + codEstudiante
-          })).then(function (response) {
-            console.log("respuesta: " + response.data[0].IdTrabajoGrado.Id);
-            self.TGregistrado.push(
-              {
-                "Id": response.data[0].IdTrabajoGrado.Id
-              }
-            );
-            self.areas_TG = self.preguardarAreasTG(self.TGregistrado);
-          });
-          self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
-          //self.file.$submit();
-          $scope.dialparent();*/
+          console.log("self.registro_TG" + self.registro_TG);
+          idTrabajoGrado = self.guardarTG(self.registro_TG, estudiante, doc);
+          console.log("idTrabajoGrado: " + idTrabajoGrado);
+          // self.estudiante_TG = self.preguardarEstudianteTG(idTrabajoGrado, estudiante);
+          // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
+          console.log(idTrabajoGrado);
+          /*
+                    self.estudiante_TG = self.preguardarEstudianteTG(self.registro_TG, estudiante);
+                    self.docregistrado = [];
+                    self.TGregistrado = [];
+                    self.areas_TG = [];
+                    self.docTG = [];
+                    console.log(doc.enlace);
+                    poluxRequest.get("estudiante_TG", $.param({
+                      query: "CodigoEstudiante:" + codEstudiante
+                    })).then(function (response) {
+                      console.log("respuesta: " + response.data[0].IdTrabajoGrado.Id);
+                      self.TGregistrado.push(
+                        {
+                          "Id": response.data[0].IdTrabajoGrado.Id
+                        }
+                      );
+                      self.areas_TG = self.preguardarAreasTG(self.TGregistrado);
+                    });
+                    self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
+                    //self.file.$submit();
+                    $scope.dialparent();*/
 
         };
 
@@ -101,16 +105,50 @@ angular.module('poluxClienteApp')
               "Titulo": title
             }
           );
-         
+
 
 
 
         };
-        self.guardarTG = function (objTG, estudiante){
-          poluxRequest.post("trabajo_grado", objTG[0]).then(function (response) {
-             console.log("guardado exitoso con response : " + response);
+
+
+        /**/
+
+        self.guardarTG = function (data, estudiante, doc) {
+          poluxRequest.post("trabajo_grado", data[0]).then(function (response) {
+            console.log("respuesta del post del trabajo de grado" + response.data.Id);
+            self.estudiante_TG = self.preguardarEstudianteTG(response.data.Id, estudiante);
+            idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
+            self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
+            poluxRequest.post("documento", self.docregistrado[0]).then(function (response) {
+              console.log("data.Id: " + response.data.Id);
+              self.guardarDocumentoTG(response.data.Id, self.TGregistrado[0]);
+              poluxRequest.get("documento", $.param({
+                query: "Id:" + response.data.Id
+              })).then(function (response) {
+                self.registroDocumento = response.data;
+              });
+            });
           });
-        }
+        };
+
+        /**/
+        self.guardarRegistro = function () {
+          self.registroDocumento = [];
+
+          poluxRequest.post("documento", self.docregistrado[0]).then(function (response) {
+            console.log("data.Id: " + response.data.Id);
+            self.guardarDocumentoTG(response.data.Id, self.TGregistrado[0]);
+            poluxRequest.get("documento", $.param({
+              query: "Id:" + response.data.Id
+            })).then(function (response) {
+              self.registroDocumento = response.data;
+            });
+          });
+
+          self.asignarAreasTG(self.areas_TG);
+          //self.vinculaciondocente= ; PENDIENTE(TO_DO) Como se controlaría?
+        };
 
         /**/
         self.preguardarDocumento = function (titulo, resumen, enlace) {
@@ -164,17 +202,25 @@ angular.module('poluxClienteApp')
 
         };
         /**/
-        self.preguardarEstudianteTG = function (tg, estudiante) {
+        self.preguardarEstudianteTG = function (idTG, estudiante) {
           estudiante = parseInt(estudiante);
-          console.log(tg[0]);
           self.estudiante_TG.push(
             {
               "CodigoEstudiante": estudiante,
               "Estado": "activo",
-              "IdTrabajoGrado": tg[0]
+              "IdTrabajoGrado": { "Id": idTG }
             });
+          console.log(self.estudiante_TG);
           return self.estudiante_TG;
         };
+
+        /**/
+        self.guardarestudianteTG = function (data) {
+          poluxRequest.post("estudiante_tg", data).then(function (response) {
+            console.log("respuesta del post estudiante_tg: " + response.data.Id);
+            return response.data.Id;
+          });
+        }
         /**/
         self.guardarDocumentoTG = function (idDocumento, IdTrabajoGrado) {
           self.docTG.push(
@@ -209,23 +255,7 @@ angular.module('poluxClienteApp')
             });
           });
         };
-        /**/
-        self.guardarRegistro = function () {
-          self.registroDocumento = [];
 
-          poluxRequest.post("documento", self.docregistrado[0]).then(function (response) {
-            console.log("data.Id: " + response.data.Id);
-            self.guardarDocumentoTG(response.data.Id, self.TGregistrado[0]);
-            poluxRequest.get("documento", $.param({
-              query: "Id:" + response.data.Id
-            })).then(function (response) {
-              self.registroDocumento = response.data;
-            });
-          });
-
-          self.asignarAreasTG(self.areas_TG);
-          //self.vinculaciondocente= ; PENDIENTE(TO_DO) Como se controlaría?
-        };
         /**/
         self.limpiar = function () {
           self.documento = angular.copy(self.doclimpio);
