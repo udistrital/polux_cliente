@@ -63,6 +63,10 @@ angular.module('poluxClienteApp')
           console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
           self.registro_TG = [];
           self.estudiante_TG = [];
+          self.docregistrado = [];
+          self.TGregistrado = [];
+          self.areas_TG = [];
+          self.docTG = [];
           self.preguardarTG(doc.titulo, parseInt(idModalidad));
           console.log("self.registro_TG" + self.registro_TG);
           idTrabajoGrado = self.guardarTG(self.registro_TG, estudiante, doc);
@@ -115,16 +119,19 @@ angular.module('poluxClienteApp')
         /**/
 
         self.guardarTG = function (data, estudiante, doc) {
-          poluxRequest.post("trabajo_grado", data[0]).then(function (response) {
-            console.log("respuesta del post del trabajo de grado" + response.data.Id);
-            self.estudiante_TG = self.preguardarEstudianteTG(response.data.Id, estudiante);
+          var idEstudianteTG;
+          self.TGregistrado = [];
+          poluxRequest.post("trabajo_grado", data[0]).then(function (responseTG) {
+            console.log("respuesta del post del trabajo de grado" + responseTG.data.Id);
+            self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Id, estudiante);
             idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
             self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
-            poluxRequest.post("documento", self.docregistrado[0]).then(function (response) {
-              console.log("data.Id: " + response.data.Id);
-              self.guardarDocumentoTG(response.data.Id, self.TGregistrado[0]);
+            console.log("doc: " + self.docregistrado[0]);
+            poluxRequest.post("documento", self.docregistrado[0]).then(function (responseDoc) {
+              console.log("data.Id: " + responseDoc.data.Id);
+              self.guardarDocumentoTG(responseDoc.data.Id, responseTG.data.Id);
               poluxRequest.get("documento", $.param({
-                query: "Id:" + response.data.Id
+                query: "Id:" + responseDoc.data.Id
               })).then(function (response) {
                 self.registroDocumento = response.data;
               });
@@ -231,7 +238,7 @@ angular.module('poluxClienteApp')
               "IdEstadoDocumento": {
                 "Id": 1
               },
-              "IdTrabajoGrado": IdTrabajoGrado
+              "IdTrabajoGrado": { "Id": IdTrabajoGrado }
             }
           );
           self.docTGregistrado = {};
