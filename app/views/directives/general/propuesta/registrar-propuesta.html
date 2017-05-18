@@ -1,3 +1,4 @@
+
 <div ng-class="{'row col-md-3': d_regProp.menucreacion,'row col-md-12':!d_regProp.menucreacion}">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -7,7 +8,7 @@
       <div class="container-fluid">
         <div class="col-sm-9 col-xs-12">
           <div class="row">
-            <div class="col-md-12 ">
+
               <!-- Seccion donde se muestra informacion suministrada por el web service de condor-->
               <div class="row" id="formPropuesta">
                 <form class="ng-valid ng-dirty ng-valid-parse" ng-if="!d_regProp.menucreacion">
@@ -65,6 +66,7 @@
                   </div>
 
                 </form>
+
                 <br>
                 <div ng-class="{'row': d_regProp.menucreacion,'row col-md-6 col-md-offset-5':!d_regProp.menucreacion}" id="botonesRegistro">
                   <div class="col-md-6" ng-if="!d_regProp.menucreacion">
@@ -73,9 +75,6 @@
                   <div ng-class="{'col-md-12': d_regProp.menucreacion,'col-md-6 ':!d_regProp.menucreacion}">
                     <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-model="d_regProp.buttonDirective" ng-click="d_regProp.estadoboton(d_regProp.buttonDirective)"
                       value={{d_regProp.buttonDirective}} />
-                  </div>
-                  <div class="col-md-8" ng-show="d_regProp.estado">
-                    <subir-documento newdial="d_regProp.guardarRegistro()" dialparent="newfuncion()" enlaceurl="d_regProp.documento.enlace"></subir-documento>
                   </div>
                 </div>
                 <br>
@@ -88,7 +87,6 @@
 
 
               <!-- Formulario de asignación de areas de conocimiento y resumen-->
-            </div>
           </div>
         </div>
         <div class="col-sm-3">
@@ -102,6 +100,7 @@
           <pre> estudiante_TG= {{d_regProp.estudiante_TG |json}}</pre>
           <pre> documentoTG= {{d_regProp.docTG |json}}</pre>
         </div>
+
       </div>
     </div>
   </div>
@@ -115,11 +114,11 @@
       <!-- Formulario de registro zona de carga de archivos -->
 
       <div class="col-md-8">
-        <subir-documento newdial="d_regProp.guardarRegistro()" dialparent="newfuncion()" enlaceurl="d_regProp.documento.enlace"></subir-documento>
-
+        <!--<subir-documento newdial="d_regProp.guardarRegistro()" dialparent="newfuncion()" enlaceurl="d_regProp.documento.enlace"></subir-documento>-->
+        <subir-documento></subir-documento>
       </div>
        <div class="col-md-4">
-          <input type="button" class="btn btn-md btn-outline btn-primary btn-block" 
+          <input type="button" class="btn btn-md btn-outline btn-primary btn-block"
            ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)" value="Registrar propuesta" />
         </div>
 
