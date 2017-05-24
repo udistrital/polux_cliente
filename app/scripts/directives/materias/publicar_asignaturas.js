@@ -39,7 +39,6 @@ angular.module('poluxClienteApp')
       showGridFooter: true
     };
 
-
     ctrl.gridOptions.columnDefs = [
       { name: 'asignatura', displayName: 'Código', width: "15%"  },
       { name: 'nombre', displayName: 'Nombre', width: "55%"  },
@@ -50,8 +49,6 @@ angular.module('poluxClienteApp')
         width: "15%",
         cellTemplate: '<input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" >'}
     ];
-
-
 
       $scope.$watch("pensum",function() {
         ctrl.pensum = $scope.pensum;
@@ -343,8 +340,6 @@ angular.module('poluxClienteApp')
 
             }
           });
-
-
 
           alert("Asignaturas guardadas");
         }
