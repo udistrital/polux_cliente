@@ -14,7 +14,7 @@ angular.module('poluxClienteApp')
     $scope.token_service = token_service;
     $scope.breadcrumb = [];
     $scope.menu_service = [
-
+ 
         { //aqui va el servicio de el app de configuracion
             "Id": 1,
             "Nombre": "Formato",
