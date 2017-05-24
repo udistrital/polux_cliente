@@ -1,24 +1,24 @@
-<br>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    docente/tgs/revision_documento.
-  </div>
-  <div class="panel-body">
+<div class="panel panel-primary panel-body">
+  <center><h3 class="page-header">
+    Revision Documentos
+  </h3></center>
 
-    <div class="col-md-6">
-      <ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2"/>
+    <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+      <label class="text-primary" ng-show="mindoc">Documento: </label><ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc"/>
       <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
     </div>
 
-    <div class="col-md-6">
-      <div ng-repeat="revision in docenterevision.revisionesd">
-        <ver-revision revisionid="revision.Id"  paginaset="docenterevision.pagina" ng-if="revision.Estado != 'pendiente'"/>
-        <revision-documento revisionid="revision.Id" revisionestado="revision.Estado"  paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
-
+    <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Revisiones</h3>
+        </div>
+        <div class="panel-body">
+          <div ng-repeat="revision in docenterevision.revisionesd">
+            <ver-revision revisionid="revision.Id"  paginaset="docenterevision.pagina" ng-if="revision.Estado != 'pendiente'"/>
+            <revision-documento revisionid="revision.Id" revisionestado="revision.Estado"  paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="panel-footer">
-    Panel Footer
-  </div>
 </div>

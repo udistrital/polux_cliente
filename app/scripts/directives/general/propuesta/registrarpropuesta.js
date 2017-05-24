@@ -151,6 +151,41 @@ angular.module('poluxClienteApp')
             })).then(function (response) {
               self.registroDocumento = response.data;
             });
+
+          poluxRequest.get("areas_docente",$.param({
+            query: "IdAreaConocimiento:"+areaSeleccionada
+          })).then(function(response){
+            if (response.data==null)
+              self.docentesArea=[];
+            else
+              self.docentesArea=self.unificarDocentes(response.data);
+          });
+        };
+        /*self.guardar:
+        guarda temporalmente los registros necesarios para el registro de la propuesta*/
+        self.guardar=function(doc,docenteSeleccionado,estudiante){
+          var codEstudiante;
+          codEstudiante=parseInt(estudiante);
+          self.estado= true;
+          self.docregistrado=[];
+          self.TGregistrado=[];
+          self.areas_TG=[];
+          self.vinculaciondocente=[];
+          self.estudiante_TG=[];
+          self.docTG=[];
+          console.log(doc.enlace);
+          poluxRequest.get("estudiante_tg",$.param({
+            query:"CodigoEstudiante:"+codEstudiante
+          })).then(function(response){
+            console.log("respuesta: "+response.data[0].IdTrabajoGrado.Id);
+            self.TGregistrado.push(
+              {
+                "Id": response.data[0].IdTrabajoGrado.Id
+              }
+            );
+            self.areas_TG=self.preguardarAreasTG(self.TGregistrado);
+            self.vinculaciondocente=self.preguardarVinculacion(self.TGregistrado,docenteSeleccionado);
+            self.estudiante_TG=self.preguardarEstudianteTG(self.TGregistrado,estudiante);
           });
 
           self.asignarAreasTG(self.areas_TG);
