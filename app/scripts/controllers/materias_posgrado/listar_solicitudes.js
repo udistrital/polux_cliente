@@ -75,7 +75,11 @@ angular.module('poluxClienteApp')
     console.log($scope.rta3);
 
     poluxMidRequest.post("seleccion/Seleccionar", $scope.rta3).then(function(response){
-      alert("Solicitudes aprobadas");
+      swal(
+        'Solicitudes aprobadas',
+        'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
+        'success'
+      )
       //recargar datos
       ctrl.buscarSolicitudes($scope.carrera);
     });
@@ -327,7 +331,11 @@ angular.module('poluxClienteApp')
         value.Formalizacion='rechazado';
         poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
           console.log("response.data confirmado: " + response.data);
-          alert("Solicitudes aprobadas");
+          swal(
+            'Solicitudes aprobadas',
+            'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
+            'success'
+          )
           //recargar datos
           ctrl.buscarSolicitudes($scope.carrera);
         });
@@ -364,7 +372,6 @@ angular.module('poluxClienteApp')
           if(response.data[0].CuposExcelencia>0 && response.data[0].CuposAdicionales>0){
             $scope.cupos_excelencia_ingresado=response.data[0].CuposExcelencia;
             $scope.cupos_adicionales_ingresado=response.data[0].CuposAdicionales;
-
           }
 
         });
@@ -430,7 +437,11 @@ angular.module('poluxClienteApp')
 
       //Enviar las solicitudes y # Admitidos
       poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function(response){
-        alert("Solicitudes aprobadas");
+        swal(
+          'Solicitudes aprobadas',
+          'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
+          'success'
+        )
         console.log(response);
         //recargar datos
         ctrl.buscarSolicitudes($scope.carrera);
