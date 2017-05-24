@@ -1,18 +1,20 @@
 <div class="panel panel-primary panel-body">
   <center>
-    <h3 class="page-header">Edición de Formatos de Evaluación</h3></center>
+    <h3 class="page-header">Edición de Formatos de Evaluación</h3>
+  </center>
 
   <div class="form-group">
     <label>Seleccionar Formato:</label>
-    <input class="form-control" list="testList" type="" ng-model="formatoEdicion.SelectedFormat" ng-change="formatoEdicion.actualizar_formato()" />
-    <datalist id="testList">
+    <input class="form-control" list="testList" type="" ng-model="formatoEdicion.SelectedFormat"  ng-change="formatoEdicion.actualizar_formato()" />
+      <datalist id="testList">
             <option ng-repeat="formato in formatoEdicion.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
         </datalist>
   </div>
   <div class="panel panel-default ">
     <div class="panel-body">
       <legend>
-        <h3 class="text-info">Edición general</h3></legend>
+        <h3 class="text-info">Edición general</h3>
+      </legend>
       <div class="form-group">
         <label for="nomformato">Titulo Formato:</label>
         <input ng-model="formatoEdicion.formato_vista.Formato.Nombre" type="text" class="form-control" id="nomformato" placeholder="Ingresa un titulo para el formato">
@@ -20,10 +22,12 @@
 
       <div class="form-group">
         <label for="introformato">Introducción:</label>
-        <textarea ng-model="formatoEdicion.formato_vista.Formato.Introduccion" type="text" class="form-control" id="introformato" placeholder="Ingrese una Introduccion" rows="5" />
+        <textarea ng-model="formatoEdicion.formato_vista.Formato.Introduccion" type="text" class="form-control" id="introformato" placeholder="Ingrese una Introduccion" rows="5">
+        </textarea>
       </div>
       <legend>
-        <h3 class="text-info">Edición Preguntas</h3></legend>
+        <h3 class="text-info">Edición Preguntas</h3>
+      </legend>
       <div class="col-md-6">
         <div class="panel panel-primary panel-body">
           <div class="form-group">
