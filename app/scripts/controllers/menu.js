@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
             }, {
               "Id": 4,
               "Nombre": "Editar formato",
-              "Url": "formato_editar",
+              "Url": "formato/formato_edicion",
               "Opciones": null
             }]
           }, {

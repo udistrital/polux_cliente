@@ -58,10 +58,10 @@ angular.module('poluxClienteApp')
         displayName: 'ORDEN',
         width: '150',
         cellClass: function(row, col) {
-          if (col.treeNode.children.length == 0 && col.treeLevel!=0) {
-            return "unbold "
+          if (col.treeNode.children.length === 0 && col.treeLevel!== 0) {
+            return "unbold ";
           } else {
-            return "text-info"
+            return "text-info";
           }
         }
       }, {
@@ -69,10 +69,10 @@ angular.module('poluxClienteApp')
         displayName: 'ENUNCIADO',
         width: '800',
         cellClass: function(row, col) {
-          if (col.treeNode.children.length == 0 && col.treeLevel!=0) {
-            return "unbold "
+          if (col.treeNode.children.length === 0 && col.treeLevel!==0) {
+            return "unbold ";
           } else {
-            return "text-info"
+            return "text-info";
           }
         }
       }, {
@@ -81,10 +81,10 @@ angular.module('poluxClienteApp')
         displayName: 'PESO',
         width: '155',
         cellClass: function(row, col) {
-          if (col.treeNode.children.length == 0 && col.treeLevel!=0) {
-            return "unbold "
+          if (col.treeNode.children.length === 0 && col.treeLevel!==0) {
+            return "unbold ";
           } else {
-            return "text-info"
+            return "text-info";
           }
         }
       }, {
@@ -92,10 +92,10 @@ angular.module('poluxClienteApp')
         displayName: 'TIPO',
         width: '175',
         cellClass: function(row, col) {
-          if (col.treeNode.children.length == 0 && col.treeLevel!=0) {
-            return "unbold "
+          if (col.treeNode.children.length === 0 && col.treeLevel!==0) {
+            return "unbold ";
           } else {
-            return "text-info"
+            return "text-info";
           }
         }
       }],
@@ -113,7 +113,7 @@ angular.module('poluxClienteApp')
 
     self.gridOptions.isRowSelectable = function(row) {
       console.log(row);
-      if (row.treeLevel == 0) {
+      if (row.treeLevel === 0) {
         return true;
       } else {
         return false;
