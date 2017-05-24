@@ -13,9 +13,11 @@ angular.module('poluxClienteApp')
     $scope.actual = "";
     $scope.token_service = token_service;
     $scope.breadcrumb = [];
-    $scope.menu_service = [
- 
-        { //aqui va el servicio de el app de configuracion
+    $scope.menu_service = [];
+
+
+    /*{ //aqui va el servicio de el app de configuracion
+>>>>>>> 7d91be8ef4e798a52a74dbe919d957e162ab3750
             "Id": 1,
             "Nombre": "Formato",
             "Url": "",
@@ -88,56 +90,18 @@ angular.module('poluxClienteApp')
               "Url": "materias_posgrado/listar_solicitudes",
               "Opciones": null
             }
+            */
 
-          ]
-        },
-
-        {
-          "Id": 2,
-          "Nombre": "Profundización",
-          "Url": "",
-          "Opciones": [{
-            "Id": 2,
-            "Nombre": "Publicación de Espacios Académicos",
-            "Url": "materias_profundizacion/publicar_asignaturas",
-            "Opciones": null
-          },
-          {
-            "Id": 3,
-            "Nombre": "Solicitar inscripción",
-            "Url": "materias_profundizacion/solicitar_asignaturas",
-            "Opciones": null
-          },
-          {
-            "Id": 4,
-            "Nombre": "Listar inscritos",
-            "Url": "materias_profundizacion/listar_solicitudes",
-            "Opciones": null
-          }
-
-        ]
-      },
-
-      {
-        "Id": 2,
-        "Nombre": "Revisión de documentos",
-        "Url": "docente/tgs/revision_documento",
-        "Opciones": null
-      },
-      {
-        "Id": 2,
-        "Nombre": "Perfil Docente",
-        "Url": "",
-        "Opciones": [{
-          "Id": 2,
-          "Nombre": "Áreas del conocimiento",
-          "Url": "perfil_docente/areas",
-          "Opciones": null
-        }]
-      },
+    //Variable que contiene el arreglo de los JSON, con los menus respectivos
 
 
-    ];
+
+    $http.get('http://10.20.0.254/configuracion_api/v1/menu_opcion_padre/ArbolMenus/Admin Polux')
+      .then(function(response) {
+        $scope.menu_service = response.data;
+        recorrerArbol($scope.menu_service, "");
+        update_url();
+    });
 
     var recorrerArbol = function(item, padre) {
       var padres = "";

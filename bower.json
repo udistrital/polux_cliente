@@ -20,7 +20,8 @@
     "angular-websocket": "^2.0.0",
     "angular-input-masks": "^2.5.0",
     "angular-moment": "^1.0.1",
-    "angular-pdf": "^1.5.1"
+    "angular-pdf": "^1.5.1",
+    "sweetalert2": "^6.6.2"
   },
   "resolutions": {
     "angular": "1.6.4"

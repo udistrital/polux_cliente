@@ -14,7 +14,6 @@ angular.module('poluxClienteApp')
       },
       link: function(scope) {
         scope.$watch('pdfjson', function(newValue, oldValue) {
-            console.log(oldValue);
           if (newValue !== oldValue) {
             scope.refresh_format_view(newValue);
           }
@@ -23,12 +22,11 @@ angular.module('poluxClienteApp')
       templateUrl: 'views/pdfgen.html',
       controller: function($scope) {
         var ctrl = this;
-        console.log($scope.pdfjson);
         ctrl.name = $scope.pdfjson.name;
         ctrl.docDefinition = $scope.pdfjson.pdfgen;
         $scope.refresh_format_view = function(pdfjson){
             ctrl.name = pdfjson.name;
-            ctrl.name = pdfjson.pdfgen;
+            ctrl.docDefinition = pdfjson.pdfgen;
         };
         ctrl.view_pdf = function(){
             pdfMake.createPdf(ctrl.docDefinition).open();

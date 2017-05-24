@@ -18,6 +18,7 @@ angular.module('poluxClienteApp')
       templateUrl: 'views/directives/general/tg/registrar-trabajo-grado.html',
       controller:function($scope){
         var self = this;
+
         poluxRequest.get("modalidad","").then(function(response){
           self.modalidad=response.data;
         });
@@ -30,8 +31,8 @@ angular.module('poluxClienteApp')
             Estado: "activo",   //cambiar consultado el estado real: activo,retirado o inactivo
             IdTrabajoGrado: { Id: tg.Id }
           }
-          poluxRequest.post("estudiante_TG",data).then(function(response){
-            poluxRequest.get("estudiante_TG",$.param({
+          poluxRequest.post("estudiante_tg",data).then(function(response){
+            poluxRequest.get("estudiante_tg",$.param({
               query: "CodigoEstudiante:" + response.data.CodigoEstudiante
             }));
           });
