@@ -1,0 +1,54 @@
+<div class="panel panel-primary panel-body">
+  <center>
+    <h3 class="page-header">Edición de Formatos de Evaluación</h3></center>
+
+  <div class="form-group">
+    <label>Seleccionar Formato:</label>
+    <input class="form-control" list="testList" type="" ng-model="formatoEdicion.SelectedFormat" ng-change="formatoEdicion.actualizar_formato()" />
+    <datalist id="testList">
+            <option ng-repeat="formato in formatoEdicion.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
+        </datalist>
+  </div>
+  <div class="panel panel-default ">
+    <div class="panel-body">
+      <legend>
+        <h3 class="text-info">Edición general</h3></legend>
+      <div class="form-group">
+        <label for="nomformato">Titulo Formato:</label>
+        <input ng-model="formatoEdicion.formato_vista.Formato.Nombre" type="text" class="form-control" id="nomformato" placeholder="Ingresa un titulo para el formato">
+      </div>
+
+      <div class="form-group">
+        <label for="introformato">Introducción:</label>
+        <textarea ng-model="formatoEdicion.formato_vista.Formato.Introduccion" type="text" class="form-control" id="introformato" placeholder="Ingrese una Introduccion" rows="5" />
+      </div>
+      <legend>
+        <h3 class="text-info">Edición Preguntas</h3></legend>
+      <div class="col-md-6">
+        <div class="panel panel-primary panel-body">
+          <div class="form-group">
+            <label for="enunpreg">Enunciado:</label>
+            <input ng-model="formatoEdicion.sel_pregunta.IdPregunta.Enunciado" type="text" class="form-control" id="enunpreg" placeholder="Ingresa un enunciado para la pregunta">
+          </div>
+
+          <div class="form-group">
+            <label for="pesopreg">Peso:</label>
+            <input ng-model="formatoEdicion.sel_pregunta.Peso" type="text" class="form-control" id="pesopreg" placeholder="Ingrese un peso para la pregunta" />
+          </div>
+
+          <div class="form-group">
+            <label for="tipopreg">Tipo:</label>
+            <select type="text" class="form-control" ng-model="formatoEdicion.sel_pregunta.Tipo" id="tipopreg" ng-options="tipo.id as tipo.tipo for tipo in formatoEdicion.tipos_preg"></select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div ui-grid="formatoEdicion.gridOptions" ui-grid-selection ui-grid-tree-view ui-grid-auto-resize>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<pre>{{formatoEdicion.formato_vista | json}}</pre>
+<pre>{{formatoEdicion.sel_pregunta | json}}</pre>

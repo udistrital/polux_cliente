@@ -26,6 +26,7 @@ angular
     'ui.grid.treeView',
     'ui.grid.selection',
     'ui.grid.exporter',
+    'ui.grid.autoResize',
     'ngStorage',
     'ngWebSocket',
     'angularMoment',
@@ -130,6 +131,11 @@ angular
         controllerAs: 'docenterevision'
       })
 
+      .when('/formato/formato_edicion', {
+        templateUrl: 'views/formato/formato_edicion.html',
+        controller: 'FormatoEdicionCtrl',
+        controllerAs: 'formatoEdicion'
+      })
       .otherwise({
         redirectTo: '/'
       });
