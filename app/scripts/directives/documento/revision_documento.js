@@ -19,6 +19,7 @@ angular.module('poluxClienteApp')
     templateUrl: "views/directives/documento/revision_documento.html",
     controller: function($scope) {
       var self = this;
+      self.correcciones=[];
       poluxRequest.get("revision",$.param({
         query:"Id:"+$scope.revisionid
       })).then(function(response){
@@ -29,7 +30,11 @@ angular.module('poluxClienteApp')
         sortby:"Id",
         order:"asc"
       })).then(function(response){
-        self.correcciones=response.data;
+        if (response.data!=null) {
+          self.correcciones=response.data;
+        } else{
+          self.correcciones=[];
+        }
       });
 
       self.copyObject=function(Obj){
@@ -93,7 +98,11 @@ angular.module('poluxClienteApp')
           sortby:"Id",
           order:"asc"
         })).then(function(response){
-          self.correcciones=response.data;
+          if (response.data!=null) {
+            self.correcciones=response.data;
+          } else{
+            self.correcciones=[];
+          }
         });
         self.correcciones_eliminadas=[];
       };
@@ -124,6 +133,8 @@ angular.module('poluxClienteApp')
         for (var i = 0; i < self.correcciones_eliminadas.length; i++) {
           poluxRequest.delete("correccion",self.correcciones_eliminadas[i].Id);
         }
+
+
       };
 
     },

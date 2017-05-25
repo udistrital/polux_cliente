@@ -136,6 +136,11 @@ angular
         controller: 'FormatoEdicionCtrl',
         controllerAs: 'formatoEdicion'
       })
+      .when('/estudiante/revision_documento', {
+        templateUrl: 'views/estudiante/revision_documento.html',
+        controller: 'EstudianteRevisionDocumentoCtrl',
+        controllerAs: 'estudianteRevisionDoc'
+      })
       .otherwise({
         redirectTo: '/'
       });
