@@ -7,7 +7,7 @@
  * # registrarPropuesta
  */
 angular.module('poluxClienteApp')
-  .directive('registrarPropuesta', function (academicaRequest, poluxRequest) {
+  .directive('registrarPropuesta', function (poluxMidRequest, academicaRequest, poluxRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -21,7 +21,8 @@ angular.module('poluxClienteApp')
       templateUrl: 'views/directives/general/propuesta/registrar-propuesta.html',
       controller: function () {
         var self = this;
-        self.modSeleccionada = "";
+        self.validar = false;
+        /*self.estudianteSeleccionado = "";*/
         self.buttonDirective = "Aceptar";
         poluxRequest.get("modalidad", "").then(function (response) {
           self.modalidad = response.data;
@@ -52,9 +53,90 @@ angular.module('poluxClienteApp')
           self.parametros = $.param({
             query: "CodigoEstudiante:" + codEstudiante
           });
+        };
+        /**
+         * @ngdoc method
+         * @name asignarModalidad
+         * @methodOf poluxClienteApp.registrarPropuesta
+         * @description
+         * Mediante la ejecución del ngChange en la vista se guardan los parametros
+         *
+         * @param {string} Codigo de modalidad
+         * 
+         */
+        self.asignarModalidad = function (codigo) {
+          try {
+            console.log("Codigo Estudiante: " + self.estudianteSeleccionado);
+            self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
+            codigo = parseInt(codigo.Id);
+            console.log("Modalidad seleccionada: " + codigo);
+            if (isNaN(codigo)) {
+
+            }
+            else {
+              self.verificarRequisitos(self.estudianteSeleccionado, codigo);
+            }
+          } catch (TypeError) {
+            poluxRequest.get("modalidad", "").then(function (response) {
+              self.modalidad = response.data;
+            });
+
+          }
 
         };
 
+        /**
+         * @ngdoc method
+         * @name verificarRequisitos
+         * @methodOf poluxClienteApp.registrarPropuesta
+         * @description
+         * Mediante el codigo del estudiante verifica los requisitos minimos
+         * @param {string} Codigo de estudiante
+         * 
+         */
+        self.verificarRequisitos = function (codigo, codigoModalidad) {
+          codigo = "" + codigo;
+          academicaRequest.periodoAnterior().then(function (periodoAnterior) {
+
+            var parametros = {
+              "codigo": codigo,
+              "ano": periodoAnterior[0].APE_ANO,
+              "periodo": periodoAnterior[0].APE_PER
+            };
+            console.log(parametros);
+            academicaRequest.promedioEstudiante(parametros).then(function (respuestaPromedio) {
+              console.log("Entro a Promedio");
+              console.log(respuestaPromedio);
+              if (respuestaPromedio) {
+                //porcentaje cursado
+                academicaRequest.porcentajeCursado(parametros).then(function (respuestaPorcentaje) {
+
+                  self.estudiante = {
+                    "Codigo": parametros.codigo,
+                    "Nombre": respuestaPromedio[0].NOMBRE,
+                    "Modalidad": codigoModalidad,
+                    "Tipo": "POSGRADO",
+                    "PorcentajeCursado": respuestaPorcentaje,
+                    "Promedio": respuestaPromedio[0].PROMEDIO,
+                    "Rendimiento": "0" + respuestaPromedio[0].REG_RENDIMIENTO_AC,
+                    "Estado": respuestaPromedio[0].EST_ESTADO_EST,
+                    "Nivel": respuestaPromedio[0].TRA_NIVEL,
+                    "TipoCarrera": respuestaPromedio[0].TRA_NOMBRE
+
+                  };
+
+                  console.log(self.estudiante);
+                  self.modalidad = "MATERIAS POSGRADO";
+                  poluxMidRequest.post("verificarRequisitos/Registrar", self.estudiante).then(function (response) {
+                    console.log("response mid api: " + response.data);
+                    self.validar = response.data;
+                  });
+
+                });
+              };
+            });
+          });
+        };
         /**
          * @ngdoc method
          * @name estadoBoton

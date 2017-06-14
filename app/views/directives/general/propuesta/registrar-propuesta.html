@@ -17,7 +17,8 @@
                     <label for="select_estudiante" class="col-form-label">Estudiante </label>
                   </div>
                   <div class="col-md-7">
-                    <select ng-model="d_regProp.estudianteSeleccionado" class="form-control" placeholder="Autor" ng-change="d_regProp.asignarEstudiante(d_regProp.estudianteSeleccionado)">
+                    <select ng-model="d_regProp.estudianteSeleccionado" id="estudianteSelect" class="form-control" placeholder="Autor"
+                     ng-change="d_regProp.asignarEstudiante(d_regProp.estudianteSeleccionado)">
                     <option ng-repeat="p in estparam" value="{{p.EST_COD}}">{{p.EST_NOMBRE}} </option>
                   </select>
                   </div>
@@ -28,13 +29,17 @@
                     <label for="select_modalidad" class="col-form-label">Modalidad</label>
                   </div>
                   <div class="col-md-7">
-                    <select ng-model="d_regProp.modSeleccionada" class="form-control" placeholder="Seleccione una modalidad " required>
-                  <option ng-repeat="mod in d_regProp.modalidad" value="{{mod.Id}}">{{mod.Nombre}}</option>
-                </select>
+                    <select  id="modalidadSelect" class="form-control"
+                     placeholder="Seleccione una modalidad " 
+                      ng-options="mod as mod.Nombre for mod in d_regProp.modalidad"
+                      ng-model="d_regProp.modSeleccionada"
+                      ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)"
+                      required>
+                    </select>
                   </div>
                 </div>
                 <br>
-                <div class="row">
+                <div class="row" ng-if="d_regProp.validar =='true'">
                   <div class="col-md-4">
                     <label for="input_titulo" class="col-form-label">Nombre de la propuesta</label>
                   </div>
@@ -44,7 +49,7 @@
                   </div>
                 </div>
                 <br>
-                <div class="row">
+                <div class="row" ng-if="d_regProp.validar =='true'">
                   <div class="col-md-4">
                     <label for="input_resumen" class="col-form-label">Resumen</label>
                   </div>
@@ -56,7 +61,7 @@
                 <br>
               </form>
               <br>
-              <div ng-class="{'row': d_regProp.menucreacion,'row col-md-6 col-md-offset-5':!d_regProp.menucreacion}" id="botonesRegistro">
+              <div ng-if="d_regProp.validar =='true'" ng-class="{'row': d_regProp.menucreacion,'row col-md-6 col-md-offset-5':!d_regProp.menucreacion}" id="botonesRegistro">
                 <div class="col-md-6" ng-if="!d_regProp.menucreacion">
                   <input type="button" class="btn btn-md btn-outline btn-danger btn-block" ng-click="d_regProp.limpiar()" value="Limpiar" />
                 </div>
@@ -78,15 +83,21 @@
           </div>
         </div>
         <div class="col-sm-3">
-          <pre>{{d_regProp.documento.titulo}}</pre>
-          <pre>{{d_regProp.modSeleccionada}}</pre>
-          <pre> TG_temporal= {{d_regProp.registro_TG |json}}</pre>
-          <pre> documentotemporal= {{d_regProp.documento |json}}</pre>
-          <pre> docregistrado= {{d_regProp.docregistrado |json}}</pre>
-          <pre> Areas_TrabajoGrado= {{d_regProp.areas_TG |json}}</pre>
-          <pre> Vinculación docente= {{d_regProp.vinculaciondocente |json}}</pre>
-          <pre> estudiante_TG= {{d_regProp.estudiante_TG |json}}</pre>
-          <pre> documentoTG= {{d_regProp.docTG |json}}</pre>
+              <div ng-if="d_regProp.validar!='true'" class="alert alert-danger">
+                  <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo
+                  de Grado
+                  <br></br>
+                  <p>
+                    <ul>
+                      <li>Estado: ACTIVO</li>
+                      <li>Porcentaje cursado >= 80%</li>
+                      <li>Promedio >= 3.8</li>
+                      <li>Nivel de estudios: PREGRADO</li>
+                      <li>Tipo carrera != TECNOLOGIA</li>
+                    </ul>
+                  </p>
+                </div>
+  
         </div>
 
       </div>
