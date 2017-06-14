@@ -29,12 +29,9 @@
                     <label for="select_modalidad" class="col-form-label">Modalidad</label>
                   </div>
                   <div class="col-md-7">
-                    <select  id="modalidadSelect" class="form-control"
-                     placeholder="Seleccione una modalidad " 
-                      ng-options="mod as mod.Nombre for mod in d_regProp.modalidad"
-                      ng-model="d_regProp.modSeleccionada"
-                      ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)"
-                      required>
+                    <select ng-model="d_regProp.modSeleccionada" id="modalidadSelect" class="form-control" placeholder="Seleccione una modalidad "
+                     ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)">
+                    <option ng-repeat="mod in d_regProp.modalidad track by mod.Id" value="{{mod.Id}}">{{mod.Nombre}} </option>                    
                     </select>
                   </div>
                 </div>

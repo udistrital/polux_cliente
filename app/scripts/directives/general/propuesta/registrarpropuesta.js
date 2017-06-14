@@ -23,6 +23,7 @@ angular.module('poluxClienteApp')
         var self = this;
         self.validar = false;
         /*self.estudianteSeleccionado = "";*/
+        self.modSeleccionada = "";
         self.buttonDirective = "Aceptar";
         poluxRequest.get("modalidad", "").then(function (response) {
           self.modalidad = response.data;
@@ -68,7 +69,7 @@ angular.module('poluxClienteApp')
           try {
             console.log("Codigo Estudiante: " + self.estudianteSeleccionado);
             self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
-            codigo = parseInt(codigo.Id);
+            codigo = parseInt(codigo);
             console.log("Modalidad seleccionada: " + codigo);
             if (isNaN(codigo)) {
 
@@ -76,7 +77,7 @@ angular.module('poluxClienteApp')
             else {
               self.verificarRequisitos(self.estudianteSeleccionado, codigo);
             }
-          } catch (TypeError) {
+          } catch (Error) {
             poluxRequest.get("modalidad", "").then(function (response) {
               self.modalidad = response.data;
             });
