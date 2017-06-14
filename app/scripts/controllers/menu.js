@@ -15,7 +15,9 @@ angular.module('poluxClienteApp')
     $scope.breadcrumb = [];
     $scope.menu_service = [];
 
+
     /*{ //aqui va el servicio de el app de configuracion
+>>>>>>> 7d91be8ef4e798a52a74dbe919d957e162ab3750
             "Id": 1,
             "Nombre": "Formato",
             "Url": "",
@@ -91,7 +93,7 @@ angular.module('poluxClienteApp')
             */
 
     //Variable que contiene el arreglo de los JSON, con los menus respectivos
-    
+
 
 
     $http.get('http://10.20.0.254/configuracion_api/v1/menu_opcion_padre/ArbolMenus/Admin Polux')

@@ -1,4 +1,3 @@
-
 <div ng-class="{'row col-md-3': d_regProp.menucreacion,'row col-md-12':!d_regProp.menucreacion}">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -9,96 +8,96 @@
         <div class="col-sm-9 col-xs-12">
           <div class="row">
 
-              <!-- Seccion donde se muestra informacion suministrada por el web service de condor-->
-              <div class="row" id="formPropuesta">
-                <form class="ng-valid ng-dirty ng-valid-parse" ng-if="!d_regProp.menucreacion">
-                  <br>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <label for="select_estudiante" class="col-form-label">Estudiante </label>
-                    </div>
-                    <div class="col-md-7">
-                      <select ng-model="d_regProp.estudianteSeleccionado" class="form-control" placeholder="Autor" ng-change="d_regProp.asignarEstudiante(d_regProp.estudianteSeleccionado)">
+            <!-- Seccion donde se muestra informacion suministrada por el web service de condor-->
+            <div class="row" id="formPropuesta">
+              <form class="ng-valid ng-dirty ng-valid-parse" ng-if="!d_regProp.menucreacion">
+                <br>
+                <div class="row">
+                  <div class="col-md-4">
+                    <label for="select_estudiante" class="col-form-label">Estudiante </label>
+                  </div>
+                  <div class="col-md-7">
+                    <select ng-model="d_regProp.estudianteSeleccionado" id="estudianteSelect" class="form-control" placeholder="Autor"
+                     ng-change="d_regProp.asignarEstudiante(d_regProp.estudianteSeleccionado)">
                     <option ng-repeat="p in estparam" value="{{p.EST_COD}}">{{p.EST_NOMBRE}} </option>
                   </select>
-                    </div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <label for="select_modalidad" class="col-form-label">Modalidad</label>
-                    </div>
-                    <div class="col-md-7">
-                      <select ng-model="d_regProp.modSeleccionada" class="form-control" placeholder="Seleccione una modalidad " required>
-                  <option ng-repeat="mod in d_regProp.modalidad" value="{{mod.Id}}">{{mod.Nombre}}</option>
-                </select>
-                    </div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <label for="input_titulo" class="col-form-label">Nombre de la propuesta</label>
-                    </div>
-                    <div class="col-md-7">
-                      <input class="form-control ng-pristine ng-valid ng-empty " name="input_titulo" ng-model="d_regProp.documento.titulo" placeholder="Ingrese el nombre de su propuesta"
-                        aria-invalid="false" style="" type="text">
-                    </div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <label for="input_resumen" class="col-form-label">Resumen</label>
-                    </div>
-                    <div class="col-md-7">
-                      <textarea class="form-control ng-pristine ng-valid ng-empty " name="input_descripcion" ng-model="d_regProp.documento.resumen"
-                        placeholder="Realice una descripcion acerca de su propuesta" aria-invalid="false" style=""></textarea>
-                    </div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <label for="select_areas" class="col-form-label">De acuerdo a su propuesta seleccione las áreas
-                </label>
-                    </div>
-                    <div class="col-md-7">
-                      <asignar-area setareas="areasparam" idarea="idareaparam" newarea="d_regProp.nuevaArea" />
-                    </div>
-                  </div>
-
-                </form>
-
-                <br>
-                <div ng-class="{'row': d_regProp.menucreacion,'row col-md-6 col-md-offset-5':!d_regProp.menucreacion}" id="botonesRegistro">
-                  <div class="col-md-6" ng-if="!d_regProp.menucreacion">
-                    <input type="button" class="btn btn-md btn-outline btn-danger btn-block" ng-click="d_regProp.limpiar()" value="Limpiar" />
-                  </div>
-                  <div ng-class="{'col-md-12': d_regProp.menucreacion,'col-md-6 ':!d_regProp.menucreacion}">
-                    <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-model="d_regProp.buttonDirective" ng-click="d_regProp.estadoboton(d_regProp.buttonDirective)"
-                      value={{d_regProp.buttonDirective}} />
                   </div>
                 </div>
                 <br>
-                <div class="row col-md-12" ng-if="d_regProp.registroDocumento">
-                  <md-card md-colors="{background: 'White', 'border-color': 'primary-600'}">
-                    {{d_regProp.registroDocumento}}
-                  </md-card>
+                <div class="row">
+                  <div class="col-md-4">
+                    <label for="select_modalidad" class="col-form-label">Modalidad</label>
+                  </div>
+                  <div class="col-md-7">
+                    <select  id="modalidadSelect" class="form-control"
+                     placeholder="Seleccione una modalidad " 
+                      ng-options="mod as mod.Nombre for mod in d_regProp.modalidad"
+                      ng-model="d_regProp.modSeleccionada"
+                      ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)"
+                      required>
+                    </select>
+                  </div>
+                </div>
+                <br>
+                <div class="row" ng-if="d_regProp.validar =='true'">
+                  <div class="col-md-4">
+                    <label for="input_titulo" class="col-form-label">Nombre de la propuesta</label>
+                  </div>
+                  <div class="col-md-7">
+                    <input class="form-control ng-pristine ng-valid ng-empty " name="input_titulo" ng-model="d_regProp.documento.titulo" placeholder="Ingrese el nombre de su propuesta"
+                      aria-invalid="false" style="" type="text">
+                  </div>
+                </div>
+                <br>
+                <div class="row" ng-if="d_regProp.validar =='true'">
+                  <div class="col-md-4">
+                    <label for="input_resumen" class="col-form-label">Resumen</label>
+                  </div>
+                  <div class="col-md-7">
+                    <textarea class="form-control ng-pristine ng-valid ng-empty " name="input_descripcion" ng-model="d_regProp.documento.resumen"
+                      placeholder="Realice una descripcion acerca de su propuesta" aria-invalid="false" style=""></textarea>
+                  </div>
+                </div>
+                <br>
+              </form>
+              <br>
+              <div ng-if="d_regProp.validar =='true'" ng-class="{'row': d_regProp.menucreacion,'row col-md-6 col-md-offset-5':!d_regProp.menucreacion}" id="botonesRegistro">
+                <div class="col-md-6" ng-if="!d_regProp.menucreacion">
+                  <input type="button" class="btn btn-md btn-outline btn-danger btn-block" ng-click="d_regProp.limpiar()" value="Limpiar" />
+                </div>
+                <div ng-class="{'col-md-12': d_regProp.menucreacion,'col-md-6 ':!d_regProp.menucreacion}">
+                  <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-model="d_regProp.buttonDirective" ng-click="d_regProp.estadoboton(d_regProp.buttonDirective)"
+                    value={{d_regProp.buttonDirective}} />
                 </div>
               </div>
+              <br>
+              <div class="row col-md-12" ng-if="d_regProp.registroDocumento">
+                <md-card md-colors="{background: 'White', 'border-color': 'primary-600'}">
+                  {{d_regProp.registroDocumento}}
+                </md-card>
+              </div>
+            </div>
 
 
-              <!-- Formulario de asignación de areas de conocimiento y resumen-->
+            <!-- Formulario de asignación de areas de conocimiento y resumen-->
           </div>
         </div>
         <div class="col-sm-3">
-          <pre>{{d_regProp.documento.titulo}}</pre>
-          <pre>{{d_regProp.modSeleccionada}}</pre>
-          <pre> TG_temporal= {{d_regProp.registro_TG |json}}</pre>
-          <pre> documentotemporal= {{d_regProp.documento |json}}</pre>
-          <pre> docregistrado= {{d_regProp.docregistrado |json}}</pre>
-          <pre> Areas_TrabajoGrado= {{d_regProp.areas_TG |json}}</pre>
-          <pre> Vinculación docente= {{d_regProp.vinculaciondocente |json}}</pre>
-          <pre> estudiante_TG= {{d_regProp.estudiante_TG |json}}</pre>
-          <pre> documentoTG= {{d_regProp.docTG |json}}</pre>
+              <div ng-if="d_regProp.validar!='true'" class="alert alert-danger">
+                  <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo
+                  de Grado
+                  <br></br>
+                  <p>
+                    <ul>
+                      <li>Estado: ACTIVO</li>
+                      <li>Porcentaje cursado >= 80%</li>
+                      <li>Promedio >= 3.8</li>
+                      <li>Nivel de estudios: PREGRADO</li>
+                      <li>Tipo carrera != TECNOLOGIA</li>
+                    </ul>
+                  </p>
+                </div>
+  
         </div>
 
       </div>
@@ -112,15 +111,23 @@
     </div>
     <div class="panel-body">
       <!-- Formulario de registro zona de carga de archivos -->
-
+      <div class="row">
+        <div class="col-md-4">
+          <label for="select_areas" class="col-form-label">De acuerdo a su propuesta seleccione las áreas, luego adjunte el archivo del documento
+                </label>
+        </div>
+        <div class="col-md-7">
+          <asignar-area setareas="areasparam" idarea="idareaparam" newarea="d_regProp.nuevaArea" />
+        </div>
+      </div>
+      <br>
       <div class="col-md-8">
-        <!--<subir-documento newdial="d_regProp.guardarRegistro()" dialparent="newfuncion()" enlaceurl="d_regProp.documento.enlace"></subir-documento>-->
         <subir-documento></subir-documento>
       </div>
-       <div class="col-md-4">
-          <input type="button" class="btn btn-md btn-outline btn-primary btn-block"
-           ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)" value="Registrar propuesta" />
-        </div>
+      <div class="col-md-4">
+        <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)"
+          value="Registrar propuesta" />
+      </div>
 
       <!-- Fin de formulario de zona de carga de archivos-->
 

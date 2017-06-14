@@ -3,3 +3,6 @@
 /.tmp
 /.sass-cache
 /bower_components
+/PhantomJS_2.1.1_(Linux_0.0.0)
+/coverage
+/.vscode
