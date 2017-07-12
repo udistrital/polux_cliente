@@ -138,14 +138,19 @@ angular
       })
 
       .when('/formato/formato_edicion', {
-        templateUrl: 'views/formato/formato_edicion.html',
-        controller: 'FormatoEdicionCtrl',
-        controllerAs: 'formatoEdicion'
+        templateUrl: 'views/formato/formato_editar.html',
+        controller: 'FormatoEditarCtrl',
+        controllerAs: 'formatoEditar'
       })
       .when('/estudiante/revision_documento', {
         templateUrl: 'views/estudiante/revision_documento.html',
         controller: 'EstudianteRevisionDocumentoCtrl',
         controllerAs: 'estudianteRevisionDoc'
+      })
+      .when('/formato_facultad', {
+        templateUrl: 'views/formato/formato_facultad.html',
+        controller: 'FormatoFacultadCtrl',
+        controllerAs: 'formatoFacultad'
       })
       .otherwise({
         redirectTo: '/'
