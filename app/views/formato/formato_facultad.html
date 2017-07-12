@@ -1,0 +1,27 @@
+<div class="panel panel-primary panel-body">
+  <center>
+    <h3 class="page-header">Asignar Formato a Proyecto Curricuar</h3>
+  </center>
+  <div class="row">
+    <div class="col-md-4 col-md-offset-1">
+      <label>Seleccionar Formato:</label>
+      <input class="form-control" list="testList" type="" ng-model="formatoFacultad.SelectedFormat" ng-change="formatoFacultad.actualizar_formato()" />
+      <datalist id="testList">
+              <option ng-repeat="formato in formatoFacultad.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
+          </datalist>
+    </div>
+    <div class="col-md-4">
+      <label>Seleccionar Formato:</label>
+      <input class="form-control" list="testList2" type="" ng-model="formatoFacultad.selectedCareer"/>
+      <datalist id="testList2">
+        <option ng-repeat="carrera in formatoFacultad.carreras" value="{{carrera.CODIGO}}" >{{carrera.NOMBRE}}</option>
+      </datalist>
+    </div>
+    <div class="col-md-3">
+      <br>
+      <button type="button" class="btn btn-outline btn-success">Asignar</button>
+    </div>
+  </div>
+  <br>
+  <vista-previa-formato formato="formatoFacultad.SelectedFormat"></vista-previa-formato>
+</div>
