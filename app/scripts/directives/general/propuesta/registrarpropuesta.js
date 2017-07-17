@@ -19,7 +19,7 @@ angular.module('poluxClienteApp')
         dialparent: '&'
       },
       templateUrl: 'views/directives/general/propuesta/registrar-propuesta.html',
-      controller: function () {
+      controller: function ($scope, $location) {
         var self = this;
         self.validar = false;
         /*self.estudianteSeleccionado = "";*/
@@ -168,23 +168,49 @@ angular.module('poluxClienteApp')
          * @param {array|string|string} objeto del documento, codigo del estudiante, codigo de Modalidad
          */
         self.guardar = function (doc, estudiante, idModalidad) {
-          var codEstudiante, idTrabajoGrado;
-          codEstudiante = parseInt(estudiante);
-          console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
-          self.registro_TG = [];
-          self.estudiante_TG = [];
-          self.docregistrado = [];
-          self.TGregistrado = [];
-          self.areas_TG = [];
-          self.docTG = [];
-          self.preguardarTG(doc.titulo, parseInt(idModalidad));
-          // console.log("self.registro_TG" + self.registro_TG);
-          self.guardarTG(self.registro_TG, estudiante, doc);
+          var objModalidad;
+          poluxRequest.get("modalidad", $.param({
+            query: "Id:" + idModalidad
+          })).then(function (response) {
+            objModalidad = response.data;
+            console.log(objModalidad[0].Nombre);
 
-          // console.log("idTrabajoGrado: " + idTrabajoGrado);
-          // self.estudiante_TG = self.preguardarEstudianteTG(idTrabajoGrado, estudiante);
-          // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
-          console.log(idTrabajoGrado);
+            swal({
+              title: 'Confirma el registro del documento:',
+              text: '' + '\n' + '"' + doc.titulo + '" en la modalidad: ' + objModalidad[0].Nombre,
+              type: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Confirmar'
+            }).then(function () {
+              var codEstudiante, idTrabajoGrado;
+              codEstudiante = parseInt(estudiante);
+              console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
+              self.registro_TG = [];
+              self.estudiante_TG = [];
+              self.docregistrado = [];
+              self.TGregistrado = [];
+              self.areas_TG = [];
+              self.docTG = [];
+              self.preguardarTG(doc.titulo, parseInt(idModalidad));
+              // console.log("self.registro_TG" + self.registro_TG);
+              self.guardarTG(self.registro_TG, estudiante, doc);
+
+              // console.log("idTrabajoGrado: " + idTrabajoGrado);
+              // self.estudiante_TG = self.preguardarEstudianteTG(idTrabajoGrado, estudiante);
+              // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
+              console.log(idTrabajoGrado);
+              $scope.$apply(function () { $location.path("/general/cons_prop"); });
+              swal(
+                'Registro Existoso',
+                'El registro del documento "' + doc.titulo + '" fue creado exitosamente',
+                'success'
+              );
+
+            });
+          });
+
         };
 
         /**
