@@ -36,7 +36,8 @@ angular.module('poluxClienteApp')
             query: "IdentificacionDocente:"+Id,
             sortby: "IdAreaConocimiento",
             order: "asc",
-            limit: 0
+            limit: 0,
+            related: "IdAreaConocimiento"
           });
           poluxRequest.get("areas_docente",self.parametros)
           .then(function(response){
