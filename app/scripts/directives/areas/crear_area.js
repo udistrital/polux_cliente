@@ -40,6 +40,7 @@ angular.module('poluxClienteApp')
               self.parametros=$.param({
                 query:"IdentificacionDocente:"+response.data.IdentificacionDocente,
                 sortby: "IdAreaConocimiento",
+                related: "IdAreaConocimiento",
                 order: "asc",
                 limit: 0
               })

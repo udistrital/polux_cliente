@@ -56,6 +56,7 @@ angular.module('poluxClienteApp')
         */
       self.generarIdAreas=function(areasDocenteParam){
           self.idareas=[];
+          console.log(areasDocenteParam);
           angular.forEach(areasDocenteParam,function(value){
               self.idareas.push(value.IdAreaConocimiento.Id);
           });
