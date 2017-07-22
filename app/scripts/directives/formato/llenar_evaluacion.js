@@ -22,7 +22,6 @@ angular.module('poluxClienteApp')
         poluxRequest.get("tr_formato/" + $scope.formato,"")
           .then(function(response) {
             ctrl.Formato = response.data;
-            console.log(response.data)
           });
       },
       controllerAs: 'd_llenar_evaluacion'

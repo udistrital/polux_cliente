@@ -2,8 +2,7 @@
 <div class="panel panel-default">
   <div class="panel-heading" align="center">
     <h2>{{d_llenar_evaluacion.Formato.Formato.Nombre}}</h2> {{d_llenar_evaluacion.Formato.Formato.Introduccion}}</div>
-  <div class="panel-body" ng-if="formato !== ''">
-
+  <div class="panel-body" ng-if="formato !== ''">    
     <div ng-repeat="pregunta in d_llenar_evaluacion.Formato.TrPreguntas">
       <div class="panel panel-defaul">
         <div class="panel-heading">{{pregunta.Pregunta.Orden}}. {{pregunta.Pregunta.IdPregunta.Enunciado}}
@@ -11,25 +10,25 @@
 
         <div ng-if="pregunta.Pregunta.Tipo === 'abierto'">
           <div class="panel-body">
-            <textarea type="text" class="form-control" placeholder="Ingrese su respuesta aqui..." /></textarea>
+            <textarea type="text" class="form-control" ng-model="pregunta.Pregunta.Respuestas.respuesta" placeholder="Ingrese su respuesta aqui..." /></textarea>
           </div>
         </div>
 
         <div ng-if="pregunta.Pregunta.Tipo === 'calificado'">
           <div class="panel-body">
             <div class="col-md-8">
-              <input type="range" min="0" max="50" ng_model="numeric" ng-default="30" />
+              <input type="range" min="0" max="50" ng_model="pregunta.Pregunta.Respuestas.respuesta" ng-default="30" />
             </div>
             <div class="col-md-4">
-              <input class="form-control" type="text" ng_model="numeric" disabled="true">
+              <input class="form-control" type="text" ng_model="pregunta.Pregunta.Respuestas.respuesta" disabled="true">
             </div>
           </div>
         </div>
 
         <div ng-if="pregunta.Pregunta.Tipo === 'cerrado_unico'">
           <div class="panel-body">
-            <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6">
-              <input class="form-group" type="radio" name="name"> {{respuesta.IdRespuesta.Descripcion}} <br>
+            <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6" >
+              <input class="form-group" type="radio" name="name" ng_model="pregunta.Pregunta.Respuestas.respuesta"> {{respuesta.IdRespuesta.Descripcion}} <br>
             </div>
           </div>
         </div>
@@ -37,7 +36,7 @@
         <div ng-if="pregunta.Pregunta.Tipo === 'cerrado_multiple'">
           <div class="panel-body">
             <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6">
-              <input class="form-group" type="checkbox" name="name" > {{respuesta.IdRespuesta.Descripcion}} <br>
+              <input class="form-group" type="checkbox" name="name" ng_model="pregunta.Pregunta.Respuestas.respuesta" > {{respuesta.IdRespuesta.Descripcion}} <br>
             </div>
           </div>
         </div>
@@ -50,4 +49,8 @@
             </button>
       </div>
     </div>
+    <pre>
+      {{d_llenar_evaluacion.Formato | json}}
+    </pre>
+
   </div>
