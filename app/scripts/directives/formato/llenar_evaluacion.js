@@ -7,22 +7,24 @@
  * # formato/llenarEvaluacion
  */
 angular.module('poluxClienteApp')
-  .directive('formato/llenarEvaluacion', function () {
+  .directive('llenarEvaluacion', function () {
     return {
       restrict: 'E',
       scope: {
-        formato: '='
+        formato: '=?'
       },
-      link: function(scope, elm, attr) {
-        scope.$watch('formato', function(newValue, oldValue) {
-          if (newValue !== oldValue) {
-            scope.refresh_format_view(newValue);
-          }
-        }, true);
-      },
-      templateUrl: 'views/directives/formato/vista_previa_formato.html',
+      templateUrl: 'views/directives/formato/llenar_evaluacion.html',
       controller: function(poluxRequest, $scope) {
+        var ctrl = this;
+        $scope.$watch('formato', function() {
+          console.log(ctrl.Formato);
+        });
+        poluxRequest.get("tr_formato/" + $scope.formato,"")
+          .then(function(response) {
+            ctrl.Formato = response.data;
+            console.log(response.data)
+          });
       },
-      controllerAs: 'vistaPrevia'
+      controllerAs: 'd_llenar_evaluacion'
     };
   });

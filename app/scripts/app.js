@@ -147,6 +147,11 @@ angular
         controller: 'EstudianteRevisionDocumentoCtrl',
         controllerAs: 'estudianteRevisionDoc'
       })
+      .when('/evaluar_proyecto', {
+        templateUrl: 'views/formato/evaluar_proyecto.html',
+        controller: 'EvaluarProyectoCtrl',
+        controllerAs: 'evaluarProyecto'
+      })
       .otherwise({
         redirectTo: '/'
       });

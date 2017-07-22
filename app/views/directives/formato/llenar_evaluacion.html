@@ -1,10 +1,10 @@
 
 <div class="panel panel-default">
   <div class="panel-heading" align="center">
-    <h2>{{formato_vista.Formato.Nombre}}</h2> {{formato_vista.Formato.Introduccion}}</div>
+    <h2>{{d_llenar_evaluacion.Formato.Formato.Nombre}}</h2> {{d_llenar_evaluacion.Formato.Formato.Introduccion}}</div>
   <div class="panel-body" ng-if="formato !== ''">
 
-    <div ng-repeat="pregunta in formato_vista.TrPreguntas">
+    <div ng-repeat="pregunta in d_llenar_evaluacion.Formato.TrPreguntas">
       <div class="panel panel-defaul">
         <div class="panel-heading">{{pregunta.Pregunta.Orden}}. {{pregunta.Pregunta.IdPregunta.Enunciado}}
         </div>
@@ -44,11 +44,7 @@
       </div>
 
     </div>
-    <div class="row">
-      <div class="col-md-6" align="center">
-        <pdfgen pdfjson="pdfgen_all"/>
-      </div>
-      <div class="col-md-6" align="center">
+    <div class="row" align="center" >
         <button type="button" class="btn btn-primary" ng-click="VistaPreviaEvaluacionCtrl.enviar()">
                 <span class="glyphicon glyphicon-file" aria-hidden="true"></span>   Enviar Evaluación
             </button>
