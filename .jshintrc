@@ -18,6 +18,7 @@
         "jQuery": false,
         "KJUR": false,
         "b64utoutf8": false,
-        "swal": false
+        "swal": false,
+        "Nuxeo": false
     }
 }
