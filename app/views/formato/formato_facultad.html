@@ -2,26 +2,50 @@
   <center>
     <h3 class="page-header">Asignar Formato a Proyecto Curricuar</h3>
   </center>
-  <div class="row">
-    <div class="col-md-4 col-md-offset-1">
+  <div class="col-md-6">
+    <div class="row">
       <label>Seleccionar Formato:</label>
       <input class="form-control" list="testList" type="" ng-model="formatoFacultad.SelectedFormat" ng-change="formatoFacultad.actualizar_formato()" />
       <datalist id="testList">
               <option ng-repeat="formato in formatoFacultad.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
           </datalist>
     </div>
-    <div class="col-md-4">
-      <label>Seleccionar Formato:</label>
-      <input class="form-control" list="testList2" type="" ng-model="formatoFacultad.selectedCareer"/>
+    <br>
+    <div class="row">
+      <label>Seleccionar Proyecto Curricular:</label>
+      <input class="form-control" list="testList2" type="" ng-model="formatoFacultad.selectedCareer" />
       <datalist id="testList2">
         <option ng-repeat="carrera in formatoFacultad.carreras" value="{{carrera.CODIGO}}" >{{carrera.NOMBRE}}</option>
       </datalist>
     </div>
-    <div class="col-md-3">
+    <br>
+    <div class="row">
+      <label>Seleccionar Proyecto Curricular:</label>
       <br>
-      <button type="button" class="btn btn-outline btn-success">Asignar</button>
+      <div flex="50" class="left-cinco" ng-repeat="item in formatoFacultad.modalidades">
+        <md-checkbox class="blue" ng-checked="exists(item, selected)" ng-click="toggle(item, selected)">
+          {{ item.Nombre }}
+        </md-checkbox>
+      </div>
+    </div>
+    <pre>
+    {{selected | json}}
+    </pre>
+
+    <div class="row">
+        <label>Fecha:</label>
+        <md-datepicker ng-model="formatoFacultad.fecha_inicio" md-placeholder="Ingrese Fecha"></md-datepicker>
+    </div>
+
+
+
+    <div class="row" align="center">
+      <br>
+      <button type="button" class="btn btn-outline btn-success" ng-click="formatoFacultad.guardar_datos()">Asignar</button>
     </div>
   </div>
   <br>
-  <vista-previa-formato formato="formatoFacultad.SelectedFormat"></vista-previa-formato>
+  <div class="col-md-6">
+    <vista-previa-formato formato="formatoFacultad.SelectedFormat"></vista-previa-formato>
+  </div>
 </div>
