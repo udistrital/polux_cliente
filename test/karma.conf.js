@@ -52,6 +52,7 @@ module.exports = function(config) {
       'bower_components/bootstrap-fileinput/js/fileinput.min.js',
       'bower_components/angular-loading-bar/build/loading-bar.js',
       'bower_components/angular-translate/angular-translate.js',
+      'bower_components/nuxeo/dist/nuxeo.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

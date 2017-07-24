@@ -1,53 +1,57 @@
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>poluxClienteApp</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width">
-  <script src="https://use.fontawesome.com/64b53ddd5b.js"></script>
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-  <!-- build:css(.) styles/vendor.css -->
-  <!-- bower:css -->
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-  <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
-  <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
-  <link rel="stylesheet" href="bower_components/angular-tree-control/css/tree-control.css" />
-  <link rel="stylesheet" href="bower_components/sweetalert2/dist/sweetalert2.css" />
-  <link rel="stylesheet" href="bower_components/bootstrap-fileinput/css/fileinput.min.css" />
-  <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
-  <link rel="stylesheet" href="bower_components/font-awesome-animation/dist/font-awesome-animation.css" />
-  <link rel="stylesheet" href="bower_components/font-awesome-animation/dist/font-awesome-animation.min.css" />
-  <!-- endbower -->
-  <!-- endbuild -->
 
-  <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/oas-style.css">
-  <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/sb-admin-2.css">
-  <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/table-demo.css">
-  <!-- build:css(.tmp) styles/main.css -->
-  <link rel="stylesheet" href="styles/polux.css">
-  <!-- endbuild -->
+<head>
+    <meta charset="utf-8">
+    <title>Polux</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <script src="https://use.fontawesome.com/64b53ddd5b.js"></script>
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
+    <link rel="stylesheet" href="bower_components/angular-tree-control/css/tree-control.css" />
+    <link rel="stylesheet" href="bower_components/sweetalert2/dist/sweetalert2.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-fileinput/css/fileinput.min.css" />
+    <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
+    <link rel="stylesheet" href="bower_components/font-awesome-animation/dist/font-awesome-animation.css" />
+    <link rel="stylesheet" href="bower_components/font-awesome-animation/dist/font-awesome-animation.min.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/oas-style.css">
+    <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/sb-admin-2.css">
+    <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/table-demo.css">
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/polux.css">
+    <!-- endbuild -->
 </head>
+
 <body ng-app="poluxClienteApp">
-  <div ng-include="'views/menu.html'" ng-controller="menuCtrl"></div>
+    <div ng-include="'views/menu.html'" ng-controller="menuCtrl"></div>
     <!--[if lte IE 8]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <div class="container-fluid">
-      <div ng-view=""></div>
+        <div ng-view=""></div>
     </div>
-  <div ng-include="'views/footer.html'" ng-controller="footerCtrl"></div>
+    <div ng-include="'views/footer.html'" ng-controller="footerCtrl"></div>
 
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
     <script>
-    !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
-      (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
-      r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
-    }(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ! function(A, n, g, u, l, a, r) {
+            A.GoogleAnalyticsObject = l, A[l] = A[l] || function() {
+                    (A[l].q = A[l].q || []).push(arguments)
+                }, A[l].l = +new Date, a = n.createElement(g),
+                r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
+        }(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
-    ga('create', 'UA-XXXXX-X');
-    ga('send', 'pageview');
+        ga('create', 'UA-XXXXX-X');
+        ga('send', 'pageview');
     </script>
 
     <!-- build:js(.) scripts/vendor.js -->
@@ -84,11 +88,12 @@
     <script src="bower_components/bootstrap-fileinput/js/fileinput.min.js"></script>
     <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
     <script src="bower_components/angular-translate/angular-translate.js"></script>
+    <script src="bower_components/nuxeo/dist/nuxeo.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
 
-      <!--  <script src="bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <!--  <script src="bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
         <script src="bower_components/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
         <script src="bower_components/blueimp-file-upload/js/jquery.fileupload.js"></script>
 
@@ -96,7 +101,7 @@
         /* global window, $ */
         window.testBasicWidget = $.blueimp.fileupload;
         -->
-          <!--
+    <!--
         </script>
 
         <script src="bower_components/blueimp-file-upload/js/jquery.fileupload-process.js"></script>
@@ -112,72 +117,64 @@
       -->
 
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-        <!-- endbuild -->
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <!-- endbuild -->
 </body>
-  <!-- build:js({.tmp,app}) scripts/extras.js -->
-  <script src="scripts/services/token.js"></script>
-  <script src="scripts/services/notificacion.js"></script>
-  <script src="scripts/services/polux_service.js"></script>
-  <script src="scripts/services/academica_service.js"></script>
-  <script src="scripts/services/polux_mid_service.js"></script>
-  <script src="scripts/services/cadena_service.js"></script>
-
-  <script src="scripts/controllers/menu.js"></script>
-  <script src="scripts/controllers/footer.js"></script>
-  <script src="scripts/controllers/notificaciones.js"></script>
-  <script src="bower_components/moment/locale/es.js"></script>
-
-  <script src="scripts/controllers/about.js"></script>
-  <script src="scripts/controllers/formato/formato_nuevo.js"></script>
-  <script src="scripts/controllers/formato/formato_editar.js"></script>
-  <script src="scripts/controllers/formato/formato_ver.js"></script>
-  <script src="scripts/directives/formato/formato_vista_previa.js"></script>
-  <script src="scripts/services/polux_service.js"></script>
-  <script src="scripts/services/academica_service.js"></script>
-  <script src="scripts/controllers/materias_posgrado/listar_solicitudes.js"></script>
-  <script src="scripts/directives/materias/publicar_asignaturas.js"></script>
-  <script src="scripts/controllers/materias_posgrado/publicar_asignaturas.js"></script>
-  <script src="scripts/controllers/materias_posgrado/solicitar_asignaturas.js"></script>
-  <script src="scripts/directives/materias/consultar_solicitudes.js"></script>
-  <script src="scripts/directives/materias/solicitar_asignaturas.js"></script>
-
-
-  <script src="scripts/services/cadena_service.js"></script>
-
-  <script src="scripts/directives/areas/mostrar_area.js"></script>
-  <script src="scripts/directives/areas/crear_area.js"></script>
-  <script src="scripts/controllers/perfil_docente/areas_docente.js"></script>
-  <script src="scripts/directives/areas/asignar_area.js"></script>
-  <script src="scripts/controllers/general/propuesta.js"></script>
-  <script src="scripts/controllers/general/consulta_propuesta.js"></script>
-  <script src="scripts/controllers/general/registrar_tg.js"></script>
-  <script src="scripts/directives/general/tg/registrartrabajogrado.js"></script>
-  <script src="scripts/directives/general/propuesta/registrarpropuesta.js"></script>
-  <script src="scripts/directives/general/propuesta/consultarpropuesta.js"></script>
-  <script src="scripts/directives/general/documento/subirdocumento.js"></script>
-
+<!-- build:js({.tmp,app}) scripts/extras.js -->
+<script src="scripts/services/token.js"></script>
+<script src="scripts/services/notificacion.js"></script>
+<script src="scripts/services/polux_service.js"></script>
+<script src="scripts/services/academica_service.js"></script>
+<script src="scripts/services/polux_mid_service.js"></script>
+<script src="scripts/services/cadena_service.js"></script>
+<script src="scripts/controllers/menu.js"></script>
+<script src="scripts/controllers/footer.js"></script>
+<script src="scripts/controllers/notificaciones.js"></script>
+<script src="bower_components/moment/locale/es.js"></script>
+<script src="scripts/controllers/about.js"></script>
+<script src="scripts/controllers/formato/formato_nuevo.js"></script>
+<script src="scripts/controllers/formato/formato_editar.js"></script>
+<script src="scripts/controllers/formato/formato_ver.js"></script>
+<script src="scripts/directives/formato/formato_vista_previa.js"></script>
+<script src="scripts/services/polux_service.js"></script>
+<script src="scripts/services/academica_service.js"></script>
+<script src="scripts/controllers/materias_posgrado/listar_solicitudes.js"></script>
+<script src="scripts/directives/materias/publicar_asignaturas.js"></script>
+<script src="scripts/controllers/materias_posgrado/publicar_asignaturas.js"></script>
+<script src="scripts/controllers/materias_posgrado/solicitar_asignaturas.js"></script>
+<script src="scripts/directives/materias/consultar_solicitudes.js"></script>
+<script src="scripts/directives/materias/solicitar_asignaturas.js"></script>
+<script src="scripts/services/cadena_service.js"></script>
+<script src="scripts/directives/areas/mostrar_area.js"></script>
+<script src="scripts/directives/areas/crear_area.js"></script>
+<script src="scripts/controllers/perfil_docente/areas_docente.js"></script>
+<script src="scripts/directives/areas/asignar_area.js"></script>
+<script src="scripts/controllers/general/propuesta.js"></script>
+<script src="scripts/controllers/general/consulta_propuesta.js"></script>
+<script src="scripts/controllers/general/registrar_tg.js"></script>
+<script src="scripts/directives/general/tg/registrartrabajogrado.js"></script>
+<script src="scripts/directives/general/propuesta/registrarpropuesta.js"></script>
+<script src="scripts/directives/general/propuesta/consultarpropuesta.js"></script>
+<script src="scripts/directives/general/documento/subirdocumento.js"></script>
 <script src="scripts/controllers/materias_profundizacion/publicar_asignaturas.js"></script>
 <script src="scripts/controllers/materias_profundizacion/solicitar_asignaturas.js"></script>
 <script src="scripts/controllers/materias_profundizacion/listar_solicitudes.js"></script>
-
 <script src="scripts/services/polux_mid_service.js"></script>
-
 <script src="scripts/directives/documento/ver_documento.js"></script>
 <script src="scripts/directives/documento/revision_documento.js"></script>
 <script src="scripts/controllers/docente/tgs/revision_documento.js"></script>
 <script src="scripts/directives/documento/ver_revision.js"></script>
+<script src="scripts/directives/pdfgen.js"></script>
+<script src="scripts/controllers/formato/formato_edicion.js"></script>
+<script src="scripts/controllers/estudiante/revision_documento.js"></script>
+<script src="scripts/decorators/text_translate.js"></script>
+<script src="scripts/directives/formato/llenar_evaluacion.js"></script>
+<script src="scripts/controllers/formato/evaluar_proyecto.js"></script>
+<script src="scripts/controllers/formato/formato_facultad.js"></script>
+<script src="scripts/services/nuxeo.js"></script>
+<!-- endbuild -->
+<script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 
-
-  <script src="scripts/directives/pdfgen.js"></script>
-  <script src="scripts/controllers/formato/formato_edicion.js"></script>
-  <script src="scripts/controllers/estudiante/revision_documento.js"></script>
-  <script src="scripts/decorators/text_translate.js"></script>
-  <script src="scripts/directives/formato/llenar_evaluacion.js"></script>
-  <script src="scripts/controllers/formato/evaluar_proyecto.js"></script>
-  <script src="scripts/controllers/formato/formato_facultad.js"></script>
-  <!-- endbuild -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-  </html>
+</html>

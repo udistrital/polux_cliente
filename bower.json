@@ -25,7 +25,8 @@
     "bootstrap-fileinput": "^4.3.9",
     "angular-loading-bar": "^0.9.0",
     "angular-translate": "^2.15.1",
-    "font-awesome-animation": "^0.0.10"
+    "font-awesome-animation": "^0.0.10",
+    "nuxeo": "^3.2.1"
   },
   "resolutions": {
     "angular": "1.6.4"
