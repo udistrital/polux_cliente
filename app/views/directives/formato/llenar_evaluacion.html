@@ -1,0 +1,63 @@
+<div class="panel panel-default">
+    <div class="panel-heading" align="center">
+        <h2>{{d_llenar_evaluacion.Formato.Formato.Nombre}}</h2> {{d_llenar_evaluacion.Formato.Formato.Introduccion}}</div>
+    <div class="panel-body" ng-if="formato !== ''">
+        <form name="evaluacion" ng-submit="d_llenar_evaluacion.enviar_evaluacion()">
+            <div ng-repeat="pregunta in d_llenar_evaluacion.Formato.TrPreguntas">
+                <div class="panel panel-defaul">
+                    <div class="panel-heading">{{pregunta.Pregunta.Orden}}. {{pregunta.Pregunta.IdPregunta.Enunciado}}
+                    </div>
+
+                    <div ng-if="pregunta.Pregunta.Tipo == 'abierto'">
+                        <div class="panel-body">
+                            <textarea type="text" class="form-control" ng-model="pregunta.Justificacion" placeholder="Ingrese su respuesta aqui..." ng-required="true" /></textarea>
+                        </div>
+                    </div>
+
+                    <div ng-if="pregunta.Pregunta.Tipo == 'calificado'">
+                        <div class="panel-body">
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" ng_model="pregunta.Justificacion" ui-number-mask ng-required="true">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="pregunta.Pregunta.Tipo == 'cerrado_unico'">
+                        <md-radio-group ng-model="pregunta.Pregunta.Respuestas" ng-required="true">
+                            <div class="panel-body">
+                                <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6">
+                                    <md-radio-button flex ng-value="respuesta" class="md-primary" ng-required="true">
+                                        {{respuesta.IdRespuesta.Descripcion}}
+                                    </md-radio-button>
+                                </div>
+                            </div>
+                        </md-radio-group>
+                    </div>
+
+
+                    <div ng-if="pregunta.Pregunta.Tipo == 'cerrado_multiple'">
+                        <div class="panel-body">
+                            <div ng-repeat="respuesta in pregunta.Respuestas" class="col-md-6">
+                                <md-checkbox class="blue" ng-checked="exists(respuesta,selected)" ng-click="toggle(respuesta, selected)" ng-required="true">
+                                    {{respuesta.IdRespuesta.Descripcion}}
+                                </md-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <label for="field">Calificación Final del proyecto de grado</label>
+            <input type="text" class="form-ctrl" name="field" ng-model="number" ui-number-mask min="0.0" max="5.0" ng-required="true">
+            <div class="row" align="center">
+                <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-file" aria-hidden="true"></span>   Enviar Evaluación
+            </button>
+            </div>
+        </form>
+    </div>
+
+    <pre>
+      {{d_llenar_evaluacion.enviar | json}}
+    </pre>
+</div>

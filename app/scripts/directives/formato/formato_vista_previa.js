@@ -21,17 +21,47 @@ angular.module('poluxClienteApp')
         }, true);
       },
       templateUrl: 'views/directives/formato/vista_previa_formato.html',
-      controller: function(poluxRequest, $scope) {
+      controller: function(poluxRequest, $scope, $http) {
+
+        $http.get("models/imagen_ud.json")
+        .then(function(response) {
+          $scope.imagen_ud = response.data;
+        });
+
+
         $scope.pdfgen_all = {
           name: "",
           pdfgen: {
-            content: []
+            content: [],
+            styles: {
+              header: {
+                fontSize: 14,
+                bold: true
+              },
+              subheader: {
+                fontSize: 12,
+                bold: true
+              },
+              quote: {
+                italics: true
+              },
+              small: {
+                fontSize: 8
+              }
+            }
           }
         };
         $scope.formato_vista = {};
         $scope.generar_pdf = function(formato) {
           $scope.pdfgen_all.name = formato.Formato.Nombre;
           $scope.pdfgen_all.pdfgen.content = [];
+            
+        $scope.pdfgen_all.pdfgen.content.push({
+            // if you specify both width and height - image will be stretched
+            image: $scope.imagen_ud.imagen,
+            width: 100,
+            margin: [200, 0, 0, 0],
+          });
           $scope.pdfgen_all.pdfgen.content.push({
             text: ['UNIVERSIDAD DISTRITAL FRANCISCO JOSÉ DE CALDAS\n',
               formato.Formato.Nombre + '\n\n'
@@ -112,9 +142,9 @@ angular.module('poluxClienteApp')
                 });
                 break;
               default:
-
             }
           });
+
         };
         $scope.refresh_format_view = function(id) {
           $scope.respuestas_vista = [];

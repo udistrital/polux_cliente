@@ -136,7 +136,6 @@ angular
         controller: 'DocenteTgsRevisionDocumentoCtrl',
         controllerAs: 'docenterevision'
       })
-
       .when('/formato/formato_edicion', {
         templateUrl: 'views/formato/formato_editar.html',
         controller: 'FormatoEditarCtrl',
@@ -146,6 +145,11 @@ angular
         templateUrl: 'views/estudiante/revision_documento.html',
         controller: 'EstudianteRevisionDocumentoCtrl',
         controllerAs: 'estudianteRevisionDoc'
+      })
+      .when('/evaluar_proyecto', {
+        templateUrl: 'views/formato/evaluar_proyecto.html',
+        controller: 'EvaluarProyectoCtrl',
+        controllerAs: 'evaluarProyecto'
       })
       .when('/formato_facultad', {
         templateUrl: 'views/formato/formato_facultad.html',

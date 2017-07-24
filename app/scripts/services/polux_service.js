@@ -7,6 +7,7 @@
  * # poluxService
  * Factory in the poluxClienteApp.
  */
+
 angular.module('poluxService', [])
     .factory('poluxRequest', function($http) {
         // Service logic

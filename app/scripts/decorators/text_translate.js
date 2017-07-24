@@ -9,11 +9,13 @@
  */
 var text_es = {
   TITULO: "GENERATOR-OAS",
-  MENSAJE_INICIAL: "Ahora puede comenzar con el desarrollo ..."
+  MENSAJE_INICIAL: "Ahora puede comenzar con el desarrollo ...",
+  EVALUAR_PROYECTO: "Evaluación de Proyecto de Grado"
 };
 var text_en = {
   TITULO: "GENERATOR-OAS",
-  MENSAJE_INICIAL: "Now get to start to develop"
+  MENSAJE_INICIAL: "Now get to start to develop",
+  
 };
 angular.module('poluxClienteApp')
   .config(function($translateProvider) {
