@@ -306,8 +306,6 @@ angular.module('poluxClienteApp')
                         response.data.Formato.Nombre,
                     type: 'success',
                     showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
                     confirmButtonText: 'Aceptar'
                 }).then(function() {
                     $location.path('/formato_ver');

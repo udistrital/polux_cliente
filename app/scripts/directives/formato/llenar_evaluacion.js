@@ -15,8 +15,19 @@ angular.module('poluxClienteApp')
             },
             templateUrl: 'views/directives/formato/llenar_evaluacion.html',
             controller: function(poluxRequest, $scope) {
+
                 var ctrl = this;
                 $scope.selected = [];
+                ctrl.enviar = [];
+
+                ctrl.enviar_evaluacion = function() {
+                    angular.forEach($scope.selected, function(data) {
+                        ctrl.enviar.push({
+                            RespuestaFormato: data
+                        });
+                    });
+                };
+
                 $scope.$watch('formato', function() {
                     console.log(ctrl.Formato);
                 });
@@ -27,8 +38,7 @@ angular.module('poluxClienteApp')
                         angular.forEach(ctrl.Formato.TrPreguntas, function(data) {
                             if (data.Tipo == "cerrado_multiple") {
                                 data.Respuestas = [];
-                            };
-
+                            }
                         });
                     });
 
