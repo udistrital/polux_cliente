@@ -136,11 +136,10 @@ angular
         controller: 'DocenteTgsRevisionDocumentoCtrl',
         controllerAs: 'docenterevision'
       })
-
       .when('/formato/formato_edicion', {
-        templateUrl: 'views/formato/formato_edicion.html',
-        controller: 'FormatoEdicionCtrl',
-        controllerAs: 'formatoEdicion'
+        templateUrl: 'views/formato/formato_editar.html',
+        controller: 'FormatoEditarCtrl',
+        controllerAs: 'formatoEditar'
       })
       .when('/estudiante/revision_documento', {
         templateUrl: 'views/estudiante/revision_documento.html',
@@ -151,6 +150,11 @@ angular
         templateUrl: 'views/formato/evaluar_proyecto.html',
         controller: 'EvaluarProyectoCtrl',
         controllerAs: 'evaluarProyecto'
+      })
+      .when('/formato_facultad', {
+        templateUrl: 'views/formato/formato_facultad.html',
+        controller: 'FormatoFacultadCtrl',
+        controllerAs: 'formatoFacultad'
       })
       .otherwise({
         redirectTo: '/'
