@@ -1,4 +1,12 @@
 #loading-bar .bar {
-  background-color:#54ACD2;
-  position: relative;
+    background-color: #54ACD2;
+    position: relative;
+}
+
+md-checkbox.md-checked.blue .md-icon {
+    background-color: rgba(0, 62, 101, 1);
+}
+
+.left-cinco {
+    padding-left: 5%;
 }
