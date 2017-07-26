@@ -1,0 +1,44 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'GESTION_SOLICITUDES' | translate}}
+    </div>
+    <div class="panel-body">
+          <div class="row">
+            <div class="col-md-10">
+            <p>Código:  <input type="text" name="userName" ng-model="codigo" required><br></p>
+          </div>
+          <div class="col-md-2">
+            <input ng-if="listarSolicitudes.validado" ng-click="listarSolicitudes.go()" value="Crear nueva solicitud"  class="btn btn-success" type="submit">
+          </div>
+          </div>
+          <div ng-if="listarSolicitudes.validado">
+            <br>
+            <div ng-if="!listarSolicitudes.conSolicitudes" class="alert alert-danger" >
+                <strong>Respuesta:</strong> El estudiante actualmente no ha realizado ninguna solicitud.
+                <br></br>
+                <p>
+                  Si desea realizar una nueva solicitud haga clic en el botón de <strong> Crear nueva solicitud </strong>.
+                </p>
+            </div>
+            <div ng-show="listarSolicitudes.conSolicitudes" class="panel panel-default panel-body col-md-12">
+              <div ui-grid="listarSolicitudes.gridOptions" ui-grid-cellNav class="grid" ui-grid-auto-resize style="text-align:center"                                                                                      ></div>
+            </div>
+          </div>
+
+          <div ng-if="!listarSolicitudes.validado" class="alert alert-danger" >
+              <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para cursar algún tipo de modalidad de grado. Por lo tanto no puede realizar ningún tipo de solicitud.
+              <br></br>
+              <p>
+                <ul>
+                  <li>Estado: ACTIVO</li>
+                  <li>Porcentaje cursado >= 80%</li>
+                  <li>Promedio >= 3.8</li>
+                  <li>Nivel de estudios: PREGRADO</li>
+                  <li>Tipo carrera != TECNOLOGIA</li>
+                </ul>
+              </p>
+          </div>
+
+    </div>
+
+</div>

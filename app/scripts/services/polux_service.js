@@ -10,8 +10,8 @@
 angular.module('poluxService',[])
   .factory('poluxRequest', function($http) {
     // Service logic
-    //var path = "http://localhost:8085/v1/";
-    var path = "http://10.20.0.254/polux_api_crud/v1/";
+    var path = "http://localhost:8080/v1/";
+  //  var path = "http://10.20.0.254/polux_api_crud/v1/";
 
     // Public API here
     return {
