@@ -18,9 +18,11 @@ angular.module('poluxClienteApp')
     poluxRequest.get("revision", $.param({
       query: "IdDocumentoTg:" + self.doctgId + ",IdVinculacionDocente:" + self.vncdocId,
       sortby: "Id",
-      order: "asc"
+      order: "asc",
+      limit:0
     })).then(function(response) {
       self.revisionesd = response.data;
+      self.numRevisiones=response.data.length;
     });
 
     poluxRequest.get("vinculacion_docente", $.param({
@@ -45,7 +47,7 @@ angular.module('poluxClienteApp')
           IdVinculacionDocente: {
             Id: self.vncdocId
           },
-          NumeroRevision: 5,
+          NumeroRevision: self.revisionesd[self.numRevisiones-1].NumeroRevision+1,
           Estado: "pendiente",
           FechaRecepcion: new Date()
         };

@@ -18,7 +18,8 @@ angular.module('poluxClienteApp')
     poluxRequest.get("revision", $.param({
       query: "IdDocumentoTg:" + self.doctgId + ",IdVinculacionDocente:" + self.vncdocId,
       sortby: "Id",
-      order: "asc"
+      order: "asc",
+      limit: 0
     })).then(function(response) {
       self.revisionesd = response.data;
     });
