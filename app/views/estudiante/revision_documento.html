@@ -16,10 +16,10 @@
         </div>
         <div class="panel-body">
           <div ng-repeat="revision in estudianteRevisionDoc.revisionesd">
-            <ver-revision revisionid="revision.Id"  paginaset="estudianteRevisionDoc.pagina" ng-if="revision.Estado != 'pendiente'"/>
+            <ver-revision revisionid="revision.Id"  paginaset="estudianteRevisionDoc.pagina" ng-if="revision.Estado != 'pendiente'"></ver-revision>
 
             <div ng-if="revision.Estado == 'borrador' || revision.Estado == 'pendiente'" >
-              <p class="text-danger">La revision {{revision.NumeroRevision}} se encuentra solicitada</p>
+              <p class="text-danger"> La revision {{revision.NumeroRevision}} se encuentra solicitada </p>
             </div>
           </div>
         </div>
