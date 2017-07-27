@@ -38,7 +38,7 @@ angular
         //'blueimp.fileupload',
         'poluxMidService',
         'pdf',
-        'pascalprecht.translate',
+        'pascalprecht.translate'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
