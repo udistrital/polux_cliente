@@ -53,12 +53,22 @@ angular.module('poluxClienteApp')
 
                 ctrl.subir_doc = function() {
                     console.log($scope.fileModel);
-                    nuxeo.operation('Document.Create')
+                    nuxeo.batchUpload()
+                        .upload($scope.fileModel)
+                        .then(function(res) {
+                            // res.blob instanceof Nuxeo.BatchBlob
+                            console.log(res.blob);
+                        })
+                        .catch(function(error) {
+                            throw error;
+                        });
+                    /*nuxeo.operation('Document.Create')
                         .params({
                             username: 'Administrator',
                             type: 'File',
-                            name: ctrl.nombre,
-                            properties: 'dc:title=My Folder \ndc:description=A Simple Folder'
+                            name: $scope.fileModel.name,
+                            File: $scope.fileModel,
+                            properties: 'dc:title=' + $scope.fileModel.name + '\ndc:description=A Simple Folder'
                         })
                         .input('/')
                         .execute()
@@ -67,7 +77,7 @@ angular.module('poluxClienteApp')
                         })
                         .catch(function(error) {
                             throw error;
-                        });
+                        });*/
                 };
 
             },
