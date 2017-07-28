@@ -1,15 +1,8 @@
-
 <div>
     <!-- The file upload form used as target for the file upload widget -->
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title">Cargar Archivo</h3>
-        </div>
-        <div class="panel-body">
-            <input id="fileupload2" type="file" name="files[]" multiple class="file-loading">
-            <div id="errorBlock"></div>
-            <div id="files" class="files"></div>
-
-        </div>
-    </div>
+    <input type='file' file-model='fileModel'>
+    <button type="button" ng-click="d_subirDocumento.subir_doc()">Subir Archivo</button>
+    <pre>
+        {{fileModel | json}}
+    </pre>
 </div>
