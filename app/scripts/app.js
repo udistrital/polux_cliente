@@ -39,6 +39,7 @@ angular
         'poluxMidService',
         'pdf',
         'pascalprecht.translate',
+        'file-model'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');

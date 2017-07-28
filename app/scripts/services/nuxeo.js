@@ -10,11 +10,11 @@
 angular.module('poluxClienteApp')
     .service('nuxeo', function() {
         return new Nuxeo({
-            baseURL: 'http://athento.udistritaloas.edu.co:8080/nuxeo/',
+            baseURL: 'http://10.20.2.129:8080/nuxeo/',
             auth: {
                 method: 'basic',
                 username: 'Administrator',
-                password: 'S1st3m4s04S=Fr331P4'
+                password: 'Administrator'
             }
         });
     });

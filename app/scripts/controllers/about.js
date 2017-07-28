@@ -8,10 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('AboutCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+    .controller('AboutCtrl', function(nuxeo) {
+        var ctrl = this;
+        ctrl.nuxeo = nuxeo;
+    });
