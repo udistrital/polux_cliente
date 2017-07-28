@@ -86,7 +86,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("respuesta_solicitud",parametrosRespuesta).then(function(responseRespuesta){
               solicitud.respuesta = responseRespuesta.data[0];
-              console.log(responseRespuesta.data);
+              //console.log(responseRespuesta.data);
           });
           solicitud.data = {
             "Id":solicitud.SolicitudTrabajoGrado.Id,
@@ -96,7 +96,7 @@ angular.module('poluxClienteApp')
           }
           ctrl.solicitudes.push(solicitud.data);
         });
-        console.log(ctrl.solicitudes.respuesta);
+      //console.log(ctrl.solicitudes.respuesta);
         ctrl.gridOptions = {
           data: ctrl.solicitudes,
           rowTemplate: '<div></div>'
@@ -131,10 +131,26 @@ angular.module('poluxClienteApp')
   };
 
   ctrl.go = function (){
-    $location.path("/solicitudes/crear_solicitud");
+    ctrl.path = "/solicitudes/crear_solicitud/";
+    //Consultar si el estudiante actualmente cursa una modalidad
+    var parametrosTG = $.param({
+        query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+",EstadoEstudianteTrabajoGrado:1"
+    });
+    //se consulta si el estudiante tiene un trabajo de grado activo
+    poluxRequest.get("estudiante_trabajo_grado",parametrosTG).then(function(responseTG){
+        if(responseTG.data == null){
+          $location.path(ctrl.path);
+        }else{
+          var parametrosModalidad =$.param({
+            query:"Id:"+responseTG.data[0].Id
+          });
+          //se consulta la modalidad del trabajo obtenido
+          poluxRequest.get("trabajo_grado",parametrosModalidad).then(function(responseModalidad){
+              $location.path(ctrl.path+responseModalidad.data[0].Modalidad.Id);
+          });
+        }
+    });
 
   };
-
-
 
 });

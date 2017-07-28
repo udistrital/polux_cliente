@@ -10,7 +10,7 @@
 var text_es = {
   TITULO: "GENERATOR-OAS",
   MENSAJE_INICIAL: "Ahora puede comenzar con el desarrollo ...",
-  GESTION_SOLICITUDES: "Módulo de gestión de solicitudes. "
+  GESTION_SOLICITUD: "Módulo de gestión de solicitudes. "
 };
 var text_en = {
   TITULO: "GENERATOR-OAS",

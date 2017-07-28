@@ -152,6 +152,11 @@ angular
         controller: 'SolicitudesListarSolicitudesCtrl',
         controllerAs: 'listarSolicitudes'
       })
+      .when('/solicitudes/crear_solicitud/:idModalidad', {
+        templateUrl: 'views/solicitudes/crear_solicitud.html',
+        controller: 'SolicitudesCrearSolicitudCtrl',
+        controllerAs: 'crearSolicitud'
+      })
       .when('/solicitudes/crear_solicitud', {
         templateUrl: 'views/solicitudes/crear_solicitud.html',
         controller: 'SolicitudesCrearSolicitudCtrl',
