@@ -1,0 +1,20 @@
+{
+    "users": [{
+        "user": "fabianLeon",
+        "datos_basicos": {
+            "perfil": "estudiante",
+            "codigo": "20092020007",
+            "nombres": "Bazurto Gomez",
+            "apellidos": "Nychol"
+        }
+    }, {
+        "user": "apdaza",
+        "datos_basicos": {
+            "perfil": "profesor",
+            "codigo": "20102020088",
+            "nombres": "Alejandro Daza",
+            "apellidos": "Sánchez León",
+            "": ""
+        }
+    }]
+}
