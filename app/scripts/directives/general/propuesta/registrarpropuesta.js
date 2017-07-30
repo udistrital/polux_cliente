@@ -20,14 +20,6 @@ angular.module('poluxClienteApp')
             },
             templateUrl: 'views/directives/general/propuesta/registrar-propuesta.html',
             controller: function($scope, $location, $http, token_service, nuxeo, $q, constantes) {
-                $q.when(nuxeo.request(constantes.NUXEO_DOCUMENT).get()).then(function(res) {
-                    console.log("Document");
-                    console.log(res);
-                });
-                $q.when(nuxeo.request(constantes.NUXEO_UPLOAD).get()).then(function(res) {
-                    console.log("upload");
-                    console.log(res);
-                });
                 var self = this;
                 self.validar = false;
                 self.estudianteSeleccionado = token_service.all_perfil.datos_basicos.codigo;
