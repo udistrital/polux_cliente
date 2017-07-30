@@ -413,18 +413,7 @@ angular.module('poluxClienteApp')
                     });
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name limpiar
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * Limpia el formulario basico mediante un evento click
-                 */
 
-                self.limpiar = function() {
-                    self.documento = angular.copy(self.doclimpio);
-                    self.nuevaArea = [];
-                };
             },
             controllerAs: 'd_regProp'
         };
