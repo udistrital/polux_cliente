@@ -1,10 +1,11 @@
 <div>
     <div class="row">
         <div class="col-md-3">
-            <label for="input_titulo" class="col-form-label">Nombre de la propuesta</label>
+            <label for="input_titulo" class="col-form-label">Nombre del documento</label>
         </div>
         <div class="col-md-9">
-            <input class="form-control ng-pristine ng-valid ng-empty " name="input_titulo" ng-model="d_subirDocumento.titulo" placeholder="Ingrese el nombre de su propuesta" aria-invalid="false" type="text">
+            <input class="form-control ng-pristine ng-valid ng-empty " name="input_titulo" ng-model="d_subirDocumento.titulo" placeholder="Ingrese el nombre del documento"
+                aria-invalid="false" type="text">
         </div>
     </div>
     <br>
@@ -13,7 +14,8 @@
             <label for="input_resumen" class="col-form-label">Resumen</label>
         </div>
         <div class="col-md-9">
-            <textarea class="form-control ng-pristine ng-valid ng-empty " name="input_descripcion" ng-model="d_subirDocumento.resumen" placeholder="Realice una descripcion acerca de su propuesta" aria-invalid="false" style=""></textarea>
+            <textarea class="form-control ng-pristine ng-valid ng-empty " name="input_descripcion" ng-model="d_subirDocumento.resumen"
+                placeholder="Realice una descripcion acerca del documento" aria-invalid="false" style=""></textarea>
         </div>
     </div>
     <br>
@@ -28,7 +30,11 @@
     <br><br>
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_subirDocumento.construir_propuesta()" value="Registrar propuesta" />
+            <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_subirDocumento.construir_propuesta()"
+                value="Registrar propuesta" />
         </div>
+            <div class="col-md-6 col-md-offset-5">
+                <input type="button" class="btn btn-md btn-outline btn-danger btn-block" ng-click="d_subirDocumento.limpiar()" value="Limpiar" />
+            </div>
     </div>
 </div>

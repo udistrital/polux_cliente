@@ -1,56 +1,30 @@
-<div ng-class="{'row col-md-3': d_regProp.menucreacion,'row col-md-12':!d_regProp.menucreacion}">
+<div class="col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             Registrar Propuesta
         </div>
         <div class="panel-body">
             <div class="container-fluid">
-                <div class="col-sm-9 col-xs-12">
+                <div class="col-sm-12 col-xs-12">
                     <div class="row">
                         <!-- Seccion donde se muestra informacion suministrada por el web service de condor-->
                         <div class="row" id="formPropuesta">
-                            <form class="ng-valid ng-dirty ng-valid-parse" ng-if="!d_regProp.menucreacion">
-                                <br>
-
-                                <br>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label for="select_modalidad" class="col-form-label">Modalidad</label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <select ng-model="d_regProp.modSeleccionada" id="modalidadSelect" class="form-control" placeholder="Seleccione una modalidad " ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="select_modalidad" class="col-form-label">Modalidad</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <select ng-model="d_regProp.modSeleccionada" id="modalidadSelect" class="form-control" placeholder="Seleccione una modalidad "
+                                        ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)">
                     <option ng-repeat="mod in d_regProp.modalidad track by mod.Id" value="{{mod.Id}}">{{mod.Nombre}} </option>                    
                     </select>
-                                    </div>
                                 </div>
-                                <br>
-                                <div class="row" ng-if="d_regProp.validar =='true'">
-                                    <div class="col-md-4">
-                                        <label for="input_titulo" class="col-form-label">Nombre de la propuesta</label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <input class="form-control ng-pristine ng-valid ng-empty " name="input_titulo" ng-model="d_regProp.documento.titulo" placeholder="Ingrese el nombre de su propuesta" aria-invalid="false" style="" type="text">
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="row" ng-if="d_regProp.validar =='true'">
-                                    <div class="col-md-4">
-                                        <label for="input_resumen" class="col-form-label">Resumen</label>
-                                    </div>
-                                    <div class="col-md-7">
-                                        <textarea class="form-control ng-pristine ng-valid ng-empty " name="input_descripcion" ng-model="d_regProp.documento.resumen" placeholder="Realice una descripcion acerca de su propuesta" aria-invalid="false" style=""></textarea>
-                                    </div>
-                                </div>
-                                <br>
-                            </form>
+                            </div>
                             <br>
-                            <div ng-if="d_regProp.validar =='true'" ng-class="{'row': d_regProp.menucreacion,'row col-md-6 col-md-offset-5':!d_regProp.menucreacion}" id="botonesRegistro">
-                                <div class="col-md-6" ng-if="!d_regProp.menucreacion">
-                                    <input type="button" class="btn btn-md btn-outline btn-danger btn-block" ng-click="d_regProp.limpiar()" value="Limpiar" />
-                                </div>
-                                <div ng-class="{'col-md-12': d_regProp.menucreacion,'col-md-6 ':!d_regProp.menucreacion}">
-                                    <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-model="d_regProp.buttonDirective" ng-click="d_regProp.estadoboton(d_regProp.buttonDirective)" value={{d_regProp.buttonDirective}} />
-                                </div>
+                            <div ng-if="d_regProp.validar =='true'" class=" row col-md-12">
+                                <subir-documento titulo="d_regProp.documento.titulo"
+                                 descripcion="d_regProp.documento.resumen"
+                                 enlace="d_regProp.documento.enlace"></subir-documento>
                             </div>
                             <br>
                             <div class="row col-md-12" ng-if="d_regProp.registroDocumento">
@@ -60,39 +34,21 @@
                             </div>
                         </div>
 
-
                         <!-- Formulario de asignación de areas de conocimiento y resumen-->
                     </div>
                 </div>
-                <div class="col-sm-3">
-                    <div ng-if="d_regProp.validar!='true'" class="alert alert-danger">
-                        <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado
-                        <br></br>
-                        <p>
-                            <ul>
-                                <li>Estado: ACTIVO</li>
-                                <li>Porcentaje cursado >= 80%</li>
-                                <li>Promedio >= 3.8</li>
-                                <li>Nivel de estudios: PREGRADO</li>
-                                <li>Tipo carrera != TECNOLOGIA</li>
-                            </ul>
-                        </p>
-                    </div>
-
-                </div>
-
             </div>
         </div>
     </div>
 </div>
-<div class="col-md-9 col-xs-12" ng-show="d_regProp.menucreacion">
+<div class="col-md-6 col-xs-12">
     <div class="panel panel-default">
         <div class="panel-heading">
-            Subir Documento
+            Asignar Area
         </div>
         <div class="panel-body">
             <!-- Formulario de registro zona de carga de archivos -->
-            <div class="row">
+            <div ng-if="d_regProp.validar =='true'" class="row">
                 <div class="col-md-4">
                     <label for="select_areas" class="col-form-label">De acuerdo a su propuesta seleccione las áreas, luego adjunte el archivo del documento
                 </label>
@@ -102,13 +58,30 @@
                 </div>
             </div>
             <br>
-            <div class="col-md-8">
-                <subir-documento></subir-documento>
+            <div class="row">
+                <div ng-if="d_regProp.validar!='true'" class="alert alert-danger">
+                    <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de
+                    Trabajo de Grado
+                    <br></br>
+                    <p>
+                        <ul>
+                            <li>Estado: ACTIVO</li>
+                            <li>Porcentaje cursado >= 80%</li>
+                            <li>Promedio >= 3.8</li>
+                            <li>Nivel de estudios: PREGRADO</li>
+                        </ul>
+                    </p>
+                </div>
             </div>
-            <div class="col-md-4">
-                <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)" value="Registrar propuesta" />
+            <div ng-if="d_regProp.validar =='true'" class="col-md-4">
+                <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)"
+                    value="Registrar propuesta" />
             </div>
-
+            <div class="row">
+                <pre>
+                {{d_regProp.documento | json}}
+                </pre>
+            </div>
             <!-- Fin de formulario de zona de carga de archivos-->
 
         </div>
