@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('DocenteTgsRevisionDocumentoCtrl', function(poluxRequest, nuxeo) {
+    .controller('DocenteTgsRevisionDocumentoCtrl', function(poluxRequest) {
         var self = this;
         self.tgId = 1;
         self.doctgId = 2; //viene por la sesión

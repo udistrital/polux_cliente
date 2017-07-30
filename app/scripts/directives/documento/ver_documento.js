@@ -24,7 +24,7 @@ angular.module('poluxClienteApp')
                     query: "Id:" + $scope.documentoid
                 })).then(function(response) {
                     self.documento = response.data[0];
-                    self.documento.Enlace = constaltes.self.documento.Enlace
+                    self.documento.Enlace = constantes.NUXEO_DOC + self.documento.Enlace;
                 });
 
                 //self.paginax=$scope.pageNum;
