@@ -1,26 +1,23 @@
 <div class="row">
-  <md-input-container class="col-md-8">
-    <label> Estudiante Actual: </label>
-    <md-select name="typeStudent" ng-model="d_regTG.estuSeleccionado"
-    placeholder="Sesión del estudiante" required>
-    <md-option ng-repeat="p in estparam" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</md-option>
-  </md-select>
-</md-input-container>
+    <md-input-container class="col-md-8">
+        <label> Estudiante Actual: </label>
+        <md-select name="typeStudent" ng-model="d_regTG.estuSeleccionado" placeholder="Sesión del estudiante" required>
+            <md-option ng-repeat="p in estparam" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</md-option>
+        </md-select>
+    </md-input-container>
 </div>
 <md-input-container class="col-md-4">
-  <label>Modalidad</label>
-  <md-select name="typemod" ng-model="d_regTG.modSeleccionada"
-  placeholder="Seleccione una modalidad " required>
-  <md-option ng-repeat="p in d_regTG.modalidad" value="{{p.Id}}">{{p.Nombre}}</md-option>
-</md-select>
+    <label>Modalidad</label>
+    <md-select name="typemod" ng-model="d_regTG.modSeleccionada" placeholder="Seleccione una modalidad " required>
+        <md-option ng-repeat="p in d_regTG.modalidad" value="{{p.Id}}">{{p.Nombre}}</md-option>
+    </md-select>
 </md-input-container>
 <md-content class="col-md-4">
-  <div>
-    <md-input-container>
-      <label>Titulo</label>
-      <input ng-model="d_regTG.titulo">
-    </md-input-container>
-  </div>
+    <div>
+        <md-input-container>
+            <label>Titulo</label>
+            <input ng-model="d_regTG.titulo">
+        </md-input-container>
+    </div>
 </md-content>
-<md-button  class="md-primary md-raised col-md-4" ng-disabled="d_regTG.validarRegistro()"
-ng-click="d_regTG.agregarRegistro(d_regTG.estuSeleccionado,d_regTG.modSeleccionada,d_regTG.titulo)">Enviar solicitud</md-button>
+<md-button class="md-primary md-raised col-md-4" ng-disabled="d_regTG.validarRegistro()" ng-click="d_regTG.agregarRegistro(d_regTG.estuSeleccionado,d_regTG.modSeleccionada,d_regTG.titulo)">Enviar solicitud</md-button>
