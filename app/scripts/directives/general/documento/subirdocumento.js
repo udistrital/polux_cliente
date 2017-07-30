@@ -64,19 +64,19 @@ angular.module('poluxClienteApp')
                             throw error;
                         });
                 };
-                ctrl.subir_archivo = function() {
+                ctrl.subir_archivo = function(uid) {
                     var nuxeoBlob = new Nuxeo.Blob({ content: $scope.fileModel });
                     console.log(nuxeoBlob);
                     nuxeo.batchUpload()
                         .upload(nuxeoBlob)
                         .then(function(res) {
                             return nuxeo.operation('Blob.AttachOnDocument')
-                                .param('document', '1dca9360-5d24-4190-8d0c-411aef25453c')
+                                .param('document', uid)
                                 .input(res.blob)
                                 .execute();
                         })
                         .then(function() {
-                            return nuxeo.repository().fetch('1dca9360-5d24-4190-8d0c-411aef25453c', { schemas: ['dublincore', 'file'] });
+                            return nuxeo.repository().fetch(uid, { schemas: ['dublincore', 'file'] });
                         })
                         .then(function(doc) {
                             console.log(doc.get('file:content'));

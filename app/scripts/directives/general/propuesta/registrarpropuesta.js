@@ -19,10 +19,18 @@ angular.module('poluxClienteApp')
                 dialparent: '&'
             },
             templateUrl: 'views/directives/general/propuesta/registrar-propuesta.html',
-            controller: function($scope, $location) {
+            controller: function($scope, $location, $http, token_service, nuxeo, $q, constantes) {
+                $q.when(nuxeo.request(constantes.NUXEO_DOCUMENT).get()).then(function(res) {
+                    console.log("Document");
+                    console.log(res);
+                });
+                $q.when(nuxeo.request(constantes.NUXEO_UPLOAD).get()).then(function(res) {
+                    console.log("upload");
+                    console.log(res);
+                });
                 var self = this;
                 self.validar = false;
-                /*self.estudianteSeleccionado = "";*/
+                self.estudianteSeleccionado = token_service.all_perfil.datos_basicos.codigo;
                 self.modSeleccionada = "";
                 self.buttonDirective = "Aceptar";
                 poluxRequest.get("modalidad", "").then(function(response) {
@@ -68,13 +76,13 @@ angular.module('poluxClienteApp')
                 self.asignarModalidad = function(codigo) {
                     try {
                         console.log("Codigo Estudiante: " + self.estudianteSeleccionado);
-                        self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
+                        //self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
                         codigo = parseInt(codigo);
                         console.log("Modalidad seleccionada: " + codigo);
                         if (isNaN(codigo)) {
 
                         } else {
-                            self.verificarRequisitos(self.estudianteSeleccionado, codigo);
+                            self.verificarRequisitos(parseInt(self.estudianteSeleccionado), codigo);
                         }
                     } catch (Error) {
                         poluxRequest.get("modalidad", "").then(function(response) {
@@ -131,7 +139,6 @@ angular.module('poluxClienteApp')
                                         console.log("response mid api: " + response.data);
                                         self.validar = response.data;
                                     });
-
                                 });
                             };
                         });

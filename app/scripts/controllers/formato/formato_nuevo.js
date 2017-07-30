@@ -115,6 +115,7 @@ angular.module('poluxClienteApp')
             }
         }
 
+
         $scope.anadir_opcion = function() {
             if ($scope.rSeleccion !== '') {
                 var seleccion = $scope.gridApi.selection.getSelectedRows();

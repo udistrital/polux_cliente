@@ -13,90 +13,27 @@ angular.module('poluxClienteApp')
             es: "btn btn-primary btn-circle btn-outline active",
             en: "btn btn-primary btn-circle btn-outline"
         };
+
+        $http.get('scripts/models/roles.json')
+            .then(function(response) {
+                angular.forEach(response.data.users, function(element) {
+                    if (!token_service.live_token) {
+                        if (element.user == token_service.user) {
+                            token_service.all_perfil = element;
+                        }
+                    } else {
+                        if (element.user == "fabianLeon") {
+                            token_service.all_perfil = element;
+                        }
+                    }
+                });
+            });
+
         $scope.notificacion = notificacion;
         $scope.actual = "";
         $scope.token_service = token_service;
         $scope.breadcrumb = [];
         $scope.menu_service = [];
-
-
-        /*{ //aqui va el servicio de el app de configuracion
->>>>>>> 7d91be8ef4e798a52a74dbe919d957e162ab3750
-            "Id": 1,
-            "Nombre": "Formato",
-            "Url": "",
-            "Opciones": [{
-              "Id": 2,
-              "Nombre": "Ver formato",
-              "Url": "formato_ver",
-              "Opciones": null
-            }, {
-              "Id": 3,
-              "Nombre": "Nuevo formato",
-              "Url": "formato_nuevo",
-              "Opciones": null
-            }, {
-              "Id": 4,
-              "Nombre": "Editar formato",
-              "Url": "formato/formato_edicion",
-              "Opciones": null
-            }]
-          }, {
-            "Id": 2,
-            "Nombre": "General",
-            "Url": "",
-            "Opciones": [{
-              "Id": 2,
-              "Nombre": "Propuesta",
-              "Url": "",
-              "Opciones": [{
-                "Id": 2,
-                "Nombre": "Registrar propuesta",
-                "Url": "general/propuesta",
-                "Opciones": null
-              }, {
-                "Id": 3,
-                "Nombre": "Consultar propuesta",
-                "Url": "general/cons_prop",
-                "Opciones": null
-              }]
-            }, {
-              "Id": 3,
-              "Nombre": "Trabajo de Grado",
-              "Url": "",
-              "Opciones": [{
-                "Id": 2,
-                "Nombre": "Registrar",
-                "Url": "general/reg_TG",
-                "Opciones": null
-              }]
-            }]
-          },
-          {
-            "Id": 2,
-            "Nombre": "Posgrado",
-            "Url": "",
-            "Opciones": [{
-              "Id": 2,
-              "Nombre": "Publicación de Espacios Académicos",
-              "Url": "materias_posgrado/publicar_asignaturas",
-              "Opciones": null
-            },
-            {
-              "Id": 3,
-              "Nombre": "Solicitar inscripción",
-              "Url": "materias_posgrado/solicitar_asignaturas",
-              "Opciones": null
-            },
-            {
-              "Id": 4,
-              "Nombre": "Listar inscritos",
-              "Url": "materias_posgrado/listar_solicitudes",
-              "Opciones": null
-            }
-            */
-
-        //Variable que contiene el arreglo de los JSON, con los menus respectivos
 
         $scope.menu_app = [{
                 id: "kronos",
