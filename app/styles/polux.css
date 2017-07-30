@@ -10,3 +10,26 @@ md-checkbox.md-checked.blue .md-icon {
 .left-cinco {
     padding-left: 5%;
 }
+
+.scrollit {
+    max-height: 700px;
+    overflow-y: scroll;
+}
+
+#bar1::-webkit-scrollbar {
+    width: 6px;
+    /* for vertical scrollbars */
+    height: 6px;
+    /* for horizontal scrollbars */
+    border-radius: 6px;
+}
+
+#bar1::-webkit-scrollbar-thumb {
+    background: rgba(0, 62, 101, 1);
+}
+
+.pdf-controls {
+    width: 100%;
+    display: block;
+    padding: 1em;
+}

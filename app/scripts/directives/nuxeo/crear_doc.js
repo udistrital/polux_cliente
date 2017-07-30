@@ -15,7 +15,7 @@ angular.module('poluxClienteApp')
                 resumen: '=?',
                 tipo: '=?',
                 ubicacion: '=?',
-                path = '=?'
+                path: '=?'
             },
 
             controller: function($scope, nuxeo, $q) {

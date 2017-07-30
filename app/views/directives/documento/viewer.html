@@ -1,38 +1,17 @@
-<style>
-  .scrollit {
-    max-height:700px;
-    overflow-y:scroll;
-   }
-   #bar1::-webkit-scrollbar
-   {
-     width: 6px;  /* for vertical scrollbars */
-     height: 6px; /* for horizontal scrollbars */
-     border-radius: 6px;
-   }
-   #bar1::-webkit-scrollbar-thumb
-   {
-     background: rgba(124, 212, 61, 0.4);
-   }
-   .pdf-controls { width: 100%; display: block; rgba(64, 255, 61, 0.4); padding: 1em;}
-
-</style>
-<div  class="text-center" ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}" >
-  <div class="row">
-  <div>
-  <a href="" ng-click="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>&nbsp;
-  <a href="" ng-click="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></a>&nbsp;
-  <a href="" ng-click="zoomIn()"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;
-  <a href="" ng-click="fit()">100%</a>&nbsp;
-  <a href="" ng-click="zoomOut()"><span class="glyphicon glyphicon-zoom-out"></span></a>
-&nbsp;&nbsp;&nbsp;&nbsp;
-  <span class="text-info">Página:
+<div class="text-center" ng-class="{'pdf-controls fixed': scroll > 100, 'pdf-controls': scroll <= 100}">
+    <div class="row">
+        <div>
+            <a href="" ng-click="goPrevious()"><span class="glyphicon glyphicon-chevron-left"></span></a>&nbsp;
+            <a href="" ng-click="goNext()"><span class="glyphicon glyphicon-chevron-right"></span></a>&nbsp;
+            <a href="" ng-click="zoomIn()"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;
+            <a href="" ng-click="fit()">100%</a>&nbsp;
+            <a href="" ng-click="zoomOut()"><span class="glyphicon glyphicon-zoom-out"></span></a> &nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="text-info">Página:
     <input ui-number-mask="0" maxlength="4"  size="2" ng-model="pageNum">
      de {{pageCount}}</span>
-  </div>
+        </div>
+    </div>
 </div>
-</div>
-<div class="scrollit" id="bar1" >
-
-<canvas id="pdf-canvas"></canvas>
-
+<div class="scrollit" id="bar1">
+    <canvas id="pdf-canvas"></canvas>
 </div>
