@@ -1,12 +1,19 @@
-<br>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Consultar propuesta.
-    </div>
+<div class="panel panel-primary panel-body">
+    <h2 class="page-header text-center">{{ 'LISTA_AVANCES' | translate }}</h2>
     <div class="panel-body">
-          <consultar-propuesta />
-    </div>
-    <div class="panel-footer">
-        Panel Footer
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ 'LISTA_AVANCES' | translate }}
+            </div>
+            <div class="panel-body">
+                <div class="mi-grid" id="mi-grid" ui-grid="consultaPropuesta.gridOptions" ui-grid-selection ui-grid-pagination></div>
+            </div>
+            <div class="panel-footer">
+                <div align="center"> <button ng-click="consultaPropuesta.load_row('', 'add')" data-toggle="modal" data-target="#myModal" class="btn btn-info btn-outline">{{ 'BTN.NUEVO' | translate }}</button></div>
+            </div>
+            <pre>
+            {{consultaPropuesta.documentos | json}}
+            </pre>
+        </div>
     </div>
 </div>

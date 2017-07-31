@@ -7,7 +7,7 @@
  * # constantes
  * Constant in the poluxClienteApp.
  */
-var HOST_NUXEO = "10.20.2.129:8080/nuxeo/";
+var HOST_NUXEO = "http://10.20.2.129:8080/nuxeo/";
 angular.module('poluxClienteApp')
     .constant('constantes', {
         NUXEO_DOC: HOST_NUXEO + "nxfile/",

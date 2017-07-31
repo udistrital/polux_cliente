@@ -25,6 +25,7 @@ angular.module('poluxClienteApp')
                 })).then(function(response) {
                     self.documento = response.data[0];
                     self.documento.Enlace = constantes.NUXEO_DOC + self.documento.Enlace;
+                    console.log(self.documento.Enlace);
                 });
 
                 //self.paginax=$scope.pageNum;
