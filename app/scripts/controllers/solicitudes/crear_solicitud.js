@@ -67,12 +67,19 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
             ctrl.detalles = responseDetalles.data;
+            angular.forEach(ctrl.detalles, function(detalle){
+                detalle.respuesta= "";
+            });
             console.log(ctrl.detalles);
             ctrl.detallesCargados = true;
             if(ctrl.detalles == null){
                 ctrl.soliciudConDetalles = false;
             }
         });
+      };
+
+      ctrl.imprimir = function (valor){
+        console.log(valor);
       };
 
   });

@@ -28,8 +28,48 @@
         Formulario de solicitud
     </div>
     <div class="panel-body">
-       <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla?</label>
-       <br></br>
+       <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla? <br> </br> </label>
+
+       <!-- detalles de la solicitud -->
+       <div ng-if="crearSolicitud.soliciudConDetalles">
+         <div ng-repeat="detalle in crearSolicitud.detalles">
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
+            <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+            <input type="text" class="col-sm-8" ng-model="detalle.respuesta" required>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Numerico'" class="row">
+           <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <input type="number" class="col-sm-8" ng-model="detalle.respuesta" required>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'">
+           <label class="col-sm-8 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <input type="file" class="col-sm-4" ng-model="detalle.respuesta" required></input>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'">
+           <input type="checkbox" class="col-sm-3" ng-model="detalle.respuesta" value="{{detalle.Detalle.TipoDetalle.Nombre}}"required>
+           <label class="col-sm-8 control-label"> {{detalle.Detalle.Enunciado}}</label>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
+           <label class="col-sm-4 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <div class="col-sm-8">
+               <select class="form-control" ng-model="modalidad_seleccionada">
+                     <!--option  ng-repeat="modalidad in crearSolicitud.modalidades" ng-value="modalidad.Id"> {{modalidad.Nombre}} </option-->
+               </select>
+           </div>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio'">
+            <input type="radio" class="col-sm-3" ng-model="detalle.respuesta" value="{{detalle.Detalle.TipoDetalle.Nombre}}"required>
+            <label class="col-sm-9 control-label"> {{detalle.Detalle.Enunciado}}</label>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" clas="row">
+            <label class="col-sm-12 control-label">{{detalle.Detalle.Enunciado}}</label>
+            <textarea class="col-sm-12" rows="8" cols="100" ng-model="detalle.respuesta" />
+            <b>
+         </div>
+           <br>
+        </div>
+       </div>
+
        <label class="col-sm-5 control-label"> </label>
        <input ng-click="" value="Enviar Solicitud"  class="col-sm-2 btn btn-success" type="submit">
     </div>
