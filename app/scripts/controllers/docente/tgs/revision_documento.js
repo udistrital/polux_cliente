@@ -12,7 +12,7 @@ angular.module('poluxClienteApp')
         var self = this;
         self.tgId = 1;
         self.doctgId = 2; //viene por la sesión
-        self.doc = 24;
+        self.doc = 25;
         self.vncdocId = 1;
         self.pagina = 2;
         poluxRequest.get("revision", $.param({
