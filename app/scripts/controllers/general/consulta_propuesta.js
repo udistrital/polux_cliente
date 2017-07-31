@@ -25,11 +25,6 @@ angular.module('poluxClienteApp')
                     visible: false
                 },
                 {
-                    field: 'Nombre',
-                    displayName: $translate.instant('NOMBRE'),
-                    width: '15%',
-                },
-                {
                     field: 'IdTrabajoGrado.IdModalidad.Nombre',
                     displayName: $translate.instant('MODALIDAD'),
                     width: '10%',
@@ -37,33 +32,27 @@ angular.module('poluxClienteApp')
                 {
                     field: 'IdTrabajoGrado.Titulo',
                     displayName: $translate.instant('TITULO_PROPUESTA'),
-                    width: '30%',
+                    width: '60%',
                 },
                 {
-                    field: 'IdDocumento.Enlace',
-                    displayName: $translate.instant('TITULO_PROPUESTA'),
-                    width: '15%',
-                },
-                {
-                    field: 'FechaRegistro',
-                    displayName: $translate.instant('FECHA'),
-                    cellTemplate: '<div align="center"><span>{{row.entity.FechaRegistro| date:"yyyy-MM-dd":"+0900"}}</span></div>',
-                    width: '12%',
+                    field: 'IdEstadoDocumento.Nombre',
+                    displayName: $translate.instant('ESTADO_DOCUMENTO'),
+                    width: '10%',
                 },
                 {
                     //<button class="btn primary" ng-click="grid.appScope.deleteRow(row)">Delete</button>
                     name: $translate.instant('OPCIONES'),
                     enableFiltering: false,
-                    width: '8%',
+                    width: '10%',
 
                     cellTemplate: '<center>' +
-                        '<a class="ver" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'ver\')" data-toggle="modal" data-target="#modalVer">' +
+                        '<a class="ver" ng-click="grid.appScope.load_row(row,\'ver\')" data-toggle="modal" data-target="#modalVer">' +
                         '<i class="fa fa-eye fa-lg  faa-shake animated-hover" aria-hidden="true" data-toggle="tooltip" title="{{\'BTN.VER\' | translate }}"></i></a> ' +
-                        '<a class="editar" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'edit\');" data-toggle="modal" data-target="#myModal">' +
+                        '<a class="editar" ng-click="grid.appScope.load_row(row,\'edit\');" data-toggle="modal" data-target="#myModal">' +
                         '<i data-toggle="tooltip" title="{{\'BTN.EDITAR\' | translate }}" class="fa fa-pencil fa-lg  faa-shake animated-hover" aria-hidden="true"></i></a> ' +
-                        '<a class="configuracion" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'config\');" data-toggle="modal" data-target="#modalConf">' +
+                        '<a class="configuracion" ng-click="grid.appScope.load_row(row,\'config\');" data-toggle="modal" data-target="#modalConf">' +
                         '<i data-toggle="tooltip" title="{{\'BTN.CONFIGURAR\' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i></a> ' +
-                        '<a  ng-click="grid.appScope.consultaPropuesta.load_row(row,\'descargar\')"class="editar">' +
+                        '<a  ng-click="grid.appScope.consultaPropuesta.load_row(row,\'descargar\')" class="editar">' +
                         '<i data-toggle="tooltip" title="{{\'BTN.DESCARGAR\' | translate }}" class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i></a>' +
                         '</center>'
                 }
@@ -79,7 +68,7 @@ angular.module('poluxClienteApp')
                 }))
                 .then(function(response) {
                     ctrl.gridOptions.data = response.data;
-                    ctrl.documentos = response.data
+                    ctrl.documentos = response.data;
                 });
         };
 
@@ -92,6 +81,7 @@ angular.module('poluxClienteApp')
 
         ctrl.load_row = function(row, operacion) {
             ctrl.row_entity = row.entity;
+            console.log(ctrl.row_entity);
             switch (operacion) {
                 case "ver":
                     break;
@@ -101,9 +91,9 @@ angular.module('poluxClienteApp')
                     break;
                 case "delete":
                     break;
-                case "descarga":
-                    console.log("descarga");
-                    window.open(constantes.NUXEO_DOC + row.row_entity.IdDocumento.Enlace, '_blank');
+                case "descargar":
+                    console.log(constantes.NUXEO_DOC + ctrl.row_entity.IdDocumento.Enlace);
+                    window.open(constantes.NUXEO_DOC + ctrl.row_entity.IdDocumento.Enlace, '_blank');
                     break;
                 default:
             }
