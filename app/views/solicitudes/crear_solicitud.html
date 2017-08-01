@@ -66,6 +66,10 @@
             <textarea class="col-sm-12" rows="8" cols="100" ng-model="detalle.respuesta" />
             <b>
          </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
+            <solicitar-asignaturas ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
+            <b>
+         </div>
            <br>
         </div>
        </div>

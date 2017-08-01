@@ -141,13 +141,8 @@ angular.module('poluxClienteApp')
         if(responseTG.data == null){
           $location.path(ctrl.path);
         }else{
-          var parametrosModalidad =$.param({
-            query:"Id:"+responseTG.data[0].Id
-          });
-          //se consulta la modalidad del trabajo obtenido
-          poluxRequest.get("trabajo_grado",parametrosModalidad).then(function(responseModalidad){
-              $location.path(ctrl.path+responseModalidad.data[0].Modalidad.Id);
-          });
+            //Se redirecciona con el trabajo de grado
+              $location.path(ctrl.path+responseTG.data[0].Id);
         }
     });
 
