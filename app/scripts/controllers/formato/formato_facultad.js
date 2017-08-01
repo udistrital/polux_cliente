@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('FormatoFacultadCtrl', function(poluxRequest, academicaRequest, $scope) {
+    .controller('FormatoFacultadCtrl', function(poluxRequest, academicaRequest, $scope, $route) {
         var ctrl = this;
 
         ctrl.cargar_datos = function() {
@@ -74,7 +74,20 @@ angular.module('poluxClienteApp')
             console.log(formato_facultad_carrera);
             poluxRequest.post("formato_evaluacion_carrera/TrFormatoEvaluacionCarrera", formato_facultad_carrera)
                 .then(function(response) {
-                    console.log(response.data);
+                    if (response.data === null) {
+                        swal(
+                            'Oops...',
+                            'se asoció con éxito el formato',
+                            'success'
+                        );
+                        $route.reload();
+                    } else {
+                        swal(
+                            'Alerta',
+                            'ha ocurrido un error',
+                            'error'
+                        );
+                    }
                 });
         };
     });

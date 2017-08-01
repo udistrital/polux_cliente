@@ -7,7 +7,7 @@
  * # verDocumento
  */
 angular.module('poluxClienteApp')
-    .directive('verDocumento', function(poluxRequest, constantes) {
+    .directive('verDocumento', function(poluxRequest, constantes, nuxeo) {
         return {
             restrict: "E",
             scope: {
@@ -24,7 +24,23 @@ angular.module('poluxClienteApp')
                     query: "Id:" + $scope.documentoid
                 })).then(function(response) {
                     self.documento = response.data[0];
-                    self.documento.Enlace = constantes.NUXEO_DOC + self.documento.Enlace;
+                    self.nuxeo = nuxeo;
+                    self.nuxeo.repository().fetch(self.documento.Enlace)
+                        .then(function(doc) {
+                            console.log(doc)
+                            doc.fetchBlob()
+                                .then(function(res) {
+                                    self.documento.Enlace = res.url;
+                                    // in Node.js, use res.body
+                                })
+                                .catch(function(error) {
+                                    throw error;
+                                });
+                        })
+                        .catch(function(error) {
+                            throw error;
+                        });
+
                     console.log(self.documento.Enlace);
                 });
 

@@ -7,9 +7,12 @@
  * # GeneralConsultaPropuestaCtrl
  * Controller of the poluxClienteApp
  */
+
+
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function(poluxRequest, $translate, $scope, constantes) {
+    .controller('ConsultaPropuestaCtrl', function(poluxRequest, $translate, $scope, constantes, nuxeo) {
         var ctrl = this;
+        ctrl.nuxeo = nuxeo;
         ctrl.operacion = "";
         ctrl.row_entity = {};
         ctrl.requisito_select = [];
@@ -81,7 +84,6 @@ angular.module('poluxClienteApp')
 
         ctrl.load_row = function(row, operacion) {
             ctrl.row_entity = row.entity;
-            console.log(ctrl.row_entity);
             switch (operacion) {
                 case "ver":
                     break;
@@ -92,8 +94,21 @@ angular.module('poluxClienteApp')
                 case "delete":
                     break;
                 case "descargar":
-                    console.log(constantes.NUXEO_DOC + ctrl.row_entity.IdDocumento.Enlace);
-                    window.open(constantes.NUXEO_DOC + ctrl.row_entity.IdDocumento.Enlace, '_blank');
+                    ctrl.nuxeo.repository().fetch(ctrl.row_entity.IdDocumento.Enlace)
+                        .then(function(doc) {
+                            doc.fetchBlob()
+                                .then(function(res) {
+                                    window.open(res.url);
+                                    // in Node.js, use res.body
+                                })
+                                .catch(function(error) {
+                                    throw error;
+                                });
+                        })
+                        .catch(function(error) {
+                            throw error;
+                        });
+
                     break;
                 default:
             }
