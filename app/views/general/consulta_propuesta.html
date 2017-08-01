@@ -8,9 +8,73 @@
             <div class="panel-body">
                 <div class="mi-grid" id="mi-grid" ui-grid="consultaPropuesta.gridOptions" ui-grid-selection ui-grid-pagination></div>
             </div>
-            <div class="panel-footer">
-                <div align="center"> <button ng-click="consultaPropuesta.load_row('', 'add')" data-toggle="modal" data-target="#myModal" class="btn btn-info btn-outline">{{ 'BTN.NUEVO' | translate }}</button></div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'ASIGNAR_DOCENTE' | translate }}
             </div>
+            <form class="form-horizontal" name="avances_add_edit" ng-submit="consultaPropuesta.add_edit()">
+                <br>
+                <div class="row">
+                    <label for="referencia" class="col-sm-2 control-label">{{'REFERENCIA' | translate }}:</label>
+                    <pre>
+                    {{consultaPropuesta | json}}
+                    </pre>
+                </div>
+                <center>
+                    <input type="reset" class="btn btn-info btn-outline" value="{{'BTN.LIMPIAR' | translate }}" />
+                    <input type="submit" ng-click="consultaPropuesta.add_edit()" class="btn btn-success btn-outline" value="{{'BTN.GUARDAR' | translate }}" />
+                </center>
+            </form>
+            <br>
+        </div>
+    </div>
+</div>
+
+<div id="myModalVer" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'SOLICITUD' | translate }}
+
+            </div>
+            <form class="form-horizontal">
+                <br>
+                <div class="row">
+                    <label for="referencia" class="col-sm-2 control-label">{{'TITULO_PROPUESTA' | translate }}:</label>
+                    <div class="col-sm-9">
+                        <textarea name="descripcion" ng-model="consultaPropuesta.row_entity.IdDocumento.Titulo" rows=3 class="form-control" disabled></textarea>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="nombre" class="col-sm-2 control-label">{{'MODALIDAD' | translate }}:</label>
+                    <div class="col-sm-9">
+                        <input name="referencia" type="text" ng-model="consultaPropuesta.row_entity.IdTrabajoGrado.IdModalidad.Nombre" class="form-control" disabled/>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="descripcion" class="col-sm-2 control-label">{{'RESUMEN' | translate }}:</label>
+                    <div class="col-sm-9">
+                        <textarea name="descripcion" ng-model="consultaPropuesta.row_entity.IdDocumento.Resumen" rows=7 class="form-control" disabled></textarea>
+                    </div>
+                </div>
+                <br>
+                <br>
+            </form>
+            <br>
         </div>
     </div>
 </div>

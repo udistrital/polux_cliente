@@ -21,27 +21,12 @@ angular.module('poluxClienteApp')
                 var self = this;
 
                 poluxRequest.get("documento", $.param({
+                    limit: -1,
+                    sortby: "Id",
+                    order: "asc",
                     query: "Id:" + $scope.documentoid
                 })).then(function(response) {
                     self.documento = response.data[0];
-                    self.nuxeo = nuxeo;
-                    self.nuxeo.repository().fetch(self.documento.Enlace)
-                        .then(function(doc) {
-                            console.log(doc)
-                            doc.fetchBlob()
-                                .then(function(res) {
-                                    self.documento.Enlace = res.url;
-                                    // in Node.js, use res.body
-                                })
-                                .catch(function(error) {
-                                    throw error;
-                                });
-                        })
-                        .catch(function(error) {
-                            throw error;
-                        });
-
-                    console.log(self.documento.Enlace);
                 });
 
                 //self.paginax=$scope.pageNum;
