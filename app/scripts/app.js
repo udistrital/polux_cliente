@@ -157,6 +157,11 @@ angular
                 controller: 'FormatoFacultadCtrl',
                 controllerAs: 'formatoFacultad'
             })
+            .when('/formato/formato_sesion_proyecto', {
+                templateUrl: 'views/formato/formato_sesion_proyecto.html',
+                controller: 'FormatoFormatoSesionProyectoCtrl',
+                controllerAs: 'formatoSesionProyecto'
+            })
             .otherwise({
                 redirectTo: '/'
             });

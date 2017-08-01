@@ -7,9 +7,12 @@
  * # GeneralConsultaPropuestaCtrl
  * Controller of the poluxClienteApp
  */
+
+
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function(poluxRequest, $translate, $scope, constantes) {
+    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, nuxeo) {
         var ctrl = this;
+        ctrl.nuxeo = nuxeo;
         ctrl.operacion = "";
         ctrl.row_entity = {};
         ctrl.requisito_select = [];
@@ -46,14 +49,16 @@ angular.module('poluxClienteApp')
                     width: '10%',
 
                     cellTemplate: '<center>' +
-                        '<a class="ver" ng-click="grid.appScope.load_row(row,\'ver\')" data-toggle="modal" data-target="#modalVer">' +
+
+                        '<a class="ver" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'ver\')" data-toggle="modal" data-target="#myModalVer">' +
                         '<i class="fa fa-eye fa-lg  faa-shake animated-hover" aria-hidden="true" data-toggle="tooltip" title="{{\'BTN.VER\' | translate }}"></i></a> ' +
-                        '<a class="editar" ng-click="grid.appScope.load_row(row,\'edit\');" data-toggle="modal" data-target="#myModal">' +
-                        '<i data-toggle="tooltip" title="{{\'BTN.EDITAR\' | translate }}" class="fa fa-pencil fa-lg  faa-shake animated-hover" aria-hidden="true"></i></a> ' +
-                        '<a class="configuracion" ng-click="grid.appScope.load_row(row,\'config\');" data-toggle="modal" data-target="#modalConf">' +
+
+                        '<a class="configuracion" ng-click="grid.appScope.load_row(row,\'config\');" data-toggle="modal" data-target="#myModal">' +
                         '<i data-toggle="tooltip" title="{{\'BTN.CONFIGURAR\' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i></a> ' +
+
                         '<a  ng-click="grid.appScope.consultaPropuesta.load_row(row,\'descargar\')" class="editar">' +
                         '<i data-toggle="tooltip" title="{{\'BTN.DESCARGAR\' | translate }}" class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i></a>' +
+
                         '</center>'
                 }
             ]
@@ -70,6 +75,7 @@ angular.module('poluxClienteApp')
                     ctrl.gridOptions.data = response.data;
                     ctrl.documentos = response.data;
                 });
+
         };
 
         ctrl.gridOptions.onRegisterApi = function(gridApi) {
@@ -84,6 +90,7 @@ angular.module('poluxClienteApp')
             console.log(ctrl.row_entity);
             switch (operacion) {
                 case "ver":
+                    ctrl.docentes = academicaRequest.obtenerDocentes();
                     break;
                 case "add":
                     break;
@@ -92,8 +99,6 @@ angular.module('poluxClienteApp')
                 case "delete":
                     break;
                 case "descargar":
-                    console.log(constantes.NUXEO_DOC + ctrl.row_entity.IdDocumento.Enlace);
-                    window.open(constantes.NUXEO_DOC + ctrl.row_entity.IdDocumento.Enlace, '_blank');
                     break;
                 default:
             }

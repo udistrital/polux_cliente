@@ -7,7 +7,7 @@
  * # verDocumento
  */
 angular.module('poluxClienteApp')
-    .directive('verDocumento', function(poluxRequest, constantes) {
+    .directive('verDocumento', function(poluxRequest, constantes, nuxeo) {
         return {
             restrict: "E",
             scope: {
@@ -21,11 +21,12 @@ angular.module('poluxClienteApp')
                 var self = this;
 
                 poluxRequest.get("documento", $.param({
+                    limit: -1,
+                    sortby: "Id",
+                    order: "asc",
                     query: "Id:" + $scope.documentoid
                 })).then(function(response) {
                     self.documento = response.data[0];
-                    self.documento.Enlace = constantes.NUXEO_DOC + self.documento.Enlace;
-                    console.log(self.documento.Enlace);
                 });
 
                 //self.paginax=$scope.pageNum;
