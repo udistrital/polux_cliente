@@ -9,7 +9,7 @@
 
 
 angular.module('poluxClienteApp')
-    .directive('subirDocumento', function ($q) {
+    .directive('subirDocumento', function($q) {
         return {
             restrict: 'E',
             scope: {
@@ -18,19 +18,19 @@ angular.module('poluxClienteApp')
                 enlace: '='
             },
             templateUrl: 'views/directives/general/documento/subir-documento.html',
-            controller: function (nuxeo, $scope) {
+            controller: function(nuxeo, $scope) {
                 var ctrl = this;
                 ctrl.msg = null;
 
-                nuxeo.connect().then(function (client) {
+                nuxeo.connect().then(function(client) {
                     // OK, the returned client is connected
                     console.log('Client is connected: ' + client.connected);
-                }, function (err) {
+                }, function(err) {
                     // cannot connect
                     console.log('Client is not connected: ' + err);
                 });
 
-                ctrl.construir_propuesta = function () {
+                ctrl.construir_propuesta = function() {
                     nuxeo.operation('Document.Create')
                         .params({
                             type: 'File',
@@ -39,56 +39,61 @@ angular.module('poluxClienteApp')
                         })
                         .input('/default-domain/workspaces/Proyectos')
                         .execute()
-                        .then(function (doc) {
+                        .then(function(doc) {
                             console.log(doc);
                             var nuxeoBlob = new Nuxeo.Blob({ content: $scope.fileModel });
                             console.log(nuxeoBlob);
                             nuxeo.batchUpload()
                                 .upload(nuxeoBlob)
-                                .then(function (res) {
+                                .then(function(res) {
                                     return nuxeo.operation('Blob.AttachOnDocument')
                                         .param('document', doc.uid)
                                         .input(res.blob)
                                         .execute();
                                 })
-                                .then(function () {
+                                .then(function() {
                                     return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
                                 })
-                                .then(function (doc) {
+                                .then(function(doc) {
                                     console.log(doc.get('file:content'));
-                                    $scope.enlace = doc.repository + '/' + doc.uid + '/' +'file:content' + '/' + doc.get('file:content').name;
+                                    $scope.enlace = doc.repository + '/' + doc.uid + '/' + 'file:content' + '/' + doc.get('file:content').name;
                                     $scope.titulo = doc.get('dc:title');
                                     $scope.descripcion = doc.get('dc:description');
                                     console.log($scope.enlace);
                                     console.log($scope.titulo);
                                     console.log($scope.descripcion);
+                                    swal(
+                                        'Registro Existoso',
+                                        'El registro del documento "' + $scope.titulo + '" fue subido exitosamente' + '\n' + 'continue por favor con la asignación de areas de conocimiento',
+                                        'success'
+                                    );
                                 })
-                                .catch(function (error) {
+                                .catch(function(error) {
                                     throw error;
                                 });
                         })
-                        .catch(function (error) {
+                        .catch(function(error) {
                             throw error;
                         });
                 };
-                ctrl.subir_archivo = function (uid) {
+                ctrl.subir_archivo = function(uid) {
                     var nuxeoBlob = new Nuxeo.Blob({ content: $scope.fileModel });
                     console.log(nuxeoBlob);
                     nuxeo.batchUpload()
                         .upload(nuxeoBlob)
-                        .then(function (res) {
+                        .then(function(res) {
                             return nuxeo.operation('Blob.AttachOnDocument')
                                 .param('document', uid)
                                 .input(res.blob)
                                 .execute();
                         })
-                        .then(function () {
+                        .then(function() {
                             return nuxeo.repository().fetch(uid, { schemas: ['dublincore', 'file'] });
                         })
-                        .then(function (doc) {
+                        .then(function(doc) {
                             console.log(doc.get('file:content'));
                         })
-                        .catch(function (error) {
+                        .catch(function(error) {
                             throw error;
                         });
                 };
@@ -100,7 +105,7 @@ angular.module('poluxClienteApp')
                  * Limpia el formulario basico mediante un evento click
                  */
 
-                ctrl.limpiar = function () {
+                ctrl.limpiar = function() {
                     ctrl.titulo = angular.copy("");
                     ctrl.resumen = angular.copy("");
                     ctrl.nuevaArea = [];

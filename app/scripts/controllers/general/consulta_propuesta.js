@@ -104,4 +104,7 @@ angular.module('poluxClienteApp')
             }
         };
 
+        ctrl.visualizarDoc = function() {
+
+        };
     });
