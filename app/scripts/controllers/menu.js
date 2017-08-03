@@ -7,7 +7,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('menuCtrl', function($location, $http, $scope, token_service, notificacion, $translate, $route, $mdSidenav) {
+    .controller('menuCtrl', function($location, $http, $scope, token_service, notificacion, $translate, $route, $mdSidenav, $localStorage) {
         var paths = [];
         $scope.language = {
             es: "btn btn-primary btn-circle btn-outline active",
@@ -27,6 +27,8 @@ angular.module('poluxClienteApp')
                         }
                     }
                 });
+                $localStorage.all_perfil = token_service.all_perfil;
+                console.log($localStorage.all_perfil);
             });
 
         $scope.notificacion = notificacion;
