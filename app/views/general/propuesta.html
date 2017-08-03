@@ -1,9 +1,10 @@
 <div class="panel panel-body panel-primary">
-   <h2 class="page-header-label text-center ng-binding">Registrar Propuesta</h2>
-
-          <registrar-propuesta estparam="propuesta.estudiantes"
-          docparam="propuesta.docentes"
-          areasparam="propuesta.areas"
-          idareaparam="propuesta.idAreas"/>
+    <h2 class="page-header-label text-center ng-binding">Registrar Propuesta</h2>
+    <input class="form-control" list="estudianteList" type="" ng-model="SelectedStudent" />
+    <datalist id="estudianteList">
+                <option ng-repeat="est in propuesta.estudiantes" value="{{est.EST_COD}}">{{est.EST_NOMBRE}} </option>
+            </datalist>
+    <br>
+    <registrar-propuesta estparam="propuesta.estudiantes" docparam="propuesta.docentes" areasparam="propuesta.areas" idareaparam="propuesta.idAreas" />
 
 </div>
