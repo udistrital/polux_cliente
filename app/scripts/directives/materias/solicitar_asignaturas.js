@@ -27,12 +27,11 @@ angular.module('poluxClienteApp')
         ctrl.tipo = $scope.estudiante.Tipo;
         $scope.sols = [];
         ctrl.listado=$scope.l;
-
         /*número de créditos mínimos, según la modalidad
           modalidad de espacios académicos de posgrado: 8 créditos,
           modalidad de espacios académicos de profundización: 6 créditos*/
         ctrl.creditosMinimos = 0;
-        if ($scope.modalidad == 'MATERIAS POSGRADO') {
+        if ($scope.modalidad == 2) {
           ctrl.creditosMinimos = 8;
         } else {
           ctrl.creditosMinimos = 6;
@@ -49,34 +48,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
             //carreras
-            console.log(response.data);
 
-            if($scope.l){
-            angular.forEach(response.data, function(value) {
-
-              //si la carrera no ha sido solicitada
-             if($scope.l.indexOf(value.CodigoCarrera)!=0){
-               var parametros = {
-                'codigo': value.CodigoCarrera,
-                'tipo': ctrl.tipo
-               };
-               academicaRequest.obtenerCarreras(parametros).then(function(response2) {
-                if (response2 != null) {
-                  var carrera = {
-                    "Codigo": value.CodigoCarrera,
-                    "Nombre": response2[0].NOMBRE,
-                    "Pensum": value.CodigoPensum
-                  };
-                  ctrl.carreras.push(carrera);
-                  console.log(ctrl.carreras);
-                }
-
-               });
-
-
-             }
-            });
-          }else{
             angular.forEach(response.data, function(value) {
 
                var parametros = {
@@ -91,22 +63,21 @@ angular.module('poluxClienteApp')
                     "Pensum": value.CodigoPensum
                   };
                   ctrl.carreras.push(carrera);
-                  console.log(ctrl.carreras);
                 }
 
                });
 
             });
-          }
+
           });
 
         });
 
 
-        ctrl.myFunc = function(carreraSeleccionada) {
+        ctrl.cargarMaterias = function(carreraSeleccionada) {
           ctrl.selected = [];
-          console.log("carrrera:"+carreraSeleccionada);
-          ctrl.asignaturas2 = [];
+          $scope.estudiante.asignaturas_elegidas= ctrl.selected;
+          ctrl.asignaturas = [];
 
           ctrl.carrera = carreraSeleccionada;
 
@@ -114,13 +85,15 @@ angular.module('poluxClienteApp')
           var parametros = $.param({
             query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER +",CodigoCarrera:"+carreraSeleccionada
           });
+
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
 
             //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
             var parametros = $.param({
-              query: "IdCarreraElegible:" + response.data[0].Id
+              query: "CarreraElegible:" + response.data[0].Id
             });
-            poluxRequest.get("asignaturas_elegibles", parametros).then(function(response) {
+
+            poluxRequest.get("espacios_academicos_elegibles", parametros).then(function(response) {
               //recorrer data y buscar datos de las asignaturas
               angular.forEach(response.data, function(value) {
                 //buscar asignaturas
@@ -140,7 +113,7 @@ angular.module('poluxClienteApp')
                     "Creditos": response[0].PEN_CRE
                   };
 
-                  ctrl.asignaturas2.push(data);
+                  ctrl.asignaturas.push(data);
 
                 });
               });
@@ -169,7 +142,7 @@ angular.module('poluxClienteApp')
           }];
 
           ctrl.gridOptions = {
-            data: ctrl.asignaturas2,
+            data: ctrl.asignaturas,
             rowTemplate: '<div ng-style="{}"></div>'
           };
         };
@@ -186,14 +159,12 @@ angular.module('poluxClienteApp')
             list.splice(idx, 1);
             var c = parseInt(item.Creditos, 10);
             ctrl.creditos = ctrl.creditos - c;
-            console.log(ctrl.creditos);
           } else {
             list.push(item);
             var c = parseInt(item.Creditos, 10);
             ctrl.creditos = ctrl.creditos + c;
-            console.log(ctrl.creditos);
           }
-          console.log(ctrl.selected);
+          console.log(JSON.stringify($scope.estudiante.asignaturas_elegidas))
 
         };
 

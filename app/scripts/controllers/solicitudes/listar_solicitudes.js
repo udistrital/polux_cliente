@@ -132,20 +132,7 @@ angular.module('poluxClienteApp')
 
   ctrl.go = function (){
     ctrl.path = "/solicitudes/crear_solicitud/";
-    //Consultar si el estudiante actualmente cursa una modalidad
-    var parametrosTG = $.param({
-        query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+",EstadoEstudianteTrabajoGrado:1"
-    });
-    //se consulta si el estudiante tiene un trabajo de grado activo
-    poluxRequest.get("estudiante_trabajo_grado",parametrosTG).then(function(responseTG){
-        if(responseTG.data == null){
-          $location.path(ctrl.path);
-        }else{
-            //Se redirecciona con el trabajo de grado
-              $location.path(ctrl.path+responseTG.data[0].Id);
-        }
-    });
-
+    $location.path(ctrl.path+ctrl.estudiante.Codigo);
   };
 
 });

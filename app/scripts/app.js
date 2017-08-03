@@ -152,7 +152,7 @@ angular
         controller: 'SolicitudesListarSolicitudesCtrl',
         controllerAs: 'listarSolicitudes'
       })
-      .when('/solicitudes/crear_solicitud/:TrabajoEstudiante', {
+      .when('/solicitudes/crear_solicitud/:idEstudiante', {
         templateUrl: 'views/solicitudes/crear_solicitud.html',
         controller: 'SolicitudesCrearSolicitudCtrl',
         controllerAs: 'crearSolicitud'

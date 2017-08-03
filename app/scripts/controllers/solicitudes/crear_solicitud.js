@@ -17,15 +17,11 @@ angular.module('poluxClienteApp')
       ctrl.modalidad_select = false;
       ctrl.detallesCargados = false;
       ctrl.soliciudConDetalles = true;
+      ctrl.conEstudiante = false;
+      ctrl.codigo = $routeParams.idEstudiante;
 
-      ctrl.TrabajoEstudiante = $routeParams.TrabajoEstudiante;
-        if(ctrl.TrabajoEstudiante === undefined){
-          poluxRequest.get("modalidad").then(function (responseModalidad){
-              ctrl.modalidades=responseModalidad.data;
-          });
-        }else{
             var parametrosTrabajoEstudiante = $.param({
-                query:"Id:"+ctrl.TrabajoEstudiante,
+                query:"CodigoEstudiante:"+ctrl.codigo,
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
                     if(responseTrabajoEstudiante.data != null){
@@ -34,16 +30,15 @@ angular.module('poluxClienteApp')
                       ctrl.siModalidad = true;
                       ctrl.modalidad_select = true;
                       ctrl.cargarTipoSolicitud(ctrl.modalidad);
-                      console.log(ctrl.codigo);
-                      console.log(ctrl.modalidad);
-                      ctrl.obtenerDatosEstudiante();
                     }else{
                       poluxRequest.get("modalidad").then(function (responseModalidad){
                           ctrl.modalidades=responseModalidad.data;
                       });
                     }
+                    ctrl.obtenerDatosEstudiante();
+
           });
-      }
+
 
 
 
@@ -118,7 +113,7 @@ angular.module('poluxClienteApp')
               };
 
               academicaRequest.porcentajeCursado(parametros).then(function(response3){
-                console.log(response3);
+
 
                 ctrl.estudiante={
                   "Codigo": parametros.codigo,
@@ -133,10 +128,9 @@ angular.module('poluxClienteApp')
                   "TipoCarrera": response2[0].TRA_NOMBRE
 
                 };
-
                 console.log(ctrl.estudiante);
-                ctrl.modalidad="MATERIAS POSGRADO";
-
+                ctrl.conEstudiante=true;
+                ctrl.estudiante.asignaturas_elegidas = [];
               });
             }
           });

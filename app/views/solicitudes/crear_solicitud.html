@@ -1,5 +1,5 @@
 <br>
-<div class="panel panel-default">
+<div class="panel panel-default" ng-if="crearSolicitud.conEstudiante">
     <div class="panel-heading">
         Crear nueva solicitud
     </div>
@@ -67,7 +67,7 @@
             <b>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
-            <solicitar-asignaturas ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
+            <solicitar-asignaturas  estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
             <b>
          </div>
            <br>
@@ -78,4 +78,12 @@
        <input ng-click="" value="Enviar Solicitud"  class="col-sm-2 btn btn-success" type="submit">
     </div>
 
+</div>
+<div class="panel panel-default" ng-if="!crearSolicitud.conEstudiante">
+    <div class="panel-heading">
+        Error
+    </div>
+    <div class="panel-body alert alert-danger">
+        Error: El estudiante no se encuentra
+    </div>
 </div>
