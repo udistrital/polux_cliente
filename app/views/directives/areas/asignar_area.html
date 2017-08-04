@@ -2,11 +2,11 @@
         <div class="input-group">
         <input type="text" class="form-control" list="listaAreas"
         ng-model="d_asignarArea.Nombre" name="asignado"
-        ng-minlength="8"
-        ng-maxlength="30"
+        ng-minlength="1"
+        ng-maxlength="50"
         placeholder="Seleccione ..." required autocomplete="off" />
         <datalist class="selector" id="listaAreas"  >
-          <option ng-repeat="a in setareas" ng-if="idarea.indexOf(a.Id) == -1" value="{{a.Nombre}}"></option>
+          <option ng-repeat="a in setareas"  ng-if="idarea.indexOf(a.Id) !== -1" value="{{a.Nombre}}"></option>
         </datalist>
         <span class="input-group-btn">
         <input type="submit" ng-click="d_asignarArea.asignarArea()"
@@ -31,7 +31,7 @@
               {{$chip.Nombre}}
             </span>
           </md-chip-template>
-  <input md-chip-remove  type="submit"  
+  <input md-chip-remove  type="submit"
             value="X" class="btn btn-primary btn-xs"/>
   </md-chips>
   </div>

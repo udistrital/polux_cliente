@@ -29,19 +29,23 @@ angular.module('poluxClienteApp')
         /**/
         self.asignarArea=function(){
           self.Nombre=cadenaRequest.cambiarTipoTitulo(self.Nombre);
-          console.log(self.Nombre);
           //verifica que el Nombre sea el mismo y asigna el Id(necesario para tablas con llave compuesta)
+
           angular.forEach($scope.setareas,function(value){
             if (value.Nombre==self.Nombre) {
               self.Id=value.Id;
+                if(self.nuevaArea.indexOf(value) === -1){
+                  self.nuevaArea.push(
+                  /*  { "Id":self.Id,
+                    "Nombre": self.Nombre
+                  }*/
+                  value
+                );
+                }
             }
+
           });
-          console.log(self.Id);
-          self.nuevaArea.push(
-            { "Id":self.Id,
-            "Nombre": self.Nombre
-          }
-        );
+
 /*        document.getElementById("formAsignar").reset();*/
          $scope.newarea=self.nuevaArea;
         };

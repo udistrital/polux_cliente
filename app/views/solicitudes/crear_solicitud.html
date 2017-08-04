@@ -68,7 +68,28 @@
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
             <solicitar-asignaturas  estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
+
+            <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
+                <div class="panel-heading">
+                    Areas del conocimiento
+                </div>
+                <div class="panel-body">
+                  <label class="col-sm-5 control-label">Seleccione las areas del conocimiento de su proyecto</label>
+                  <asignar-area class="col-sm-7 control-label" setareas="crearSolicitud.areas" newarea="crearSolicitud.estudiante.areas_elegidas">
+                </div>
+            </div>
             <b>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Selector'" class = "row">
+           <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <div class="col-sm-9">
+             <input type="text" class="form-control" list="lista+{{detalle.Detalle.Nombre}}" ng-model="detalle.respuesta"
+             placeholder="Seleccione ..." required autocomplete="off" />
+             <!-- lista de elementos del input-->
+             <datalist class="selector" id="lista+{{detalle.Detalle.Nombre}}"  >
+               <option ng-repeat="opcion in detalle.opciones" value="{{opcion.DOC_NOMBRE}}"></option>
+             </datalist>
+           </div>
          </div>
            <br>
         </div>

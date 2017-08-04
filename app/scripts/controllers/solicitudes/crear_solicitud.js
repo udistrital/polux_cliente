@@ -13,6 +13,7 @@ angular.module('poluxClienteApp')
       ctrl.modalidades = [];
       ctrl.solicitudes = [];
       ctrl.detalles = [];
+      ctrl.areas = [];
       ctrl.siModalidad = false;
       ctrl.modalidad_select = false;
       ctrl.detallesCargados = false;
@@ -24,6 +25,7 @@ angular.module('poluxClienteApp')
                 query:"CodigoEstudiante:"+ctrl.codigo,
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
+
                     if(responseTrabajoEstudiante.data != null){
                       ctrl.codigo = responseTrabajoEstudiante.data[0].CodigoEstudiante;
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
@@ -36,9 +38,17 @@ angular.module('poluxClienteApp')
                       });
                     }
                     ctrl.obtenerDatosEstudiante();
-
+                    ctrl.obtenerAreas();
           });
 
+
+        ctrl.obtenerAreas = function (){
+            poluxRequest.get("area_conocimiento").then(function(responseAreas){
+                ctrl.areas = responseAreas.data;
+                  console.log(ctrl.areas);
+            });
+
+          }
 
 
 
@@ -70,6 +80,25 @@ angular.module('poluxClienteApp')
             if(ctrl.detalles == null){
                 ctrl.soliciudConDetalles = false;
             }
+            angular.forEach(ctrl.detalles, function(detalle){
+                detalle.respuesta= "";
+                detalle.opciones = [];
+                //SE evalua si el detalle necesita cargar datos
+                if(detalle.Detalle.Descripcion!=='no_service' && detalle.Detalle.TipoDetalle.Id!==8){
+                    //Se separa el strig
+                    var parametrosConsulta = detalle.Detalle.Descripcion.split(";");
+                    //servicio de academiac
+                    if(parametrosConsulta[0]==="academica"){
+                        if(parametrosConsulta[1]==="docente"){
+                              /*academicaRequest.obtenerDocentesJson().then(function(respuestaDocentes){
+                                  detalle.opciones= respuestaDocentes.data;
+                              });*/
+                              detalle.opciones=academicaRequest.obtenerDocentesJson();
+                              console.log(detalle.opciones);
+                        }
+                    }
+                };
+            });
         });
       };
 
@@ -85,8 +114,12 @@ angular.module('poluxClienteApp')
             angular.forEach(ctrl.detalles, function(detalle){
                 detalle.respuesta= "";
                 detalle.opciones = [];
+                if(detalle.Detalle.TipoDetalle.Descripcion!=="no_service"){
+                    console.log("No consume servicios")
+                };
             });
-            console.log(ctrl.detalles);
+            //cargar directiva para areas de conocimiento, modificar directiva, y enviar respuesta al controlador
+            //cargar resultados de directivas en un json stringify
             ctrl.detallesCargados = true;
             if(ctrl.detalles == null){
                 ctrl.soliciudConDetalles = false;
@@ -131,6 +164,7 @@ angular.module('poluxClienteApp')
                 console.log(ctrl.estudiante);
                 ctrl.conEstudiante=true;
                 ctrl.estudiante.asignaturas_elegidas = [];
+                ctrl.estudiante.areas_elegidas= [];
               });
             }
           });
