@@ -10,6 +10,7 @@
 angular.module('poluxClienteApp')
     .controller('AreasDocenteCtrl', function(academicaRequest, poluxRequest) {
         var self = this;
+        var parametros;
         self.buttonDirective = "Agregar Área"
         self.removable = false;
         self.menucreacion = false;
@@ -25,7 +26,9 @@ angular.module('poluxClienteApp')
             } else { self.buttonDirective = "Agregar Área"; return true; }
         };
         //cuando se trabaje con el servidor cambiar a:  self.docentes=academicaRequest.obtenerDocentes();
-        self.docentes = academicaRequest.obtenerDocentesJson();
+        academicaRequest.obtenerDocentes(parametros).then(function(response) {
+            self.docentes = response;
+        });
         //necesario para cargar las peticiones de áreas en el primer intento
         poluxRequest.get("area_conocimiento", "").then(function(response) {
             self.areas = response.data;

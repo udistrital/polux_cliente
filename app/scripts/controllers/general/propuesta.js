@@ -21,7 +21,9 @@ angular.module('poluxClienteApp')
         var self = this;
         self.idAreas = [];
         //cuando se trabaje con el servidor cambiar a:  self.docentes=academicaRequest.obtenerDocentes();
-        self.docentes = academicaRequest.obtenerDocentesJson();
+        // academicaRequest.obtenerDocentes(parametros).then(function(response) {
+        //     self.docentes = response;
+        // });
         /*self.estudiantes=academicaRequest.getAllEstudiantesJson(); */ //cambiar a self.estudiantes=academicaRequest.obtenerEstudiantes();
         var parametros = {
             'carrera': 20
