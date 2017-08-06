@@ -7,7 +7,7 @@
         <div class="row" ng-if="!crearSolicitud.siModalidad">
         <label class="col-sm-2 control-label"> Seleccione la modalidad</label>
         <div class="col-sm-10">
-            <select class="form-control" ng-model="modalidad_seleccionada" ng-change="crearSolicitud.cargarInicial(2,modalidad_seleccionada)">
+            <select class="form-control" ng-model="modalidad_seleccionada" ng-change="crearSolicitud.cargarDetalles(2,modalidad_seleccionada)">
                   <option  ng-repeat="modalidad in crearSolicitud.modalidades" ng-value="modalidad.Id"> {{modalidad.Nombre}} </option>
             </select>
         </div>
@@ -16,7 +16,7 @@
         <div class="row" ng-if="crearSolicitud.modalidad_select">
           <label class="col-sm-2 control-label"> Seleccione tipo de solicitud</label>
           <div class="col-sm-10">
-              <select class="form-control" ng-model="solicitud_seleccionada" ng-change="crearSolicitud.cargarDetalles(solicitud_seleccionada,crearSolicitud.modalidad)">
+              <select class="form-control" ng-model="solicitud_seleccionada" ng-change="crearSolicitud.cargarDetalles(solicitud_seleccionada)">
                     <option  ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud.Id" ng-if="solicitud.TipoSolicitud.Id != 2"> {{solicitud.TipoSolicitud.Nombre}} </option>
               </select>
           </div>
@@ -33,6 +33,10 @@
        <!-- detalles de la solicitud -->
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
+        <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row">
+              <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+              <label class="col-sm-9 control-label" ng-model="detalle.respuesta"> {{detalle.opciones[0].Nombre}}</label>
+          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
             <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
             <input type="text" class="col-sm-8" ng-model="detalle.respuesta" required>
@@ -52,8 +56,8 @@
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
            <label class="col-sm-4 control-label"> {{detalle.Detalle.Enunciado}}</label>
            <div class="col-sm-8">
-               <select class="form-control" ng-model="modalidad_seleccionada">
-                     <!--option  ng-repeat="modalidad in crearSolicitud.modalidades" ng-value="modalidad.Id"> {{modalidad.Nombre}} </option-->
+               <select class="form-control" ng-model="detalle.respuesta">
+                     <option  ng-repeat="opcion in detalle.opciones" ng-value="opcion.Nombre"> {{opcion.Nombre}} </option>
                </select>
            </div>
          </div>
@@ -87,7 +91,7 @@
              placeholder="Seleccione ..." required autocomplete="off" />
              <!-- lista de elementos del input-->
              <datalist class="selector" id="lista+{{detalle.Detalle.Nombre}}"  >
-               <option ng-repeat="opcion in detalle.opciones" value="{{opcion.DOC_NOMBRE}}"></option>
+               <option ng-repeat="opcion in detalle.opciones" value="{{opcion.Nombre}}"></option>
              </datalist>
            </div>
          </div>

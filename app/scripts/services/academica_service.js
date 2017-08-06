@@ -72,32 +72,32 @@ angular.module('academicaService', [])
   return [
     {
       "DOC_NRO_IDEN": 211,
-      "DOC_NOMBRE": "DAVID",
+      "Nombre": "DAVID",
       "DOC_APELLIDO": "MORALES"
     },
     {
       "DOC_NRO_IDEN": 312,
-      "DOC_NOMBRE":"FABIAN",
+      "Nombre":"FABIAN",
       "DOC_APELLIDO": "SANCHEZ"
     },
     {
       "DOC_NRO_IDEN": 323,
-      "DOC_NOMBRE": "GEINER",
+      "Nombre": "GEINER",
       "DOC_APELLIDO": "SALCEDO"
     },
     {
       "DOC_NRO_IDEN": 134,
-      "DOC_NOMBRE": "MARIA FERNANDA",
+      "Nombre": "MARIA FERNANDA",
       "DOC_APELLIDO": "AVENDAÑO"
     },
     {
       "DOC_NRO_IDEN": 512,
-      "DOC_NOMBRE": "FABIO",
+      "Nombre": "FABIO",
       "DOC_APELLIDO": "PARRA"
     },
     {
       "DOC_NRO_IDEN": 236,
-      "DOC_NOMBRE": "ANDREY",
+      "Nombre": "ANDREY",
       "DOC_APELLIDO": "SARMIENTO"
     }
   ];
@@ -106,37 +106,37 @@ obtenerDocentesJson:function(){
  return [
    {
      "DOC_NRO_IDEN": 1,
-     "DOC_NOMBRE": "CARLOS ",
+     "Nombre": "CARLOS ",
      "DOC_APELLIDO": "MONTENEGRO"
    },
    {
      "DOC_NRO_IDEN": 2,
-     "DOC_NOMBRE":"ALEJANDRO",
+     "Nombre":"ALEJANDRO",
      "DOC_APELLIDO": "DAZA"
    },
    {
      "DOC_NRO_IDEN": 3,
-     "DOC_NOMBRE": "FREDY",
+     "Nombre": "FREDY",
      "DOC_APELLIDO": "PARRA"
    },
    {
      "DOC_NRO_IDEN": 4,
-     "DOC_NOMBRE": "ALBA CONSUELO",
+     "Nombre": "ALBA CONSUELO",
      "DOC_APELLIDO": "NIETO"
    },
    {
      "DOC_NRO_IDEN": 5,
-     "DOC_NOMBRE": "LUZ DEICY",
+     "Nombre": "LUZ DEICY",
      "DOC_APELLIDO": "ALVARADO"
    },
    {
      "DOC_NRO_IDEN": 6,
-     "DOC_NOMBRE": "JULIO",
+     "Nombre": "JULIO",
      "DOC_APELLIDO": "BARON"
    },
    {
      "DOC_NRO_IDEN": 19,
-     "DOC_NOMBRE": "JOSE NELSÓN",
+     "Nombre": "JOSE NELSÓN",
      "DOC_APELLIDO": "PEREZ"
    }
  ];

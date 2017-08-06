@@ -35,6 +35,7 @@ angular
     'poluxService',
     'academicaService',
     'cadenaService',
+    'cidcService',
     //'blueimp.fileupload',
     'poluxMidService',
     'pdf',
