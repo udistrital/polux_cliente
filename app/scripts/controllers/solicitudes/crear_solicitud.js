@@ -26,7 +26,7 @@ angular.module('poluxClienteApp')
                 query:"CodigoEstudiante:"+ctrl.codigo,
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
-
+                    ctrl.Trabajo = responseTrabajoEstudiante.data;
                     if(responseTrabajoEstudiante.data != null){
                       ctrl.codigo = responseTrabajoEstudiante.data[0].CodigoEstudiante;
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
@@ -34,6 +34,28 @@ angular.module('poluxClienteApp')
                       ctrl.siModalidad = true;
                       ctrl.modalidad_select = true;
                       ctrl.cargarTipoSolicitud(ctrl.modalidad);
+                      var parametrosVinculacion = $.param({
+                          query:"TrabajoGrado:"+ctrl.trabajo_grado,
+                          limit:0
+                      });
+                      poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(responseVinculacion){
+                            ctrl.Trabajo.evaluadores = [];
+                            console.log(responseVinculacion.data);
+                          angular.forEach(responseVinculacion.data, function(vinculado){
+                              if(vinculado.RolTrabajoGrado.Id==1){
+                                  ctrl.Trabajo.directorInterno = vinculado;
+                              }
+                              if(vinculado.RolTrabajoGrado.Id==2){
+                                  ctrl.Trabajo.directorExterno = vinculado;
+                              }
+                              if(vinculado.RolTrabajoGrado.Id==3){
+                                  ctrl.Trabajo.evaluadores.push(vinculado);
+                              }
+                          });
+                          console.log(ctrl.Trabajo.directorInterno);
+                          console.log(ctrl.Trabajo.directorExterno);
+                          console.log(ctrl.Trabajo.evaluadores);
+                      });
                       if(ctrl.modalidad == 2 || ctrl.modalidad==3){
                         var parametrosEspacios = $.param({
                           query:"trabajo_grado:"+ctrl.trabajo_grado,
