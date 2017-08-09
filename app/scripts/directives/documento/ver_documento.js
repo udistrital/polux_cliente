@@ -27,15 +27,17 @@ angular.module('poluxClienteApp')
                     query: "Id:" + $scope.documentoid
                 })).then(function(response) {
                     self.documento = response.data[0];
+                    console.log(self.documento);
+                    self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
+                    console.log(self.documento.Enlace);
+                    $scope.selectpag = $scope.pageNum;
+                    $scope.pdfUrl = self.documento.Enlace;
                 });
-
-                //self.paginax=$scope.pageNum;
 
                 $scope.$watch('loadpag', function() {
                     $scope.pageNum = $scope.loadpag;
                 });
 
-                $scope.httpHeaders = { Authorization: 'Bearer some-aleatory-token' };
             },
             controllerAs: "d_verDocumento"
         };

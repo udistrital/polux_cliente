@@ -10,9 +10,8 @@
 
 
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, nuxeo) {
+    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes) {
         var ctrl = this;
-        ctrl.nuxeo = nuxeo;
         ctrl.operacion = "";
         ctrl.row_entity = {};
         ctrl.requisito_select = [];
@@ -90,7 +89,7 @@ angular.module('poluxClienteApp')
             console.log(ctrl.row_entity);
             switch (operacion) {
                 case "ver":
-                    ctrl.docentes = academicaRequest.obtenerDocentes();
+                    //ctrl.docentes = academicaRequest.obtenerDocentes();
                     break;
                 case "add":
                     break;
@@ -104,7 +103,4 @@ angular.module('poluxClienteApp')
             }
         };
 
-        ctrl.visualizarDoc = function() {
-
-        };
     });
