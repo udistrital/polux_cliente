@@ -22,6 +22,12 @@ angular.module('poluxClienteApp')
             controller: function($scope, $location, $http, token_service, nuxeo, $q, constantes) {
                 var self = this;
                 self.validar = false;
+                var parametros = {
+                    'carrera': 20
+                };
+                academicaRequest.obtenerEstudiantes(parametros).then(function(response) {
+                    self.estudiantes = response;
+                });
                 self.estudianteSeleccionado = token_service.all_perfil.datos_basicos.codigo;
                 self.modSeleccionada = "";
                 self.buttonDirective = "Aceptar";
@@ -183,7 +189,7 @@ angular.module('poluxClienteApp')
                             confirmButtonText: 'Confirmar'
                         }).then(function() {
                             var codEstudiante, idTrabajoGrado;
-                            codEstudiante = parseInt(estudiante);
+                            // codEstudiante = parseInt(estudiante);
                             console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
                             self.registro_TG = [];
                             self.estudiante_TG = [];

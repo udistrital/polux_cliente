@@ -14,17 +14,14 @@
                                     <label for="select_modalidad" class="col-form-label">Modalidad</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select ng-model="d_regProp.modSeleccionada" id="modalidadSelect" class="form-control" placeholder="Seleccione una modalidad "
-                                        ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)">
+                                    <select ng-model="d_regProp.modSeleccionada" id="modalidadSelect" class="form-control" placeholder="Seleccione una modalidad " ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)">
                     <option ng-repeat="mod in d_regProp.modalidad track by mod.Id" value="{{mod.Id}}">{{mod.Nombre}} </option>                    
                     </select>
                                 </div>
                             </div>
                             <br>
                             <div ng-if="d_regProp.validar =='true'" class=" row col-md-12">
-                                <subir-documento titulo="d_regProp.documento.titulo"
-                                 descripcion="d_regProp.documento.resumen"
-                                 enlace="d_regProp.documento.enlace"></subir-documento>
+                                <subir-documento titulo="d_regProp.documento.titulo" descripcion="d_regProp.documento.resumen" enlace="d_regProp.documento.enlace"></subir-documento>
                             </div>
                             <br>
                             <div class="row col-md-12" ng-if="d_regProp.registroDocumento">
@@ -60,8 +57,7 @@
             <br>
             <div class="row">
                 <div ng-if="d_regProp.validar!='true'" class="alert alert-danger">
-                    <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de
-                    Trabajo de Grado
+                    <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado
                     <br></br>
                     <p>
                         <ul>
@@ -73,18 +69,50 @@
                     </p>
                 </div>
             </div>
-            <div ng-if="d_regProp.validar =='true'" class="col-md-4">
-                <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)"
-                    value="Registrar propuesta" />
+            <div ng-if="d_regProp.validar =='true'" class="row">
+                <div class="col-md-4">
+                    <input type="button" class="btn btn-md btn-outline btn-success btn-block" ng-click="d_regProp.load_row(row,\'ver\')" data-toggle="modal" data-target="#myModalInvitar" value="Invitar Estudiante" />
+                </div>
+                <div class="col-md-8">
+                    <label for="estudianteInvitado"></label>
+                </div>
             </div>
-            <div class="row">
-                <pre>
-                {{d_regProp.documento | json}}
-                </pre>
+            <br>
+            <div ng-if="d_regProp.validar =='true'" class="col-md-4 pull-right">
+                <input type="button" class="btn btn-md btn-outline btn-primary btn-block" ng-click="d_regProp.guardar(d_regProp.documento, d_regProp.estudianteSeleccionado, d_regProp.modSeleccionada)" value="Registrar propuesta" />
             </div>
             <!-- Fin de formulario de zona de carga de archivos-->
 
         </div>
     </div>
 
+</div>
+<div id="myModalInvitar" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'INVITAR_ESTUDIANTE' | translate }}
+            </div>
+            <form class="form-horizontal" name="avances_add_edit" ng-submit="d_regProp.add_edit()">
+                <br>
+                <div class="row">
+                    <label for="referencia" class="col-sm-2 control-label">{{'ESTUDIANTE' | translate }}:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" list="estudianteList" type="" ng-model="SelectedStudent" />
+                        <datalist id="estudianteList">
+                        <option ng-repeat="est in d_regProp.estudiantes" value="{{est.EST_COD}}">{{est.EST_NOMBRE}} </option>
+                    </datalist>
+                    </div>
+                </div>
+                <center>
+                    <input type="reset" class="btn btn-info btn-outline" value="{{'BTN.LIMPIAR' | translate }}" />
+                    <input type="submit" ng-click="d_regProp.addStudent(SelectedStudent)" class="btn btn-success btn-outline" value="{{'BTN.GUARDAR' | translate }}" />
+                </center>
+            </form>
+            <br>
+        </div>
+    </div>
 </div>
