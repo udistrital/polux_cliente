@@ -1,0 +1,24 @@
+<div class="panel panel-primary panel-body">
+    <center>
+        <h3 class="page-header">{{'SOCIALIZACION' | translate}}</h3>
+    </center>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <label>{{'FECHA' | translate}}:</label>
+            </div>
+            <div class="col-md-2">
+                <md-datepicker ng-model="socializacion.fecha" md-placeholder="Ingrese Fecha"></md-datepicker>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-2">
+                <label>{{'HORA' | translate}}:</label>
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="field" ng-model="initializeTime" ui-time-mask="short" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>

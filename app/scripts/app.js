@@ -28,6 +28,7 @@ angular
         'ui.grid.selection',
         'ui.grid.exporter',
         'ui.grid.autoResize',
+        'ui.grid.pagination',
         'ngStorage',
         'ngWebSocket',
         'angularMoment',
@@ -35,6 +36,7 @@ angular
         'poluxService',
         'academicaService',
         'cadenaService',
+        'ui.utils.masks',
         //'blueimp.fileupload',
         'poluxMidService',
         'pdf',
@@ -161,6 +163,11 @@ angular
                 templateUrl: 'views/formato/formato_sesion_proyecto.html',
                 controller: 'FormatoFormatoSesionProyectoCtrl',
                 controllerAs: 'formatoSesionProyecto'
+            })
+            .when('/formato/socializacion', {
+                templateUrl: 'views/formato/socializacion.html',
+                controller: 'SocializacionCtrl',
+                controllerAs: 'socializacion'
             })
             .otherwise({
                 redirectTo: '/'

@@ -19,7 +19,13 @@ var text_es = {
     RESUMEN: "Resumen",
     OPCIONES: "Opciones",
     SOLICITUD: "Solicitud",
-    ASIGNAR_DOCENTE: "Asignar Docente"
+    ASIGNAR_DOCENTE: "Asignar Docente",
+    SOCIALIZACION: "Socialización de proyectos de grado",
+    NUEVA_EVALUACION: "Nueva Evaluación",
+    FORMATOS_EVALUACION: "Formatos de Evaluación",
+    BUSCAR_FORMATOS: "Buscar Formatos",
+    FECHA: "Fecha",
+    HORA: "Hora"
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -32,9 +38,9 @@ var text_en = {
     RESUMEN: "Abstract",
     OPCIONES: "Options",
     SOLICITUD: "Request",
-    ASIGNAR_DOCENTE: "Assign Teacher"
-
-
+    ASIGNAR_DOCENTE: "Assign Teacher",
+    FECHA: "Date",
+    Hora: "Hour"
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

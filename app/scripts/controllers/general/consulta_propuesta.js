@@ -10,14 +10,14 @@
 
 
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes) {
+    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, $window) {
         var ctrl = this;
         ctrl.operacion = "";
         ctrl.row_entity = {};
         ctrl.requisito_select = [];
         ctrl.gridOptions = {
-            paginationPageSizes: [5, 15, 20],
-            paginationPageSize: 5,
+            paginationPageSizes: [15, 20, 25],
+            paginationPageSize: 15,
             enableFiltering: true,
             enableSorting: true,
             enableRowSelection: true,
@@ -38,6 +38,11 @@ angular.module('poluxClienteApp')
                 },
                 {
                     field: 'IdEstadoDocumento.Nombre',
+                    displayName: $translate.instant('ESTADO_DOCUMENTO'),
+                    width: '10%',
+                },
+                {
+                    field: 'IdTrabajoGrado.Etapa',
                     displayName: $translate.instant('ESTADO_DOCUMENTO'),
                     width: '10%',
                 },
@@ -86,7 +91,6 @@ angular.module('poluxClienteApp')
 
         ctrl.load_row = function(row, operacion) {
             ctrl.row_entity = row.entity;
-            console.log(ctrl.row_entity);
             switch (operacion) {
                 case "ver":
                     //ctrl.docentes = academicaRequest.obtenerDocentes();
@@ -98,6 +102,8 @@ angular.module('poluxClienteApp')
                 case "delete":
                     break;
                 case "descargar":
+                    console.log(ctrl.row_entity);
+                    $window.open(constantes.DOWNLOAD_FILE + ctrl.row_entity.IdDocumento.Enlace);
                     break;
                 default:
             }
