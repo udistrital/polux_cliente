@@ -102,8 +102,7 @@ angular.module('poluxClienteApp')
                 case "delete":
                     break;
                 case "descargar":
-                    console.log(ctrl.row_entity);
-                    $window.open(constantes.DOWNLOAD_FILE + ctrl.row_entity.IdDocumento.Enlace);
+                    $window.open(constantes.DOWNLOAD_FILE + ctrl.row_entity.IdDocumento.Enlace, "New Window", "width=800,height=600,resizable=1");
                     break;
                 default:
             }
