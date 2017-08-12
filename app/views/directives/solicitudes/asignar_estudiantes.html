@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+      Agregar
+  </div>
+  <div class="panel-body">
+    <label class="col-sm-5 control-label">Digite el código de los otros estudiantes que participan en el proyecto</label>
+    <form  class="col-sm-7 control-label" role="form" name="formEstudiantes" id="formEstudiantes">
+        <div class="input-group">
+        <input type="nummber" class="form-control"
+        ng-model="d_asignarEstudiante.codigoEstudiante" name="asignado"
+        ng-minlength="11"
+        ng-maxlength="11"
+        placeholder="Código..." required />
+        <span class="input-group-btn">
+        <input type="submit" ng-click="d_asignarEstudiante.agregarEstudiante()"
+        value="Agregar" class="btn btn-primary btn-md "
+        ng-disabled="formEstudiantes.$invalid" />
+        </span>
+        </div>
+
+    </form>
+    <br>
+    <br>
+    <br>
+
+        <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteRegistrado">
+            Error: El estudiante ya se encuentra registrado.
+        </div>
+
+    <div class="row">
+    <md-chips  class="custom-chips col-md-12" ng-model="d_asignarEstudiante.nuevaArea" readonly="true"
+    md-removable="d_asignarEstudiante.removable" >
+    <md-chip-template ng-click="d_asignarEstudiante.removable=!d_asignarEstudiante.removable">
+            <span>
+              {{$chip.Nombre}}
+            </span>
+          </md-chip-template>
+    <input md-chip-remove  type="submit"
+            value="X" class="btn btn-primary btn-xs"/>
+    </md-chips>
+    </div>
+  </div>
+</div>

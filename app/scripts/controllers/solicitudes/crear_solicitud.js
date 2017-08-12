@@ -20,8 +20,9 @@ angular.module('poluxClienteApp')
       ctrl.detallesCargados = false;
       ctrl.soliciudConDetalles = true;
       ctrl.conEstudiante = false;
+      ctrl.estudiantes = [];
       ctrl.codigo = $routeParams.idEstudiante;
-
+            ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
                 query:"CodigoEstudiante:"+ctrl.codigo,
             });
@@ -118,6 +119,7 @@ angular.module('poluxClienteApp')
       }
         poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
             ctrl.detalles = responseDetalles.data;
+            console.log(ctrl.detalles);
             angular.forEach(ctrl.detalles, function(detalle){
               detalle.respuesta= "";
               detalle.opciones = [];
