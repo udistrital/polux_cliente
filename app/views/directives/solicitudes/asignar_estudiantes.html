@@ -1,6 +1,6 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-      Agregar
+      Agregar estudiantes a la solicitud
   </div>
   <div class="panel-body">
     <label class="col-sm-5 control-label">Digite el código de los otros estudiantes que participan en el proyecto</label>
@@ -24,15 +24,24 @@
     <br>
 
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteRegistrado">
-            Error: El estudiante ya se encuentra registrado.
+            Error: El estudiante ya se encuentra en la lista de solicitados.
+        </div>
+        <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteExiste">
+            Error: El codigo digitado no es valido.
+        </div>
+        <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteValido">
+            Error: El estudiante solicitado actualmente no cumple con los requisitos para realizar un trabajo de grado.
+        </div>
+        <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteConTrabajo">
+            Error: El estudiante solicitado actualmente esta realizando un trabajo de grado.
         </div>
 
     <div class="row">
-    <md-chips  class="custom-chips col-md-12" ng-model="d_asignarEstudiante.nuevaArea" readonly="true"
+    <md-chips  class="custom-chips col-md-12" ng-model="d_asignarEstudiante.nuevosEstudiantes" readonly="true"
     md-removable="d_asignarEstudiante.removable" >
     <md-chip-template ng-click="d_asignarEstudiante.removable=!d_asignarEstudiante.removable">
             <span>
-              {{$chip.Nombre}}
+              {{$chip}}
             </span>
           </md-chip-template>
     <input md-chip-remove  type="submit"
