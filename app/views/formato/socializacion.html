@@ -17,8 +17,50 @@
                 <label>{{'HORA' | translate}}:</label>
             </div>
             <div class="col-md-2">
-                <input type="text" name="field" ng-model="initializeTime" ui-time-mask="short" class="form-control">
+                <input type="text" name="field" ng-model="time" ui-time-mask="short" class="form-control">
             </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-2">
+                <label>
+                 <label>{{'SELECCION_PROYECTO' | translate}}:</label>
+                </label>
+            </div>
+            <div class="col-md-7">
+                <ui-select ng-model="socializacion.trabajo_grado.selected" theme="select2" style="width:100%;">
+                    <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.Titulo}}</ui-select-match>
+                    <ui-select-choices repeat="trabajo in socializacion.trabajos_grado | filter: $select.search">
+                        <span ng-bind-html="trabajo.Titulo | highlight: $select.search"></span>
+                        <small ng-bind-html="trabajo.Id | highlight: $select.search"></small>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-2">
+                <label>
+                 <label>{{'LUGAR' | translate}}:</label>
+                </label>
+            </div>
+            <div class="col-md-7">
+                <ui-select ng-model="socializacion.lugar.selected" theme="select2" style="width:100%;">
+                    <ui-select-match placeholder="{{'LUGAR' | translate}}...">{{$select.selected.Nombre}}</ui-select-match>
+                    <ui-select-choices repeat="lugar in socializacion.lugares | filter: $select.search">
+                        <span ng-bind-html="lugar.Nombre | highlight: $select.search"></span>
+                        <small ng-bind-html="lugar.Codigo | highlight: $select.search"></small>
+                    </ui-select-choices>
+                </ui-select>
+
+                <br>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5">
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_opcion()">Crear Socialización</button>
         </div>
     </div>
 </div>

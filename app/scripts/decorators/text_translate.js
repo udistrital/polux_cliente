@@ -25,7 +25,9 @@ var text_es = {
     FORMATOS_EVALUACION: "Formatos de Evaluación",
     BUSCAR_FORMATOS: "Buscar Formatos",
     FECHA: "Fecha",
-    HORA: "Hora"
+    HORA: "Hora",
+    SELECCION_PROYECTO: "Seleccione el Proyecto",
+    LUGAR: "Lugar"
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",

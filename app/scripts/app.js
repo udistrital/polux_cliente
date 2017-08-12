@@ -34,9 +34,11 @@ angular
         'angularMoment',
         'ui.utils.masks',
         'poluxService',
+        'oikosService',
         'academicaService',
         'cadenaService',
         'ui.utils.masks',
+        'ui.select',
         //'blueimp.fileupload',
         'poluxMidService',
         'pdf',
@@ -46,9 +48,10 @@ angular
     .run(function(amMoment) {
         amMoment.changeLocale('es');
     })
-    .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
-        cfpLoadingBarProvider.parentSelector = '#loading-bar-container';
-        cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-clock-o fa-2x faa-spin animated"></div>';
+    .config(['cfpLoadingBarProvider', 'uiSelectConfig', function(cfpLoadingBarProvider, uiSelectConfig) {
+        uiSelectConfig.theme = 'select2';
+        uiSelectConfig.resetSearchInput = true;
+        uiSelectConfig.appendToBody = true;
     }])
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
         $locationProvider.hashPrefix("");
