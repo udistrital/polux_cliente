@@ -1,28 +1,27 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        Solicitudes.
+        {{'LISTAR_SOLICITUDES' | translate}}
     </div>
     <div class="panel-body">
-      <p>Código:  <input type="text" name="userName" ng-model="codigo" required><br>
-          Nombre: {{solicitarAsignaturas.estudiante.Nombre}}<br>
-          <!-- Tipo: {{solicitarAsignaturas.estudiante.Tipo}}<br> -->
-          Modalidad: Espacios académicos de posgrado</p>
+      <p>{{'CODIGO' | translate}}  <input type="text" name="userName" ng-model="codigo" required><br>
+         {{'NOMBRE' | translate}} {{solicitarAsignaturas.estudiante.Nombre}}<br>
+         {{'MODALIDAD_ESP_POS' | translate}}</p>
 
       <div ng-if="solicitarAsignaturas.validar=='true'">
         <consultar-solicitudes estudiante="solicitarAsignaturas.estudiante" s="0" modalidad="solicitarAsignaturas.modalidad"/>
       </div>
 
       <div ng-if="solicitarAsignaturas.validar!='true'" class="alert alert-danger" >
-          <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado
+          <strong>{{'RESPUESTA' | translate}}</strong> {'DENEGADO' | translate}}
           <br></br>
           <p>
             <ul>
-              <li>Estado: ACTIVO</li>
-              <li>Porcentaje cursado >= 80%</li>
-              <li>Promedio >= 3.8</li>
-              <li>Nivel de estudios: PREGRADO</li>
-              <li>Tipo carrera != TECNOLOGIA</li>
+              <li>{{'ESTADO' | translate}} ACTIVO</li>
+              <li>{{'PORCENTAJE_CURSADO' | translate}} >= 80%</li>
+              <li>{{'PROMEDIO' | translate}} >= 3.8</li>
+              <li>{{'NIVEL_ESTUDIOS' | translate}} PREGRADO</li>
+              <li>{{'TIPO_CARRERA' | translate}} != TECNOLOGIA</li>
             </ul>
           </p>
       </div>

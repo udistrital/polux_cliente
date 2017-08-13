@@ -1,15 +1,15 @@
 <div class="col-lg-5">
     <div class="panel panel-default">
         <div class="panel-heading">
-            Nueva Evaluación
+            {{'NUEVA_EVALUACION' | translate}}
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label>Nombre del formato</label>
+                <label>{{'NOMBRE_FORMATO' | translate}}</label>
                 <input type="text" class="form-control" ng-model="nombre_formato" name="nombre_evaluacion" id="nombre_evaluacion" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
-                <label>Introducción del formato</label>
+                <label>{{'INTRODUCCION_FORMATO' | translate}}</label>
                 <textarea type="text" class="form-control" ng-model="introduccion_formato" name="introducción_evaluacion" id="introducción_evaluacion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
-                <label>Añadir Pregunta</label>
+                <label>{{'ANADIR_PREGUNTA' | translate}}</label>
                 <div class="row">
                     <div class="col-md-9">
                         <input class="form-control" list="testList" type="" ng-model="pSeleccion" />
@@ -22,7 +22,7 @@
                         <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_pregunta()"> + Pregunta</button>
                     </div>
                 </div>
-                <label>Añadir Opcion</label>
+                <label>{{'ANADIR_OPCION' | translate}}</label>
                 <div class="row">
                     <div class="col-md-9">
                         <input class="form-control" list="testList2" type="" ng-model="rSeleccion" />
@@ -43,7 +43,7 @@
 <div class="col-lg-7">
     <div class="panel panel-default">
         <div class="panel-heading">
-            Creación de la evaluación
+            {{'CREACION_EVALUACION' | translate}}
         </div>
         <div class="panel-body">
             <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">

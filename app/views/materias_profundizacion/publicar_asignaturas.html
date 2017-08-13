@@ -5,32 +5,32 @@
     </div>
     <div class="panel-body">
 
-          <label for="anio" class="col-sm-2 control-label">Año:</label>
+          <label for="anio" class="col-sm-2 control-label">{{'AÑO' | translate}}</label>
           <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_ANO}}</label>
 
-          <label for="periodo" class="col-sm-2 control-label">Periodo:</label>
+          <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
           <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_PER}}</label>
 
 
-          <label for="carrera" class="col-sm-2 control-label">Carrera:</label>
+          <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
           <div class="col-sm-10">
             <form name="myForm">
               <select ng-model="carreraSeleccionada" name="carrera"  class="form-control" required
               ng-change="profundizacion_publicarAsignaturas.myFunc(carreraSeleccionada)">
               <option ng-repeat="p in profundizacion_publicarAsignaturas.carreras" ng-value="p.CODIGO">{{p.NOMBRE}} </option>
               </select>
-              <span ng-show="myForm.carrera.$invalid" style="color: red">*Seleccione la carrera</span>
-            </form>
+              <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}} </span>
+              </form>
            </div>
 
-           <label for="carrera" class="col-sm-2 control-label">Pensum:</label>
+           <label for="carrera" class="col-sm-2 control-label">{{'PENSUM' | translate}}</label>
            <div class="col-sm-10">
               <form name="myForm2">
                   <select ng-model="pensumSeleccionado" name="pensum"  class="form-control" required
                     ng-change="">
                       <option ng-repeat="p in profundizacion_publicarAsignaturas.pensums" ng-value="p.PEN_NRO">{{p.PEN_NRO}} </option>
                   </select>
-                  <span ng-show="myForm2.pensum.$invalid" style="color: red">*Seleccione el pensum</span>
+                  <span ng-show="myForm2.pensum.$invalid" style="color: red">{{'SELECCIONAR_PENSUM' | translate}}</span>
               </form>
             </div>
             <br>
