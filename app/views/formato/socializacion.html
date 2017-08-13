@@ -2,65 +2,102 @@
     <center>
         <h3 class="page-header">{{'SOCIALIZACION' | translate}}</h3>
     </center>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2">
-                <label>{{'FECHA' | translate}}:</label>
+    <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ 'LISTADO_SOLICITUD' | translate }}
             </div>
-            <div class="col-md-2">
-                <md-datepicker ng-model="socializacion.fecha" md-placeholder="Ingrese Fecha"></md-datepicker>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-2">
-                <label>{{'HORA' | translate}}:</label>
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="field" ng-model="time" ui-time-mask="short" class="form-control">
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-2">
-                <label>
-                 <label>{{'SELECCION_PROYECTO' | translate}}:</label>
-                </label>
-            </div>
-            <div class="col-md-7">
-                <ui-select ng-model="socializacion.trabajo_grado.selected" theme="select2" style="width:100%;">
-                    <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.Titulo}}</ui-select-match>
-                    <ui-select-choices repeat="trabajo in socializacion.trabajos_grado | filter: $select.search">
-                        <span ng-bind-html="trabajo.Titulo | highlight: $select.search"></span>
-                        <small ng-bind-html="trabajo.Id | highlight: $select.search"></small>
-                    </ui-select-choices>
-                </ui-select>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-2">
-                <label>
-                 <label>{{'LUGAR' | translate}}:</label>
-                </label>
-            </div>
-            <div class="col-md-7">
-                <ui-select ng-model="socializacion.lugar.selected" theme="select2" style="width:100%;">
-                    <ui-select-match placeholder="{{'LUGAR' | translate}}...">{{$select.selected.Nombre}}</ui-select-match>
-                    <ui-select-choices repeat="lugar in socializacion.lugares | filter: $select.search">
-                        <span ng-bind-html="lugar.Nombre | highlight: $select.search"></span>
-                        <small ng-bind-html="lugar.Codigo | highlight: $select.search"></small>
-                    </ui-select-choices>
-                </ui-select>
-
-                <br>
+            <div class="panel-body">
+                <div class="mi-grid" id="mi-grid" ui-grid="socializacion.gridOptions" ui-grid-selection ui-grid-pagination></div>
             </div>
         </div>
     </div>
-    <br>
     <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_opcion()">Crear Socialización</button>
+            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="socializacion.load_row('','add')">Crear Socialización</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="add" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <style>
+        .md-datepicker-calendar-pane {
+            z-index: 1200
+        }
+    </style>
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'ASIGNAR_DOCENTE' | translate }}
+            </div>
+            <form class="form-horizontal" align="center">
+                <br><br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{'FECHA' | translate}}:</label>
+                    </div>
+                    <div class="col-md-2">
+                        <md-datepicker ng-model="socializacion.fecha" md-placeholder="Ingrese Fecha"></md-datepicker>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{'HORA' | translate}}:</label>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" name="field" ng-model="socializacion.time" ui-time-mask="short" class="form-control">
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>
+                 <label>{{'SELECCION_PROYECTO' | translate}}:</label>
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        <ui-select ng-model="socializacion.trabajo_grado.selected" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.Titulo}}</ui-select-match>
+                            <ui-select-choices repeat="trabajo in socializacion.trabajos_grado | filter: $select.search">
+                                <span ng-bind-html="trabajo.Titulo | highlight: $select.search"></span>
+                                <small ng-bind-html="trabajo.Id | highlight: $select.search"></small>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>
+                 <label>{{'LUGAR' | translate}}:</label>
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        <ui-select ng-model="socializacion.lugar.selected" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="{{'LUGAR' | translate}}...">{{$select.selected.Nombre}}</ui-select-match>
+                            <ui-select-choices repeat="lugar in socializacion.lugares | filter: $select.search">
+                                <span ng-bind-html="lugar.Nombre | highlight: $select.search"></span>
+                                <small ng-bind-html="lugar.Codigo | highlight: $select.search"></small>
+                            </ui-select-choices>
+                        </ui-select>
+
+                        <br>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <div class="col-md-2 col-md-offset-5">
+                        <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="socializacion.add_socializacion()">Crear Socialización</button>
+                    </div>
+                </div>
+            </form>
+            <br>
         </div>
     </div>
 </div>

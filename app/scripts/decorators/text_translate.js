@@ -27,7 +27,8 @@ var text_es = {
     FECHA: "Fecha",
     HORA: "Hora",
     SELECCION_PROYECTO: "Seleccione el Proyecto",
-    LUGAR: "Lugar"
+    LUGAR: "Lugar",
+    SELECCIONE_FORMATO: "Seleccione el formato"
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -42,7 +43,8 @@ var text_en = {
     SOLICITUD: "Request",
     ASIGNAR_DOCENTE: "Assign Teacher",
     FECHA: "Date",
-    Hora: "Hour"
+    HORA: "Time",
+    SELECCIONE_FORMATO: "Select the format"
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
