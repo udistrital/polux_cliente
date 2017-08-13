@@ -8,7 +8,7 @@
     <!-- The file upload form used as target for the file upload widget -->
     <div class="panel panel-info">
         <div class="panel-heading">
-            <h3 class="panel-title">Cargar Archivo</h3>
+            <h3 class="panel-title">{{'CARGAR_ARCHIVO' | translate}}</h3>
         </div>
         <div class="panel-body">
           <blockquote>
@@ -31,7 +31,7 @@
                         </button>
                         <!-- The global file processing state -->
                         <span class="fileupload-process"></span>
-                        <div  class="drop-box" > Arrastre el archivo o haga click para subir al servidor
+                        <div  class="drop-box" > {{'ARRASTRE_O_CLICK' | translate}}
                         </div>
                     </div>
                     <!-- The global progress state -->
@@ -68,15 +68,15 @@
                         <td>
                             <button type="button" class="btn btn-primary start" ng-click="file.$submit(); newdial();" data-ng-hide="!file.$submit || options.autoUpload" data-ng-disabled="file.$state() == 'pending' || file.$state() == 'rejected'">
                                 <i class="glyphicon glyphicon-upload"></i>
-                                <span>Guardar Registro</span>
+                                <span>{{'GUARDAR_REGISTRO' | translate}}</span>
                             </button>
                             <button type="button" class="btn btn-warning cancel" data-ng-click="file.$cancel()" data-ng-hide="!file.$cancel">
                                 <i class="glyphicon glyphicon-ban-circle"></i>
-                                <span>Cancelar</span>
+                                <span>{{'CANCELAR' | translate}}</span>
                             </button>
                             <button  type="button" class="btn btn-danger destroy" data-ng-click="file.$destroy()" data-ng-hide="!file.$destroy">
                                 <i class="glyphicon glyphicon-trash"></i>
-                                <span>Delete</span>
+                                <span>{{'BORRAR' | translate}}</span>
                             </button>
                         </td>
                     </tr>

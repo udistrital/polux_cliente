@@ -1,12 +1,12 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        Solicitudes.
+        {{'LISTAR_SOLICITUDES' | translate}}
     </div>
     <div class="panel-body">
-      <p>Código: {{profundizacion_solicitarAsignaturas.estudiante.Codigo}}<br>
-          Nombre: {{profundizacion_solicitarAsignaturas.estudiante.Nombre}}<br>
-          Modalidad: Espacios académicos de posgrado</p>
+      <p>{{'CODIGO' | translate}}  {{profundizacion_solicitarAsignaturas.estudiante.Codigo}}<br>
+         {{'NOMBRE' | translate}}  {{profundizacion_solicitarAsignaturas.estudiante.Nombre}}<br>
+         {{'MODALIDAD_ESP_POS' | translate}}</p>
 
       <consultar-solicitudes estudiante="profundizacion_solicitarAsignaturas.estudiante" s="0"/>
     </div>
