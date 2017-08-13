@@ -1,17 +1,17 @@
 <div class="panel panel-primary panel-body">
   <center><h3 class="page-header">
-    Revision Documentos
+      {{'REVISION_DOCUMENTOS' | translate}}
   </h3></center>
 
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-      <label class="text-primary" ng-show="mindoc">Documento: </label><ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc"/>
+      <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}} </label><ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc"/>
       <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
     </div>
 
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Revisiones</h3>
+          <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
         </div>
         <div class="panel-body">
           <div ng-repeat="revision in docenterevision.revisionesd">
