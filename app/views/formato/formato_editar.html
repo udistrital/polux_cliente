@@ -1,109 +1,109 @@
 <div class="col-lg-6">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      Nueva Evaluación
-    </div>
-    <div class="panel-body">
-      <div class="panel panel-default">
+    <div class="panel panel-default">
         <div class="panel-heading">
-          Buscar Formatos
+            {{'NUEVA_EVALUACION' | translate}}
         </div>
         <div class="panel-body">
-          <div class="col-md-5">
-            <label>
-                Seleccione el Formato
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{'BUSCAR_FORMATOS' | translate}}
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-5">
+                        <label>
+              {{'SELECCIONE_FORMATO' | translate}}
               </label>
-          </div>
-          <div class="col-md-7">
-            <input class="form-control" list="testList" type="" ng-model="SelectedFormat" ng-change="formatoEditar.refresh_format_view()" />
-            <datalist id="testList">
+                    </div>
+                    <div class="col-md-7">
+                        <input class="form-control" list="testList" type="" ng-model="SelectedFormat" ng-change="formatoEditar.refresh_format_view()" />
+                        <datalist id="testList">
                     <option ng-repeat="formato in formatoEditar.formatos" value="{{formato.Id}}" >{{formato.Nombre}}</option>
                 </datalist>
-            <br>
-          </div>
-        </div>
-      </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
 
-      <div class="form-group">
-        <label>Nombre del formato</label>
-        <input type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Nombre" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
-      </div>
-      <div class="form-group">
-        <label>Introducción del formato</label>
-        <textarea type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Introduccion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
-      </div>
-      <label>Añadir Pregunta</label>
-      <div class="row">
-        <div class="col-md-9">
-          <input class="form-control" list="testList1" type="" ng-model="pSeleccion" />
-          <datalist id="testList1">
+            <div class="form-group">
+                <label>{{'NOMBRE_FORMATO' | translate}}</label>
+                <input type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Nombre" required="" placeholder="* Nombre de la Evaluación" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>{{'INTRODUCCION_FORMATO' | translate}}</label>
+                <textarea type="text" class="form-control" ng-model="formatoEditar.formato_vista.Formato.Introduccion" required="" placeholder="* Introducción de la evaluación" autocomplete="off"></textarea>
+            </div>
+            <label>{{'ANADIR_PREGUNTA' | translate}}</label>
+            <div class="row">
+                <div class="col-md-9">
+                    <input class="form-control" list="testList1" type="" ng-model="pSeleccion" />
+                    <datalist id="testList1">
               <option ng-repeat="pregunta in preguntas" value="{{pregunta.Enunciado}}" ></option>
           </datalist>
-          <br>
-        </div>
-        <div class="col-md-3">
-          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_pregunta()"> + Pregunta</button>
-        </div>
-      </div>
-      <label>Añadir Opcion</label>
-      <div class="row">
-        <div class="col-md-9">
-          <input class="form-control" list="testList2" type="" ng-model="rSeleccion" />
-          <datalist id="testList2">
+                    <br>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_pregunta()">{{'PREGUNTA_BOTON' | translate}} </button>
+                </div>
+            </div>
+            <label>{{'ANADIR_OPCION' | translate}}</label>
+            <div class="row">
+                <div class="col-md-9">
+                    <input class="form-control" list="testList2" type="" ng-model="rSeleccion" />
+                    <datalist id="testList2">
               <option ng-repeat="respuesta in respuestas" value="{{respuesta.Descripcion}}" ></option>
           </datalist>
-          <br>
+                    <br>
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_opcion()">{{'OPCION_BOTON' | translate}} </button>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3">
-          <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="anadir_opcion()"> + Opción</button>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 
 <div class="col-lg-6">
-  <div class="panel-body">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        Buscar Formatos
-      </div>
-      <div class="panel-body">
-        <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">
+    <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'BUSCAR_FORMATOS' | translate}}
+            </div>
+            <div class="panel-body">
+                <div ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav ui-grid-tree-view class="myGrid">
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="borrar()">{{'BORRAR' | translate}} </button>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="guardar()">{{'GUARDAR' | translate}} </button>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal">{{'VISTA_PREVIA' | translate}} </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <br>
-        <div class="row">
-          <div class="col-lg-3">
-            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="borrar()">Borrar</button>
-          </div>
-          <div class="col-lg-3">
-            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" ng-click="guardar()">Guardar</button>
-          </div>
-          <div class="col-lg-3">
-            <button type="button" class="btn btn-outline btn-primary btn-sm btn-block" data-toggle="modal" data-target="#myModal"> Vista Previa</button>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Vista Previa</h4>
-      </div>
-      <div class="modal-body">
-        <vista-previa-formato formato="SelectedFormat"></vista-previa-formato>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{'VISTA_PREVIA' | translate}}</h4>
+            </div>
+            <div class="modal-body">
+                <vista-previa-formato formato="SelectedFormat"></vista-previa-formato>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
 
-  </div>
+    </div>
 </div>

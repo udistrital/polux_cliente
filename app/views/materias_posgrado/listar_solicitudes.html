@@ -1,24 +1,24 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        Listado de solicitudes
-    </div>
+      {{'LISTAR_SOLICITUDES' | translate}}
+        </div>
     <div class="panel-body">
       <!--<pre>{{listarsolicitudes.sols | json}}</pre>-->
-      <label for="anio" class="col-sm-2 control-label">Año:</label>
+      <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
       <label for="anioSel" class="col-sm-10 control-label">{{listarSolicitudes.periodo.APE_ANO}}</label>
 
-      <label for="periodo" class="col-sm-2 control-label">Periodo:</label>
+      <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
       <label for="anioSel" class="col-sm-10 control-label">{{listarSolicitudes.periodo.APE_PER}}</label>
 
-      <label for="carrera" class="col-sm-2 control-label">Carrera:</label>
+      <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
       <div class="col-sm-10">
         <form name="myForm">
           <select ng-model="carreraSeleccionada" name="carrera"  class="form-control" required
           ng-change="listarSolicitudes.buscarSolicitudes(carreraSeleccionada)">
           <option ng-repeat="p in listarSolicitudes.carreras" ng-value="p.CODIGO">{{p.NOMBRE}} </option>
           </select>
-          <span ng-show="myForm.carrera.$invalid" style="color: red">*Seleccione la carrera</span>
+          <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}}</span>
         </form>
        </div>
 
@@ -26,8 +26,8 @@
          <div ui-grid="listarSolicitudes.gridOptions"></div>
 
          <div  layout="column" layout-align="center" >
-          <p>Admitidos por rendimiento: {{listarSolicitudes.rendimiento}}</p>
-          <p>Admitidos por economía: {{listarSolicitudes.economicas}}</p>
+          <p>{{'ADMITIDOS_POR_RENDIMIENTO' | translate}} {{listarSolicitudes.rendimiento}}</p>
+          <p>{{'ADMITIDOS_POR_ECONOMIA' | translate}} {{listarSolicitudes.economicas}}</p>
 
         </div>
 
@@ -38,10 +38,10 @@
       </div>
 
       <pre>
-        Fecha actual: {{fechaActual| date:'dd-MM-yyyy'}}
-        Fecha inicio: {{fecha_inicio|date:'dd-MM-yyyy'}}
-        Segunda fecha: {{segunda_fecha| date:'dd-MM-yyyy'}}
-        Fecha fin: {{fecha_fin| date:'dd-MM-yyyy'}}
+        {{'FECHA_ACTUAL' | translate}} {{fechaActual| date:'dd-MM-yyyy'}}
+        {{'FECHA_INICIO' | translate}} {{fecha_inicio|date:'dd-MM-yyyy'}}
+        {{'FECHA_INICIO_DOS' | translate}} {{segunda_fecha| date:'dd-MM-yyyy'}}
+        {{'FECHA_FIN' | translate}}  {{fecha_fin| date:'dd-MM-yyyy'}}
       </pre>
 
       <script type="text/ng-template" id="dialog.tmpl.html">
@@ -50,7 +50,7 @@
         <form role="form" name="formAdmitidos" id="formAdmitidos">
         <md-toolbar>
           <div class="md-toolbar-tools">
-            <h2 flex="95">Selección de Admitidos</h2>
+            <h2 flex="95">{{'SELECCION_DE_ADMITIDOS' | translate}}</h2>
             <md-button class="md-icon-button" ng-click="cancel()">
               <md-icon md-svg-src="images/icon_close.png" aria-label="Close dialog"></md-icon>
             </md-button>
@@ -60,19 +60,19 @@
         <md-dialog-content >
           <div class="md-dialog-content" >
               <md-input-container class="md-icon-float md-icon-right md-block">
-                <label>Admitidos por excelencia académica y exentos de pago (Máx {{cupos_excelencia}})</label>
+                <label>{{'ADMITIDOS_POR_EXCELENCIA_A' | translate}} {{cupos_excelencia}})</label>
 
                 <input ng-model="cupos_excelencia_ingresado" ng-disabled="cupos_excelencia_ingresado!=null" name="rendimiento" placeholder="Ingrese el número de admitidos por excelencia académica y exentos de pago" type="number" min="0" max="{{cupos_excelemcia}}" step="1" required="">
                 <div ng-messages="formAdmitidos.rendimiento.$error" ng-show="formAdmitidos.rendimiento.$dirty">
-                  <div ng-message="required">Es requerido</div>
+                  <div ng-message="required">{{'REQUERIDO' | translate}}</div>
                 </div>
               </md-input-container>
 
               <md-input-container class="md-icon-float md-icon-right md-block">
-                <label>Admitidos admitidos por condiciones económicas y calidades académicas (Máx {{cupos_adicionales}})</label>
+                <label>{{' ADMITIDOS_POR_COND_EC' | translate}} {{cupos_adicionales}})</label>
                 <input ng-model="cupos_adicionales_ingresado" ng-disabled="cupos_adicionales_ingresado!=null" size="30" placeholder="Ingrese el número de admitidos por condiciones económicas y calidades académicas" type="number" min="0" max="{{cupos_adicionales}}" step="1" required>
                 <div ng-messages="formAdmitidos.economicas.$error">
-                  <div ng-message="required">Es requerido</div>
+                  <div ng-message="required">{{'REQUERIDO' | translate}}</div>
                 </div>
               </md-input-container>
               <md-button ng-disabled="cupos_excelencia_ingresado == null || cupos_adicionales_ingresado == null" ng-click="answer(dialog)" class="md-raised md-primary">Aceptar</md-button-->

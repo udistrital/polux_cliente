@@ -1,7 +1,7 @@
 <div>
     <div class="row">
         <div class="col-md-3">
-            <label for="input_titulo" class="col-form-label">Nombre del documento</label>
+            <label for="input_titulo" class="col-form-label">{{'NOMBRE_DEL_DOCUMENTO' | translate}}</label>
         </div>
         <div class="col-md-9">
             <input class="form-control ng-pristine ng-valid ng-empty " name="input_titulo" ng-model="d_subirDocumento.titulo" placeholder="Ingrese el nombre del documento" aria-invalid="false" type="text">
@@ -10,7 +10,7 @@
     <br>
     <div class="row">
         <div class="col-md-3">
-            <label for="input_resumen" class="col-form-label">Resumen</label>
+            <label for="input_resumen" class="col-form-label">{{'RESUMEN' | translate}}</label>
         </div>
         <div class="col-md-9">
             <textarea class="form-control ng-pristine ng-valid ng-empty " name="input_descripcion" ng-model="d_subirDocumento.resumen" placeholder="Realice una descripcion acerca del documento" aria-invalid="false" style=""></textarea>
@@ -19,7 +19,7 @@
     <br>
     <div class="row">
         <div class="col-md-3">
-            <label for="input_resumen" class="col-form-label">Seleccione el Documento</label>
+            <label for="input_resumen" class="col-form-label">{{'SELECCIONE_EL_DOCUMENTO' | translate}}</label>
         </div>
         <div class="col-md-9">
             <input type='file' class="form-control" file-model='fileModel'>

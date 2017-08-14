@@ -1,7 +1,7 @@
 <div class="col-md-6">
     <div class="panel panel-default">
         <div class="panel-heading">
-            Registrar Propuesta
+            {{'REGISTRAR_PROPUESTA' | translate}}
         </div>
         <div class="panel-body">
             <div class="container-fluid">
@@ -11,7 +11,7 @@
                         <div class="row" id="formPropuesta">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <label for="select_modalidad" class="col-form-label">Modalidad</label>
+                                    <label for="select_modalidad" class="col-form-label">{{'MODALIDAD' | translate}}</label>
                                 </div>
                                 <div class="col-md-8">
                                     <select ng-model="d_regProp.modSeleccionada" id="modalidadSelect" class="form-control" placeholder="Seleccione una modalidad " ng-change="d_regProp.asignarModalidad(d_regProp.modSeleccionada)">
@@ -41,13 +41,13 @@
 <div class="col-md-6 col-xs-12">
     <div class="panel panel-default">
         <div class="panel-heading">
-            Asignar Area
+            {{'ASIGNAR_AREA' | translate}}
         </div>
         <div class="panel-body">
             <!-- Formulario de registro zona de carga de archivos -->
             <div ng-if="d_regProp.validar =='true'" class="row">
                 <div class="col-md-4">
-                    <label for="select_areas" class="col-form-label">De acuerdo a su propuesta seleccione las áreas, luego adjunte el archivo del documento
+                    <label for="select_areas" class="col-form-label">{{'DE_ACUERDO_A_SU_PROPUESTA' | translate}}
                 </label>
                 </div>
                 <div class="col-md-7">
@@ -55,16 +55,16 @@
                 </div>
             </div>
             <br>
-            <div class="row">
+            <div class="row centro-cinco">
                 <div ng-if="d_regProp.validar!='true'" class="alert alert-danger">
-                    <strong>Respuesta:</strong> El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado
+                    <strong>{{'RESPUESTA' | translate}}:</strong> {{'DENEGADO' | translate}}
                     <br></br>
                     <p>
                         <ul>
-                            <li>Estado: ACTIVO</li>
-                            <li>Porcentaje cursado >= 80%</li>
-                            <li>Promedio >= 3.8</li>
-                            <li>Nivel de estudios: PREGRADO</li>
+                            <li>{{'ESTADO' | translate}} ACTIVO</li>
+                            <li>{{'PORCENTAJE_CURSADO' | translate}} >= 80%</li>
+                            <li>{{'PORCENTAJE_CURSADO' | translate}} >= 3.8</li>
+                            <li>{{'NIVEL_ESTUDIOS' | translate}} PREGRADO</li>
                         </ul>
                     </p>
                 </div>

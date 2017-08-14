@@ -1,14 +1,14 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        Solicitudes del estudiante
+        {{'SOLICITUDES_DEL_ESTUDIANTE' | translate}}
         <!-- : {{estudiante}} (consultarSolicitudes directive) -->
     </div>
     <div class="panel-body">
 
       <!-- si no tiene solicitudes -->
       <div ng-if="d_consultarSolicitudes.solicitud.length==0 ">
-        Ninguna solicitud realizada.
+          {{'NINGUNA_SOLICITUD_REALIZADA' | translate}}
         <solicitar-asignaturas estudiante="estudiante" modalidad="modalidad"/>
       </div>
 
@@ -18,12 +18,12 @@
           <md-list-item class="md-3-line" ng-repeat="sol in d_consultarSolicitudes.solicitud" >
 
          <div class="md-list-item-text" style="margin-top: 10px;">
-           Solicitud N° {{sol.Solicitud.Id}}<br>
-           Fecha: {{sol.Solicitud.Fecha | date:'yyyy-MM-dd'}}<br>
-           Carrera: {{sol.Solicitud.Carrera}}<br>
-           Estado: {{sol.Solicitud.Estado}}<br>
+            {{'SOLICITUD_NUM' | translate}} {{sol.Solicitud.Id}}<br>
+            {{'FECHA' | translate}} {{sol.Solicitud.Fecha | date:'yyyy-MM-dd'}}<br>
+            {{'CARRERA' | translate}} {{sol.Solicitud.Carrera}}<br>
+            {{'ESTADO' | translate}} {{sol.Solicitud.Estado}}<br>
            <div class="">
-             Formalización: {{sol.Solicitud.Formalizacion}}<br>
+            {{'FORMALIZACION' | translate}} {{sol.Solicitud.Formalizacion}}<br>
              <input ng-if="(sol.Solicitud.Estado == 'aprobado' && sol.Solicitud.Formalizacion=='pendiente')  || (sol.Solicitud.Estado == 'aprobado con pago' && sol.Solicitud.Formalizacion=='pendiente')"
              ng-click="d_consultarSolicitudes.formalizarSolicitud(sol.Solicitud) " value="Formalizar" class="btn btn-primary" type="submit">
            </div>
@@ -31,9 +31,9 @@
 
            <table class="table table-condensed table-bordered table-striped" >
              <tr>
-               <th>Código</th>
-               <th>Nombre</th>
-               <th>Créditos</th>
+               <th>{{'CODIGO' | translate}}</th>
+               <th>{{'NOMBRE' | translate}}</th>
+               <th>{{'CREDITOS' | translate}}</th>
              </tr>
              <tr ng-repeat="asig in sol.Asignaturas">
                  <td data-title="'Código'" >

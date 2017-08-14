@@ -1,13 +1,13 @@
 <div class="row">
     <md-input-container class="col-md-8">
-        <label> Estudiante Actual: </label>
+        <label> {{'ESTUDIANTE_ACTUAL' | translate}}</label>
         <md-select name="typeStudent" ng-model="d_regTG.estuSeleccionado" placeholder="Sesión del estudiante" required>
             <md-option ng-repeat="p in estparam" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</md-option>
         </md-select>
     </md-input-container>
 </div>
 <md-input-container class="col-md-4">
-    <label>Modalidad</label>
+    <label>{{'MODALIDAD' | translate}}</label>
     <md-select name="typemod" ng-model="d_regTG.modSeleccionada" placeholder="Seleccione una modalidad " required>
         <md-option ng-repeat="p in d_regTG.modalidad" value="{{p.Id}}">{{p.Nombre}}</md-option>
     </md-select>
@@ -15,7 +15,7 @@
 <md-content class="col-md-4">
     <div>
         <md-input-container>
-            <label>Titulo</label>
+            <label>{{'TITULO_TG' | translate}}</label>
             <input ng-model="d_regTG.titulo">
         </md-input-container>
     </div>

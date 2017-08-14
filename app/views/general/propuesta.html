@@ -1,5 +1,5 @@
 <div class="panel panel-body panel-primary">
-    <h2 class="page-header-label text-center ng-binding">Registrar Propuesta</h2>
+    <h2 class="page-header-label text-center ng-binding">{{'REGISTRAR_PROPUESTA' | translate}}</h2>
     <input class="form-control" list="estudianteList" type="" ng-model="SelectedStudent" />
     <datalist id="estudianteList">
                 <option ng-repeat="est in propuesta.estudiantes" value="{{est.EST_COD}}">{{est.EST_NOMBRE}} </option>

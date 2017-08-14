@@ -6,7 +6,7 @@
             <!-- Seccion donde se muestra informacion suministrada por el web service de condor-->
             <div class="row " id="consumoInfo">
               <md-input-container class="col-md-4">
-                <label>Estudiante</label>
+                <label>{{'ESTUDIANTE' | translate}}</label>
                 <md-select ng-model="d_regProp.estudianteSeleccionado" class="form-control" placeholder="Autores" ng-change="d_regProp.asignarEstudiante(d_regProp.estudianteSeleccionado)">
                   <md-option ng-repeat="p in estparam" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}} </md-option>
                 </md-select>
@@ -15,7 +15,7 @@
             </div>
               <div class="row">
                 <md-input-container class="col-md-8">
-                  <label> Estudiante Actual: </label>
+                  <label> {{'ESTUDIANTE_ACTUAL' | translate}} </label>
                   <md-select name="typeStudent" ng-model="d_regTG.estuSeleccionado" placeholder="Sesión del estudiante" required>
                     <md-option ng-repeat="p in estparam" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</md-option>
                   </md-select>
@@ -23,7 +23,7 @@
               </div>
               <div class="row"> 
               <md-input-container class="col-md-4">
-                <label>Modalidad</label>
+                <label>{{'MODALIDAD' | translate}}</label>
                 <md-select name="typemod" ng-model="d_regTG.modSeleccionada" placeholder="Seleccione una modalidad " required>
                   <md-option ng-repeat="p in d_regTG.modalidad" value="{{p.Id}}">{{p.Nombre}}</md-option>
                 </md-select>
@@ -34,7 +34,7 @@
             <div class="row " id="d_regPropInfo">
               <div class="col-md-6 col-sm-6">
                 <div class="form-group">
-                  <span class="label label-default">Nombre de la propuesta</span><br/>
+                  <span class="label label-default">{{'NOMBRE_PROPUESTA' | translate}}</span><br/>
                   <input type="text" ng-model="d_regProp.documento.titulo" class="form-control" ng-disabled="true">
                 </div>
               </div>
@@ -47,11 +47,11 @@
             <!-- Formulario de asignación de areas de conocimiento y resumen-->
             <div class="row " id="resumen">
               <div class="col-md-6">
-                <span class="label label-default">Resumen</span><br/>
+                <span class="label label-default">{{'RESUMEN' | translate}}</span><br/>
                 <textarea class="form-control" ng-model="d_regProp.documento.resumen" placeholder="Describa su propuesta . . ." required></textarea>
               </div>
               <div class="col-md-6">
-                <label>De acuerdo a su propuesta seleccione las áreas
+                <label>{{'DE_ACUERDO_A_SU_PROPUEST' | translate}}
                 </label><br/>
                 <asignar-area setareas="areasparam" idarea="idareaparam" newarea="d_regProp.nuevaArea" />
               </div>
@@ -61,10 +61,10 @@
               <md-card md-colors="{background: 'BlueGrey-50', 'border-color': 'primary-600'}">
                 <form class="col-md-12 " name="myForm">
                   <br/>
-                  <label>Seleccione las opciones para vincular el docente
+                  <label>{{'SELECCIONE_LAS_OPCIONES' | translate}}
                       </label><br/>
                   <md-input-container>
-                    <label ng-hide="d_regProp.filtro"> Filtrando por:</label>
+                    <label ng-hide="d_regProp.filtro"> {{'FILTRANDO_POR' | translate}}</label>
                     <md-select ng-model="d_regProp.areaSeleccionada" name="areaname" class="form-control " ng-disabled="d_regProp.filtro" placeholder="Seleccione un área asociada a la propuesta"
                       ng-change="d_regProp.mostrarDocentesArea(d_regProp.areaSeleccionada)">
                       <md-option ng-repeat="p in areasparam" value="{{p.Id}}">{{p.Nombre}} </md-option>
@@ -75,7 +75,7 @@
                     <label>(cambiar)</label>
                   </md-checkbox>
                   <br/>
-                  <span class="label label-default">Vincular docente</span><br/>
+                  <span class="label label-default">{{'VINCULAR_DOCENTE' | translate}}</span><br/>
                   <select ng-model="d_regProp.docenteSeleccionado" name="docente" class="form-control" required ng-change="d_regProp.asignarDocente(d_regProp.docenteSeleccionado)">
                       <option value="" disabled selected style="display: none;">Docentes relacionados con el área</option>
                       <option ng-repeat="p in d_regProp.establecerFiltroDocentes()" value="{{p.DOC_NRO_IDEN}}">{{p.DOC_NOMBRE}} {{p.DOC_APELLIDO}}</option>
