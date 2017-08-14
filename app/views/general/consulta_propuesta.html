@@ -13,6 +13,11 @@
 </div>
 
 <div id="myModal" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <style>
+        .md-datepicker-calendar-pane {
+            z-index: 1200
+        }
+    </style>
     <div class="modal-content col-md-offset-2 col-md-8">
         <div class="modal-header">
             <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
@@ -21,14 +26,67 @@
             <div class="panel-heading">
                 {{'ASIGNAR_DOCENTE' | translate }}
             </div>
-            <form class="form-horizontal" name="avances_add_edit" ng-submit="consultaPropuesta.add_edit()">
+            <form class="form-horizontal  left-cinco" name="avances_add_edit" ng-submit="consultaPropuesta.add_edit()">
                 <br>
                 <div class="row">
-                    <label for="referencia" class="col-sm-2 control-label">{{'REFERENCIA' | translate }}:</label>
+                    <div class="col-md-2">
+                        <label>
+                 <label>{{'DOCENTE' | translate}}:</label>
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        <ui-select refresh-delay="2" on-select="consultaPropuesta.ver_asignaturas($item, $model)" ng-model="consultaPropuesta.profesores.selected" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="{{'SELECCION_DOCENTE' | translate}}...">{{$select.selected.DOC_NOMBRE}} {{ $select.selected.DOC_APELLIDO}}</ui-select-match>
+                            <ui-select-choices repeat="docente in consultaPropuesta.docentes | filter: $select.search">
+                                <span ng-bind-html="docente.DOC_NOMBRE | highlight: $select.search"></span>
+                                <span ng-bind-html="docente.DOC_APELLIDO | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
                 </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{'AREAS_CONOCIMIENTO' | translate}}:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <ol>
+                            <li ng-repeat="materia in consultaPropuesta.materias">
+                                <label for="">{{materia.IdAreaConocimiento.Nombre}}</label>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>
+                 <label>{{'TIPO_VINCULACION' | translate}}:</label>
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        <ui-select refresh-delay="2" ng-model="consultaPropuesta.vinculacion.selected" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="{{'SELECCION_TIPO_VINCULACION' | translate}}...">{{$select.selected.Nombre}}</ui-select-match>
+                            <ui-select-choices repeat="vinculacion in consultaPropuesta.tipo_vinculacion | filter: $select.search">
+                                <span ng-bind-html="vinculacion.Id | highlight: $select.search"></span>
+                                <span ng-bind-html="vinculacion.Nombre | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{'FECHA' | translate}}:</label>
+                    </div>
+                    <div class="col-md-2">
+                        <md-datepicker ng-model="consultaPropuesta.fecha" md-placeholder="Ingrese Fecha"></md-datepicker>
+                    </div>
+                </div>
+                <br>
                 <center>
-                    <input type="reset" class="btn btn-info btn-outline" value="{{'BTN.LIMPIAR' | translate }}" />
-                    <input type="submit" ng-click="consultaPropuesta.add_edit()" class="btn btn-success btn-outline" value="{{'BTN.GUARDAR' | translate }}" />
+                    <input type="submit" ng-click="consultaPropuesta.asignar_docente()" class="btn btn-success btn-outline" value="{{'GUARDAR' | translate }}" />
                 </center>
             </form>
             <br>

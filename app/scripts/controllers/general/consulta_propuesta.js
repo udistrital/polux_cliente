@@ -12,6 +12,46 @@
 angular.module('poluxClienteApp')
     .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, $window) {
         var ctrl = this;
+        academicaRequest.obtenerDocentes("").then(function(response) {
+            ctrl.docentes = response;
+        });
+        ctrl.tipos = function() {
+            poluxRequest.get("tipo_vinculacion", $.param({
+                    limit: -1
+                }))
+                .then(function(response) {
+                    ctrl.tipo_vinculacion = response.data;
+                });
+        };
+        ctrl.asignar_docente = function() {
+            var data = {};
+            data.IdentificacionDocente = parseFloat(ctrl.profesores.selected.DOC_NRO_IDEN);
+            data.IdTipoVinculacion = ctrl.vinculacion.selected;
+            data.IdTrabajoGrado = ctrl.row_entity.IdTrabajoGrado;
+            data.Activo = true;
+            data.FechaInicio = ctrl.fecha;
+            poluxRequest.post("vinculacion_docente", data)
+                .then(function(response) {
+                    $('#myModal').modal('hide');
+                    swal(
+                        '',
+                        'Ha Asignado al proyecto' + response.data.IdTrabajoGradoTitulo + ' El Docente ' + ctrl.profesores.selected.DOC_NOMBRE + " " + ctrl.profesores.selected.DOC_APELLIDO,
+                        'success'
+                    );
+                    ctrl.get_socializacion();
+                });
+        };
+        ctrl.ver_asignaturas = function(item, model) {
+            console.log(item);
+            poluxRequest.get("areas_docente", $.param({
+                    limit: -1,
+                    query: "IdentificacionDocente:" + item.DOC_NRO_IDEN
+                }))
+                .then(function(response) {
+                    ctrl.materias = response.data;
+                });
+        };
+        ctrl.tipos();
         ctrl.operacion = "";
         ctrl.row_entity = {};
         ctrl.requisito_select = [];
@@ -57,7 +97,7 @@ angular.module('poluxClienteApp')
                         '<a class="ver" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'ver\')" data-toggle="modal" data-target="#myModalVer">' +
                         '<i class="fa fa-eye fa-lg  faa-shake animated-hover" aria-hidden="true" data-toggle="tooltip" title="{{\'BTN.VER\' | translate }}"></i></a> ' +
 
-                        '<a class="configuracion" ng-click="grid.appScope.load_row(row,\'config\');" data-toggle="modal" data-target="#myModal">' +
+                        '<a class="configuracion" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'config\');" data-toggle="modal" data-target="#myModal">' +
                         '<i data-toggle="tooltip" title="{{\'BTN.CONFIGURAR\' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i></a> ' +
 
                         '<a  ng-click="grid.appScope.consultaPropuesta.load_row(row,\'descargar\')" class="editar">' +
@@ -97,7 +137,7 @@ angular.module('poluxClienteApp')
                     break;
                 case "add":
                     break;
-                case "edit":
+                case "config":
                     break;
                 case "delete":
                     break;
