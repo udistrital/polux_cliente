@@ -15,7 +15,16 @@ angular.module('poluxClienteApp')
                 limit: "-1"
             })).then(function(response) {
                 ctrl.socializacion = response.data;
-                ctrl.gridOptions.data = response.data;
+                ctrl.gridOptions.data = ctrl.socializacion;
+                angular.forEach(ctrl.socializacion, function(social) {
+                    oikosRequest.get("espacio_fisico", $.param({
+                        query: "Codigo:" + social.Lugar,
+                        limit: "-1",
+                    })).then(function(response) {
+                        ctrl.lugares = response.data;
+                        social.Lugar = response.data[0];
+                    });
+                });
             });
         };
         ctrl.get_trabajos_grado = function() {
@@ -30,22 +39,29 @@ angular.module('poluxClienteApp')
                 limit: "-1"
             })).then(function(response) {
                 ctrl.lugares = response.data;
+                console.log(ctrl.lugares);
             });
         };
         ctrl.add_socializacion = function() {
             var data = {};
             data.IdTrabajoGrado = ctrl.trabajo_grado.selected;
-            console.log(ctrl.time);
-            // poluxRequest.post("socializacion", $.param({
-            //     limit: "-1"
-            // })).then(function(response) {
-            //     ctrl.socializacion = response.data;
-            //     ctrl.gridOptions.data = response.data;
-            // });
+            data.Lugar = ctrl.lugar.selected.Codigo;
+            data.Fecha = ctrl.fecha;
+            poluxRequest.post("socializacion", data)
+                .then(function(response) {
+                    console.log(response.data);
+                    $('#add').modal('hide');
+                    swal(
+                        '',
+                        'Ha Asignado al proyecto' + response.data.IdTrabajoGrado.Titulo + ' Una Socialización',
+                        'success'
+                    );
+                    ctrl.get_socializacion();
+                });
         };
         ctrl.get_trabajos_grado();
         ctrl.get_socializacion();
-        ctrl.get_lugares();
+
 
         ctrl.operacion = "";
         ctrl.row_entity = {};
@@ -62,42 +78,24 @@ angular.module('poluxClienteApp')
                 },
                 {
                     field: 'Id',
-                    displayName: $translate.instant('MODALIDAD'),
-                    width: '10%',
+                    displayName: '#',
+                    width: '5%'
                 },
                 {
                     field: 'IdTrabajoGrado.Titulo',
                     displayName: $translate.instant('TITULO_PROPUESTA'),
-                    width: '60%',
+                    width: '60%'
                 },
                 {
-                    field: 'IdEstadoDocumento.Nombre',
-                    displayName: $translate.instant('ESTADO_DOCUMENTO'),
-                    width: '10%',
+                    field: 'Lugar.Nombre',
+                    displayName: $translate.instant('LUGAR'),
+                    width: '15%'
                 },
                 {
-                    field: 'IdTrabajoGrado.Etapa',
-                    displayName: $translate.instant('ESTADO_DOCUMENTO'),
-                    width: '10%',
-                },
-                {
-                    //<button class="btn primary" ng-click="grid.appScope.deleteRow(row)">Delete</button>
-                    name: $translate.instant('OPCIONES'),
-                    enableFiltering: false,
-                    width: '10%',
-
-                    cellTemplate: '<center>' +
-
-                        '<a class="ver" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'ver\')" data-toggle="modal" data-target="#myModalVer">' +
-                        '<i class="fa fa-eye fa-lg  faa-shake animated-hover" aria-hidden="true" data-toggle="tooltip" title="{{\'BTN.VER\' | translate }}"></i></a> ' +
-
-                        '<a class="configuracion" ng-click="grid.appScope.load_row(row,\'config\');" data-toggle="modal" data-target="#myModal">' +
-                        '<i data-toggle="tooltip" title="{{\'BTN.CONFIGURAR\' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i></a> ' +
-
-                        '<a  ng-click="grid.appScope.consultaPropuesta.load_row(row,\'descargar\')" class="editar">' +
-                        '<i data-toggle="tooltip" title="{{\'BTN.DESCARGAR\' | translate }}" class="fa fa-download faa-shake animated-hover" aria-hidden="true"></i></a>' +
-
-                        '</center>'
+                    field: 'Fecha',
+                    displayName: $translate.instant('FECHA'),
+                    cellTemplate: '<div align="center"><span>{{row.entity.Fecha| date:"yyyy-MM-dd":"+0900"}}</span></div>',
+                    width: '20%'
                 }
             ]
         };
@@ -115,6 +113,7 @@ angular.module('poluxClienteApp')
                     //ctrl.docentes = academicaRequest.obtenerDocentes();
                     break;
                 case "add":
+                    ctrl.get_lugares();
                     $('#add').modal('show');
                     break;
                 case "edit":
