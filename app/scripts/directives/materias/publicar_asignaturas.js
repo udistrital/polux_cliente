@@ -43,7 +43,8 @@ angular.module('poluxClienteApp')
             displayName: $translate.instant('SELECCIONAR'),
             type: 'boolean',
             width: "15%",
-            cellTemplate: '<input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" >'
+            //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
+            cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
           }
         ];
 
@@ -176,13 +177,21 @@ angular.module('poluxClienteApp')
           var idx = list.indexOf(item);
           if (idx > -1) {
             list.splice(idx, 1);
-            var c = parseInt(item.creditos, 10);
+            if(item.creditos){
+              var c = parseInt(item.creditos, 10);
+            }else{
+              var c = 0;
+            }
           }
           else {
             list.push(item);
-            var c = parseInt(item.creditos, 10);
+            if(item.creditos){
+              var c = parseInt(item.creditos, 10);
+            }else{
+              var c = 0;
+            }
           }
-          if (item.check === true) {
+          if (item.check === false) {
             ctrl.totalCreditos = ctrl.totalCreditos + c;
             console.log(ctrl.totalCreditos);
           } else {
