@@ -37,8 +37,8 @@ var text_es = {
     PENSUM: "Pensum:",
     SELECCIONAR_CARRERA: "*Seleccione la carrera",
     SELECCIONAR_PENSUM: "*Seleccione un pensum",
-    CODIGO: "Código:",
-    NOMBRE: "Nombre:",
+    CODIGO: "Código",
+    NOMBRE: "Nombre",
     MODALIDAD_ESP_POS: "Modalidad: Espacios académicos de posgrado",
     ADMITIDOS_POR_RENDIMIENTO: "Admitidos por rendimiento:",
     ADMITIDOS_POR_ECONOMIA: "Admitidos por pago:",
@@ -125,8 +125,12 @@ var text_es = {
     ASIGNAR_BOTON: " Asignar",
     SEL_FECHA: "Seleccione una fecha",
     ENVIAR_EVALUACION_BOTON: "Enviar calificación",
-    SOLICITAR_REVISION: "Solicitar Revision"
-
+    SOLICITAR_REVISION: "Solicitar Revision",
+    SELECCIONAR: "Seleccionar",
+    BTN: {
+        GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
+        CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos"
+    },
 
 };
 var text_en = {
@@ -153,8 +157,8 @@ var text_en = {
     EVALUAR_PROYECTO: "Evaluate graduation project",
     SELECCIONAR_CARRERA: "*Select a carrer",
     SELECCIONAR_PENSUM: "*Select a list of subjects",
-    CODIGO: "Code:",
-    NOMBRE: "Name:",
+    CODIGO: "Code",
+    NOMBRE: "Name",
     MODALIDAD_ESP_POS: "Modality: Postgraduate subjects",
     ADMITIDOS_POR_RENDIMIENTO: "Admited by academic performance:",
     ADMITIDOS_POR_ECONOMIA: "Admited by payment:",
@@ -243,7 +247,13 @@ var text_en = {
     ASIGNAR_BOTON: " Asign",
     SEL_FECHA: "Select a date",
     ENVIAR_EVALUACION_BOTON: "Send qualification",
-    SOLICITAR_REVISION: "Request review"
+    SOLICITAR_REVISION: "Request review",
+    SELECCIONAR: "Select",
+    BTN: {
+        GUARDAR_ESPACIOS_ACADEMICOS: "Save academic spaces",
+        CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces"
+    },
+
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

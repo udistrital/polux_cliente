@@ -19,7 +19,7 @@ angular.module('poluxClienteApp')
       },
 
       templateUrl: 'views/directives/materias/publicar_asignaturas.html',
-      controller: function ($scope) {
+      controller: function ($scope, $route, $translate) {
         var ctrl = this;
         ctrl.creditosMinimos = 0;
         ctrl.selected = [];
@@ -31,16 +31,16 @@ angular.module('poluxClienteApp')
 
         //uigrid
         ctrl.gridOptions = {
-          showGridFooter: true
+          //showGridFooter: true
         };
 
         ctrl.gridOptions.columnDefs = [
-          { name: 'asignatura', displayName: 'Código', width: "15%" },
-          { name: 'nombre', displayName: 'Nombre', width: "55%" },
-          { name: 'creditos', displayName: 'Créditos', width: "15%" },
+          { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "15%" },
+          { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
+          { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "15%" },
           {
             name: 'check',
-            displayName: 'Seleccionar',
+            displayName: $translate.instant('SELECCIONAR'),
             type: 'boolean',
             width: "15%",
             cellTemplate: '<input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" >'
@@ -206,7 +206,7 @@ angular.module('poluxClienteApp')
               console.log("Creditos minimos profundizacion" + ctrl.creditosMinimos);
             }
         console.log("Creditos minimos obtenidos de la vista "+ $scope.modalidad + " : "+ ctrl.creditosMinimos);
-                 
+
           console.log(ctrl.totalCreditos);
 
           if (ctrl.totalCreditos >= ctrl.creditosMinimos) {
@@ -363,8 +363,8 @@ angular.module('poluxClienteApp')
             alert("Seleccione más de " + ctrl.creditosMinimos + " créditos");
             ctrl.habilitar = false;
             ctrl.habilitar2 = true;
-          }            
-            
+          }
+
           }
           ).catch(function (rta) {
             console.log(rta);

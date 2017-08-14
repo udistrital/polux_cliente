@@ -5,14 +5,17 @@
 </div>
 
     <div class="panel-body">
-
-      <div ui-grid="d_publicarAsignaturas.gridOptions"></div>
+      <div class="row">
+        <div class="mi-grid" id="mi-grid" ui-grid="d_publicarAsignaturas.gridOptions"></div><br>
+      </div>
 
       <div class="form-group">
-        <div class="">
-          <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
-          <input type="submit" ng-click="d_publicarAsignaturas.add()" value="Guardar" class="btn btn-success" ng-disabled="habilitar=d_publicarAsignaturas.habilitar"/>
-          <input type="submit" ng-click="d_publicarAsignaturas.cambiar()" value="Cambiar asignaturas" class="btn btn-primary" ng-disabled="habilitar=d_publicarAsignaturas.habilitar2"/>
+        <div class="row">
+          <center>
+            <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
+            <input type="submit" ng-click="d_publicarAsignaturas.add()" value="{{'BTN.GUARDAR_ESPACIOS_ACADEMICOS' | translate }}" class="btn btn-success" ng-disabled="habilitar=d_publicarAsignaturas.habilitar"/>
+            <input type="submit" ng-click="d_publicarAsignaturas.cambiar()" value="{{'BTN.CAMBIAR_ESPACIOS_ACADEMICOS' | translate }}" class="btn btn-primary" ng-disabled="habilitar=d_publicarAsignaturas.habilitar2"/>
+          </center>
         </div>
       </div>
     </div>
