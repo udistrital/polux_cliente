@@ -11,7 +11,7 @@ angular.module('poluxClienteApp')
     .controller('AreasDocenteCtrl', function(academicaRequest, poluxRequest) {
         var self = this;
         var parametros;
-        self.buttonDirective = "Agregar Área"
+        self.buttonDirective = "Agregar Área";
         self.removable = false;
         self.menucreacion = false;
         self.idAreas = [];

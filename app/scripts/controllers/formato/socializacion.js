@@ -62,7 +62,6 @@ angular.module('poluxClienteApp')
         ctrl.get_trabajos_grado();
         ctrl.get_socializacion();
 
-
         ctrl.operacion = "";
         ctrl.row_entity = {};
         ctrl.gridOptions = {
