@@ -28,13 +28,17 @@ angular
         'ui.grid.selection',
         'ui.grid.exporter',
         'ui.grid.autoResize',
+        'ui.grid.pagination',
         'ngStorage',
         'ngWebSocket',
         'angularMoment',
         'ui.utils.masks',
         'poluxService',
+        'oikosService',
         'academicaService',
         'cadenaService',
+        'ui.utils.masks',
+        'ui.select',
         //'blueimp.fileupload',
         'poluxMidService',
         'pdf',
@@ -44,9 +48,10 @@ angular
     .run(function(amMoment) {
         amMoment.changeLocale('es');
     })
-    .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
-        cfpLoadingBarProvider.parentSelector = '#loading-bar-container';
-        cfpLoadingBarProvider.spinnerTemplate = '<div><span class="fa fa-clock-o fa-2x faa-spin animated"></div>';
+    .config(['cfpLoadingBarProvider', 'uiSelectConfig', function(cfpLoadingBarProvider, uiSelectConfig) {
+        uiSelectConfig.theme = 'select2';
+        uiSelectConfig.resetSearchInput = true;
+        uiSelectConfig.appendToBody = true;
     }])
     .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
         $locationProvider.hashPrefix("");
@@ -161,6 +166,11 @@ angular
                 templateUrl: 'views/formato/formato_sesion_proyecto.html',
                 controller: 'FormatoFormatoSesionProyectoCtrl',
                 controllerAs: 'formatoSesionProyecto'
+            })
+            .when('/formato/socializacion', {
+                templateUrl: 'views/formato/socializacion.html',
+                controller: 'SocializacionCtrl',
+                controllerAs: 'socializacion'
             })
             .otherwise({
                 redirectTo: '/'

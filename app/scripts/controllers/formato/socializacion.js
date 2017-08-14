@@ -2,19 +2,53 @@
 
 /**
  * @ngdoc function
- * @name poluxClienteApp.controller:GeneralConsultaPropuestaCtrl
+ * @name poluxClienteApp.controller:SocializacionCtrl
  * @description
- * # GeneralConsultaPropuestaCtrl
+ * # SocializacionCtrl
  * Controller of the poluxClienteApp
  */
-
-
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, $window) {
+    .controller('SocializacionCtrl', function(poluxRequest, oikosRequest, $translate, $scope) {
         var ctrl = this;
+        ctrl.get_socializacion = function() {
+            poluxRequest.get("socializacion", $.param({
+                limit: "-1"
+            })).then(function(response) {
+                ctrl.socializacion = response.data;
+                ctrl.gridOptions.data = response.data;
+            });
+        };
+        ctrl.get_trabajos_grado = function() {
+            poluxRequest.get("trabajo_grado", $.param({
+                limit: "-1"
+            })).then(function(response) {
+                ctrl.trabajos_grado = response.data;
+            });
+        };
+        ctrl.get_lugares = function() {
+            oikosRequest.get("espacio_fisico", $.param({
+                limit: "-1"
+            })).then(function(response) {
+                ctrl.lugares = response.data;
+            });
+        };
+        ctrl.add_socializacion = function() {
+            var data = {};
+            data.IdTrabajoGrado = ctrl.trabajo_grado.selected;
+            console.log(ctrl.time);
+            // poluxRequest.post("socializacion", $.param({
+            //     limit: "-1"
+            // })).then(function(response) {
+            //     ctrl.socializacion = response.data;
+            //     ctrl.gridOptions.data = response.data;
+            // });
+        };
+        ctrl.get_trabajos_grado();
+        ctrl.get_socializacion();
+        ctrl.get_lugares();
+
         ctrl.operacion = "";
         ctrl.row_entity = {};
-        ctrl.requisito_select = [];
         ctrl.gridOptions = {
             paginationPageSizes: [15, 20, 25],
             paginationPageSize: 15,
@@ -27,7 +61,7 @@ angular.module('poluxClienteApp')
                     visible: false
                 },
                 {
-                    field: 'IdTrabajoGrado.IdModalidad.Nombre',
+                    field: 'Id',
                     displayName: $translate.instant('MODALIDAD'),
                     width: '10%',
                 },
@@ -69,26 +103,11 @@ angular.module('poluxClienteApp')
         };
         ctrl.gridOptions.enablePaginationControls = true;
         ctrl.gridOptions.multiSelect = false;
-        ctrl.solicitudes = function() {
-            poluxRequest.get("documento_tg", $.param({
-                    limit: -1,
-                    sortby: "Id",
-                    order: "asc"
-                }))
-                .then(function(response) {
-                    ctrl.gridOptions.data = response.data;
-                    ctrl.documentos = response.data;
-                });
-
-        };
 
         ctrl.gridOptions.onRegisterApi = function(gridApi) {
             ctrl.gridApi = gridApi;
             gridApi.selection.on.rowSelectionChanged($scope, function() {});
         };
-
-        ctrl.solicitudes();
-
         ctrl.load_row = function(row, operacion) {
             ctrl.row_entity = row.entity;
             switch (operacion) {
@@ -96,13 +115,13 @@ angular.module('poluxClienteApp')
                     //ctrl.docentes = academicaRequest.obtenerDocentes();
                     break;
                 case "add":
+                    $('#add').modal('show');
                     break;
                 case "edit":
                     break;
                 case "delete":
                     break;
                 case "descargar":
-                    $window.open(constantes.DOWNLOAD_FILE + ctrl.row_entity.IdDocumento.Enlace, "New Window", "width=800,height=600,resizable=1");
                     break;
                 default:
             }

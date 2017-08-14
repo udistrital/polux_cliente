@@ -15,5 +15,5 @@ angular.module('poluxClienteApp')
         NUXEO_DOCUMENT: HOST_NUXEO + "api/v1/Document.Create",
         NUXEO_UPLOAD: HOST_NUXEO + "api/v1/upload",
         UPLOAD_FILE: "http://10.20.2.129:8082/upload",
-        DOWNLOAD_FILE: "http://10.20.2.129/EHIDRAULICOS/"
+        DOWNLOAD_FILE: "http://10.20.2.129/nuxeo/"
     });
