@@ -1,34 +1,36 @@
 <div class="panel panel-primary panel-body">
-  <center><h3 class="page-header">
-    {{'REVISION_DOCUMENTOS' | translate}}
-  </h3></center>
+    <center>
+        <h3 class="page-header">
+            {{'REVISION_DOCUMENTOS' | translate}}
+        </h3>
+    </center>
 
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-      <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}}</label>
-      <ver-documento documentoid="estudianteRevisionDoc.doc" loadpag="estudianteRevisionDoc.pagina" selectpag="estudianteRevisionDoc.pagina2" minified="mindoc"/>
-      <!--  <pre>{{estudianteRevisionDoc.revisionesd | json}}</pre>-->
+        <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}}</label>
+        <ver-documento documentoid="estudianteRevisionDoc.doc" loadpag="estudianteRevisionDoc.pagina" selectpag="estudianteRevisionDoc.pagina2" minified="mindoc" />
+        <!--  <pre>{{estudianteRevisionDoc.revisionesd | json}}</pre>-->
     </div>
 
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
-        </div>
-        <div class="panel-body">
-          <div ng-repeat="revision in estudianteRevisionDoc.revisionesd">
-            <ver-revision revisionid="revision.Id"  paginaset="estudianteRevisionDoc.pagina" ng-if="revision.Estado != 'pendiente'"></ver-revision>
-
-            <div ng-if="revision.Estado == 'borrador' || revision.Estado == 'pendiente'" >
-              <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
             </div>
-          </div>
-        </div>
-      </div>
+            <div class="panel-body">
+                <div ng-repeat="revision in estudianteRevisionDoc.revisionesd">
+                    <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina" ng-if="revision.Estado != 'pendiente'"></ver-revision>
 
-      <div class="form-group">
-          <button type="button" class="btn btn-info pull-left">{{'SUBIR_DOCUMENTO' | translate}}</button>
-          <button type="button" class="btn btn-success pull-right" ng-click="estudianteRevisionDoc.solicitar_revision()">Solicitar Revision</button>
-      </div>
+                    <div ng-if="revision.Estado == 'borrador' || revision.Estado == 'pendiente'">
+                        <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="button" class="btn btn-info pull-left">{{'SUBIR_DOCUMENTO' | translate}}</button>
+            <button type="button" class="btn btn-success pull-right" ng-click="estudianteRevisionDoc.solicitar_revision()">{{'SOLICITAR_REVISION' | translate}}</button>
+        </div>
     </div>
 
 </div>
