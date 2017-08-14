@@ -365,11 +365,20 @@ angular.module('poluxClienteApp')
               }
             });
 
-            alert("Asignaturas guardadas");
+            swal(
+              'Espacios Académicos Guardados',
+              'Los espacios académicos seleccionados podrán ser elegidos por los estudiantes para optar por la modalidad de trabajo de grado',
+              'success'
+            );
+            $route.reload();
           }
 
           else {
-            alert("Seleccione más de " + ctrl.creditosMinimos + " créditos");
+            swal(
+              'Seleccione más espacios académicos',
+              "La cantidad de créditos de los espacios académicos seleccionados debe ser igual o superior a " + ctrl.creditosMinimos + " créditos",
+              'warning'
+            );
             ctrl.habilitar = false;
             ctrl.habilitar2 = true;
           }
