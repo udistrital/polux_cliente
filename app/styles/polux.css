@@ -11,6 +11,10 @@ md-checkbox.md-checked.blue .md-icon {
     padding-left: 5%;
 }
 
+.centro-cinco {
+    padding: 5%;
+}
+
 .scrollit {
     max-height: 700px;
     overflow-y: scroll;
@@ -32,4 +36,8 @@ md-checkbox.md-checked.blue .md-icon {
     width: 100%;
     display: block;
     padding: 1em;
+}
+
+.panel panel-default {
+    padding: 3%
 }

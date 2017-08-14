@@ -113,7 +113,15 @@ var text_es = {
     EL_AREA_NO_EXISTE: "El área no existe",
     NO_EXISTEN_AREAS: "No existen áreas",
     AREAS_DOCENTE: "Áreas del docente",
-    DOCENTE_ACTUAL: "Docente actual: "
+    DOCENTE_ACTUAL: "Docente actual: ",
+    GUARDAR: "Guardar",
+    OPCION_BOTON: " + Opción",
+    PREGUNTA_BOTON: " + Pregunta",
+    ASIGNAR_BOTON: " Asignar",
+    SEL_FECHA: "Seleccione una fecha",
+    ENVIAR_EVALUACION_BOTON: "Enviar calificación",
+    SOLICITAR_REVISION: "Solicitar Revision"
+
 
 };
 var text_en = {
@@ -134,6 +142,7 @@ var text_en = {
     PERIODO: "Term:",
     CARRERA: "Carrer:",
     PENSUM: "List of subjects:",
+    EVALUAR_PROYECTO: "Evaluate graduation project",
     SELECCIONAR_CARRERA: "*Select a carrer",
     SELECCIONAR_PENSUM: "*Select a list of subjects",
     CODIGO: "Code:",
@@ -151,7 +160,7 @@ var text_en = {
     REQUERIDO: "It's required",
     PUBLICACION_DE_ESPACIOS: "Announcement of subjects list.",
     RESPUESTA: "Answer:",
-    DENEGADO: "The student doesn't Does not meet the requirements in order aply to this modality",
+    DENEGADO: "The student doesn't meet the requirements in order aply to this modality",
     REGISTRAR_PROPUESTA: "Register proposal.",
     ESTADO: "Status:",
     PORCENTAJE_CURSADO: "Percentage completed",
@@ -184,7 +193,7 @@ var text_en = {
     REVISION_DOCUMENTOS: "Documents review",
     DOCUMENTO: "Document",
     REVISIONES: "Reviews",
-    LA_REVISION: "La review ",
+    LA_REVISION: "The review ",
     LA_REVISION_SE_ENCUENTRA: " is in process",
     SUBIR_DOCUMENTO: "Upload document",
     PUBLICAR_ASIGNATURA: "Announce subject",
@@ -221,8 +230,14 @@ var text_en = {
     EL_AREA_NO_EXISTE: "The area of knowledge doesn't exist",
     NO_EXISTEN_AREAS: "There aren't areas of knoeledge",
     AREAS_DOCENTE: "Areas of knowledge for the teacher",
-    DOCENTE_ACTUAL: "Current teacher: "
-
+    DOCENTE_ACTUAL: "Current teacher: ",
+    GUARDAR: "Save",
+    OPCION_BOTON: " + Option",
+    PREGUNTA_BOTON: " + Question",
+    ASIGNAR_BOTON: " Asign",
+    SEL_FECHA: "Select a date",
+    ENVIAR_EVALUACION_BOTON: "Send qualification",
+    SOLICITAR_REVISION: "Request review"
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
