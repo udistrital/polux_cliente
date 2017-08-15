@@ -37,18 +37,21 @@ angular.module('poluxClienteApp')
     });
 
     ctrl.buscarSolicitudes = function(carrera){
+      ctrl.carrera=carrera;
+      $scope.carrera=carrera;
       if(carrera){
-        ctrl.sols=[];
+        $scope.sols=[];
         var parametros=$.param({
           query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera
         });
-        //buscar la solicitudes
+        //buscar solicitudes
         poluxRequest.get("solicitud_materias",parametros).then(function(response){
+          console.log(response);
           angular.forEach(response.data, function(value) {
             ctrl.buscarEstudianteTg(value);
           });
         });
-        ctrl.gridOptions.data = ctrl.sols;
+        ctrl.gridOptions.data = $scope.sols;
       }
     };
 

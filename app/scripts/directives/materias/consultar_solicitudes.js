@@ -73,13 +73,21 @@ angular.module('poluxClienteApp')
         academicaRequest.obtenerPeriodo().then(function(response){
           ctrl.periodo=response[0];
 
-          //buscar si hay TG para el estudiante en la modalidad de materias de posgrado
-          var parametros=$.param({
-            query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:3",
-            related:"IdTrabajoGrado"
-          });
+          if(ctrl.estudiante.TipoCarrera!="TECNOLOGIA"){
+            //buscar si hay TG para el estudiante en la modalidad de materias de posgrado
+            var parametros=$.param({
+              query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:3",
+              related:"IdTrabajoGrado"
+            });
+          }else{
+            var parametros=$.param({
+              query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:4",
+              related:"IdTrabajoGrado"
+            });
+          }
+
           poluxRequest.get("estudiante_tg",parametros).then(function(response){
-            console.log(response.data)
+
             if(response.data){
 
               //por cada TG, buscar la solicitud asociada al TG
@@ -171,8 +179,10 @@ angular.module('poluxClienteApp')
                      };
 
                       academicaRequest.obtenerCarreras(parametros).then(function(resp){
+
                         var parametros=$.param({
-                          query:"IdSolicitudMaterias:"+response.data[0].Id
+                          query:"IdSolicitudMaterias:"+response.data[0].Id,
+                          related:"IdAsignaturasElegibles"
                         });
                         //buscar asignaturas asociadas a la solicitud
                         poluxRequest.get("asignatura_inscrita",parametros).then(function(resp2){

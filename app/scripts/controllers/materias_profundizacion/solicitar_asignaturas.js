@@ -26,7 +26,6 @@ angular.module('poluxClienteApp')
         academicaRequest.promedioEstudiante(parametros).then(function(response2){
 
           if(response2){
-            console.log(response2);
             //porcentaje cursado
             var parametros2 = {
               "codigo": parametros.codigo
