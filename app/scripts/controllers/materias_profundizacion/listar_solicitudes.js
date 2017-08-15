@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('MateriasProfundizacionListarSolicitudesCtrl', function (poluxRequest, academicaRequest) {
+  .controller('MateriasProfundizacionListarSolicitudesCtrl', function (poluxRequest, academicaRequest, $scope) {
     var ctrl = this;
     ctrl.periodo=[];
     ctrl.carreras=[];
@@ -64,7 +64,8 @@ angular.module('poluxClienteApp')
       poluxRequest.get("estudiante_tg",parametros).then(function(response){
 
         var parametros = {
-          'codigo' : response.data[0].CodigoEstudiante
+          'codigo' : response.data[0].CodigoEstudiante,
+          'sin_rendimiento':1
         };
         academicaRequest.promedioEstudiante(parametros).then(function(response2){
 
@@ -76,7 +77,7 @@ angular.module('poluxClienteApp')
             "promedio": response2[0].PROMEDIO,
             "estado": tg.Estado
           };
-          ctrl.sols.push(solicitud);
+          $scope.sols.push(solicitud);
         });
 
       });

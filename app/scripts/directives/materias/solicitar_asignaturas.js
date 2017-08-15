@@ -333,19 +333,30 @@ angular.module('poluxClienteApp')
 
                 }
 
-                alert("Solicitud realizada");
+                swal(
+                  'Solicitud Realizada',
+                  'Se realiza solicitud con los espacios académicos seleccionados en modalidad de trabajo de grado',
+                  'success'
+                );
                 $route.reload();
               } else {
-                alert("Seleccione más de " + ctrl.creditosMinimos + " créditos");
+                swal(
+                  'Seleccione más espacios académicos',
+                  "La cantidad de créditos de los espacios académicos seleccionados debe ser igual o superior a " + ctrl.creditosMinimos + " créditos",
+                  'warning'
+                );
               }
 
               ///##########################################################################
 
             });
 
-
           }else {
-            alert("Ya tiene 1 solicitud en esa carrera");
+            swal(
+              'Solicitud de espacios académicos',
+              "Ya tiene 1 solicitud en esa carrera",
+              'warning'
+            );
             ctrl.selected = [];
             $route.reload();
           }

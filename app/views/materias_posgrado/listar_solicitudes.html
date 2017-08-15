@@ -23,13 +23,8 @@
        </div>
 
        <div class="panel panel-default panel-body col-md-12">
-         <div ui-grid="listarSolicitudes.gridOptions"></div>
+         <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div>
 
-         <div  layout="column" layout-align="center" >
-          <p>{{'ADMITIDOS_POR_RENDIMIENTO' | translate}} {{listarSolicitudes.rendimiento}}</p>
-          <p>{{'ADMITIDOS_POR_ECONOMIA' | translate}} {{listarSolicitudes.economicas}}</p>
-
-        </div>
 
           <button ng-if="fechaActual.toJSON() >= fecha_inicio.toJSON() && fechaActual.toJSON() < segunda_fecha.toJSON() && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
           <button ng-if="fechaActual.toJSON() >= segunda_fecha.toJSON() && fechaActual.toJSON()<=fecha_fin.toJSON() && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos 2</button>

@@ -20,7 +20,8 @@ angular.module('poluxClienteApp')
           "codigo": $scope.codigo,
           //periodo anterior
           'ano' : periodoAnterior[0].APE_ANO,
-          'periodo' :periodoAnterior[0].APE_PER
+          'periodo' :periodoAnterior[0].APE_PER,
+          'sin_rendimiento':1
         };
 
         academicaRequest.promedioEstudiante(parametros).then(function(response2){
