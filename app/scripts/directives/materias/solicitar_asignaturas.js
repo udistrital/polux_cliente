@@ -17,7 +17,7 @@ angular.module('poluxClienteApp')
       },
 
       templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
-      controller: function($scope) {
+      controller: function($scope, $route, $translate) {
         console.log("carreras ya elegidas",$scope.l);
         var ctrl = this;
         ctrl.maxCreditos = 0;
@@ -151,18 +151,18 @@ angular.module('poluxClienteApp')
           //ui-grid
           ctrl.gridOptions.columnDefs = [{
             name: 'CodigoAsignatura',
-            displayName: 'Código',
+            displayName: $translate.instant('CODIGO'),
             width: 200
           }, {
             name: 'Nombre',
-            displayName: 'Nombre'
+            displayName: $translate.instant('NOMBRE'),
           }, {
             name: 'Creditos',
-            displayName: 'Créditos',
+            displayName: $translate.instant('CREDITOS'),
             width: 200
           }, {
             name: 'Check',
-            displayName: 'Seleccionar',
+            displayName: $translate.instant('SELECCIONAR'),
             width: 200,
             type: 'boolean',
             cellTemplate: '<input type="checkbox" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'

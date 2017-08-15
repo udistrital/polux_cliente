@@ -8,7 +8,6 @@
          {{'NOMBRE' | translate}}  {{profundizacion_solicitarAsignaturas.estudiante.Nombre}}<br>
          {{'MODALIDAD_ESP_PROFUNDIZACION' | translate}}</p>
 
-         <!--<pre>{{profundizacion_solicitarAsignaturas.validar}}</pre>-->
          <div ng-if="profundizacion_solicitarAsignaturas.validar=='true'">
            <consultar-solicitudes estudiante="profundizacion_solicitarAsignaturas.estudiante" s="0" modalidad="solicitarAsignaturas.modalidad"/>
          </div>
