@@ -32,6 +32,16 @@ angular.module('academicaService', [])
                     });
             },
 
+            obtener_docente_id: function(ruta, parametros) {
+                return $http.get(path + ruta + "&" + parametros)
+                    .then(function(response) {
+                        console.log(ruta + parametros);
+                        var json = response.data.split("<json>");
+                        var jsonObj = JSON.parse(json[1]);
+                        return jsonObj;
+                    });
+            },
+
             obtenerPeriodo: function(parametros) {
                 return this.obtener(periodo, parametros);
             },
@@ -54,6 +64,9 @@ angular.module('academicaService', [])
 
             obtenerDocentes: function(parametros) {
                 return this.obtener(docentes, parametros);
+            },
+            obtenerDocenteId: function(parametros) {
+                return this.obtenerDocenteId(docentes, parametros);
             },
 
             obtenerEstudiantes: function(parametros) {

@@ -26,7 +26,21 @@
             <div class="panel-heading">
                 {{'ASIGNAR_DOCENTE' | translate }}
             </div>
+
             <form class="form-horizontal  left-cinco" name="avances_add_edit" ng-submit="consultaPropuesta.add_edit()">
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{'DOCENTES_ASIGNADOS' | translate}}:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <ol>
+                            <li ng-repeat="vd in consultaPropuesta.vinculacion_docente_tg">
+                                <label for="">{{vd.Docente.DOC_NOMBRE}} {{vd.Docente.DOC_APELLIDO}} ({{vd.IdTipoVinculacion.Nombre}})</label>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
                 <br>
                 <div class="row">
                     <div class="col-md-2">
@@ -34,7 +48,19 @@
                  <label>{{'DOCENTE' | translate}}:</label>
                         </label>
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-7" ng-if="!consultaPropuesta.todos_docentes">
+                        <ui-select refresh-delay="2" on-select="consultaPropuesta.ver_asignaturas($item, $model)" ng-model="consultaPropuesta.profesores.selected" theme="select2" style="width:100%;">
+                            <ui-select-match placeholder="{{'SELECCION_DOCENTE' | translate}}...">{{$select.selected.DOC_NOMBRE}} {{ $select.selected.DOC_APELLIDO}}</ui-select-match>
+                            <ui-select-choices repeat="docente in consultaPropuesta.DocentesAreaConocimiento | filter: $select.search">
+                                <span ng-bind-html="docente.DOC_NOMBRE | highlight: $select.search"></span>
+                                <span ng-bind-html="docente.DOC_APELLIDO | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                    <div class="col-md-3" ng-if="!consultaPropuesta.todos_docentes">
+                        <input ng-click="consultaPropuesta.todos_docentes = !consultaPropuesta.todos_docentes" class="btn btn-success btn-outline" value="{{'VER_TODOS' | translate }}" />
+                    </div>
+                    <div class="col-md-7" ng-if="consultaPropuesta.todos_docentes">
                         <ui-select refresh-delay="2" on-select="consultaPropuesta.ver_asignaturas($item, $model)" ng-model="consultaPropuesta.profesores.selected" theme="select2" style="width:100%;">
                             <ui-select-match placeholder="{{'SELECCION_DOCENTE' | translate}}...">{{$select.selected.DOC_NOMBRE}} {{ $select.selected.DOC_APELLIDO}}</ui-select-match>
                             <ui-select-choices repeat="docente in consultaPropuesta.docentes | filter: $select.search">
@@ -42,6 +68,9 @@
                                 <span ng-bind-html="docente.DOC_APELLIDO | highlight: $select.search"></span>
                             </ui-select-choices>
                         </ui-select>
+                    </div>
+                    <div class="col-md-3" ng-if="consultaPropuesta.todos_docentes">
+                        <input ng-click="consultaPropuesta.todos_docentes = !consultaPropuesta.todos_docentes" class="btn btn-success btn-outline" value="{{'VER_SUGERENCIAS' | translate }}" />
                     </div>
                 </div>
                 <br>
@@ -53,6 +82,18 @@
                         <ol>
                             <li ng-repeat="materia in consultaPropuesta.materias">
                                 <label for="">{{materia.IdAreaConocimiento.Nombre}}</label>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{'AREAS_CONOCIMIENTO' | translate}}:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <ol>
+                            <li ng-repeat="tg in consultaPropuesta.areas_trabajo_grado">
+                                <label for="">{{tg.IdAreaConocimiento.Nombre}}</label>
                             </li>
                         </ol>
                     </div>
@@ -105,6 +146,7 @@
 
             </div>
             <form class="form-horizontal">
+
                 <br>
                 <div class="row">
                     <label for="referencia" class="col-sm-2 control-label">{{'TITULO_PROPUESTA' | translate }}:</label>
@@ -128,9 +170,18 @@
                 </div>
                 <br>
                 <div class="row">
-                    <label for="vista" class="col-sm-2 control-label"></label>
-
+                    <div class="col-md-2">
+                        <label>{{'DOCENTES_ASIGNADOS' | translate}}:</label>
+                    </div>
+                    <div class="col-md-7">
+                        <ol>
+                            <li ng-repeat="vd in consultaPropuesta.vinculacion_docente_tg">
+                                <label for="">{{vd.Docente.DOC_NOMBRE}} {{vd.Docente.DOC_APELLIDO}} ({{vd.IdTipoVinculacion.Nombre}})</label>
+                            </li>
+                        </ol>
+                    </div>
                 </div>
+                <br>
                 <br>
                 <br>
             </form>

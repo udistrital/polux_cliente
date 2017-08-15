@@ -10,8 +10,9 @@
 
 
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, $window) {
+    .controller('ConsultaPropuestaCtrl', function(poluxRequest, academicaRequest, $translate, $scope, constantes, $window, $http) {
         var ctrl = this;
+        ctrl.todos_docentes = false;
         academicaRequest.obtenerDocentes("").then(function(response) {
             ctrl.docentes = response;
         });
@@ -92,7 +93,7 @@ angular.module('poluxClienteApp')
                     enableFiltering: false,
                     width: '10%',
 
-                    cellTemplate: '<center>' +
+                    cellTemplate: '<centerctrl.areas_trabajo_grado >' +
 
                         '<a class="ver" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'ver\')" data-toggle="modal" data-target="#myModalVer">' +
                         '<i class="fa fa-eye fa-lg  faa-shake animated-hover" aria-hidden="true" data-toggle="tooltip" title="{{\'BTN.VER\' | translate }}"></i></a> ' +
@@ -131,13 +132,78 @@ angular.module('poluxClienteApp')
 
         ctrl.load_row = function(row, operacion) {
             ctrl.row_entity = row.entity;
+            console.log(ctrl.row_entity);
             switch (operacion) {
                 case "ver":
-                    //ctrl.docentes = academicaRequest.obtenerDocentes();
+                    poluxRequest.get("vinculacion_docente", $.param({
+                            limit: -1,
+                            query: "IdTrabajoGrado:" + ctrl.row_entity.IdTrabajoGrado.Id
+                        }))
+                        .then(function(response) {
+                            ctrl.vinculacion_docente_tg = response.data;
+                            console.log(ctrl.vinculacion_docente_tg);
+                            angular.forEach(ctrl.vinculacion_docente_tg, function(vd) {
+                                $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
+                                    .then(function(response) {
+                                        var json = response.data.split("<json>");
+                                        var jsonObj = JSON.parse(json[1]);
+                                        var docente = jsonObj[0];
+                                        vd.Docente = docente;
+                                    });
+                            });
+                        });
                     break;
                 case "add":
                     break;
                 case "config":
+                    ctrl.DocentesAreaConocimiento = [];
+                    poluxRequest.get("vinculacion_docente", $.param({
+                            limit: -1,
+                            query: "IdTrabajoGrado:" + ctrl.row_entity.IdTrabajoGrado.Id
+                        }))
+                        .then(function(response) {
+                            ctrl.vinculacion_docente_tg = response.data;
+                            console.log(ctrl.vinculacion_docente_tg);
+                            angular.forEach(ctrl.vinculacion_docente_tg, function(vd) {
+                                $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
+                                    .then(function(response) {
+                                        var json = response.data.split("<json>");
+                                        var jsonObj = JSON.parse(json[1]);
+                                        var docente = jsonObj[0];
+                                        vd.Docente = docente;
+                                    });
+                            });
+                        });
+                    poluxRequest.get("areas_trabajo_grado", $.param({
+                            limit: -1,
+                            query: "IdTrabajoGrado:" + ctrl.row_entity.IdTrabajoGrado.Id
+                        }))
+                        .then(function(response) {
+                            ctrl.areas_trabajo_grado = response.data;
+                            angular.forEach(ctrl.areas_trabajo_grado, function(atg) {
+                                poluxRequest.get("areas_docente", $.param({
+                                        limit: -1,
+                                        query: "IdAreaConocimiento:" + atg.IdAreaConocimiento.Id
+                                    }))
+                                    .then(function(response) {
+                                        ctrl.docentes_areas = response.data;
+                                        angular.forEach(ctrl.docentes_areas, function(da) {
+                                            $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + da.IdentificacionDocente)
+                                                .then(function(response) {
+                                                    var json = response.data.split("<json>");
+                                                    var jsonObj = JSON.parse(json[1]);
+                                                    var docente = jsonObj[0];
+                                                    if (ctrl.DocentesAreaConocimiento.indexOf(docente) == -1) {
+                                                        console.log("Heyyy");
+                                                        console.log(docente);
+                                                    }
+                                                    ctrl.DocentesAreaConocimiento.push(docente);
+
+                                                });
+                                        });
+                                    });
+                            });
+                        });
                     break;
                 case "delete":
                     break;
