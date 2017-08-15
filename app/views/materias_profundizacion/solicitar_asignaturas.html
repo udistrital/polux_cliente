@@ -4,11 +4,28 @@
         {{'LISTAR_SOLICITUDES' | translate}}
     </div>
     <div class="panel-body">
-      <p>{{'CODIGO' | translate}}  {{profundizacion_solicitarAsignaturas.estudiante.Codigo}}<br>
+      <p>{{'CODIGO' | translate}}  <input type="text" name="userName" ng-model="codigo" required><br>
          {{'NOMBRE' | translate}}  {{profundizacion_solicitarAsignaturas.estudiante.Nombre}}<br>
          {{'MODALIDAD_ESP_POS' | translate}}</p>
 
-      <consultar-solicitudes estudiante="profundizacion_solicitarAsignaturas.estudiante" s="0"/>
+         <!--<pre>{{profundizacion_solicitarAsignaturas.validar}}</pre>-->
+         <div ng-if="profundizacion_solicitarAsignaturas.validar=='true'">
+           <consultar-solicitudes estudiante="profundizacion_solicitarAsignaturas.estudiante" s="0" modalidad="solicitarAsignaturas.modalidad"/>
+         </div>
+
+         <div ng-if="profundizacion_solicitarAsignaturas.validar!='true'" class="alert alert-danger" >
+             <strong>{{'RESPUESTA' | translate}}</strong> {{'DENEGADO' | translate}}
+             <br></br>
+             <p>
+               <ul>
+                 <li>{{'ESTADO' | translate}} ACTIVO</li>
+                 <li>{{'PORCENTAJE_CURSADO' | translate}} >= 80%</li>
+                 <!--<li>{{'PROMEDIO' | translate}} >= 3.8</li>-->
+                 <li>{{'NIVEL_ESTUDIOS' | translate}} PREGRADO</li>
+                 <li>{{'TIPO_CARRERA' | translate}} == TECNOLOGIA</li>
+               </ul>
+             </p>
+         </div>
     </div>
     <div class="panel-footer">
         Panel Footer
