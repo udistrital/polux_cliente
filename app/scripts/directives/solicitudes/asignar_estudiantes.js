@@ -36,7 +36,7 @@ angular.module('poluxClienteApp')
         };
 
         ctrl.verificarEstudiante = function(){
-        /*  academicaRequest.periodoAnterior().then(function(periodoAnterior){
+        academicaRequest.periodoAnterior().then(function(periodoAnterior){
 
             var parametros = {
               "codigo": ctrl.codigoEstudiante,
@@ -46,7 +46,7 @@ angular.module('poluxClienteApp')
             };
 
             academicaRequest.promedioEstudiante(parametros).then(function(response2){
-                console.log(response2);
+
                 if(response2){
                 //porcentaje cursado
                 var parametros2 = {
@@ -59,7 +59,7 @@ angular.module('poluxClienteApp')
                   ctrl.estudiante={
                     "Codigo": parametros.codigo,
                     "Nombre": response2[0].NOMBRE,
-                    "Modalidad": 6,
+                    "Modalidad": 1,
                     "Tipo": "POSGRADO",
                     "PorcentajeCursado": response3,
                     "Promedio": response2[0].PROMEDIO,
@@ -69,24 +69,28 @@ angular.module('poluxClienteApp')
                     "TipoCarrera": response2[0].TRA_NOMBRE
                   };
 
+
                   poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
-                      if(response.data.includes("true")){
-                      */
-                      var parametrosTrabajoEstudiante = $.param({
-                          query:"CodigoEstudiante:"+ctrl.codigoEstudiante,
-                      });
-                      poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
-                            if(responseTrabajoEstudiante.data===null){
-                                ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
-                                $scope.estudiantes = ctrl.nuevosEstudiantes;
-                            }else{
-                                ctrl.estudianteConTrabajo = true;
-                            }
-                      });
-                      /*
-                    }else{
-                          ctrl.estudianteValido = true;
-                      }
+
+                    console.log(response);
+                    if(response.data.includes("true")){
+                    var parametrosTrabajoEstudiante = $.param({
+                        query:"CodigoEstudiante:"+ctrl.codigoEstudiante,
+                    });
+                    poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
+                          if(responseTrabajoEstudiante.data===null){
+
+                              //verificacion en el ruler API
+                              ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
+                              $scope.estudiantes = ctrl.nuevosEstudiantes;
+                          }else{
+                              ctrl.estudianteConTrabajo = true;
+                          }
+                    });
+
+                  }else{
+                        ctrl.estudianteValido = true;
+                    }
 
                   });
 
@@ -96,7 +100,7 @@ angular.module('poluxClienteApp')
               }
             });
           });
-          */
+
         }
 
       },

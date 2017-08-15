@@ -74,9 +74,9 @@ angular.module('poluxClienteApp')
                           ctrl.modalidades=responseModalidad.data;
                       });
                     }
-                  //  ctrl.obtenerDatosEstudiante();
+                    ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
-                    ctrl.conEstudiante= true;
+                    //ctrl.conEstudiante= true;
           });
 
 
