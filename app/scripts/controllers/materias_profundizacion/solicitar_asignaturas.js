@@ -10,7 +10,7 @@
 angular.module('poluxClienteApp')
   .controller('MateriasProfundizacionSolicitarAsignaturasCtrl', function (poluxMidRequest, academicaRequest, $scope) {
     var ctrl = this;
-    $scope.codigo="20092020008";
+    $scope.codigo="20112085061";
 
     $scope.$watch("codigo",function() {
 
@@ -44,7 +44,7 @@ angular.module('poluxClienteApp')
                 "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
                 "Estado": response2[0].EST_ESTADO_EST,
                 "Nivel": response2[0].TRA_NIVEL,
-                //"TipoCarrera": response2[0].TRA_NOMBRE
+                "TipoCarrera": response2[0].TRA_NOMBRE,
                 "TipoCarrera": "TECNOLOGIA"
 
               };
