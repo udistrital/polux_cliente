@@ -11,7 +11,7 @@ angular.module('poluxClienteApp')
         return {
             restrict: "E",
             scope: {
-                documentoid: '=',
+                documentoid: '=?',
                 selectpag: '=?',
                 loadpag: '=?',
                 minified: '=?'
@@ -20,22 +20,28 @@ angular.module('poluxClienteApp')
             controller: function($scope) {
                 var self = this;
 
-                poluxRequest.get("documento", $.param({
-                    limit: -1,
-                    sortby: "Id",
-                    order: "asc",
-                    query: "Id:" + $scope.documentoid
-                })).then(function(response) {
-                    self.documento = response.data[0];
-                    console.log(self.documento);
-                    self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
-                    console.log(self.documento.Enlace);
-                    $scope.selectpag = $scope.pageNum;
-                    $scope.pdfUrl = self.documento.Enlace;
+                $scope.$watch('selectpag', function() {
+                    $scope.pageNum = $scope.selectpag;
                 });
 
-                $scope.$watch('loadpag', function() {
-                    $scope.pageNum = $scope.loadpag;
+                $scope.$watch('pageNum', function() {
+                    $scope.loadpag = $scope.pageNum;
+                });
+
+                $scope.$watch('documentoid', function() {
+                    poluxRequest.get("documento", $.param({
+                        limit: -1,
+                        sortby: "Id",
+                        order: "asc",
+                        query: "Id:" + $scope.documentoid
+                    })).then(function(response) {
+                        self.documento = response.data[0];
+                        console.log(self.documento);
+                        self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
+                        console.log(self.documento.Enlace);
+                        $scope.selectpag = $scope.pageNum;
+                        $scope.pdfUrl = self.documento.Enlace;
+                    });
                 });
 
             },
