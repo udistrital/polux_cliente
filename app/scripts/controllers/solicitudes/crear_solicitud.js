@@ -103,6 +103,9 @@ angular.module('poluxClienteApp')
 
 
       ctrl.cargarDetalles= function (tipoSolicitud, modalidad_seleccionada) {
+        ctrl.modalidad = modalidad_seleccionada;
+        ctrl.estudiante.Modalidad = ctrl.modalidad;
+        console.log(ctrl.estudiante);
         ctrl.soliciudConDetalles = true;
         ctrl.detalles = [];
         var parametrosDetalles;
@@ -259,7 +262,7 @@ angular.module('poluxClienteApp')
                 ctrl.estudiante={
                   "Codigo": parametros.codigo,
                   "Nombre": response2[0].NOMBRE,
-                  "Modalidad": 6,
+                  "Modalidad": ctrl.modalidad, //modalidad que solo necesita el porcentaje cursado y el estado del estudiante para la validacion
                   "Tipo": "POSGRADO",
                   "PorcentajeCursado": response3,
                   "Promedio": response2[0].PROMEDIO,

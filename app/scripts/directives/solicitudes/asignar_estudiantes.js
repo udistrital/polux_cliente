@@ -11,14 +11,17 @@ angular.module('poluxClienteApp')
     return {
       scope: {
         estudiantes: '=',
+        modalidad: '=',
         },
       templateUrl: 'views/directives/solicitudes/asignar_estudiantes.html',
       controller:function($scope){
         var ctrl = this;
+
         ctrl.estudianteRegistrado = false;
         ctrl.estudianteExiste = false;
         ctrl.estudianteValido = false;
         ctrl.estudianteConTrabajo = false;
+        ctrl.cantidadExcedida = false;
         ctrl.removable=false;
         ctrl.solicitante = $scope.estudiantes[0];
         ctrl.nuevosEstudiantes = [];
@@ -28,6 +31,7 @@ angular.module('poluxClienteApp')
             ctrl.estudianteExiste = false;
             ctrl.estudianteValido = false;
             ctrl.estudianteConTrabajo = false;
+            ctrl.cantidadExcedida = false;
             if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && ctrl.solicitante!==ctrl.codigoEstudiante){
                 ctrl.verificarEstudiante();
             }else{
@@ -59,7 +63,7 @@ angular.module('poluxClienteApp')
                   ctrl.estudiante={
                     "Codigo": parametros.codigo,
                     "Nombre": response2[0].NOMBRE,
-                    "Modalidad": 1,
+                    "Modalidad": $scope.modalidad,
                     "Tipo": "POSGRADO",
                     "PorcentajeCursado": response3,
                     "Promedio": response2[0].PROMEDIO,
@@ -79,10 +83,51 @@ angular.module('poluxClienteApp')
                     });
                     poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
                           if(responseTrabajoEstudiante.data===null){
+                            var cantidad;
+                            cantidad =  2+ctrl.nuevosEstudiantes.length;
+                            var modalidad;
+                            switch ($scope.modalidad) {
+                              case 1:
+                                  modalidad = "pasantia";
+                                  break;
+                              case 2:
+                                  modalidad = "posgrado";
+                                  break;
+                              case 3:
+                                  modalidad = "profundizacion";
+                                  break;
+                              case 4:
+                                  modalidad = "monografia";
+                                  break;
+                              case 5:
+                                  modalidad = "investigacion";
+                                  break;
+                              case 6:
+                                  modalidad = "creacion";
+                                  break;
+                              case 7:
+                                  modalidad = "emprendimiento";
+                                  break;
+                              case 8:
+                                  modalidad = "articulo";
+                                  break;
+                              };
+                            ctrl.datosModalidad = {
+                              "Modalidad": modalidad,
+                              "Cantidad": cantidad+""
+                            };
+                            console.log("cantidad");
+                            console.log(ctrl.datosModalidad);
+                            poluxMidRequest.post("verificarRequisitos/CantidadModalidades",ctrl.datosModalidad).then(function(validado){
+                                  console.log(validado)
+                                  if(validado.data === "true"){
+                                    ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
+                                    $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                  }else{
+                                    ctrl.cantidadExcedida = true;
+                                  }
+                            });
 
-                              //verificacion en el ruler API
-                              ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
-                              $scope.estudiantes = ctrl.nuevosEstudiantes;
                           }else{
                               ctrl.estudianteConTrabajo = true;
                           }

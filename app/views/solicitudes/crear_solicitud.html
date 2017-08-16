@@ -74,7 +74,7 @@
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
             <solicitar-asignaturas  estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
-            <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes'" />
+            <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes'" />
             <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">
                     Areas del conocimiento

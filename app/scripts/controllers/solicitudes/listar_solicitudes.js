@@ -41,7 +41,7 @@ angular.module('poluxClienteApp')
             ctrl.estudiante={
               "Codigo": parametros.codigo,
               "Nombre": response2[0].NOMBRE,
-              "Modalidad": 6,
+              "Modalidad": 1, //modalidad que solo necesita el porcentaje cursado y el estado del estudiante para la validacion
               "Tipo": "POSGRADO",
               "PorcentajeCursado": response3,
               "Promedio": response2[0].PROMEDIO,
