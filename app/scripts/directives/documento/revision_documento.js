@@ -18,12 +18,17 @@ angular.module('poluxClienteApp')
             },
             templateUrl: "views/directives/documento/revision_documento.html",
             controller: function($scope) {
-                var self = this;
-                self.correcciones = [];
+                var ctrl = this;
+
+                $scope.$watch('paginadoc', function() {
+                    $scope.paginadoc = $scope.paginadoc;
+                });
+
+                ctrl.correcciones = [];
                 poluxRequest.get("revision", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function(response) {
-                    self.revision = response.data[0];
+                    ctrl.revision = response.data[0];
                 });
                 poluxRequest.get("correccion", $.param({
                     query: "IdRevision:" + $scope.revisionid,
@@ -31,13 +36,13 @@ angular.module('poluxClienteApp')
                     order: "asc"
                 })).then(function(response) {
                     if (response.data != null) {
-                        self.correcciones = response.data;
+                        ctrl.correcciones = response.data;
                     } else {
-                        self.correcciones = [];
+                        ctrl.correcciones = [];
                     }
                 });
 
-                self.copyObject = function(Obj) {
+                ctrl.copyObject = function(Obj) {
                     /* //Opcion recursiva
                     if ( obj === null || typeof obj  !== 'object' ) {
                           return obj;
@@ -51,7 +56,7 @@ angular.module('poluxClienteApp')
                     return JSON.parse(JSON.stringify(Obj));
                 };
 
-                self.editar = function(correc, temp) {
+                ctrl.editar = function(correc, temp) {
                     for (var key in correc) {
                         correc[key] = temp[key];
                     }
@@ -65,73 +70,73 @@ angular.module('poluxClienteApp')
                     correc.Justificacion = temp.Justificacion;*/
                 };
 
-                self.correccion = {};
-                self.correcciones_eliminadas = [];
-                self.fecha = new Date();
-                self.agregarpag = false;
-                self.verpag = function(pag) {
+                ctrl.correccion = {};
+                ctrl.correcciones_eliminadas = [];
+                ctrl.fecha = new Date();
+                ctrl.agregarpag = false;
+                ctrl.verpag = function(pag) {
                     $scope.paginaset = pag;
                 };
 
-                self.agregar_correccion = function(correcion) {
-                    if (self.agregarpag) {
+                ctrl.agregar_correccion = function(correcion) {
+                    if (ctrl.agregarpag) {
                         correcion.Pagina = $scope.paginadoc;
                     }
                     var idrev = {};
                     idrev.Id = $scope.revisionid;
                     correcion.IdRevision = idrev;
                     correcion.Cambio = "nuevo";
-                    self.correcciones.push(correcion);
-                    self.correccion = {};
+                    ctrl.correcciones.push(correcion);
+                    ctrl.correccion = {};
                 };
 
-                self.eliminar_correccion = function(correcion) {
+                ctrl.eliminar_correccion = function(correcion) {
                     if (correcion.Id != null) {
-                        self.correcciones_eliminadas.push(correcion);
+                        ctrl.correcciones_eliminadas.push(correcion);
                     }
-                    self.correcciones.splice(self.correcciones.indexOf(correcion), 1);
+                    ctrl.correcciones.splice(ctrl.correcciones.indexOf(correcion), 1);
                 };
 
-                self.cancelar_revisado = function() {
+                ctrl.cancelar_revisado = function() {
                     poluxRequest.get("correccion", $.param({
                         query: "IdRevision:" + $scope.revisionid,
                         sortby: "Id",
                         order: "asc"
                     })).then(function(response) {
                         if (response.data != null) {
-                            self.correcciones = response.data;
+                            ctrl.correcciones = response.data;
                         } else {
-                            self.correcciones = [];
+                            ctrl.correcciones = [];
                         }
                     });
-                    self.correcciones_eliminadas = [];
+                    ctrl.correcciones_eliminadas = [];
                 };
 
-                self.guardar_revision = function(accion) {
+                ctrl.guardar_revision = function(accion) {
                     switch (accion) {
                         case "borrador":
-                            if (self.revision.Estado != "borrador") {
-                                self.revision.Estado = "borrador";
-                                poluxRequest.put("revision", self.revision.Id, self.revision);
+                            if (ctrl.revision.Estado != "borrador") {
+                                ctrl.revision.Estado = "borrador";
+                                poluxRequest.put("revision", ctrl.revision.Id, ctrl.revision);
                             }
                             break;
                         case "finalizar":
-                            self.revision.Estado = "finalizada";
-                            self.revision.FechaRevision = new Date();
-                            poluxRequest.put("revision", self.revision.Id, self.revision);
-                            $scope.revisionestado = self.revision.Estado;
+                            ctrl.revision.Estado = "finalizada";
+                            ctrl.revision.FechaRevision = new Date();
+                            poluxRequest.put("revision", ctrl.revision.Id, ctrl.revision);
+                            $scope.revisionestado = ctrl.revision.Estado;
                             break;
                     }
-                    for (var i = 0; i < self.correcciones.length; i++) {
-                        if (self.correcciones[i].Cambio == "nuevo") {
-                            poluxRequest.post("correccion", self.correcciones[i]);
+                    for (var i = 0; i < ctrl.correcciones.length; i++) {
+                        if (ctrl.correcciones[i].Cambio == "nuevo") {
+                            poluxRequest.post("correccion", ctrl.correcciones[i]);
                         }
-                        if (self.correcciones[i].Cambio == "editado") {
-                            poluxRequest.put("correccion", self.correcciones[i].Id, self.correcciones[i]);
+                        if (ctrl.correcciones[i].Cambio == "editado") {
+                            poluxRequest.put("correccion", ctrl.correcciones[i].Id, ctrl.correcciones[i]);
                         }
                     }
-                    for (var i = 0; i < self.correcciones_eliminadas.length; i++) {
-                        poluxRequest.delete("correccion", self.correcciones_eliminadas[i].Id);
+                    for (var i = 0; i < ctrl.correcciones_eliminadas.length; i++) {
+                        poluxRequest.delete("correccion", ctrl.correcciones_eliminadas[i].Id);
                     }
                 };
 

@@ -11,33 +11,36 @@
             </label>
         </div>
         <div class="col-md-7">
-            <ui-select ng-model="docenterevision.trabajo_grado.selected" theme="select2" style="width:100%;">
+            <ui-select ng-model="docenterevision.trabajo_grado.selected" theme="select2" on-select="docenterevision.ver_seleccion($item, $model)" style="width:100%;">
                 <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.IdTrabajoGrado.Titulo}}</ui-select-match>
                 <ui-select-choices repeat="trabajo in docenterevision.vinculacion_docente | filter: $select.search">
                     <span ng-bind-html="trabajo.IdTrabajoGrado.Titulo | highlight: $select.search"></span>
-                    <small ng-bind-html="trabajo.IdTrabajoGrado.Id | highlight: $select.search"></small>
+                    <small ng-bind-html="trabajo.Docente.DOC_NOMBRE | highlight: $select.search"></small>
+                    <small ng-bind-html="trabajo.Docente.DOC_APELLIDO | highlight: $select.search"></small>
                 </ui-select-choices>
             </ui-select>
         </div>
     </div>
+    <div class="row" ng-show="docenterevision.documento">
+        <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+            <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}} </label>
+            <ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc" />
+            <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
+        </div>
 
-    <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-        <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}} </label>
-        <ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc" />
-        <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
-    </div>
-
-    <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
-            </div>
-            <div class="panel-body">
-                <div ng-repeat="revision in docenterevision.revisionesd">
-                    <ver-revision revisionid="revision.Id" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'pendiente'" />
-                    <revision-documento revisionid="revision.Id" revisionestado="revision.Estado" paginadoc="docenterevision.pagina2" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
+        <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
+                </div>
+                <div class="panel-body">
+                    <div ng-repeat="revision in docenterevision.revisionesd">
+                        <ver-revision revisionid="revision.Id" paginaset="docenterevision.pagina2" ng-if="revision.Estado != 'pendiente'" />
+                        <revision-documento revisionid="revision.Id" revisionestado="revision.Estado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" ng-if="revision.Estado != 'finalizada'" />
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
