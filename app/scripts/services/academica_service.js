@@ -9,7 +9,7 @@
  */
 angular.module('academicaService', [])
   .factory('academicaRequest', function ($http) {
-
+    //http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0Ok4ZN5LoYsioCLeOgBJwmWDK9e6x1T-0xKlpwCmwUjaXmypXuJCD3kPEhE-4YJTOXR-nf3m2xfG7TTOR1itS2t-&codigo=20112097324&ano=2014&periodo=1
     var path = "http://10.20.0.127/polux/index.php?data=";
     var periodo = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0On4uKrtXAvwZ0V0Rn0jx7a9DpWV8USQg0uH8PEHS9mgJw";
     var carreras = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OlFcjLj2zQ5wW34uJpjj5pwevOJCnr9Xzx9Z7KT38Atd3O0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb";

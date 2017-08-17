@@ -104,14 +104,18 @@ angular.module('poluxClienteApp')
 
 
       ctrl.cargarDetalles= function (tipoSolicitud, modalidad_seleccionada) {
-
+        ctrl.siPuede=false;
+        ctrl.detallesCargados = false;
+        ctrl.areas = [];
+        ctrl.espaciosElegidos = [];
+        ctrl.estudiantes = [];
         if(modalidad_seleccionada!==undefined){
-          ctrl.modalidad = modalidad_seleccionada;
-            ctrl.estudiante.Modalidad = ctrl.modalidad;
+            ctrl.estudiante.Modalidad = modalidad_seleccionada;
+            ctrl.modalidad = modalidad_seleccionada;
         }
-
         console.log(ctrl.estudiante);
-      poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
+        poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
+          puede.data = "true"
           if(puede.data==="true"){
             console.log(ctrl.estudiante);
             ctrl.soliciudConDetalles = true;
@@ -246,6 +250,7 @@ angular.module('poluxClienteApp')
             });
           }else{
               ctrl.siPuede=true;
+              ctrl.detalles = [];
           }
       });
 
@@ -262,7 +267,8 @@ angular.module('poluxClienteApp')
           };
 
           academicaRequest.promedioEstudiante(parametros).then(function(response2){
-
+            console.log(parametros);
+            console.log(response2);
             if(response2){
               //porcentaje cursado
               var parametros2 = {

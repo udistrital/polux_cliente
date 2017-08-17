@@ -71,6 +71,7 @@ angular.module('poluxClienteApp')
                     "Estado": response2[0].EST_ESTADO_EST,
                     "Nivel": response2[0].TRA_NIVEL,
                     "TipoCarrera": response2[0].TRA_NOMBRE
+
                   };
 
 
@@ -85,35 +86,8 @@ angular.module('poluxClienteApp')
                           if(responseTrabajoEstudiante.data===null){
                             var cantidad;
                             cantidad =  2+ctrl.nuevosEstudiantes.length;
-                            var modalidad;
-                            switch ($scope.modalidad) {
-                              case 1:
-                                  modalidad = "pasantia";
-                                  break;
-                              case 2:
-                                  modalidad = "posgrado";
-                                  break;
-                              case 3:
-                                  modalidad = "profundizacion";
-                                  break;
-                              case 4:
-                                  modalidad = "monografia";
-                                  break;
-                              case 5:
-                                  modalidad = "investigacion";
-                                  break;
-                              case 6:
-                                  modalidad = "creacion";
-                                  break;
-                              case 7:
-                                  modalidad = "emprendimiento";
-                                  break;
-                              case 8:
-                                  modalidad = "articulo";
-                                  break;
-                              };
                             ctrl.datosModalidad = {
-                              "Modalidad": modalidad,
+                              "Modalidad": $scope.modalidad+"",
                               "Cantidad": cantidad+""
                             };
                             console.log("cantidad");
