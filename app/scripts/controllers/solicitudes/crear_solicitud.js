@@ -33,6 +33,7 @@ angular.module('poluxClienteApp')
                       ctrl.codigo = responseTrabajoEstudiante.data[0].CodigoEstudiante;
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
                       ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
+                      console.log(ctrl.trabajo_grado);
                       ctrl.siModalidad = true;
                       ctrl.modalidad_select = true;
                       ctrl.cargarTipoSolicitud(ctrl.modalidad);
@@ -84,10 +85,10 @@ angular.module('poluxClienteApp')
         ctrl.obtenerAreas = function (){
             poluxRequest.get("area_conocimiento").then(function(responseAreas){
                 ctrl.areas = responseAreas.data;
+
             });
 
           }
-
 
 
 
@@ -106,17 +107,18 @@ angular.module('poluxClienteApp')
       ctrl.cargarDetalles= function (tipoSolicitud, modalidad_seleccionada) {
         ctrl.siPuede=false;
         ctrl.detallesCargados = false;
-        ctrl.areas = [];
         ctrl.espaciosElegidos = [];
         ctrl.estudiantes = [];
+        ctrl.ModalidadTipoSolicitud = tipoSolicitud;
         if(modalidad_seleccionada!==undefined){
             ctrl.estudiante.Modalidad = modalidad_seleccionada;
             ctrl.modalidad = modalidad_seleccionada;
         }
         console.log(ctrl.estudiante);
-        poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
-          puede.data = "true"
-          if(puede.data==="true"){
+    //    poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
+
+      //      puede.data = "true"
+      //    if(puede.data==="true"){
             console.log(ctrl.estudiante);
             ctrl.soliciudConDetalles = true;
             ctrl.detalles = [];
@@ -241,6 +243,8 @@ angular.module('poluxClienteApp')
                           });
                       }
 
+
+
                   };
                 });
                 ctrl.detallesCargados = true;
@@ -248,11 +252,11 @@ angular.module('poluxClienteApp')
                     ctrl.soliciudConDetalles = false;
                 }
             });
-          }else{
-              ctrl.siPuede=true;
-              ctrl.detalles = [];
-          }
-      });
+        //  }else{
+    //          ctrl.siPuede=true;
+    //          ctrl.detalles = [];
+        //  }
+    //  });
 
       };
 
@@ -295,6 +299,7 @@ angular.module('poluxClienteApp')
                 ctrl.conEstudiante=true;
                 ctrl.estudiante.asignaturas_elegidas = [];
                 ctrl.estudiante.areas_elegidas= [];
+                ctrl.estudiante.minimoCreditos = false;
               });
             }
           });
@@ -304,5 +309,110 @@ angular.module('poluxClienteApp')
       ctrl.imprimir = function (valor){
         console.log(valor);
       };
+
+
+      ctrl.validarFormularioSolicitud = function(){
+        console.log("detalles");
+        angular.forEach(ctrl.detalles, function(detalle){
+            if(detalle.Detalle.TipoDetalle.Nombre==='Label'){
+                detalle.respuesta = detalle.opciones[0].Nombre;
+            }
+            if(detalle.Detalle.TipoDetalle.Nombre==='Documento'){
+                detalle.respuesta = "urlDocumento";
+            }
+            if(detalle.Detalle.TipoDetalle.Nombre==='Directiva'){
+                if(detalle.Detalle.Descripcion=='solicitar-asignaturas'){
+                  detalle.respuesta = "";
+                  angular.forEach(ctrl.estudiante.asignaturas_elegidas, function(asignatura){
+                     detalle.respuesta = detalle.respuesta +"," + asignatura.CodigoAsignatura;
+                  });
+                  detalle.respuesta = detalle.respuesta.substring(1);
+                }
+                if(detalle.Detalle.Descripcion=='asignar-estudiantes'){
+                   detalle.respuesta = (ctrl.estudiantes.length===0)? ctrl.codigo  :ctrl.codigo+","+ctrl.estudiantes.toString();
+                }
+                if(detalle.Detalle.Descripcion=='asignar-area'){
+                  detalle.respuesta = "";
+                  angular.forEach(ctrl.estudiante.areas_elegidas, function(area){
+                     detalle.respuesta = detalle.respuesta +"," + area.Nombre;
+                  });
+                  detalle.respuesta = detalle.respuesta.substring(1);
+                }
+            }
+            if(detalle.Detalle.TipoDetalle.Nombre==='Checkbox' || detalle.Detalle.TipoDetalle.Nombre==='Radio'){
+                if(detalle.bool === undefined){
+                    detalle.bool = false;
+                }
+                detalle.respuesta = detalle.bool.toString();
+            }
+        });
+        //Realizar validaciones
+        ctrl.erroresFormulario = false;
+        angular.forEach(ctrl.detalles, function(detalle){
+              if(typeof (detalle.respuesta)!=="string"){
+                  console.log("Diligencie correctamente el formulario por favor.");
+                  ctrl.erroresFormulario = true;
+              }
+              if(detalle.respuesta === "" && detalle.Detalle.TipoDetalle.Nombre !== "Directiva" ){
+                console.log("Debe completar todos los campos del formulario.");
+                ctrl.erroresFormulario = true;
+              }
+              if(detalle.respuesta === "" && detalle.Detalle.Descripcion=='asignar-area' ){
+                console.log("Debe ingresar al menos un area.");
+                ctrl.erroresFormulario = true;
+              }
+              if(detalle.Detalle.Descripcion=='solicitar-asignaturas' && !ctrl.estudiante.minimoCreditos ){
+                console.log("Debe cumplir con el minimo de creditos.");
+                ctrl.erroresFormulario = true;
+              }
+              if(detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista"){
+                    var contiene = false;
+                    angular.forEach(detalle.opciones, function(opcion){
+                        if(opcion.Nombre.includes(detalle.respuesta)){
+                            contiene = true;
+                        };
+                    });
+                    if(!contiene){
+                      console.log("Error ingrese una opcion valida")
+                      ctrl.erroresFormulario = true;
+                    }
+              }
+        });
+        if(!ctrl.erroresFormulario){
+            var data = [];
+            var fecha = new Date();
+            if(ctrl.trabajo_grado !== undefined){
+                data.push({
+                  "Fecha": fecha,
+                  "ModalidadTipoSolicitud":ctrl.ModalidadTipoSolicitud,
+                  "TrabajoGrado": ctrl.trabajo_grado,
+                });
+            }else{
+              data.push({
+                "Fecha": fecha,
+                "ModalidadTipoSolicitud":ctrl.ModalidadTipoSolicitud,
+              });
+            }
+            angular.forEach(ctrl.detalles, function(detalle){
+              data.push({
+                 "Descripcion": detalle.respuesta,
+                 "SolicitudTrabajoGrado": 0,
+                 "DetalleTipoSolicitud": detalle.Detalle.Id,
+              });
+            });
+            //Se agrega soliciitud al estudiante
+            data.push({
+              "Usuario":ctrl.codigo,
+              "Solicitud":0,
+            });
+            angular.forEach(ctrl.estudiantes, function(estudiante){
+              data.push({
+                "Usuario":estudiante,
+                "Solicitud":0,
+              });
+            });
+            console.log(data);
+        }
+      }
 
   });

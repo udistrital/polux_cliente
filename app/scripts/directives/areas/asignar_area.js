@@ -20,6 +20,7 @@ angular.module('poluxClienteApp')
         var self = this;
         self.removable=false;
         self.nuevaArea = [];
+
         //Watch necesario luego de confirmar algun registro para el api
         $scope.$watch('newarea',function(){
           if ($scope.newarea=="") {

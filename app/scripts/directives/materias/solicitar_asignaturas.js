@@ -13,7 +13,7 @@ angular.module('poluxClienteApp')
       scope: {
         estudiante: '=',
         modalidad: '=',
-        l: '=?'
+        l: '=?',
       },
 
       templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
@@ -164,6 +164,13 @@ angular.module('poluxClienteApp')
             var c = parseInt(item.Creditos, 10);
             ctrl.creditos = ctrl.creditos + c;
           }
+          console.log($scope);
+          if(ctrl.creditos >= ctrl.creditosMinimos){
+                ctrl.minimoCreditos = true;
+          }else{
+                ctrl.minimoCreditos = false;
+          }
+          $scope.estudiante.minimoCreditos = ctrl.minimoCreditos;
           console.log(JSON.stringify($scope.estudiante.asignaturas_elegidas))
 
         };

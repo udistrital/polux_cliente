@@ -31,14 +31,15 @@
         Formulario de solicitud
     </div>
     <div class="panel-body">
+        <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
        <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla? <br> </br> </label>
 
        <!-- detalles de la solicitud -->
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
-        <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row">
+        <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row" >
               <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
-              <label class="col-sm-9 control-label" ng-model="detalle.respuesta"> {{detalle.opciones[0].Nombre}}</label>
+              <label class="col-sm-9 control-label"> {{detalle.opciones[0].Nombre}}</label>
           </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
             <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
@@ -53,7 +54,7 @@
            <input type="file" class="col-sm-4" ng-model="detalle.respuesta" required></input>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'">
-           <input type="checkbox" class="col-sm-3" ng-model="detalle.respuesta" value="{{detalle.Detalle.TipoDetalle.Nombre}}"required>
+           <input type="checkbox" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}">
            <label class="col-sm-8 control-label"> {{detalle.Detalle.Enunciado}}</label>
            <br>
            <br>
@@ -61,22 +62,22 @@
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
            <label class="col-sm-4 control-label"> {{detalle.Detalle.Enunciado}}</label>
            <div class="col-sm-8">
-               <select class="form-control" ng-model="detalle.respuesta">
+               <select class="form-control" ng-model="detalle.respuesta" required>
                      <option  ng-repeat="opcion in detalle.opciones" ng-value="opcion.Nombre"> {{opcion.Nombre}} </option>
                </select>
            </div>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio'">
-            <input type="radio" class="col-sm-3" ng-model="detalle.respuesta" value="{{detalle.Detalle.TipoDetalle.Nombre}}"required>
+            <input type="radio" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}">
             <label class="col-sm-9 control-label"> {{detalle.Detalle.Enunciado}}</label>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" clas="row">
             <label class="col-sm-12 control-label">{{detalle.Detalle.Enunciado}}</label>
-            <textarea class="col-sm-12" rows="8" cols="100" ng-model="detalle.respuesta" />
+            <textarea class="col-sm-12" rows="8" cols="100" ng-model="detalle.respuesta" required/>
             <b>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
-            <solicitar-asignaturas  estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
+            <solicitar-asignaturas   estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'" />
             <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes'" />
             <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">
@@ -105,7 +106,9 @@
        </div>
 
        <label class="col-sm-5 control-label"> </label>
-       <input ng-click="" value="Enviar Solicitud"  class="col-sm-2 btn btn-success" type="submit">
+       <input type="submit" value="Enviar Solicitud"  class="col-sm-2 btn btn-success" type="submit">
+
+     </form>
     </div>
 
 </div>
