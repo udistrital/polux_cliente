@@ -379,39 +379,68 @@ angular.module('poluxClienteApp')
               }
         });
         if(!ctrl.erroresFormulario){
-            var data = [];
+            //var data_solicitud = [];
+            var data_solicitud={};
+            var data_detalles = [];
+            var data_usuarios = [];
             var fecha = new Date();
+
             if(ctrl.trabajo_grado !== undefined){
-                data.push({
+                data_solicitud={
                   "Fecha": fecha,
-                  "ModalidadTipoSolicitud":ctrl.ModalidadTipoSolicitud,
-                  "TrabajoGrado": ctrl.trabajo_grado,
-                });
+                  "ModalidadTipoSolicitud": {
+                    "Id": ctrl.ModalidadTipoSolicitud
+                  },
+                  "TrabajoGrado": {
+                    "Id": ctrl.trabajo_grado
+                  }
+                };
             }else{
-              data.push({
+              data_solicitud={
                 "Fecha": fecha,
-                "ModalidadTipoSolicitud":ctrl.ModalidadTipoSolicitud,
-              });
+                "ModalidadTipoSolicitud": {
+                  "Id": ctrl.ModalidadTipoSolicitud
+                }
+              };
             }
             angular.forEach(ctrl.detalles, function(detalle){
-              data.push({
+              data_detalles.push({
                  "Descripcion": detalle.respuesta,
-                 "SolicitudTrabajoGrado": 0,
-                 "DetalleTipoSolicitud": detalle.Detalle.Id,
+                 "SolicitudTrabajoGrado": {
+                   "Id": 0
+                 },
+                 "DetalleTipoSolicitud": {
+                   "Id": detalle.Detalle.Id
+                 }
               });
             });
-            //Se agrega soliciitud al estudiante
-            data.push({
+            //Se agrega solicitud al estudiante
+            data_usuarios.push({
               "Usuario":ctrl.codigo,
-              "Solicitud":0,
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              }
             });
+
             angular.forEach(ctrl.estudiantes, function(estudiante){
-              data.push({
+              data_usuarios.push({
                 "Usuario":estudiante,
-                "Solicitud":0,
+                "SolicitudTrabajoGrado": {
+                  "Id": 0
+                }
               });
             });
-            console.log(data);
+
+            //se crea objeto con las solicitudes
+            ctrl.solicitud={
+              Solicitud: data_solicitud,
+              DetallesSolicitud: data_detalles,
+              UsuariosSolicitud: data_usuarios
+            }
+
+            poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
+              console.log(response.data);
+            });
         }
       }
 
