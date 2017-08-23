@@ -176,11 +176,11 @@ angular.module('poluxClienteApp')
                           poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones){
                               if (detalle.Detalle.Nombre.includes("Nombre anterior de la propuesta")) {
                                   detalle.opciones.push({
-                                    "Nombre":responseOpciones.data[0].Documento.Titulo
+                                    "NOMBRE":responseOpciones.data[0].Documento.Titulo
                                   });
                               }else if(detalle.Detalle.Nombre.includes("Anterior resumen de la propuesta")){
                                 detalle.opciones.push({
-                                  "Nombre":responseOpciones.data[0].Documento.Resumen
+                                  "NOMBRE":responseOpciones.data[0].Documento.Resumen
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Anteriores areas de conocimiento")){
                                 var areasString = "";
@@ -188,18 +188,18 @@ angular.module('poluxClienteApp')
                                     areasString = areasString +", " + area.AreaConocimiento.Nombre;
                                 });
                                 detalle.opciones.push({
-                                  "Nombre":areasString.substring(2)
+                                  "NOMBRE":areasString.substring(2)
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Nombre Empresa")){
                                 angular.forEach(responseOpciones.data,function(empresa){
                                   detalle.opciones.push({
-                                    "Nombre":empresa.Identificacion+"",
+                                    "NOMBRE":empresa.Identificacion+"",
                                   });
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Espacio Academico Anterior")){
                                 angular.forEach(responseOpciones.data,function(espacio){
                                   detalle.opciones.push({
-                                    "Nombre":espacio.EspaciosAcademicosElegibles.CodigoAsignatura
+                                    "NOMBRE":espacio.EspaciosAcademicosElegibles.CodigoAsignatura
                                   });
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")){
@@ -212,7 +212,7 @@ angular.module('poluxClienteApp')
                                   });
                                   if(!esta){
                                     detalle.opciones.push({
-                                      "Nombre":espacio.CodigoAsignatura
+                                      "NOMBRE":espacio.CodigoAsignatura
                                     });
                                   }
                                 });
@@ -223,7 +223,11 @@ angular.module('poluxClienteApp')
                       }
                       if(parametrosServicio[0]==="academica"){
                           if(parametrosServicio[1]==="docente"){
-                                detalle.opciones=academicaRequest.obtenerDocentesJson();
+                                //detalle.opciones=academicaRequest.obtenerDocentesJson();
+                                academicaRequest.obtenerDocentes().then(function(docentes){
+                                  detalle.opciones=docentes;
+                                  console.log(docentes);
+                                });
                           }
                       }
                       if(parametrosServicio[0]==="cidc"){
@@ -238,7 +242,7 @@ angular.module('poluxClienteApp')
                           parametrosConsulta = parametrosServicio[2].split(",");
                           angular.forEach(parametrosConsulta, function(opcion){
                             detalle.opciones.push({
-                              "Nombre":opcion
+                              "NOMBRE":opcion
                             });
                           });
                       }
@@ -383,7 +387,7 @@ angular.module('poluxClienteApp')
               if(detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista"){
                     var contiene = false;
                     angular.forEach(detalle.opciones, function(opcion){
-                        if(opcion.Nombre.includes(detalle.respuesta)){
+                        if(opcion.NOMBRE.includes(detalle.respuesta)){
                             contiene = true;
                         };
                     });

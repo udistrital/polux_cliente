@@ -63,7 +63,7 @@
            <label class="col-sm-4 control-label"> {{detalle.Detalle.Enunciado}}</label>
            <div class="col-sm-8">
                <select class="form-control" ng-model="detalle.respuesta" required>
-                     <option  ng-repeat="opcion in detalle.opciones" ng-value="opcion.Nombre"> {{opcion.Nombre}} </option>
+                     <option  ng-repeat="opcion in detalle.opciones" ng-value="opcion.NOMBRE"> {{opcion.NOMBRE}} </option>
                </select>
            </div>
          </div>
@@ -97,7 +97,7 @@
              placeholder="Seleccione ..." required autocomplete="off" />
              <!-- lista de elementos del input-->
              <datalist class="selector" id="lista+{{detalle.Detalle.Nombre}}"  >
-               <option ng-repeat="opcion in detalle.opciones" value="{{opcion.Nombre}}"></option>
+               <option ng-repeat="opcion in detalle.opciones" value="{{opcion.NOMBRE}}"></option>
              </datalist>
            </div>
          </div>
