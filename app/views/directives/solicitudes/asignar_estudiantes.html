@@ -1,9 +1,9 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-      Agregar estudiantes a la solicitud
+      {{'AGREGAR_ESTUDIANTES' | translate}}
   </div>
   <div class="panel-body">
-    <label class="col-sm-5 control-label">Digite el código de los otros estudiantes que participan en el proyecto</label>
+    <label class="col-sm-5 control-label">{{'INGRESE_CODIGO' | translate}}</label>
     <form  class="col-sm-7 control-label" role="form" name="formEstudiantes" id="formEstudiantes">
         <div class="input-group">
         <input type="nummber" class="form-control"
@@ -24,19 +24,19 @@
     <br>
 
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteRegistrado">
-            Error: El estudiante ya se encuentra en la lista de solicitados.
+            {{'ESTUDIANTE_EN_LISTA' | translate}}
         </div>
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteExiste">
-            Error: El codigo digitado no es valido.
+            {{'ESTUDIANTE_NO_VALIDO' | translate}}
         </div>
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteValido">
-            Error: El estudiante solicitado actualmente no cumple con los requisitos para realizar un trabajo de grado.
+            {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
         </div>
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteConTrabajo">
-            Error: El estudiante solicitado actualmente esta realizando un trabajo de grado.
+            {{'ESTUDIANTE_TRABAJO_GRADO' | translate}}
         </div>
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.cantidadExcedida">
-            Error: Se excede la cantidad de estudiantes para la modalidad solicitada.
+            {{'CANTIDAD_EXCEDIDA' | translate}}
         </div>
 
     <div class="row">

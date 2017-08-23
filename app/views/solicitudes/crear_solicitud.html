@@ -1,11 +1,11 @@
 <br>
 <div class="panel panel-default" ng-if="crearSolicitud.conEstudiante">
     <div class="panel-heading">
-        Crear nueva solicitud
+        {{'NUEVA_SOLICITUD' | translate}}
     </div>
     <div class="panel-body">
         <div class="row" ng-if="!crearSolicitud.siModalidad">
-        <label class="col-sm-2 control-label"> Seleccione la modalidad</label>
+        <label class="col-sm-2 control-label"> {{'SELECCIONAR_MODALIDAD' | translate}}</label>
         <div class="col-sm-10">
             <select class="form-control" ng-model="modalidad_seleccionada" ng-change="crearSolicitud.cargarDetalles(2,modalidad_seleccionada)">
                   <option  ng-repeat="modalidad in crearSolicitud.modalidades" ng-value="modalidad.Id"> {{modalidad.Nombre}} </option>
@@ -14,7 +14,7 @@
       </div>
       <br>
         <div class="row" ng-if="crearSolicitud.modalidad_select">
-          <label class="col-sm-2 control-label"> Seleccione tipo de solicitud</label>
+          <label class="col-sm-2 control-label"> {{'SELECCIONAR_SOLICITUD' | translate}} </label>
           <div class="col-sm-10">
               <select class="form-control" ng-model="solicitud_seleccionada" ng-change="crearSolicitud.cargarDetalles(solicitud_seleccionada)">
                     <option  ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud.Id" ng-if="solicitud.TipoSolicitud.Id != 2"> {{solicitud.TipoSolicitud.Nombre}} </option>
@@ -24,11 +24,11 @@
     </div>
 </div>
 <div class="panel-body alert alert-danger" ng-show="crearSolicitud.siPuede">
-    Error: El estudiante no cumple los requisitos para solicitar esta modalidad, por lo tanto debe elegir otra.
+    {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
 </div>
 <div class="panel panel-default" ng-show="crearSolicitud.detallesCargados">
     <div class="panel-heading">
-        Formulario de solicitud
+        {{'FORMULARIO_SOLICITUD' | translate}}
     </div>
     <div class="panel-body">
         <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
@@ -38,7 +38,7 @@
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row" >
-              <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+              <label class="col-sm-3 control-label"> {{ detalle.Detalle.Enunciado}}</label>
               <label class="col-sm-9 control-label"> {{detalle.opciones[0].Nombre}}</label>
           </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
@@ -81,10 +81,10 @@
             <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes'" />
             <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">
-                    Areas del conocimiento
+                    {{'AREAS_CONOCIMIENTO' | translate}}
                 </div>
                 <div class="panel-body">
-                  <label class="col-sm-5 control-label">Seleccione las areas del conocimiento de su proyecto</label>
+                  <label class="col-sm-5 control-label">{{'SELECCIONE_AREAS_CONOCIMIENTO' | translate}}</label>
                   <asignar-area class="col-sm-7 control-label" setareas="crearSolicitud.areas" newarea="crearSolicitud.estudiante.areas_elegidas">
                 </div>
             </div>
@@ -114,9 +114,9 @@
 </div>
 <div class="panel panel-default" ng-if="!crearSolicitud.conEstudiante">
     <div class="panel-heading">
-        Error
+        {{'ERROR' | translate}}
     </div>
     <div class="panel-body alert alert-danger">
-        Error: El estudiante no se encuentra
+        {{'ESTUDIANTE_NO_ENCONTRADO' | translate}}
     </div>
 </div>

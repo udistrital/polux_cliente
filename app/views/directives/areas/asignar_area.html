@@ -17,9 +17,9 @@
         <div ng-show="formAsignar.asignado.$invalid ">
           <div ng-messages="formAsignar.asignado.$error" style="color:red"
           class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
-          <div ng-message="required"> Ingrese una nueva área </div>
-          <div ng-message="minlength"> Nombre muy corto </div>
-          <div ng-message="maxlength"> Nombre muy extenso </div>
+          <div ng-message="required"> {{'NUEVA_AREA' | translate}} </div>
+          <div ng-message="minlength"> {{'NOMBRE_CORTO' | translate}} </div>
+          <div ng-message="maxlength"> {{'NOMBRE_LARGO' | translate}} </div>
         </div>
       </div>
   </form>

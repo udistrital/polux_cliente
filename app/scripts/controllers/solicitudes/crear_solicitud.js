@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesCrearSolicitudCtrl', function (poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+  .controller('SolicitudesCrearSolicitudCtrl', function ($translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
       var ctrl = this;
       ctrl.modalidades = [];
       ctrl.solicitudes = [];
