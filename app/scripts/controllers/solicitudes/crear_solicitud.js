@@ -193,7 +193,7 @@ angular.module('poluxClienteApp')
                               }else if(detalle.Detalle.Nombre.includes("Nombre Empresa")){
                                 angular.forEach(responseOpciones.data,function(empresa){
                                   detalle.opciones.push({
-                                    "Nombre":empresa.Identificacion
+                                    "Nombre":empresa.Identificacion+"",
                                   });
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Espacio Academico Anterior")){
@@ -430,9 +430,10 @@ angular.module('poluxClienteApp')
                    "Id": 0
                  },
                  "DetalleTipoSolicitud": {
-                   "Id": detalle.Detalle.Id
+                   "Id": detalle.Id
                  }
               });
+
             });
             //Se agrega solicitud al estudiante
             data_usuarios.push({
@@ -459,7 +460,19 @@ angular.module('poluxClienteApp')
             }
 
             poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-              console.log(response.data);
+              if(response.data[0]==="Success"){
+                swal(
+                  'Registro del formulario',
+                  "El formulario se registro correctamente",
+                  'success'
+                );
+              }else{
+                swal(
+                  'Registro del formulario',
+                  response.data[1],
+                  'warning'
+                );
+              }
             });
         }
       }
