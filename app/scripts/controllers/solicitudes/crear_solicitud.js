@@ -350,15 +350,30 @@ angular.module('poluxClienteApp')
         ctrl.erroresFormulario = false;
         angular.forEach(ctrl.detalles, function(detalle){
               if(typeof (detalle.respuesta)!=="string"){
-                  console.log("Diligencie correctamente el formulario por favor.");
+                  swal(
+                    'Validación del formulario',
+                    "Diligencie correctamente el formulario por favor.",
+                    'warning'
+                  );
+                  //console.log("Diligencie correctamente el formulario por favor.");
                   ctrl.erroresFormulario = true;
               }
               if(detalle.respuesta === "" && detalle.Detalle.TipoDetalle.Nombre !== "Directiva" ){
-                console.log("Debe completar todos los campos del formulario.");
+                swal(
+                  'Validación del formulario',
+                  "Debe completar todos los campos del formulario.",
+                  'warning'
+                );
+                //console.log("Debe completar todos los campos del formulario.");
                 ctrl.erroresFormulario = true;
               }
               if(detalle.respuesta === "" && detalle.Detalle.Descripcion=='asignar-area' ){
-                console.log("Debe ingresar al menos un area.");
+                swal(
+                  'Validación del formulario',
+                  "Debe ingresar al menos un area.",
+                  'warning'
+                );
+                //console.log("Debe ingresar al menos un area.");
                 ctrl.erroresFormulario = true;
               }
               if(detalle.Detalle.Descripcion=='solicitar-asignaturas' && !ctrl.estudiante.minimoCreditos ){
@@ -373,6 +388,11 @@ angular.module('poluxClienteApp')
                         };
                     });
                     if(!contiene){
+                      swal(
+                        'Validación del formulario',
+                        "Error ingrese una opcion valida.",
+                        'warning'
+                      );
                       console.log("Error ingrese una opcion valida")
                       ctrl.erroresFormulario = true;
                     }
