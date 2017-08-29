@@ -9,6 +9,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl', function ($translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+
       var ctrl = this;
       ctrl.modalidades = [];
       ctrl.solicitudes = [];
@@ -466,14 +467,14 @@ angular.module('poluxClienteApp')
             poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
               if(response.data[0]==="Success"){
                 swal(
-                  'Registro del formulario',
-                  "El formulario se registro correctamente",
+                  $translate.instant("FORMULARIO_SOLICITUD"),
+                  $translate.instant("SOLICITUD_REGISTRADA"),
                   'success'
                 );
               }else{
                 swal(
-                  'Registro del formulario',
-                  response.data[1],
+                  $translate.instant("FORMULARIO_SOLICITUD"),
+                  $translate.instant(response.data[1],),
                   'warning'
                 );
               }

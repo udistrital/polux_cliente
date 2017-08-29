@@ -34,6 +34,10 @@ var text_es = {
   ERROR:"ERROR",
   ESTUDIANTE_NO_ENCONTRADO:"Error: El estudiante no se encuentra",
   NOMBRE_EMPRESA:"Escriba el nombre de la empresa",
+  REGISTRO_FORMULARIO:"Registro de formulario",
+  SOLICITUD_REGISTRADA:"El formulario se registro correctamente",
+  ERROR_SOLICITUDES_1:"Ocurrio un error al insertar los detalles de la solicitud",
+  ERROR_SOLICITUDES_2:"Ocurrio un error al insertar los usuarios de la solicitud.",
 };
 var text_en = {
   TITULO: "GENERATOR-OAS",
@@ -61,6 +65,10 @@ var text_en = {
   ERROR:"ERROR",
   ESTUDIANTE_NO_ENCONTRADO:"Error: The student is not found",
   NOMBRE_EMPRESA:"Enter the name of the company",
+  REGISTRO_FORMULARIO:"Form Submit",
+  SOLICITUD_REGISTRADA:"The form was successfully registered",
+  ERROR_SOLICITUDES_1:"There was an error inserting the details of the request.",
+  ERROR_SOLICITUDES_2:"There was an error inserting the details of the request",
 };
 angular.module('poluxClienteApp')
   .config(function($translateProvider) {
