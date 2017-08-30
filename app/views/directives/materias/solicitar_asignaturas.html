@@ -1,21 +1,21 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        Solicitar Espacios Académicos.
-        {{estudiante.Tipo}}
+
+        {{'SOLICITAR_ASIGNATURAS' | translate}}
     </div>
     <div class="panel-body">
 
-        <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
+        <label for="anio" class="col-sm-2 control-label">{{'ANIO' | translate}}:</label>
         <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.APE_ANO}}</label>
 
-        <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
+        <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}:</label>
         <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.APE_PER}}</label>
 
-        <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
+        <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
         <div class="col-sm-10">
           <select ng-model="carreraSeleccionada" name="carrera" class="form-control"
-          ng-change="d_solicitarAsignaturas.myFunc(carreraSeleccionada)">
+          ng-change="d_solicitarAsignaturas.cargarMaterias(carreraSeleccionada)">
             <option ng-repeat="p in d_solicitarAsignaturas.carreras" ng-value="p.Codigo">{{p.Nombre}} </option>
           </select><br>
         </div>
@@ -23,12 +23,12 @@
         <div class="panel panel-default panel-body col-md-12">
           <div class="mi-grid" id="mi-grid" ui-grid="d_solicitarAsignaturas.gridOptions" ui-grid-cellNav class="grid" ui-grid-auto-resize  style="height: {{d_solicitarAsignaturas.desiredTableHeight + 'px'}}; width: {{d_solicitarAsignaturas.desiredTableWidth + 'px'}};"></div>
         </div>
-        <div class="form-group">
-          <div class=""><center>
+        <!--div class="form-group">
+          <div class="">
             <input type="submit" ng-click="d_solicitarAsignaturas.add()" value="Enviar Solicitud" class="btn btn-success"/>
             <center>
           </div>
-        </div>
+        </div-->
 
     </div>
 </div>
