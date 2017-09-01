@@ -38,29 +38,29 @@
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row" >
-              <label class="col-sm-3 control-label"> {{ detalle.Detalle.Enunciado}}</label>
+              <label class="col-sm-3 control-label"> {{ detalle.label}}</label>
               <label class="col-sm-9 control-label"> {{detalle.opciones[0].Nombre}}</label>
           </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
-            <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
             <input type="text" class="col-sm-8" ng-model="detalle.respuesta" required>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Numerico'" class="row">
-           <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <input type="number" class="col-sm-8" ng-model="detalle.respuesta" required>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'">
-           <label class="col-sm-8 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <label class="col-sm-8 control-label"> {{detalle.label}}</label>
            <input type="file" class="col-sm-4" ng-model="detalle.respuesta" required></input>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'">
            <input type="checkbox" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}">
-           <label class="col-sm-8 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <label class="col-sm-8 control-label"> {{detalle.label}}</label>
            <br>
            <br>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
-           <label class="col-sm-4 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <label class="col-sm-4 control-label"> {{detalle.label}}</label>
            <div class="col-sm-8">
                <select class="form-control" ng-model="detalle.respuesta" required>
                      <option  ng-repeat="opcion in detalle.opciones" ng-value="opcion.NOMBRE"> {{opcion.NOMBRE}} </option>
@@ -69,10 +69,10 @@
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio'">
             <input type="radio" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}">
-            <label class="col-sm-9 control-label"> {{detalle.Detalle.Enunciado}}</label>
+            <label class="col-sm-9 control-label"> {{detalle.label}}</label>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" clas="row">
-            <label class="col-sm-12 control-label">{{detalle.Detalle.Enunciado}}</label>
+            <label class="col-sm-12 control-label">{{detalle.label}}</label>
             <textarea class="col-sm-12" rows="8" cols="100" ng-model="detalle.respuesta" required/>
             <b>
          </div>
@@ -91,7 +91,7 @@
             <b>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Selector'" class = "row">
-           <label class="col-sm-3 control-label"> {{detalle.Detalle.Enunciado}}</label>
+           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
              <input type="text" class="form-control" list="lista+{{detalle.Detalle.Nombre}}" ng-model="detalle.respuesta"
              placeholder="Seleccione ..." required autocomplete="off" />
@@ -106,7 +106,7 @@
        </div>
 
        <label class="col-sm-5 control-label"> </label>
-       <input type="submit" value="Enviar Solicitud"  class="col-sm-2 btn btn-success" type="submit">
+       <input type="submit" value="{{'ENVIAR_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success" type="submit">
 
      </form>
     </div>

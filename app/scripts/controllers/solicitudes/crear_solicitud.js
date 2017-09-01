@@ -138,7 +138,10 @@ angular.module('poluxClienteApp')
             poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
                 ctrl.detalles = responseDetalles.data;
                 console.log(ctrl.detalles);
+                //Se cargan opciones de los detalles
                 angular.forEach(ctrl.detalles, function(detalle){
+                  //Se internacionalizan variables y se crean labels de los detalles
+                  detalle.label = $translate.instant(detalle.Detalle.Enunciado);  
                   detalle.respuesta= "";
                   detalle.opciones = [];
                   //SE evalua si el detalle necesita cargar datos
@@ -388,7 +391,7 @@ angular.module('poluxClienteApp')
               if(detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista"){
                     var contiene = false;
                     angular.forEach(detalle.opciones, function(opcion){
-                        if(opcion.NOMBRE.includes(detalle.respuesta)){
+                        if(opcion.NOMBRE === detalle.respuesta){
                             contiene = true;
                         };
                     });

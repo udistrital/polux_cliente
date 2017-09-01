@@ -166,7 +166,9 @@ var text_es = {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos"
     },
-
+    ENVIAR_SOLICITUD:"Enviar Solicitud",
+    INGRESAR_PROPUESTA:"Ingrese el nombre de la propuesta",
+    SELECCIONE_EMPRESA:"Seleccione el nombre de la empresa",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -314,7 +316,9 @@ var text_en = {
         GUARDAR_ESPACIOS_ACADEMICOS: "Save academic spaces",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces"
     },
-
+    ENVIAR_SOLICITUD:"Send Form",
+    INGRESAR_PROPUESTA:"Enter the name of the proposal",
+    SELECCIONE_EMPRESA:"Select the name of the company",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
