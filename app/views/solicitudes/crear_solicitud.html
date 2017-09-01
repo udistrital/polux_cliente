@@ -32,7 +32,7 @@
     </div>
     <div class="panel-body">
         <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
-       <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla? <br> </br> </label>
+       <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> {{'SOLICITUD_SIN_FORMULARIO' | translate}} <br> </br> </label>
 
        <!-- detalles de la solicitud -->
        <div ng-if="crearSolicitud.soliciudConDetalles">
