@@ -141,7 +141,7 @@ angular.module('poluxClienteApp')
                 //Se cargan opciones de los detalles
                 angular.forEach(ctrl.detalles, function(detalle){
                   //Se internacionalizan variables y se crean labels de los detalles
-                  detalle.label = $translate.instant(detalle.Detalle.Enunciado);  
+                  detalle.label = $translate.instant(detalle.Detalle.Enunciado);
                   detalle.respuesta= "";
                   detalle.opciones = [];
                   //SE evalua si el detalle necesita cargar datos
@@ -411,6 +411,7 @@ angular.module('poluxClienteApp')
             var data_solicitud={};
             var data_detalles = [];
             var data_usuarios = [];
+            var data_respuesta = {};
             var fecha = new Date();
 
             if(ctrl.trabajo_grado !== undefined){
@@ -443,6 +444,20 @@ angular.module('poluxClienteApp')
               });
 
             });
+            //respuesta ded la solicitud
+            data_respuesta={
+              "Fecha": fecha,
+              "Justificacion": "Su solicitud fue radicada",
+              "EnteResponsable":0,
+              "Usuario":0,
+              "EstadoSolicitud": {
+                "Id": 1
+              },
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              }
+            }
+
             //Se agrega solicitud al estudiante
             data_usuarios.push({
               "Usuario":ctrl.codigo,
@@ -463,6 +478,7 @@ angular.module('poluxClienteApp')
             //se crea objeto con las solicitudes
             ctrl.solicitud={
               Solicitud: data_solicitud,
+              Respuesta: data_respuesta,
               DetallesSolicitud: data_detalles,
               UsuariosSolicitud: data_usuarios
             }
