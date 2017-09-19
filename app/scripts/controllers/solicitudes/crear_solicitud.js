@@ -279,8 +279,6 @@ angular.module('poluxClienteApp')
           };
 
           academicaRequest.promedioEstudiante(parametros).then(function(response2){
-            console.log(parametros);
-            console.log(response2);
             if(response2){
               //porcentaje cursado
               var parametros2 = {
@@ -300,7 +298,8 @@ angular.module('poluxClienteApp')
                   "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
                   "Estado": response2[0].EST_ESTADO_EST,
                   "Nivel": response2[0].TRA_NIVEL,
-                  "TipoCarrera": response2[0].TRA_NOMBRE
+                  "TipoCarrera": response2[0].TRA_NOMBRE,
+                  "Carrera":response2[0].EST_CRA_COD
 
                 };
                 console.log(ctrl.estudiante);
@@ -444,19 +443,6 @@ angular.module('poluxClienteApp')
               });
 
             });
-            //respuesta ded la solicitud
-            data_respuesta={
-              "Fecha": fecha,
-              "Justificacion": "Su solicitud fue radicada",
-              "EnteResponsable":0,
-              "Usuario":0,
-              "EstadoSolicitud": {
-                "Id": 1
-              },
-              "SolicitudTrabajoGrado": {
-                "Id": 0
-              }
-            }
 
             //Se agrega solicitud al estudiante
             data_usuarios.push({
@@ -475,29 +461,55 @@ angular.module('poluxClienteApp')
               });
             });
 
-            //se crea objeto con las solicitudes
-            ctrl.solicitud={
-              Solicitud: data_solicitud,
-              Respuesta: data_respuesta,
-              DetallesSolicitud: data_detalles,
-              UsuariosSolicitud: data_usuarios
-            }
 
-            poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-              if(response.data[0]==="Success"){
-                swal(
-                  $translate.instant("FORMULARIO_SOLICITUD"),
-                  $translate.instant("SOLICITUD_REGISTRADA"),
-                  'success'
-                );
-              }else{
-                swal(
-                  $translate.instant("FORMULARIO_SOLICITUD"),
-                  $translate.instant(response.data[1],),
-                  'warning'
-                );
-              }
-            });
+          var parametrosCoordinador = {
+            "carrera": ctrl.estudiante.Carrera
+          };
+          academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
+             //respuesta ded la solicitud
+             console.log(responseCoordinador[0].ID_COORDINADOR);
+             data_respuesta={
+               "Fecha": fecha,
+               "Justificacion": "Su solicitud fue radicada",
+               "EnteResponsable":0,
+               "Usuario": parseInt(responseCoordinador[0].ID_COORDINADOR),
+               "EstadoSolicitud": {
+                 "Id": 1
+               },
+               "SolicitudTrabajoGrado": {
+                 "Id": 0
+               }
+             }
+
+             //se crea objeto con las solicitudes
+             ctrl.solicitud={
+               Solicitud: data_solicitud,
+               Respuesta: data_respuesta,
+               DetallesSolicitud: data_detalles,
+               UsuariosSolicitud: data_usuarios
+             }
+
+
+             poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
+                console.log(response.data);
+                 if(response.data[0]==="Success"){
+                   swal(
+                     $translate.instant("FORMULARIO_SOLICITUD"),
+                     $translate.instant("SOLICITUD_REGISTRADA"),
+                     'success'
+                   );
+                 }else{
+                   swal(
+                     $translate.instant("FORMULARIO_SOLICITUD"),
+                     $translate.instant(response.data[1]),
+                     'warning'
+                   );
+                 }
+               });
+
+          });
+
+
         }
       }
 
