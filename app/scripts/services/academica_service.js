@@ -27,9 +27,7 @@ angular.module('academicaService', [])
             obtener: function(ruta, parametros) {
                 return $http.get(path + ruta, { params: parametros })
                     .then(function(response) {
-                        var json = response.data.split("<json>");
-                        var jsonObj = JSON.parse(json[1]);
-                        return jsonObj;
+                        return response.data;
                     });
             },
 
