@@ -37,8 +37,8 @@ angular
         'oikosService',
         'academicaService',
         'cadenaService',
-        'ui.utils.masks',
         'ui.select',
+        'cidcService',
         //'blueimp.fileupload',
         'poluxMidService',
         'pdf',
@@ -171,6 +171,21 @@ angular
                 templateUrl: 'views/formato/socializacion.html',
                 controller: 'SocializacionCtrl',
                 controllerAs: 'socializacion'
+            })
+            .when('/solicitudes/listar_solicitudes', {
+              templateUrl: 'views/solicitudes/listar_solicitudes.html',
+              controller: 'SolicitudesListarSolicitudesCtrl',
+              controllerAs: 'listarSolicitudes'
+            })
+            .when('/solicitudes/crear_solicitud/:idEstudiante', {
+              templateUrl: 'views/solicitudes/crear_solicitud.html',
+              controller: 'SolicitudesCrearSolicitudCtrl',
+              controllerAs: 'crearSolicitud'
+            })
+            .when('/solicitudes/crear_solicitud', {
+              templateUrl: 'views/solicitudes/crear_solicitud.html',
+              controller: 'SolicitudesCrearSolicitudCtrl',
+              controllerAs: 'crearSolicitud'
             })
             .otherwise({
                 redirectTo: '/'

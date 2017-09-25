@@ -20,15 +20,14 @@ angular.module('academicaService', [])
         var estudiantes = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0Om74SuwW6IkfDoYa6tncUbxFQOnPY89W5nK1iqlZM0A46MmBGhubLLF7DrHMUwJvi67vmq5o_7ABH2LLvMfV9hM";
         var porcentaje_cursado = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0Ok4ZN5LoYsioCLeOgBJwmWDK9e6x1T-0xKlpwCmwUjaXmypXuJCD3kPEhE-4YJTOXR-nf3m2xfG7TTOR1itS2t-";
         var periodo_anterior = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0Okv8IQ9qNj125-wfzl-rR7R9IygNmerbc-w_VnnqEawBQ";
+        var coordinador_carrera = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmXyQ-hqKi02A-HoywRRQVhzx5WnJ2f7qi-ei4TkWGaUAFeySeBzV_jUp-Cp2YQC3-Q5iMzSdWmVtIklG3eZ8s2";
 
         return {
 
             obtener: function(ruta, parametros) {
                 return $http.get(path + ruta, { params: parametros })
                     .then(function(response) {
-                        var json = response.data.split("<json>");
-                        var jsonObj = JSON.parse(json[1]);
-                        return jsonObj;
+                        return response.data;
                     });
             },
 
@@ -40,6 +39,10 @@ angular.module('academicaService', [])
                         var jsonObj = JSON.parse(json[1]);
                         return jsonObj;
                     });
+            },
+
+            obtenerCoordinador: function(parametros) {
+                return this.obtener(coordinador_carrera, parametros);
             },
 
             obtenerPeriodo: function(parametros) {

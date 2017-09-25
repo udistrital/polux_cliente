@@ -1,0 +1,75 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'LISTAR_SOLICITUDES' | translate}}
+    </div>
+    <div class="panel-body">
+          <div class="row">
+            <div class="col-md-6">
+            <p>Código:  <input type="text" name="userId" ng-model="userId" required><br></p>
+           </div>
+           <div class="col-md-6">
+           <p>Rol:  <input type="text" name="userRole" ng-model="listarSolicitudes.userRole" required><br></p>
+          </div>
+          </div>
+            <br>
+            <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRole==='estudiante'" class="alert alert-danger" >
+                <strong>{{'ERROR' | translate}}</strong> {{'ESTUDIANTE_SIN_SOLICITUD' | translate}}
+                <br></br>
+                <p>
+                  {{'DIRIGIJASE_SOLICITUD' | translate}} <strong> {{'NUEVA_SOLICITUD' | translate}}</strong>.
+                </p>
+            </div>
+            <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRole==='coordinador'" class="alert alert-danger" >
+               {{'COORDINADOR_SIN_SOLICITUD' | translate}}
+            </div>
+            <div ng-if="listarSolicitudes.conSolicitudes" class="panel panel-default panel-body col-md-12">
+              <div ui-grid="listarSolicitudes.gridOptions" ui-grid-cellNav class="grid" ui-grid-pagination style="text-align:center" ></div>
+            </div>
+
+
+    </div>
+
+</div>
+
+<div id="modalVerSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+              {{'INFORMACION_SOLICITUD' | translate}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'DETALLES_SOLICITUD' | translate}}
+            </div>
+              <div class="panel-body">
+
+                 <div  class="row" ng-repeat="detalle in listarSolicitudes.detallesSolicitud">
+
+                  <label class="col-sm-4 control-label"> {{detalle.DetalleTipoSolicitud.Detalle.Nombre}}:  </label>
+                  <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento'">
+                      <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
+                  </div>
+                  <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
+                      <a href="{{detalle.Descripcion}}" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>
+                  </div>
+                </div>
+
+              </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEvaluarSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Evaluar Solicitud
+
+            </div>
+
+        </div>
+    </div>
+</div>
