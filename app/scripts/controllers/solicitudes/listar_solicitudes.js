@@ -8,131 +8,110 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-.controller('SolicitudesListarSolicitudesCtrl', function ($location,poluxMidRequest,academicaRequest,poluxRequest,$scope) {
+.controller('SolicitudesListarSolicitudesCtrl', function ($translate, academicaRequest,poluxRequest,$scope) {
   var ctrl = this;
   ctrl.solicitudes = [];
 
-  $scope.codigo = "20092020048";
+  $scope.userId = "60261576";
+  ctrl.userRole = "coordinador";
+  //$scope.userId = "20141020036";
+  //ctrl.userRole = "estudiante";
+  ctrl.userId = $scope.userId;
 
-  $scope.$watch("codigo",function() {
-    ctrl.validado=false;
-    ctrl.conSolicitudes = false;
+  $scope.$watch("userId",function() {
+      ctrl.conSolicitudes = false;
+      ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
+    });
 
-    academicaRequest.periodoAnterior().then(function(periodoAnterior){
 
-      var parametros = {
-        "codigo": $scope.codigo,
-        //periodo anterior
-        'ano' : periodoAnterior[0].APE_ANO,
-        'periodo' :periodoAnterior[0].APE_PER
+  ctrl.actualizarSolicitudes = function (identificador, rol){
+      ctrl.solicitudes = [];
+      var parametrosSolicitudes;
+      var tablaConsulta ;
+
+      ctrl.cell = '<a class="configuracion"  data-toggle="modal" data-target="#modalVerSolicitud">' +
+                        '<i data-toggle="tooltip" title="{{\'BTN.VER_DETALLES\' | translate }}" ng-click="listarSolicitudes.cargarDetalles(12)" class="fa fa-eye faa-spin animated-hover" aria-hidden="true"></i></a> ' ;
+      if(rol === "estudiante"){
+        tablaConsulta = "usuario_solicitud";
+        parametrosSolicitudes = $.param({
+            query:"usuario:"+identificador,
+            limit:0
+        });
+      }
+      if(rol === "coordinador"){
+        tablaConsulta = "respuesta_solicitud";
+        parametrosSolicitudes = $.param({
+            query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
+            limit:0
+        });
+        ctrl.cell = ctrl.cell + '<a class="configuracion" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'config\');" data-toggle="modal" data-target="#modalEvaluarSolicitud">' +
+                        '<i data-toggle="tooltip" title="{{\'BTN.RESPONDER_SOLICITUD\' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i></a> ' ;
+      }
+
+      ctrl.gridOptions = {
+          paginationPageSizes: [10,15, 20, 25],
+          paginationPageSize: 10,
+          enableFiltering: true,
+          enableSorting: true,
       };
 
-      academicaRequest.promedioEstudiante(parametros).then(function(response2){
+      ctrl.gridOptions.columnDefs = [{
+        name: 'Id',
+        displayName: $translate.instant('NUMERO_RADICADO'),
+        width: 200
+      },{
+        name: 'ModalidadTipoSolicitud',
+        displayName: $translate.instant('TIPO_SOLICITUD'),
+      },{
+        name: 'Estado',
+        displayName: $translate.instant('ESTADO_SOLICITUD'),
+        width: 200
+      }, {
+        name: 'Fecha',
+        displayName: $translate.instant('FECHA'),
+        width: 300
+      }, {
+        name: 'Detalle',
+        displayName: $translate.instant('DETALLE'),
+        width: 150,
+        type: 'boolean',
+        cellTemplate: ctrl.cell
+      }];
 
-        if(response2){
-          //porcentaje cursado
-          var parametros2 = {
-            "codigo": parametros.codigo
-          };
-
-          academicaRequest.porcentajeCursado(parametros).then(function(response3){
-
-
-            ctrl.estudiante={
-              "Codigo": parametros.codigo,
-              "Nombre": response2[0].NOMBRE,
-              "Modalidad": 1, //modalidad que solo necesita el porcentaje cursado y el estado del estudiante para la validacion
-              "Tipo": "POSGRADO",
-              "PorcentajeCursado": response3,
-              "Promedio": response2[0].PROMEDIO,
-              "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-              "Estado": response2[0].EST_ESTADO_EST,
-              "Nivel": response2[0].TRA_NIVEL,
-              "TipoCarrera": response2[0].TRA_NOMBRE
-
-            };
-
-            ctrl.modalidad="MATERIAS POSGRADO";
-
-            poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
-                if(response.data === "true"){
-                    ctrl.actualizarSolicitudes(ctrl.estudiante.Codigo);
-                    ctrl.validado=true;
-                }
-            });
-          });
+      poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
+        if(responseSolicitudes.data !== null){
+          ctrl.conSolicitudes = true;
         }
-
-      });
-
-    });
-
-    });
-
-
-
-  ctrl.actualizarSolicitudes = function (codigo){
-      ctrl.solicitudes = [];
-      ctrl.gridOptions = {};
-      var parametrosSolicitudes=$.param({
-        query:"usuario:"+codigo,
-        limit:0
-      });
-      poluxRequest.get("usuario_solicitud",parametrosSolicitudes).then(function(responseSolicitudes){
         angular.forEach(responseSolicitudes.data, function(solicitud){
-          solicitud.respuesta=[];
-          var parametrosRespuesta=$.param({
-            query:"SolicitudTrabajoGrado:"+solicitud.SolicitudTrabajoGrado.Id,
-          });
-          poluxRequest.get("respuesta_solicitud",parametrosRespuesta).then(function(responseRespuesta){
-              solicitud.respuesta = responseRespuesta.data[0];
-              //console.log(responseRespuesta.data);
-          });
           solicitud.data = {
-            "Id":solicitud.SolicitudTrabajoGrado.Id,
-            "ModalidadTipoSolicitud":solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
-            "Estado":"Radicada",
-            "Fecha":solicitud.SolicitudTrabajoGrado.Fecha,
+          'Id':solicitud.SolicitudTrabajoGrado.Id,
+          'ModalidadTipoSolicitud':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+          'Fecha':solicitud.SolicitudTrabajoGrado.Fecha,
           }
-          ctrl.solicitudes.push(solicitud.data);
+          if(rol=== "estudiante"){
+            var parametrosRespuesta=$.param({
+              query:"SolicitudTrabajoGrado:"+solicitud.SolicitudTrabajoGrado.Id,
+            });
+              poluxRequest.get("respuesta_solicitud",parametrosRespuesta).then(function(responseRespuesta){
+                  solicitud.data.Estado = responseRespuesta.data[0].EstadoSolicitud.Nombre;
+                  ctrl.solicitudes.push(solicitud.data);
+                  ctrl.gridOptions.data = ctrl.solicitudes;
+              });
+          }
+          if(rol === "coordinador"){
+            solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
+            ctrl.solicitudes.push(solicitud.data);
+            ctrl.gridOptions.data = ctrl.solicitudes;
+          }
         });
       //console.log(ctrl.solicitudes.respuesta);
-        ctrl.gridOptions = {
-          data: ctrl.solicitudes,
-          rowTemplate: '<div></div>'
-        };
-        ctrl.gridOptions.columnDefs = [{
-          name: 'Id',
-          displayName: 'Número radicado',
-          width: 200
-        },{
-          name: 'ModalidadTipoSolicitud',
-          displayName: 'Tipo solicitud',
-        },{
-          name: 'Estado',
-          displayName: 'Estado',
-          width: 200
-        }, {
-          name: 'Fecha',
-          displayName: 'Fecha',
-          width: 300
-        }, {
-          name: 'Detalle',
-          displayName: 'Detalle',
-          width: 150,
-          type: 'boolean',
-          cellTemplate: '<a class="ver pull-center" href="/index.html"> <i class="fa fa-eye fa-lg" tittle="Ver Detalle">  </i> </a>'
-        }];
-        if(ctrl.solicitudes.length>0){
-          ctrl.conSolicitudes = true;
-        };
+
       });
 
   };
 
-  ctrl.go = function (){
-    ctrl.path = "/solicitudes/crear_solicitud/";
-    $location.path(ctrl.path+ctrl.estudiante.Codigo);
-  };
+  ctrl.cargarDetalles = function(idSolicitud){
+      console.log(idSolicitud);
+  }
 
 });

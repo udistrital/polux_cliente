@@ -165,7 +165,9 @@ var text_es = {
     ERROR_SOLICITUDES_3:"Ocurrio un error al insertar la respuesta de la solicitud.",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
-        CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos"
+        CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos",
+        VER_DETALLES: "Ver Detalles",
+        RESPONDER_SOLICITUD:"Responder solicitud",
     },
     ENVIAR_SOLICITUD:"Enviar Solicitud",
     INGRESAR_PROPUESTA:"Ingrese el nombre de la propuesta",
@@ -209,6 +211,14 @@ var text_es = {
     CARGUE_NUEVO_PLAN_NEGOCIOS:"Cargue el Plan o modelo de negocios nuevo",
     SELECCIONE_ESTUDIANTES_PROYECTO:"Seleccione los estudiantes que pertenecen al proyecto",
     SOLICITUD_SIN_FORMULARIO:"Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla?",
+    NUMERO_RADICADO : "Número de radicado",
+    TIPO_SOLICITUD : "Tipo de solicitud",
+    ESTADO_SOLICITUD : "Estado",
+    DETALLE : "Detalle",
+    ESTUDIANTE_SIN_SOLICITUD : "El estudiante actualmente no ha realizado ninguna solicitud.",
+    DIRIGIJASE_SOLICITUD :"Si desea realizar una nueva solicitud dirijase al modulo",
+    COORDINADOR_SIN_SOLICITUD : "Señor coordinador actualmente usted no tiene solicitudes por revisar.",
+    DETALLES_SOLICITUD: "Detalles de la solicitud",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -355,7 +365,9 @@ var text_en = {
     ERROR_SOLICITUDES_3:"There was an error inserting the answer of the request",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Save academic spaces",
-        CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces"
+        CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces",
+        VER_DETALLES: "View details",
+        RESPONDER_SOLICITUD:"Reply request",
     },
     ENVIAR_SOLICITUD:"Send Form",
     INGRESAR_PROPUESTA:"Enter the name of the proposal",
@@ -399,6 +411,14 @@ var text_en = {
     CARGUE_NUEVO_PLAN_NEGOCIOS:"Upload the new business plan or model",
     SELECCIONE_ESTUDIANTES_PROYECTO:"Select the students that belong to the project",
     SOLICITUD_SIN_FORMULARIO:"This request does not require completing any form. Are you sure you want to send it?",
+    NUMERO_RADICADO : "Roaming number",
+    TIPO_SOLICITUD : "Type of request",
+    ESTADO_SOLICITUD : "State",
+    DETALLE : "Detail",
+    ESTUDIANTE_SIN_SOLICITUD : "The student has not made any request.",
+    DIRIGIJASE_SOLICITUD : "If you want to make a new request go to the module",
+    COORDINADOR_SIN_SOLICITUD : "Dear Coordinator, you do not currently have any requests to review.",
+    DETALLES_SOLICITUD: "Request's details",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
