@@ -24,13 +24,15 @@ angular.module('poluxClienteApp')
     });
 
 
+
+
   ctrl.actualizarSolicitudes = function (identificador, rol){
       ctrl.solicitudes = [];
       var parametrosSolicitudes;
       var tablaConsulta ;
 
       ctrl.cell = '<a class="configuracion"  data-toggle="modal" data-target="#modalVerSolicitud">' +
-                        '<i data-toggle="tooltip" title="{{\'BTN.VER_DETALLES\' | translate }}" ng-click="listarSolicitudes.cargarDetalles(12)" class="fa fa-eye faa-spin animated-hover" aria-hidden="true"></i></a> ' ;
+                        '<i data-toggle="tooltip" title="{{\'BTN.VER_DETALLES\' | translate }}"  ng-click="grid.appScope.listarSolicitudes.cargarDetalles(row)" class="fa fa-eye faa-spin animated-hover" aria-hidden="true"></i></a> ' ;
       if(rol === "estudiante"){
         tablaConsulta = "usuario_solicitud";
         parametrosSolicitudes = $.param({
@@ -110,8 +112,16 @@ angular.module('poluxClienteApp')
 
   };
 
-  ctrl.cargarDetalles = function(idSolicitud){
-      console.log(idSolicitud);
+  ctrl.cargarDetalles = function(fila){
+      var solicitud = fila.entity.Id;
+      var parametrosSolicitud = $.param({
+          query:"SolicitudTrabajoGrado.Id:"+solicitud,
+          limit:0
+      });
+      poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function(responseDetalles){
+          ctrl.detallesSolicitud = responseDetalles.data;
+          console.log(responseDetalles.data);
+      });
   }
 
 });
