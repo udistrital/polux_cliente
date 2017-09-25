@@ -4,7 +4,30 @@
         about.
     </div>
     <div class="panel-body">
-        <subir-documento></subir-documento>
+        <!--<subir-documento></subir-documento>-->
+
+        <div class="col-md-6">
+            <select ng-model="about.SelectedFormat" ng-options='formato.id as formato.title for formato in about.formatos'
+            ng-change="about.actualizar_formato()"></select>
+            <br>
+
+            <pre>{{about.id}}</pre>
+            <pre>{{about.formatos|json}}</pre>
+
+            <div class="row">
+                <label>Seleccionar Formato de Evaluación: <label>
+                <input class="form-control" list="testList" placeholder="Seleccione el formato" type="" ng-model="about.SelectedFormat" ng-change="about.actualizar_formato()" />
+                <datalist id="testList">
+
+                  <option ng-repeat="formato in about.formatos" label="{{formato.title}}"  ng-value="{{formato.id}}" ></option>
+                </datalist>
+            </div>
+          </div>
+
+
+      <div class="col-md-6">
+          <iframe src="{{about.trustSrc(about.id)}}" width="800" height="900"></iframe>
+      </div>
     </div>
     <div class="panel-footer">
         Panel Footer
