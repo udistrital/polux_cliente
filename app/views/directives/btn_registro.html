@@ -1,0 +1,23 @@
+<sencillo ng-if="angular.isUndefined(grupobotones)">
+    <a class="ver" ng-click="funcion({fila:fila,operacion:'ver'})">
+        <i class="fa fa-eye fa-lg  faa-shake animated-hover" aria-hidden="true" data-toggle="tooltip" title="{{'BTN.VER' | translate }}"></i>
+    </a>
+    <a class="editar" ng-click="funcion({fila:fila,operacion:'edit'})">
+        <i data-toggle="tooltip" title="{{'BTN.EDITAR' | translate }}" class="fa fa-pencil fa-lg  faa-shake animated-hover" aria-hidden="true"></i>
+    </a>
+    <a class="configuracion" ng-click="funcion({fila:fila,operacion:'config'})">
+        <i data-toggle="tooltip" title="{{'BTN.CONFIGURAR' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i>
+    </a>
+    <a class="borrar" ng-click="funcion({fila:fila,operacion:'delete'})">
+        <i data-toggle="tooltip" title="{{'BTN.BORRAR' | translate }}" class="fa fa-trash fa-lg  faa-shake animated-hover" aria-hidden="true"></i>
+    </a>
+    <a class="ver" ng-click="funcion({fila:fila,operacion:'validar'})">
+        <i data-toggle="tooltip" title="{{BTN.VALIDAR | translate }}" class="fa  fa-check fa-lg  faa-shake animated-hover" aria-hidden="true"></i>
+    </a>
+</sencillo>
+
+<sencillo ng-if="!angular.isUndefined(grupobotones)">
+    <a ng-repeat="btn in grupobotones" class="{{btn.clase_color}}" ng-click="funcion({fila:fila,operacion:btn.operacion})">
+        <i class="{{btn.clase_css}}" aria-hidden="true" data-toggle="tooltip" title="{{btn.titulo}}"></i>
+    </a>
+</sencillo>

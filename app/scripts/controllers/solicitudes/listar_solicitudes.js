@@ -24,21 +24,22 @@ angular.module('poluxClienteApp')
     });
 
 
-
-
   ctrl.actualizarSolicitudes = function (identificador, rol){
       ctrl.solicitudes = [];
       var parametrosSolicitudes;
       var tablaConsulta ;
 
-      ctrl.cell = '<a class="configuracion"  data-toggle="modal" data-target="#modalVerSolicitud">' +
-                        '<i data-toggle="tooltip" title="{{\'BTN.VER_DETALLES\' | translate }}"  ng-click="grid.appScope.listarSolicitudes.cargarDetalles(row)" class="fa fa-eye faa-spin animated-hover" aria-hidden="true"></i></a> ' ;
+      $scope.botones = [
+              { clase_color: "ver", clase_css: "fa fa-eye fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.VER_DETALLES'), operacion: 'ver', estado: true },
+      ];
+
       if(rol === "estudiante"){
         tablaConsulta = "usuario_solicitud";
         parametrosSolicitudes = $.param({
             query:"usuario:"+identificador,
             limit:0
         });
+
       }
       if(rol === "coordinador"){
         tablaConsulta = "respuesta_solicitud";
@@ -46,8 +47,8 @@ angular.module('poluxClienteApp')
             query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
             limit:0
         });
-        ctrl.cell = ctrl.cell + '<a class="configuracion" ng-click="grid.appScope.consultaPropuesta.load_row(row,\'config\');" data-toggle="modal" data-target="#modalEvaluarSolicitud">' +
-                        '<i data-toggle="tooltip" title="{{\'BTN.RESPONDER_SOLICITUD\' | translate }}" class="fa fa-cog fa-lg faa-spin animated-hover" aria-hidden="true"></i></a> ' ;
+        $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-cog fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
+
       }
 
       ctrl.gridOptions = {
@@ -77,7 +78,7 @@ angular.module('poluxClienteApp')
         displayName: $translate.instant('DETALLE'),
         width: 150,
         type: 'boolean',
-        cellTemplate: ctrl.cell
+        cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro>'
       }];
 
       poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
@@ -106,7 +107,6 @@ angular.module('poluxClienteApp')
             ctrl.gridOptions.data = ctrl.solicitudes;
           }
         });
-      //console.log(ctrl.solicitudes.respuesta);
 
       });
 
@@ -120,8 +120,21 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function(responseDetalles){
           ctrl.detallesSolicitud = responseDetalles.data;
-          console.log(responseDetalles.data);
       });
   }
+
+  $scope.loadrow = function(row, operacion) {
+            switch (operacion) {
+                case "ver":
+                    ctrl.cargarDetalles(row)
+                    $('#modalVerSolicitud').modal('show');
+                    break;
+                case "responder":
+                    $('#modalEvaluarSolicitud').modal('show');
+
+                    break;
+                default:
+            }
+        };
 
 });
