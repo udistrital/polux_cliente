@@ -26,7 +26,7 @@ angular.module('poluxClienteApp')
       ctrl.codigo = $routeParams.idEstudiante;
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
-                query:"CodigoEstudiante:"+ctrl.codigo,
+                query:"Estudiante:"+ctrl.codigo,
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
                     ctrl.Trabajo = responseTrabajoEstudiante.data;
