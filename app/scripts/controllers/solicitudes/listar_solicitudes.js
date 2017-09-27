@@ -61,22 +61,23 @@ angular.module('poluxClienteApp')
       ctrl.gridOptions.columnDefs = [{
         name: 'Id',
         displayName: $translate.instant('NUMERO_RADICADO'),
-        width: 200
+        width:'15%',
       },{
         name: 'ModalidadTipoSolicitud',
         displayName: $translate.instant('TIPO_SOLICITUD'),
+        width:'40%',
       },{
         name: 'Estado',
         displayName: $translate.instant('ESTADO_SOLICITUD'),
-        width: 200
+        width: '15%',
       }, {
         name: 'Fecha',
         displayName: $translate.instant('FECHA'),
-        width: 300
+        width: '15%',
       }, {
         name: 'Detalle',
         displayName: $translate.instant('DETALLE'),
-        width: 150,
+        width:'15%',
         type: 'boolean',
         cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro>'
       }];
@@ -85,11 +86,12 @@ angular.module('poluxClienteApp')
         if(responseSolicitudes.data !== null){
           ctrl.conSolicitudes = true;
         }
+
         angular.forEach(responseSolicitudes.data, function(solicitud){
           solicitud.data = {
           'Id':solicitud.SolicitudTrabajoGrado.Id,
           'ModalidadTipoSolicitud':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
-          'Fecha':solicitud.SolicitudTrabajoGrado.Fecha,
+          'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
           }
           if(rol=== "estudiante"){
             var parametrosRespuesta=$.param({
@@ -119,7 +121,17 @@ angular.module('poluxClienteApp')
           limit:0
       });
       poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function(responseDetalles){
-          ctrl.detallesSolicitud = responseDetalles.data;
+          poluxRequest.get("usuario_solicitud",parametrosSolicitud).then(function(responseEstudiantes){
+              ctrl.detallesSolicitud = responseDetalles.data;
+              var solicitantes = "";
+              ctrl.detallesSolicitud.id = fila.entity.Id;
+              ctrl.detallesSolicitud.tipoSolicitud = fila.entity.ModalidadTipoSolicitud;
+              ctrl.detallesSolicitud.fechaSolicitud = fila.entity.Fecha;
+              angular.forEach(responseEstudiantes.data,function(estudiante){
+                  solicitantes += (", "+estudiante.Usuario) ;
+              });
+              ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
+          });
       });
   }
 
@@ -131,7 +143,6 @@ angular.module('poluxClienteApp')
                     break;
                 case "responder":
                     $('#modalEvaluarSolicitud').modal('show');
-
                     break;
                 default:
             }

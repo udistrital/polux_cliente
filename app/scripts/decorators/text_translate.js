@@ -220,6 +220,7 @@ var text_es = {
     COORDINADOR_SIN_SOLICITUD : "Señor coordinador actualmente usted no tiene solicitudes por revisar.",
     DETALLES_SOLICITUD: "Detalles de la solicitud",
     INFORMACION_SOLICITUD: "Información de la solicitud",
+    SOLICITANTES: "Solicitantes",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -421,6 +422,7 @@ var text_en = {
     COORDINADOR_SIN_SOLICITUD : "Dear Coordinator, you do not currently have any requests to review.",
     DETALLES_SOLICITUD: "Request's details",
     INFORMACION_SOLICITUD: "Request's information",
+    SOLICITANTES: "Applicants",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

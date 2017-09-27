@@ -23,7 +23,7 @@
                {{'COORDINADOR_SIN_SOLICITUD' | translate}}
             </div>
             <div ng-if="listarSolicitudes.conSolicitudes" class="panel panel-default panel-body col-md-12">
-              <div ui-grid="listarSolicitudes.gridOptions" ui-grid-cellNav class="grid" ui-grid-pagination style="text-align:center" ></div>
+              <div ui-grid="listarSolicitudes.gridOptions"  ui-grid-cellNav class="grid" ui-grid-pagination style="text-align:center" ui-grid-auto-resize></div>
             </div>
 
 
@@ -34,8 +34,27 @@
 <div id="modalVerSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
     <div class="modal-content col-md-offset-2 col-md-8">
         <div class="modal-header">
-              {{'INFORMACION_SOLICITUD' | translate}}
+              {{listarSolicitudes.detallesSolicitud.tipoSolicitud}}
             <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'INFORMACION_SOLICITUD' | translate}}
+            </div>
+              <div class="panel-body">
+                  <div clase="row">
+                      <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.id}}  </label>
+                  </div>
+                  <div clase="row">
+                      <label class="col-sm-4 control-label"> {{'FECHA'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.fechaSolicitud}}  </label>
+                  </div>
+                  <div clase="row">
+                      <label class="col-sm-4 control-label"> {{'SOLICITANTES'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.solicitantes}}  </label>
+                  </div>
+            </div>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
