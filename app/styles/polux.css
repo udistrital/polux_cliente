@@ -3,6 +3,10 @@
     position: relative;
 }
 
+#mi-grid {
+  text-align: center;
+}
+
 md-checkbox.md-checked.blue .md-icon {
     background-color: rgba(0, 62, 101, 1);
 }

@@ -52,10 +52,12 @@ angular.module('poluxClienteApp')
       }
 
       ctrl.gridOptions = {
-          paginationPageSizes: [10,15, 20, 25],
+          paginationPageSizes: [5,10,15, 20, 25],
           paginationPageSize: 10,
           enableFiltering: true,
           enableSorting: true,
+          enableSelectAll: false,
+          useExternalPagination: false,
       };
 
       ctrl.gridOptions.columnDefs = [{
