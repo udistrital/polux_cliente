@@ -52,13 +52,13 @@ angular.module('poluxClienteApp')
                  * Mediante la ejecución del ngChange en la vista se guardan los parametros
                  *
                  * @param {string} Codigo de estudiante
-                 * 
+                 *
                  */
                 self.asignarEstudiante = function(codEstudiante) {
                     console.log(codEstudiante);
                     codEstudiante = parseInt(codEstudiante);
                     self.parametros = $.param({
-                        query: "CodigoEstudiante:" + codEstudiante
+                        query: "Estudiante:" + codEstudiante
                     });
                 };
                 /**
@@ -69,7 +69,7 @@ angular.module('poluxClienteApp')
                  * Mediante la ejecución del ngChange en la vista se guardan los parametros
                  *
                  * @param {string} Codigo de modalidad
-                 * 
+                 *
                  */
                 self.asignarModalidad = function(codigo) {
                     try {
@@ -98,7 +98,7 @@ angular.module('poluxClienteApp')
                  * @description
                  * Mediante el codigo del estudiante verifica los requisitos minimos
                  * @param {string} Codigo de estudiante
-                 * 
+                 *
                  */
                 self.verificarRequisitos = function(codigo, codigoModalidad) {
                     codigo = "" + codigo;

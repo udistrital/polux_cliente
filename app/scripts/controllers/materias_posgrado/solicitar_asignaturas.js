@@ -37,7 +37,7 @@ angular.module('poluxClienteApp')
               ctrl.estudiante={
                 "Codigo": parametros.codigo,
                 "Nombre": response2[0].NOMBRE,
-                "Modalidad": 6,
+                "Modalidad": 2,
                 "Tipo": "POSGRADO",
                 "PorcentajeCursado": response3,
                 "Promedio": response2[0].PROMEDIO,

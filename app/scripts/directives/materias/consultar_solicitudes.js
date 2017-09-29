@@ -76,17 +76,17 @@ angular.module('poluxClienteApp')
           if(ctrl.estudiante.TipoCarrera!="TECNOLOGIA"){
             //buscar si hay TG para el estudiante en la modalidad de materias de posgrado
             var parametros=$.param({
-              query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:3",
-              related:"IdTrabajoGrado"
+              query:"Estudiante:"+ctrl.estudiante.Codigo+","+ "TrabajoGrado.Modalidad.Id:3",
+              related:"TrabajoGrado"
             });
           }else{
             var parametros=$.param({
-              query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:4",
-              related:"IdTrabajoGrado"
+              query:"Estudiante:"+ctrl.estudiante.Codigo+","+ "TrabajoGrado.Modalidad.Id:4",
+              related:"TrabajoGrado"
             });
           }
 
-          poluxRequest.get("estudiante_tg",parametros).then(function(response){
+          poluxRequest.get("estudiante_trabajo_grado",parametros).then(function(response){
 
             if(response.data){
 
@@ -99,7 +99,7 @@ angular.module('poluxClienteApp')
                 if((ctrl.estudiante.Tipo=='POSGRADO') && (value.IdTrabajoGrado.IdModalidad.Id==3)){
 
                   var parametros=$.param({
-                    query:"IdTrabajoGrado:"+value.IdTrabajoGrado.Id+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+                    query:"TrabajoGrado:"+value.IdTrabajoGrado.Id+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
                   });
 
                   //buscar las solicitudes asociadas al TG
@@ -118,7 +118,7 @@ angular.module('poluxClienteApp')
 
                       academicaRequest.obtenerCarreras(parametros).then(function(resp){
                         var parametros=$.param({
-                          query:"IdSolicitudMaterias:"+value.Id,
+                          query:"SolicitudMaterias:"+value.Id,
                           related:"IdAsignaturasElegibles"
                         });
 

@@ -8,6 +8,7 @@
          {{'NOMBRE' | translate}} {{solicitarAsignaturas.estudiante.Nombre}}<br>
          {{'MODALIDAD_ESP_POS' | translate}}</p>
 
+      <pre>{{solicitarAsignaturas.validar}}</pre>
       <div ng-if="solicitarAsignaturas.validar=='true'">
         <consultar-solicitudes estudiante="solicitarAsignaturas.estudiante" s="0" modalidad="solicitarAsignaturas.modalidad"/>
       </div>
