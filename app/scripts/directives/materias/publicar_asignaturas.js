@@ -113,10 +113,10 @@ angular.module('poluxClienteApp')
               ctrl.id = response.data[0].Id
 
               var parametros = $.param({
-                query: "IdCarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura[0].ASI_COD
+                query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura[0].ASI_COD
               });
 
-              poluxRequest.get("asignaturas_elegibles", parametros).then(function (response) {
+              poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
                 console.log(response.data);
 
                 if (response.data != null) {
@@ -214,7 +214,7 @@ angular.module('poluxClienteApp')
               ctrl.creditosMinimos = parseInt($scope.creditosMinimosProfundizacion);
               console.log("Creditos minimos profundizacion" + ctrl.creditosMinimos);
             }
-        console.log("Creditos minimos obtenidos de la vista "+ $scope.modalidad + " : "+ ctrl.creditosMinimos);
+          console.log("Creditos minimos obtenidos de la vista "+ $scope.modalidad + " : "+ ctrl.creditosMinimos);
 
           console.log(ctrl.totalCreditos);
 
@@ -250,22 +250,22 @@ angular.module('poluxClienteApp')
                     var data = {
                       "CodigoAsignatura": asignatura,
                       "Activo": true,
-                      "IdCarreraElegible": response22.data
+                      "CarreraElegible": response22.data
                     };
 
                     /*antes de guardar la asignatura, se debe verificar que no esté registrada
                     si no está registrada, guardarla
                     si está registrada, actualizar el estado*/
                     var parametros = $.param({
-                      query: "CodigoAsignatura:" + asignatura + " ,IdCarreraElegible:" + response22.data.Id
+                      query: "CodigoAsignatura:" + asignatura + " ,CarreraElegible:" + response22.data.Id
                     });
 
-                    poluxRequest.get("asignaturas_elegibles", parametros).then(function (response) {
+                    poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
                       console.log("rta:" + response.data);
 
                       if (response.data == null) {
                         console.log(data);
-                        poluxRequest.post("asignaturas_elegibles", data).then(function (response) {
+                        poluxRequest.post("espacios_academicos_elegibles", data).then(function (response) {
                           ctrl.habilitar = true;
                           ctrl.habilitar2 = false;
                           console.log("Status respuesta ", response.data);
@@ -285,10 +285,10 @@ angular.module('poluxClienteApp')
                         var dataModificado = {
                           "CodigoAsignatura": asignatura,
                           "Activo": estado,
-                          "IdCarreraElegible": response22.data
+                          "CarreraElegible": response22.data
                         };
 
-                        poluxRequest.put("asignaturas_elegibles", id, dataModificado).then(function (response) {
+                        poluxRequest.put("espacios_academicos_elegibles", id, dataModificado).then(function (response) {
                           console.log("Status respuesta ", response.data);
                         });
 
@@ -313,7 +313,7 @@ angular.module('poluxClienteApp')
                   var data = {
                     "CodigoAsignatura": asignatura,
                     "Activo": true,
-                    "IdCarreraElegible": response.data[0]
+                    "CarreraElegible": response.data[0]
                   };
 
                   /*antes de guardar la asignatura, se debe verificar que no esté registrada
@@ -321,15 +321,15 @@ angular.module('poluxClienteApp')
                   si está registrada, actualizar el estado*/
 
                   var parametros = $.param({
-                    query: "CodigoAsignatura:" + asignatura + " ,IdCarreraElegible:" + response.data[0].Id
+                    query: "CodigoAsignatura:" + asignatura + " ,CarreraElegible:" + response.data[0].Id
                   });
 
-                  poluxRequest.get("asignaturas_elegibles", parametros).then(function (response) {
+                  poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
                     console.log("rta:" + response.data);
 
                     if (response.data == null) {
                       console.log(data);
-                      poluxRequest.post("asignaturas_elegibles", data).then(function (response) {
+                      poluxRequest.post("espacios_academicos_elegibles", data).then(function (response) {
                         ctrl.habilitar = true;
                         ctrl.habilitar2 = false;
                         console.log("Status respuesta ", response.data);
@@ -349,7 +349,7 @@ angular.module('poluxClienteApp')
                       var dataModificado = {
                         "CodigoAsignatura": asignatura,
                         "Activo": estado,
-                        "IdCarreraElegible": response.data[0]
+                        "CarreraElegible": response.data[0]
                       };
 
                       poluxRequest.put("asignaturas_elegibles", id, dataModificado).then(function (response) {

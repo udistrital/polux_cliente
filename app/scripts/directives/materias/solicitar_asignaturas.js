@@ -185,9 +185,9 @@ angular.module('poluxClienteApp')
           if( ctrl.esta==-1 ){
             //buscar si el estudiante tiene un TG en la modalidad de materias de posgrado: #3
             var parametros=$.param({
-              query:"CodigoEstudiante:"+ctrl.estudiante.Codigo+","+ "IdTrabajoGrado.IdModalidad.Id:3"
+              query:"Estudiante:"+ctrl.estudiante.Codigo+","+ "TrabajoGrado.Modalidad.Id:3"
             });
-            poluxRequest.get("estudiante_tg", parametros).then(function(response) {
+            poluxRequest.get("estudiante_trabajo_grado", parametros).then(function(response) {
               //console.log(response.data[0].Id);
 
 ///##########################################################################
