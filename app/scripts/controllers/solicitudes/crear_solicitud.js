@@ -116,10 +116,9 @@ angular.module('poluxClienteApp')
             ctrl.modalidad = modalidad_seleccionada;
         }
         console.log(ctrl.estudiante);
-    //    poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
+        poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
 
-      //      puede.data = "true"
-      //    if(puede.data==="true"){
+          if(puede.data==="true"){
             console.log(ctrl.estudiante);
             ctrl.soliciudConDetalles = true;
             ctrl.detalles = [];
@@ -129,12 +128,12 @@ angular.module('poluxClienteApp')
                 query:"ModalidadTipoSolicitud:"+tipoSolicitud,
                 limit:0
               });
-          }else{
-              parametrosDetalles = $.param({
-                query:"ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
-                limit:0
-              });
-          }
+            }else{
+                parametrosDetalles = $.param({
+                  query:"ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
+                  limit:0
+                });
+            }
             poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
                 ctrl.detalles = responseDetalles.data;
                 console.log(ctrl.detalles);
@@ -260,11 +259,11 @@ angular.module('poluxClienteApp')
                     ctrl.soliciudConDetalles = false;
                 }
             });
-        //  }else{
-    //          ctrl.siPuede=true;
-    //          ctrl.detalles = [];
-        //  }
-    //  });
+          }else{
+              ctrl.siPuede=true;
+              ctrl.detalles = [];
+          }
+      });
 
       };
 
