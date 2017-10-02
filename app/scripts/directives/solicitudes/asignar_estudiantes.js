@@ -40,7 +40,7 @@ angular.module('poluxClienteApp')
         };
 
         ctrl.verificarEstudiante = function(){
-        academicaRequest.periodoAnterior().then(function(periodoAnterior){
+          academicaRequest.periodoAnterior().then(function(periodoAnterior){
 
             var parametros = {
               "codigo": ctrl.codigoEstudiante,
@@ -52,37 +52,28 @@ angular.module('poluxClienteApp')
             academicaRequest.promedioEstudiante(parametros).then(function(response2){
 
                 if(response2){
-                //porcentaje cursado
-                var parametros2 = {
-                  "codigo": parametros.codigo
-                };
+                    ctrl.estudiante={
+                      "Codigo": parametros.codigo,
+                      "Nombre": response2[0].NOMBRE,
+                      "Modalidad": $scope.modalidad,
+                      "Tipo": "POSGRADO",
+                      "PorcentajeCursado": response2[0].PORCENTAJE,
+                      "Promedio": response2[0].PROMEDIO,
+                      "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+                      "Estado": response2[0].EST_ESTADO_EST,
+                      "Nivel": response2[0].TRA_NIVEL,
+                      "TipoCarrera": response2[0].TRA_NOMBRE
+                    };
+                    console.log(ctrl.estudiante);
 
-                academicaRequest.porcentajeCursado(parametros).then(function(response3){
+                    poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
 
-
-                  ctrl.estudiante={
-                    "Codigo": parametros.codigo,
-                    "Nombre": response2[0].NOMBRE,
-                    "Modalidad": $scope.modalidad,
-                    "Tipo": "POSGRADO",
-                    "PorcentajeCursado": response3,
-                    "Promedio": response2[0].PROMEDIO,
-                    "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                    "Estado": response2[0].EST_ESTADO_EST,
-                    "Nivel": response2[0].TRA_NIVEL,
-                    "TipoCarrera": response2[0].TRA_NOMBRE
-
-                  };
-
-
-                  poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
-
-                    console.log(response);
-                    if(response.data.includes("true")){
-                    var parametrosTrabajoEstudiante = $.param({
-                        query:"Estudiante:"+ctrl.codigoEstudiante,
-                    });
-                    poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
+                      console.log(response);
+                      if(response.data.includes("true")){
+                      var parametrosTrabajoEstudiante = $.param({
+                          query:"Estudiante:"+ctrl.codigoEstudiante,
+                      });
+                      poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
                           if(responseTrabajoEstudiante.data===null){
                             var cantidad;
                             cantidad =  2+ctrl.nuevosEstudiantes.length;
@@ -105,15 +96,13 @@ angular.module('poluxClienteApp')
                           }else{
                               ctrl.estudianteConTrabajo = true;
                           }
+                      });
+
+                    }else{
+                          ctrl.estudianteValido = true;
+                      }
+
                     });
-
-                  }else{
-                        ctrl.estudianteValido = true;
-                    }
-
-                  });
-
-                });
               } else {
                 ctrl.estudianteExiste = true;
               }
