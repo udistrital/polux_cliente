@@ -21,6 +21,8 @@ angular.module('academicaService', [])
         var porcentaje_cursado = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0Ok4ZN5LoYsioCLeOgBJwmWDK9e6x1T-0xKlpwCmwUjaXmypXuJCD3kPEhE-4YJTOXR-nf3m2xfG7TTOR1itS2t-";
         var periodo_anterior = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0Okv8IQ9qNj125-wfzl-rR7R9IygNmerbc-w_VnnqEawBQ";
         var coordinador_carrera = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmXyQ-hqKi02A-HoywRRQVhzx5WnJ2f7qi-ei4TkWGaUAFeySeBzV_jUp-Cp2YQC3-Q5iMzSdWmVtIklG3eZ8s2";
+        var docentesTG = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdr0eXTqZJyKMJkeoxrgxRwA3AZcDeYW7lkxP8XpjclOP";
+
 
         return {
 
@@ -67,6 +69,10 @@ angular.module('academicaService', [])
 
             obtenerDocentes: function(parametros) {
                 return this.obtener(docentes, parametros);
+            },
+
+            obtenerDocentesTG: function(parametros) {
+                return this.obtener(docentesTG, parametros);
             },
             obtenerDocenteId: function(parametros) {
                 return this.obtenerDocenteId(docentes, parametros);

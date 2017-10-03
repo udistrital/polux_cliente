@@ -227,7 +227,7 @@ angular.module('poluxClienteApp')
                       if(parametrosServicio[0]==="academica"){
                           if(parametrosServicio[1]==="docente"){
                                 //detalle.opciones=academicaRequest.obtenerDocentesJson();
-                                academicaRequest.obtenerDocentes().then(function(docentes){
+                                academicaRequest.obtenerDocentesTG().then(function(docentes){
                                   detalle.opciones=docentes;
                                   console.log(docentes);
                                 });
