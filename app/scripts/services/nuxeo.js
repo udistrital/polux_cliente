@@ -12,7 +12,7 @@ angular.module('poluxClienteApp')
         Nuxeo.promiseLibrary($q);
         return new Nuxeo({
 
-            baseURL: 'http://athento.udistritaloas.edu.co:8080/nuxeo/',
+            baseURL: 'https://athento.udistritaloas.edu.co/nuxeo/',
             auth: {
                 method: 'basic',
                 username: 'Administrator',

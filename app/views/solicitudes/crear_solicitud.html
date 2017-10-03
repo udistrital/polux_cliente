@@ -13,6 +13,7 @@
         </div>
       </div>
       <br>
+
         <div class="row" ng-if="crearSolicitud.modalidad_select">
           <label class="col-sm-2 control-label"> {{'SELECCIONAR_SOLICITUD' | translate}} </label>
           <div class="col-sm-10">
@@ -82,7 +83,7 @@
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
             <solicitar-asignaturas estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
-            <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes'"></asignar-estudiantes>
+            <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.modalidad!=2 && crearSolicitud.modalidad!=3"></asignar-estudiantes>
             <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">
                     {{'AREAS_CONOCIMIENTO' | translate}}
