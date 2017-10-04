@@ -11,7 +11,7 @@ angular.module('poluxClienteApp')
 .controller('SolicitudesListarSolicitudesCtrl', function ($translate, academicaRequest,poluxRequest,$scope) {
   var ctrl = this;
   ctrl.solicitudes = [];
-
+  ctrl.carrerasCoordinador = [];
   $scope.userId = "60261576";
   ctrl.userRole = "coordinador";
   //$scope.userId = "20141020036";
@@ -44,7 +44,8 @@ angular.module('poluxClienteApp')
       if(rol === "coordinador"){
         tablaConsulta = "respuesta_solicitud";
         parametrosSolicitudes = $.param({
-            query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
+            //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
+            query:"ESTADOSOLICITUD.ID:1",
             limit:0
         });
         $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-cog fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
@@ -106,9 +107,39 @@ angular.module('poluxClienteApp')
               });
           }
           if(rol === "coordinador"){
-            solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
-            ctrl.solicitudes.push(solicitud.data);
-            ctrl.gridOptions.data = ctrl.solicitudes;
+            var parametrosCoordinador = {
+              "identificacion":$scope.userId,
+            };
+            academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
+              ctrl.carrerasCoordinador = responseCoordinador;
+              var carreras  = [];
+              angular.forEach(responseCoordinador, function(carrera){
+                  carreras.push(carrera.CODIGO_CARRERA);
+              });
+              if(responseSolicitudes.data !== null){
+                ctrl.conSolicitudes = true;
+              }
+              var parametrosUsuario=$.param({
+                query:"SolicitudTrabajoGrado:"+solicitud.SolicitudTrabajoGrado.Id,
+                sortby:"Usuario",
+                order:"asc",
+                limit:1,
+              });
+              poluxRequest.get("usuario_solicitud",parametrosUsuario).then(function(usuario){
+                  var parametrosEstudiante = {
+                    "codigo":usuario.data[0].Usuario,
+                  };
+                  academicaRequest.obtenerEstudiantes(parametrosEstudiante).then(function(responseEstudiante){
+                  //console.log(responseEstudiante);
+                  var carreraEstudiante = "20";
+                  if(carreras.includes(carreraEstudiante)){
+                    solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
+                    ctrl.solicitudes.push(solicitud.data);
+                    ctrl.gridOptions.data = ctrl.solicitudes;
+                  }
+                  });
+              });
+            });
           }
         });
 

@@ -461,17 +461,12 @@ angular.module('poluxClienteApp')
             });
 
 
-          var parametrosCoordinador = {
-            "carrera": ctrl.estudiante.Carrera
-          };
-          academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
-             //respuesta ded la solicitud
-             console.log(responseCoordinador[0].ID_COORDINADOR);
+            //Respuesta de la solicitud
              data_respuesta={
                "Fecha": fecha,
                "Justificacion": "Su solicitud fue radicada",
                "EnteResponsable":0,
-               "Usuario": parseInt(responseCoordinador[0].ID_COORDINADOR),
+               "Usuario": 0,
                "EstadoSolicitud": {
                  "Id": 1
                },
@@ -506,7 +501,6 @@ angular.module('poluxClienteApp')
                  }
                });
 
-          });
 
 
         }

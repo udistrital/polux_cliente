@@ -11,6 +11,14 @@
              <p>Rol:  <input type="text" name="userRole" ng-model="listarSolicitudes.userRole" required></input><br></p>
             </div>
           </div>
+          <div class="row"ng-if="!crearSolicitud.siModalidad">
+          <label class="col-sm-2 control-label"> Filrar por carrera: </label>
+            <div class="col-sm-10">
+                <select class="form-control" ng-model="carrera_seleccionada" ng-change="listarSolicitudes">
+                      <option  ng-repeat="carrera in listarSolicitudes.carrerasCoordinador" ng-value="carrera.CODIGO_CARRERA"> {{carrera.CARRERA}} </option>
+                </select>
+            </div>
+          </div>
 
             <br>
             <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRole==='estudiante'" class="alert alert-danger" >
