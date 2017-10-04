@@ -111,6 +111,7 @@ angular.module('poluxClienteApp')
         ctrl.espaciosElegidos = [];
         ctrl.estudiantes = [];
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
+        console.log(ctrl.ModalidadTipoSolicitud);
         if(modalidad_seleccionada!==undefined){
             ctrl.estudiante.Modalidad = modalidad_seleccionada;
             ctrl.modalidad = modalidad_seleccionada;
