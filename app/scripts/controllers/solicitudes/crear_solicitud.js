@@ -24,14 +24,17 @@ angular.module('poluxClienteApp')
       ctrl.estudiantes = [];
       ctrl.siPuede=false;
       ctrl.codigo = $routeParams.idEstudiante;
+
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
                 query:"Estudiante:"+ctrl.codigo,
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
+
                     ctrl.Trabajo = responseTrabajoEstudiante.data;
                     if(responseTrabajoEstudiante.data != null){
-                      ctrl.codigo = responseTrabajoEstudiante.data[0].CodigoEstudiante;
+                //      ctrl.codigo = responseTrabajoEstudiante.data[0].CodigoEstudiante;
+
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
                       ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
                       console.log(ctrl.trabajo_grado);
@@ -86,7 +89,6 @@ angular.module('poluxClienteApp')
         ctrl.obtenerAreas = function (){
             poluxRequest.get("area_conocimiento").then(function(responseAreas){
                 ctrl.areas = responseAreas.data;
-
             });
 
           }
@@ -133,6 +135,13 @@ angular.module('poluxClienteApp')
                 parametrosDetalles = $.param({
                   query:"ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
                   limit:0
+                });
+                var parametrosModalidadTipoSolicitud = $.param({
+                  query:"TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
+                  limit:1,
+                });
+                poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud){
+                    ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
                 });
             }
             poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
@@ -269,6 +278,8 @@ angular.module('poluxClienteApp')
       };
 
       ctrl.obtenerDatosEstudiante = function(){
+        console.log("Piosioasdf");
+        console.log(ctrl.codigo);
         academicaRequest.periodoAnterior().then(function(periodoAnterior){
 
           var parametros = {
@@ -285,15 +296,12 @@ angular.module('poluxClienteApp')
                 "codigo": parametros.codigo
               };
 
-              academicaRequest.porcentajeCursado(parametros).then(function(response3){
-
-
                 ctrl.estudiante={
                   "Codigo": parametros.codigo,
                   "Nombre": response2[0].NOMBRE,
                   "Modalidad": ctrl.modalidad,
                   "Tipo": "POSGRADO",
-                  "PorcentajeCursado": response3,
+                  "PorcentajeCursado": response2[0].PORCENTAJE,
                   "Promedio": response2[0].PROMEDIO,
                   "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
                   "Estado": response2[0].EST_ESTADO_EST,
@@ -307,7 +315,7 @@ angular.module('poluxClienteApp')
                 ctrl.estudiante.asignaturas_elegidas = [];
                 ctrl.estudiante.areas_elegidas= [];
                 ctrl.estudiante.minimoCreditos = false;
-              });
+
             }
           });
         });
