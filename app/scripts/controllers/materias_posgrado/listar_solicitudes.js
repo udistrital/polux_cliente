@@ -48,16 +48,52 @@ angular.module('poluxClienteApp')
     ctrl.carreras=response;
   });
 
+//solicitudes iniciales de la modalidad de materias de posgrado
   ctrl.buscarSolicitudes = function(carrera){
     ctrl.carrera=carrera;
     $scope.carrera=carrera;
     if(carrera){
       $scope.sols=[];
       var parametros=$.param({
-        query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera
+        //query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera
+        query:"modalidad_tipo_solicitud:13",
+        limit:0
       });
       //buscar la solicitudes
-      poluxRequest.get("solicitud_materias",parametros).then(function(response){
+      poluxRequest.get("solicitud_trabajo_grado",parametros).then(function(response){
+        console.log(response);
+
+        //por cada solicitud buscar rta solicitud
+        angular.forEach(response.data, function(value) {
+          var parametros=$.param({
+            query:"solicitud_trabajo_grado:"+value.Id+",EstadoSolicitud.Id:6"
+          });
+          poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
+            //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
+            var parametros=$.param({
+              query:"DetalleTipoSolicitud:37"+",SolicitudTrabajoGrado:"+value.Id
+            });
+            poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
+              console.log(detalleSolicitud.data[0].Descripcion);
+              //split de las asignaturas
+              var res = detalleSolicitud.data[0].Descripcion.split(",");
+              console.log(res[0]);
+              //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
+              var parametros = {
+               'codigo': res[0]
+              };
+
+              academicaRequest.buscarAsignaturas(parametros).then(function(resp){
+                console.log(resp[0].PEN_CRA_COD);
+                console.log(ctrl.carrera);
+                if(ctrl.carrera==resp[0].PEN_CRA_COD){
+                  console.log("iguales");
+                }
+              });
+            });
+          });
+        });
+
         angular.forEach(response.data, function(value) {
           ctrl.buscarEstudianteTg(value);
         });
