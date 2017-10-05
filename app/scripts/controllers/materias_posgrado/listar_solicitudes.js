@@ -112,6 +112,7 @@ angular.module('poluxClienteApp')
                             "estado": respuestaSolicitud.data[0].EstadoSolicitud.Nombre,
                             "estado_rta": respuestaSolicitud.data[0].EstadoSolicitud.Id
                           };
+
                           console.log(solicitud);
                           $scope.sols.push(solicitud);
                         });
