@@ -65,7 +65,7 @@ angular.module('poluxClienteApp')
         //por cada solicitud buscar rta solicitud
         angular.forEach(response.data, function(value) {
           var parametros=$.param({
-            query:"solicitud_trabajo_grado:"+value.Id+",EstadoSolicitud.Id:6"
+            query:"SolicitudTrabajoGrado:"+value.Id+",EstadoSolicitud.Id:6"
           });
           poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
             if(respuestaSolicitud.data!=null){
@@ -109,7 +109,8 @@ angular.module('poluxClienteApp')
                             "nombre": response2[0].NOMBRE,
                             "promedio": response2[0].PROMEDIO,
                             "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                            "estado": respuestaSolicitud.data[0].EstadoSolicitud.Nombre
+                            "estado": respuestaSolicitud.data[0].EstadoSolicitud.Nombre,
+                            "estado_rta": respuestaSolicitud.data[0].EstadoSolicitud.Id
                           };
                           console.log(solicitud);
                           $scope.sols.push(solicitud);
@@ -146,6 +147,7 @@ angular.module('poluxClienteApp')
         'success'
       )
       //recargar datos
+      console.log($scope.carrera);
       ctrl.buscarSolicitudes($scope.carrera);
     });
 
@@ -461,6 +463,7 @@ angular.module('poluxClienteApp')
         query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
       });
       poluxRequest.get("carrera_elegible",parametros).then(function(response){
+        console.log(response);
 
         if(response.data[0].CuposExcelencia==0 && response.data[0].CuposAdicionales==0){
           response.data[0].CuposExcelencia=ctrl.rendimiento;
@@ -475,12 +478,13 @@ angular.module('poluxClienteApp')
 
       //Enviar las solicitudes y # Admitidos
       poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function(response){
+        console.log(response);
         swal(
           'Solicitudes aprobadas',
           'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
           'success'
         )
-        console.log(response);
+
         //recargar datos
         ctrl.buscarSolicitudes($scope.carrera);
       });
