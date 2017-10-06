@@ -23,7 +23,7 @@
        </div>
 
        <div class="panel panel-default panel-body col-md-12">
-         <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div>
+         <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div><br>
 
 
           <button ng-if="fechaActual.toJSON() >= fecha_inicio.toJSON() && fechaActual.toJSON() < segunda_fecha.toJSON() && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>

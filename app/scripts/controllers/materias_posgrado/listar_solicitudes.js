@@ -55,10 +55,10 @@ angular.module('poluxClienteApp')
       $scope.sols=[];
       var parametros=$.param({
         //query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera
-        query:"modalidad_tipo_solicitud:13",
+        query:"ModalidadTipoSolicitud:13",
         limit:0
       });
-      //buscar la solicitudes
+      //buscar las solicitudes
       poluxRequest.get("solicitud_trabajo_grado",parametros).then(function(response){
         console.log(response);
 
@@ -69,31 +69,24 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
             if(respuestaSolicitud.data!=null){
-            console.log(respuestaSolicitud);
-            //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
-            var parametros=$.param({
-              query:"DetalleTipoSolicitud:37"+",SolicitudTrabajoGrado:"+value.Id
-            });
-            poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
-              console.log(detalleSolicitud.data[0].Descripcion);
-              //split de las asignaturas
-              var res = detalleSolicitud.data[0].Descripcion.split(",");
-              console.log(res[0]);
-              //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-              var parametros = {
-               'codigo': res[0]
-              };
+                //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
+                var parametros=$.param({
+                  query:"DetalleTipoSolicitud:37"+",SolicitudTrabajoGrado:"+value.Id
+                });
+                poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
 
-              academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                console.log(resp[0].PEN_CRA_COD);
-                console.log(ctrl.carrera);
+                  var res = detalleSolicitud.data[0].Descripcion.split(",");
+                  //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
+                  var parametros = {
+                   'codigo': res[0]
+                  };
+
+                  academicaRequest.buscarAsignaturas(parametros).then(function(resp){
                 if(ctrl.carrera==resp[0].PEN_CRA_COD){
-                  console.log("iguales");
                   var parametros=$.param({
                     query:"SolicitudTrabajoGrado:"+value.Id
                   });
                   poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
-                    console.log(usuarioSolicitud.data[0].Usuario);
 
                     academicaRequest.periodoAnterior().then(function(periodoAnterior){
                         var parametros = {
@@ -109,10 +102,9 @@ angular.module('poluxClienteApp')
                             "nombre": response2[0].NOMBRE,
                             "promedio": response2[0].PROMEDIO,
                             "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                            "estado": respuestaSolicitud.data[0].EstadoSolicitud.Nombre,
-                            "estado_rta": respuestaSolicitud.data[0].EstadoSolicitud.Id
+                            "estado": ""+respuestaSolicitud.data[0].EstadoSolicitud.Id,
+                            "respuesta": ""+respuestaSolicitud.data[0].Id
                           };
-
                           console.log(solicitud);
                           $scope.sols.push(solicitud);
                         });
@@ -122,12 +114,14 @@ angular.module('poluxClienteApp')
                   });
                 }
               });
-            });
-          }
+                });
+            }
           });
-
         });
 
+        /*angular.forEach(response.data, function(value) {
+          ctrl.buscarEstudianteTg(value);
+        });*/
       });
       ctrl.gridOptions.data = $scope.sols;
     }
@@ -148,15 +142,41 @@ angular.module('poluxClienteApp')
         'success'
       )
       //recargar datos
-      console.log($scope.carrera);
       ctrl.buscarSolicitudes($scope.carrera);
     });
 
   }
 
-  ctrl.buscarEstudianteSolicitud = function(estudiante, solicitud, respuesta){
-    console.log(solicitud.Id);
+  ctrl.buscarEstudianteTg = function(tg){
+    var parametros=$.param({
+      query:"IdTrabajoGrado:"+tg.IdTrabajoGrado.Id,
+      fields: "CodigoEstudiante"
+    });
+    //buscar la solicitudes
 
+    academicaRequest.periodoAnterior().then(function(periodoAnterior){
+      poluxRequest.get("estudiante_tg",parametros).then(function(response){
+        var parametros = {
+          'codigo' : response.data[0].CodigoEstudiante,
+          'ano' : periodoAnterior[0].APE_ANO,
+          'periodo' :periodoAnterior[0].APE_PER
+        };
+        academicaRequest.promedioEstudiante(parametros).then(function(response2){
+          var solicitud = {
+            "solicitud": tg.Id,
+            "fecha": tg.Fecha,
+            "estudiante": response.data[0].CodigoEstudiante.toString(),
+            "nombre": response2[0].NOMBRE,
+            "promedio": response2[0].PROMEDIO,
+            "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+            "estado": tg.Estado,
+            "formalizacion": tg.Formalizacion
+          };
+          $scope.sols.push(solicitud);
+        });
+
+      });
+    });
 
   }
 
@@ -464,7 +484,6 @@ angular.module('poluxClienteApp')
         query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
       });
       poluxRequest.get("carrera_elegible",parametros).then(function(response){
-        console.log(response);
 
         if(response.data[0].CuposExcelencia==0 && response.data[0].CuposAdicionales==0){
           response.data[0].CuposExcelencia=ctrl.rendimiento;
@@ -479,13 +498,12 @@ angular.module('poluxClienteApp')
 
       //Enviar las solicitudes y # Admitidos
       poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function(response){
-        console.log(response);
         swal(
           'Solicitudes aprobadas',
           'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
           'success'
         )
-
+        console.log(response);
         //recargar datos
         ctrl.buscarSolicitudes($scope.carrera);
       });

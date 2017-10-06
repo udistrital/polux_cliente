@@ -41,7 +41,7 @@ angular.module('poluxClienteApp')
                         .execute()
                         .then(function(doc) {
                             console.log(doc);
-                            var nuxeoBlob = new Nuxeo.Blob({ content: $scope.fileModel });
+                            var nuxeoBlob = new Nuxeo.Blob({ content: ctrl.fileModel });
                             console.log(nuxeoBlob);
                             nuxeo.batchUpload()
                                 .upload(nuxeoBlob)
