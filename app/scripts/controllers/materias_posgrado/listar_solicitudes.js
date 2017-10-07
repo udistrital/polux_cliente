@@ -53,28 +53,22 @@ angular.module('poluxClienteApp')
     $scope.carrera=carrera;
     if(carrera){
       $scope.sols=[];
-      var parametros=$.param({
-        //query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera
-        query:"ModalidadTipoSolicitud:13",
-        limit:0
-      });
-      //buscar las solicitudes
-      poluxRequest.get("solicitud_trabajo_grado",parametros).then(function(response){
-        console.log(response);
 
-        //por cada solicitud buscar rta solicitud
-        angular.forEach(response.data, function(value) {
           var parametros=$.param({
-            query:"SolicitudTrabajoGrado:"+value.Id+",EstadoSolicitud.Id:6"
+            query:"SolicitudTrabajoGrado.in:",
+            limit:0
           });
-          poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
-            if(respuestaSolicitud.data!=null){
+          poluxRequest.get("respuesta_solicitud/Solicitudes",parametros).then(function(respuestaSolicitud){
+
+            angular.forEach(respuestaSolicitud.data, function(value) {
+
+            if(value!=null){
                 //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
                 var parametros=$.param({
-                  query:"DetalleTipoSolicitud:37"+",SolicitudTrabajoGrado:"+value.Id
+                  query:"DetalleTipoSolicitud:37"+",SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
                 });
                 poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
-
+                  if(detalleSolicitud.data!=null){
                   var res = detalleSolicitud.data[0].Descripcion.split(",");
                   //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
                   var parametros = {
@@ -84,7 +78,7 @@ angular.module('poluxClienteApp')
                   academicaRequest.buscarAsignaturas(parametros).then(function(resp){
                 if(ctrl.carrera==resp[0].PEN_CRA_COD){
                   var parametros=$.param({
-                    query:"SolicitudTrabajoGrado:"+value.Id
+                    query:"SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
                   });
                   poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
@@ -102,10 +96,9 @@ angular.module('poluxClienteApp')
                             "nombre": response2[0].NOMBRE,
                             "promedio": response2[0].PROMEDIO,
                             "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                            "estado": ""+respuestaSolicitud.data[0].EstadoSolicitud.Id,
-                            "respuesta": ""+respuestaSolicitud.data[0].Id
+                            "estado": ""+value.EstadoSolicitud.Id,
+                            "respuesta": ""+value.Id
                           };
-                          console.log(solicitud);
                           $scope.sols.push(solicitud);
                         });
 
@@ -114,15 +107,16 @@ angular.module('poluxClienteApp')
                   });
                 }
               });
+            }
                 });
             }
           });
-        });
+          });
 
         /*angular.forEach(response.data, function(value) {
           ctrl.buscarEstudianteTg(value);
         });*/
-      });
+
       ctrl.gridOptions.data = $scope.sols;
     }
   }
