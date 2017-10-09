@@ -8,7 +8,7 @@
 * Controller of the poluxClienteApp
 */
 angular.module('poluxClienteApp')
-.controller('MateriasPosgradoListarSolicitudesCtrl', function (poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
+.controller('MateriasPosgradoListarSolicitudesCtrl', function ($q,poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
   var ctrl = this;
   ctrl.periodo=[];
   ctrl.carreras=[];
@@ -55,10 +55,10 @@ angular.module('poluxClienteApp')
       $scope.sols=[];
 
           var parametros=$.param({
-            query:"SolicitudTrabajoGrado.in:",
+            query:"EstadoSolicitud.Id.in:5|6|7|8|9|10",
             limit:0
           });
-          poluxRequest.get("respuesta_solicitud/Solicitudes",parametros).then(function(respuestaSolicitud){
+          poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
 
             angular.forEach(respuestaSolicitud.data, function(value) {
             console.log(value);
@@ -302,8 +302,13 @@ angular.module('poluxClienteApp')
 
 
             poluxRequest.get("respuesta_solicitud", parametros).then(function(response){
+            var arrayPromise=[];
+
             if(response.data!=null){
                 angular.forEach(response.data, function(value) {
+                  var defered = $q.defer();
+                  var promise = defered.promise;
+
                     //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
                     if(value!=null){
                         var parametros=$.param({
@@ -319,15 +324,23 @@ angular.module('poluxClienteApp')
                                 academicaRequest.buscarAsignaturas(parametros).then(function(resp){
                                     if($scope.carrera==resp[0].PEN_CRA_COD){
                                       $scope.aprobadas.push(value);
+                                      defered.resolve(value);
                                     }
                                     console.log($scope.aprobadas);
 
                                 });
                             }
                         });
+                        arrayPromise.push(promise);
                       }
                   });
             }
+
+            $q.all().then(function(){
+                console.log($scope.aprobadas);
+            }).catch(function(error){
+                console.log(error);
+            });
 
             if($scope.aprobadas!=null){
               ctrl.totalSols=$scope.aprobadas.length;
