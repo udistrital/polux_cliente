@@ -52,7 +52,7 @@
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'" class="row">
            <label class="col-sm-8 control-label"> {{detalle.label}}</label>
-           <input type="file" class="col-sm-4" ng-model="detalle.respuesta" required></input>
+           <input type="file" class="col-sm-4" file-model="detalle.fileModel" required></input>
            <br>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'" class="row">

@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesCrearSolicitudCtrl', function ($translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+  .controller('SolicitudesCrearSolicitudCtrl', function (nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
 
       var ctrl = this;
       ctrl.modalidades = [];
@@ -22,6 +22,9 @@ angular.module('poluxClienteApp')
       ctrl.soliciudConDetalles = true;
       ctrl.conEstudiante = false;
       ctrl.estudiantes = [];
+
+      ctrl.detallesConDocumento = [];
+
       ctrl.siPuede=false;
       ctrl.codigo = $routeParams.idEstudiante;
 
@@ -82,6 +85,14 @@ angular.module('poluxClienteApp')
                     }
                     ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
+
+                    nuxeo.connect().then(function(client) {
+                    // OK, the returned client is connected
+                        console.log('Client is connected: ' + client.connected);
+                    }, function(err) {
+                    // cannot connect
+                        console.log('Client is not connected: ' + err);
+                    });
                     //ctrl.conEstudiante= true;
           });
 
@@ -152,6 +163,7 @@ angular.module('poluxClienteApp')
                   //Se internacionalizan variables y se crean labels de los detalles
                   detalle.label = $translate.instant(detalle.Detalle.Enunciado);
                   detalle.respuesta= "";
+                  detalle.fileModel = null;
                   detalle.opciones = [];
                   //SE evalua si el detalle necesita cargar datos
                   if(detalle.Detalle.Descripcion!=='no_service' && detalle.Detalle.TipoDetalle.Id!==8){
@@ -328,12 +340,16 @@ angular.module('poluxClienteApp')
 
       ctrl.validarFormularioSolicitud = function(){
         console.log("detalles");
+
+        ctrl.detallesConDocumento = [];
+
         angular.forEach(ctrl.detalles, function(detalle){
             if(detalle.Detalle.TipoDetalle.Nombre==='Label'){
                 detalle.respuesta = detalle.opciones[0].Nombre;
             }
             if(detalle.Detalle.TipoDetalle.Nombre==='Documento'){
                 detalle.respuesta = "urlDocumento";
+                ctrl.detallesConDocumento.push(detalle);
             }
             if(detalle.Detalle.TipoDetalle.Nombre==='Directiva'){
                 if(detalle.Detalle.Descripcion=='solicitar-asignaturas'){
@@ -412,107 +428,190 @@ angular.module('poluxClienteApp')
                       ctrl.erroresFormulario = true;
                     }
               }
+              if(detalle.Detalle.TipoDetalle.Nombre==='Documento'){
+                  if(detalle.fileModel==null){
+                    swal(
+                      'Validación del formulario',
+                      "Error ingrese una opcion valida. (Documento)",
+                      'warning'
+                    );
+                    console.log("Error con el documento")
+                    ctrl.erroresFormulario = true;
+                  }
+              }
         });
         if(!ctrl.erroresFormulario){
-            //var data_solicitud = [];
-            var data_solicitud={};
-            var data_detalles = [];
-            var data_usuarios = [];
-            var data_respuesta = {};
-            var fecha = new Date();
-
-            if(ctrl.trabajo_grado !== undefined){
-                data_solicitud={
-                  "Fecha": fecha,
-                  "ModalidadTipoSolicitud": {
-                    "Id": ctrl.ModalidadTipoSolicitud
-                  },
-                  "TrabajoGrado": {
-                    "Id": ctrl.trabajo_grado
-                  }
-                };
-            }else{
-              data_solicitud={
-                "Fecha": fecha,
-                "ModalidadTipoSolicitud": {
-                  "Id": ctrl.ModalidadTipoSolicitud
-                }
-              };
-            }
-            angular.forEach(ctrl.detalles, function(detalle){
-              data_detalles.push({
-                 "Descripcion": detalle.respuesta,
-                 "SolicitudTrabajoGrado": {
-                   "Id": 0
-                 },
-                 "DetalleTipoSolicitud": {
-                   "Id": detalle.Id
-                 }
-              });
-
-            });
-
-            //Se agrega solicitud al estudiante
-            data_usuarios.push({
-              "Usuario":ctrl.codigo,
-              "SolicitudTrabajoGrado": {
-                "Id": 0
-              }
-            });
-
-            angular.forEach(ctrl.estudiantes, function(estudiante){
-              data_usuarios.push({
-                "Usuario":estudiante,
-                "SolicitudTrabajoGrado": {
-                  "Id": 0
-                }
-              });
-            });
-
-
-            //Respuesta de la solicitud
-             data_respuesta={
-               "Fecha": fecha,
-               "Justificacion": "Su solicitud fue radicada",
-               "EnteResponsable":0,
-               "Usuario": 0,
-               "EstadoSolicitud": {
-                 "Id": 1
-               },
-               "SolicitudTrabajoGrado": {
-                 "Id": 0
-               }
-             }
-
-             //se crea objeto con las solicitudes
-             ctrl.solicitud={
-               Solicitud: data_solicitud,
-               Respuesta: data_respuesta,
-               DetallesSolicitud: data_detalles,
-               UsuariosSolicitud: data_usuarios
-             }
-
-
-             poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-                console.log(response.data);
-                 if(response.data[0]==="Success"){
-                   swal(
-                     $translate.instant("FORMULARIO_SOLICITUD"),
-                     $translate.instant("SOLICITUD_REGISTRADA"),
-                     'success'
-                   );
-                 }else{
-                   swal(
-                     $translate.instant("FORMULARIO_SOLICITUD"),
-                     $translate.instant(response.data[1]),
-                     'warning'
-                   );
-                 }
-               });
-
-
-
+          //ctrl.cargarSolicitudes();
+          ctrl.cargarDocumentos();
         }
+      }
+
+      ctrl.cargarDocumento = function(nombre, descripcion, documento ,callback){
+              var defered = $q.defer();
+              var promise = defered.promise;
+              nuxeo.operation('Document.Create')
+                .params({
+                  type: 'File',
+                  name: nombre,
+                  properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
+                })
+                .input('/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes')
+                .execute()
+                .then(function(doc) {
+                    console.log(doc);
+                    var nuxeoBlob = new Nuxeo.Blob({ content: documento });
+                    console.log(nuxeoBlob);
+                    nuxeo.batchUpload()
+                    .upload(nuxeoBlob)
+                    .then(function(res) {
+                      return nuxeo.operation('Blob.AttachOnDocument')
+                          .param('document', doc.uid)
+                          .input(res.blob)
+                          .execute();
+                    })
+                    .then(function() {
+                      return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
+                    })
+                    .then(function(doc) {
+                      var url = doc.uid;
+                      var docTitle = doc.get('dc:title');
+                      var docDesc = doc.get('dc:description');
+                      swal(
+                          'Registro Existoso',
+                          'El registro del documento "' + docTitle + '" fue subido exitosamente',
+                          'success'
+                      );
+                      callback("https://athento.udistritaloas.edu.co/nuxeo/nxfile/default/"+url);
+                       defered.resolve(url);
+                    })
+                    .catch(function(error) {
+                      throw error;
+                      defered.reject(error)
+                    });
+                })
+                .catch(function(error) {
+                    throw error;
+                    defered.reject(error)
+                });
+                return promise;
+      }
+
+      ctrl.cargarDocumentos = function(callFunction){
+            var promiseArr = [];
+            angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+                console.log(detalle);
+                var anHttpPromise = ctrl.cargarDocumento(detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.fileModel, function(url){
+                  detalle.respuesta = url;
+                });
+                promiseArr.push(anHttpPromise);
+            });
+            console.log("promesas");
+            console.log(promiseArr);
+            $q.all(promiseArr).then(function(){
+                ctrl.cargarSolicitudes();
+            }).catch(function(error){
+                console.log(error);
+            });
+      };
+
+
+      ctrl.cargarSolicitudes = function(){
+        //var data_solicitud = [];
+        var data_solicitud={};
+        var data_detalles = [];
+        var data_usuarios = [];
+        var data_respuesta = {};
+        var fecha = new Date();
+
+        if(ctrl.trabajo_grado !== undefined){
+            data_solicitud={
+              "Fecha": fecha,
+              "ModalidadTipoSolicitud": {
+                "Id": ctrl.ModalidadTipoSolicitud
+              },
+              "TrabajoGrado": {
+                "Id": ctrl.trabajo_grado
+              }
+            };
+        }else{
+          data_solicitud={
+            "Fecha": fecha,
+            "ModalidadTipoSolicitud": {
+              "Id": ctrl.ModalidadTipoSolicitud
+            }
+          };
+        }
+        angular.forEach(ctrl.detalles, function(detalle){
+          data_detalles.push({
+             "Descripcion": detalle.respuesta,
+             "SolicitudTrabajoGrado": {
+               "Id": 0
+             },
+             "DetalleTipoSolicitud": {
+               "Id": detalle.Id
+             }
+          });
+
+        });
+
+        //Se agrega solicitud al estudiante
+        data_usuarios.push({
+          "Usuario":ctrl.codigo,
+          "SolicitudTrabajoGrado": {
+            "Id": 0
+          }
+        });
+
+        angular.forEach(ctrl.estudiantes, function(estudiante){
+          data_usuarios.push({
+            "Usuario":estudiante,
+            "SolicitudTrabajoGrado": {
+              "Id": 0
+            }
+          });
+        });
+
+
+        //Respuesta de la solicitud
+         data_respuesta={
+           "Fecha": fecha,
+           "Justificacion": "Su solicitud fue radicada",
+           "EnteResponsable":0,
+           "Usuario": 0,
+           "EstadoSolicitud": {
+             "Id": 1
+           },
+           "SolicitudTrabajoGrado": {
+             "Id": 0
+           }
+         }
+
+         //se crea objeto con las solicitudes
+         ctrl.solicitud={
+           Solicitud: data_solicitud,
+           Respuesta: data_respuesta,
+           DetallesSolicitud: data_detalles,
+           UsuariosSolicitud: data_usuarios
+         }
+
+
+         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
+            console.log(response.data);
+             if(response.data[0]==="Success"){
+               swal(
+                 $translate.instant("FORMULARIO_SOLICITUD"),
+                 $translate.instant("SOLICITUD_REGISTRADA"),
+                 'success'
+               );
+             }else{
+               swal(
+                 $translate.instant("FORMULARIO_SOLICITUD"),
+                 $translate.instant(response.data[1]),
+                 'warning'
+               );
+             }
+           });
+
       }
 
   });
