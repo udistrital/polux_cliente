@@ -8,7 +8,7 @@
 * Controller of the poluxClienteApp
 */
 angular.module('poluxClienteApp')
-.controller('MateriasPosgradoListarSolicitudesCtrl', function (poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
+.controller('MateriasPosgradoListarSolicitudesCtrl', function ($q, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
   var ctrl = this;
   ctrl.periodo=[];
   ctrl.carreras=[];
@@ -27,11 +27,23 @@ angular.module('poluxClienteApp')
   ];
 
   poluxMidRequest.get("fechas/ObtenerFechas").then(function(response){
-    console.log(response);
+    var momentDate = null;
+
     $scope.fechaActual = new Date();
-    $scope.fecha_inicio= new Date(response.data['inicio_proceso'].replace(/'/g, ""));
-    $scope.fecha_fin= new Date(response.data['fecha_fin'].replace(/'/g, ""));
-    $scope.segunda_fecha= new Date(response.data['segunda_fecha'].replace(/'/g, ""));
+    momentDate = moment($scope.fechaActual);
+    $scope.fechaActual = momentDate.format("YYYY-MM-DD");
+
+    $scope.fecha_inicio = new Date(response.data['inicio_proceso'].replace(/'/g, ""));
+    momentDate = moment($scope.fecha_inicio);
+    $scope.fecha_inicio = momentDate.format("YYYY-MM-DD");
+
+    $scope.fecha_fin = new Date(response.data['fecha_fin'].replace(/'/g, ""));
+    momentDate = moment($scope.fecha_fin);
+    $scope.fecha_fin = momentDate.format("YYYY-MM-DD");
+
+    $scope.segunda_fecha = new Date(response.data['segunda_fecha'].replace(/'/g, ""));
+    momentDate = moment($scope.segunda_fecha);
+    $scope.segunda_fecha = momentDate.format("YYYY-MM-DD");
   }).catch(function(rta) {
     console.log(rta);
   });
@@ -55,10 +67,10 @@ angular.module('poluxClienteApp')
       $scope.sols=[];
 
           var parametros=$.param({
-            query:"SolicitudTrabajoGrado.in:",
+            query:"EstadoSolicitud.Id.in:5|6|7|8|9|10",
             limit:0
           });
-          poluxRequest.get("respuesta_solicitud/Solicitudes",parametros).then(function(respuestaSolicitud){
+          poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
 
             angular.forEach(respuestaSolicitud.data, function(value) {
             console.log(value);
@@ -174,34 +186,6 @@ angular.module('poluxClienteApp')
 
   }
 
-  ctrl.buscarEstudianteTgOpcionados = function(tg){
-    var parametros=$.param({
-      query:"IdTrabajoGrado:"+tg.IdTrabajoGrado.Id,
-      fields: "CodigoEstudiante"
-    });
-    //buscar la solicitud
-    poluxRequest.get("estudiante_tg",parametros).then(function(response){
-      var parametros = {
-        'codigo' : response.data[0].CodigoEstudiante,
-        'ano' : 2014,
-        'periodo' :1
-      };
-      academicaRequest.promedioEstudiante(parametros).then(function(response2){
-        var solicitud = {
-          "solicitud": tg.Id,
-          "fecha": tg.Fecha,
-          "estudiante": response.data[0].CodigoEstudiante.toString(),
-          "nombre": response2[0].NOMBRE,
-          "promedio": response2[0].PROMEDIO,
-          "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-          "estado": tg.Estado
-        };
-        $scope.solsOpcionados.push(solicitud);
-      });
-
-    });
-  }
-
   ctrl.gridOptions.onRegisterApi = function (gridApi) {
     ctrl.gridApi= gridApi
   };
@@ -216,7 +200,7 @@ angular.module('poluxClienteApp')
 
       /*Solicitudes aprobadas y con formalizacion pendiente (7) quedan en estado rechazado (5)
         Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente*/
-      /*var parametros=$.param({
+      var parametros=$.param({
         query:"EstadoSolicitud.Id:7",
         limit:0
       });
@@ -246,10 +230,10 @@ angular.module('poluxClienteApp')
                 });
             }
           });
-      });*/
+      });
 
       /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
-      /*var parametros=$.param({
+      var parametros=$.param({
         query:"EstadoSolicitud.Id:8",
         limit:0
       });
@@ -279,7 +263,7 @@ angular.module('poluxClienteApp')
                 });
             }
           });
-      });*/
+      });
 
       //obtener # de cupos
       var parametros=$.param({
@@ -300,10 +284,14 @@ angular.module('poluxClienteApp')
             limit:0
           });
 
-
             poluxRequest.get("respuesta_solicitud", parametros).then(function(response){
+            var arrayPromise=[];
+
             if(response.data!=null){
                 angular.forEach(response.data, function(value) {
+                  var defered = $q.defer();
+                  var promise = defered.promise;
+
                     //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
                     if(value!=null){
                         var parametros=$.param({
@@ -317,6 +305,7 @@ angular.module('poluxClienteApp')
                                     'codigo': res[0]
                                 };
                                 academicaRequest.buscarAsignaturas(parametros).then(function(resp){
+                                    defered.resolve(value);
                                     if($scope.carrera==resp[0].PEN_CRA_COD){
                                       $scope.aprobadas.push(value);
                                     }
@@ -325,23 +314,30 @@ angular.module('poluxClienteApp')
                                 });
                             }
                         });
+                        arrayPromise.push(promise);
                       }
                   });
+
             }
 
-            if($scope.aprobadas!=null){
-              ctrl.totalSols=$scope.aprobadas.length;
-              console.log(ctrl.totalSols);
-            }
-
-            console.log(ctrl.totalSols);
             var cuposDisponibles=0;
-            if($scope.cupos_excelencia_ingresado!= ctrl.totalSols){
-              cuposDisponibles=$scope.cupos_excelencia_ingresado-ctrl.totalSols;
-              console.log("HAY más cupos, Total:" + cuposDisponibles);
-            }else{
-              console.log("No hay más cupos");
-            }
+            $q.all(arrayPromise).then(function(){
+                console.log($scope.aprobadas);
+                console.log($scope.aprobadas.length);
+                if($scope.aprobadas!=null){
+                  ctrl.totalSols=$scope.aprobadas.length;
+                  console.log(ctrl.totalSols);
+
+                  if($scope.cupos_excelencia_ingresado!= ctrl.totalSols){
+                    cuposDisponibles=$scope.cupos_excelencia_ingresado-ctrl.totalSols;
+                    console.log("HAY más cupos, Total:" + cuposDisponibles);
+                  }else{
+                    console.log("No hay más cupos");
+                  }
+                }
+            }).catch(function(error){
+                console.log(error);
+            });
 
             //sols aprobadas con pago y con formalizacion:confirmado
             var totalSolsPago=0;
@@ -350,8 +346,10 @@ angular.module('poluxClienteApp')
                 limit:0
             });
             poluxRequest.get("respuesta_solicitud", parametros).then(function(response){
-
+              var arrayPromise=[];
                angular.forEach(response.data, function(value) {
+                 var defered = $q.defer();
+                 var promise = defered.promise;
                     //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
                     if(value!=null){
                         var parametros=$.param({
@@ -365,26 +363,32 @@ angular.module('poluxClienteApp')
                                     'codigo': res[0]
                                 };
                                 academicaRequest.buscarAsignaturas(parametros).then(function(resp){
+                                  defered.resolve(value);
                                     if($scope.carrera==resp[0].PEN_CRA_COD){
                                       ctrl.aprobadasPago.push(value.SolicitudTrabajoGrado);
                                     }
                                 });
                             }
                         });
+                        arrayPromise.push(promise);
                     }
                 });
 
-              if(ctrl.aprobadasPago!=null){
-                totalSolsPago=ctrl.aprobadasPago.length;
-              }
+                var cuposDisponiblesPago=0;
+                $q.all(arrayPromise).then(function(){
+                    if(ctrl.aprobadasPago!=null){
+                      totalSolsPago=ctrl.aprobadasPago.length;
 
-              var cuposDisponiblesPago=0;
-              if($scope.cupos_adicionales_ingresado!= totalSolsPago){
-                cuposDisponiblesPago=$scope.cupos_adicionales_ingresado-totalSolsPago;
-                console.log("HAY más cupos, Total:" + cuposDisponiblesPago);
-              }else{
-                console.log("No hay más cupos");
-              }
+                      if($scope.cupos_adicionales_ingresado!= totalSolsPago){
+                        cuposDisponiblesPago=$scope.cupos_adicionales_ingresado-totalSolsPago;
+                        console.log("HAY más cupos, Total:" + cuposDisponiblesPago);
+                      }else{
+                        console.log("No hay más cupos");
+                      }
+                    }
+                }).catch(function(error){
+                    console.log(error);
+                });
 
               //buscar las solicitudes con estado:opcionado
               if($scope.carrera){
@@ -443,7 +447,7 @@ angular.module('poluxClienteApp')
                                                     'cupos_excelencia' : cuposDisponibles,
                                                     'cupos_adicionales' : cuposDisponiblesPago
                                                   };
-                                                  //ctrl.seleccionAdmitidos($scope.solsOpcionados, ctrl.rta);
+                                                  ctrl.seleccionAdmitidos($scope.solsOpcionados, ctrl.rta);
                                                 }
                                             });
 
@@ -480,32 +484,29 @@ angular.module('poluxClienteApp')
     console.log("Selección de admitidos 3");
     //Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
     //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
-
     var parametros=$.param({
-      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado,Formalizacion:pendiente"
+      query:"EstadoSolicitud.Id:7",
+      limit:0
     });
-
-    poluxRequest.get("solicitud_materias", parametros).then(function(response){
+    poluxRequest.get("respuesta_solicitud",parametros).then(function(response){
       angular.forEach(response.data, function(value) {
-        value.Estado='rechazado'
-        value.Formalizacion='rechazado';
-        poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
+        value.EstadoSolicitud.Id=5;
+        poluxRequest.put("respuesta_solicitud",value.Id, value).then(function(response){
           console.log("response.data confirmado: " + response.data);
         });
       });
     });
 
     /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
-
     var parametros=$.param({
-      query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",Estado:aprobado con pago,Formalizacion:pendiente"
+      query:"EstadoSolicitud.Id:8",
+      limit:0
     });
 
-    poluxRequest.get("solicitud_materias", parametros).then(function(response){
+    poluxRequest.get("respuesta_solicitud",parametros).then(function(response){
       angular.forEach(response.data, function(value) {
-        value.Estado='rechazado'
-        value.Formalizacion='rechazado';
-        poluxRequest.put("solicitud_materias",value.Id, value).then(function(response){
+        value.EstadoSolicitud.Id=5;
+        poluxRequest.put("respuesta_solicitud",value.Id, value).then(function(response){
           console.log("response.data confirmado: " + response.data);
           swal(
             'Solicitudes aprobadas',
@@ -518,7 +519,11 @@ angular.module('poluxClienteApp')
       });
     });
 
-    alert("Se cancelan las solicitudes aprobadas/aprobadas con pago que no estén formalizadas");
+    swal(
+      'Solicitudes aprobadas',
+      'Se cancelan las solicitudes aprobadas/aprobadas con pago que no estén formalizadas',
+      'success'
+    )
     //recargar datos
     ctrl.buscarSolicitudes($scope.carrera);
 
