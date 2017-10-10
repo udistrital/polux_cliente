@@ -156,12 +156,13 @@ angular.module('poluxClienteApp')
   }
 
   ctrl.getDocumento = function(docid){
-    nuxeo.connect().then(function(client) {
+    $window.open(docid);
+    /*nuxeo.connect().then(function(client) {
     // OK, the returned client is connected
     // 'https://athento.udistritaloas.edu.co/nuxeo/nxfile/default/ce5791c7-fd9f-41a5-90c6-fb9c882772bb/blobholder:0/dibujo.pdf';
      //nuxeo.request('/path/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes/Propuesta :20131020002')
     // nuxeo.request('/path/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes/Propuesta :20131020002')
-      nuxeo.request('id/ce5791c7-fd9f-41a5-90c6-fb9c882772bb//@blob/blobholder:0')
+      nuxeo.request('id/ce5791c7-fd9f-41a5-90c6-fb9c882772bb/@blob/blobholder:0')
         .get()
         .then(function(doc) {
            console.log(doc);
@@ -174,7 +175,7 @@ angular.module('poluxClienteApp')
                'success'
            );
       });
-    /*  nuxeo.repository().fetch('ce5791c7-fd9f-41a5-90c6-fb9c882772bb', { schemas: ['dublincore', 'file'] }).then(function(doc) {
+     nuxeo.repository().fetch('ce5791c7-fd9f-41a5-90c6-fb9c882772bb', { schemas: ['dublincore', 'file'] }).then(function(doc) {
                                     console.log(doc);
                                     $scope.enlace = doc.uid + ".pdf";
                                     $scope.titulo = doc.get('dc:title');
@@ -186,13 +187,13 @@ angular.module('poluxClienteApp')
                                         'El registro del documento "' + $scope.titulo + '" fue subido exitosamente' + '\n' + 'continue por favor con la asignación de areas de conocimiento',
                                         'success'
                                     );
-                                });*/
+                                });
         console.log('Client is connected: ' + client.connected);
     }, function(err) {
     // cannot connect
         console.log('Client is not connected: ' + err);
     });
-
+    */
   }
 
 

@@ -475,13 +475,13 @@ angular.module('poluxClienteApp')
                     })
                     .then(function(doc) {
                       var url = doc.uid;
-                      var docTitle = doc.get('dc:title');
+                  /*    var docTitle = doc.get('dc:title');
                       var docDesc = doc.get('dc:description');
                       swal(
                           'Registro Existoso',
                           'El registro del documento "' + docTitle + '" fue subido exitosamente',
                           'success'
-                      );
+                      );*/
                       callback("https://athento.udistritaloas.edu.co/nuxeo/nxfile/default/"+url);
                        defered.resolve(url);
                     })
