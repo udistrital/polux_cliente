@@ -8,14 +8,14 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-.controller('SolicitudesListarSolicitudesCtrl', function ($translate, academicaRequest,poluxRequest,$scope) {
+.controller('SolicitudesListarSolicitudesCtrl', function ($window,nuxeo,$translate, academicaRequest,poluxRequest,$scope) {
   var ctrl = this;
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  $scope.userId = "60261576";
-  ctrl.userRole = "coordinador";
-  //$scope.userId = "20141020036";
-  //ctrl.userRole = "estudiante";
+  //$scope.userId = "60261576";
+  //ctrl.userRole = "coordinador";
+  $scope.userId = "20131020002";
+  ctrl.userRole = "estudiante";
   ctrl.userId = $scope.userId;
 
   $scope.$watch("userId",function() {
@@ -155,6 +155,46 @@ angular.module('poluxClienteApp')
     }
   }
 
+  ctrl.getDocumento = function(docid){
+    nuxeo.connect().then(function(client) {
+    // OK, the returned client is connected
+    // 'https://athento.udistritaloas.edu.co/nuxeo/nxfile/default/ce5791c7-fd9f-41a5-90c6-fb9c882772bb/blobholder:0/dibujo.pdf';
+     //nuxeo.request('/path/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes/Propuesta :20131020002')
+    // nuxeo.request('/path/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes/Propuesta :20131020002')
+      nuxeo.request('id/ce5791c7-fd9f-41a5-90c6-fb9c882772bb//@blob/blobholder:0')
+        .get()
+        .then(function(doc) {
+           console.log(doc);
+           $scope.enlace = doc.uid + ".pdf";
+           $scope.titulo = doc.title
+           $scope.descripcion = doc.get('dc:description');
+           swal(
+               'Registro Existoso',
+               'El registro del documento "' + $scope.titulo + '" fue subido exitosamente' + '\n' + 'continue por favor con la asignación de areas de conocimiento',
+               'success'
+           );
+      });
+    /*  nuxeo.repository().fetch('ce5791c7-fd9f-41a5-90c6-fb9c882772bb', { schemas: ['dublincore', 'file'] }).then(function(doc) {
+                                    console.log(doc);
+                                    $scope.enlace = doc.uid + ".pdf";
+                                    $scope.titulo = doc.get('dc:title');
+                                    $scope.descripcion = doc.get('dc:description');
+                                    $scope.file = doc.get('file:content');
+                                    console.log($scope.file);
+                                    swal(
+                                        'Registro Existoso',
+                                        'El registro del documento "' + $scope.titulo + '" fue subido exitosamente' + '\n' + 'continue por favor con la asignación de areas de conocimiento',
+                                        'success'
+                                    );
+                                });*/
+        console.log('Client is connected: ' + client.connected);
+    }, function(err) {
+    // cannot connect
+        console.log('Client is not connected: ' + err);
+    });
+
+  }
+
 
   ctrl.filtrarSolicitudes = function(carrera_seleccionada){
       var solicitudesTemporales = [];
@@ -200,5 +240,7 @@ angular.module('poluxClienteApp')
                 default:
             }
         };
+
+
 
 });

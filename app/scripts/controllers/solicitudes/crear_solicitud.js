@@ -458,7 +458,8 @@ angular.module('poluxClienteApp')
                 .input('/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes')
                 .execute()
                 .then(function(doc) {
-                    console.log(doc);
+                    console.log("doc content");
+                    console.log(documento);
                     var nuxeoBlob = new Nuxeo.Blob({ content: documento });
                     console.log(nuxeoBlob);
                     nuxeo.batchUpload()

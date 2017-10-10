@@ -77,7 +77,8 @@
                       <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
                   </div>
                   <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
-                      <a href="{{detalle.Descripcion}}" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>
+                      <input type="submit" value="Ver documento"  class="col-sm-2 btn btn-success" ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)"></input>
+                    <!--  <a href="{{detalle.Descripcion}}" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label> -->
                   </div>
                 </div>
 
