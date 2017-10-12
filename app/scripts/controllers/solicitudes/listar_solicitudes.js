@@ -12,19 +12,23 @@ angular.module('poluxClienteApp')
   var ctrl = this;
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  //$scope.userId = "60261576";
-  //ctrl.userRole = "coordinador";
-  $scope.userId = "20131020002";
-  ctrl.userRole = "estudiante";
+  $scope.userId = "80093200";
+  ctrl.userRole = "coordinador";
+  //$scope.userId = "20131020002";
+  //ctrl.userRole = "estudiante";
   ctrl.userId = $scope.userId;
 
   $scope.$watch("userId",function() {
       ctrl.conSolicitudes = false;
       ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
+      $scope.load = true;
     });
 
 
+
   ctrl.actualizarSolicitudes = function (identificador, rol){
+    var promiseArr = [];
+
       ctrl.solicitudes = [];
       var parametrosSolicitudes;
       var tablaConsulta ;
@@ -73,10 +77,10 @@ angular.module('poluxClienteApp')
             limit:0
         });
         poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
-              if(responseSolicitudes.data !== null){
-                ctrl.conSolicitudes = true;
-              }
               angular.forEach(responseSolicitudes.data, function(solicitud){
+                var defered = $q.defer();
+                var promise = defered.promise;
+                promiseArr.push(promise);
                 solicitud.data = {
                 'Id':solicitud.SolicitudTrabajoGrado.Id,
                 'ModalidadTipoSolicitud':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
@@ -89,7 +93,17 @@ angular.module('poluxClienteApp')
                       solicitud.data.Estado = responseRespuesta.data[0].EstadoSolicitud.Nombre;
                       ctrl.solicitudes.push(solicitud.data);
                       ctrl.gridOptions.data = ctrl.solicitudes;
+                      defered.resolve(solicitud.data);
                  });
+              });
+              $q.all(promiseArr).then(function(){
+                  if(responseSolicitudes.data !== null){
+                    ctrl.conSolicitudes = true;
+                  }
+                  ctrl.gridOptions.data = ctrl.solicitudes;
+                  $scope.load = false;
+              }).catch(function(error){
+                  console.log(error);
               });
         });
       }
@@ -111,15 +125,18 @@ angular.module('poluxClienteApp')
       academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
               ctrl.carrerasCoordinador = responseCoordinador;
               var carreras  = [];
+              console.log("response");
+              console.log(typeof(responseCoordinador));
+              if(responseCoordinador!=="null"){
               angular.forEach(responseCoordinador, function(carrera){
                   carreras.push(carrera.CODIGO_CARRERA);
               });
 
-      poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
-                if(responseSolicitudes.data !== null){
-                  ctrl.conSolicitudes = true;
-                }
+              poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
                 angular.forEach(responseSolicitudes.data, function(solicitud){
+                  var defered = $q.defer();
+                  var promise = defered.promise;
+                  promiseArr.push(promise);
                     solicitud.data = {
                     'Id':solicitud.SolicitudTrabajoGrado.Id,
                     'ModalidadTipoSolicitud':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
@@ -145,12 +162,27 @@ angular.module('poluxClienteApp')
                           solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
                           solicitud.data.Carrera = carreraEstudiante;
                           ctrl.solicitudes.push(solicitud.data);
+                          defered.resolve(solicitud.data);
                           ctrl.gridOptions.data = ctrl.solicitudes;
+                        }else{
+                          defered.resolve(carreraEstudiante);
                         }
                       });
                     });
                   });
+                  $q.all(promiseArr).then(function(){
+                      if(ctrl.solicitudes.length != 0){
+                        ctrl.conSolicitudes = true;
+                      }
+                      ctrl.gridOptions.data = ctrl.solicitudes;
+                      $scope.load = false;
+                  }).catch(function(error){
+                      console.log(error);
+                  });
                 });
+              }else{
+              $scope.load = false;
+              }
         });
     }
   }

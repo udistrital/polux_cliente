@@ -1,8 +1,12 @@
+
+
+
 <div class="panel panel-default">
     <div class="panel-heading">
         {{'LISTAR_SOLICITUDES' | translate}}
     </div>
     <div class="panel-body">
+
           <div class="row">
             <div class="col-md-6">
               <p>Código:  <input type="text" name="userId" ng-model="userId" required></input><br></p>
@@ -11,7 +15,11 @@
              <p>Rol:  <input type="text" name="userRole" ng-model="listarSolicitudes.userRole" required></input><br></p>
             </div>
           </div>
-          <div class="row" ng-if="listarSolicitudes.userRole==='coordinador'">
+
+          <loading tam="4" load="load"> </loading>
+
+            <div ng-if="load!==true">
+          <div class="row" ng-if="listarSolicitudes.userRole==='coordinador' and listarSolicitudes.solicitudes.length != 0">
           <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
             <div class="col-sm-10">
                 <select class="form-control" ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
@@ -34,7 +42,7 @@
             <div ng-if="listarSolicitudes.conSolicitudes" class="panel panel-default panel-body col-md-12">
               <div ui-grid="listarSolicitudes.gridOptions"  ui-grid-cellNav  ui-grid-pagination class="mi-grid" id="mi-grid" ui-grid-auto-resize></div>
             </div>
-
+          </div>
     </div>
 
 </div>
@@ -79,7 +87,7 @@
                   <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
                     <!--  <input type="submit" value="Ver documento"   class="col-sm-2 btn btn-success" height="48" ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)"></input> -->
                     <!--   <a href="{{detalle.Descripcion}}" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>  -->
-                      <a ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label> 
+                      <a ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>
                   </div>
                 </div>
 
