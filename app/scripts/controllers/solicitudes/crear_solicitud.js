@@ -482,7 +482,7 @@ angular.module('poluxClienteApp')
                           'El registro del documento "' + docTitle + '" fue subido exitosamente',
                           'success'
                       );*/
-                      callback("https://athento.udistritaloas.edu.co/nuxeo/nxfile/default/"+url);
+                      callback(url);
                        defered.resolve(url);
                     })
                     .catch(function(error) {
