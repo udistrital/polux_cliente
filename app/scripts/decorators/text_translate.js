@@ -232,6 +232,7 @@ var text_es = {
       CARGANDO_SOLICITUDES:"Cargando solicitudes",
     },
     CODIGO_MATERIA:"Codigo asignatura",
+    SIN_CARRERAS_SOLICITUDES:"Actualmente no hay carreras disponibles para su elección",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -446,6 +447,7 @@ var text_en = {
     },
 
     CODIGO_MATERIA:"Subject code",
+    SIN_CARRERAS_SOLICITUDES:"There are currently no carrers available for your choice",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

@@ -13,15 +13,16 @@
         <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.APE_PER}}</label>
 
         <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
+        <div class="col-sm-10" ng-if="!d_solicitarAsignaturas.carreras.length>0">
+            <label for="periodo" class="col-sm-10 control-label">{{'SIN_CARRERAS_SOLICITUDES' | translate}}.</label>
+        </div>
         <div class="col-sm-10" ng-if="d_solicitarAsignaturas.carreras.length>0">
           <select ng-model="carreraSeleccionada" name="carrera" class="form-control"
           ng-change="d_solicitarAsignaturas.cargarMaterias(carreraSeleccionada)">
             <option ng-repeat="p in d_solicitarAsignaturas.carreras" ng-value="p">{{p.Nombre}} </option>
           </select><br>
         </div>
-        <div class="col-sm-10" ng-if="!d_solicitarAsignaturas.carreras.length>0">
-            <label for="periodo" class="col-sm-10 control-label">Actualmente no hay carreras disponibles para su elección.</label>
-        </div>
+
         <div class="panel panel-default panel-body col-md-12" ng-if="d_solicitarAsignaturas.carreras.length>0">
           <div class="mi-grid" id="mi-grid" ui-grid="d_solicitarAsignaturas.gridOptions" ui-grid-cellNav class="grid" ui-grid-auto-resize  style="height: {{d_solicitarAsignaturas.desiredTableHeight + 'px'}}; width: {{d_solicitarAsignaturas.desiredTableWidth + 'px'}};"></div>
         </div>
