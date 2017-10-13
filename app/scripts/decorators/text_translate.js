@@ -99,7 +99,7 @@ var text_es = {
     NINGUNA_SOLICITUD_REALIZADA: "Ninguna solicitud realizada",
     SOLICITUD_NUM: "Solicitud N° ",
     FORMALIZACION: "Formalización: ",
-    CREDITOS: "Créditos: ",
+    CREDITOS: "Créditos ",
     ESTUDIANTE_ACTUAL: "Estudiante actual: ",
     TITULO_TG: "Título del trabajo de grado",
     ASIGNAR_AREA: "Asignar Área",
@@ -231,6 +231,7 @@ var text_es = {
       CARGANDO_DETALLES:"Cargando detalles del formulario",
       CARGANDO_SOLICITUDES:"Cargando solicitudes",
     },
+    CODIGO_MATERIA:"Codigo asignatura",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -443,6 +444,8 @@ var text_en = {
       CARGANDO_DETALLES:"Loading form details",
       CARGANDO_SOLICITUDES:"Loading requests",
     },
+
+    CODIGO_MATERIA:"Subject code",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
