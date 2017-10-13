@@ -171,7 +171,7 @@ angular.module('poluxClienteApp')
                   detalle.fileModel = null;
                   detalle.opciones = [];
                   //SE evalua si el detalle necesita cargar datos
-                  if(detalle.Detalle.Descripcion!=='no_service' && detalle.Detalle.TipoDetalle.Id!==8){
+                  if(!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id!==8){
                       //Se separa el strig
                       var parametrosServicio = detalle.Detalle.Descripcion.split(";");
                       var sql  = "";
@@ -504,7 +504,7 @@ angular.module('poluxClienteApp')
             var fileTypeError = false;
             angular.forEach(ctrl.detallesConDocumento, function (detalle) {
               var documento = detalle.fileModel;
-              if(documento.type !== "application/pdf"){
+              if(documento.type !== "application/pdf" || documento.size>parseInt(detalle.Detalle.Descripcion.split(";")[1])){
                   fileTypeError = true;
               }
             });

@@ -166,7 +166,7 @@ var text_es = {
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
     },
-    VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf'). ",
+    VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos",
@@ -378,7 +378,7 @@ var text_en = {
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
     },
-    VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf). ",
+    VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Save academic spaces",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces",

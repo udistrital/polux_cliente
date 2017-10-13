@@ -24,7 +24,6 @@ angular.module('poluxClienteApp')
                 '</div>'
                 ,
       controller:function($scope){
-        console.log($scope.message);
         $scope.loadMessage = "";
         if ($scope.tam===undefined) {
           $scope.tam=5;
