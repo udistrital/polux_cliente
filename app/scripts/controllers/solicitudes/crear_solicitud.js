@@ -458,10 +458,7 @@ angular.module('poluxClienteApp')
                 .input('/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes')
                 .execute()
                 .then(function(doc) {
-                    console.log("doc content");
-                    console.log(documento);
                     var nuxeoBlob = new Nuxeo.Blob({ content: documento });
-                    console.log(nuxeoBlob);
                     nuxeo.batchUpload()
                     .upload(nuxeoBlob)
                     .then(function(res) {
@@ -475,13 +472,6 @@ angular.module('poluxClienteApp')
                     })
                     .then(function(doc) {
                       var url = doc.uid;
-                  /*    var docTitle = doc.get('dc:title');
-                      var docDesc = doc.get('dc:description');
-                      swal(
-                          'Registro Existoso',
-                          'El registro del documento "' + docTitle + '" fue subido exitosamente',
-                          'success'
-                      );*/
                       callback(url);
                        defered.resolve(url);
                     })
@@ -494,25 +484,42 @@ angular.module('poluxClienteApp')
                     throw error;
                     defered.reject(error)
                 });
+
                 return promise;
       }
 
       ctrl.cargarDocumentos = function(callFunction){
-            var promiseArr = [];
+            var fileTypeError = false;
             angular.forEach(ctrl.detallesConDocumento, function (detalle) {
-                console.log(detalle);
-                var anHttpPromise = ctrl.cargarDocumento(detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.fileModel, function(url){
-                  detalle.respuesta = url;
-                });
-                promiseArr.push(anHttpPromise);
+              var documento = detalle.fileModel;
+              if(documento.type !== "application/pdf"){
+                  fileTypeError = true;
+              }
             });
-            console.log("promesas");
-            console.log(promiseArr);
-            $q.all(promiseArr).then(function(){
-                ctrl.cargarSolicitudes();
-            }).catch(function(error){
-                console.log(error);
-            });
+            if(!fileTypeError){
+              var promiseArr = [];
+              angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+                  var anHttpPromise = ctrl.cargarDocumento(detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.fileModel, function(url){
+                    detalle.respuesta = url;
+                  });
+                  promiseArr.push(anHttpPromise);
+              });
+              $q.all(promiseArr).then(function(){
+                  ctrl.cargarSolicitudes();
+              }).catch(function(error){
+                  swal(
+                    $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                    $translate.instant("VERIFICAR_DOCUMENTO"),
+                    'warning'
+                  );
+              });
+            }else{
+              swal(
+                $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                $translate.instant("VERIFICAR_DOCUMENTO"),
+                'warning'
+              );
+            }
       };
 
 

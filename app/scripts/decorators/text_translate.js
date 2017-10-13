@@ -163,6 +163,10 @@ var text_es = {
     ERROR_SOLICITUDES_1:"Ocurrio un error al insertar los detalles de la solicitud",
     ERROR_SOLICITUDES_2:"Ocurrio un error al insertar los usuarios de la solicitud.",
     ERROR_SOLICITUDES_3:"Ocurrio un error al insertar la respuesta de la solicitud.",
+    ERROR: {
+        SUBIR_DOCUMENTO:"Error al intentar subir un documento",
+    },
+    VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf'). ",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos",
@@ -365,6 +369,10 @@ var text_en = {
     ERROR_SOLICITUDES_1:"There was an error inserting the details of the request.",
     ERROR_SOLICITUDES_2:"There was an error inserting the users of the request",
     ERROR_SOLICITUDES_3:"There was an error inserting the answer of the request",
+    ERROR: {
+        SUBIR_DOCUMENTO:"Error attempting to load a documento",
+    },
+    VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf). ",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Save academic spaces",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces",
