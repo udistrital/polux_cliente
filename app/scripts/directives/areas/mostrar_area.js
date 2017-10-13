@@ -33,11 +33,10 @@ angular.module('poluxClienteApp')
         */
       self.mostrarAreasDocente= function(Id){
           self.parametros=$.param({
-            query: "IdentificacionDocente:"+Id,
-            sortby: "IdAreaConocimiento",
+            query: "docente:"+Id,
+            sortby: "area_conocimiento",
             order: "asc",
-            limit: 0,
-            related: "IdAreaConocimiento"
+            limit: 0
           });
           poluxRequest.get("areas_docente",self.parametros)
           .then(function(response){
@@ -58,7 +57,7 @@ angular.module('poluxClienteApp')
           self.idareas=[];
           console.log(areasDocenteParam);
           angular.forEach(areasDocenteParam,function(value){
-              self.idareas.push(value.IdAreaConocimiento.Id);
+              self.idareas.push(value.AreaConocimiento.Id);
           });
           return self.idareas;
       }
