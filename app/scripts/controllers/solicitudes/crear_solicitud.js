@@ -8,7 +8,11 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesCrearSolicitudCtrl', function (nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+  .controller('SolicitudesCrearSolicitudCtrl', function ($scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+      $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
+      $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
+      $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
+
 
       var ctrl = this;
       ctrl.modalidades = [];
@@ -22,9 +26,8 @@ angular.module('poluxClienteApp')
       ctrl.soliciudConDetalles = true;
       ctrl.conEstudiante = false;
       ctrl.estudiantes = [];
-
       ctrl.detallesConDocumento = [];
-
+      $scope.loadEstudiante = true;
       ctrl.siPuede=false;
       ctrl.codigo = $routeParams.idEstudiante;
 
@@ -119,6 +122,7 @@ angular.module('poluxClienteApp')
 
 
       ctrl.cargarDetalles= function (tipoSolicitud, modalidad_seleccionada) {
+        $scope.loadDetalles = true;
         ctrl.siPuede=false;
         ctrl.detallesCargados = false;
         ctrl.espaciosElegidos = [];
@@ -156,6 +160,7 @@ angular.module('poluxClienteApp')
                 });
             }
             poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
+                $scope.loadDetalles = false;
                 ctrl.detalles = responseDetalles.data;
                 console.log(ctrl.detalles);
                 //Se cargan opciones de los detalles
@@ -282,6 +287,7 @@ angular.module('poluxClienteApp')
                 }
             });
           }else{
+              $scope.loadDetalles = false;
               ctrl.siPuede=true;
               ctrl.detalles = [];
           }
@@ -322,8 +328,13 @@ angular.module('poluxClienteApp')
                   "Carrera":response2[0].EST_CRA_COD
 
                 };
-                console.log(ctrl.estudiante);
-                ctrl.conEstudiante=true;
+                if(ctrl.estudiante.Nombre === undefined){
+                  ctrl.conEstudiante=false;
+                  $scope.loadEstudiante = false;
+                }else{
+                  ctrl.conEstudiante=true;
+                  $scope.loadEstudiante = false;
+                }
                 ctrl.estudiante.asignaturas_elegidas = [];
                 ctrl.estudiante.areas_elegidas= [];
                 ctrl.estudiante.minimoCreditos = false;
@@ -442,6 +453,7 @@ angular.module('poluxClienteApp')
         });
         if(!ctrl.erroresFormulario){
           //ctrl.cargarSolicitudes();
+
           ctrl.cargarDocumentos();
         }
       }
@@ -496,6 +508,7 @@ angular.module('poluxClienteApp')
                   fileTypeError = true;
               }
             });
+            $scope.loadFormulario = true;
             if(!fileTypeError){
               var promiseArr = [];
               angular.forEach(ctrl.detallesConDocumento, function (detalle) {
@@ -512,6 +525,7 @@ angular.module('poluxClienteApp')
                     $translate.instant("VERIFICAR_DOCUMENTO"),
                     'warning'
                   );
+                  $scope.loadFormulario = false;
               });
             }else{
               swal(
@@ -519,6 +533,7 @@ angular.module('poluxClienteApp')
                 $translate.instant("VERIFICAR_DOCUMENTO"),
                 'warning'
               );
+              $scope.loadFormulario = false;
             }
       };
 
@@ -618,6 +633,7 @@ angular.module('poluxClienteApp')
                  'warning'
                );
              }
+             $scope.loadFormulario = false;
            });
 
       }

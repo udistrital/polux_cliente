@@ -1,4 +1,5 @@
 <br>
+<loading tam="4" load="loadEstudiante" message="cargandoEstudiante"> </loading>
 <div class="panel panel-default" ng-if="crearSolicitud.conEstudiante">
     <div class="panel-heading">
         {{'NUEVA_SOLICITUD' | translate}}
@@ -24,14 +25,17 @@
     </div>
     </div>
 </div>
+<loading tam="4" load="loadFormulario" message="enviandoFormulario"> </loading>
+<loading tam="4" load="loadDetalles"  message="cargandoDetalles"> </loading>
 <div class="panel-body alert alert-danger" ng-show="crearSolicitud.siPuede">
     {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
 </div>
-<div class="panel panel-default" ng-show="crearSolicitud.detallesCargados">
+<div class="panel panel-default" ng-show="crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario">
     <div class="panel-heading">
         {{'FORMULARIO_SOLICITUD' | translate}}
     </div>
     <div class="panel-body">
+
        <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
        <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> {{'SOLICITUD_SIN_FORMULARIO' | translate}} <br> </br> </label>
 
@@ -117,7 +121,7 @@
     </div>
 
 </div>
-<div class="panel panel-default" ng-if="!crearSolicitud.conEstudiante">
+<div class="panel panel-default" ng-if="!crearSolicitud.conEstudiante && !loadEstudiante">
     <div class="panel-heading">
         {{'ERROR' | translate}}
     </div>

@@ -10,6 +10,7 @@
 angular.module('poluxClienteApp')
 .controller('SolicitudesListarSolicitudesCtrl', function ($q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope) {
   var ctrl = this;
+  $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
   $scope.userId = "80093200";

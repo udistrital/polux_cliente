@@ -225,6 +225,12 @@ var text_es = {
     DETALLES_SOLICITUD: "Detalles de la solicitud",
     INFORMACION_SOLICITUD: "Información de la solicitud",
     SOLICITANTES: "Solicitantes",
+    LOADING:{
+      CARGANDO_ESTUDIANTE:"Cargando datos del estudiante",
+      ENVIANDO_FORLMULARIO:"Enviando formulario",
+      CARGANDO_DETALLES:"Cargando detalles del formulario",
+      CARGANDO_SOLICITUDES:"Cargando solicitudes",
+    },
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -431,6 +437,12 @@ var text_en = {
     DETALLES_SOLICITUD: "Request's details",
     INFORMACION_SOLICITUD: "Request's information",
     SOLICITANTES: "Applicants",
+    LOADING:{
+      CARGANDO_ESTUDIANTE:"Loading student data",
+      ENVIANDO_FORLMULARIO:"Sending form",
+      CARGANDO_DETALLES:"Loading form details",
+      CARGANDO_SOLICITUDES:"Loading requests",
+    },
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
