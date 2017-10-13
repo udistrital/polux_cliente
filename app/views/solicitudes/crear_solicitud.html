@@ -1,4 +1,3 @@
-<br>
 <loading tam="4" load="loadEstudiante" message="cargandoEstudiante"> </loading>
 <div class="panel panel-default" ng-if="crearSolicitud.conEstudiante">
     <div class="panel-heading">
@@ -86,7 +85,7 @@
          </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
-            <solicitar-asignaturas estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
+            <solicitar-asignaturas e="crearSolicitud.carreraElegida" estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
             <asignar-estudiantes estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.modalidad!=2 && crearSolicitud.modalidad!=3"></asignar-estudiantes>
             <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">

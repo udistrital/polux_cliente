@@ -13,12 +13,11 @@ angular.module('poluxClienteApp')
       scope: {
         estudiante: '=',
         modalidad: '=',
-        l: '=?',
+        e: '=?',
       },
 
       templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
       controller: function($scope, $route, $translate) {
-        console.log("carreras ya elegidas",$scope.l);
         var ctrl = this;
         ctrl.maxCreditos = 0;
         ctrl.carreras = [];
@@ -26,7 +25,12 @@ angular.module('poluxClienteApp')
         ctrl.estudiante = $scope.estudiante;
         ctrl.tipo = $scope.estudiante.Tipo;
         $scope.sols = [];
-        ctrl.listado=$scope.l;
+        if($scope.e===undefined){
+          $scope.e = {
+            "codigo":"null",
+          };
+        }
+        console.log("carreras ya elegidas", $scope.e);
         /*número de créditos mínimos, según la modalidad
           modalidad de espacios académicos de posgrado: 8 créditos,
           modalidad de espacios académicos de profundización: 6 créditos*/
@@ -50,7 +54,7 @@ angular.module('poluxClienteApp')
             //carreras
 
             angular.forEach(response.data, function(value) {
-
+              if(value.CodigoCarrera!==$scope.e.Codigo){
                var parametros = {
                 'codigo': value.CodigoCarrera,
                 'tipo': ctrl.tipo
@@ -62,11 +66,12 @@ angular.module('poluxClienteApp')
                     "Nombre": response2[0].NOMBRE,
                     "Pensum": value.CodigoPensum
                   };
-                  ctrl.carreras.push(carrera);
+                    ctrl.carreras.push(carrera);
+
                 }
 
                });
-
+             }
             });
 
           });

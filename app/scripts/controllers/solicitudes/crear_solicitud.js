@@ -85,6 +85,25 @@ angular.module('poluxClienteApp')
                       poluxRequest.get("modalidad").then(function (responseModalidad){
                           ctrl.modalidades=responseModalidad.data;
                       });
+                      //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
+                      var parametrosSolicitudes = $.param({
+                          query:"Usuario:"+ctrl.codigo+",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+                          limit:1,
+                      });
+                      poluxRequest.get("usuario_solicitud",parametrosSolicitudes).then(function (responseSolicitudes){
+                          if(responseSolicitudes.data !== null){
+                            //si ha hecho una solicitud se obtienen las materias por el detalle
+                            var idSolicitud = responseSolicitudes.data[0].SolicitudTrabajoGrado.Id;
+                            var parametrosSolicitud = $.param({
+                                query:"SolicitudTrabajoGrado:"+idSolicitud+",DetalleTipoSolicitud:37",
+                                limit:1,
+                            });
+                            poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function (responseSolicitud){
+                                //se obtiene guarda la carrera que ya eligio
+                                ctrl.carreraElegida = JSON.parse(responseSolicitud.data[0].Descripcion.split("-")[1]);
+                            });
+                          }
+                      });
                     }
                     ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
@@ -425,7 +444,11 @@ angular.module('poluxClienteApp')
                 ctrl.erroresFormulario = true;
               }
               if(detalle.Detalle.Descripcion=='solicitar-asignaturas' && !ctrl.estudiante.minimoCreditos ){
-                console.log("Debe cumplir con el minimo de creditos.");
+                swal(
+                  'Validación del formulario',
+                  "Debe cumplir con el minimo de creditos.",
+                  'warning'
+                );
                 ctrl.erroresFormulario = true;
               }
               if(detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista"){
