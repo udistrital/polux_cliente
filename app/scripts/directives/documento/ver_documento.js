@@ -29,18 +29,23 @@ angular.module('poluxClienteApp')
                 });
 
                 $scope.$watch('documentoid', function() {
-                    poluxRequest.get("documento", $.param({
+                  console.log($scope.documentoid);
+                    poluxRequest.get("documento_trabajo_grado", $.param({
                         limit: -1,
                         sortby: "Id",
                         order: "asc",
                         query: "Id:" + $scope.documentoid
                     })).then(function(response) {
                         self.documento = response.data[0];
-                        console.log(self.documento);
                         self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
+                      //  self.documento.Enlace='blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
                         console.log(self.documento.Enlace);
                         $scope.selectpag = $scope.pageNum;
                         $scope.pdfUrl = self.documento.Enlace;
+                      //  $scope.pdfUrl = 'blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
+
+                      //cargar documento obteniendolo de NUXEO
+                        $scope.pdfUrl="documentos/dibujo.pdf";
                     });
                 });
 

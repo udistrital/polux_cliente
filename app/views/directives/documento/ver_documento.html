@@ -5,7 +5,7 @@
     <div class="panel panel-default" ng-show="!minified">
         <div class="panel-heading">
             <center>
-                <h3 class="panel-title">{{d_verDocumento.documento.Titulo}} <span class="pull-right" ng-click="minified=true"><i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                <h3 class="panel-title">{{d_verDocumento.documento.DocumentoEscrito.Titulo}} <span class="pull-right" ng-click="minified=true"><i class="fa fa-minus-square-o" aria-hidden="true"></i>
 </span></h3>
             </center>
         </div>
@@ -16,11 +16,10 @@
         </div>
         <div class="panel-heading">
             <p>
-                <span>Tipo:{{d_verDocumento.documento.IdTipoDocumento.Nombre}}</span>
-                <span class="pull-right">Categoria:{{d_verDocumento.documento.IdTipoDocumento.IdCategoria.Nombre}}</span> {{pageNum}}
+                <span>Tipo:{{d_verDocumento.documento.TipoDocumento.Nombre}}</span> {{pageNum}}
             </p>
             <p>
-                <span class="panel-title">{{'RESUMEN' | translate}}</span><br>{{d_verDocumento.documento.Resumen}}
+                <span class="panel-title">{{'RESUMEN' | translate}}</span><br>{{d_verDocumento.documento.DocumentoEscrito.Resumen}}
             </p>
         </div>
     </div>

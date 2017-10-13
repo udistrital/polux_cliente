@@ -12,12 +12,14 @@
             </label>
         </div>
         <div class="col-md-7">
+          
             <ui-select ng-model="estudianteRevisionDoc.trabajo_grado.selected" theme="select2" on-select="estudianteRevisionDoc.ver_seleccion($item, $model)" style="width:100%;">
                 <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.IdTrabajoGrado.Titulo}}</ui-select-match>
                 <ui-select-choices repeat="trabajo in estudianteRevisionDoc.vinculacion_docente | filter: $select.search">
-                    <span ng-bind-html="trabajo.IdTrabajoGrado.Titulo | highlight: $select.search"></span>
-                    <small ng-bind-html="trabajo.Docente.DOC_NOMBRE | highlight: $select.search"></small>
-                    <small ng-bind-html="trabajo.Docente.DOC_APELLIDO | highlight: $select.search"></small>
+                    <span ng-bind-html="trabajo.TrabajoGrado.Titulo | highlight: $select.search"></span>
+                    <small ng-bind-html="trabajo.Docente.NOMBRE | highlight: $select.search"></small>
+                    <!--<small ng-bind-html="trabajo.Docente.DOC_NOMBRE | highlight: $select.search"></small>-->
+                    <!--<small ng-bind-html="trabajo.Docente.DOC_APELLIDO | highlight: $select.search"></small>-->
                 </ui-select-choices>
             </ui-select>
         </div>
