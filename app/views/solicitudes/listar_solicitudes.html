@@ -19,10 +19,10 @@
           <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
 
             <div ng-if="load!==true">
-          <div class="row" ng-if="listarSolicitudes.userRole==='coordinador' && listarSolicitudes.solicitudes.length != 0">
+          <div class="row" ng-if="listarSolicitudes.userRole==='coordinador' && listarSolicitudes.carrerasCoordinador.length>1">
           <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
             <div class="col-sm-10">
-                <select class="form-control" ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
+                <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
                       <option  ng-repeat="carrera in listarSolicitudes.carrerasCoordinador" ng-value="carrera.CODIGO_CARRERA"> {{carrera.CARRERA}} </option>
                 </select>
             </div>
@@ -81,13 +81,18 @@
                  <div  class="row" ng-repeat="detalle in listarSolicitudes.detallesSolicitud">
 
                   <label class="col-sm-4 control-label"> {{detalle.DetalleTipoSolicitud.Detalle.Nombre}}:  </label>
-                  <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento'">
-                      <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
+                  <div ng-if="detalle.carrera===undefined">
+                    <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento'">
+                        <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
+                    </div>
+                    <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
+                      <!--  <input type="submit" value="Ver documento"   class="col-sm-2 btn btn-success" height="48" ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)"></input> -->
+                      <!--   <a href="{{detalle.Descripcion}}" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>  -->
+                        <a ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>
+                    </div>
                   </div>
-                  <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
-                    <!--  <input type="submit" value="Ver documento"   class="col-sm-2 btn btn-success" height="48" ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)"></input> -->
-                    <!--   <a href="{{detalle.Descripcion}}" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>  -->
-                      <a ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>
+                  <div ng-if="detalle.carrera!==undefined" class="panel panel-default panel-body col-sm-8">
+                      <div class="mi-grid" id="mi-grid" ui-grid="detalle.gridOptions" ui-grid-cellNav ui-grid-auto-resize></div>
                   </div>
                 </div>
 

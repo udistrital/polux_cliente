@@ -261,6 +261,20 @@ angular.module('poluxClienteApp')
               angular.forEach(responseEstudiantes.data,function(estudiante){
                   solicitantes += (", "+estudiante.Usuario) ;
               });
+              angular.forEach(ctrl.detallesSolicitud,function(detalle){
+                    detalle.filas = [];
+                    if(detalle.Descripcion.includes("JSON-")){
+                        var datosMaterias = detalle.Descripcion.split("-");
+                        detalle.carrera = datosMaterias[1];
+                        console.log(detalle.carrera);
+                        datosMaterias.splice(0, 2);
+                        angular.forEach(datosMaterias, function(materia){
+                            detalle.filas.push(JSON.parse(materia));
+                        });
+                        detalle.gridOptions = [];
+                        detalle.gridOptions.data = detalle.filas;
+                    }
+              });
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
               $('#modalVerSolicitud').modal('show');
           });

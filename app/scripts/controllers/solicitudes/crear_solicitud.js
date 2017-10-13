@@ -364,11 +364,12 @@ angular.module('poluxClienteApp')
             }
             if(detalle.Detalle.TipoDetalle.Nombre==='Directiva'){
                 if(detalle.Detalle.Descripcion=='solicitar-asignaturas'){
-                  detalle.respuesta = "";
+                  detalle.respuesta = "JSON";
                   angular.forEach(ctrl.estudiante.asignaturas_elegidas, function(asignatura){
-                     detalle.respuesta = detalle.respuesta +"," + asignatura.CodigoAsignatura;
+                     asignatura.$$hashKey = undefined;
+                     detalle.respuesta = detalle.respuesta +"-" + JSON.stringify(asignatura);
                   });
-                  detalle.respuesta = detalle.respuesta.substring(1);
+                  //detalle.respuesta = detalle.respuesta.substring(1);
                 }
                 if(detalle.Detalle.Descripcion=='asignar-estudiantes'){
                    detalle.respuesta = (ctrl.estudiantes.length===0)? ctrl.codigo  :ctrl.codigo+","+ctrl.estudiantes.toString();
@@ -385,7 +386,12 @@ angular.module('poluxClienteApp')
                 if(detalle.bool === undefined){
                     detalle.bool = false;
                 }
-                detalle.respuesta = detalle.bool.toString();
+                if(detalle.bool){
+                    detalle.respuesta = "SI";
+                }else{
+                    detalle.respuesta = "NO";
+                }
+                //detalle.respuesta = detalle.bool.toString();
             }
         });
         //Realizar validaciones

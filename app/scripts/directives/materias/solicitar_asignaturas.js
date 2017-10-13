@@ -76,14 +76,15 @@ angular.module('poluxClienteApp')
 
         ctrl.cargarMaterias = function(carreraSeleccionada) {
           ctrl.selected = [];
+          ctrl.selected.push(carreraSeleccionada);
           $scope.estudiante.asignaturas_elegidas= ctrl.selected;
           ctrl.asignaturas = [];
 
-          ctrl.carrera = carreraSeleccionada;
+          ctrl.carrera = carreraSeleccionada.Codigo;
 
           //buscar la carrera en: carrera_elegible
           var parametros = $.param({
-            query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER +",CodigoCarrera:"+carreraSeleccionada
+            query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER +",CodigoCarrera:"+carreraSeleccionada.Codigo
           });
 
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
@@ -160,11 +161,12 @@ angular.module('poluxClienteApp')
             var c = parseInt(item.Creditos, 10);
             ctrl.creditos = ctrl.creditos - c;
           } else {
+
             list.push(item);
             var c = parseInt(item.Creditos, 10);
             ctrl.creditos = ctrl.creditos + c;
           }
-          console.log($scope);
+
           if(ctrl.creditos >= ctrl.creditosMinimos){
                 ctrl.minimoCreditos = true;
           }else{
@@ -173,174 +175,7 @@ angular.module('poluxClienteApp')
           $scope.estudiante.minimoCreditos = ctrl.minimoCreditos;
           console.log(JSON.stringify($scope.estudiante.asignaturas_elegidas))
 
-        };
-
-        ctrl.add = function() {
-
-          ctrl.esta=-1;
-          if($scope.l!=null){
-            ctrl.esta=$scope.l.indexOf(ctrl.carrera);
-          }
-
-          if( ctrl.esta==-1 ){
-            //buscar si el estudiante tiene un TG en la modalidad de materias de posgrado: #3
-            var parametros=$.param({
-              query:"Estudiante:"+ctrl.estudiante.Codigo+","+ "TrabajoGrado.Modalidad.Id:3"
-            });
-            poluxRequest.get("estudiante_trabajo_grado", parametros).then(function(response) {
-              //console.log(response.data[0].Id);
-
-///##########################################################################
-               if (ctrl.creditos >= ctrl.creditosMinimos) {
-                //Modalidad 3: Espacios académicos de posgrado
-                var cod = parseInt(ctrl.estudiante.Codigo, 10);
-
-
-                //si no hay registrados TG en modalidad #3
-
-                if(!response.data){
-                  console.log("NOOO Hay TG en la modalidad #3");
-                  ctrl.datos = {
-                    "TrabajoGrado": {
-
-                      "Distincion": "",
-                      "Etapa": "propuesta",
-                      "IdModalidad": {
-                        "Id": 3
-                      },
-                      "Titulo": "Trabajo de Grado"
-                    },
-
-                    "EstudianteTg": {
-                      "CodigoEstudiante": cod,
-                      "Estado": "activo",
-                      "IdTrabajoGrado": {
-                        "Id": 0
-                      }
-                    },
-                  }
-
-                    //registrar TG
-                    poluxRequest.post("tr_trabajo_grado", ctrl.datos).then(function(response) {
-                      console.log(response.data);
-                      var fecha = new Date();
-                      var car = parseInt(ctrl.carrera, 10);
-                      var a = parseInt(ctrl.periodo.APE_ANO, 10);
-                      var p = ctrl.periodo.APE_PER.toString();
-
-                      angular.forEach(ctrl.selected, function(value) {
-                        var data3 = {
-                          "IdAsignaturasElegibles": {
-                            "Id": value.Id
-                          },
-                          "IdSolicitudMaterias": {
-                            "Id": 0
-                          },
-                          "Estado": "solicitada"
-                        };
-                        $scope.sols.push(data3);
-
-                      });
-
-                      ctrl.datosSolicitud = {
-                        "Solicitud": {
-                          "CodigoCarrera": car,
-                          "Estado": "opcionado",
-                          "Formalizacion": "pendiente",
-                          "Periodo": p,
-                          "IdTrabajoGrado": response.data.TrabajoGrado,
-                          "Fecha": fecha,
-                          "Anio": a
-                        },
-
-                        "MateriasSolicitadas": $scope.sols
-                      };
-
-                      /////registrar solicitud
-                      poluxRequest.post("tr_solicitud", ctrl.datosSolicitud).then(function(response) {
-                        console.log(response);
-                      });
-
-
-                    });
-
-                }
-
-                //si existen TG en la modalida #3
-                else{
-                      console.log("Hay TG en la modalidad #3");
-
-                      var fecha = new Date();
-                      var car = parseInt(ctrl.carrera, 10);
-                      var a = parseInt(ctrl.periodo.APE_ANO, 10);
-                      var p = ctrl.periodo.APE_PER.toString();
-
-                      angular.forEach(ctrl.selected, function(value) {
-                        var data3 = {
-                          "IdAsignaturasElegibles": {
-                            "Id": value.Id
-                          },
-                          "IdSolicitudMaterias": {
-                            "Id": 0
-                          },
-                          "Estado": "solicitada"
-                        };
-                        $scope.sols.push(data3);
-
-                      });
-
-                      ctrl.datosSolicitud = {
-                        "Solicitud": {
-                          "CodigoCarrera": car,
-                          "Estado": "opcionado",
-                          "Formalizacion": "pendiente",
-                          "Periodo": p,
-                          "IdTrabajoGrado": response.data[0].IdTrabajoGrado,
-                          "Fecha": fecha,
-                          "Anio": a
-                        },
-
-                        "MateriasSolicitadas": $scope.sols
-                      };
-
-                      /////registrar solicitud
-                      poluxRequest.post("tr_solicitud", ctrl.datosSolicitud).then(function(response) {
-                        console.log(response);
-                      });
-
-
-                }
-
-                swal(
-                  'Solicitud Realizada',
-                  'Se realiza solicitud con los espacios académicos seleccionados en modalidad de trabajo de grado',
-                  'success'
-                );
-                $route.reload();
-              } else {
-                swal(
-                  'Seleccione más espacios académicos',
-                  "La cantidad de créditos de los espacios académicos seleccionados debe ser igual o superior a " + ctrl.creditosMinimos + " créditos",
-                  'warning'
-                );
-              }
-
-              ///##########################################################################
-
-            });
-
-          }else {
-            swal(
-              'Solicitud de espacios académicos',
-              "Ya tiene 1 solicitud en esa carrera",
-              'warning'
-            );
-            ctrl.selected = [];
-            $route.reload();
-          }
-
-        };
-        ///////////fin add()///////////////////
+        };        ///////////fin add()///////////////////
 
       },
       controllerAs: 'd_solicitarAsignaturas'
