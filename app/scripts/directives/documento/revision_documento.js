@@ -24,14 +24,16 @@ angular.module('poluxClienteApp')
                     $scope.paginadoc = $scope.paginadoc;
                 });
 
+                console.log($scope.revisionid);
                 ctrl.correcciones = [];
-                poluxRequest.get("revision", $.param({
+                poluxRequest.get("revision_trabajo_grado", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function(response) {
-                    ctrl.revision = response.data[0];
+                  console.log(response);
+                    ctrl.revision = response.data;
                 });
-                poluxRequest.get("correccion", $.param({
-                    query: "IdRevision:" + $scope.revisionid,
+                poluxRequest.get("revision_trabajo_grado", $.param({
+                    query: "Id:" + $scope.revisionid,
                     sortby: "Id",
                     order: "asc"
                 })).then(function(response) {
@@ -99,7 +101,7 @@ angular.module('poluxClienteApp')
 
                 ctrl.cancelar_revisado = function() {
                     poluxRequest.get("correccion", $.param({
-                        query: "IdRevision:" + $scope.revisionid,
+                        query: "RevisionTrabajoGrado.Id:" + $scope.revisionid,
                         sortby: "Id",
                         order: "asc"
                     })).then(function(response) {
@@ -115,15 +117,15 @@ angular.module('poluxClienteApp')
                 ctrl.guardar_revision = function(accion) {
                     switch (accion) {
                         case "borrador":
-                            if (ctrl.revision.Estado != "borrador") {
-                                ctrl.revision.Estado = "borrador";
-                                poluxRequest.put("revision", ctrl.revision.Id, ctrl.revision);
+                            if (ctrl.revision.EstadoRevisionTrabajoGrado.Id != 2) {
+                                ctrl.revision.EstadoRevisionTrabajoGrado.Id=2;
+                                poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
                             }
                             break;
                         case "finalizar":
-                            ctrl.revision.Estado = "finalizada";
+                            ctrl.revision.Estado = 3;
                             ctrl.revision.FechaRevision = new Date();
-                            poluxRequest.put("revision", ctrl.revision.Id, ctrl.revision);
+                            poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
                             $scope.revisionestado = ctrl.revision.Estado;
                             break;
                     }

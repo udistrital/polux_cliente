@@ -34,9 +34,9 @@ angular.module('poluxClienteApp')
                         limit: -1,
                         sortby: "Id",
                         order: "asc",
-                        //query: "Id:" + $scope.documentoid
                         query: "Id:"+$scope.documentoid
                     })).then(function(response) {
+                      console.log(response);
                       console.log(response.data[0].DocumentoEscrito.Enlace);
                         self.documento = response.data[0];
                         self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;

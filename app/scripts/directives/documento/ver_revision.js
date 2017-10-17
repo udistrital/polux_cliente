@@ -24,14 +24,14 @@ angular.module('poluxClienteApp')
                     $scope.pageNum = $scope.paginaset;
                 });
 
-                poluxRequest.get("revision", $.param({
+                poluxRequest.get("revision_trabajo_grado", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function(response) {
                     ctrl.revision = response.data[0];
                 });
 
                 poluxRequest.get("correccion", $.param({
-                    query: "IdRevision:" + $scope.revisionid,
+                    query: "RevisionTrabajoGrado.Id:" + $scope.revisionid,
                     sortby: "Id",
                     order: "asc"
                 })).then(function(response) {
