@@ -78,14 +78,13 @@ angular.module('poluxClienteApp')
 
         ctrl.solicitar_revision = function() {
             var docente = {};
-            $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + ctrl.vinculacion_info.IdentificacionDocente)
+            $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + ctrl.vinculacion_info.Usuario)
                 .then(function(response) {
-                    var json = response.data.split("<json>");
-                    var jsonObj = JSON.parse(json[1]);
-                    docente = jsonObj[0];
+                  console.log(response.data[0].DOC_NRO_IDEN);
+                    docente = response.data[0];
                     swal({
                         title: 'Solicitud de Revisión?',
-                        text: "Desea realizar la solicitud de revision para " + ctrl.vinculacion_info.IdTrabajoGrado.Titulo + "al docente " + docente.DOC_NOMBRE + " " + docente.DOC_APELLIDO,
+                        html: "Desea realizar la solicitud de revisión para <b>" + ctrl.vinculacion_info.TrabajoGrado.Titulo + "</b> al docente " + response.data[0].NOMBRE,
                         type: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
@@ -99,14 +98,16 @@ angular.module('poluxClienteApp')
                             numero_revision = ctrl.revisionesd[ctrl.numRevisiones - 1].NumeroRevision + 1;
                         }
                         var revision = {
-                            IdDocumentoTg: {
+                            DocumentoTrabajoGrado: {
                                 Id: ctrl.doctgId
                             },
-                            IdVinculacionDocente: {
+                            VinculacionTrabajoGrado: {
                                 Id: ctrl.vncdocId
                             },
                             NumeroRevision: numero_revision,
-                            Estado: "pendiente",
+                            EstadoRevisionTrabajoGrado:{
+                                Id: 1
+                            },
                             FechaRecepcion: new Date()
                         };
 
@@ -120,7 +121,8 @@ angular.module('poluxClienteApp')
                             }
                         }
                         if (ctrl.solicitarev) {
-                            poluxRequest.post("revision", revision).then(function(response) {
+                          console.log(revision);
+                            poluxRequest.post("revision_trabajo_grado", revision).then(function(response) {
                                 console.log(response.data);
                                 swal(
                                     'Revisión Solicitada',
@@ -132,7 +134,7 @@ angular.module('poluxClienteApp')
                         } else {
                             swal(
                                 'Revisión No Solicitada',
-                                'la revision ya se encuentra solicitada',
+                                'La revision ya se encuentra solicitada',
                                 'warning'
                             );
                         }
