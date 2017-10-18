@@ -12,18 +12,17 @@
             </label>
         </div>
         <div class="col-md-7">
-          
+
             <ui-select ng-model="estudianteRevisionDoc.trabajo_grado.selected" theme="select2" on-select="estudianteRevisionDoc.ver_seleccion($item, $model)" style="width:100%;">
                 <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.IdTrabajoGrado.Titulo}}</ui-select-match>
                 <ui-select-choices repeat="trabajo in estudianteRevisionDoc.vinculacion_docente | filter: $select.search">
                     <span ng-bind-html="trabajo.TrabajoGrado.Titulo | highlight: $select.search"></span>
                     <small ng-bind-html="trabajo.Docente.NOMBRE | highlight: $select.search"></small>
-                    <!--<small ng-bind-html="trabajo.Docente.DOC_NOMBRE | highlight: $select.search"></small>-->
-                    <!--<small ng-bind-html="trabajo.Docente.DOC_APELLIDO | highlight: $select.search"></small>-->
                 </ui-select-choices>
             </ui-select>
         </div>
     </div>
+    <br>
     <div class="row" ng-show="estudianteRevisionDoc.documento">
         <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
             <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}}</label>
@@ -38,8 +37,8 @@
                 </div>
                 <div class="panel-body">
                     <div ng-repeat="revision in estudianteRevisionDoc.revisionesd">
-                        <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina" ng-if="revision.Estado != 'pendiente'"></ver-revision>
-                        <div ng-if="revision.Estado == 'borrador' || revision.Estado == 'pendiente'">
+                        <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
+                        <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador' || revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente'">
                             <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
                         </div>
                     </div>

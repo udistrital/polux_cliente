@@ -147,6 +147,11 @@ angular
                 controller: 'FormatoEditarCtrl',
                 controllerAs: 'formatoEditar'
             })
+            .when('/estudiante/revision_documento/:idEstudiante', {
+                templateUrl: 'views/estudiante/revision_documento.html',
+                controller: 'EstudianteRevisionDocumentoCtrl',
+                controllerAs: 'estudianteRevisionDoc'
+            })
             .when('/estudiante/revision_documento', {
                 templateUrl: 'views/estudiante/revision_documento.html',
                 controller: 'EstudianteRevisionDocumentoCtrl',

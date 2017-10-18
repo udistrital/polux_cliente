@@ -8,14 +8,10 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('EstudianteRevisionDocumentoCtrl', function(poluxRequest, $route, $http) {
+    .controller('EstudianteRevisionDocumentoCtrl', function(poluxRequest, $route, $http, $routeParams) {
         var ctrl = this;
-        ctrl.tgId = 1;
-        ctrl.doctgId = 2; //viene por la sesión
-        ctrl.doc = 1;
-        ctrl.vncdocId = 1;
-        ctrl.pagina = 2;
-        ctrl.documento = false;
+
+        ctrl.estudiante=$routeParams.idEstudiante;
 
         ctrl.ver_seleccion = function(item, model) {
             console.log(item);
@@ -27,30 +23,41 @@ angular.module('poluxClienteApp')
             ctrl.refrescar();
         };
 
-        poluxRequest.get("vinculacion_trabajo_grado", $.param({
+        poluxRequest.get("estudiante_trabajo_grado", $.param({
             limit: -1,
             sortby: "Id",
-            order: "asc"
-        })).then(function(response) {
-            console.log(response);
-            ctrl.vinculacion_docente = response.data;
-            angular.forEach(ctrl.vinculacion_docente, function(vd) {
-                console.log(vd);
-                poluxRequest.get("documento_trabajo_grado", $.param({
-                    limit: -1,
-                    sortby: "Id",
-                    order: "asc",
-                    query: "TrabajoGrado:" + vd.TrabajoGrado.Id
-                })).then(function(response) {
+            order: "asc",
+            query: "Estudiante"+ctrl.estudiante
+        })).then(function(responseTg) {
+            if(responseTg.data!=null){
+              poluxRequest.get("vinculacion_trabajo_grado", $.param({
+                  limit: -1,
+                  sortby: "Id",
+                  order: "asc"
+              })).then(function(response) {
                   console.log(response);
-                    vd.DocumentoTrabajoGrado = response.data;
-                });
-                $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.Usuario)
-                    .then(function(response) {
-                        vd.Docente = response.data[0];
-                    });
-            });
+                  ctrl.vinculacion_docente = response.data;
+                  angular.forEach(ctrl.vinculacion_docente, function(vd) {
+                      console.log(vd);
+                      poluxRequest.get("documento_trabajo_grado", $.param({
+                          limit: -1,
+                          sortby: "Id",
+                          order: "asc",
+                          query: "TrabajoGrado:" + vd.TrabajoGrado.Id
+                      })).then(function(response) {
+                        console.log(response);
+                          vd.DocumentoTrabajoGrado = response.data;
+                      });
+                      $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.Usuario)
+                          .then(function(response) {
+                              vd.Docente = response.data[0];
+                          });
+                  });
+              });
+            }
+
         });
+
 
         ctrl.refrescar = function() {
             poluxRequest.get("revision_trabajo_grado", $.param({
@@ -74,13 +81,11 @@ angular.module('poluxClienteApp')
                 ctrl.vinculacion_info = response.data[0];
             });
         };
-        ctrl.refrescar();
 
         ctrl.solicitar_revision = function() {
             var docente = {};
             $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + ctrl.vinculacion_info.Usuario)
                 .then(function(response) {
-                  console.log(response.data[0].DOC_NRO_IDEN);
                     docente = response.data[0];
                     swal({
                         title: 'Solicitud de Revisión?',
@@ -114,7 +119,7 @@ angular.module('poluxClienteApp')
                         ctrl.solicitarev = true;
                         if (ctrl.revisionesd != null) {
                             for (var i = 0; i < ctrl.revisionesd.length; i++) {
-                                if (ctrl.revisionesd[i].Estado === "pendiente" || ctrl.revisionesd[i].Estado === "borrador") {
+                                if (ctrl.revisionesd[i].EstadoRevisionTrabajoGrado.Nombre === "pendiente" || ctrl.revisionesd[i].EstadoRevisionTrabajoGrado.Nombre === "borrador") {
                                     ctrl.solicitarev = false;
                                     break;
                                 }
@@ -134,7 +139,7 @@ angular.module('poluxClienteApp')
                         } else {
                             swal(
                                 'Revisión No Solicitada',
-                                'La revision ya se encuentra solicitada',
+                                'La revisión ya se encuentra solicitada',
                                 'warning'
                             );
                         }

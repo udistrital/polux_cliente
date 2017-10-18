@@ -30,6 +30,7 @@ angular.module('poluxClienteApp')
 
                 $scope.$watch('documentoid', function() {
                   console.log($scope.documentoid);
+                  if($scope.documentoid){
                     poluxRequest.get("documento_trabajo_grado", $.param({
                         limit: -1,
                         sortby: "Id",
@@ -49,11 +50,12 @@ angular.module('poluxClienteApp')
                       //cargar documento obteniendolo de NUXEO
                       var docid=response.data[0].DocumentoEscrito.Enlace;
 
-                        self.getDocumento(docid);
-                        //$scope.pdfUrl="documentos/dibujo.pdf";
-                        console.log($scope.pdfUrl);
+                        //self.getDocumento(docid);
+                        $scope.pdfUrl="documentos/dibujo.pdf";
+                        //console.log($scope.pdfUrl);
                         //$scope.pdfUrl=fileURL;
                     });
+                  }
                 });
 
                 self.getDocumento = function(docid){
