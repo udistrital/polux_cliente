@@ -1,14 +1,13 @@
 <div class="panel panel-warning" ng-if="d_revisionDocumento.revision.Estado != 'finalizada'">
 
   <div class="panel-heading" ng-click="showc=!showc">
-    <h3 class="panel-title">Revision {{d_revisionDocumento.revision.NumeroRevision}} {{d_revisionDocumento.revision.Estado}}
+    <h3 class="panel-title">Revision {{d_revisionDocumento.revision.NumeroRevision}} {{d_revisionDocumento.revision.EstadoRevisionTrabajoGrado.Nombre}}
     </h3>
   </div>
   <div class="panel-body" ng-show="showc">
-
     <p class="text-muted"><cite><span>Fecha Recepcion:{{d_revisionDocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} | Fecha Revision: {{d_revisionDocumento.revision.FechaRevision | date:'dd-MMM-yyyy'}}</span></cite><br /><p>
 
-    <!--<pre>{{d_revisionDocumento.correcciones | json}}</pre>!-->
+
     <div ng-repeat="correccion in d_revisionDocumento.correcciones">
       <div class="panel panel-info">
         <div class="panel-heading">
@@ -32,10 +31,10 @@
           <div class="panel panel-body" ng-show="showedit" >
               <form name="editForm"  ng-submit="editForm.$valid && d_revisionDocumento.editar(correccion,correccion_temp)" novalidate>
                 <fieldset class="form-group">
-                  <input  class="form-control" type="text" placeholder="enunciado" ng-model="correccion_temp.Observacion" required/>
+                  <input  class="form-control" type="text" placeholder="Enunciado" ng-model="correccion_temp.Observacion" required/>
                 </fieldset>
                 <fieldset class="form-group">
-                  <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="correccion_temp.Justificacion"></textarea>
+                  <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripción" ng-model="correccion_temp.Justificacion"></textarea>
                 </fieldset>
                 <fieldset class="form-group">
                   <input type="checkbox" class="checkbox checkbox-inline" ng-model="correccion_temp.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>

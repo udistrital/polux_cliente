@@ -30,10 +30,10 @@ angular.module('poluxClienteApp')
                     query: "Id:" + $scope.revisionid
                 })).then(function(response) {
                   console.log(response);
-                    ctrl.revision = response.data;
+                    ctrl.revision = response.data[0];
                 });
-                poluxRequest.get("revision_trabajo_grado", $.param({
-                    query: "Id:" + $scope.revisionid,
+                poluxRequest.get("correccion", $.param({
+                    query: "RevisionTrabajoGrado.Id:" + $scope.revisionid,
                     sortby: "Id",
                     order: "asc"
                 })).then(function(response) {
@@ -85,8 +85,10 @@ angular.module('poluxClienteApp')
                         correcion.Pagina = $scope.paginadoc;
                     }
                     var idrev = {};
-                    idrev.Id = $scope.revisionid;
-                    correcion.IdRevision = idrev;
+                    idrev = $scope.revisionid;
+                    correcion.RevisionTrabajoGrado={
+                        Id:idrev
+                    };
                     correcion.Cambio = "nuevo";
                     ctrl.correcciones.push(correcion);
                     ctrl.correccion = {};
@@ -117,6 +119,7 @@ angular.module('poluxClienteApp')
                 ctrl.guardar_revision = function(accion) {
                     switch (accion) {
                         case "borrador":
+                            console.log(ctrl.revision);
                             if (ctrl.revision.EstadoRevisionTrabajoGrado.Id != 2) {
                                 ctrl.revision.EstadoRevisionTrabajoGrado.Id=2;
                                 poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
@@ -131,6 +134,7 @@ angular.module('poluxClienteApp')
                     }
                     for (var i = 0; i < ctrl.correcciones.length; i++) {
                         if (ctrl.correcciones[i].Cambio == "nuevo") {
+                            console.log(ctrl.correcciones[i]);
                             poluxRequest.post("correccion", ctrl.correcciones[i]);
                         }
                         if (ctrl.correcciones[i].Cambio == "editado") {

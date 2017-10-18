@@ -43,15 +43,16 @@ angular.module('poluxClienteApp')
                     var mycomentario = {};
                     var myidcorreccion = {};
                     myidcorreccion.Id = idcorreccion;
-                    mycomentario.IdCorreccion = myidcorreccion;
+                    mycomentario.Correccion = myidcorreccion;
                     mycomentario.Comentario = comentario;
                     mycomentario.Fecha = new Date();
                     mycomentario.Autor = "pepito";
                     ctrl.pruebac = mycomentario;
                     var comentarios = [];
+                    console.log(mycomentario);
                     poluxRequest.post("comentario", mycomentario).then(function(response) {
                         poluxRequest.get("comentario", $.param({
-                            query: "IdCorreccion:" + mycomentario.IdCorreccion.Id,
+                            query: "Correccion:" + mycomentario.Correccion.Id,
                             sortby: "Id",
                             order: "asc"
                         })).then(function(response) {
@@ -65,7 +66,7 @@ angular.module('poluxClienteApp')
                 ctrl.cargarComentarios = function(correccionid) {
                     var comentarios = [];
                     poluxRequest.get("comentario", $.param({
-                        query: "IdCorreccion:" + correccionid,
+                        query: "Correccion:" + correccionid,
                         sortby: "Id",
                         order: "asc"
                     })).then(function(response) {
