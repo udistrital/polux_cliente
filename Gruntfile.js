@@ -407,6 +407,11 @@ module.exports = function(grunt) {
                     dest: '<%= yeoman.dist %>/scripts'
                 }, {
                     expand: true,
+                    cwd: 'bower_components/bootstrap-fileinput/js/locales',
+                    src: 'es.js',
+                    dest: '<%= yeoman.dist %>/scripts'
+                },{
+                    expand: true,
                     cwd: 'bower_components/angular-ui-grid',
                     src: ['*.eot', '*.svg', '*.ttf', '*.woff'],
                     dest: '<%= yeoman.dist %>/styles'

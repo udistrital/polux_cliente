@@ -143,6 +143,11 @@ angular
                 controller: 'DocenteTgsRevisionDocumentoCtrl',
                 controllerAs: 'docenterevision'
             })
+            .when('/docente/tgs/revision_documento/:idDocente', {
+                templateUrl: 'views/docente/tgs/revision_documento.html',
+                controller: 'DocenteTgsRevisionDocumentoCtrl',
+                controllerAs: 'docenterevision'
+            })
             .when('/formato/formato_edicion', {
                 templateUrl: 'views/formato/formato_editar.html',
                 controller: 'FormatoEditarCtrl',
