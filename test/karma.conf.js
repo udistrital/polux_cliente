@@ -58,6 +58,7 @@ module.exports = function(config) {
       'bower_components/angular-ui-select/dist/select.js',
       'bower_components/select2/select2.js',
       'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
+      'bower_components/angular-bootstrap-fileinput/angular-bootstrap-fileinput.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

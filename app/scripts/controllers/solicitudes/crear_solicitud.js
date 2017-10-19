@@ -13,8 +13,13 @@ angular.module('poluxClienteApp')
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
 
-
       var ctrl = this;
+      $scope.bfiConfig={
+        showUpload:false,
+        allowedFileExtensions:['pdf'],
+        language:"es",
+        maxFileSize: 1000
+      }
       ctrl.modalidades = [];
       ctrl.solicitudes = [];
       ctrl.detalles = [];

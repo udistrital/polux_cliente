@@ -43,7 +43,8 @@ angular
         'poluxMidService',
         'pdf',
         'pascalprecht.translate',
-        'file-model'
+        'file-model',
+        'angularBootstrapFileinput'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
