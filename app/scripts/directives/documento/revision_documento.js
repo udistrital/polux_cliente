@@ -126,7 +126,7 @@ angular.module('poluxClienteApp')
                             }
                             break;
                         case "finalizar":
-                            ctrl.revision.Estado = 3;
+                            ctrl.revision.EstadoRevisionTrabajoGrado.Id = 3;
                             ctrl.revision.FechaRevision = new Date();
                             poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
                             $scope.revisionestado = ctrl.revision.Estado;

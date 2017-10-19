@@ -36,7 +36,7 @@
                 </div>
                 <div class="panel-body">
                     <div ng-repeat="revision in docenterevision.revisionesd">
-                        <ver-revision revisionid="revision.Id" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Id != 1" />
+                        <ver-revision revisionid="revision.Id" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente" />
                         <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" ng-if="revision.EstadoRevisionTrabajoGrado.Id != 3" />
                     </div>
                 </div>

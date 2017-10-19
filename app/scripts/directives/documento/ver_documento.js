@@ -50,8 +50,8 @@ angular.module('poluxClienteApp')
                       //cargar documento obteniendolo de NUXEO
                       var docid=response.data[0].DocumentoEscrito.Enlace;
 
-                        //self.getDocumento(docid);
-                        $scope.pdfUrl="documentos/dibujo.pdf";
+                        self.getDocumento(docid);
+                        //$scope.pdfUrl="documentos/dibujo.pdf";
                         //console.log($scope.pdfUrl);
                         //$scope.pdfUrl=fileURL;
                     });

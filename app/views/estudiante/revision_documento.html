@@ -37,7 +37,7 @@
                 </div>
                 <div class="panel-body">
                     <div ng-repeat="revision in estudianteRevisionDoc.revisionesd">
-                        <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
+                        <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
                         <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador' || revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente'">
                             <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
                         </div>
