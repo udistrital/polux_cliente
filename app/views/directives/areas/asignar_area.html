@@ -4,9 +4,10 @@
         ng-model="d_asignarArea.Nombre" name="asignado"
         ng-minlength="1"
         ng-maxlength="50"
-        placeholder="Seleccione ..." required autocomplete="off" />
-        <datalist class="selector" id="listaAreas"  >
-          <option ng-repeat="a in setareas"  ng-if="idarea.indexOf(a.Id) !== -1" value="{{a.Nombre}}"></option>
+        placeholder="Seleccione ..." required autocomplete="off"></input>
+        <datalist class="selector" id="listaAreas">
+          <!--ng-if="idarea.indexOf(a.Id) !== -1"-->
+          <option ng-repeat="a in setareas" value="{{a.Nombre}}"></option>
         </datalist>
         <span class="input-group-btn">
         <input type="submit" ng-click="d_asignarArea.asignarArea()"
@@ -24,14 +25,12 @@
       </div>
   </form>
   <div class="row">
-  <md-chips  class="custom-chips col-md-12" ng-model="d_asignarArea.nuevaArea" readonly="true"
-   md-removable="d_asignarArea.removable" >
-    <md-chip-template ng-click="d_asignarArea.removable=!d_asignarArea.removable">
-            <span>
-              {{$chip.Nombre}}
-            </span>
-          </md-chip-template>
-  <input md-chip-remove  type="submit"
-            value="X" class="btn btn-primary btn-xs"/>
-  </md-chips>
+    <md-chips  class="custom-chips col-md-12" ng-model="d_asignarArea.nuevaArea" readonly="true" md-removable="d_asignarArea.removable" >
+      <md-chip-template ng-click="d_asignarArea.removable=!d_asignarArea.removable">
+        <span>
+          {{$chip.Nombre}}
+        </span>
+      </md-chip-template>
+      <input md-chip-remove  type="submit" value="X" class="btn btn-primary btn-xs"></input>
+    </md-chips>
   </div>

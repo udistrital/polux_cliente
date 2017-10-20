@@ -31,17 +31,16 @@ angular.module('poluxClienteApp')
               console.log("nombre de area nulo");
             }
             var data = {
-              IdAreaConocimiento: {
+              AreaConocimiento: {
                 Id: value.Id,
                 Nombre: value.Nombre
               },
-              IdentificacionDocente: self.codigodocente
+              Docente: self.codigodocente
             }
             poluxRequest.post("areas_docente", data).then(function (response) {
               self.parametros = $.param({
-                query: "IdentificacionDocente:" + response.data.IdentificacionDocente,
-                sortby: "IdAreaConocimiento",
-                related: "IdAreaConocimiento",
+                query: "Docente:" + response.data.Docente,
+                sortby: "AreaConocimiento",
                 order: "asc",
                 limit: 0
               });

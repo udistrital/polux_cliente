@@ -7,15 +7,11 @@
 
     <div class="row">
       <blockquote >
-      <h4>{{'DE_ACUERDO_A_SU_PERFIL' | translate}}
-      </h4>
-      <asignar-area setareas="areasParam"
-      idarea="idareaparam"
-      newarea="d_crearArea.nuevaArea"
-       />
-     </blockquote>
+        <h4>{{'DE_ACUERDO_A_SU_PERFIL' | translate}}</h4>
+        <asignar-area setareas="areasParam" idarea="idareaparam" newarea="d_crearArea.nuevaArea"></asignar-area>
+      </blockquote>
     </div>
-    <div  ng-if="d_crearArea.verificarAreas(d_asignarArea.Nombre)">
+    <div ng-if="d_crearArea.verificarAreas(d_asignarArea.Nombre)">
       <label style="color:blue" ng-if="setareas!=null"> {{'EL_AREA_NO_EXISTE' | translate}} </label>
       <label style="color:blue" ng-show="setareas==null"> {{'NO_EXISTEN_AREAS' | translate}} </label>
       <input type="submit"  ng-click="d_crearArea.registrarAreas(d_crearArea.Nombre)"
@@ -23,7 +19,7 @@
     </div>
     <input type="submit" ng-disabled="!d_crearArea.nuevaArea"
      ng-click="d_crearArea.asignarAreasDocente(d_crearArea.nuevaArea)"
-     value="Confirmar" class="btn btn-primary btn-md pull-right" />
+     value="Confirmar" class="btn btn-primary btn-md pull-right"></input>
 
 </div>
 <div class="panel-footer">
