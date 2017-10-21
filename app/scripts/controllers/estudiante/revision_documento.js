@@ -17,7 +17,7 @@ angular.module('poluxClienteApp')
             console.log(item);
             ctrl.tgId = item.TrabajoGrado.Id;
             ctrl.doctgId = item.DocumentoTrabajoGrado[0].Id;
-            ctrl.doc = item.DocumentoTrabajoGrado[0].DocumentoEscrito.Id;
+            ctrl.doc = item.DocumentoTrabajoGrado[0].Id;
             ctrl.documento = true;
             ctrl.vncdocId = item.Id;
             ctrl.refrescar();
