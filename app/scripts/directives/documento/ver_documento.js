@@ -33,14 +33,14 @@ angular.module('poluxClienteApp')
                 $scope.$watch('documentoid', function() {
                   console.log($scope.documentoid);
                   if($scope.documentoid){
-                    poluxRequest.get("documento_trabajo_grado", $.param({
+                    poluxRequest.get("documento_escrito", $.param({
                         limit: -1,
                         sortby: "Id",
                         order: "asc",
                         query: "Id:"+$scope.documentoid
                     })).then(function(response) {
                       console.log(response);
-                      console.log(response.data[0].DocumentoEscrito.Enlace);
+                      console.log(response.data[0].Enlace);
                         self.documento = response.data[0];
                         self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
                       //  self.documento.Enlace='blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
@@ -50,12 +50,10 @@ angular.module('poluxClienteApp')
                       //  $scope.pdfUrl = 'blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
 
                       //cargar documento obteniendolo de NUXEO
-                      var docid=response.data[0].DocumentoEscrito.Enlace;
+                      var docid=response.data[0].Enlace;
+                      self.getDocumento(docid);
+                      //$scope.pdfUrl="documentos/dibujo.pdf";
 
-                        //self.getDocumento(docid);
-                        $scope.pdfUrl="documentos/dibujo.pdf";
-                        //console.log($scope.pdfUrl);
-                        //$scope.pdfUrl=fileURL;
                     });
                   }
                 });
