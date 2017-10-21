@@ -33,14 +33,14 @@ angular.module('poluxClienteApp')
                 $scope.$watch('documentoid', function() {
                   console.log($scope.documentoid);
                   if($scope.documentoid){
-                    poluxRequest.get("documento_escrito", $.param({
+                    poluxRequest.get("documento_trabajo_grado", $.param({
                         limit: -1,
                         sortby: "Id",
                         order: "asc",
                         query: "Id:"+$scope.documentoid
                     })).then(function(response) {
                       console.log(response);
-                      console.log(response.data[0].Enlace);
+                      console.log(response.data[0].DocumentoEscrito.Enlace);
                         self.documento = response.data[0];
                         self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
                       //  self.documento.Enlace='blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
@@ -50,7 +50,7 @@ angular.module('poluxClienteApp')
                       //  $scope.pdfUrl = 'blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
 
                       //cargar documento obteniendolo de NUXEO
-                      var docid=response.data[0].Enlace;
+                      var docid=response.data[0].DocumentoEscrito.Enlace;
                       self.getDocumento(docid);
                       //$scope.pdfUrl="documentos/dibujo.pdf";
 
@@ -59,6 +59,7 @@ angular.module('poluxClienteApp')
                 });
 
                 self.getDocumento = function(docid){
+                  console.log(docid);
                     if(docid!=null){
 
                       nuxeo.header('X-NXDocumentProperties', '*');
@@ -69,6 +70,7 @@ angular.module('poluxClienteApp')
                         nuxeo.request('/id/'+docid)
                             .get()
                             .then(function(response) {
+                              console.log(response);
                               self.doc=response;
                               var aux=response.get('file:content');
                               self.document=response;
@@ -85,6 +87,7 @@ angular.module('poluxClienteApp')
 
                         doc.fetchBlob()
                           .then(function(res) {
+                            console.log(res);
                             defered.resolve(res.blob());
 
                           })
