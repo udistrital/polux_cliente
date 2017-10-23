@@ -14,12 +14,6 @@ angular.module('poluxClienteApp')
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
 
       var ctrl = this;
-      $scope.bfiConfig={
-        showUpload:false,
-        allowedFileExtensions:['pdf'],
-        language:"es",
-        maxFileSize: 1000
-      }
       ctrl.modalidades = [];
       ctrl.solicitudes = [];
       ctrl.detalles = [];
@@ -35,6 +29,10 @@ angular.module('poluxClienteApp')
       $scope.loadEstudiante = true;
       ctrl.siPuede=false;
       ctrl.codigo = $routeParams.idEstudiante;
+
+      ctrl.splitDescripcion=function(descripcion){
+        return JSON.parse(descripcion.split(";")[1]);
+      }
 
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
