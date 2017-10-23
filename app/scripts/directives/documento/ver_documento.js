@@ -7,7 +7,7 @@
  * # verDocumento
  */
 angular.module('poluxClienteApp')
-    .directive('verDocumento', function(poluxRequest, constantes, nuxeo, $q, $sce) {
+    .directive('verDocumento', function(poluxRequest, constantes, nuxeo, $q, $sce, $translate) {
         return {
             restrict: "E",
             scope: {
@@ -19,6 +19,8 @@ angular.module('poluxClienteApp')
             templateUrl: "views/directives/documento/ver_documento.html",
             controller: function($scope) {
                 var self = this;
+                $scope.msgCargandoDocumento=$translate.instant('LOADING.CARGANDO_DOCUMENTO');
+                $scope.load=true;
 
                 $scope.$watch('selectpag', function() {
                     if($scope.selectpag){
@@ -106,6 +108,7 @@ angular.module('poluxClienteApp')
                                self.content = $sce.trustAsResourceUrl(fileURL);
                                //$window.open(fileURL);
                                $scope.pdfUrl=fileURL;
+                               $scope.load=false;
                             });
                         });
 

@@ -230,6 +230,7 @@ var text_es = {
       ENVIANDO_FORLMULARIO:"Enviando formulario",
       CARGANDO_DETALLES:"Cargando detalles del formulario",
       CARGANDO_SOLICITUDES:"Cargando solicitudes",
+      CARGANDO_DOCUMENTO:"Cargando documento",
     },
     CODIGO_MATERIA:"Codigo asignatura",
     SIN_CARRERAS_SOLICITUDES:"Actualmente no hay carreras disponibles para su elección",
@@ -444,6 +445,7 @@ var text_en = {
       ENVIANDO_FORLMULARIO:"Sending form",
       CARGANDO_DETALLES:"Loading form details",
       CARGANDO_SOLICITUDES:"Loading requests",
+      CARGANDO_DOCUMENTO:"Loading document",
     },
 
     CODIGO_MATERIA:"Subject code",
