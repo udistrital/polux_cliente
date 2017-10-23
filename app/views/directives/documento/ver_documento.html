@@ -6,17 +6,17 @@
         <div class="panel-heading">
             <center>
                 <h3 class="panel-title">{{d_verDocumento.documento.DocumentoEscrito.Titulo}} <span class="pull-right" ng-click="minified=true"><i class="fa fa-minus-square-o" aria-hidden="true"></i>
-</span></h3>
+                </span></h3>
             </center>
         </div>
         <div class="panel-body">
             <div>
-                <ng-pdf template-url="views/directives/documento/viewer.html" scale="page-fit"></ng-pdf>
+                <ng-pdf class="scrollit" template-url="views/directives/documento/viewer.html" scale="page-fit"></ng-pdf>
             </div>
         </div>
         <div class="panel-heading">
             <p>
-                <span>Tipo:{{d_verDocumento.documento.DocumentoEscrito.TipoDocumentoEscrito.Nombre}}</span> {{pageNum}}
+                <span>Tipo:{{d_verDocumento.documento.DocumentoEscrito.TipoDocumentoEscrito}}</span> {{pageNum}}
             </p>
             <p>
                 <span class="panel-title">{{'RESUMEN' | translate}}</span><br>{{d_verDocumento.documento.DocumentoEscrito.Resumen}}

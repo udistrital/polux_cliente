@@ -88,7 +88,7 @@ var text_es = {
     ASOCIAR_FORMATO_A_PC: "Asociar formato a proyecto curricular:",
     SELECCIONAR_PC: "Seleccionar proyecto curricular:",
     CREACION_EVALUACION: "Creación de la evaluación",
-    REVISION_DOCUMENTOS: "Revision de Documentos",
+    REVISION_DOCUMENTOS: "Revisión de Documentos",
     DOCUMENTO: "Documento",
     REVISIONES: "Revisiones",
     LA_REVISION: "La revisión ",
