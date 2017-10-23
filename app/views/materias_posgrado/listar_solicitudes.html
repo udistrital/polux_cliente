@@ -24,11 +24,11 @@
 
        <div class="panel panel-default panel-body col-md-12">
          <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div><br>
-
-
-          <button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.openDialog($event)" class="btn btn-primary">Seleccionar Admitidos</button>
-          <button ng-if="fechaActual >= segunda_fecha && fechaActual <=fecha_fin && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos 2</button>
-          <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos 3</button>
+           <center>
+          <button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
+          <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
+          <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>
+           </center>
       </div>
 
       <pre>
@@ -38,6 +38,7 @@
         {{'FECHA_FIN' | translate}}  {{fecha_fin| date:'dd-MM-yyyy'}}
       </pre>
 
+        <!--
       <script type="text/ng-template" id="dialog.tmpl.html">
 
       <md-dialog flex="60" aria-label="Selección de Admitidos" >
@@ -69,16 +70,56 @@
                   <div ng-message="required">{{'REQUERIDO' | translate}}</div>
                 </div>
               </md-input-container>
-              <md-button ng-disabled="cupos_excelencia_ingresado == null || cupos_adicionales_ingresado == null" ng-click="answer(dialog)" class="md-raised md-primary">Aceptar</md-button-->
+              <md-button ng-disabled="cupos_excelencia_ingresado == null || cupos_adicionales_ingresado == null" ng-click="answer(dialog)" class="md-raised md-primary">Aceptar</md-button>
 
           </div>
         </md-dialog-content>
     </form>
     </md-dialog>
     </script>
-
+-->
     </div>
     <div class="panel-footer">
         Panel Footer
     </div>
+</div>
+
+<div id="modalCupos" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+        <div class="modal-content col-md-offset-2 col-md-8">
+            <div class="modal-header">
+                <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+            </div>
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    Cupos
+                </div>
+
+                <div class="panel-body">
+
+                      <div clase="row">
+                          <div class="col-md-12">
+                            <label>{{'ADMITIDOS_POR_EXCELENCIA_A' | translate}} {{cupos_excelencia}})</label>
+                            <input ng-model="cupos_excelencia_ingresado" name="rendimiento" placeholder="Ingrese el número de admitidos por excelencia académica y exentos de pago" type="number" min="0" max="{{cupos_excelencia}}" step="1" required class="form-control">
+                              <br>
+                          </div>
+                      </div>
+
+                      <div clase="row">
+                          <div class="col-md-12">
+                            <label>{{' ADMITIDOS_POR_COND_EC' | translate}} {{cupos_adicionales}})</label>
+                            <input ng-model="cupos_adicionales_ingresado" placeholder="Ingrese el número de admitidos por condiciones económicas y calidades académicas" type="number" min="0" max="{{cupos_adicionales}}" step="1" required class="form-control">
+                              <br>
+                          </div>
+                      </div>
+                      <div clase="row">
+                          <div class="col-md-12"><center>
+                              <button class="btn btn-primary" type="button" ng-disabled="cupos_excelencia_ingresado == null || cupos_adicionales_ingresado == null" ng-click="listarSolicitudes.admitidos1()">Aceptar</button></center>
+                          </div>
+                      </div>
+
+                </div>
+
+            </div>
+        </div>
 </div>

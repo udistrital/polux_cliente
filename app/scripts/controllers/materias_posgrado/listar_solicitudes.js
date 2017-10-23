@@ -9,6 +9,7 @@
 */
 angular.module('poluxClienteApp')
 .controller('MateriasPosgradoListarSolicitudesCtrl', function ($q, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
+    $scope.$ = $;
   var ctrl = this;
   ctrl.periodo=[];
   ctrl.carreras=[];
@@ -44,6 +45,16 @@ angular.module('poluxClienteApp')
     $scope.segunda_fecha = new Date(response.data['segunda_fecha'].replace(/'/g, ""));
     momentDate = moment($scope.segunda_fecha);
     $scope.segunda_fecha = momentDate.format("YYYY-MM-DD");
+
+        $scope.cupos_excelencia_ingresado = null;
+        $scope.cupos_adicionales_ingresado = null;
+        //Consultar cupos
+        poluxMidRequest.get("cupos/Obtener").then(function(response){
+          console.log(response.data);
+          $scope.cupos_excelencia=response.data.Cupos_excelencia;
+          $scope.cupos_adicionales=response.data.Cupos_adicionales;
+        });
+
   }).catch(function(rta) {
     console.log(rta);
   });
@@ -536,14 +547,7 @@ angular.module('poluxClienteApp')
   ctrl.openDialog = function($event) {
     $mdDialog.show({
       controller: function ($timeout, $q, $scope, $mdDialog) {
-        $scope.cupos_excelencia_ingresado = null;
-        $scope.cupos_adicionales_ingresado = null;
-        //Consultar cupos
-        poluxMidRequest.get("cupos/Obtener").then(function(response){
-          console.log(response.data);
-          $scope.cupos_excelencia=response.data.Cupos_excelencia;
-          $scope.cupos_adicionales=response.data.Cupos_adicionales;
-        });
+
 
         var parametros=$.param({
           query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
@@ -632,5 +636,107 @@ angular.module('poluxClienteApp')
        }
     );
   };
+
+
+    ctrl.admitidos1 = function() {
+          ctrl.rendimiento = $scope.cupos_excelencia_ingresado;
+          ctrl.economicas = $scope.cupos_adicionales_ingresado;
+
+          ctrl.rta ={
+            'cupos_excelencia' : ctrl.rendimiento,
+            'cupos_adicionales' : ctrl.economicas
+          };
+
+          ctrl.rta2 ={
+            'NumAdmitidos' : ctrl.rta,
+            'Solicitudes' : $scope.sols
+          };
+          console.log($scope.sols);
+
+          //Guardar el # de cupos ingresados
+          /* buscar carrera en carrera_elegible*/
+          var parametros=$.param({
+            query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+          });
+          poluxRequest.get("carrera_elegible",parametros).then(function(response){
+
+            if(response.data[0].CuposExcelencia==0 && response.data[0].CuposAdicionales==0){
+              response.data[0].CuposExcelencia=ctrl.rendimiento;
+              response.data[0].CuposAdicionales=ctrl.economicas;
+
+              poluxRequest.put("carrera_elegible", response.data[0].Id, response.data[0]).then(function(response){
+                console.log(response.data);
+              });
+            }
+
+          });
+
+          //Enviar las solicitudes y # Admitidos
+          poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function(response){
+            swal(
+              'Solicitudes aprobadas',
+              'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
+              'success'
+            )
+            console.log(response);
+            //recargar datos
+            ctrl.buscarSolicitudes($scope.carrera);
+              $('#modalCupos').modal('hide');
+            $scope.cupos_excelencia_ingresado="";
+            $scope.cupos_adicionales_ingresado="";
+
+          });
+    }
+
+
+    ///////////////////////////////////
+    ctrl.admitidos = function() {
+        ctrl.status = answer;
+          ctrl.rendimiento = $scope.cupos_excelencia_ingresado;
+          ctrl.economicas = $scope.cupos_adicionales_ingresado;
+
+          ctrl.rta ={
+            'cupos_excelencia' : ctrl.rendimiento,
+            'cupos_adicionales' : ctrl.economicas
+          };
+
+          ctrl.rta2 ={
+            'NumAdmitidos' : ctrl.rta,
+            'Solicitudes' : $scope.sols
+          };
+          console.log($scope.sols);
+
+          //Guardar el # de cupos ingresados
+          /* buscar carrera en carrera_elegible*/
+          var parametros=$.param({
+            query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+          });
+          poluxRequest.get("carrera_elegible",parametros).then(function(response){
+
+            if(response.data[0].CuposExcelencia==0 && response.data[0].CuposAdicionales==0){
+              response.data[0].CuposExcelencia=ctrl.rendimiento;
+              response.data[0].CuposAdicionales=ctrl.economicas;
+
+              poluxRequest.put("carrera_elegible", response.data[0].Id, response.data[0]).then(function(response){
+                console.log(response.data);
+              });
+            }
+
+          });
+
+          //Enviar las solicitudes y # Admitidos
+          poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function(response){
+            swal(
+              'Solicitudes aprobadas',
+              'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
+              'success'
+            )
+            console.log(response);
+            //recargar datos
+            ctrl.buscarSolicitudes($scope.carrera);
+          });
+    };
+
+    ///////////////////////////////////
 
 });
