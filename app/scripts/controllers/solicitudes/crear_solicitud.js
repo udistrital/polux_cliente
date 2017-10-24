@@ -536,7 +536,8 @@ angular.module('poluxClienteApp')
             var fileTypeError = false;
             angular.forEach(ctrl.detallesConDocumento, function (detalle) {
               var documento = detalle.fileModel;
-              if(documento.type !== "application/pdf" || documento.size>parseInt(detalle.Detalle.Descripcion.split(";")[1])){
+              var tam=parseInt(detalle.Detalle.Descripcion.split(";")[1]+"000");
+              if(documento.type !== "application/pdf" || documento.size>tam){
                   fileTypeError = true;
               }
             });
