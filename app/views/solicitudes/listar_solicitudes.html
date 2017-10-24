@@ -96,7 +96,7 @@
                         <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
                     </div>
                     <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
-                        <a ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 "> {{ 'VER_DOCUMENTO' | translate}} </label>
+                        <label ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
                     </div>
                   </div>
 
@@ -108,16 +108,17 @@
     </div>
 </div>
 
-<div id="modalEvaluarSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+<!--<div id="modalEvaluarSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
     <div class="modal-content col-md-offset-2 col-md-8">
         <div class="modal-header">
             <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <!-- Modal para darle tramite a una solicitud -->
+                <!-- Modal para darle tramite a una solicitud
             </div>
 
         </div>
     </div>
 </div>
+ -->
