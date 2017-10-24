@@ -198,6 +198,16 @@ angular
               controller: 'SolicitudesCrearSolicitudCtrl',
               controllerAs: 'crearSolicitud'
             })
+            .when('/solicitudes/aprobar_solicitud', {
+              templateUrl: 'views/solicitudes/aprobar_solicitud.html',
+              controller: 'SolicitudesAprobarSolicitudCtrl',
+              controllerAs: 'aprobarSolicitud'
+            })
+            .when('/solicitudes/aprobar_solicitud/:idSolicitud', {
+              templateUrl: 'views/solicitudes/aprobar_solicitud.html',
+              controller: 'SolicitudesAprobarSolicitudCtrl',
+              controllerAs: 'aprobarSolicitud'
+            })
             .otherwise({
                 redirectTo: '/'
             });

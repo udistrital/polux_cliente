@@ -231,9 +231,15 @@ var text_es = {
       CARGANDO_DETALLES:"Cargando detalles del formulario",
       CARGANDO_SOLICITUDES:"Cargando solicitudes",
       CARGANDO_DOCUMENTO:"Cargando documento",
+      CARGANDO_DETALLES_SOLICITUD:"Cargando detalles de la solicitud",
     },
     CODIGO_MATERIA:"Codigo asignatura",
     SIN_CARRERAS_SOLICITUDES:"Actualmente no hay carreras disponibles para su elección",
+    APROBAR_SOLICITUD:"Aprobar solicitud",
+    RECHAZAR_SOLICITUD:"Rechazar solicitud",
+    FORMULARIO_APROBACION:"Formulario de aprobación",
+    JUSTIFICACION_RESPUESTA_SOLICITUD:"Escriba la justificación de la respuesta",
+    ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo da carrera",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -446,10 +452,16 @@ var text_en = {
       CARGANDO_DETALLES:"Loading form details",
       CARGANDO_SOLICITUDES:"Loading requests",
       CARGANDO_DOCUMENTO:"Loading document",
+      CARGANDO_DETALLES_SOLICITUD:"Loading request details",
     },
 
     CODIGO_MATERIA:"Subject code",
     SIN_CARRERAS_SOLICITUDES:"There are currently no carrers available for your choice",
+    APROBAR_SOLICITUD:"Approve request",
+    RECHAZAR_SOLICITUD:"Reject request",
+    FORMULARIO_APROBACION:"Approval form",
+    JUSTIFICACION_RESPUESTA_SOLICITUD:"Write the justification for the answer",
+    ACTA_RESPUESTA_SOLICITUD:"Select the document with the answer given by the Career Council",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

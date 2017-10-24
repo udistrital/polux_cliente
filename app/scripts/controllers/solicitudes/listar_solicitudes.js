@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-.controller('SolicitudesListarSolicitudesCtrl', function ($q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope) {
+.controller('SolicitudesListarSolicitudesCtrl', function ($location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope) {
   var ctrl = this;
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
@@ -302,7 +302,8 @@ angular.module('poluxClienteApp')
                     //$('#modalVerSolicitud').modal('show');
                     break;
                 case "responder":
-                    $('#modalEvaluarSolicitud').modal('show');
+                    //$('#modalEvaluarSolicitud').modal('show');
+                    $location.path("solicitudes/aprobar_solicitud/"+row.entity.Id);
                     break;
                 default:
             }

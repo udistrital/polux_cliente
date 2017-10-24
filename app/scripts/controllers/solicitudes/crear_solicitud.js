@@ -277,6 +277,9 @@ angular.module('poluxClienteApp')
                           if(parametrosServicio[1]==="docente"){
                                 //detalle.opciones=academicaRequest.obtenerDocentesJson();
                                 academicaRequest.obtenerDocentesTG().then(function(docentes){
+                                  angular.forEach(docentes, function(docente){
+                                      docente.NOMBRE = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
+                                  });
                                   detalle.opciones=docentes;
                                   console.log(docentes);
                                 });
