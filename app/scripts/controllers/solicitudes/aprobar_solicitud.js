@@ -23,18 +23,9 @@ angular.module('poluxClienteApp')
     ctrl.isPasantia = false;
     ctrl.hasRevisor = false;
 
-    var parametrosSolicitud = $.param({
-        query:"Id:"+ctrl.solicitud,
-        limit:1
-    });
-    poluxRequest.get("solicitud_trabajo_grado",parametrosSolicitud).then(function(responseSolicitud){
-      var parametrosDetallesSolicitud = $.param({
-          query:"SolicitudTrabajoGrado.Id:"+ctrl.solicitud,
-          limit:0
-      });
-      ctrl.dataSolicitud = responseSolicitud.data[0];
-      console.log("solicitud");
-      console.log(ctrl.dataSolicitud);
+    ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud){
+      var defered = $q.defer();
+      var promise = defered.promise;
       poluxRequest.get("detalle_solicitud",parametrosDetallesSolicitud).then(function(responseDetalles){
 
           poluxRequest.get("usuario_solicitud",parametrosDetallesSolicitud).then(function(responseEstudiantes){
@@ -85,11 +76,15 @@ angular.module('poluxClienteApp')
                     }
               });
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
-              $scope.loadSolicitud = false;
+              defered.resolve(ctrl.detallesSolicitud);
           });
       });
+      return promise;
+    };
 
-      //Si es una solicitud inicial
+    ctrl.evaluarSolicitud = function(){
+      var defered = $q.defer();
+      var promise = defered.promise;
       ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
       ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2){
@@ -99,6 +94,8 @@ angular.module('poluxClienteApp')
                 //Si no es de materias de posgrado y profundización trae los docentes
                 academicaRequest.obtenerDocentesTG().then(function(docentes){
                   ctrl.docentes=docentes;
+                  console.log(ctrl.docentes);
+                  defered.resolve(ctrl.docentes);
                 });
                 if(ctrl.dataSolicitud.modalidad === 1){
                   ctrl.isPasantia = true;
@@ -106,9 +103,33 @@ angular.module('poluxClienteApp')
                 if(ctrl.dataSolicitud.modalidad !== 1 && ctrl.dataSolicitud.modalidad !== 8){
                   ctrl.hasRevisor = true;
                 }
+            }else{
+              defered.resolve(ctrl.dataSolicitud.modalidad);
             }
-
       }
+      return promise;
+    };
+
+    var parametrosSolicitud = $.param({
+        query:"Id:"+ctrl.solicitud,
+        limit:1
+    });
+    poluxRequest.get("solicitud_trabajo_grado",parametrosSolicitud).then(function(responseSolicitud){
+      var parametrosDetallesSolicitud = $.param({
+          query:"SolicitudTrabajoGrado.Id:"+ctrl.solicitud,
+          limit:0
+      });
+      ctrl.dataSolicitud = responseSolicitud.data[0];
+      console.log("solicitud");
+      console.log(ctrl.dataSolicitud);
+
+      var promesaDetalles = ctrl.getDetallesSolicitud(parametrosDetallesSolicitud);
+      var promesaEvaluar = ctrl.evaluarSolicitud();
+
+      //Esperar a que se cumplan las promesas
+      $q.all([promesaDetalles, promesaEvaluar]).then(function(){
+        $scope.loadSolicitud = false;
+      });
 
     });
 
