@@ -15,7 +15,9 @@ angular.module('poluxClienteApp')
     ctrl.solicitud = $routeParams.idSolicitud;
 
     $scope.msgCargandoSolicitud = $translate.instant("LOADING.CARGANDO_DETALLES_SOLICITUD");
+    $scope.msgEnviandFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
     $scope.loadSolicitud = true;
+    $scope.loadFormulario = false;
 
     ctrl.isInicial = false;
     ctrl.isPasantia = false;
@@ -91,8 +93,9 @@ angular.module('poluxClienteApp')
       ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
       ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2){
-            ctrl.isInicial = true;
+
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
+                ctrl.isInicial = true;
                 //Si no es de materias de posgrado y profundización trae los docentes
                 academicaRequest.obtenerDocentesTG().then(function(docentes){
                   ctrl.docentes=docentes;
@@ -109,50 +112,103 @@ angular.module('poluxClienteApp')
 
     });
 
-    ctrl.getDocumento = function(docid){
-        nuxeo.header('X-NXDocumentProperties', '*');
-
-        ctrl.obtenerDoc = function () {
-          var defered = $q.defer();
-
-          nuxeo.request('/id/'+docid)
-              .get()
-              .then(function(response) {
-                ctrl.doc=response;
-                var aux=response.get('file:content');
-                ctrl.document=response;
-                defered.resolve(response);
+    ctrl.cargarDocumento = function(nombre, descripcion, documento ,callback){
+            var defered = $q.defer();
+            var promise = defered.promise;
+            nuxeo.operation('Document.Create')
+              .params({
+                type: 'File',
+                name: nombre,
+                properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
               })
-              .catch(function(error){
+              .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas')
+              .execute()
+              .then(function(doc) {
+                  var nuxeoBlob = new Nuxeo.Blob({ content: documento });
+                  nuxeo.batchUpload()
+                  .upload(nuxeoBlob)
+                  .then(function(res) {
+                    return nuxeo.operation('Blob.AttachOnDocument')
+                        .param('document', doc.uid)
+                        .input(res.blob)
+                        .execute();
+                  })
+                  .then(function() {
+                    return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
+                  })
+                  .then(function(doc) {
+                    var url = doc.uid;
+                    callback(url);
+                    defered.resolve(url);
+                  })
+                  .catch(function(error) {
+                    throw error;
+                    ctrl.swalError();
+                    $scope.loadFormulario = false;
+                    defered.reject(error)
+                  });
+              })
+              .catch(function(error) {
+                  throw error;
+                  ctrl.swalError();
+                  $scope.loadFormulario = false;
                   defered.reject(error)
               });
-          return defered.promise;
-        };
 
-        ctrl.obtenerFetch = function (doc) {
-          var defered = $q.defer();
+              return promise;
+    }
 
-          doc.fetchBlob()
-            .then(function(res) {
-              defered.resolve(res.blob());
-
-            })
-            .catch(function(error){
-                  defered.reject(error)
-              });
-          return defered.promise;
-        };
-
-          ctrl.obtenerDoc().then(function(){
-
-             ctrl.obtenerFetch(ctrl.document).then(function(r){
-                 ctrl.blob=r;
-                 var fileURL = URL.createObjectURL(ctrl.blob);
-                 console.log(fileURL);
-                 ctrl.content = $sce.trustAsResourceUrl(fileURL);
-                 $window.open(fileURL);
-              });
+    ctrl.cargarJustificacion = function(callFunction){
+          nuxeo.connect().then(function(client) {
+          // OK, the returned client is connected
+              console.log("CONECTADO");
+              var tam=2000;
+              $scope.loadFormulario = true;
+              var documento = ctrl.acta;
+              if(documento.type !== "application/pdf" || documento.size>tam){
+                ctrl.cargarDocumento("ActaSolicitud"+ctrl.solicitud, "Acta de evaluación de la solicitud "+ctrl.solicitud,documento, function(url){
+                  ctrl.urlActa = url;
+                })
+                .then(function(){
+                    ctrl.cargarRespuesta();
+                }).catch(function(error){
+                    ctrl.swalError();
+                    $scope.loadFormulario = false;
+                });
+              }else{
+                ctrl.swalError();
+                $scope.loadFormulario = false;
+              }
+          }, function(err) {
+          // cannot connect
+            ctrl.swalError();
           });
+
+    };
+
+    ctrl.swalError = function(){
+      swal(
+        $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+        $translate.instant("VERIFICAR_DOCUMENTO"),
+        'warning'
+      );
+      $scope.loadFormulario = false;
+    }
+
+    ctrl.cargarRespuesta= function(){
+
+      swal(
+        $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+        $translate.instant("VERIFICAR_DOCUMENTO"),
+        'success',
+      );
+      $scope.loadFormulario = false;
+    }
+
+    ctrl.validarFormularioAprobacion = function(){
+        if(!ctrl.isInicial){
+          ctrl.cargarJustificacion();
+        }
 
     }
 
