@@ -77,13 +77,22 @@
                   <br>
                   <div clas="row">
                       <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
-                      <textarea class="col-sm-8" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
+                      <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
                   </div>
                   <br>
-                  <br></br>
                   <div class="row">
                     <label class="col-sm-12 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
-                    <input type="file" class="col-sm-12" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>
+                    <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>
+                  </div>
+                  <br>
+                  <!--Docente que avala la propuesta -->
+                  <div class="row">
+                    <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
+                    <div class="col-sm-8">
+                        <select class="form-control" ng-model="aprobarSolicitud.docenteDirector" required>
+                              <option  value=""> {{}} </option>
+                        </select>
+                    </div>
                   </div>
                   <br>
                   <div class="row">

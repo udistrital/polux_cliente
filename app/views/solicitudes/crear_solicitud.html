@@ -36,8 +36,11 @@
     <div class="panel-body">
 
        <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
-       <label class="col-sm-12 control-label" style="text-align:center" ng-if="!crearSolicitud.soliciudConDetalles"> {{'SOLICITUD_SIN_FORMULARIO' | translate}} <br> </br> </label>
 
+      <div ng-if="!crearSolicitud.soliciudConDetalles" class="row">
+       <label class="col-sm-12 control-label" style="text-align:center" > {{'SOLICITUD_SIN_FORMULARIO' | translate}} </label>
+       <br> </br>
+     </div>
        <!-- detalles de la solicitud -->
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
@@ -46,12 +49,12 @@
               <label class="col-sm-9 control-label"> {{detalle.opciones[0].Nombre}}</label>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
-            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-            <input type="text" class="col-sm-8" ng-model="detalle.respuesta" required></input>
+            <label class="col-sm-4 control-label"> {{detalle.label}}</label>
+            <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Numerico'" class="row">
-           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-           <input type="number" class="col-sm-8" ng-model="detalle.respuesta" required></input>
+           <label class="col-sm-4 control-label"> {{detalle.label}}</label>
+           <input type="number" class="form-control" ng-model="detalle.respuesta" required></input>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'" class="row">
            <label class="col-sm-4 control-label"> {{detalle.label}}</label>
@@ -59,7 +62,7 @@
            <br>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'" class="row">
-           <input type="checkbox" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>
+           <input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>
            <label class="col-sm-8 control-label"> {{detalle.label}}</label>
           </div>
 
@@ -67,7 +70,7 @@
            <label class="col-sm-4 control-label"> {{detalle.label}}</label>
            <div class="col-sm-8">
                <select class="form-control" ng-model="detalle.respuesta" required>
-                     <option  ng-repeat="opcion in detalle.opciones" ng-value="opcion.NOMBRE"> {{opcion.NOMBRE}} </option>
+                     <option  ng-repeat="opcion in detalle.opciones" value="opcion.bd"> {{opcion.NOMBRE}} </option>
                </select>
            </div>
          </div>
@@ -79,9 +82,9 @@
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" class = "row">
             <label class="col-sm-12 control-label">{{detalle.label}}</label>
-            <textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
-            <br>
-            <br>
+            <!--<textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
+            -->
+            <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
          </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
@@ -101,21 +104,24 @@
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Selector'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
-             <input type="text" class="form-control" list="lista+{{detalle.Detalle.Nombre}}" ng-model="detalle.respuesta" placeholder="Seleccione ..." required autocomplete="off"></input>
-             <!-- lista de elementos del input-->
-             <datalist class="selector" id="lista+{{detalle.Detalle.Nombre}}" >
-               <option ng-repeat="opcion in detalle.opciones" value="{{opcion.NOMBRE}}"></option>
-             </datalist>
+            <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
+            <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:80%;">
+                 <ui-select-match  placeholder="{{'SELECCION_DOCENTE' | translate}}...">{{$select.selected.NOMBRE}} </ui-select-match>
+                 <ui-select-choices repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search">
+                     <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
+                 </ui-select-choices>
+             </ui-select>
            </div>
          </div>
          <br>
 
         </div>
        </div>
-
-       <label class="col-sm-5 control-label"> </label>
-       <input type="submit" value="{{'ENVIAR_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success" type="submit"></input>
-
+       <div class ="row">
+         <label class="col-sm-5 control-label"> </label>
+         <input type="submit" value="{{'ENVIAR_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success" type="submit"></input>
+         <label class="col-sm-5 control-label"> </label>
+       </div>
      </form>
     </div>
 

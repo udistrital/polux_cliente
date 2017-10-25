@@ -228,11 +228,13 @@ angular.module('poluxClienteApp')
                           poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones){
                               if (detalle.Detalle.Nombre.includes("Nombre anterior de la propuesta")) {
                                   detalle.opciones.push({
-                                    "NOMBRE":responseOpciones.data[0].Documento.Titulo
+                                    "NOMBRE":responseOpciones.data[0].Documento.Titulo,
+                                    "bd":responseOpciones.data[0].Documento.Titulo,
                                   });
                               }else if(detalle.Detalle.Nombre.includes("Anterior resumen de la propuesta")){
                                 detalle.opciones.push({
-                                  "NOMBRE":responseOpciones.data[0].Documento.Resumen
+                                  "NOMBRE":responseOpciones.data[0].Documento.Resumen,
+                                  "bd":responseOpciones.data[0].Documento.Resumen
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Anteriores areas de conocimiento")){
                                 var areasString = "";
@@ -240,18 +242,21 @@ angular.module('poluxClienteApp')
                                     areasString = areasString +", " + area.AreaConocimiento.Nombre;
                                 });
                                 detalle.opciones.push({
-                                  "NOMBRE":areasString.substring(2)
+                                  "NOMBRE":areasString.substring(2),
+                                  "bd":areasString.substring(2)
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Nombre Empresa")){
                                 angular.forEach(responseOpciones.data,function(empresa){
                                   detalle.opciones.push({
                                     "NOMBRE":empresa.Identificacion+"",
+                                    "bd":empresa.Identificacion+"",
                                   });
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Espacio Academico Anterior")){
                                 angular.forEach(responseOpciones.data,function(espacio){
                                   detalle.opciones.push({
-                                    "NOMBRE":espacio.EspaciosAcademicosElegibles.CodigoAsignatura
+                                    "NOMBRE":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
+                                    "bd":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
                                   });
                                 });
                               }else if(detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")){
@@ -264,7 +269,8 @@ angular.module('poluxClienteApp')
                                   });
                                   if(!esta){
                                     detalle.opciones.push({
-                                      "NOMBRE":espacio.CodigoAsignatura
+                                      "NOMBRE":espacio.CodigoAsignatura,
+                                      "bd":espacio.CodigoAsignatura
                                     });
                                   }
                                 });
@@ -278,7 +284,7 @@ angular.module('poluxClienteApp')
                                 //detalle.opciones=academicaRequest.obtenerDocentesJson();
                                 academicaRequest.obtenerDocentesTG().then(function(docentes){
                                   angular.forEach(docentes, function(docente){
-                                      docente.NOMBRE = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
+                                      docente.bd = docente.DIR_NRO_IDEN+"|"+docente.NOMBRE;
                                   });
                                   detalle.opciones=docentes;
                                   console.log(docentes);
@@ -297,7 +303,8 @@ angular.module('poluxClienteApp')
                           parametrosConsulta = parametrosServicio[2].split(",");
                           angular.forEach(parametrosConsulta, function(opcion){
                             detalle.opciones.push({
-                              "NOMBRE":opcion
+                              "NOMBRE":opcion,
+                              "bd":opcion
                             });
                           });
                       }
@@ -460,7 +467,7 @@ angular.module('poluxClienteApp')
               if(detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista"){
                     var contiene = false;
                     angular.forEach(detalle.opciones, function(opcion){
-                        if(opcion.NOMBRE === detalle.respuesta){
+                        if(opcion.bd === detalle.respuesta){
                             contiene = true;
                         };
                     });
