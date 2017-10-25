@@ -15,7 +15,7 @@
       <br>
 
         <div class="row" ng-if="crearSolicitud.modalidad_select">
-          <label class="col-sm-2 control-label"> {{'SELECCIONAR_SOLICITUD' | translate}} </label>
+          <label class="col-sm-2 control-label"> {{'SELECCIONAR_SOLICITU' | translate}} </label>
           <div class="col-sm-10">
               <select class="form-control" ng-model="solicitud_seleccionada" ng-change="crearSolicitud.cargarDetalles(solicitud_seleccionada)">
                     <option  ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud.Id" ng-if="solicitud.TipoSolicitud.Id != 2"> {{solicitud.TipoSolicitud.Nombre}} </option>
@@ -105,8 +105,8 @@
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
             <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
-            <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:80%;">
-                 <ui-select-match  placeholder="{{'SELECCION_DOCENTE' | translate}}...">{{$select.selected.NOMBRE}} </ui-select-match>
+            <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
+                 <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}...">{{$select.selected.NOMBRE}} </ui-select-match>
                  <ui-select-choices repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search">
                      <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
                  </ui-select-choices>

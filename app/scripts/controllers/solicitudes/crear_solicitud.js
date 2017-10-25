@@ -110,15 +110,6 @@ angular.module('poluxClienteApp')
                     }
                     ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
-
-                    nuxeo.connect().then(function(client) {
-                    // OK, the returned client is connected
-                        console.log('Client is connected: ' + client.connected);
-                    }, function(err) {
-                    // cannot connect
-                        console.log('Client is not connected: ' + err);
-                    });
-                    //ctrl.conEstudiante= true;
           });
 
 
@@ -543,41 +534,53 @@ angular.module('poluxClienteApp')
       }
 
       ctrl.cargarDocumentos = function(callFunction){
-            var fileTypeError = false;
-            angular.forEach(ctrl.detallesConDocumento, function (detalle) {
-              var documento = detalle.fileModel;
-              var tam=parseInt(detalle.Detalle.Descripcion.split(";")[1]+"000");
-              if(documento.type !== "application/pdf" || documento.size>tam){
-                  fileTypeError = true;
-              }
-            });
-            $scope.loadFormulario = true;
-            if(!fileTypeError){
-              var promiseArr = [];
-              angular.forEach(ctrl.detallesConDocumento, function (detalle) {
-                  var anHttpPromise = ctrl.cargarDocumento(detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.fileModel, function(url){
-                    detalle.respuesta = url;
+            nuxeo.connect().then(function(client) {
+            // OK, the returned client is connected
+                var fileTypeError = false;
+                angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+                  var documento = detalle.fileModel;
+                  var tam=parseInt(detalle.Detalle.Descripcion.split(";")[1]+"000");
+                  if(documento.type !== "application/pdf" || documento.size>tam){
+                      fileTypeError = true;
+                  }
+                });
+                $scope.loadFormulario = true;
+                if(!fileTypeError){
+                  var promiseArr = [];
+                  angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+                      var anHttpPromise = ctrl.cargarDocumento(detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.Detalle.Nombre+":"+ctrl.codigo, detalle.fileModel, function(url){
+                        detalle.respuesta = url;
+                      });
+                      promiseArr.push(anHttpPromise);
                   });
-                  promiseArr.push(anHttpPromise);
-              });
-              $q.all(promiseArr).then(function(){
-                  ctrl.cargarSolicitudes();
-              }).catch(function(error){
+                  $q.all(promiseArr).then(function(){
+                      ctrl.cargarSolicitudes();
+                  }).catch(function(error){
+                      swal(
+                        $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                        $translate.instant("VERIFICAR_DOCUMENTO"),
+                        'warning'
+                      );
+                      $scope.loadFormulario = false;
+                  });
+                }else{
                   swal(
                     $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                     $translate.instant("VERIFICAR_DOCUMENTO"),
                     'warning'
                   );
                   $scope.loadFormulario = false;
-              });
-            }else{
+                }
+            }, function(err) {
+            // cannot connect
               swal(
                 $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                 $translate.instant("VERIFICAR_DOCUMENTO"),
                 'warning'
               );
               $scope.loadFormulario = false;
-            }
+            });
+
       };
 
 

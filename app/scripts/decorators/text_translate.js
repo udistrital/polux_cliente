@@ -234,7 +234,9 @@ var text_es = {
       CARGANDO_DETALLES_SOLICITUD:"Cargando detalles de la solicitud",
     },
     SELECT:{
+      SELECCIONE:"Seleccione una opción",
       DOCENTE_DIRECTOR: "Seleccione el docente director del proyecto",
+      DOCENTE_REVISOR: "Seleccione el docente revisor del proyecto",
     },
     CODIGO_MATERIA:"Codigo asignatura",
     SIN_CARRERAS_SOLICITUDES:"Actualmente no hay carreras disponibles para su elección",
@@ -458,6 +460,8 @@ var text_en = {
       CARGANDO_DETALLES_SOLICITUD:"Loading request details",
     },
     SELECT:{
+      SELECCIONE:"Select an option",
+      DOCENTE_REVISOR: "Select the project review teacher",
       DOCENTE_DIRECTOR: "Select the project director teacher",
     },
     CODIGO_MATERIA:"Subject code",
