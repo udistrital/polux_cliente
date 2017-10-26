@@ -105,12 +105,12 @@
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
             <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
-            <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
-                 <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}...">{{$select.selected.NOMBRE}} </ui-select-match>
-                 <ui-select-choices repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search">
-                     <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
-                 </ui-select-choices>
-             </ui-select>
+             <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
+                    <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                    <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">
+                        <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
+                    </ui-select-choices>
+                </ui-select>
            </div>
          </div>
          <br>

@@ -31,7 +31,6 @@ angular.module('poluxClienteApp')
        $scope.infiniteScrollcurrentItems = $scope.infiniteScroll.numToAdd;
     };
     $scope.addMoreItems = function(){
-      console.log("asdfasd");
        $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
     };
 

@@ -13,6 +13,17 @@ angular.module('poluxClienteApp')
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
 
+      //opciones infinite scroll
+      $scope.infiniteScroll = {};
+      $scope.infiniteScroll.numToAdd = 20;
+      $scope.infiniteScroll.currentItems = 20;
+      $scope.reloadScroll = function(){
+         $scope.infiniteScrollcurrentItems = $scope.infiniteScroll.numToAdd;
+      };
+      $scope.addMoreItems = function(){
+         $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
+      };
+
       var ctrl = this;
       ctrl.modalidades = [];
       ctrl.solicitudes = [];
