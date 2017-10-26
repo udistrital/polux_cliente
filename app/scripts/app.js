@@ -44,7 +44,8 @@ angular
         'pdf',
         'pascalprecht.translate',
         'file-model',
-        'angularBootstrapFileinput'
+        'angularBootstrapFileinput',
+        'infinite-scroll'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');

@@ -106,6 +106,8 @@ angular.module('poluxClienteApp')
             }else{
               defered.resolve(ctrl.dataSolicitud.modalidad);
             }
+      }else{
+        defered.resolve(ctrl.dataSolicitud.modalidad);
       }
       return promise;
     };

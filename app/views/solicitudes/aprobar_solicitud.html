@@ -92,7 +92,7 @@
                     <div class="col-sm-8">
                       <ui-select refresh-delay="400" ng-model="aprobarSolicitud.docente" theme="bootstrap" reset-search-input="false" style="width:95%;">
                            <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                           <ui-select-choices repeat="docente in aprobarSolicitud.docentes | filter: $select.search">
+                           <ui-select-choices  infinite-scroll="aprobarSolicitud.addMoreItems()"  infinite-scroll-distance="2" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:aprobarSolicitud.currentItems">
                                <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
                            </ui-select-choices>
                        </ui-select>
