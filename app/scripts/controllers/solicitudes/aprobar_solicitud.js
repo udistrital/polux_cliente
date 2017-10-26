@@ -79,11 +79,11 @@ angular.module('poluxClienteApp')
                     //SI es el docente, detalle 9
                     console.log(detalle.DetalleTipoSolicitud.Detalle.Id===9);
                     if(detalle.DetalleTipoSolicitud.Detalle.Id===9){
-                        ctrl.docente = {
+                        ctrl.docenteDirector = {
                           "NOMBRE":detalle.Descripcion.split("-")[1],
                           "DIR_NRO_IDEN":detalle.Descripcion.split("-")[0],
                         };
-                        console.log(ctrl.docente);
+                        console.log(ctrl.docenteDirector);
                     }
               });
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
