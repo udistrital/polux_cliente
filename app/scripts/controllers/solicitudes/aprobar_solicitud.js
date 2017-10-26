@@ -23,6 +23,18 @@ angular.module('poluxClienteApp')
     ctrl.isPasantia = false;
     ctrl.hasRevisor = false;
 
+    //datos para infinite SolicitudesAprobarSolicitudCtrl//Infinite Scroll Magic
+    $scope.infiniteScroll = {};
+    $scope.infiniteScroll.numToAdd = 20;
+    $scope.infiniteScroll.currentItems = 20;
+
+    $scope.resetInfScroll = function() {
+       $scope.infiniteScroll.currentItems = $scope.infiniteScroll.numToAdd;
+    };
+    $scope.addMoreItems = function(){
+       $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
+    };
+
     ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud){
       var defered = $q.defer();
       var promise = defered.promise;
