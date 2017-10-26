@@ -166,18 +166,18 @@ angular.module('poluxClienteApp')
                     throw error;
                     ctrl.swalError();
                     $scope.loadFormulario = false;
-                    defered.reject(error)
+                    defered.reject(error);
                   });
               })
               .catch(function(error) {
                   throw error;
                   ctrl.swalError();
                   $scope.loadFormulario = false;
-                  defered.reject(error)
+                  defered.reject(error);
               });
 
               return promise;
-    }
+    };
 
     ctrl.cargarJustificacion = function(callFunction){
           nuxeo.connect().then(function(client) {
@@ -214,7 +214,7 @@ angular.module('poluxClienteApp')
         'warning'
       );
       $scope.loadFormulario = false;
-    }
+    };
 
     ctrl.cargarRespuesta= function(){
 
@@ -224,13 +224,13 @@ angular.module('poluxClienteApp')
         'success',
       );
       $scope.loadFormulario = false;
-    }
+    };
 
     ctrl.validarFormularioAprobacion = function(){
         if(!ctrl.isInicial){
           ctrl.cargarJustificacion();
         }
 
-    }
+    };
 
   });

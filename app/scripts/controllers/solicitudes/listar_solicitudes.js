@@ -306,6 +306,7 @@ angular.module('poluxClienteApp')
                     $location.path("solicitudes/aprobar_solicitud/"+row.entity.Id);
                     break;
                 default:
+                    break;
             }
         };
 
