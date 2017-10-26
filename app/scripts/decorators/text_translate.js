@@ -244,7 +244,7 @@ var text_es = {
     RECHAZAR_SOLICITUD:"Rechazar solicitud",
     FORMULARIO_APROBACION:"Formulario de aprobación",
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Escriba la justificación de la respuesta",
-    ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo da carrera",
+    ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo de carrera",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",

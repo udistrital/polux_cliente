@@ -221,7 +221,7 @@ angular.module('poluxClienteApp')
       swal(
         $translate.instant("ERROR.SUBIR_DOCUMENTO"),
         $translate.instant("VERIFICAR_DOCUMENTO"),
-        'success',
+        'success'
       );
       $scope.loadFormulario = false;
     };
