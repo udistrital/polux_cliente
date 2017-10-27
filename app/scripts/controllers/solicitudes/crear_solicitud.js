@@ -41,9 +41,6 @@ angular.module('poluxClienteApp')
       ctrl.siPuede=false;
       ctrl.codigo = $routeParams.idEstudiante;
 
-      ctrl.splitDescripcion=function(descripcion){
-        return JSON.parse(descripcion.split(";")[1]);
-      }
 
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
@@ -226,18 +223,18 @@ angular.module('poluxClienteApp')
                           }
                           console.log(detalle.parametros);
                           poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones){
-                              console.log("Opciones",responseOpciones);
-                              if (detalle.Detalle.Nombre.includes("Nombre anterior de la propuesta")) {
+                              if (detalle.Detalle.Nombre.includes("Nombre actual de la propuesta")) {
                                   detalle.opciones.push({
-                                    "NOMBRE":responseOpciones.data[0].Documento.Titulo,
-                                    "bd":responseOpciones.data[0].Documento.Titulo,
+                                    "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Titulo,
+                                    "bd":responseOpciones.data[0].DocumentoEscrito.Titulo,
                                   });
-                              }else if(detalle.Detalle.Nombre.includes("Anterior resumen de la propuesta")){
+                              }else if(detalle.Detalle.Nombre.includes("Actual resumen de la propuesta")){
                                 detalle.opciones.push({
-                                  "NOMBRE":responseOpciones.data[0].Documento.Resumen,
-                                  "bd":responseOpciones.data[0].Documento.Resumen
+                                  "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Resumen,
+                                  "bd":responseOpciones.data[0].DocumentoEscrito.Resumen
                                 });
-                              }else if(detalle.Detalle.Nombre.includes("Anteriores areas de conocimiento")){
+                              }else if(detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")){
+                                console.log("Opciones",responseOpciones);
                                 var areasString = "";
                                 angular.forEach(responseOpciones.data,function(area){
                                     areasString = areasString +", " + area.AreaConocimiento.Nombre;
