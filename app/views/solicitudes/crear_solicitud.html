@@ -70,7 +70,7 @@
            <label class="col-sm-4 control-label"> {{detalle.label}}</label>
            <div class="col-sm-8">
                <select class="form-control" ng-model="detalle.respuesta" required>
-                     <option  ng-repeat="opcion in detalle.opciones" value="opcion.bd"> {{opcion.NOMBRE}} </option>
+                     <option  ng-repeat="opcion in detalle.opciones" value="{{opcion.bd}}"> {{opcion.NOMBRE}} </option>
                </select>
            </div>
          </div>
