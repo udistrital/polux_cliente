@@ -58,21 +58,25 @@
                 {{'INFORMACION_SOLICITUD' | translate}}
             </div>
               <div class="panel-body">
-                  <div clase="row">
+                  <div class="row">
                       <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label>
                       <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.id}}  </label>
                   </div>
-                  <div clase="row">
+                  <div class="row">
                       <label class="col-sm-4 control-label"> {{'FECHA'|translate}}:  </label>
                       <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.fechaSolicitud}}  </label>
                   </div>
-                  <div clase="row">
+                  <div class="row">
                       <label class="col-sm-4 control-label"> {{'SOLICITANTES'|translate}}:  </label>
                       <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.solicitantes}}  </label>
                   </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'TIPO_SOLICITUD' | translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.tipoSolicitud}}  </label>
+                  </div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-if="listarSolicitudes.detallesSolicitud.length>0">
             <div class="panel-heading">
                 {{'DETALLES_SOLICITUD' | translate}}
             </div>

@@ -40,7 +40,11 @@ angular.module('poluxClienteApp')
       poluxRequest.get("detalle_solicitud",parametrosDetallesSolicitud).then(function(responseDetalles){
 
           poluxRequest.get("usuario_solicitud",parametrosDetallesSolicitud).then(function(responseEstudiantes){
-              ctrl.detallesSolicitud = responseDetalles.data;
+              ctrl.detallesSolicitud = [];
+              if(responseDetalles.data !== null){
+                ctrl.detallesSolicitud = responseDetalles.data;
+              }
+
               var solicitantes = "";
               ctrl.detallesSolicitud.id = ctrl.solicitud;
               ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
@@ -106,6 +110,7 @@ angular.module('poluxClienteApp')
       var defered = $q.defer();
       var promise = defered.promise;
       ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
+      ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Nombre;
       ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2){
 

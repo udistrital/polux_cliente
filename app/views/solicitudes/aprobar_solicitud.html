@@ -10,17 +10,21 @@
               {{'INFORMACION_SOLICITUD' | translate}}
           </div>
             <div class="panel-body">
-                <div clase="row">
+                <div class="row">
                     <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label>
                     <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.id}}  </label>
                 </div>
-                <div clase="row">
+                <div class="row">
                     <label class="col-sm-4 control-label"> {{'FECHA'|translate}}:  </label>
                     <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.fechaSolicitud}}  </label>
                 </div>
-                <div clase="row">
+                <div class="row">
                     <label class="col-sm-4 control-label"> {{'SOLICITANTES'|translate}}:  </label>
                     <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.solicitantes}}  </label>
+                </div>
+                <div class="row">
+                    <label class="col-sm-4 control-label"> {{'TIPO_SOLICITUD' | translate}}:  </label>
+                    <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataSolicitud.NombreTipoSolicitud}}  </label>
                 </div>
           </div>
 
@@ -28,7 +32,7 @@
 
 
 
-      <div class="panel panel-default">
+      <div class="panel panel-default" ng-if="aprobarSolicitud.detallesSolicitud.length > 0">
           <div class="panel-heading">
               {{'DETALLES_SOLICITUD' | translate}}
           </div>
@@ -76,7 +80,7 @@
                       </div>
                     </div>
                   <br>
-                  <div clas="row">
+                  <div class="row">
                       <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
                       <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
                   </div>
