@@ -262,7 +262,17 @@ angular.module('poluxClienteApp')
               });
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     detalle.filas = [];
-                    if(detalle.Descripcion.includes("JSON-")){
+                    var id = detalle.DetalleTipoSolicitud.Detalle.Id;
+                    console.log(detalle);
+                    if( id === 9 || id === 14 || id===15){
+                      var parametrosDocentesUD = {
+                        "identificacion":detalle.Descripcion
+                      };
+                      academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
+                        detalle.Descripcion = docente[0].NOMBRE;
+                      });
+
+                    }else if(detalle.Descripcion.includes("JSON-")){
                         var datosMaterias = detalle.Descripcion.split("-");
                         detalle.carrera = JSON.parse(datosMaterias[1]);
                         console.log(detalle.carrera);

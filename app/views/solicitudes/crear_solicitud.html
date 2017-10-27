@@ -100,7 +100,10 @@
                 </div>
             </div>
          </div>
-
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='linkNuxeo'" class="row">
+             <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+             <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+         </div>
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Selector'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">

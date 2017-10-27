@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesCrearSolicitudCtrl', function ($scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+  .controller('SolicitudesCrearSolicitudCtrl', function ($window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
       $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -48,8 +48,9 @@ angular.module('poluxClienteApp')
                 limit:1
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
-                    ctrl.Trabajo = responseTrabajoEstudiante.data[0];
-                    if(responseTrabajoEstudiante.data[0] != null){
+
+                    if(responseTrabajoEstudiante.data != null){
+                      ctrl.Trabajo = responseTrabajoEstudiante.data[0];
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
                       ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
                       ctrl.siModalidad = true;
@@ -233,6 +234,10 @@ angular.module('poluxClienteApp')
                                   "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Resumen,
                                   "bd":responseOpciones.data[0].DocumentoEscrito.Resumen
                                 });
+                              }else if(detalle.Detalle.Nombre.includes("Propuesta actual")){
+                                detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
+
+                                console.log("Documento",detalle.respuesta);
                               }else if(detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")){
                                 console.log("Opciones",responseOpciones);
                                 var areasString = "";
@@ -266,7 +271,8 @@ angular.module('poluxClienteApp')
                                     console.log("Respuesta docente", docente);
                                     detalle.opciones.push({
                                       "NOMBRE":docente[0].NOMBRE,
-                                      "bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                                      //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                                      "bd":  docente.bd = docente[0].DOC_NRO_IDEN
                                     });
                                     console.log(detalle.opciones);
                                   });
@@ -296,7 +302,8 @@ angular.module('poluxClienteApp')
                                 //detalle.opciones=academicaRequest.obtenerDocentesJson();
                                 academicaRequest.obtenerDocentesTG().then(function(docentes){
                                   angular.forEach(docentes, function(docente){
-                                      docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
+                                      //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
+                                      docente.bd = docente.DIR_NRO_IDEN;
                                   });
                                   detalle.opciones=docentes;
                                   console.log(docentes);
@@ -400,7 +407,7 @@ angular.module('poluxClienteApp')
 
         angular.forEach(ctrl.detalles, function(detalle){
             if(detalle.Detalle.TipoDetalle.Nombre==='Label'){
-                detalle.respuesta = detalle.opciones[0].Nombre;
+                detalle.respuesta = detalle.opciones[0].bd;
             }
             if(detalle.Detalle.TipoDetalle.Nombre==='Documento'){
                 detalle.respuesta = "urlDocumento";
@@ -702,6 +709,53 @@ angular.module('poluxClienteApp')
              }
              $scope.loadFormulario = false;
            });
+
+      }
+
+      ctrl.getDocumento = function(docid){
+          nuxeo.header('X-NXDocumentProperties', '*');
+
+          ctrl.obtenerDoc = function () {
+            var defered = $q.defer();
+
+            nuxeo.request('/id/'+docid)
+                .get()
+                .then(function(response) {
+                  ctrl.doc=response;
+                  var aux=response.get('file:content');
+                  ctrl.document=response;
+                  defered.resolve(response);
+                })
+                .catch(function(error){
+                    defered.reject(error)
+                });
+            return defered.promise;
+          };
+
+          ctrl.obtenerFetch = function (doc) {
+            var defered = $q.defer();
+
+            doc.fetchBlob()
+              .then(function(res) {
+                defered.resolve(res.blob());
+
+              })
+              .catch(function(error){
+                    defered.reject(error)
+                });
+            return defered.promise;
+          };
+
+            ctrl.obtenerDoc().then(function(){
+
+               ctrl.obtenerFetch(ctrl.document).then(function(r){
+                   ctrl.blob=r;
+                   var fileURL = URL.createObjectURL(ctrl.blob);
+                   console.log(fileURL);
+                   ctrl.content = $sce.trustAsResourceUrl(fileURL);
+                   $window.open(fileURL);
+                });
+            });
 
       }
 
