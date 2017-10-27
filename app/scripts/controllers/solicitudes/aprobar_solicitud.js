@@ -261,4 +261,51 @@ angular.module('poluxClienteApp')
 
     };
 
+    ctrl.getDocumento = function(docid){
+        nuxeo.header('X-NXDocumentProperties', '*');
+
+        ctrl.obtenerDoc = function () {
+          var defered = $q.defer();
+
+          nuxeo.request('/id/'+docid)
+              .get()
+              .then(function(response) {
+                ctrl.doc=response;
+                var aux=response.get('file:content');
+                ctrl.document=response;
+                defered.resolve(response);
+              })
+              .catch(function(error){
+                  defered.reject(error)
+              });
+          return defered.promise;
+        };
+
+        ctrl.obtenerFetch = function (doc) {
+          var defered = $q.defer();
+
+          doc.fetchBlob()
+            .then(function(res) {
+              defered.resolve(res.blob());
+
+            })
+            .catch(function(error){
+                  defered.reject(error)
+              });
+          return defered.promise;
+        };
+
+          ctrl.obtenerDoc().then(function(){
+
+             ctrl.obtenerFetch(ctrl.document).then(function(r){
+                 ctrl.blob=r;
+                 var fileURL = URL.createObjectURL(ctrl.blob);
+                 console.log(fileURL);
+                 ctrl.content = $sce.trustAsResourceUrl(fileURL);
+                 $window.open(fileURL);
+              });
+          });
+
+    }
+
   });

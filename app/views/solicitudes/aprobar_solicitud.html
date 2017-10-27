@@ -50,10 +50,10 @@
                     </div>
               </div>
               <div ng-if="detalle.carrera===undefined">
-                <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento'">
+                <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='linkNuxeo'">
                     <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
                 </div>
-                <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento'">
+                <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='linkNuxeo'">
                     <label ng-click="aprobarSolicitud.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
                 </div>
               </div>
