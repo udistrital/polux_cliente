@@ -40,8 +40,9 @@ angular.module('poluxClienteApp')
       poluxRequest.get("detalle_solicitud",parametrosDetallesSolicitud).then(function(responseDetalles){
 
           poluxRequest.get("usuario_solicitud",parametrosDetallesSolicitud).then(function(responseEstudiantes){
-              ctrl.detallesSolicitud = [];
-              if(responseDetalles.data !== null){
+              if(responseDetalles.data===null){
+                ctrl.detallesSolicitud = [];
+              }else{
                 ctrl.detallesSolicitud = responseDetalles.data;
               }
 

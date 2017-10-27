@@ -252,10 +252,11 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function(responseDetalles){
           poluxRequest.get("usuario_solicitud",parametrosSolicitud).then(function(responseEstudiantes){
+            if(responseDetalles.data===null){
               ctrl.detallesSolicitud = [];
-              if(responseDetalles.data !== null){
-                  ctrl.detallesSolicitud = responseDetalles.data;
-              }
+            }else{
+              ctrl.detallesSolicitud = responseDetalles.data;
+            }
               var solicitantes = "";
               ctrl.detallesSolicitud.id = fila.entity.Id;
               ctrl.detallesSolicitud.tipoSolicitud = fila.entity.ModalidadTipoSolicitud;

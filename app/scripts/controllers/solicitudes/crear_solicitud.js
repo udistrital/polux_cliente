@@ -262,7 +262,22 @@ angular.module('poluxClienteApp')
                                     "bd":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
                                   });
                                 });
-                              }else if (detalle.Detalle.Nombre.includes("Director Actual")) {
+                              }
+                              else if(detalle.Detalle.Nombre.includes("Evaluador Actual")){
+                                angular.forEach(responseOpciones.data,function(evaluador){
+                                  var parametrosDocentesUD = {
+                                    "identificacion":evaluador.Usuario
+                                  };
+                                  academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
+                                    detalle.opciones.push({
+                                      "NOMBRE":docente[0].NOMBRE,
+                                      "bd":  docente.bd = docente[0].DOC_NRO_IDEN
+                                    });
+                                    console.log(detalle.opciones);
+                                  });
+                                });
+                              }
+                              else if (detalle.Detalle.Nombre.includes("Director Actual")) {
                                     var parametrosDocentesUD = {
                                       "identificacion":ctrl.Trabajo.directorInterno.Usuario
                                     };
