@@ -46,7 +46,7 @@
          <div ng-repeat="detalle in crearSolicitud.detalles">
            <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row" >
               <label class="col-sm-3 control-label"> {{ detalle.label}}</label>
-              <label class="col-sm-9 control-label"> {{detalle.opciones[0].Nombre}}</label>
+              <label class="col-sm-9 control-label"> {{detalle.opciones[0].NOMBRE}}</label>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
             <label class="col-sm-4 control-label"> {{detalle.label}}</label>

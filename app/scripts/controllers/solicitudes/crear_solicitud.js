@@ -47,17 +47,14 @@ angular.module('poluxClienteApp')
 
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
-                query:"Estudiante:"+ctrl.codigo,
+                query:"Estudiante:"+ctrl.codigo+",EstadoEstudianteTrabajoGrado:1",
+                limit:1
             });
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
-
-                    ctrl.Trabajo = responseTrabajoEstudiante.data;
-                    if(responseTrabajoEstudiante.data != null){
-                //      ctrl.codigo = responseTrabajoEstudiante.data[0].CodigoEstudiante;
-
+                    ctrl.Trabajo = responseTrabajoEstudiante.data[0];
+                    if(responseTrabajoEstudiante.data[0] != null){
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
                       ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
-                      console.log(ctrl.trabajo_grado);
                       ctrl.siModalidad = true;
                       ctrl.modalidad_select = true;
                       ctrl.cargarTipoSolicitud(ctrl.modalidad);
@@ -67,8 +64,8 @@ angular.module('poluxClienteApp')
                       });
                       poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(responseVinculacion){
                             ctrl.Trabajo.evaluadores = [];
-                            console.log(responseVinculacion.data);
                           angular.forEach(responseVinculacion.data, function(vinculado){
+
                               if(vinculado.RolTrabajoGrado.Id==1){
                                   ctrl.Trabajo.directorInterno = vinculado;
                               }
@@ -227,7 +224,9 @@ angular.module('poluxClienteApp')
                                 limit:0
                               });
                           }
+                          console.log(detalle.parametros);
                           poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones){
+                              console.log("Opciones",responseOpciones);
                               if (detalle.Detalle.Nombre.includes("Nombre anterior de la propuesta")) {
                                   detalle.opciones.push({
                                     "NOMBRE":responseOpciones.data[0].Documento.Titulo,
@@ -261,6 +260,20 @@ angular.module('poluxClienteApp')
                                     "bd":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
                                   });
                                 });
+                              }else if (detalle.Detalle.Nombre.includes("Director Actual")) {
+                                    var parametrosDocentesUD = {
+                                      "identificacion":ctrl.Trabajo.directorInterno.Usuario
+                                    };
+                                    console.log("parametrosDocentesUD", parametrosDocentesUD);
+                                  academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
+                                    console.log("Respuesta docente", docente);
+                                    detalle.opciones.push({
+                                      "NOMBRE":docente[0].NOMBRE,
+                                      "bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                                    });
+                                    console.log(detalle.opciones);
+                                  });
+
                               }else if(detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")){
                                 angular.forEach(responseOpciones.data,function(espacio){
                                   var esta = false;
