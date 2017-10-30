@@ -82,19 +82,25 @@
                   <br>
                   <div class="row">
                       <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
-                      <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
+                      <div class="col-sm-8">
+                          <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
+                      </div>
                   </div>
                   <br>
                   <div class="row">
-                    <label class="col-sm-12 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
-                    <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>
+                    <label class="col-sm-4 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
+                    <div class="col-sm-8">
+                      <!--<input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>-->
+                      <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
+                      <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.seleccionarDocumento()">
+                    </div>
                   </div>
                   <br>
                   <!--Docente que avala la propuesta -->
                   <div class="row" ng-if="aprobarSolicitud.isInicial">
                     <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
                     <div class="col-sm-8">
-                    <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:95%;">
+                    <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
                            <ui-select-match  placeholder="{{'SELECT.DOCENTE_DIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                            <ui-select-choices infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
                                <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
@@ -102,12 +108,13 @@
                        </ui-select>
                     </div>
                   </div>
+
                   <br ng-if="aprobarSolicitud.isInicial">
                   <!--Docente que avala la propuesta -->
                   <div class="row" ng-if="aprobarSolicitud.hasRevisor">
                     <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_REVISOR' | translate}} </label>
                     <div class="col-sm-8">
-                      <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteRevisor"  theme="bootstrap" reset-search-input="false" style="width:95%;">
+                      <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteRevisor"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
                            <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                             <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
                                <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
@@ -130,5 +137,35 @@
 
       </div>
     </div>
+</div>
 
+
+
+<div id="modalSeleccionarDocumento" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            {{'ACTA_RESPUESTA_SOLICITUD' |translate}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-defaul">
+            <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {{SELECCIONE_DOCUMENTO}}
+                    </div>
+                    <div class="panel-body">
+                      <div class="col-sm-12">
+                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta"  theme="select2" reset-search-input="false" style="width:100s%;">
+                             <ui-select-match  placeholder="{{'SELECCIONE_DOCUMENTO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                              <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
+                                 <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
+                             </ui-select-choices>
+                         </ui-select>
+                      </div>
+                    </div>
+                </div>
+                <cargar-documento  name="ActasSolicitudes" carrera="20"> </cargar-documento>
+            </div>
+        </div>
+    </div>
 </div>

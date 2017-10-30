@@ -12,6 +12,8 @@ angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl', function (academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope) {
     var ctrl = this;
 
+
+
     ctrl.solicitud = $routeParams.idSolicitud;
 
     $scope.msgCargandoSolicitud = $translate.instant("LOADING.CARGANDO_DETALLES_SOLICITUD");
@@ -22,6 +24,11 @@ angular.module('poluxClienteApp')
     ctrl.isInicial = false;
     ctrl.isPasantia = false;
     ctrl.hasRevisor = false;
+
+    //datos para el acta
+    ctrl.acta = [];
+    ctrl.acta.nombre = $translate.instant('DOCUMENTO.SIN_DOCUMENTO');
+    ctrl.acta.url = "";
 
     //datos para infinite SolicitudesAprobarSolicitudCtrl//Infinite Scroll Magic
     $scope.infiniteScroll = {};
@@ -306,6 +313,23 @@ angular.module('poluxClienteApp')
               });
           });
 
+    }
+
+    ctrl.getDocumentos = function(){
+      // codigo para ejecutar consulta en nuxeo
+      nuxeo.operation('Document.Query')
+          .params({
+            query:"SELECT * FROM Document  WHERE dc:title like 'Acta%'"
+          })
+          .execute()
+          .then(function(doc) {
+              console.log(doc);
+          });
+    }
+
+    ctrl.seleccionarDocumento = function(){
+      ctrl.getDocumentos();
+      $('#modalSeleccionarDocumento').modal('show');
     }
 
   });
