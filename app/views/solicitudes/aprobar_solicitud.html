@@ -154,7 +154,10 @@
                         {{'SELECCIONE_EL_DOCUMENTO' | translate}}
                     </div>
                     <loading tam="4" load="loadDocumento"> </loading>
-                    <div class="panel-body" ng-if="!loadDocumento">
+                    <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length===0" >
+                      <label clase="control-label">No hay documentos que mostrar, por favor cargue uno</label>
+                    </div>
+                    <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length>0">
                       <div class="row">
                         <div class="col-sm-9">
                           <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta"  theme="select2" reset-search-input="false" style="width:100%;">
@@ -176,7 +179,7 @@
                     </div>
                 </div>
             </div>
-              <cargar-documento  name="ActasSolicitudes" carrera="20"> </cargar-documento>
+              <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
         </div>
     </div>
 </div>

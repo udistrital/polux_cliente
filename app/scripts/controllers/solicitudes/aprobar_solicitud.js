@@ -41,6 +41,17 @@ angular.module('poluxClienteApp')
        $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
     };
 
+    //carreras del coordinador
+    var parametrosCoordinador = {
+      "identificacion":80093200,
+    };
+    ctrl.carrerasCoordinador = [];
+    academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
+      if(responseCoordinador!=="null"){
+        ctrl.carrerasCoordinador = responseCoordinador;
+      }
+    });
+
     ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud){
       var defered = $q.defer();
       var promise = defered.promise;
@@ -349,8 +360,13 @@ angular.module('poluxClienteApp')
               });
           });
         */
+        var sql = "";
+        angular.forEach(ctrl.carrerasCoordinador, function(carrera){
+            sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.CODIGO_CARRERA;
+        });
         var parametrosDocumentos = $.param({
-          query:"TipoDocumentoEscrito:1",
+          query:"TipoDocumentoEscrito:1"+sql,
+          //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
           limit:0
         });
         $scope.loadDocumento = true;
@@ -359,7 +375,7 @@ angular.module('poluxClienteApp')
               angular.forEach(responseDocumentos.data, function(documento){
                 console.log("docuemntos", documento);
                   var tempDoc = {
-                    "nombre":documento.Resumen,
+                    "nombre":documento.Titulo,
                     "url": documento.Enlace,
                   }
                   ctrl.documentos.push(tempDoc);
@@ -390,8 +406,5 @@ angular.module('poluxClienteApp')
       $('#modalSeleccionarDocumento').modal('show');
     }
 
-    ctrl.documentos = [];
-    ctrl.getDocumentos();
-    $('#modalSeleccionarDocumento').modal('show');
 
   });

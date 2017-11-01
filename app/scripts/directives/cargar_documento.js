@@ -12,13 +12,21 @@ angular.module('poluxClienteApp')
       restrict: 'E',
       scope:{
           name: '@',
-          carrera: '=',
+          carreras: '=',
+          acta: '=',
       },
       templateUrl: 'views/directives/cargar_documento.html',
-      controller:function($translate,$filter,$scope,$q,nuxeo){
+      controller:function(poluxRequest,$translate,$filter,$scope,$q,nuxeo){
         var ctrl = this;
         ctrl.documento = [];
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
+
+        if($scope.carreras !== []){
+            console.log($scope.carreras);
+            if($scope.carreras.length===1){
+                $scope.carrera = $scope.carreras[0];
+            }
+        }
 
         ctrl.cargarDocumento = function(){
           var defered = $q.defer();
@@ -32,6 +40,8 @@ angular.module('poluxClienteApp')
             .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas')
             .execute()
             .then(function(doc) {
+                ctrl.documento.resumen = ctrl.documento.fileModel.name;
+                ctrl.documento.url = doc.uid;
                 var nuxeoBlob = new Nuxeo.Blob({ content: ctrl.documento.fileModel });
                 nuxeo.batchUpload()
                 .upload(nuxeoBlob)
@@ -60,22 +70,46 @@ angular.module('poluxClienteApp')
         }
 
         ctrl.enviarDocumento = function(){
+          console.log("consecutivo",ctrl.consecutivo);
+          if($scope.carreras.length===1){
+            ctrl.carrera = $scope.carreras[0].CODIGO_CARRERA;
+          }
+          if(ctrl.carrera!==undefined){
             $scope.loadDocumento = true;
-            if($scope.name!==undefined && $scope.carrera!==undefined){
-                var date = $filter('date')(new Date(), 'dd-MM-yyyy');
-                ctrl.documento.nombre = $scope.name+"-"+$scope.carrera+"-"+date;
-                console.log(ctrl.documento.nombre);
-            }
+            var date = $filter('date')(new Date(), 'dd-MM-yyyy');
+            ctrl.documento.nombre = $scope.name+" "+ctrl.consecutivo+" Codigo de carrera:"+ctrl.carrera+" Fecha:"+date;
             ctrl.cargarDocumento().then(function(){
-              $('#modalSeleccionarDocumento').modal('hide');
-              swal(
-                $translate.instant("DOCUMENTO.CARGADO"),
-                '',
-                'success'
-              );
+              var documento = {
+                "Titulo":ctrl.documento.nombre,
+                "Enlace":ctrl.documento.url,
+                "Resumen":ctrl.documento.resumen,
+                "TipoDocumentoEscrito":1,
+              }
+              $scope.acta = [];
+              $scope.acta.nombre = ctrl.documento.nombre;
+              $scope.acta.url = ctrl.documento.url;
+
+              poluxRequest.post("documento_escrito",documento).then(function(){
+                $('#modalSeleccionarDocumento').modal('hide');
+                swal(
+                  $translate.instant("DOCUMENTO.CARGADO"),
+                  '',
+                  'success'
+                );
+              });
+
               ctrl.documento = [];
               $scope.loadDocumento = false;
             });
+          }else{
+            swal(
+              $translate.instant("SELECT.SIN_CARRERA"),
+              '',
+              'warning'
+            );
+          }
+
+
         }
 
       },
