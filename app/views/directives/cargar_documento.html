@@ -5,7 +5,7 @@
   <loading tam="4" load="loadDocumento" message="msgCargandoDocumento"> </loading>
   <div class="panel-body" ng-if="!loadDocumento">
       <form method="post" name="formularioCargar" ng-submit="d_cargarDocumento.enviarDocumento()">
-        <div class="row">
+        <div class="row" ng-if="carrera=== undefined && name===undefined">
                 <label class="col-sm-4 control-label"> {{'DOCUMENTO.INGRESE_NOMBRE' | translate}} </label>
                 <div class="col-sm-8">
                   <input type="text" class="form-control" ng-model="d_cargarDocumento.documento.nombre" required></input>

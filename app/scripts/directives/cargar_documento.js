@@ -67,9 +67,10 @@ angular.module('poluxClienteApp')
                 console.log(ctrl.documento.nombre);
             }
             ctrl.cargarDocumento().then(function(){
+              $('#modalSeleccionarDocumento').modal('hide');
               swal(
-                $translate.instant("FORMULARIO_SOLICITUD"),
-                $translate.instant("SOLICITUD_REGISTRADA"),
+                $translate.instant("DOCUMENTO.CARGADO"),
+                '',
                 'success'
               );
               ctrl.documento = [];

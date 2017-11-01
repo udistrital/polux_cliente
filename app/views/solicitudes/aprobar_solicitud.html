@@ -92,7 +92,7 @@
                     <div class="col-sm-8">
                       <!--<input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>-->
                       <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
-                      <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.seleccionarDocumento()">
+                      <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
                     </div>
                   </div>
                   <br>
@@ -151,21 +151,32 @@
             <div class="panel-body">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        {{SELECCIONE_DOCUMENTO}}
+                        {{'SELECCIONE_EL_DOCUMENTO' | translate}}
                     </div>
-                    <div class="panel-body">
-                      <div class="col-sm-12">
-                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta"  theme="select2" reset-search-input="false" style="width:100s%;">
-                             <ui-select-match  placeholder="{{'SELECCIONE_DOCUMENTO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                              <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
-                                 <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
-                             </ui-select-choices>
-                         </ui-select>
-                      </div>
+                    <loading tam="4" load="loadDocumento"> </loading>
+                    <div class="panel-body" ng-if="!loadDocumento">
+                      <div class="row">
+                        <div class="col-sm-9">
+                          <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta"  theme="select2" reset-search-input="false" style="width:100%;">
+                               <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
+                                <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
+                                   <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
+                               </ui-select-choices>
+                           </ui-select>
+                        </div>
+                        <div class="col-sm-3">
+                            <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                            <label class="col-sm-4"></label>
+                            <button class="col-sm-4 btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'DOCUMENTO.SELECCIONAR_DOCUMENTO' | translate}}</button>
+                            <label class="col-sm-4"></label>
                     </div>
                 </div>
-                <cargar-documento  name="ActasSolicitudes" carrera="20"> </cargar-documento>
             </div>
+              <cargar-documento  name="ActasSolicitudes" carrera="20"> </cargar-documento>
         </div>
     </div>
 </div>

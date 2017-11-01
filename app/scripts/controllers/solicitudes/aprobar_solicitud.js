@@ -28,7 +28,7 @@ angular.module('poluxClienteApp')
     //datos para el acta
     ctrl.acta = [];
     ctrl.acta.nombre = $translate.instant('DOCUMENTO.SIN_DOCUMENTO');
-    ctrl.acta.url = "";
+
 
     //datos para infinite SolicitudesAprobarSolicitudCtrl//Infinite Scroll Magic
     $scope.infiniteScroll = {};
@@ -268,68 +268,130 @@ angular.module('poluxClienteApp')
 
     };
 
+    ctrl.obtenerDoc = function (docid) {
+      var defered = $q.defer();
+
+      nuxeo.request('/id/'+docid)
+          .get()
+          .then(function(response) {
+            ctrl.doc=response;
+            var aux=response.get('file:content');
+            ctrl.document=response;
+            defered.resolve(response);
+          })
+          .catch(function(error){
+              defered.reject(error)
+          });
+      return defered.promise;
+    };
+
+    ctrl.obtenerFetch = function (doc) {
+      var defered = $q.defer();
+
+      doc.fetchBlob()
+        .then(function(res) {
+          defered.resolve(res.blob());
+
+        })
+        .catch(function(error){
+              defered.reject(error)
+          });
+      return defered.promise;
+    };
+
     ctrl.getDocumento = function(docid){
+        if(docid!== undefined){
+          $scope.loadDocumento = true;
         nuxeo.header('X-NXDocumentProperties', '*');
 
-        ctrl.obtenerDoc = function () {
-          var defered = $q.defer();
 
-          nuxeo.request('/id/'+docid)
-              .get()
-              .then(function(response) {
-                ctrl.doc=response;
-                var aux=response.get('file:content');
-                ctrl.document=response;
-                defered.resolve(response);
-              })
-              .catch(function(error){
-                  defered.reject(error)
-              });
-          return defered.promise;
-        };
 
-        ctrl.obtenerFetch = function (doc) {
-          var defered = $q.defer();
-
-          doc.fetchBlob()
-            .then(function(res) {
-              defered.resolve(res.blob());
-
-            })
-            .catch(function(error){
-                  defered.reject(error)
-              });
-          return defered.promise;
-        };
-
-          ctrl.obtenerDoc().then(function(){
-
+          ctrl.obtenerDoc(docid).then(function(){
              ctrl.obtenerFetch(ctrl.document).then(function(r){
                  ctrl.blob=r;
                  var fileURL = URL.createObjectURL(ctrl.blob);
                  console.log(fileURL);
                  ctrl.content = $sce.trustAsResourceUrl(fileURL);
                  $window.open(fileURL);
+                 $scope.loadDocumento = false;
               });
           });
-
+        }else{
+          swal(
+            $translate.instant("DOCUMENTO.SIN_DOCUMENTO"),
+            ' ',
+            'warning'
+          );
+        }
     }
+
 
     ctrl.getDocumentos = function(){
       // codigo para ejecutar consulta en nuxeo
+
+      /*
+      nuxeo.header('X-NXDocumentProperties', '*');
       nuxeo.operation('Document.Query')
           .params({
-            query:"SELECT * FROM Document  WHERE dc:title like 'Acta%'"
+            query:"SELECT * FROM Document WHERE dc:title like 'ActasSolicitudes-20-%'",
           })
           .execute()
           .then(function(doc) {
-              console.log(doc);
+              angular.forEach(doc.entries, function(documento){
+                  ctrl.obtenerDoc(documento.uid).then(function(doc){
+                      var tempDoc = {
+                        "nombre":doc.get("file:content").name,
+                        "url": doc.uid,
+                        "documento":doc,
+                      }
+                      ctrl.documentos.push(tempDoc);
+                  });
+              });
           });
+        */
+        var parametrosDocumentos = $.param({
+          query:"TipoDocumentoEscrito:1",
+          limit:0
+        });
+        $scope.loadDocumento = true;
+        poluxRequest.get("documento_escrito",parametrosDocumentos).then(function(responseDocumentos){
+
+              angular.forEach(responseDocumentos.data, function(documento){
+                console.log("docuemntos", documento);
+                  var tempDoc = {
+                    "nombre":documento.Resumen,
+                    "url": documento.Enlace,
+                  }
+                  ctrl.documentos.push(tempDoc);
+                });
+              $scope.loadDocumento = false;
+        });
+
+
     }
 
+
+
     ctrl.seleccionarDocumento = function(){
+      if(ctrl.acta.url!==undefined){
+        $('#modalSeleccionarDocumento').modal('hide');
+      }else{
+        swal(
+          $translate.instant("DOCUMENTO.SIN_DOCUMENTO"),
+          ' ',
+          'warning'
+        );
+      }
+    }
+
+    ctrl.modalDocumento = function(){
+      ctrl.documentos = [];
       ctrl.getDocumentos();
       $('#modalSeleccionarDocumento').modal('show');
     }
+
+    ctrl.documentos = [];
+    ctrl.getDocumentos();
+    $('#modalSeleccionarDocumento').modal('show');
 
   });
