@@ -43,7 +43,7 @@ angular.module('poluxClienteApp')
 
     //carreras del coordinador
     var parametrosCoordinador = {
-      "identificacion":80093200,
+      "identificacion":19451396,
     };
     ctrl.carrerasCoordinador = [];
     academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
@@ -363,26 +363,28 @@ angular.module('poluxClienteApp')
         var sql = "";
         angular.forEach(ctrl.carrerasCoordinador, function(carrera){
             sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.CODIGO_CARRERA;
-        });
-        var parametrosDocumentos = $.param({
-          query:"TipoDocumentoEscrito:1"+sql,
-          //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
-          limit:0
-        });
-        $scope.loadDocumento = true;
-        poluxRequest.get("documento_escrito",parametrosDocumentos).then(function(responseDocumentos){
 
-              angular.forEach(responseDocumentos.data, function(documento){
-                console.log("docuemntos", documento);
-                  var tempDoc = {
-                    "nombre":documento.Titulo,
-                    "url": documento.Enlace,
-                  }
-                  ctrl.documentos.push(tempDoc);
-                });
-              $scope.loadDocumento = false;
-        });
+            var parametrosDocumentos = $.param({
+              query:"TipoDocumentoEscrito:1"+sql,
+              //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
+              limit:0
+            });
+            $scope.loadDocumento = true;
+            poluxRequest.get("documento_escrito",parametrosDocumentos).then(function(responseDocumentos){
 
+              console.log(responseDocumentos);
+
+                  angular.forEach(responseDocumentos.data, function(documento){
+                    console.log("docuemntos", documento);
+                      var tempDoc = {
+                        "nombre":documento.Titulo,
+                        "url": documento.Enlace,
+                      }
+                      ctrl.documentos.push(tempDoc);
+                    });
+                  $scope.loadDocumento = false;
+            });
+        });
 
     }
 
