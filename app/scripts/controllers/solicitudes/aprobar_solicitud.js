@@ -14,7 +14,6 @@ angular.module('poluxClienteApp')
 
     ctrl.respuestaSolicitud="";
     ctrl.justificacion="";
-
     ctrl.solicitud = $routeParams.idSolicitud;
 
     $scope.msgCargandoSolicitud = $translate.instant("LOADING.CARGANDO_DETALLES_SOLICITUD");
@@ -41,6 +40,17 @@ angular.module('poluxClienteApp')
     $scope.addMoreItems = function(){
        $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
     };
+
+    //carreras del coordinador
+    var parametrosCoordinador = {
+      "identificacion":19451396,
+    };
+    ctrl.carrerasCoordinador = [];
+    academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
+      if(responseCoordinador!=="null"){
+        ctrl.carrerasCoordinador = responseCoordinador;
+      }
+    });
 
     ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud){
       var defered = $q.defer();
@@ -110,7 +120,6 @@ angular.module('poluxClienteApp')
                         console.log(ctrl.docenteDirector);
                     }
               });
-              //ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2);
               defered.resolve(ctrl.detallesSolicitud);
           });
@@ -128,7 +137,7 @@ angular.module('poluxClienteApp')
 
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
                 ctrl.isInicial = true;
-                //Si no es de materias de posgrado y profundización trae los docentes
+                //Si no es de materias de posgrado y profundizaciÃ³n trae los docentes
                 academicaRequest.obtenerDocentesTG().then(function(docentes){
                   ctrl.docentes=docentes;
                   console.log(ctrl.docentes);
@@ -172,6 +181,7 @@ angular.module('poluxClienteApp')
 
     });
 
+
     ctrl.responder=function(){
 
       var parametros = $.param({
@@ -195,7 +205,7 @@ angular.module('poluxClienteApp')
         objRtaNueva.Fecha=new Date();
 
         var parametros = $.param({
-            query:"Id:7",
+            query:"Id:"+ctrl.acta.id,
             limit:0
         });
 
@@ -208,7 +218,6 @@ angular.module('poluxClienteApp')
             "Id": Number(ctrl.solicitud)
           }
 
-          console.log(ctrl.todoDetalles);
 
           if(ctrl.todoDetalles.length>0){
 
@@ -234,7 +243,6 @@ angular.module('poluxClienteApp')
           });
 
             //cambio de director interno o evaluadores
-            console.log();
             if(ctrl.dataSolicitud.TipoSolicitud==4 || ctrl.dataSolicitud.TipoSolicitud==10){
               //buscar vinculación
               if(ctrl.dataSolicitud.TipoSolicitud==4){
@@ -342,7 +350,6 @@ angular.module('poluxClienteApp')
     };
 
 
-
     ctrl.cargarDocumento = function(nombre, descripcion, documento ,callback){
             var defered = $q.defer();
             var promise = defered.promise;
@@ -397,7 +404,7 @@ angular.module('poluxClienteApp')
               $scope.loadFormulario = true;
               var documento = ctrl.acta;
               if(documento.type !== "application/pdf" || documento.size>tam){
-                ctrl.cargarDocumento("ActaSolicitud"+ctrl.solicitud, "Acta de evaluación de la solicitud "+ctrl.solicitud,documento, function(url){
+                ctrl.cargarDocumento("ActaSolicitud"+ctrl.solicitud, "Acta de evaluaciÃ³n de la solicitud "+ctrl.solicitud,documento, function(url){
                   ctrl.urlActa = url;
                 })
                 .then(function(){
@@ -443,69 +450,135 @@ angular.module('poluxClienteApp')
 
     };
 
+    ctrl.obtenerDoc = function (docid) {
+      var defered = $q.defer();
+
+      nuxeo.request('/id/'+docid)
+          .get()
+          .then(function(response) {
+            ctrl.doc=response;
+            var aux=response.get('file:content');
+            ctrl.document=response;
+            defered.resolve(response);
+          })
+          .catch(function(error){
+              defered.reject(error)
+          });
+      return defered.promise;
+    };
+
+    ctrl.obtenerFetch = function (doc) {
+      var defered = $q.defer();
+
+      doc.fetchBlob()
+        .then(function(res) {
+          defered.resolve(res.blob());
+
+        })
+        .catch(function(error){
+              defered.reject(error)
+          });
+      return defered.promise;
+    };
+
     ctrl.getDocumento = function(docid){
+        if(docid!== undefined){
+          $scope.loadDocumento = true;
         nuxeo.header('X-NXDocumentProperties', '*');
 
-        ctrl.obtenerDoc = function () {
-          var defered = $q.defer();
 
-          nuxeo.request('/id/'+docid)
-              .get()
-              .then(function(response) {
-                ctrl.doc=response;
-                var aux=response.get('file:content');
-                ctrl.document=response;
-                defered.resolve(response);
-              })
-              .catch(function(error){
-                  defered.reject(error)
-              });
-          return defered.promise;
-        };
 
-        ctrl.obtenerFetch = function (doc) {
-          var defered = $q.defer();
-
-          doc.fetchBlob()
-            .then(function(res) {
-              defered.resolve(res.blob());
-
-            })
-            .catch(function(error){
-                  defered.reject(error)
-              });
-          return defered.promise;
-        };
-
-          ctrl.obtenerDoc().then(function(){
-
+          ctrl.obtenerDoc(docid).then(function(){
              ctrl.obtenerFetch(ctrl.document).then(function(r){
                  ctrl.blob=r;
                  var fileURL = URL.createObjectURL(ctrl.blob);
                  console.log(fileURL);
                  ctrl.content = $sce.trustAsResourceUrl(fileURL);
                  $window.open(fileURL);
+                 $scope.loadDocumento = false;
               });
           });
-
+        }else{
+          swal(
+            $translate.instant("DOCUMENTO.SIN_DOCUMENTO"),
+            ' ',
+            'warning'
+          );
+        }
     }
+
 
     ctrl.getDocumentos = function(){
       // codigo para ejecutar consulta en nuxeo
+
+      /*
+      nuxeo.header('X-NXDocumentProperties', '*');
       nuxeo.operation('Document.Query')
           .params({
-            query:"SELECT * FROM Document  WHERE dc:title like 'Acta%'"
+            query:"SELECT * FROM Document WHERE dc:title like 'ActasSolicitudes-20-%'",
           })
           .execute()
           .then(function(doc) {
-              console.log(doc);
-              ctrl.documentos=doc.entries;
+              angular.forEach(doc.entries, function(documento){
+                  ctrl.obtenerDoc(documento.uid).then(function(doc){
+                      var tempDoc = {
+                        "nombre":doc.get("file:content").name,
+                        "url": doc.uid,
+                        "documento":doc,
+                      }
+                      ctrl.documentos.push(tempDoc);
+                  });
+              });
           });
+        */
+        var sql = "";
+        angular.forEach(ctrl.carrerasCoordinador, function(carrera){
+            sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.CODIGO_CARRERA;
+
+            var parametrosDocumentos = $.param({
+              query:"TipoDocumentoEscrito:1"+sql,
+              //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
+              limit:0
+            });
+            $scope.loadDocumento = true;
+            poluxRequest.get("documento_escrito",parametrosDocumentos).then(function(responseDocumentos){
+
+              console.log(responseDocumentos);
+
+                  angular.forEach(responseDocumentos.data, function(documento){
+                    console.log("documentos", documento);
+                      var tempDoc = {
+                        "id": documento.Id,
+                        "nombre":documento.Titulo,
+                        "url": documento.Enlace,
+                      }
+                      ctrl.documentos.push(tempDoc);
+                    });
+                  $scope.loadDocumento = false;
+            });
+        });
+
     }
 
+
+
     ctrl.seleccionarDocumento = function(){
+      if(ctrl.acta.url!==undefined){
+        $('#modalSeleccionarDocumento').modal('hide');
+      }else{
+        swal(
+          $translate.instant("DOCUMENTO.SIN_DOCUMENTO"),
+          ' ',
+          'warning'
+        );
+      }
+    }
+
+    ctrl.modalDocumento = function(){
+      ctrl.documentos = [];
       ctrl.getDocumentos();
       $('#modalSeleccionarDocumento').modal('show');
     }
+
 
   });
