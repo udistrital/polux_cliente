@@ -73,10 +73,10 @@
                     <div class="row">
                       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
                       <div class="col-sm-8">
-                          <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
-                                <option  ng-value="si"> {{'APROBAR_SOLICITUD' | translate}} </option>
-                                <option  ng-value="no"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
-                          </select>
+                        <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
+                              <option value=6> {{'APROBAR_SOLICITUD' | translate}} </option>
+                              <option value=5> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+                        </select>
                       </div>
                     </div>
                   <br>
@@ -124,11 +124,19 @@
                   </div>
                   <br ng-if="aprobarSolicitud.hasRevisor">
 
-                  <div class="row">
-                    <label class="col-sm-5 control-label"> </label>
-                    <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
-                    <label class="col-sm-5 control-label"> </label>
-                  </div>
+                  <!--<div class="row">
+                      <label class="col-sm-5 control-label"> </label>
+                      <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
+                      <label class="col-sm-5 control-label"> </label>
+                    </div>-->
+
+                    <br>
+                    <div class="row">
+                      <label class="col-sm-5 control-label"> </label>
+                      <input type="button" ng-click="aprobarSolicitud.responder()" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
+                      <label class="col-sm-5 control-label"> </label>
+                    </div>
+
                   </form>
                 </div>
             </div>
