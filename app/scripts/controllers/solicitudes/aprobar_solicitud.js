@@ -111,7 +111,7 @@ angular.module('poluxClienteApp')
                         detalle.gridOptions.data = detalle.filas;
                     }
                     //SI es el docente, detalle 9
-                    console.log(detalle.DetalleTipoSolicitud.Detalle.Id===9);
+                    //console.log(detalle.DetalleTipoSolicitud.Detalle.Id===9);
                     if(detalle.DetalleTipoSolicitud.Detalle.Id===9){
                         ctrl.docenteDirector = {
                           "NOMBRE":detalle.Descripcion.split("-")[1],
@@ -295,9 +295,23 @@ angular.module('poluxClienteApp')
                   console.log(response);
                 });
               });
+            }else if(ctrl.dataSolicitud.TipoSolicitud==2){ //solicitud inicial
+              //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
+              if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id=13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id=16){
+                ctrl.rtaSol={
+                  RespuestaAnterior:objRtaAnterior,
+                  RespuestaNueva:objRtaNueva,
+                  DocumentoSolicitud:data_documento,
+                  TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                  Vinculaciones: null,
+                  EstudianteTrabajoGrado: null
+                };
+                console.log(ctrl.rtaSol);
+                poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                  console.log(response);
+                });
+              }
             }
-
-
 
       }else{ //solictud de: prórroga y de socialización
         ctrl.rtaSol={
