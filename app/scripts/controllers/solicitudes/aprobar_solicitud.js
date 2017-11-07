@@ -327,6 +327,32 @@ angular.module('poluxClienteApp')
                     });
                   });
                 }
+              }else if(ctrl.dataSolicitud.TipoSolicitud==8){//solicitud de modificación de datos del trabajo de grado
+                if(ctrl.respuestaSolicitud==5){//solicitud:rechazada
+                  ctrl.rtaSol={
+                    RespuestaAnterior:objRtaAnterior,
+                    RespuestaNueva:objRtaNueva,
+                    DocumentoSolicitud:data_documento,
+                    TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                    Vinculaciones: null,
+                    EstudianteTrabajoGrado: null
+                  };
+                  console.log(ctrl.rtaSol);
+                  poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                    console.log(response);
+                  });
+                }else{
+
+                  angular.forEach(ctrl.todoDetalles,function(detalle){
+                    console.log(detalle);
+                    if(detalle.DetalleTipoSolicitud.Detalle.Enunciado=="ESCRIBA_NOMBRE_NUEVO_PROPUESTA"){
+                      ctrl.tgNuevoTitulo=detalle.Descripcion;
+                    }else if(detalle.DetalleTipoSolicitud.Detalle.Enunciado=="SELECCIONE_NUEVAS_AREAS_CONOCIMIENTO"){
+                      ctrl.tgNuevasAreas=detalle.Descripcion.split(',');
+                    }
+                  });
+
+                }
               }else if(ctrl.dataSolicitud.TipoSolicitud==2){ //solicitud inicial
                 //solicitud rechazada
                 if(ctrl.respuestaSolicitud==5){
