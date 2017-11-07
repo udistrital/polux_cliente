@@ -119,7 +119,7 @@ angular.module('poluxClienteApp')
 
         parametrosSolicitudes = $.param({
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
-            query:"ESTADOSOLICITUD.ID:1",
+            query:"ESTADOSOLICITUD.ID:1,Activo:true",
             limit:0
         });
 
@@ -133,6 +133,7 @@ angular.module('poluxClienteApp')
               });
 
               poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
+
                 angular.forEach(responseSolicitudes.data, function(solicitud){
                   var defered = $q.defer();
                   var promise = defered.promise;

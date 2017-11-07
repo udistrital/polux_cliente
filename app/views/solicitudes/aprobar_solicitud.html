@@ -97,7 +97,7 @@
                   </div>
                   <br>
                   <!--Docente que avala la propuesta -->
-                  <div class="row" ng-if="aprobarSolicitud.isInicial">
+                  <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
                     <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
                     <div class="col-sm-8">
                     <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
@@ -109,9 +109,9 @@
                     </div>
                   </div>
 
-                  <br ng-if="aprobarSolicitud.isInicial">
+                  <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
                   <!--Docente que avala la propuesta -->
-                  <div class="row" ng-if="aprobarSolicitud.hasRevisor">
+                  <div class="row" ng-if="aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==6">
                     <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_REVISOR' | translate}} </label>
                     <div class="col-sm-8">
                       <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteRevisor"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
