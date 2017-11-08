@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesCrearSolicitudCtrl', function ($window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest) {
+  .controller('SolicitudesCrearSolicitudCtrl', function ($window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest, $location) {
       $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -695,7 +695,8 @@ angular.module('poluxClienteApp')
            },
            "SolicitudTrabajoGrado": {
              "Id": 0
-           }
+           },
+           "Activo": true
          }
 
          //se crea objeto con las solicitudes
@@ -715,6 +716,7 @@ angular.module('poluxClienteApp')
                  $translate.instant("SOLICITUD_REGISTRADA"),
                  'success'
                );
+               $location.path("/solicitudes/listar_solicitudes");
              }else{
                swal(
                  $translate.instant("FORMULARIO_SOLICITUD"),

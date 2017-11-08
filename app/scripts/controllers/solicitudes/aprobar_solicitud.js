@@ -82,6 +82,14 @@ angular.module('poluxClienteApp')
                       };
                       academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
                         detalle.Descripcion = docente[0].DOC_NRO_IDEN+" "+docente[0].NOMBRE;
+
+                        if(id === 9){
+                          ctrl.docenteDirector = {
+                            "NOMBRE":docente[0].NOMBRE,
+                            "DIR_NRO_IDEN":docente[0].DOC_NRO_IDEN,
+                          };
+                          console.log(ctrl.docenteDirector);
+                        }
                       });
 
                     }else if(detalle.Descripcion.includes("JSON-")){
@@ -109,15 +117,6 @@ angular.module('poluxClienteApp')
                           width: '20%',
                         }];
                         detalle.gridOptions.data = detalle.filas;
-                    }
-                    //SI es el docente, detalle 9
-                    //console.log(detalle.DetalleTipoSolicitud.Detalle.Id===9);
-                    if(detalle.DetalleTipoSolicitud.Detalle.Id===9){
-                        ctrl.docenteDirector = {
-                          "NOMBRE":detalle.Descripcion.split("-")[1],
-                          "DIR_NRO_IDEN":detalle.Descripcion.split("-")[0],
-                        };
-                        console.log(ctrl.docenteDirector);
                     }
               });
               console.log(ctrl.todoDetalles);
