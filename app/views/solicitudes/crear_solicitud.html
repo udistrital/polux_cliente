@@ -46,19 +46,27 @@
          <div ng-repeat="detalle in crearSolicitud.detalles">
            <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row" >
               <label class="col-sm-3 control-label"> {{ detalle.label}}</label>
-              <label class="col-sm-9 control-label"> {{detalle.opciones[0].NOMBRE}}</label>
+              <div class="col-sm-9 ">
+                <label class="control-label"> {{detalle.opciones[0].NOMBRE}}</label>
+            </div>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
-            <label class="col-sm-4 control-label"> {{detalle.label}}</label>
-            <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
+            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+            <div class="col-sm-9 ">
+                <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
+            </div>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Numerico'" class="row">
-           <label class="col-sm-4 control-label"> {{detalle.label}}</label>
-           <input type="number" class="form-control" ng-model="detalle.respuesta" required></input>
+           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+             <div class="col-sm-9 ">
+                <input type="number" class="form-control" ng-model="detalle.respuesta" required></input>
+            </div>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'" class="row">
-           <label class="col-sm-4 control-label"> {{detalle.label}}</label>
-           <input type="file" class="col-sm-8" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: crearSolicitud.splitDescripcion(detalle.Detalle.Descripcion)}" file-model="detalle.fileModel" required> </input>
+           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+                <div class="col-sm-9 ">
+                    <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: crearSolicitud.splitDescripcion(detalle.Detalle.Descripcion)}" file-model="detalle.fileModel" required> </input>
+                </div>
            <br>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'" class="row">
@@ -67,8 +75,8 @@
           </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
-           <label class="col-sm-4 control-label"> {{detalle.label}}</label>
-           <div class="col-sm-8">
+           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+           <div class="col-sm-9">
                <select class="form-control" ng-model="detalle.respuesta" required>
                      <option  ng-repeat="opcion in detalle.opciones" value="{{opcion.bd}}"> {{opcion.NOMBRE}} </option>
                </select>
@@ -81,10 +89,12 @@
          </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" class = "row">
-            <label class="col-sm-12 control-label">{{detalle.label}}</label>
+            <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <!--<textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
             -->
-            <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
+            <div class="col-sm-9 ">
+                <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
+            </div>
          </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">

@@ -278,30 +278,43 @@ angular.module('poluxClienteApp')
                       });
 
                     }else if(detalle.Descripcion.includes("JSON-")){
-                        var datosMaterias = detalle.Descripcion.split("-");
-                        detalle.carrera = JSON.parse(datosMaterias[1]);
-                        console.log(detalle.carrera);
-                        datosMaterias.splice(0, 2);
-                        angular.forEach(datosMaterias, function(materia){
-                            detalle.filas.push(JSON.parse(materia));
-                                                    console.log(materia);
-                        });
+                        if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
+                          //areas de conocimiento
+                          var datosAreas = detalle.Descripcion.split("-");
+                          datosAreas.splice(0,1);
+                          detalle.Descripcion = "";
+                          angular.forEach(datosAreas, function(area){
+                              console.log(JSON.parse(area));
+                              detalle.Descripcion = detalle.Descripcion+", "+JSON.parse(area).Nombre;
+                          });
+                          detalle.Descripcion = detalle.Descripcion.substring(2);
+                        }else if(detalle.DetalleTipoSolicitud.Detalle.Id===22){
+                          //materias
+                          var datosMaterias = detalle.Descripcion.split("-");
+                          detalle.carrera = JSON.parse(datosMaterias[1]);
+                          datosMaterias.splice(0, 2);
+                          angular.forEach(datosMaterias, function(materia){
+                              detalle.filas.push(JSON.parse(materia));
+                                                      console.log(materia);
+                          });
 
-                        detalle.gridOptions = [];
-                        detalle.gridOptions.columnDefs = [{
-                          name: 'CodigoAsignatura',
-                          displayName: $translate.instant('CODIGO_MATERIA'),
-                          width:'30%',
-                        },{
-                          name: 'Nombre',
-                          displayName: $translate.instant('NOMBRE'),
-                          width: '50%',
-                        }, {
-                          name: 'Creditos',
-                          displayName: $translate.instant('CREDITOS'),
-                          width: '20%',
-                        }];
-                        detalle.gridOptions.data = detalle.filas;
+                          detalle.gridOptions = [];
+                          detalle.gridOptions.columnDefs = [{
+                            name: 'CodigoAsignatura',
+                            displayName: $translate.instant('CODIGO_MATERIA'),
+                            width:'30%',
+                          },{
+                            name: 'Nombre',
+                            displayName: $translate.instant('NOMBRE'),
+                            width: '50%',
+                          }, {
+                            name: 'Creditos',
+                            displayName: $translate.instant('CREDITOS'),
+                            width: '20%',
+                          }];
+                          detalle.gridOptions.data = detalle.filas;
+                        }
+
                     }
               });
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";

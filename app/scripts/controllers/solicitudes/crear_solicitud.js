@@ -441,11 +441,13 @@ angular.module('poluxClienteApp')
                    detalle.respuesta = (ctrl.estudiantes.length===0)? ctrl.codigo  :ctrl.codigo+","+ctrl.estudiantes.toString();
                 }
                 if(detalle.Detalle.Descripcion=='asignar-area'){
-                  detalle.respuesta = "";
+                  detalle.respuesta = "JSON";
                   angular.forEach(ctrl.estudiante.areas_elegidas, function(area){
-                     detalle.respuesta = detalle.respuesta +"," + area.Nombre;
+                     area.$$hashKey = undefined;
+                     detalle.respuesta = detalle.respuesta +"-" + JSON.stringify(area);
+                     //detalle.respuesta = detalle.respuesta +"," + (area.Id+"-"+area.Nombre);
                   });
-                  detalle.respuesta = detalle.respuesta.substring(1);
+                  //detalle.respuesta = detalle.respuesta.substring(1);
                 }
             }
             if(detalle.Detalle.TipoDetalle.Nombre==='Checkbox' || detalle.Detalle.TipoDetalle.Nombre==='Radio'){
