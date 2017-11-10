@@ -162,12 +162,12 @@ angular.module('poluxClienteApp')
             var parametrosDetalles;
             if(modalidad_seleccionada===undefined){
               parametrosDetalles = $.param({
-                query:"ModalidadTipoSolicitud:"+tipoSolicitud,
+                query:"Activo:TRUE,ModalidadTipoSolicitud:"+tipoSolicitud,
                 limit:0
               });
             }else{
                 parametrosDetalles = $.param({
-                  query:"ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
+                  query:"Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
                   limit:0
                 });
                 var parametrosModalidadTipoSolicitud = $.param({
