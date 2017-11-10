@@ -98,11 +98,12 @@ angular.module('poluxClienteApp')
                     }else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
+                          ctrl.areas=[];
                           var datosAreas = detalle.Descripcion.split("-");
                           datosAreas.splice(0,1);
                           detalle.Descripcion = "";
                           angular.forEach(datosAreas, function(area){
-                              console.log(JSON.parse(area));
+                              ctrl.areas.push(JSON.parse(area).Id);
                               detalle.Descripcion = detalle.Descripcion+", "+JSON.parse(area).Nombre;
                           });
                           detalle.Descripcion = detalle.Descripcion.substring(2);
@@ -113,7 +114,7 @@ angular.module('poluxClienteApp')
                           datosMaterias.splice(0, 2);
                           angular.forEach(datosMaterias, function(materia){
                               detalle.filas.push(JSON.parse(materia));
-                                                      console.log(materia);
+                              console.log(materia);
                           });
 
                           detalle.gridOptions = [];
@@ -479,7 +480,7 @@ angular.module('poluxClienteApp')
                     }else if(detalle.DetalleTipoSolicitud.Detalle.Nombre=="Resumen propuesta"){
                       otro.Resumen=detalle.Descripcion;
                     }else if(detalle.DetalleTipoSolicitud.Detalle.Nombre=="Áreas de conocimiento"){
-                      otro.Areas=detalle.Descripcion.split(',');
+                      otro.Areas=ctrl.areas;
                     }
                   });
 
