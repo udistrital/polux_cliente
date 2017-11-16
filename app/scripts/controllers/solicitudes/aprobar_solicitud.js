@@ -362,9 +362,20 @@ angular.module('poluxClienteApp')
                     console.log(detalle);
                     if(detalle.DetalleTipoSolicitud.Detalle.Enunciado=="ESCRIBA_NOMBRE_NUEVO_PROPUESTA"){
                       ctrl.tgNuevoTitulo=detalle.Descripcion;
-                    }else if(detalle.DetalleTipoSolicitud.Detalle.Enunciado=="SELECCIONE_NUEVAS_AREAS_CONOCIMIENTO"){
-                      ctrl.tgNuevasAreas=detalle.Descripcion.split(',');
+                      responseRta.data[0].SolicitudTrabajoGrado.TrabajoGrado.Titulo=detalle.Descripcion;
                     }
+                  });
+                  ctrl.rtaSol={
+                    RespuestaAnterior:objRtaAnterior,
+                    RespuestaNueva:objRtaNueva,
+                    DocumentoSolicitud:data_documento,
+                    TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                    Vinculaciones: null,
+                    TrabajoGrado: responseRta.data[0].SolicitudTrabajoGrado.TrabajoGrado
+                  };
+                  console.log(ctrl.rtaSol);
+                  poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                    console.log(response);
                   });
 
                 }

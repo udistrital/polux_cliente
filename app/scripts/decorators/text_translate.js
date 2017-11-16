@@ -175,6 +175,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_10: "Ocurrió un error al registrar las áreas de conocimiento del trabajo de grado.",
     ERROR_RTA_SOLICITUD_11: "Ocurrió un error al registrar el documento de la propuesta de trabajo de grado.",
     ERROR_RTA_SOLICITUD_12: "Ocurrió un error al asociar el documento escrito a la propuesta de trabajo de grado.",
+    ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
     },
@@ -427,6 +428,8 @@ var text_en = {
     ERROR_RTA_SOLICITUD_10: "There was an error inserting the knowledge areas of the graduation work.",
     ERROR_RTA_SOLICITUD_11: "There was an error inserting the document of the graduation work.",
     ERROR_RTA_SOLICITUD_12: "There was an error inserting the written document to the proposal of the graduation work.",
+    ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
+
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
     },
