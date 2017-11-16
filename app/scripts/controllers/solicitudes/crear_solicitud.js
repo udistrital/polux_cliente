@@ -131,7 +131,7 @@ angular.module('poluxClienteApp')
       ctrl.cargarTipoSolicitud= function (modalidad) {
         ctrl.solicitudes = [];
         var parametrosTiposSolicitudes = $.param({
-          query:"Modalidad:"+modalidad,
+          query:"Modalidad:"+modalidad+",TipoSolicitud.Activo:TRUE",
           limit:0,
         });
         poluxRequest.get("modalidad_tipo_solicitud",parametrosTiposSolicitudes).then(function(responseTiposSolicitudes){
@@ -175,10 +175,9 @@ angular.module('poluxClienteApp')
                   order: "asc"
                 });
                 var parametrosModalidadTipoSolicitud = $.param({
-                  query:"TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
+                  query:"TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
                   limit:1,
-                  sortby: "NumeroOrden",
-                  order: "asc"
+
                 });
                 poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud){
                     ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
