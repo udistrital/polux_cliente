@@ -178,6 +178,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
+        HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -439,6 +440,7 @@ var text_en = {
 
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
+        HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {

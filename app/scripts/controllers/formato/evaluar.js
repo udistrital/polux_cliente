@@ -51,11 +51,42 @@ angular.module('poluxClienteApp')
     ctrl.enviarEvaluacion = function(){
           //enviarEvaluacion
           if(ctrl.distincionEnabled){
+                //si no hay una solicitud de distincion pendiente permite enviar la solicitud.
                 //enviarDistincion
-                ctrl.enviarDatosDistincion();
+                ctrl.buscarSolicitudesDistincion(ctrl.solicitudDistincion.trabajoGrado.Id).then(function(hayDistinciones){
+                    if(!hayDistinciones){
+                        ctrl.enviarDatosDistincion();
+                    }else{
+                      swal(
+                        $translate.instant("ERROR"),
+                        $translate.instant("ERROR.HAY_SOLICITUD_DISTINCION"),
+                        'warning'
+                      );
+                    }
+                });
+
 
           }
     }
+
+    ctrl.buscarSolicitudesDistincion = function(trabajo){
+          var defered = $q.defer();
+          var parametrosHayDistincion = $.param({
+              query:"ModalidadTipoSolicitud.TipoSolicitud.Id:11,TrabajoGrado:"+trabajo,
+              limit:1
+          });
+          poluxRequest.get("solicitud_trabajo_grado",parametrosHayDistincion).then(function(responseHayDistincion){
+              console.log("hayDistinciones",responseHayDistincion.data);
+              var response = true;
+              if(responseHayDistincion.data===null){
+                  response = false;
+              }
+              defered.resolve(response);
+          });
+          return defered.promise;
+    }
+
+
 
     ctrl.enviarDatosDistincion = function(){
 
