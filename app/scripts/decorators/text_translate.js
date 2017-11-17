@@ -253,6 +253,8 @@ var text_es = {
       DOCENTE_REVISOR_FILTRO: "Escriba al menos 2 letras del nombre del docente revisor del proyecto",
       DOCENTE_DIRECTOR_FILTRO: "Escriba al menos 2 letras del nombre del docente director del proyecto",
       SIN_CARRERA:"No se ha seleccionado ninguna carrera",
+      TIPO_DISTINCION:"Seleccione el tipo de distinción",
+      TRABAJO_GRADO_EVALUAR:"Seleccione el trabajo de grado que desea evaluar",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Cargar documento",
@@ -265,6 +267,10 @@ var text_es = {
         CARGADO:"Documento Cargado",
         INGRESE_CONSECUTIVO: "Ingrese el consecutivo del documento",
     },
+    SWITCH:{
+        SI:"SI",
+        NO:"NO",
+    },
     CODIGO_MATERIA:"Codigo asignatura",
     SIN_CARRERAS_SOLICITUDES:"Actualmente no hay carreras disponibles para su elección",
     APROBAR_SOLICITUD:"Aprobar solicitud",
@@ -272,6 +278,7 @@ var text_es = {
     FORMULARIO_APROBACION:"Formulario de aprobación",
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Escriba la justificación de la respuesta",
     ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo de carrera",
+    SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -507,6 +514,8 @@ var text_en = {
       DOCENTE_REVISOR_FILTRO: "Enter at least 2 letters of the name of the project review teacher",
       DOCENTE_DIRECTOR_FILTRO: "Enter at least 2 letters of the name of the project director teacher",
       SIN_CARRERA:"No carreer selected",
+      TIPO_DISTINCION:"Select the type of distinction",
+      TRABAJO_GRADO_EVALUAR:"Select the degree job you want to evaluate",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Load document",
@@ -519,6 +528,10 @@ var text_en = {
         CARGADO:"Document loaded",
         INGRESE_CONSECUTIVO: "Enter the consecutive document",
     },
+    SWITCH:{
+        SI:"YES",
+        NO:"NO",
+    },
     CODIGO_MATERIA:"Subject code",
     SIN_CARRERAS_SOLICITUDES:"There are currently no carrers available for your choice",
     APROBAR_SOLICITUD:"Approve request",
@@ -526,6 +539,7 @@ var text_en = {
     FORMULARIO_APROBACION:"Approval form",
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Write the justification for the answer",
     ACTA_RESPUESTA_SOLICITUD:"Select the document with the answer given by the Career Council",
+    SOLICITAR_DISTINCION:"Want an application for this degree job",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

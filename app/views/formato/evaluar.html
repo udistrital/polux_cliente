@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'EVALUAR_PROYECTO'|translate}}
+    </div>
+    <div class="panel-body">
+        <loading tam="4" load="loadForm" > </loading>
+
+        <form ng-if="!loadForm" nf-form="formularioRegistro" method="post" name="formularioRegistro" ng-submit="evaluarTG.enviarEvaluacion()">
+
+          <div class = "row">
+            <label class="col-sm-3 control-label"> {{'SELECT.TRABAJO_GRADO_EVALUAR'|translate}}</label>
+            <div class="col-sm-9">
+             <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
+              <ui-select  ng-required="true" refresh-delay="0" ng-model="evaluarTG.solicitudDistincion.trabajoGrado" theme="bootstrap" reset-search-input="false" style="width:98%;">
+                     <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.TrabajoGrado.Titulo}} </ui-select-match>
+                     <ui-select-choices  repeat="trabajo.TrabajoGrado as trabajo in evaluarTG.trabajosEvaluador | filter: $select.search">
+                         <div ng-bind-html="trabajo.TrabajoGrado.Titulo | highlight: $select.search"></div>
+                          <small>
+                            {{'MODALIDAD'|translate}}: <span ng-bind-html="''+trabajo.TrabajoGrado.Modalidad.Nombre | highlight: $select.search"></span>
+                          </small>
+                     </ui-select-choices>
+                 </ui-select>
+            </div>
+          </div>
+          <br>
+
+          <div class="row">
+              <label class="col-sm-11 control-label">¿{{'SOLICITAR_DISTINCION'|translate}}?</label>
+              <div class="col-sm-1">
+              <switch  ng-model="evaluarTG.distincionEnabled" class="blue" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
+              </div>
+          </div>
+          <br>
+          <div ng-if="evaluarTG.distincionEnabled">
+              <div class = "row">
+                <label class="col-sm-3 control-label"> {{'SELECT.TIPO_DISTINCION'|translate}}</label>
+                <div class="col-sm-9">
+                 <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
+                  <ui-select  ng-required="evaluarTG.distincionEnabled"  refresh-delay="0" ng-model="evaluarTG.solicitudDistincion.tipoDistincion" theme="bootstrap" reset-search-input="false" style="width:98%;">
+                         <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.Nombre}} </ui-select-match>
+                         <ui-select-choices  repeat="distincion in evaluarTG.distinciones | filter: $select.search">
+                             <span ng-bind-html="distincion.Nombre | highlight: $select.search"></span>
+                         </ui-select-choices>
+                     </ui-select>
+                </div>
+              </div>
+              <br>
+              <div class = "row">
+                 <label class="col-sm-3 control-label">{{'JUSTIFICACION_SOLICITUD'|translate}}</label>
+                 <div class="col-sm-9 ">
+                     <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="evaluarTG.solicitudDistincion.justificacion" required="evaluarTG.distincionEnabled"></textarea>
+                 </div>
+              </div>
+              <br>
+
+          </div>
+
+          <div class ="row">
+            <label class="col-sm-5 control-label"> </label>
+            <input type="submit" value="{{'ENVIAR_EVALUACION' | translate}}"  ng-if="formularioRegistro.$valid" class="col-sm-2 btn btn-success" type="submit"></input>
+            <label class="col-sm-5 control-label"> </label>
+          </div>
+
+        </form>
+    </div>
+
+</div>

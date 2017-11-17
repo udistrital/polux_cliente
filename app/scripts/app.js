@@ -45,7 +45,8 @@ angular
         'pascalprecht.translate',
         'file-model',
         'angularBootstrapFileinput',
-        'infinite-scroll'
+        'infinite-scroll',
+        'uiSwitch'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
@@ -208,6 +209,11 @@ angular
               templateUrl: 'views/solicitudes/aprobar_solicitud.html',
               controller: 'SolicitudesAprobarSolicitudCtrl',
               controllerAs: 'aprobarSolicitud'
+            })
+            .when('/formato/evaluar', {
+              templateUrl: 'views/formato/evaluar.html',
+              controller: 'FormatoEvaluarCtrl',
+              controllerAs: 'evaluarTG'
             })
             .otherwise({
                 redirectTo: '/'
