@@ -106,7 +106,7 @@ angular.module('poluxClienteApp')
                                   }else if(detalle.Detalle.Id===48){
                                     desc = ctrl.evaluador;
                                   }else if(detalle.Detalle.Id===49){
-                                    desc = ctrl.solicitudDistincion.tipoDistincion.Id;
+                                    desc = ctrl.solicitudDistincion.tipoDistincion.Id+"-"+ctrl.solicitudDistincion.tipoDistincion.Nombre;
                                   }
 
                                   data_detalles.push({
