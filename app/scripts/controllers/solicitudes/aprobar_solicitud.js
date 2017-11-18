@@ -76,7 +76,9 @@ angular.module('poluxClienteApp')
                     ctrl.todoDetalles.push(detalle);
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id
-                    if(id === 9 || id===14 || id===15){
+                    if(id===49){
+                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
+                    } else if(id === 9 || id===14 || id===15 || id===48){
                       var parametrosDocentesUD = {
                         "identificacion":detalle.Descripcion
                         //"identificacion":"80093200"
