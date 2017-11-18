@@ -76,9 +76,7 @@ angular.module('poluxClienteApp')
                     ctrl.todoDetalles.push(detalle);
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id
-                    if(id===49){
-                      detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if(id === 9 || id===14 || id===15 || id===48){
+                    if(id === 9 || id===14 || id===15){
                       var parametrosDocentesUD = {
                         "identificacion":detalle.Descripcion
                         //"identificacion":"80093200"
@@ -401,7 +399,67 @@ angular.module('poluxClienteApp')
                     });
                   });
                 }
-              }else if(ctrl.dataSolicitud.TipoSolicitud==8){//solicitud de modificación de datos del trabajo de grado
+              }
+
+              else if(ctrl.dataSolicitud.TipoSolicitud==7){//solicitud prórroga
+                if(ctrl.respuestaSolicitud==5){//solicitud:rechazada
+                  ctrl.rtaSol={
+                    RespuestaAnterior:objRtaAnterior,
+                    RespuestaNueva:objRtaNueva,
+                    DocumentoSolicitud:data_documento,
+                    TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                    Vinculaciones: null,
+                    EstudianteTrabajoGrado: null
+                  };
+                  console.log(ctrl.rtaSol);
+                  poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                    if(response.data[0]=='Success'){
+                      swal(
+                        'Respuesta a la solicitud',
+                        'La solicitud ha sido rechazada',
+                        'success'
+                      );
+                      $location.path("/solicitudes/listar_solicitudes");
+                    }else{
+                      swal(
+                        'Respuesta a la solicitud',
+                        'Error al dar la respuesta a la solicitud',
+                        'warning'
+                      );
+                      console.log(response.data);
+                    }
+                  });
+                }else{
+                  ctrl.rtaSol={
+                    RespuestaAnterior:objRtaAnterior,
+                    RespuestaNueva:objRtaNueva,
+                    DocumentoSolicitud:data_documento,
+                    TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                    Vinculaciones: null
+                  };
+                  console.log(ctrl.rtaSol);
+                  poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                    if(response.data[0]=='Success'){
+                      swal(
+                        'Respuesta a la solicitud',
+                        'La solicitud ha sido aprobada',
+                        'success'
+                      );
+                      $location.path("/solicitudes/listar_solicitudes");
+                    }else{
+                      swal(
+                        'Respuesta a la solicitud',
+                        'Error al dar la respuesta a la solicitud',
+                        'warning'
+                      );
+                      console.log(response.data);
+                    }
+                  });
+
+                }
+              }
+
+              else if(ctrl.dataSolicitud.TipoSolicitud==8){//solicitud de modificación de datos del trabajo de grado
                 if(ctrl.respuestaSolicitud==5){//solicitud:rechazada
                   ctrl.rtaSol={
                     RespuestaAnterior:objRtaAnterior,
@@ -732,7 +790,7 @@ angular.module('poluxClienteApp')
                 }
               }
 
-        }else{ //solictud de: prórroga y de socialización
+        }else{ //solictud de socialización
           ctrl.rtaSol={
             RespuestaAnterior:objRtaAnterior,
             RespuestaNueva:objRtaNueva,
@@ -743,6 +801,7 @@ angular.module('poluxClienteApp')
           };
           console.log(ctrl.rtaSol);
           poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+            console.log(response);
             if(response.data[0]=='Success'){
               swal(
                 'Respuesta a la solicitud',
