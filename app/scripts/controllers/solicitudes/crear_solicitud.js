@@ -57,11 +57,11 @@ angular.module('poluxClienteApp')
                       ctrl.modalidad_select = true;
                       ctrl.cargarTipoSolicitud(ctrl.modalidad);
                       var parametrosVinculacion = $.param({
-                          query:"TrabajoGrado:"+ctrl.trabajo_grado,
+                          query:"TrabajoGrado:"+ctrl.trabajo_grado+",Activo:true",
                           limit:0
                       });
                       poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(responseVinculacion){
-                            ctrl.Trabajo.evaluadores = [];
+                          ctrl.Trabajo.evaluadores = [];
                           angular.forEach(responseVinculacion.data, function(vinculado){
 
                               if(vinculado.RolTrabajoGrado.Id==1){
@@ -194,7 +194,7 @@ angular.module('poluxClienteApp')
                   detalle.respuesta= "";
                   detalle.fileModel = null;
                   detalle.opciones = [];
-                  //SE evalua si el detalle necesita cargar datos
+                  //Se evalua si el detalle necesita cargar datos
                   if(!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id!==8){
                       //Se separa el strig
                       var parametrosServicio = detalle.Detalle.Descripcion.split(";");
@@ -269,6 +269,7 @@ angular.module('poluxClienteApp')
                                 });
                               }
                               else if(detalle.Detalle.Nombre.includes("Evaluador Actual")){
+                                console.log(responseOpciones.data);
                                 angular.forEach(responseOpciones.data,function(evaluador){
                                   var parametrosDocentesUD = {
                                     "identificacion":evaluador.Usuario

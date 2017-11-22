@@ -284,7 +284,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -302,7 +302,7 @@ angular.module('poluxClienteApp')
                       limit:0
                   });
 
-                  var promesaVinculacion = ctrl.obtenerVinculaciones(parametros);
+                  var promesaVinculacion = ctrl.obtenerVinculaciones(parametros, ctrl.dataSolicitud.TipoSolicitud);
                   //Esperar a que se cumplan las promesas
                   promesaVinculacion.then(function(){
                     console.log(ctrl.vinculaciones);
@@ -326,7 +326,7 @@ angular.module('poluxClienteApp')
                       }else{
                         swal(
                           'Respuesta a la solicitud',
-                          'Error al dar la respuesta a la solicitud',
+                          $translate.instant(response.data[1]),
                           'warning'
                         );
                         console.log(response.data);
@@ -356,7 +356,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -393,7 +393,7 @@ angular.module('poluxClienteApp')
                       }else{
                         swal(
                           'Respuesta a la solicitud',
-                          'Error al dar la respuesta a la solicitud',
+                          $translate.instant(response.data[1]),
                           'warning'
                         );
                         console.log(response.data);
@@ -425,7 +425,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -451,7 +451,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -483,7 +483,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -518,7 +518,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -550,7 +550,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -633,7 +633,7 @@ angular.module('poluxClienteApp')
                     }else{
                       swal(
                         'Respuesta a la solicitud',
-                        'Error al dar la respuesta a la solicitud',
+                        $translate.instant(response.data[1]),
                         'warning'
                       );
                       console.log(response.data);
@@ -783,7 +783,7 @@ angular.module('poluxClienteApp')
                          }else{
                            swal(
                              'Respuesta a la solicitud',
-                             'Error al dar la respuesta a la solicitud',
+                             $translate.instant(response.data[1]),
                              'warning'
                            );
                            console.log(response.data);
@@ -814,7 +814,7 @@ angular.module('poluxClienteApp')
             }else{
               swal(
                 'Respuesta a la solicitud',
-                'Error al dar la respuesta a la solicitud',
+                $translate.instant(response.data[1]),
                 'warning'
               );
               console.log(response.data);
@@ -832,7 +832,7 @@ angular.module('poluxClienteApp')
 
     }
 
-    ctrl.obtenerVinculaciones = function(parametros){
+    ctrl.obtenerVinculaciones = function(parametros, tipoSolicitud){
       var defered = $q.defer();
       var promise = defered.promise;
 
@@ -845,8 +845,13 @@ angular.module('poluxClienteApp')
         ctrl.vinculacionActual.FechaFin=new Date();
 
         nuevaVinculacion.Id=null;
-        //nuevaVinculacion.Usuario=ctrl.directorNuevo;
-        nuevaVinculacion.Usuario=ctrl.evaluadorNuevo;
+
+        if(tipoSolicitud==4){
+          nuevaVinculacion.Usuario=ctrl.directorNuevo;
+        }else{
+          nuevaVinculacion.Usuario=ctrl.evaluadorNuevo;
+        }
+
         nuevaVinculacion.FechaInicio=new Date();
         nuevaVinculacion.FechaFin=null;
         ctrl.vinculaciones.push(ctrl.vinculacionActual);
