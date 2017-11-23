@@ -74,9 +74,9 @@ angular.module('poluxClienteApp')
                                   ctrl.Trabajo.evaluadores.push(vinculado);
                               }
                           });
-                          console.log(ctrl.Trabajo.directorInterno);
-                          console.log(ctrl.Trabajo.directorExterno);
-                          console.log(ctrl.Trabajo.evaluadores);
+                          console.log("directorInterno",ctrl.Trabajo.directorInterno);
+                          console.log("directorExterno",ctrl.Trabajo.directorExterno);
+                          console.log("evaluadores",ctrl.Trabajo.evaluadores);
                       });
                       if(ctrl.modalidad == 2 || ctrl.modalidad==3){
                         var parametrosEspacios = $.param({
@@ -117,6 +117,7 @@ angular.module('poluxClienteApp')
                     ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
           });
+
 
 
         ctrl.obtenerAreas = function (){
@@ -214,6 +215,9 @@ angular.module('poluxClienteApp')
                                     }
                                     if(parametro == "carrera_elegible"){
                                       parametro = parametro+":"+ctrl.carreraElegida;
+                                    }
+                                    if(parametro == "activo"){
+                                      parametro = parametro;
                                     }
                                   }
                                   if(sql === ""){
@@ -322,12 +326,20 @@ angular.module('poluxClienteApp')
                           if(parametrosServicio[1]==="docente"){
                                 //detalle.opciones=academicaRequest.obtenerDocentesJson();
                                 academicaRequest.obtenerDocentesTG().then(function(docentes){
+                                  var vinculados = [];
                                   angular.forEach(docentes, function(docente){
                                       //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
-                                      docente.bd = docente.DIR_NRO_IDEN;
+                                      if(ctrl.docenteVinculado(docente.DIR_NRO_IDEN)){
+                                        vinculados.push(docente);
+                                      }else{
+                                        docente.bd = docente.DIR_NRO_IDEN;
+                                      }
+                                  });
+                                  angular.forEach(vinculados, function(docente){
+                                      var index = docentes.indexOf(docente);
+                                      docentes.splice(index, 1);
                                   });
                                   detalle.opciones=docentes;
-                                  console.log(docentes);
                                 });
                           }
                       }
@@ -366,6 +378,34 @@ angular.module('poluxClienteApp')
       });
 
       };
+
+      ctrl.docenteVinculado = function(docente){
+        if(ctrl.Trabajo.directorInterno !== undefined){
+          if(ctrl.Trabajo.directorInterno.Usuario==docente){
+            return true;
+          }
+        }
+        if(ctrl.Trabajo.directorExterno !== undefined){
+          if(ctrl.Trabajo.directorInterno.Usuario==docente){
+            return true;
+          }
+        }
+        if(ctrl.Trabajo.evaluadores!=undefined){
+          var esta = false;
+          angular.forEach(ctrl.Trabajo.evaluadores, function(evaluador){
+            if(evaluador.Usuario==docente){
+              esta = true;
+            }
+          });
+          if(esta){
+            return true;
+          }
+        }
+        //console.log("directorInterno",ctrl.Trabajo.directorInterno);
+        //console.log("directorExterno",ctrl.Trabajo.directorExterno);
+        //console.log("evaluadores",ctrl.Trabajo.evaluadores);
+        return false;
+      }
 
       ctrl.obtenerDatosEstudiante = function(){
         console.log("Piosioasdf");

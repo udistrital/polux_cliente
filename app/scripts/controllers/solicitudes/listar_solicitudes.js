@@ -308,7 +308,7 @@ angular.module('poluxClienteApp')
                     console.log(detalle);
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if( id === 9 || id === 14 || id===15 ||  id===48){
+                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48){
                       var parametrosDocentesUD = {
                         "identificacion":detalle.Descripcion
                       };
