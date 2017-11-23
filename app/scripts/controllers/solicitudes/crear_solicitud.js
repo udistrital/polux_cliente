@@ -380,25 +380,27 @@ angular.module('poluxClienteApp')
       };
 
       ctrl.docenteVinculado = function(docente){
-        if(ctrl.Trabajo.directorInterno !== undefined){
-          if(ctrl.Trabajo.directorInterno.Usuario==docente){
-            return true;
-          }
-        }
-        if(ctrl.Trabajo.directorExterno !== undefined){
-          if(ctrl.Trabajo.directorInterno.Usuario==docente){
-            return true;
-          }
-        }
-        if(ctrl.Trabajo.evaluadores!=undefined){
-          var esta = false;
-          angular.forEach(ctrl.Trabajo.evaluadores, function(evaluador){
-            if(evaluador.Usuario==docente){
-              esta = true;
+        if(ctrl.Trabajo!=undefined){
+          if(ctrl.Trabajo.directorInterno !== undefined){
+            if(ctrl.Trabajo.directorInterno.Usuario==docente){
+              return true;
             }
-          });
-          if(esta){
-            return true;
+          }
+          if(ctrl.Trabajo.directorExterno !== undefined){
+            if(ctrl.Trabajo.directorInterno.Usuario==docente){
+              return true;
+            }
+          }
+          if(ctrl.Trabajo.evaluadores!=undefined){
+            var esta = false;
+            angular.forEach(ctrl.Trabajo.evaluadores, function(evaluador){
+              if(evaluador.Usuario==docente){
+                esta = true;
+              }
+            });
+            if(esta){
+              return true;
+            }
           }
         }
         //console.log("directorInterno",ctrl.Trabajo.directorInterno);
