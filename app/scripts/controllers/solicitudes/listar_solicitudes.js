@@ -153,11 +153,24 @@ angular.module('poluxClienteApp')
                       order:"asc",
                       limit:1,
                     });
+
                     poluxRequest.get("usuario_solicitud",parametrosUsuario).then(function(usuario){
-                        var parametrosEstudiante = {
-                          "codigo":usuario.data[0].Usuario,
-                        };
-                        academicaRequest.obtenerEstudiantes(parametrosEstudiante).then(function(responseEstudiante){
+
+                      if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id===11){//sols de distincion
+
+                        var parametros=$.param({
+                          query:"SolicitudTrabajoGrado:"+solicitud.SolicitudTrabajoGrado.Id
+                        });
+                        ctrl.obtenerEstudiantes(parametros);
+                      }else{
+                        ctrl.est=usuario.data[0].Usuario;
+                      }
+
+                      var parametrosEstudiante = {
+                        "codigo":ctrl.est,
+                      };
+                      academicaRequest.obtenerEstudiantes(parametrosEstudiante).then(function(responseEstudiante){
+                        console.log(responseEstudiante);
                         var carreraEstudiante = responseEstudiante[0].CARRERA;
                         if(carreras.includes(carreraEstudiante)){
                           solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
@@ -169,6 +182,7 @@ angular.module('poluxClienteApp')
                           defered.resolve(carreraEstudiante);
                         }
                       });
+
                     });
                   });
                   $q.all(promiseArr).then(function(){
@@ -243,6 +257,29 @@ angular.module('poluxClienteApp')
             }
       });
       ctrl.gridOptions.data = solicitudesTemporales;
+  }
+
+  ctrl.obtenerEstudiantes = function(parametros){
+    poluxRequest.get("detalle_solicitud",parametros).then(function(detalles){
+
+      console.log(detalles);
+        angular.forEach(detalles.data, function(detalle){
+          console.log(detalle.DetalleTipoSolicitud.Detalle.Id);
+          if(detalle.DetalleTipoSolicitud.Detalle.Id===50){//buscar el detalle asociado al TG
+            console.log(detalle.Descripcion);
+            var parametros=$.param({
+              query:"TrabajoGrado.Id:"+detalle.Descripcion
+            });
+            poluxRequest.get("estudiante_trabajo_grado",parametros).then(function(estudiantes){
+              console.log(estudiantes.data[0].Estudiante);
+              ctrl.est=estudiantes.data[0].Estudiante;
+            });
+
+          }
+        });
+
+    });
+
   }
 
   ctrl.cargarDetalles = function(fila){

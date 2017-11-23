@@ -64,8 +64,6 @@ angular.module('poluxClienteApp')
                       );
                     }
                 });
-
-
           }
     }
 
@@ -130,6 +128,7 @@ angular.module('poluxClienteApp')
                               limit:0
                           });
                           poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles).then(function(responseDetalles){
+                            console.log(responseDetalles);
                               angular.forEach(responseDetalles.data, function(detalle){
                                   var desc = "";
                                   if(detalle.Detalle.Id===13){
@@ -138,6 +137,8 @@ angular.module('poluxClienteApp')
                                     desc = ctrl.evaluador;
                                   }else if(detalle.Detalle.Id===49){
                                     desc = ctrl.solicitudDistincion.tipoDistincion.Id+"-"+ctrl.solicitudDistincion.tipoDistincion.Nombre;
+                                  }else if(detalle.Detalle.Id===50){
+                                    desc = ctrl.solicitudDistincion.trabajoGrado.Id;
                                   }
 
                                   data_detalles.push({
@@ -178,7 +179,7 @@ angular.module('poluxClienteApp')
 
                       getModalidadTipoSolicitud().then(function(modalidadTipoSolicitud){
                           getDetalles(modalidadTipoSolicitud).then(function(){
-                              getUsuarios().then(function(){
+                            //  getUsuarios().then(function(){
                                 // se agrega el usuario a la solicitud
 
 
@@ -197,6 +198,15 @@ angular.module('poluxClienteApp')
                                    "Activo": true
                                  }
                                  //se crea objeto con las solicitudes
+
+                                 data_usuarios.push({
+                                 //  "Usuario":ctrl.evaluado,
+                                   "Usuario":""+ctrl.evaluador,
+                                   "SolicitudTrabajoGrado": {
+                                     "Id": 0
+                                   }
+                                 });
+
                                  var solicitud={
                                    Solicitud: data_solicitud,
                                    Respuesta: data_respuesta,
@@ -224,7 +234,7 @@ angular.module('poluxClienteApp')
                                      }
                                      $scope.loadFormulario = false;
                                    });
-                              });
+                            //  });
                           });
                       });
 
