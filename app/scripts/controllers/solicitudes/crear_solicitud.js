@@ -41,7 +41,65 @@ angular.module('poluxClienteApp')
       ctrl.siPuede=false;
       ctrl.codigo = $routeParams.idEstudiante;
 
+      //modalidad restringida ninguna
+      ctrl.restringirModalidades = false;
 
+
+            ctrl.verificarSolicitudes = function(){
+              var defered = $q.defer();
+              var parametrosUser = $.param({
+                query:"usuario:"+ctrl.codigo,
+                limit:0,
+              });
+              var actuales = [];
+
+              var requestRespuesta = function(solActuales, id ){
+                  var defered = $q.defer();
+
+                  var parametrosSolicitudesActuales = $.param({
+                    query:"EstadoSolicitud.in:1|2,activo:TRUE,SolicitudTrabajoGrado:"+id,
+                    limit: 1,
+                  });
+                  poluxRequest.get("respuesta_solicitud",parametrosSolicitudesActuales).then(function(responseSolicitudesActuales){
+                      if(responseSolicitudesActuales.data!=null){
+                        defered.resolve(responseSolicitudesActuales.data);
+                        solActuales.push(responseSolicitudesActuales.data[0]);
+                      }else{
+                        defered.resolve(responseSolicitudesActuales.data);
+                      }
+                  });
+
+                  return defered.promise;
+              }
+
+              poluxRequest.get("usuario_solicitud",parametrosUser).then(function(responseUser){
+                  var solicitudesUsuario = responseUser.data;
+                  var promesas = [];
+                  angular.forEach(solicitudesUsuario, function(solicitud){
+                     //console.log(solicitud.SolicitudTrabajoGrado.Id);
+                      promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
+                  });
+                  $q.all(promesas).then(function(){
+                    console.log("actuales",actuales);
+                    if(actuales.length==0){
+                        console.log("si se puede");
+                        defered.resolve(true);
+                    }else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
+                        console.log("es inicial y se deben restringir las demás");
+                        ctrl.restringirModalidades = true;
+                        defered.resolve(true);
+                    }else{
+                        console.log("No puedes");
+                        defered.resolve(false);
+                    }
+                  });
+              });
+
+              return defered.promise;
+            }
+
+        ctrl.verificarSolicitudes().then(function(puede){
+            ctrl.puedeSolicitudAnterior = puede;
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
                 query:"Estudiante:"+ctrl.codigo+",EstadoEstudianteTrabajoGrado:1",
@@ -92,7 +150,16 @@ angular.module('poluxClienteApp')
                       }
                     }else{
                       poluxRequest.get("modalidad").then(function (responseModalidad){
-                          ctrl.modalidades=responseModalidad.data;
+                          ctrl.modalidades=[];
+                          if(ctrl.restringirModalidades){
+                            angular.forEach(responseModalidad.data, function(modalidad){
+                                if(modalidad.Id==2){
+                                  ctrl.modalidades.push(modalidad);
+                                }
+                            });
+                          }else{
+                            ctrl.modalidades =responseModalidad.data;
+                          }
                       });
                       //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
                       var parametrosSolicitudes = $.param({
@@ -117,7 +184,7 @@ angular.module('poluxClienteApp')
                     ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
           });
-
+        });
 
 
         ctrl.obtenerAreas = function (){
@@ -140,7 +207,6 @@ angular.module('poluxClienteApp')
         });
       };
 
-
       ctrl.cargarDetalles= function (tipoSolicitud, modalidad_seleccionada) {
         $scope.loadDetalles = true;
         ctrl.siPuede=false;
@@ -157,219 +223,228 @@ angular.module('poluxClienteApp')
         poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
 
           if(puede.data==="true"){
-            console.log(ctrl.estudiante);
-            ctrl.soliciudConDetalles = true;
-            ctrl.detalles = [];
-            var parametrosDetalles;
-            if(modalidad_seleccionada===undefined){
-              parametrosDetalles = $.param({
-                query:"Activo:TRUE,ModalidadTipoSolicitud:"+tipoSolicitud,
-                limit:0,
-                sortby: "NumeroOrden",
-                order: "asc"
-              });
-            }else{
-                parametrosDetalles = $.param({
-                  query:"Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
-                  limit:0,
-                  sortby: "NumeroOrden",
-                  order: "asc"
-                });
-                var parametrosModalidadTipoSolicitud = $.param({
-                  query:"TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
-                  limit:1,
+              if(ctrl.puedeSolicitudAnterior){
+                  console.log("no hay solicitudes pendietnes");
+                  console.log(ctrl.estudiante);
+                  ctrl.soliciudConDetalles = true;
+                  ctrl.detalles = [];
+                  var parametrosDetalles;
+                  if(modalidad_seleccionada===undefined){
+                    parametrosDetalles = $.param({
+                      query:"Activo:TRUE,ModalidadTipoSolicitud:"+tipoSolicitud,
+                      limit:0,
+                      sortby: "NumeroOrden",
+                      order: "asc"
+                    });
+                  }else{
+                      parametrosDetalles = $.param({
+                        query:"Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
+                        limit:0,
+                        sortby: "NumeroOrden",
+                        order: "asc"
+                      });
+                      var parametrosModalidadTipoSolicitud = $.param({
+                        query:"TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
+                        limit:1,
 
-                });
-                poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud){
-                    ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
-                });
-            }
-            poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
-                $scope.loadDetalles = false;
-                ctrl.detalles = responseDetalles.data;
-                console.log(ctrl.detalles);
-                //Se cargan opciones de los detalles
-                angular.forEach(ctrl.detalles, function(detalle){
-                  //Se internacionalizan variables y se crean labels de los detalles
-                  detalle.label = $translate.instant(detalle.Detalle.Enunciado);
-                  detalle.respuesta= "";
-                  detalle.fileModel = null;
-                  detalle.opciones = [];
-                  //Se evalua si el detalle necesita cargar datos
-                  if(!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id!==8){
-                      //Se separa el strig
-                      var parametrosServicio = detalle.Detalle.Descripcion.split(";");
-                      var sql  = "";
-                      var parametrosConsulta = [];
-                      //servicio de academiaca
-                      if(parametrosServicio[0]==="polux"){
-                          var parametros= $.param({
-                            limit:0
-                          });
-                          if(parametrosServicio[2]!==undefined){
-                              parametrosConsulta = parametrosServicio[2].split(",");
-                              angular.forEach(parametrosConsulta, function(parametro){
-                                  if(!parametro.includes(":")){
-                                    if(parametro == "trabajo_grado"){
-                                      parametro = parametro+":"+ctrl.trabajo_grado;
-                                    }
-                                    if(parametro == "carrera_elegible"){
-                                      parametro = parametro+":"+ctrl.carreraElegida;
-                                    }
-                                    if(parametro == "activo"){
-                                      parametro = parametro;
-                                    }
-                                  }
-                                  if(sql === ""){
-                                      sql=parametro;
-                                  }else{
-                                      sql=sql+","+parametro;
-                                  }
-                              });
-                              detalle.parametros= $.param({
-                                query:sql,
-                                limit:0
-                              });
-                          }
-                          console.log(detalle.parametros);
-                          poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones){
-                              if (detalle.Detalle.Nombre.includes("Nombre actual de la propuesta")) {
-                                  detalle.opciones.push({
-                                    "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Titulo,
-                                    "bd":responseOpciones.data[0].DocumentoEscrito.Titulo,
-                                  });
-                              }else if(detalle.Detalle.Nombre.includes("Actual resumen de la propuesta")){
-                                detalle.opciones.push({
-                                  "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Resumen,
-                                  "bd":responseOpciones.data[0].DocumentoEscrito.Resumen
+                      });
+                      poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud){
+                          ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
+                      });
+                  }
+                  poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
+                      $scope.loadDetalles = false;
+                      ctrl.detalles = responseDetalles.data;
+                      console.log(ctrl.detalles);
+                      //Se cargan opciones de los detalles
+                      angular.forEach(ctrl.detalles, function(detalle){
+                        //Se internacionalizan variables y se crean labels de los detalles
+                        detalle.label = $translate.instant(detalle.Detalle.Enunciado);
+                        detalle.respuesta= "";
+                        detalle.fileModel = null;
+                        detalle.opciones = [];
+                        //Se evalua si el detalle necesita cargar datos
+                        if(!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id!==8){
+                            //Se separa el strig
+                            var parametrosServicio = detalle.Detalle.Descripcion.split(";");
+                            var sql  = "";
+                            var parametrosConsulta = [];
+                            //servicio de academiaca
+                            if(parametrosServicio[0]==="polux"){
+                                var parametros= $.param({
+                                  limit:0
                                 });
-                              }else if(detalle.Detalle.Nombre.includes("Propuesta actual")){
-                                detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
-
-                                console.log("Documento",detalle.respuesta);
-                              }else if(detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")){
-                                console.log("Opciones",responseOpciones);
-                                var areasString = "";
-                                angular.forEach(responseOpciones.data,function(area){
-                                    areasString = areasString +", " + area.AreaConocimiento.Nombre;
-                                });
-                                detalle.opciones.push({
-                                  "NOMBRE":areasString.substring(2),
-                                  "bd":areasString.substring(2)
-                                });
-                              }else if(detalle.Detalle.Nombre.includes("Nombre Empresa")){
-                                angular.forEach(responseOpciones.data,function(empresa){
-                                  detalle.opciones.push({
-                                    "NOMBRE":empresa.Identificacion+"",
-                                    "bd":empresa.Identificacion+"",
-                                  });
-                                });
-                              }else if(detalle.Detalle.Nombre.includes("Espacio Academico Anterior")){
-                                angular.forEach(responseOpciones.data,function(espacio){
-                                  detalle.opciones.push({
-                                    "NOMBRE":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
-                                    "bd":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
-                                  });
-                                });
-                              }
-                              else if(detalle.Detalle.Nombre.includes("Evaluador Actual")){
-                                console.log(responseOpciones.data);
-                                angular.forEach(responseOpciones.data,function(evaluador){
-                                  var parametrosDocentesUD = {
-                                    "identificacion":evaluador.Usuario
-                                  };
-                                  academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                                    detalle.opciones.push({
-                                      "NOMBRE":docente[0].NOMBRE,
-                                      "bd":  docente.bd = docente[0].DOC_NRO_IDEN
+                                if(parametrosServicio[2]!==undefined){
+                                    parametrosConsulta = parametrosServicio[2].split(",");
+                                    angular.forEach(parametrosConsulta, function(parametro){
+                                        if(!parametro.includes(":")){
+                                          if(parametro == "trabajo_grado"){
+                                            parametro = parametro+":"+ctrl.trabajo_grado;
+                                          }
+                                          if(parametro == "carrera_elegible"){
+                                            parametro = parametro+":"+ctrl.carreraElegida;
+                                          }
+                                          if(parametro == "activo"){
+                                            parametro = parametro;
+                                          }
+                                        }
+                                        if(sql === ""){
+                                            sql=parametro;
+                                        }else{
+                                            sql=sql+","+parametro;
+                                        }
                                     });
-                                    console.log(detalle.opciones);
-                                  });
-                                });
-                              }
-                              else if (detalle.Detalle.Nombre.includes("Director Actual")) {
-                                    var parametrosDocentesUD = {
-                                      "identificacion":ctrl.Trabajo.directorInterno.Usuario
-                                    };
-                                    console.log("parametrosDocentesUD", parametrosDocentesUD);
-                                  academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                                    console.log("Respuesta docente", docente);
-                                    detalle.opciones.push({
-                                      "NOMBRE":docente[0].NOMBRE,
-                                      //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
-                                      "bd":  docente.bd = docente[0].DOC_NRO_IDEN
+                                    detalle.parametros= $.param({
+                                      query:sql,
+                                      limit:0
                                     });
-                                    console.log(detalle.opciones);
-                                  });
+                                }
+                                console.log(detalle.parametros);
+                                poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones){
+                                    if (detalle.Detalle.Nombre.includes("Nombre actual de la propuesta")) {
+                                        detalle.opciones.push({
+                                          "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Titulo,
+                                          "bd":responseOpciones.data[0].DocumentoEscrito.Titulo,
+                                        });
+                                    }else if(detalle.Detalle.Nombre.includes("Actual resumen de la propuesta")){
+                                      detalle.opciones.push({
+                                        "NOMBRE":responseOpciones.data[0].DocumentoEscrito.Resumen,
+                                        "bd":responseOpciones.data[0].DocumentoEscrito.Resumen
+                                      });
+                                    }else if(detalle.Detalle.Nombre.includes("Propuesta actual")){
+                                      detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
 
-                              }else if(detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")){
-                                angular.forEach(responseOpciones.data,function(espacio){
-                                  var esta = false;
-                                  angular.forEach(ctrl.espaciosElegidos, function(asignatura){
-                                      if(espacio.CodigoAsignatura==asignatura.CodigoAsignatura){
-                                          esta = true;
-                                      }
-                                  });
-                                  if(!esta){
-                                    detalle.opciones.push({
-                                      "NOMBRE":espacio.CodigoAsignatura,
-                                      "bd":espacio.CodigoAsignatura
-                                    });
-                                  }
+                                      console.log("Documento",detalle.respuesta);
+                                    }else if(detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")){
+                                      console.log("Opciones",responseOpciones);
+                                      var areasString = "";
+                                      angular.forEach(responseOpciones.data,function(area){
+                                          areasString = areasString +", " + area.AreaConocimiento.Nombre;
+                                      });
+                                      detalle.opciones.push({
+                                        "NOMBRE":areasString.substring(2),
+                                        "bd":areasString.substring(2)
+                                      });
+                                    }else if(detalle.Detalle.Nombre.includes("Nombre Empresa")){
+                                      angular.forEach(responseOpciones.data,function(empresa){
+                                        detalle.opciones.push({
+                                          "NOMBRE":empresa.Identificacion+"",
+                                          "bd":empresa.Identificacion+"",
+                                        });
+                                      });
+                                    }else if(detalle.Detalle.Nombre.includes("Espacio Academico Anterior")){
+                                      angular.forEach(responseOpciones.data,function(espacio){
+                                        detalle.opciones.push({
+                                          "NOMBRE":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
+                                          "bd":espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
+                                        });
+                                      });
+                                    }
+                                    else if(detalle.Detalle.Nombre.includes("Evaluador Actual")){
+                                      console.log(responseOpciones.data);
+                                      angular.forEach(responseOpciones.data,function(evaluador){
+                                        var parametrosDocentesUD = {
+                                          "identificacion":evaluador.Usuario
+                                        };
+                                        academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
+                                          detalle.opciones.push({
+                                            "NOMBRE":docente[0].NOMBRE,
+                                            "bd":  docente.bd = docente[0].DOC_NRO_IDEN
+                                          });
+                                          console.log(detalle.opciones);
+                                        });
+                                      });
+                                    }
+                                    else if (detalle.Detalle.Nombre.includes("Director Actual")) {
+                                          var parametrosDocentesUD = {
+                                            "identificacion":ctrl.Trabajo.directorInterno.Usuario
+                                          };
+                                          console.log("parametrosDocentesUD", parametrosDocentesUD);
+                                        academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
+                                          console.log("Respuesta docente", docente);
+                                          detalle.opciones.push({
+                                            "NOMBRE":docente[0].NOMBRE,
+                                            //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                                            "bd":  docente.bd = docente[0].DOC_NRO_IDEN
+                                          });
+                                          console.log(detalle.opciones);
+                                        });
+
+                                    }else if(detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")){
+                                      angular.forEach(responseOpciones.data,function(espacio){
+                                        var esta = false;
+                                        angular.forEach(ctrl.espaciosElegidos, function(asignatura){
+                                            if(espacio.CodigoAsignatura==asignatura.CodigoAsignatura){
+                                                esta = true;
+                                            }
+                                        });
+                                        if(!esta){
+                                          detalle.opciones.push({
+                                            "NOMBRE":espacio.CodigoAsignatura,
+                                            "bd":espacio.CodigoAsignatura
+                                          });
+                                        }
+                                      });
+                                    }else{
+                                        detalle.opciones = responseOpciones.data;
+                                    }
                                 });
-                              }else{
-                                  detalle.opciones = responseOpciones.data;
-                              }
-                          });
-                      }
-                      if(parametrosServicio[0]==="academica"){
-                          if(parametrosServicio[1]==="docente"){
-                                //detalle.opciones=academicaRequest.obtenerDocentesJson();
-                                academicaRequest.obtenerDocentesTG().then(function(docentes){
-                                  var vinculados = [];
-                                  angular.forEach(docentes, function(docente){
-                                      //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
-                                      if(ctrl.docenteVinculado(docente.DIR_NRO_IDEN)){
-                                        vinculados.push(docente);
-                                      }else{
-                                        docente.bd = docente.DIR_NRO_IDEN;
-                                      }
+                            }
+                            if(parametrosServicio[0]==="academica"){
+                                if(parametrosServicio[1]==="docente"){
+                                      //detalle.opciones=academicaRequest.obtenerDocentesJson();
+                                      academicaRequest.obtenerDocentesTG().then(function(docentes){
+                                        var vinculados = [];
+                                        angular.forEach(docentes, function(docente){
+                                            //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
+                                            if(ctrl.docenteVinculado(docente.DIR_NRO_IDEN)){
+                                              vinculados.push(docente);
+                                            }else{
+                                              docente.bd = docente.DIR_NRO_IDEN;
+                                            }
+                                        });
+                                        angular.forEach(vinculados, function(docente){
+                                            var index = docentes.indexOf(docente);
+                                            docentes.splice(index, 1);
+                                        });
+                                        detalle.opciones=docentes;
+                                      });
+                                }
+                            }
+                            if(parametrosServicio[0]==="cidc"){
+                                if(parametrosServicio[1]==="estructura_investigacion"){
+                                      detalle.opciones = cidcRequest.obtenerEntidades();
+                                }
+                                if(parametrosServicio[1]==="docentes"){
+                                      detalle.opciones = cidcRequest.obtenerDoncentes();
+                                }
+                            }
+                            if(parametrosServicio[0]==="estatico"){
+                                parametrosConsulta = parametrosServicio[2].split(",");
+                                angular.forEach(parametrosConsulta, function(opcion){
+                                  detalle.opciones.push({
+                                    "NOMBRE":opcion,
+                                    "bd":opcion
                                   });
-                                  angular.forEach(vinculados, function(docente){
-                                      var index = docentes.indexOf(docente);
-                                      docentes.splice(index, 1);
-                                  });
-                                  detalle.opciones=docentes;
                                 });
-                          }
-                      }
-                      if(parametrosServicio[0]==="cidc"){
-                          if(parametrosServicio[1]==="estructura_investigacion"){
-                                detalle.opciones = cidcRequest.obtenerEntidades();
-                          }
-                          if(parametrosServicio[1]==="docentes"){
-                                detalle.opciones = cidcRequest.obtenerDoncentes();
-                          }
-                      }
-                      if(parametrosServicio[0]==="estatico"){
-                          parametrosConsulta = parametrosServicio[2].split(",");
-                          angular.forEach(parametrosConsulta, function(opcion){
-                            detalle.opciones.push({
-                              "NOMBRE":opcion,
-                              "bd":opcion
-                            });
-                          });
-                      }
+                            }
 
 
 
-                  };
-                });
-                ctrl.detallesCargados = true;
-                if(ctrl.detalles == null){
-                    ctrl.soliciudConDetalles = false;
-                }
-            });
+                        };
+                      });
+                      ctrl.detallesCargados = true;
+                      if(ctrl.detalles == null){
+                          ctrl.soliciudConDetalles = false;
+                      }
+                  });
+              }else{
+                  console.log("hay solicitudes pendietnes");
+                  ctrl.siPuedeAnteriores = true;
+                  $scope.loadDetalles = false;
+                  ctrl.detalles = [];
+              }
+
           }else{
               $scope.loadDetalles = false;
               ctrl.siPuede=true;

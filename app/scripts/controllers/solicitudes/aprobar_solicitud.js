@@ -220,7 +220,7 @@ angular.module('poluxClienteApp')
               limit:0
           });
           poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(docentesVinculados){
-              if(docentesVinculados.data !== []){
+              if(docentesVinculados.data !== null){
                 var vinculados = [];
                 console.log("docentes", ctrl.docentes);
                 angular.forEach(ctrl.docentes, function(docente){
