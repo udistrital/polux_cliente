@@ -249,6 +249,7 @@ var text_es = {
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
+      DOCENTE_CAMBIO: "Seleccione el docente para realizar el cambio",
       DOCENTE_DIRECTOR: "Seleccione el docente director del proyecto",
       DOCENTE_REVISOR: "Seleccione el docente revisor del proyecto",
       DOCENTE_REVISOR_FILTRO: "Escriba al menos 2 letras del nombre del docente revisor del proyecto",
@@ -511,6 +512,7 @@ var text_en = {
     },
     SELECT:{
       SELECCIONE:"Select an option",
+      DOCENTE_CAMBIO: "Select the teacher to make the change",
       DOCENTE_REVISOR: "Select the project review teacher",
       DOCENTE_DIRECTOR: "Select the project director teacher",
       DOCENTE_REVISOR_FILTRO: "Enter at least 2 letters of the name of the project review teacher",

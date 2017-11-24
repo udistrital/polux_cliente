@@ -22,6 +22,7 @@ angular.module('poluxClienteApp')
     $scope.loadFormulario = false;
 
     ctrl.isInicial = false;
+    ctrl.isCambio = true;
     ctrl.isPasantia = false;
     ctrl.hasRevisor = false;
 
@@ -74,6 +75,7 @@ angular.module('poluxClienteApp')
               ctrl.todoDetalles=[];
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     ctrl.todoDetalles.push(detalle);
+                    console.log("detalle",detalle);
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id
                     if(id===49){
@@ -93,8 +95,18 @@ angular.module('poluxClienteApp')
                             "NOMBRE":docente[0].NOMBRE,
                             "DIR_NRO_IDEN":docente[0].DOC_NRO_IDEN,
                           };
-                          console.log(ctrl.docenteDirector);
+                          //console.log(ctrl.docenteDirector);
                         }
+
+                        //docente solicitado para el cambio
+                        if(id === 15 || id===17){
+                          ctrl.docenteCambio = {
+                            "NOMBRE":docente[0].NOMBRE,
+                            "DIR_NRO_IDEN":docente[0].DOC_NRO_IDEN,
+                          };
+                        //  console.log("docente cambio", ctrl.docenteCambio);
+                        }
+
                       });
 
                     }else if(detalle.Descripcion.includes("JSON-")){
@@ -151,6 +163,7 @@ angular.module('poluxClienteApp')
       ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
       ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Nombre;
       ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
+      console.log(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id );
       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2){
 
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
@@ -171,6 +184,9 @@ angular.module('poluxClienteApp')
               defered.resolve(ctrl.dataSolicitud.modalidad);
             }
       }else{
+        if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 ){
+          ctrl.isCambio = true;
+        }
         defered.resolve(ctrl.dataSolicitud.modalidad);
       }
       return promise;
