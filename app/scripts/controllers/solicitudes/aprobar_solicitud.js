@@ -22,7 +22,7 @@ angular.module('poluxClienteApp')
     $scope.loadFormulario = false;
 
     ctrl.isInicial = false;
-    ctrl.isCambio = true;
+    ctrl.isCambio = false;
     ctrl.isPasantia = false;
     ctrl.hasRevisor = false;
 
@@ -183,10 +183,14 @@ angular.module('poluxClienteApp')
             }else{
               defered.resolve(ctrl.dataSolicitud.modalidad);
             }
+      }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 ){
+        ctrl.isCambio = true;
+        academicaRequest.obtenerDocentesTG().then(function(docentes){
+          ctrl.docentes=docentes;
+          //console.log(ctrl.docentes);
+          defered.resolve(ctrl.docentes);
+        });
       }else{
-        if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 ){
-          ctrl.isCambio = true;
-        }
         defered.resolve(ctrl.dataSolicitud.modalidad);
       }
       return promise;
@@ -210,11 +214,47 @@ angular.module('poluxClienteApp')
 
       //Esperar a que se cumplan las promesas
       $q.all([promesaDetalles, promesaEvaluar]).then(function(){
-        $scope.loadSolicitud = false;
+        if(ctrl.dataSolicitud.TrabajoGrado !== null){
+          var parametrosVinculacion = $.param({
+              query:"Activo:true,TrabajoGrado:"+ctrl.dataSolicitud.TrabajoGrado.Id,
+              limit:0
+          });
+          poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(docentesVinculados){
+              if(docentesVinculados.data !== []){
+                var vinculados = [];
+                console.log("docentes", ctrl.docentes);
+                angular.forEach(ctrl.docentes, function(docente){
+                    if(ctrl.docenteVinculado(docentesVinculados.data, docente.DIR_NRO_IDEN)){
+                      console.log("vinculado", docente);
+                      vinculados.push(docente);
+                    }
+                });
+                angular.forEach(vinculados, function(docente){
+                    var index = ctrl.docentes.indexOf(docente);
+                    ctrl.docentes.splice(index, 1);
+                });
+                $scope.loadSolicitud = false;
+              }else{
+                $scope.loadSolicitud = false;
+              }
+          });
+        }else{
+          $scope.loadSolicitud = false;
+        }
+
       });
 
     });
 
+    ctrl.docenteVinculado = function(vinculados,  docente){
+        var esta = false;
+        angular.forEach(vinculados, function(vinculado){
+            if(vinculado.Usuario == docente){
+              esta = true;
+            }
+        });
+        return esta;
+    };
 
     ctrl.responder=function(){
 

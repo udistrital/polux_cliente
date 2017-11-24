@@ -102,8 +102,8 @@
                     <div class="col-sm-8">
                     <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
                            <ui-select-match  placeholder="{{'SELECT.DOCENTE_DIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                           <ui-select-choices infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
-                               <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+                           <ui-select-choices  infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+                               <span  ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
                            </ui-select-choices>
                        </ui-select>
                     </div>
