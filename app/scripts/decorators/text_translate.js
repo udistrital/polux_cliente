@@ -282,6 +282,7 @@ var text_es = {
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Escriba la justificación de la respuesta",
     ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo de carrera",
     SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
+    JUSTIFICACION_RESPUESTA:"Justificación del estado.",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -546,6 +547,7 @@ var text_en = {
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Write the justification for the answer",
     ACTA_RESPUESTA_SOLICITUD:"Select the document with the answer given by the Career Council",
     SOLICITAR_DISTINCION:"Want an application for this degree job",
+    JUSTIFICACION_RESPUESTA:"Justification of the state.",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

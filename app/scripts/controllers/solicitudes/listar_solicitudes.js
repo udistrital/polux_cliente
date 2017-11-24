@@ -84,6 +84,7 @@ angular.module('poluxClienteApp')
                 promiseArr.push(promise);
                 solicitud.data = {
                 'Id':solicitud.SolicitudTrabajoGrado.Id,
+                'Modalidad':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Nombre,
                 'ModalidadTipoSolicitud':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
                 'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
                 }
@@ -92,6 +93,7 @@ angular.module('poluxClienteApp')
                 });
                   poluxRequest.get("respuesta_solicitud",parametrosRespuesta).then(function(responseRespuesta){
                       solicitud.data.Estado = responseRespuesta.data[0].EstadoSolicitud.Nombre;
+                      solicitud.data.Respuesta = responseRespuesta.data[0];
                       ctrl.solicitudes.push(solicitud.data);
                       ctrl.gridOptions.data = ctrl.solicitudes;
                       defered.resolve(solicitud.data);
@@ -140,6 +142,7 @@ angular.module('poluxClienteApp')
                   promiseArr.push(promise);
                     solicitud.data = {
                     'Id':solicitud.SolicitudTrabajoGrado.Id,
+                    'Modalidad':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Nombre,
                     'ModalidadTipoSolicitud':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
                     'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
                   }
@@ -174,6 +177,7 @@ angular.module('poluxClienteApp')
                         var carreraEstudiante = responseEstudiante[0].CARRERA;
                         if(carreras.includes(carreraEstudiante)){
                           solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
+                          solicitud.data.Respuesta = solicitud;
                           solicitud.data.Carrera = carreraEstudiante;
                           ctrl.solicitudes.push(solicitud.data);
                           defered.resolve(solicitud.data);
@@ -296,9 +300,13 @@ angular.module('poluxClienteApp')
               ctrl.detallesSolicitud = responseDetalles.data;
             }
               var solicitantes = "";
+              console.log("Solicitud",fila.entity);
               ctrl.detallesSolicitud.id = fila.entity.Id;
               ctrl.detallesSolicitud.tipoSolicitud = fila.entity.ModalidadTipoSolicitud;
               ctrl.detallesSolicitud.fechaSolicitud = fila.entity.Fecha;
+              ctrl.detallesSolicitud.estado = fila.entity.Estado;
+              ctrl.detallesSolicitud.modalidad = fila.entity.Modalidad;
+              ctrl.detallesSolicitud.respuesta= fila.entity.Respuesta.Justificacion;
               angular.forEach(responseEstudiantes.data,function(estudiante){
                   solicitantes += (", "+estudiante.Usuario) ;
               });
