@@ -331,21 +331,7 @@ angular.module('poluxClienteApp')
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
                     console.log(response.data);
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido rechazada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
                 }else{//solicitud aprobada
                   //buscar vinculación
@@ -373,21 +359,7 @@ angular.module('poluxClienteApp')
                     };
                     console.log(ctrl.rtaSol);
                     poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                      if(response.data[0]=='Success'){
-                        swal(
-                          'Respuesta a la solicitud',
-                          'La solicitud ha sido aprobada',
-                          'success'
-                        );
-                        $location.path("/solicitudes/listar_solicitudes");
-                      }else{
-                        swal(
-                          'Respuesta a la solicitud',
-                          $translate.instant(response.data[1]),
-                          'warning'
-                        );
-                        console.log(response.data);
-                      }
+                      ctrl.mostrarRespuesta(response);
                     });
                   });
                 }
@@ -403,21 +375,7 @@ angular.module('poluxClienteApp')
                   };
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido rechazada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
                 }
                 else{//solicitud aprobada
@@ -440,21 +398,7 @@ angular.module('poluxClienteApp')
                     };
                     console.log(ctrl.rtaSol);
                     poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                      if(response.data[0]=='Success'){
-                        swal(
-                          'Respuesta a la solicitud',
-                          'La modalidad de trabajo de grado queda cancelada',
-                          'success'
-                        );
-                        $location.path("/solicitudes/listar_solicitudes");
-                      }else{
-                        swal(
-                          'Respuesta a la solicitud',
-                          $translate.instant(response.data[1]),
-                          'warning'
-                        );
-                        console.log(response.data);
-                      }
+                      ctrl.mostrarRespuesta(response);
                     });
                   });
                 }
@@ -472,21 +416,7 @@ angular.module('poluxClienteApp')
                   };
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido rechazada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
                 }else{
                   ctrl.rtaSol={
@@ -498,21 +428,7 @@ angular.module('poluxClienteApp')
                   };
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido aprobada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
 
                 }
@@ -530,21 +446,7 @@ angular.module('poluxClienteApp')
                   };
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido rechazada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
                 }else{
 
@@ -565,21 +467,7 @@ angular.module('poluxClienteApp')
                   };
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido aprobada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
 
                 }
@@ -597,21 +485,7 @@ angular.module('poluxClienteApp')
                   };
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido rechazada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
                 }
                 //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
@@ -680,21 +554,7 @@ angular.module('poluxClienteApp')
 
                   console.log(ctrl.rtaSol);
                   poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                    if(response.data[0]=='Success'){
-                      swal(
-                        'Respuesta a la solicitud',
-                        'La solicitud ha sido aprobada',
-                        'success'
-                      );
-                      $location.path("/solicitudes/listar_solicitudes");
-                    }else{
-                      swal(
-                        'Respuesta a la solicitud',
-                        $translate.instant(response.data[1]),
-                        'warning'
-                      );
-                      console.log(response.data);
-                    }
+                    ctrl.mostrarRespuesta(response);
                   });
                 }
                 //Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
@@ -830,21 +690,7 @@ angular.module('poluxClienteApp')
                        };
                        console.log(ctrl.rtaSol);
                        poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                         if(response.data[0]=='Success'){
-                           swal(
-                             'Respuesta a la solicitud',
-                             'La solicitud ha sido aprobada',
-                             'success'
-                           );
-                           $location.path("/solicitudes/listar_solicitudes");
-                         }else{
-                           swal(
-                             'Respuesta a la solicitud',
-                             $translate.instant(response.data[1]),
-                             'warning'
-                           );
-                           console.log(response.data);
-                         }
+                         ctrl.mostrarRespuesta(response);
                        });
                 }
               }
@@ -860,22 +706,7 @@ angular.module('poluxClienteApp')
           };
           console.log(ctrl.rtaSol);
           poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-            console.log(response);
-            if(response.data[0]=='Success'){
-              swal(
-                'Respuesta a la solicitud',
-                'La solicitud ha sido aprobada',
-                'success'
-              );
-              $location.path("/solicitudes/listar_solicitudes");
-            }else{
-              swal(
-                'Respuesta a la solicitud',
-                $translate.instant(response.data[1]),
-                'warning'
-              );
-              console.log(response.data);
-            }
+            ctrl.mostrarRespuesta(response);
           });
         }
 
@@ -887,6 +718,31 @@ angular.module('poluxClienteApp')
       });
 
 
+    }
+
+    ctrl.mostrarRespuesta = function(response){
+        if(response.data[0]=='Success'){
+              swal(
+                $translate.instant("RESPUESTA_SOLICITUD"),
+                $translate.instant("SOLICITUD_APROBADA"),
+                'success'
+              );
+              $location.path("/solicitudes/listar_solicitudes");
+            }else{
+              if(Array.isArray(response.data)){
+                    swal(
+                      $translate.instant("RESPUESTA_SOLICITUD"),
+                      $translate.instant(response.data[1]),
+                      'warning'
+                    );
+                }else{
+                    swal(
+                      $translate.instant("RESPUESTA_SOLICITUD"),
+                      response.data,
+                      'warning'
+                    );
+                }
+            }
     }
 
     ctrl.obtenerVinculaciones = function(parametros, tipoSolicitud){
@@ -903,10 +759,8 @@ angular.module('poluxClienteApp')
 
         nuevaVinculacion.Id=null;
 
-        if(tipoSolicitud==4){
-          nuevaVinculacion.Usuario=ctrl.directorNuevo;
-        }else{
-          nuevaVinculacion.Usuario=ctrl.evaluadorNuevo;
+        if(tipoSolicitud===4 || tipoSolicitud===10){
+          nuevaVinculacion.Usuario=Number(ctrl.docenteCambio.DIR_NRO_IDEN);
         }
 
         nuevaVinculacion.FechaInicio=new Date();

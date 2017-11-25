@@ -179,7 +179,7 @@ var text_es = {
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
         HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
-        HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado pendiente que se encuentra pendiente por respuesta.",
+        HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado que se encuentra pendiente por respuesta.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -281,6 +281,8 @@ var text_es = {
     FORMULARIO_APROBACION:"Formulario de aprobación",
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Escriba la justificación de la respuesta",
     ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo de carrera",
+    RESPUESTA_SOLICITUD:"Respuesta a la solicitud",
+    SOLICITUD_APROBADA:"La solicitud ha sido aprobada",
     SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
     JUSTIFICACION_RESPUESTA:"Justificación del estado.",
 };
@@ -444,7 +446,7 @@ var text_en = {
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
         HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
-        HAY_SOLICITUD_PENDIENTE:"Currently the student already has a pending grade job request that is pending by response.",
+        HAY_SOLICITUD_PENDIENTE:"Currently the student already has a grade job request that is pending by response.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -546,6 +548,8 @@ var text_en = {
     FORMULARIO_APROBACION:"Approval form",
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Write the justification for the answer",
     ACTA_RESPUESTA_SOLICITUD:"Select the document with the answer given by the Career Council",
+    RESPUESTA_SOLICITUD:"Response to the request",
+    SOLICITUD_APROBADA:"The request has been approved",
     SOLICITAR_DISTINCION:"Want an application for this degree job",
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
 };
