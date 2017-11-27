@@ -202,8 +202,8 @@ var text_es = {
     JUSTIFICACION_SOLICITUD:"Escriba la causa con la que justifica la solicitud",
     DIRECTOR_ACTUAL:"Nombre del director actual",
     DIRECTOR_NUEVO:"Seleccione el docente que solicita como nuevo director",
-    EVALUADOR_ACTUAL:"Seleccione el nombre del anterior evaluador",
-    EVALUADOR_NUEVO:"Seleccione el nombre de la persona que solicita como nuevo evaluador",
+    EVALUADOR_ACTUAL:"Seleccione el nombre del evaluador actual",
+    EVALUADOR_NUEVO:"Seleccione el docente que sugiere como nuevo evaluador",
     HOJA_VIDA_DIRECTOR_EXTERNO_NUEVO:"Cargue la hoja de vida del nuevo director externo",
     SELECCIONE_TIPO_PRORROGA:"Seleccione el tipo de prórroga que va a solicitar",
     SELECCIONE_ESPACIOS_ACADEMICOS:"Seleccione los espacios academicos que desea solicitar",
@@ -284,8 +284,8 @@ var text_es = {
     RESPUESTA_SOLICITUD:"Respuesta a la solicitud",
     SOLICITUD_APROBADA:"La solicitud ha sido aprobada",
     SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
-    JUSTIFICACION_RESPUESTA:"Justificación del estado.",
-    AUTORIZACION_DERECHOS_AUTOR:"Autorización derechos de autor"
+    JUSTIFICACION_RESPUESTA:"Justificación del estado",
+    AUTORIZACION_DERECHOS_AUTOR:"Yo <u> {{nombre}}</u> con código <u>{{codigo}}</u>, manifiesto mi voluntad de ceder los derechos de autor del trabajo de grado <u> {{tg}} </u> a los demás estudiantes relacionados.",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -470,8 +470,8 @@ var text_en = {
     JUSTIFICACION_SOLICITUD:"Write the cause that justifies the request",
     DIRECTOR_ACTUAL:"Name of current director",
     DIRECTOR_NUEVO:"Select the teacher requestes as  new director",
-    EVALUADOR_ACTUAL:"Select the name of the previous evaluator",
-    EVALUADOR_NUEVO:"Select the name of the person requested as new evaluator",
+    EVALUADOR_ACTUAL:"Select the name of the current evaluator",
+    EVALUADOR_NUEVO:"Select the teacher that you suggest as the new evaluator",
     HOJA_VIDA_DIRECTOR_EXTERNO_NUEVO:"Upload the resume of the new external director",
     SELECCIONE_TIPO_PRORROGA:"Select the type of extension that you are requesting",
     SELECCIONE_ESPACIOS_ACADEMICOS:"Select the academic spaces that you want to request",
@@ -553,7 +553,7 @@ var text_en = {
     SOLICITUD_APROBADA:"The request has been approved",
     SOLICITAR_DISTINCION:"Want an application for this degree job",
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
-    AUTORIZACION_DERECHOS_AUTOR:"Authorization of author rights"
+    AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students."
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
