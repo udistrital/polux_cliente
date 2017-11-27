@@ -285,6 +285,7 @@ var text_es = {
     SOLICITUD_APROBADA:"La solicitud ha sido aprobada",
     SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
     JUSTIFICACION_RESPUESTA:"Justificación del estado.",
+    AUTORIZACION_DERECHOS_AUTOR:"Autorización derechos de autor"
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -552,6 +553,7 @@ var text_en = {
     SOLICITUD_APROBADA:"The request has been approved",
     SOLICITAR_DISTINCION:"Want an application for this degree job",
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
+    AUTORIZACION_DERECHOS_AUTOR:"Authorization of author rights"
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

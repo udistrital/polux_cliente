@@ -99,6 +99,7 @@ angular.module('poluxClienteApp')
             }
 
         ctrl.verificarSolicitudes().then(function(puede){
+            ctrl.estudiantesTg=[];
             ctrl.puedeSolicitudAnterior = puede;
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
@@ -108,8 +109,21 @@ angular.module('poluxClienteApp')
             poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
 
                     if(responseTrabajoEstudiante.data != null){
+
+                      //buscar # de autores del tg
+                      var parametros = $.param({
+                      query:"EstadoEstudianteTrabajoGrado.Id:1,TrabajoGrado:"+ responseTrabajoEstudiante.data[0].TrabajoGrado.Id,
+                          limit: 0,
+                      });
+                      poluxRequest.get("estudiante_trabajo_grado",parametros).then(function(autoresTg){
+                          angular.forEach(autoresTg.data, function(estudiante){
+                              ctrl.estudiantesTg.push(estudiante);
+                          });
+                      });
+
                       ctrl.Trabajo = responseTrabajoEstudiante.data[0];
                       ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
+                      ctrl.trabajo_grado_completo = responseTrabajoEstudiante.data[0].TrabajoGrado;
                       ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
                       ctrl.siModalidad = true;
                       ctrl.modalidad_select = true;
@@ -574,6 +588,7 @@ angular.module('poluxClienteApp')
                 }
             }
             if(detalle.Detalle.TipoDetalle.Nombre==='Checkbox' || detalle.Detalle.TipoDetalle.Nombre==='Radio'){
+
                 if(detalle.bool === undefined){
                     detalle.bool = false;
                 }
@@ -582,6 +597,7 @@ angular.module('poluxClienteApp')
                 }else{
                     detalle.respuesta = "NO";
                 }
+
                 //detalle.respuesta = detalle.bool.toString();
             }
         });

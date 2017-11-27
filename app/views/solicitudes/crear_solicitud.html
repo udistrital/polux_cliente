@@ -72,9 +72,14 @@
                 </div>
            <br>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox'" class="row">
+          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="row">
            <input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>
            <label class="col-sm-8 control-label"> {{detalle.label}}</label>
+          </div>
+
+          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox' && detalle.Detalle.Enunciado=='AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>1" class="panel-body alert alert-warning">
+           <label class="col-sm-12 control-label">{{detalle.label}}</label>
+           <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}" required><b>AUTORIZAR</b></input>
           </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
