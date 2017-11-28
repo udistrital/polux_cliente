@@ -35,42 +35,50 @@ req.onreadystatechange = function(e) {
             //alert('something else other than 200 was returned');
             //console.log(req);
         }
-
     }
 };
 
 angular.module('poluxClienteApp')
-    .factory('token_service', function($location, $http, $localStorage) {
+    .factory('token_service', function($location, $http, $localStorage, CONF) {
         var service = {
             local: $localStorage.$default(params),
             //session: $sessionStorage.default(params),
             header: null,
             token: null,
-            user: null,
-            all_perfil: null,
+            //user: null,
+            //all_perfil: null,
 
             config: {
-                AUTORIZATION_URL: "https://wso2.udistritaloas.edu.co:9443/oauth2/authorize",
-                CLIENTE_ID: "3QSGwu9AsnyV69SNTPAIDQtb9A0a",
-                REDIRECT_URL: "http://10.20.0.254/polux",
-                RESPONSE_TYPE: "id_token token",
-                SCOPE: "openid profile email",
-                BUTTON_CLASS: "btn btn-outline btn-primary btn-sm"
+                AUTORIZATION_URL: CONF.GENERAL.TOKEN.AUTORIZATION_URL,
+                CLIENTE_ID: CONF.GENERAL.TOKEN.CLIENTE_ID,
+                REDIRECT_URL: CONF.GENERAL.TOKEN.REDIRECT_URL,
+                RESPONSE_TYPE: CONF.GENERAL.TOKEN.RESPONSE_TYPE,
+                SCOPE: CONF.GENERAL.TOKEN.SCOPE,
+                BUTTON_CLASS: CONF.GENERAL.TOKEN.BUTTON_CLASS,
+                SIGN_OUT_URL: CONF.GENERAL.TOKEN.SIGN_OUT_URL,
+                SIGN_OUT_REDIRECT_URL: CONF.GENERAL.TOKEN.SIGN_OUT_REDIRECT_URL,
+                SIGN_OUT_APPEND_TOKEN: CONF.GENERAL.TOKEN.SIGN_OUT_APPEND_TOKEN
             },
+
             live_token: function() {
                 if (typeof service.local.id_token === 'undefined' || service.local.id_token === null) {
                     return false;
                 } else {
                     service.header = KJUR.jws.JWS.readSafeJSONString(b64utoutf8(service.local.id_token.split(".")[0]));
                     service.token = KJUR.jws.JWS.readSafeJSONString(b64utoutf8(service.local.id_token.split(".")[1]));
-                    service.user = service.token.sub;
+                    //service.user = service.token.sub;
                     return true;
                 }
             },
             logout: function() {
+                window.location = $location.absUrl();
+                var url = service.config.SIGN_OUT_URL;
+                url = url + '?logout_redirect_uri=' + service.config.SIGN_OUT_REDIRECT_URL;
+                url = url + '?id_token_hint=' + service.local.id_token;
+                console.log(url);
                 service.token = null;
                 $localStorage.$reset();
-                window.location = $location.absUrl();
+                window.location.replace(url);
             }
         };
         return service;
