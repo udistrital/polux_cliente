@@ -644,7 +644,7 @@ angular.module('poluxClienteApp')
                         "Usuario": Number(ctrl.docenteDirector.DIR_NRO_IDEN),
                         "Activo": true,
                         "FechaInicio": new Date(),
-                        "FechaFin": null,
+                        //"FechaFin": null,
                         "RolTrabajoGrado": {
                           "Id": 1
                         },
@@ -658,7 +658,7 @@ angular.module('poluxClienteApp')
                         "Usuario": Number(ctrl.docenteRevisor.DIR_NRO_IDEN),
                         "Activo": true,
                         "FechaInicio": new Date(),
-                        "FechaFin": null,
+                        //"FechaFin": null,
                         "RolTrabajoGrado": {
                           "Id": 3
                         },
