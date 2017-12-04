@@ -282,7 +282,7 @@ var text_es = {
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Escriba la justificación de la respuesta",
     ACTA_RESPUESTA_SOLICITUD:"Seleccione el acta de la respuesta dada por el consejo de carrera",
     RESPUESTA_SOLICITUD:"Respuesta a la solicitud",
-    SOLICITUD_APROBADA:"La solicitud ha sido aprobada",
+    SOLICITUD_APROBADA:"La respuesta a la solicitud ha sido registrada exitosamente",
     SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
     JUSTIFICACION_RESPUESTA:"Justificación del estado",
     AUTORIZACION_DERECHOS_AUTOR:"Yo <u> {{nombre}}</u> con código <u>{{codigo}}</u>, manifiesto mi voluntad de ceder los derechos de autor del trabajo de grado <u> {{tg}} </u> a los demás estudiantes relacionados.",
@@ -550,7 +550,7 @@ var text_en = {
     JUSTIFICACION_RESPUESTA_SOLICITUD:"Write the justification for the answer",
     ACTA_RESPUESTA_SOLICITUD:"Select the document with the answer given by the Career Council",
     RESPUESTA_SOLICITUD:"Response to the request",
-    SOLICITUD_APROBADA:"The request has been approved",
+    SOLICITUD_APROBADA:"The response to the request has been successfully registered",
     SOLICITAR_DISTINCION:"Want an application for this degree job",
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
     AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students."
