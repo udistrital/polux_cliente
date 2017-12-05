@@ -89,7 +89,7 @@ angular.module('poluxClienteApp')
                 'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
                 }
                 var parametrosRespuesta=$.param({
-                  query:"SolicitudTrabajoGrado:"+solicitud.SolicitudTrabajoGrado.Id,
+                  query:"ACTIVO:TRUE,SolicitudTrabajoGrado:"+solicitud.SolicitudTrabajoGrado.Id,
                 });
                   poluxRequest.get("respuesta_solicitud",parametrosRespuesta).then(function(responseRespuesta){
                       solicitud.data.Estado = responseRespuesta.data[0].EstadoSolicitud.Nombre;
