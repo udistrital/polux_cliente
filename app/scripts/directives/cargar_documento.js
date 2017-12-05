@@ -89,7 +89,8 @@ angular.module('poluxClienteApp')
               $scope.acta.nombre = ctrl.documento.nombre;
               $scope.acta.url = ctrl.documento.url;
 
-              poluxRequest.post("documento_escrito",documento).then(function(){
+              poluxRequest.post("documento_escrito",documento).then(function(resultado){
+                $scope.acta.id=resultado.data.Id;
                 $('#modalSeleccionarDocumento').modal('hide');
                 swal(
                   $translate.instant("DOCUMENTO.CARGADO"),
