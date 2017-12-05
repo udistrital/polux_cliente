@@ -764,7 +764,7 @@ angular.module('poluxClienteApp')
         }
 
         nuevaVinculacion.FechaInicio=new Date();
-        nuevaVinculacion.FechaFin=null;
+        //nuevaVinculacion.FechaFin=null;
         ctrl.vinculaciones.push(ctrl.vinculacionActual);
         ctrl.vinculaciones.push(nuevaVinculacion);
         defered.resolve(ctrl.vinculaciones);
