@@ -654,19 +654,21 @@ angular.module('poluxClienteApp')
                       }
                       data_vinculacion.push(vinculacion);
 
-                      vinculacion={
-                        "Usuario": Number(ctrl.docenteRevisor.DIR_NRO_IDEN),
-                        "Activo": true,
-                        "FechaInicio": new Date(),
-                        //"FechaFin": null,
-                        "RolTrabajoGrado": {
-                          "Id": 3
-                        },
-                        "TrabajoGrado": {
-                          "Id": 0
+                      if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id!==55){
+                        vinculacion={
+                          "Usuario": Number(ctrl.docenteRevisor.DIR_NRO_IDEN),
+                          "Activo": true,
+                          "FechaInicio": new Date(),
+                          //"FechaFin": null,
+                          "RolTrabajoGrado": {
+                            "Id": 3
+                          },
+                          "TrabajoGrado": {
+                            "Id": 0
+                          }
                         }
+                        data_vinculacion.push(vinculacion);
                       }
-                      data_vinculacion.push(vinculacion);
 
                        ctrl.trabajo_grado={
                           TrabajoGrado: data_trabajo_grado,

@@ -142,7 +142,7 @@ var text_es = {
     SELECCIONAR_MODALIDAD:"Seleccione la modalidad",
     SELECCIONAR_SOLICITUD:"Seleccione tipo de solicitud",
     FORMULARIO_SOLICITUD:"Formulario de solicitud",
-    SELECCIONE_AREAS_CONOCIMIENTO:"Seleccione las areas del conocimiento de su proyecto",
+    SELECCIONE_AREAS_CONOCIMIENTO:"Seleccione las áreas del conocimiento de su proyecto",
     NOMBRE_CORTO:"Nombre muy corto",
     NOMBRE_LARGO:"Nombre muy largo",
     NUEVA_AREA:"Ingrese nueva area",
