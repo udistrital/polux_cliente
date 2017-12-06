@@ -286,6 +286,7 @@ var text_es = {
     SOLICITAR_DISTINCION:"Desea solicitar una distinción para este trabajo de grado",
     JUSTIFICACION_RESPUESTA:"Justificación del estado",
     AUTORIZACION_DERECHOS_AUTOR:"Yo <u> {{nombre}}</u> con código <u>{{codigo}}</u>, manifiesto mi voluntad de ceder los derechos de autor del trabajo de grado <u> {{tg}} </u> a los demás estudiantes relacionados.",
+    SELECCIONE_ACTA:"Seleccione el acta mediante la cual se da respuesta a la solicitud",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -553,7 +554,8 @@ var text_en = {
     SOLICITUD_APROBADA:"The response to the request has been successfully registered",
     SOLICITAR_DISTINCION:"Want an application for this degree job",
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
-    AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students."
+    AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students.",
+    SELECCIONE_ACTA:"Select the minutes by which the request is answered",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

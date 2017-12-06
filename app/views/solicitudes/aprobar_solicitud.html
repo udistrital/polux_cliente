@@ -73,11 +73,12 @@
             </div>
               <loading tam="4" load="loadFormulario" message="msgEnviandFormulario"> </loading>
               <div class="panel-body" ng-if="!loadFormulario">
-                  <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.validarFormularioAprobacion()">
+                  <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
                     <div class="row">
                       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
                       <div class="col-sm-8">
-                        <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
+                        <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required >
+                              <option></option>
                               <option value=6> {{'APROBAR_SOLICITUD' | translate}} </option>
                               <option value=5> {{'RECHAZAR_SOLICITUD' | translate}} </option>
                         </select>
@@ -151,7 +152,7 @@
                     <br>
                     <div class="row">
                       <label class="col-sm-5 control-label"> </label>
-                      <input type="button" ng-click="aprobarSolicitud.responder()" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
+                      <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
                       <label class="col-sm-5 control-label"> </label>
                     </div>
 

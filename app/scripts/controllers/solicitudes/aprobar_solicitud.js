@@ -279,6 +279,8 @@ angular.module('poluxClienteApp')
         objRtaNueva.Justificacion=ctrl.justificacion;
         objRtaNueva.Fecha=new Date();
 
+        if(ctrl.acta.id!=null){
+
         var parametros = $.param({
             query:"Id:"+ctrl.acta.id,
             limit:0
@@ -717,13 +719,19 @@ angular.module('poluxClienteApp')
         });
 
 
+      }else{
+        ctrl.mostrarRespuesta("SELECCIONE_ACTA");
+      }
+
+
       });
 
 
     }
 
     ctrl.mostrarRespuesta = function(response){
-        if(response.data[0]=='Success'){
+      if(response.data!== undefined){
+          if(response.data[0]=='Success'){
               swal(
                 $translate.instant("RESPUESTA_SOLICITUD"),
                 $translate.instant("SOLICITUD_APROBADA"),
@@ -745,6 +753,14 @@ angular.module('poluxClienteApp')
                     );
                 }
             }
+        }
+        else{
+          swal(
+            $translate.instant("RESPUESTA_SOLICITUD"),
+            $translate.instant(response),
+            'warning'
+          );
+        }
     }
 
     ctrl.obtenerVinculaciones = function(parametros, tipoSolicitud){
