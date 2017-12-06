@@ -54,6 +54,14 @@ angular.module('poluxClienteApp')
     });
 
     ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud){
+      var parametros = $.param({
+        query:"SolicitudTrabajoGrado.Id:"+ctrl.solicitud+",Activo:TRUE"
+      });
+      poluxRequest.get("respuesta_solicitud",parametros).then(function(responseRespuesta){
+          ctrl.estadoSolicitud=responseRespuesta.data[0];
+          console.log(ctrl.estadoSolicitud);
+      });
+
       var defered = $q.defer();
       var promise = defered.promise;
       poluxRequest.get("detalle_solicitud",parametrosDetallesSolicitud).then(function(responseDetalles){

@@ -287,6 +287,7 @@ var text_es = {
     JUSTIFICACION_RESPUESTA:"Justificación del estado",
     AUTORIZACION_DERECHOS_AUTOR:"Yo <u> {{nombre}}</u> con código <u>{{codigo}}</u>, manifiesto mi voluntad de ceder los derechos de autor del trabajo de grado <u> {{tg}} </u> a los demás estudiantes relacionados.",
     SELECCIONE_ACTA:"Seleccione el acta mediante la cual se da respuesta a la solicitud",
+    SOLICITUD_CON_RESPUESTA:"La solicitud ya fue atendida"
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -556,6 +557,7 @@ var text_en = {
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
     AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students.",
     SELECCIONE_ACTA:"Select the minutes by which the request is answered",
+    SOLICITUD_CON_RESPUESTA:"The request has already been answered"
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
