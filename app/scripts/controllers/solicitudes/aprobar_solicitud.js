@@ -398,18 +398,29 @@ angular.module('poluxClienteApp')
                     console.log(responseTg);
                     var objEstudianteTG=responseTg.data[0];
                     objEstudianteTG.EstadoEstudianteTrabajoGrado.Id=2;
-                    ctrl.rtaSol={
-                      RespuestaAnterior:objRtaAnterior,
-                      RespuestaNueva:objRtaNueva,
-                      DocumentoSolicitud:data_documento,
-                      TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
-                      Vinculaciones: null,
-                      EstudianteTrabajoGrado: objEstudianteTG
-                    };
-                    console.log(ctrl.rtaSol);
-                    poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                      ctrl.mostrarRespuesta(response);
+
+                    //buscar vinculaciones activas
+                    var parametros = $.param({
+                        query:"TrabajoGrado.Id:"+responseRta.data[0].SolicitudTrabajoGrado.TrabajoGrado.Id+",Activo:TRUE",
+                        limit:0
                     });
+                    poluxRequest.get("vinculacion_trabajo_grado",parametros).then(function(responseVinculaciones){
+                      console.log(responseVinculaciones);
+
+                      ctrl.rtaSol={
+                        RespuestaAnterior:objRtaAnterior,
+                        RespuestaNueva:objRtaNueva,
+                        DocumentoSolicitud:data_documento,
+                        TipoSolicitud: responseRta.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                        Vinculaciones: responseVinculaciones.data,
+                        EstudianteTrabajoGrado: objEstudianteTG
+                      };
+                      console.log(ctrl.rtaSol);
+                      poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                        ctrl.mostrarRespuesta(response);
+                      });
+                    });
+
                   });
                 }
               }
