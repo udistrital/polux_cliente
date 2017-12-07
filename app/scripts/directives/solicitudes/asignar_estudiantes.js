@@ -22,6 +22,7 @@ angular.module('poluxClienteApp')
         ctrl.estudianteValido = false;
         ctrl.estudianteConTrabajo = false;
         ctrl.cantidadExcedida = false;
+        ctrl.estudianteNoEncontrado = false;
         ctrl.removable=false;
         ctrl.solicitante = $scope.estudiantes;
         ctrl.nuevosEstudiantes = [];
@@ -32,7 +33,7 @@ angular.module('poluxClienteApp')
             ctrl.estudianteValido = false;
             ctrl.estudianteConTrabajo = false;
             ctrl.cantidadExcedida = false;
-
+            ctrl.estudianteNoEncontrado = false;
 
             console.log(ctrl.solicitante);
             if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && ctrl.solicitante!==ctrl.codigoEstudiante){
@@ -54,7 +55,7 @@ angular.module('poluxClienteApp')
 
             academicaRequest.promedioEstudiante(parametros).then(function(response2){
 
-                if(response2){
+                if(response2!=='null'){
                     ctrl.estudiante={
                       "Codigo": parametros.codigo,
                       "Nombre": response2[0].NOMBRE,
@@ -95,7 +96,6 @@ angular.module('poluxClienteApp')
                                     ctrl.cantidadExcedida = true;
                                   }
                             });
-
                           }else{
                               ctrl.estudianteConTrabajo = true;
                           }
@@ -107,7 +107,7 @@ angular.module('poluxClienteApp')
 
                     });
               } else {
-                ctrl.estudianteExiste = true;
+                ctrl.estudianteNoEncontrado = true;
               }
             });
           });

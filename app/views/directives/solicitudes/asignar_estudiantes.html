@@ -29,6 +29,9 @@
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteExiste">
             {{'ESTUDIANTE_NO_VALIDO' | translate}}
         </div>
+        <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteNoEncontrado">
+            {{'FALTAN_DATOS_ESTUDIANTE' | translate}}
+        </div>
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteValido">
             {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
         </div>
