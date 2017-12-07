@@ -23,7 +23,7 @@ angular.module('poluxClienteApp')
         ctrl.estudianteConTrabajo = false;
         ctrl.cantidadExcedida = false;
         ctrl.removable=false;
-        ctrl.solicitante = $scope.estudiantes[0];
+        ctrl.solicitante = $scope.estudiantes;
         ctrl.nuevosEstudiantes = [];
 
         ctrl.agregarEstudiante = function(){
@@ -32,6 +32,9 @@ angular.module('poluxClienteApp')
             ctrl.estudianteValido = false;
             ctrl.estudianteConTrabajo = false;
             ctrl.cantidadExcedida = false;
+
+
+            console.log(ctrl.solicitante);
             if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && ctrl.solicitante!==ctrl.codigoEstudiante){
                 ctrl.verificarEstudiante();
             }else{
