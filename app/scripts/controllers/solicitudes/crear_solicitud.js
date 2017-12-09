@@ -622,10 +622,10 @@ angular.module('poluxClienteApp')
                 //console.log("Debe completar todos los campos del formulario.");
                 ctrl.erroresFormulario = true;
               }
-              if(detalle.respuesta === "" && detalle.Detalle.Descripcion=='asignar-area' ){
+              if(ctrl.estudiante.areas_elegidas.length===0 && detalle.Detalle.Descripcion=='asignar-area' ){
                 swal(
                   'Validación del formulario',
-                  "Debe ingresar al menos un area.",
+                  "Debe ingresar al menos un área de conocimiento.",
                   'warning'
                 );
                 //console.log("Debe ingresar al menos un area.");
