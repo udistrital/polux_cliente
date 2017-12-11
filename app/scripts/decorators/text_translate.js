@@ -288,7 +288,17 @@ var text_es = {
     JUSTIFICACION_RESPUESTA:"Justificación del estado",
     AUTORIZACION_DERECHOS_AUTOR:"Yo <u> {{nombre}}</u> con código <u>{{codigo}}</u>, manifiesto mi voluntad de ceder los derechos de autor del trabajo de grado <u> {{tg}} </u> a los demás estudiantes relacionados.",
     SELECCIONE_ACTA:"Seleccione el acta mediante la cual se da respuesta a la solicitud",
-    SOLICITUD_CON_RESPUESTA:"La solicitud ya fue atendida"
+    SOLICITUD_CON_RESPUESTA:"La solicitud ya fue atendida",
+    SOLICITUD_SIN_RESPUESTA:"La solicitud no ha sido atendida",
+    RESULTADO_SOLICITUD:"Resultado de la solicitud",
+    SOLICITUD_RECHAZADA:"La solicitud fue rechazada",
+    SOLICITUD_ES_APROBADA:"La solicitud fue aprobada",
+    APROBADO : {
+        CURSAR_MODALIDAD: "El estudiante puede cursar la modalidad de {{modalidad}}",
+        CANCELAR_MODALIDAD: "El estudiante ya no cursa la modalidad de {{modalidad}}",
+        CAMBIAR_NOMBRE:"Se cambio el nombre del trabajo de grado '{{anterior}}' por '{{nuevo}}'",
+        DIRECTOR_INTERNO:"Se cambio el director interno {{anterior}} por {{nuevo}}",
+    },
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -559,7 +569,17 @@ var text_en = {
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
     AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students.",
     SELECCIONE_ACTA:"Select the minutes by which the request is answered",
-    SOLICITUD_CON_RESPUESTA:"The request has already been answered"
+    SOLICITUD_CON_RESPUESTA:"The request has already been answered",
+    SOLICITUD_SIN_RESPUESTA:"The request has not been answered",
+    RESULTADO_SOLICITUD:"Result of the request",
+    SOLICITUD_RECHAZADA:"The request was rejected",
+    SOLICITUD_ES_APROBADA:"The request was approved",
+    APROBADO : {
+        CURSAR_MODALIDAD: "The student can take the modality of {{modalidad}}",
+        CANCELAR_MODALIDAD: "The student no longer attends the modality of {{modalidad}}",
+        CAMBIAR_NOMBRE:"The name of the grade job '{{anterior}}' was changed to '{{nuevo}}'",
+        DIRECTOR_INTERNO:"The internal director {{anterior}} was changed to {{nuevo}}",
+    },
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
