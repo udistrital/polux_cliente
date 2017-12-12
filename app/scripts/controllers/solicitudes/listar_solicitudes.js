@@ -32,8 +32,35 @@ angular.module('poluxClienteApp')
     var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
     console.log("resputadas",solicitud);
     console.log("detalles",detalles);
+    var nuevo = "";
+    var anterior = "";
+    var getVinculado = function(solicitud,rol,finInicio){
+      var defered = $q.defer();
+      var promise = defered.promise;
+      var d = new Date(solicitud.Fecha);
+      d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 );
+      var parametrosVinculado= $.param({
+        query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd hh:mm:ss")),
+        limit:1
+      });
+      //alert(d);
+      //alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(new Date(solicitud.Fecha), "yyyy-MM-dd hh:mm:ss")));
+      poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculado).then(function(responseVinculado){
+        var parametrosDocentesUD = {
+          "identificacion":responseVinculado.data[0].Usuario
+        };
+        academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
+            docente = docente[0].NOMBRE;
+            defered.resolve(docente);
+          //ctrl.detallesSolicitud.resultado = ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud);
+        });
+
+      });
+      return promise;
+    }
     if(solicitud.EstadoSolicitud.Nombre === 'Rechazada'){
       resultado = $translate.instant('SOLICITUD_RECHAZADA');
+      defered.resolve(resultado);
     } else if(solicitud.EstadoSolicitud.Nombre === 'Aprobada por consejo de carrera'){
       resultado = $translate.instant('SOLICITUD_ES_APROBADA');
       switch(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id){
@@ -49,57 +76,24 @@ angular.module('poluxClienteApp')
           break;
         //solicitud de cambio de director interno
         case 4:
-          var internoAnterior = function(solicitud){
-            var defered = $q.defer();
-            var promise = defered.promise;
-            var parametrosVinculado= $.param({
-              query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:1,FechaFin.contains:"+($filter('date')(solicitud.Fecha, "yyyy-MM-dd hh:mm:ss.")),
-              limit:1
-             });
-             poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculado).then(function(responseVinculado){
-              var parametrosDocentesUD = {
-                "identificacion":responseVinculado.data[0].Usuario
-              };
-              academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                  docente = docente[0].NOMBRE;
-                  defered.resolve(docente);
-                //ctrl.detallesSolicitud.resultado = ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud);
-              });
-
-            });
-            return promise;
-          }
-          var internoNuevo = function(solicitud){
-            var defered = $q.defer();
-            var promise = defered.promise;
-            var parametrosVinculado= $.param({
-              query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:1,FechaInicio.contains:"+($filter('date')(solicitud.Fecha, "yyyy-MM-dd hh:mm:ss")),
-              limit:1
-             });
-            poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculado).then(function(responseVinculado){
-              var parametrosDocentesUD = {
-                "identificacion":responseVinculado.data[0].Usuario
-              };
-              academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                  docente = docente[0].NOMBRE;
-                  defered.resolve(docente);
-                //ctrl.detallesSolicitud.resultado = ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud);
-              });
-
-            });
-            return promise;
-          }
-          $q.all([internoAnterior(solicitud),internoNuevo(solicitud)]).then(function(response){
+          $q.all([getVinculado(solicitud,1,"Fin"),getVinculado(solicitud,1,"Inicio")]).then(function(response){
             nuevo = response[1];
             anterior = response[0];
             resultado += ". " + $translate.instant('APROBADO.DIRECTOR_INTERNO',{nuevo:nuevo,anterior:anterior});
             defered.resolve(resultado);
           });
           break;
+        //solicitud de cambio de director interno
+        case 10:
+          $q.all([getVinculado(solicitud,3,"Fin"),getVinculado(solicitud,3,"Inicio")]).then(function(response){
+            nuevo = response[1];
+            anterior = response[0];
+            resultado += ". " + $translate.instant('APROBADO.EVALUADOR',{nuevo:nuevo,anterior:anterior});
+            defered.resolve(resultado);
+          });
+          break;
         //Solicitud de cambio de nombre de trabajo de grado
         case 8:
-          var nuevo = "";
-          var anterior = "";
           angular.forEach(detalles, function(detalle){
             var id = detalle.DetalleTipoSolicitud.Detalle.Id;
             if(id===26){
@@ -112,8 +106,14 @@ angular.module('poluxClienteApp')
           resultado += ". " + $translate.instant('APROBADO.CAMBIAR_NOMBRE',{nuevo:nuevo,anterior:anterior});
           defered.resolve(resultado);
           break;
+        //default
+        default:
+          defered.resolve(resultado);
+          break;          
       }
 
+    }else{
+      defered.resolve(resultado);
     }
     return promise;
   }

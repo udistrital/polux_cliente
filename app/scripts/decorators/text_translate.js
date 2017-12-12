@@ -298,6 +298,7 @@ var text_es = {
         CANCELAR_MODALIDAD: "El estudiante ya no cursa la modalidad de {{modalidad}}",
         CAMBIAR_NOMBRE:"Se cambio el nombre del trabajo de grado '{{anterior}}' por '{{nuevo}}'",
         DIRECTOR_INTERNO:"Se cambio el director interno {{anterior}} por {{nuevo}}",
+        EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
     },
 };
 var text_en = {
@@ -579,6 +580,7 @@ var text_en = {
         CANCELAR_MODALIDAD: "The student no longer attends the modality of {{modalidad}}",
         CAMBIAR_NOMBRE:"The name of the grade job '{{anterior}}' was changed to '{{nuevo}}'",
         DIRECTOR_INTERNO:"The internal director {{anterior}} was changed to {{nuevo}}",
+        EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
     },
 };
 angular.module('poluxClienteApp')
