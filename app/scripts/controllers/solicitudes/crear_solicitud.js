@@ -442,9 +442,12 @@ angular.module('poluxClienteApp')
                                   });
                                 });
                             }
-
-
-
+                            if(parametrosServicio[0]==="mensaje"){
+                              detalle.opciones.push({
+                                "NOMBRE":$translate.instant(parametrosServicio[1]),
+                                "bd":$translate.instant(parametrosServicio[1])
+                              });
+                            }
                         };
                       });
                       ctrl.detallesCargados = true;

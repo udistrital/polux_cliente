@@ -293,6 +293,8 @@ var text_es = {
     RESULTADO_SOLICITUD:"Resultado de la solicitud",
     SOLICITUD_RECHAZADA:"La solicitud fue rechazada",
     SOLICITUD_ES_APROBADA:"La solicitud fue aprobada",
+    INFORMACION_PRORROGA:"Información importante sobre la prórroga",
+    MENSAJE_PRORROGA:"Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a uan prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
     APROBADO : {
         CURSAR_MODALIDAD: "El estudiante puede cursar la modalidad de {{modalidad}}",
         CANCELAR_MODALIDAD: "El estudiante ya no cursa la modalidad de {{modalidad}}",
@@ -575,6 +577,8 @@ var text_en = {
     RESULTADO_SOLICITUD:"Result of the request",
     SOLICITUD_RECHAZADA:"The request was rejected",
     SOLICITUD_ES_APROBADA:"The request was approved",
+    INFORMACION_PRORROGA:"Important information about the extension",
+    MENSAJE_PRORROGA:"Mr. student, you are informed that in accordance with the provisions of Agreement 038 of July 2015 issued by the academic council of the Francisco José de Caldas District University, you only have the right to an extension, that is, once you make this application regardless of the nature (extension to socialize or formalize) and is approved, you can not request it again.",
     APROBADO : {
         CURSAR_MODALIDAD: "The student can take the modality of {{modalidad}}",
         CANCELAR_MODALIDAD: "The student no longer attends the modality of {{modalidad}}",

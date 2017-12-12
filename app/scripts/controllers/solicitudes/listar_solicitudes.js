@@ -13,10 +13,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  //$scope.userId = "60261576";
-  //ctrl.userRole = "coordinador";
-  $scope.userId = "20131020020";
-  ctrl.userRole = "estudiante";
+  $scope.userId = "60261576";
+  ctrl.userRole = "coordinador";
+  //$scope.userId = "20131020020";
+  //ctrl.userRole = "estudiante";
   ctrl.userId = $scope.userId;
 
   $scope.$watch("userId",function() {
