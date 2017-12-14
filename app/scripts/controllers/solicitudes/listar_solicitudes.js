@@ -13,10 +13,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  $scope.userId = "60261576";
-  ctrl.userRole = "coordinador";
-  //$scope.userId = "20131020020";
-  //ctrl.userRole = "estudiante";
+  //$scope.userId = "60261576";
+  //ctrl.userRole = "coordinador";
+  $scope.userId = "20131020002";
+  ctrl.userRole = "estudiante";
   ctrl.userId = $scope.userId;
 
   $scope.$watch("userId",function() {
@@ -91,6 +91,11 @@ angular.module('poluxClienteApp')
             resultado += ". " + $translate.instant('APROBADO.EVALUADOR',{nuevo:nuevo,anterior:anterior});
             defered.resolve(resultado);
           });
+          break;
+        //solicitud de prorroga
+        case 7:
+          resultado += ". " + $translate.instant('APROBADO.PRORROGA');
+          defered.resolve(resultado);
           break;
         //Solicitud de cambio de nombre de trabajo de grado
         case 8:

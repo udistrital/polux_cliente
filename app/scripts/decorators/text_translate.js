@@ -294,13 +294,14 @@ var text_es = {
     SOLICITUD_RECHAZADA:"La solicitud fue rechazada",
     SOLICITUD_ES_APROBADA:"La solicitud fue aprobada",
     INFORMACION_PRORROGA:"Información importante sobre la prórroga",
-    MENSAJE_PRORROGA:"Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a uan prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
+    MENSAJE_PRORROGA:"Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a una prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
     APROBADO : {
         CURSAR_MODALIDAD: "El estudiante puede cursar la modalidad de {{modalidad}}",
         CANCELAR_MODALIDAD: "El estudiante ya no cursa la modalidad de {{modalidad}}",
         CAMBIAR_NOMBRE:"Se cambio el nombre del trabajo de grado '{{anterior}}' por '{{nuevo}}'",
         DIRECTOR_INTERNO:"Se cambio el director interno {{anterior}} por {{nuevo}}",
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
+        PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
     },
 };
 var text_en = {
@@ -585,6 +586,7 @@ var text_en = {
         CAMBIAR_NOMBRE:"The name of the grade job '{{anterior}}' was changed to '{{nuevo}}'",
         DIRECTOR_INTERNO:"The internal director {{anterior}} was changed to {{nuevo}}",
         EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
+        PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
     },
 };
 angular.module('poluxClienteApp')

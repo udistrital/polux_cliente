@@ -39,7 +39,26 @@ angular.module('poluxClienteApp')
       ctrl.detallesConDocumento = [];
       $scope.loadEstudiante = true;
       ctrl.siPuede=false;
+      ctrl.tieneProrrogas = false;
       ctrl.codigo = $routeParams.idEstudiante;
+
+      //buscar prorrogas anteriores
+      ctrl.getProrroga = function(id){
+        var defered = $q.defer();
+
+        var parametrosProrroga = $.param({
+          query:"EstadoSolicitud:6,activo:TRUE,SolicitudTrabajoGrado.TrabajoGrado.EstadoTrabajoGrado.Id:1,SolicitudTrabajoGrado:"+id,
+          limit: 1,
+        });
+        poluxRequest.get("respuesta_solicitud",parametrosProrroga).then(function(responseProrroga){
+            if(responseProrroga.data!=null){
+              ctrl.tieneProrrogas = true;
+            }
+            defered.resolve(ctrl.tieneProrrogas);
+        });
+
+        return defered.promise;
+      }
 
       //modalidad restringida ninguna
       ctrl.restringirModalidades = false;
@@ -78,6 +97,10 @@ angular.module('poluxClienteApp')
                   angular.forEach(solicitudesUsuario, function(solicitud){
                      //console.log(solicitud.SolicitudTrabajoGrado.Id);
                       promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
+                      //solicitud de prorogga
+                      if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id===7){
+                        promesas.push(ctrl.getProrroga(solicitud.SolicitudTrabajoGrado.Id));
+                      }
                   });
                   $q.all(promesas).then(function(){
                     console.log("actuales",actuales);
@@ -217,7 +240,17 @@ angular.module('poluxClienteApp')
           limit:0,
         });
         poluxRequest.get("modalidad_tipo_solicitud",parametrosTiposSolicitudes).then(function(responseTiposSolicitudes){
-            ctrl.solicitudes = responseTiposSolicitudes.data;
+            //ctrl.solicitudes = responseTiposSolicitudes.data;
+            if(ctrl.tieneProrrogas){
+              angular.forEach(responseTiposSolicitudes.data, (solicitud) => {
+                //si la solicitud es diferente de una de prorroga
+                if(solicitud.TipoSolicitud.Id!==7){
+                  ctrl.solicitudes.push(solicitud);
+                }
+              });
+            }else{
+              ctrl.solicitudes = responseTiposSolicitudes.data;
+            }
         });
       };
 
