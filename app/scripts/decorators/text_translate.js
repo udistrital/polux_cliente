@@ -181,6 +181,7 @@ var text_es = {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
         HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
         HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado que se encuentra pendiente por respuesta.",
+        DOCENTE_DUPLICADO:"Por favor seleccione docentes diferentes en los campos de director y evaluador(es)",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -467,6 +468,7 @@ var text_en = {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
         HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
         HAY_SOLICITUD_PENDIENTE:"Currently the student already has a grade job request that is pending by response.",
+        DOCENTE_DUPLICADO:"Please select different teachers in the fields of director and evaluator(s)",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {

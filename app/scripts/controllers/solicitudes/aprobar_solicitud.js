@@ -675,6 +675,7 @@ angular.module('poluxClienteApp')
                       data_areas.push(area);
                     });
 
+                      
                       vinculacion={
                         "Usuario": Number(ctrl.docenteDirector.DIR_NRO_IDEN),
                         "Activo": true,
@@ -688,6 +689,11 @@ angular.module('poluxClienteApp')
                         }
                       }
                       data_vinculacion.push(vinculacion);
+
+                      //verificar que el docente no este repetido
+                      var vinculados = [];
+                      vinculados.push(ctrl.docenteDirector.DIR_NRO_IDEN);
+                      var errorDocente = false;
 
                       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id!==55){
                         angular.forEach(ctrl.evaluadoresInicial, function(docente){
@@ -704,6 +710,11 @@ angular.module('poluxClienteApp')
                             }
                           }
                           data_vinculacion.push(vinculacion);
+                          if(vinculados.includes(docente.docente.DIR_NRO_IDEN)){
+                            errorDocente = true;
+                          }else{
+                            vinculados.push(docente.docente.DIR_NRO_IDEN);
+                          }
                         });
                       }
 
@@ -728,9 +739,17 @@ angular.module('poluxClienteApp')
                          ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
                        };
                        console.log(ctrl.rtaSol);
-                       poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                        ctrl.mostrarRespuesta(response);
-                      });
+                       if(!errorDocente){
+                        poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
+                          ctrl.mostrarRespuesta(response);
+                        });
+                       }else{
+                        swal(
+                          $translate.instant("ERROR"),
+                          $translate.instant("ERROR.DOCENTE_DUPLICADO"),
+                          'warning'
+                        );
+                       }
                 }
               }
 

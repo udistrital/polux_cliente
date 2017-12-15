@@ -115,7 +115,7 @@
                   </div>
                   <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
                   <!--Docente que evalua la propuesta -->
-                  <div ng-if="aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==6">
+                  <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==6">
                         <div ng-repeat="evaluador in aprobarSolicitud.evaluadoresInicial">
                             <div class="row">
                                 <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
