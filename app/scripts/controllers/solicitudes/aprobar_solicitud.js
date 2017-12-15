@@ -695,7 +695,7 @@ angular.module('poluxClienteApp')
                       vinculados.push(ctrl.docenteDirector.DIR_NRO_IDEN);
                       var errorDocente = false;
 
-                      if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id!==55){
+                     // if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id!==55){
                         angular.forEach(ctrl.evaluadoresInicial, function(docente){
                           vinculacion={
                             "Usuario": Number(docente.docente.DIR_NRO_IDEN),
@@ -716,7 +716,7 @@ angular.module('poluxClienteApp')
                             vinculados.push(docente.docente.DIR_NRO_IDEN);
                           }
                         });
-                      }
+                    //  }
 
                        ctrl.trabajo_grado={
                           TrabajoGrado: data_trabajo_grado,
