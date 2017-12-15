@@ -259,6 +259,7 @@ var text_es = {
       SIN_CARRERA:"No se ha seleccionado ninguna carrera",
       TIPO_DISTINCION:"Seleccione el tipo de distinción",
       TRABAJO_GRADO_EVALUAR:"Seleccione el trabajo de grado que desea evaluar",
+      EVALUADOR_NUMERO:"Seleccione el evaluador numero {{numero}}",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Cargar documento",
@@ -544,6 +545,7 @@ var text_en = {
       SIN_CARRERA:"No carreer selected",
       TIPO_DISTINCION:"Select the type of distinction",
       TRABAJO_GRADO_EVALUAR:"Select the degree job you want to evaluate",
+      EVALUADOR_NUMERO:"Select the evaluator number {{numero}}",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Load document",

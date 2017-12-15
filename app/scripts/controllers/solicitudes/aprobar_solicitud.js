@@ -9,7 +9,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesAprobarSolicitudCtrl', function (academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location) {
+  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location) {
     var ctrl = this;
 
     ctrl.respuestaSolicitud="";
@@ -186,9 +186,6 @@ angular.module('poluxClienteApp')
                 if(ctrl.dataSolicitud.modalidad === 1){
                   ctrl.isPasantia = true;
                 }
-                if(ctrl.dataSolicitud.modalidad !== 1 && ctrl.dataSolicitud.modalidad !== 8){
-                  ctrl.hasRevisor = true;
-                }
             }else{
               defered.resolve(ctrl.dataSolicitud.modalidad);
             }
@@ -205,6 +202,23 @@ angular.module('poluxClienteApp')
       return promise;
     };
 
+    ctrl.getEvaluadores = function(solicitud){
+      var defered = $q.defer();
+      poluxMidRequest.post("evaluadores/ObtenerEvaluadores",solicitud).then(function(response){
+        ctrl.evaluadoresInicial = new Array(parseInt(response.data.cantidad_evaluadores));
+        for(var i = 0; i<ctrl.evaluadoresInicial.length;i++){
+          var label = (ctrl.evaluadoresInicial.length>1)?$translate.instant('SELECT.EVALUADOR_NUMERO',{numero:(i+1)}):$translate.instant('SELECT.DOCENTE_REVISOR');
+          ctrl.evaluadoresInicial[i] = {
+            indice:i+1,
+            label: label,
+          };
+        }
+        ctrl.hasRevisor = ctrl.evaluadoresInicial.length>0;
+        defered.resolve(ctrl.evaluadoresInicial);
+      });    
+      return defered.promise;
+    };
+
     var parametrosSolicitud = $.param({
         query:"Id:"+ctrl.solicitud,
         limit:1
@@ -215,14 +229,14 @@ angular.module('poluxClienteApp')
           limit:0
       });
       ctrl.dataSolicitud = responseSolicitud.data[0];
-      console.log("solicitud");
-      console.log(ctrl.dataSolicitud);
 
       var promesaDetalles = ctrl.getDetallesSolicitud(parametrosDetallesSolicitud);
       var promesaEvaluar = ctrl.evaluarSolicitud();
 
+      var evaluadores = ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id);
+
       //Esperar a que se cumplan las promesas
-      $q.all([promesaDetalles, promesaEvaluar]).then(function(){
+      $q.all([promesaDetalles, promesaEvaluar,evaluadores]).then(function(){
         if(ctrl.dataSolicitud.TrabajoGrado !== null){
           var parametrosVinculacion = $.param({
               query:"Activo:true,TrabajoGrado:"+ctrl.dataSolicitud.TrabajoGrado.Id,
@@ -676,19 +690,21 @@ angular.module('poluxClienteApp')
                       data_vinculacion.push(vinculacion);
 
                       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id!==55){
-                        vinculacion={
-                          "Usuario": Number(ctrl.docenteRevisor.DIR_NRO_IDEN),
-                          "Activo": true,
-                          "FechaInicio": new Date(),
-                          //"FechaFin": null,
-                          "RolTrabajoGrado": {
-                            "Id": 3
-                          },
-                          "TrabajoGrado": {
-                            "Id": 0
+                        angular.forEach(ctrl.evaluadoresInicial, function(docente){
+                          vinculacion={
+                            "Usuario": Number(docente.docente.DIR_NRO_IDEN),
+                            "Activo": true,
+                            "FechaInicio": new Date(),
+                            //"FechaFin": null,
+                            "RolTrabajoGrado": {
+                              "Id": 3
+                            },
+                            "TrabajoGrado": {
+                              "Id": 0
+                            }
                           }
-                        }
-                        data_vinculacion.push(vinculacion);
+                          data_vinculacion.push(vinculacion);
+                        });
                       }
 
                        ctrl.trabajo_grado={
@@ -713,8 +729,8 @@ angular.module('poluxClienteApp')
                        };
                        console.log(ctrl.rtaSol);
                        poluxRequest.post("tr_respuesta_solicitud", ctrl.rtaSol).then(function(response) {
-                         ctrl.mostrarRespuesta(response);
-                       });
+                        ctrl.mostrarRespuesta(response);
+                      });
                 }
               }
 
