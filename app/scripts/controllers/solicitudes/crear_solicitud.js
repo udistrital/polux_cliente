@@ -242,7 +242,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("modalidad_tipo_solicitud",parametrosTiposSolicitudes).then(function(responseTiposSolicitudes){
             //ctrl.solicitudes = responseTiposSolicitudes.data;
             if(ctrl.tieneProrrogas){
-              angular.forEach(responseTiposSolicitudes.data, (solicitud) => {
+              angular.forEach(responseTiposSolicitudes.data, function(solicitud){
                 //si la solicitud es diferente de una de prorroga
                 if(solicitud.TipoSolicitud.Id!==7){
                   ctrl.solicitudes.push(solicitud);
