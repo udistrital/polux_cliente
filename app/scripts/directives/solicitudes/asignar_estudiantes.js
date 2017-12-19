@@ -75,7 +75,7 @@ angular.module('poluxClienteApp')
                       console.log(response);
                       if(response.data.includes("true")){
                       var parametrosTrabajoEstudiante = $.param({
-                          query:"Estudiante:"+ctrl.codigoEstudiante,
+                          query:"EstadoEstudianteTrabajoGrado:1,Estudiante:"+ctrl.codigoEstudiante,
                       });
                       poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
                           if(responseTrabajoEstudiante.data===null){
