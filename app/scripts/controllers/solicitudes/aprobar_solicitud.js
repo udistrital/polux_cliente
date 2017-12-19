@@ -286,6 +286,7 @@ angular.module('poluxClienteApp')
           limit:0
       });
       poluxRequest.get("respuesta_solicitud",parametros).then(function(responseRta){
+        var fechaRespuesta = new Date();
         console.log(responseRta);
         var data_documento = {};
         ctrl.vinculaciones=[];
@@ -299,7 +300,7 @@ angular.module('poluxClienteApp')
           "Id": Number(ctrl.respuestaSolicitud)
         }
         objRtaNueva.Justificacion=ctrl.justificacion;
-        objRtaNueva.Fecha=new Date();
+        objRtaNueva.Fecha=fechaRespuesta;
 
         if(ctrl.acta.id!=null){
 
@@ -369,7 +370,7 @@ angular.module('poluxClienteApp')
                       limit:0
                   });
 
-                  var promesaVinculacion = ctrl.obtenerVinculaciones(parametros, ctrl.dataSolicitud.TipoSolicitud);
+                  var promesaVinculacion = ctrl.obtenerVinculaciones(parametros, ctrl.dataSolicitud.TipoSolicitud,fechaRespuesta);
                   //Esperar a que se cumplan las promesas
                   promesaVinculacion.then(function(){
                     console.log(ctrl.vinculaciones);
@@ -679,7 +680,7 @@ angular.module('poluxClienteApp')
                       vinculacion={
                         "Usuario": Number(ctrl.docenteDirector.DIR_NRO_IDEN),
                         "Activo": true,
-                        "FechaInicio": new Date(),
+                        "FechaInicio": fechaRespuesta,
                         //"FechaFin": null,
                         "RolTrabajoGrado": {
                           "Id": 1
@@ -700,7 +701,7 @@ angular.module('poluxClienteApp')
                           vinculacion={
                             "Usuario": Number(docente.docente.DIR_NRO_IDEN),
                             "Activo": true,
-                            "FechaInicio": new Date(),
+                            "FechaInicio":fechaRespuesta,
                             //"FechaFin": null,
                             "RolTrabajoGrado": {
                               "Id": 3
@@ -817,7 +818,7 @@ angular.module('poluxClienteApp')
         }
     }
 
-    ctrl.obtenerVinculaciones = function(parametros, tipoSolicitud){
+    ctrl.obtenerVinculaciones = function(parametros, tipoSolicitud,fechaRespuesta){
       var defered = $q.defer();
       var promise = defered.promise;
 
@@ -827,7 +828,8 @@ angular.module('poluxClienteApp')
         var nuevaVinculacion = angular.copy(ctrl.vinculacionActual);
         //actualizar vinculacion actual
         ctrl.vinculacionActual.Activo=false;
-        ctrl.vinculacionActual.FechaFin=new Date();
+       // ctrl.vinculacionActual.FechaFin=new Date();
+        ctrl.vinculacionActual.FechaFin=fechaRespuesta;
 
         nuevaVinculacion.Id=null;
 
@@ -835,7 +837,7 @@ angular.module('poluxClienteApp')
           nuevaVinculacion.Usuario=Number(ctrl.docenteCambio.DIR_NRO_IDEN);
         }
 
-        nuevaVinculacion.FechaInicio=new Date();
+        nuevaVinculacion.FechaInicio=fechaRespuesta;
         //nuevaVinculacion.FechaFin=null;
         ctrl.vinculaciones.push(ctrl.vinculacionActual);
         ctrl.vinculaciones.push(nuevaVinculacion);

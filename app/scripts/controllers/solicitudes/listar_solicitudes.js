@@ -39,12 +39,12 @@ angular.module('poluxClienteApp')
       var promise = defered.promise;
       var d = new Date(solicitud.Fecha);
       d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 );
+      //alert(d);
+      //alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd hh:mm:ss")));
       var parametrosVinculado= $.param({
         query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd hh:mm:ss")),
         limit:1
       });
-      //alert(d);
-      //alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(new Date(solicitud.Fecha), "yyyy-MM-dd hh:mm:ss")));
       poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculado).then(function(responseVinculado){
         var parametrosDocentesUD = {
           "identificacion":responseVinculado.data[0].Usuario
