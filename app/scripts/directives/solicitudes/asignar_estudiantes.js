@@ -10,6 +10,7 @@ angular.module('poluxClienteApp')
   .directive('asignarEstudiantes', function (poluxRequest,academicaRequest,poluxMidRequest) {
     return {
       scope: {
+        estudiante: '=',
         estudiantes: '=',
         modalidad: '=',
         },
@@ -24,7 +25,6 @@ angular.module('poluxClienteApp')
         ctrl.cantidadExcedida = false;
         ctrl.estudianteNoEncontrado = false;
         ctrl.removable=false;
-        ctrl.solicitante = $scope.estudiantes;
         ctrl.nuevosEstudiantes = [];
 
         ctrl.agregarEstudiante = function(){
@@ -35,8 +35,8 @@ angular.module('poluxClienteApp')
             ctrl.cantidadExcedida = false;
             ctrl.estudianteNoEncontrado = false;
 
-            console.log(ctrl.solicitante);
-            if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && ctrl.solicitante!==ctrl.codigoEstudiante){
+            console.log("estudiante",$scope.estudiante);
+            if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && $scope.estudiante!==""+ctrl.codigoEstudiante){
                 ctrl.verificarEstudiante();
             }else{
               ctrl.estudianteRegistrado = true;
