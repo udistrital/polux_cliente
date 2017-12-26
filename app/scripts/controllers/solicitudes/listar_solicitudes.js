@@ -30,8 +30,6 @@ angular.module('poluxClienteApp')
     var defered = $q.defer();
     var promise = defered.promise;
     var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
-    console.log("resputadas",solicitud);
-    console.log("detalles",detalles);
     var nuevo = "";
     var anterior = "";
     var getVinculado = function(solicitud,rol,finInicio){
@@ -40,9 +38,9 @@ angular.module('poluxClienteApp')
       var d = new Date(solicitud.Fecha);
       d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 );
       //alert(d);
-      //alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd hh:mm:ss")));
+      alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd HH:mm:ss")));
       var parametrosVinculado= $.param({
-        query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd hh:mm:ss")),
+        query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd HH:mm:ss.")),
         limit:1
       });
       poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculado).then(function(responseVinculado){
@@ -390,6 +388,24 @@ angular.module('poluxClienteApp')
           query:"SolicitudTrabajoGrado.Id:"+solicitud,
           limit:0
       });
+
+      var getDocumento = function(fila,solicitud){
+        var defer = $q.defer();
+        if(fila.entity.Respuesta.EstadoSolicitud.Id!==1 && fila.entity.Respuesta.EstadoSolicitud.Id!==2){
+          var parametrosDocumentoSolicitud = $.param({
+            query:"SolicitudTrabajoGrado.Id:"+solicitud,
+            limit:0
+          });
+          poluxRequest.get("documento_solicitud",parametrosDocumentoSolicitud).then(function(documento){
+            ctrl.detallesSolicitud.documento = documento.data[0].DocumentoEscrito;
+            defer.resolve(documento);
+          });
+        }else{
+          defer.resolve();
+        }
+        return defer.promise;
+      }
+
       poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function(responseDetalles){
           poluxRequest.get("usuario_solicitud",parametrosSolicitud).then(function(responseEstudiantes){
             if(responseDetalles.data===null){
@@ -398,6 +414,7 @@ angular.module('poluxClienteApp')
               ctrl.detallesSolicitud = responseDetalles.data;
             }
               var solicitantes = "";
+              console.log("respuesta",fila.entity.Respuesta);
               ctrl.detallesSolicitud.id = fila.entity.Id;
               ctrl.detallesSolicitud.tipoSolicitud = fila.entity.ModalidadTipoSolicitud;
               ctrl.detallesSolicitud.fechaSolicitud = fila.entity.Fecha;
@@ -407,6 +424,7 @@ angular.module('poluxClienteApp')
               ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud).then(function(resultado){
                 ctrl.detallesSolicitud.resultado = resultado;
               });
+
               angular.forEach(responseEstudiantes.data,function(estudiante){
                   solicitantes += (", "+estudiante.Usuario) ;
               });
@@ -466,7 +484,9 @@ angular.module('poluxClienteApp')
                     }
               });
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
-              $('#modalVerSolicitud').modal('show');
+              getDocumento(fila,solicitud).then(function(){
+                $('#modalVerSolicitud').modal('show');
+              });
           });
       });
   }
