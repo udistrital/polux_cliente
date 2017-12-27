@@ -215,7 +215,7 @@ angular.module('poluxClienteApp')
         }
         ctrl.hasRevisor = ctrl.evaluadoresInicial.length>0;
         defered.resolve(ctrl.evaluadoresInicial);
-      });    
+      });
       return defered.promise;
     };
 
@@ -421,6 +421,13 @@ angular.module('poluxClienteApp')
                     });
                     poluxRequest.get("vinculacion_trabajo_grado",parametros).then(function(responseVinculaciones){
                       console.log(responseVinculaciones);
+
+                      //nul vinvulaciones: validar
+                      if(responseVinculaciones.data!==null){
+                        angular.forEach(responseVinculaciones.data, function(vinculado){
+                          vinculado.FechaFin=fechaRespuesta;
+                        });
+                      }
 
                       ctrl.rtaSol={
                         RespuestaAnterior:objRtaAnterior,
@@ -676,7 +683,7 @@ angular.module('poluxClienteApp')
                       data_areas.push(area);
                     });
 
-                      
+
                       vinculacion={
                         "Usuario": Number(ctrl.docenteDirector.DIR_NRO_IDEN),
                         "Activo": true,
