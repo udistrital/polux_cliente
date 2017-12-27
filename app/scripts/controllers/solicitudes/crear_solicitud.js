@@ -43,20 +43,31 @@ angular.module('poluxClienteApp')
       ctrl.codigo = $routeParams.idEstudiante;
 
       //buscar prorrogas anteriores
-      ctrl.getProrroga = function(id){
+      ctrl.getProrroga = function(){
         var defered = $q.defer();
 
-        var parametrosProrroga = $.param({
-          query:"EstadoSolicitud:6,activo:TRUE,SolicitudTrabajoGrado.TrabajoGrado.EstadoTrabajoGrado.Id:1,SolicitudTrabajoGrado:"+id,
+        var parametrosTrabajoGrado = $.param({
+          query:"TrabajoGrado.EstadoTrabajoGrado.Id:1,Estudiante:"+ctrl.codigo,
           limit: 1,
         });
-        poluxRequest.get("respuesta_solicitud",parametrosProrroga).then(function(responseProrroga){
-            if(responseProrroga.data!=null){
-              ctrl.tieneProrrogas = true;
-            }
+        //se consulta el trabajo de grado actual
+        poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoGrado).then(function(responseTrabajoGrado){
+          if(responseTrabajoGrado.data!==null){
+            //se consulta si el trabajo tiene solicitudes de proroga aprobadas
+            var parametrosProrroga = $.param({
+              query:"EstadoSolicitud:6,activo:TRUE,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:7,SolicitudTrabajoGrado.TrabajoGrado.Id:"+responseTrabajoGrado.data[0].Id,
+              limit: 1,
+            });
+            poluxRequest.get("respuesta_solicitud",parametrosProrroga).then(function(responseProrroga){
+                if(responseProrroga.data!=null){
+                  ctrl.tieneProrrogas = true;
+                }
+                defered.resolve(ctrl.tieneProrrogas);
+            });
+          }else{
             defered.resolve(ctrl.tieneProrrogas);
+          }
         });
-
         return defered.promise;
       }
 
@@ -94,13 +105,12 @@ angular.module('poluxClienteApp')
               poluxRequest.get("usuario_solicitud",parametrosUser).then(function(responseUser){
                   var solicitudesUsuario = responseUser.data;
                   var promesas = [];
+                  //solicitud de prorogga
+                  promesas.push(ctrl.getProrroga());
+                  //otras solicitudes
                   angular.forEach(solicitudesUsuario, function(solicitud){
                      //console.log(solicitud.SolicitudTrabajoGrado.Id);
                       promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
-                      //solicitud de prorogga
-                      if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id===7){
-                        promesas.push(ctrl.getProrroga(solicitud.SolicitudTrabajoGrado.Id));
-                      }
                   });
                   $q.all(promesas).then(function(){
                     console.log("actuales",actuales);
