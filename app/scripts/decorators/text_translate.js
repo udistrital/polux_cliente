@@ -306,6 +306,8 @@ var text_es = {
         PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
     },
     DOCUMENTO_RESPUESTA_SOLICITUD:"Documento con el que se respondió la solicitud",
+    EVALUADOR:"Evaluador(es)",
+    DIRECTOR_INTERNO:"Director interno",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -594,6 +596,8 @@ var text_en = {
         PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
     },
     DOCUMENTO_RESPUESTA_SOLICITUD:"Document with which the request was answered",
+    EVALUADOR:"Evaluator(s)",
+    DIRECTOR_INTERNO:"Internal director",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

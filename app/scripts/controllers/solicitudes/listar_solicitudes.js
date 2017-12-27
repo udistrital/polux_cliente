@@ -32,13 +32,71 @@ angular.module('poluxClienteApp')
     var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
     var nuevo = "";
     var anterior = "";
+
+    var getVinculadosIniciales = function(solicitud){
+      var defer = $q.defer();
+      var docentes = "";
+      var d = new Date(solicitud.Fecha);
+      d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 );
+      var parametrosVinculadoInicial= $.param({
+        query:"FechaInicio.contains:"+($filter('date')(d, "yyyy-MM-dd HH:mm:ss.")),
+        limit:0,
+        sortby:"RolTrabajoGRado",
+        order:"asc"
+      });
+      poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculadoInicial).then(function(responseVinculados){
+        if(responseVinculados.data!==null){
+
+          var getNombreDocente = function(docente){
+            var defer = $q.defer();
+            var parametrosDocentesUD = {
+              "identificacion":docente.Usuario
+            };
+            academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(responseDocente){
+                docente.nombre =  responseDocente[0].NOMBRE;
+                defer.resolve(docente);
+            });
+            return defer.promise;
+          }
+
+          var promises = [];
+          angular.forEach(responseVinculados.data, function(vinculado){
+            promises.push(getNombreDocente(vinculado));
+          });
+          $q.all(promises).then(function(){
+            var directorInterno = $translate.instant("DIRECTOR_INTERNO");  
+            var evaluador = $translate.instant("EVALUADOR");
+            angular.forEach(responseVinculados.data, function(vinculado){
+               if(vinculado.RolTrabajoGrado.Id===1){
+                directorInterno += ": "+vinculado.nombre;
+               }
+               if(vinculado.RolTrabajoGrado.Id===3){
+                if(evaluador===$translate.instant("EVALUADOR")){
+                  evaluador += ": "+vinculado.nombre;
+                }else{
+                  evaluador += ", "+vinculado.nombre
+                }
+               }
+            });
+            docentes = (directorInterno!==$translate.instant("DIRECTOR_INTERNO"))?docentes+". "+directorInterno:docentes;
+            docentes = (evaluador!==$translate.instant("EVALUADOR"))?docentes+". "+evaluador:docentes;
+            defer.resolve(docentes);
+          });
+        }else{
+          defer.resolve(docentes);
+        }
+      });
+
+      return defer.promise;
+    }
+
     var getVinculado = function(solicitud,rol,finInicio){
       var defered = $q.defer();
       var promise = defered.promise;
       var d = new Date(solicitud.Fecha);
       d.setTime( d.getTime() + d.getTimezoneOffset()*60*1000 );
       //alert(d);
-      alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd HH:mm:ss")));
+      //alert("TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd HH:mm:ss")));
       var parametrosVinculado= $.param({
         query:"TrabajoGrado:"+solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id+",RolTrabajoGrado.Id:"+rol+",Fecha"+finInicio+".contains:"+($filter('date')(d, "yyyy-MM-dd HH:mm:ss.")),
         limit:1
@@ -64,8 +122,12 @@ angular.module('poluxClienteApp')
       switch(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id){
         //solicitud inicial
         case 2:
-          resultado += ". " + $translate.instant('APROBADO.CURSAR_MODALIDAD') + ctrl.detallesSolicitud.modalidad;
-          defered.resolve(resultado);
+          getVinculadosIniciales(solicitud)
+          .then(function(response){
+            resultado += ". " + $translate.instant('APROBADO.CURSAR_MODALIDAD') + ctrl.detallesSolicitud.modalidad;
+            resultado += response;
+            defered.resolve(resultado);
+          });
           break;
         //solicitud de cancelación de modalidad
         case 3:
