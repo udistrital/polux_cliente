@@ -305,6 +305,7 @@ var text_es = {
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
         PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
     },
+    DOCUMENTO_RESPUESTA_SOLICITUD:"Documento con el que se respondió la solicitud",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -592,6 +593,7 @@ var text_en = {
         EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
         PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
     },
+    DOCUMENTO_RESPUESTA_SOLICITUD:"Document with which the request was answered",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
@@ -599,5 +601,6 @@ angular.module('poluxClienteApp')
             .translations("es", text_es)
             .translations("en", text_en);
         $translateProvider.preferredLanguage("es");
-        $translateProvider.useSanitizeValueStrategy("sanitizeParameters");
+        //$translateProvider.useSanitizeValueStrategy("sanitizeParameters");
+        $translateProvider.useSanitizeValueStrategy("escaped");
     });

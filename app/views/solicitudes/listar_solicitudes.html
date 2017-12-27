@@ -89,7 +89,11 @@
                   <div class="row">
                     <label class="col-sm-4 control-label"> {{'RESULTADO_SOLICITUD'|translate}}:  </label>
                     <label class="col-sm-8 control-label"> {{listarSolicitudes.detallesSolicitud.resultado}}  </label>
-                </div>
+                  </div>
+                  <div class="row" ng-if="listarSolicitudes.detallesSolicitud.documento!==undefined">
+                    <label class="col-sm-4 control-label"> {{'DOCUMENTO_RESPUESTA_SOLICITUD'|translate}}:  </label>
+                    <label ng-click="listarSolicitudes.getDocumento(listarSolicitudes.detallesSolicitud.documento.Enlace)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{listarSolicitudes.detallesSolicitud.documento.Titulo}}  </label>
+                  </div>
             </div>
         </div>
         <div class="panel panel-default" ng-if="listarSolicitudes.detallesSolicitud.length>0">
