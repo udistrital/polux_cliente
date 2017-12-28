@@ -24,6 +24,7 @@ angular.module('poluxClienteApp')
         ctrl.estudianteConTrabajo = false;
         ctrl.cantidadExcedida = false;
         ctrl.estudianteNoEncontrado = false;
+        ctrl.estudianteConSolicitud = false;
         ctrl.removable=false;
         ctrl.nuevosEstudiantes = [];
 
@@ -34,6 +35,7 @@ angular.module('poluxClienteApp')
             ctrl.estudianteConTrabajo = false;
             ctrl.cantidadExcedida = false;
             ctrl.estudianteNoEncontrado = false;
+            ctrl.estudianteConSolicitud = false;
 
             console.log("estudiante",$scope.estudiante);
             if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && $scope.estudiante!==""+ctrl.codigoEstudiante){
@@ -90,8 +92,31 @@ angular.module('poluxClienteApp')
                             poluxMidRequest.post("verificarRequisitos/CantidadModalidades",ctrl.datosModalidad).then(function(validado){
                                   console.log(validado)
                                   if(validado.data === "true"){
-                                    ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
-                                    $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                    var parametrosEstudiante = $.param({
+                                      query:"SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:2,Usuario:"+ctrl.codigoEstudiante,
+                                      sortby:"SolicitudTrabajoGrado",
+                                      order:"desc",
+                                      limit:1
+                                    });
+                                    poluxRequest.get("usuario_solicitud",parametrosEstudiante).then(function(responseSolicitud){
+                                      if(responseSolicitud.data!==null){
+                                        var idSolicitud = responseSolicitud.data[0].SolicitudTrabajoGrado.Id;
+                                        var parametrosSolicitudEstudiante = $.param({
+                                          query:"Activo:true,EstadoSolicitud.Id:1,SolicitudTrabajoGrado.Id:"+idSolicitud,
+                                        });
+                                        poluxRequest.get("respuesta_solicitud",parametrosSolicitudEstudiante).then(function(resultadoSolicitudes){
+                                          if(resultadoSolicitudes.data===null){
+                                            ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
+                                            $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                          }else{
+                                            ctrl.estudianteConSolicitud = true;
+                                          }
+                                        });
+                                      }else{
+                                        ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
+                                        $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                      }
+                                    });
                                   }else{
                                     ctrl.cantidadExcedida = true;
                                   }

@@ -41,6 +41,9 @@
         <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.cantidadExcedida">
             {{'CANTIDAD_EXCEDIDA' | translate}}
         </div>
+        <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.estudianteConSolicitud">
+            {{'ERROR.HAY_SOLICITUD_PENDIENTE' | translate}}
+        </div>
 
     <div class="row">
     <md-chips  class="custom-chips col-md-12" ng-model="d_asignarEstudiante.nuevosEstudiantes" readonly="true"
