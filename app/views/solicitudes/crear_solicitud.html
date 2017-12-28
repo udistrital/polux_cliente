@@ -18,7 +18,7 @@
           <label class="col-sm-2 control-label"> {{'SELECCIONAR_SOLICITUD' | translate}} </label>
           <div class="col-sm-10">
               <select class="form-control" ng-model="solicitud_seleccionada" ng-change="crearSolicitud.cargarDetalles(solicitud_seleccionada)">
-                    <option ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud.Id" ng-if="solicitud.TipoSolicitud.Id != 2 && solicitud.TipoSolicitud.Id!=11 "> {{solicitud.TipoSolicitud.Nombre}} </option>
+                    <option ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud" ng-if="solicitud.TipoSolicitud.Id != 2 && solicitud.TipoSolicitud.Id!=11 "> {{solicitud.TipoSolicitud.Nombre}} </option>
               </select>
           </div>
     </div>

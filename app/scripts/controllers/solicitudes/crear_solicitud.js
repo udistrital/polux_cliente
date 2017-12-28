@@ -35,6 +35,9 @@ angular.module('poluxClienteApp')
       ctrl.detallesCargados = false;
       ctrl.soliciudConDetalles = true;
       ctrl.conEstudiante = false;
+      //estudiantes que estan en el tg
+      ctrl.estudiantesTg=[];
+      //estudiantes que se agregan a la solicitud inicial
       ctrl.estudiantes = [];
       ctrl.detallesConDocumento = [];
       $scope.loadEstudiante = true;
@@ -132,7 +135,6 @@ angular.module('poluxClienteApp')
             }
 
         ctrl.verificarSolicitudes().then(function(puede){
-            ctrl.estudiantesTg=[];
             ctrl.puedeSolicitudAnterior = puede;
             ctrl.estudiantes.push(ctrl.codigo);
             var parametrosTrabajoEstudiante = $.param({
@@ -150,7 +152,9 @@ angular.module('poluxClienteApp')
                       });
                       poluxRequest.get("estudiante_trabajo_grado",parametros).then(function(autoresTg){
                           angular.forEach(autoresTg.data, function(estudiante){
-                              ctrl.estudiantesTg.push(estudiante);
+                              if(estudiante.Estudiante!==ctrl.codigo){
+                                ctrl.estudiantesTg.push(estudiante.Estudiante);
+                              }
                           });
                       });
 
@@ -264,14 +268,16 @@ angular.module('poluxClienteApp')
         });
       };
 
-      ctrl.cargarDetalles= function (tipoSolicitud, modalidad_seleccionada) {
+      ctrl.cargarDetalles= function (tipoSolicitudSeleccionada, modalidad_seleccionada) {
         $scope.loadDetalles = true;
         ctrl.siPuede=false;
         ctrl.detallesCargados = false;
         ctrl.espaciosElegidos = [];
         ctrl.estudiantes = [];
+        ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
+        var tipoSolicitud = tipoSolicitudSeleccionada.Id;
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
-        console.log(ctrl.ModalidadTipoSolicitud);
+        console.log(tipoSolicitudSeleccionada);
         if(modalidad_seleccionada!==undefined){
             ctrl.estudiante.Modalidad = modalidad_seleccionada;
             ctrl.modalidad = modalidad_seleccionada;
@@ -860,7 +866,19 @@ angular.module('poluxClienteApp')
             "Id": 0
           }
         });
-
+        //estudiantes que ya pertenecian al tg
+        //si es diferente a una solicitud de cancelación
+        if(ctrl.TipoSolicitud.TipoSolicitud.Id!==3){
+          angular.forEach(ctrl.estudiantesTg, function(estudiante){
+            data_usuarios.push({
+              "Usuario":estudiante,
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              }
+            });
+          });
+        }
+        //estudiantes agregados en la solicitudi inicial
         angular.forEach(ctrl.estudiantes, function(estudiante){
           data_usuarios.push({
             "Usuario":estudiante,
