@@ -7,7 +7,7 @@
  * # asignarArea
  */
 angular.module('poluxClienteApp')
-  .directive('asignarArea', function (poluxRequest,cadenaRequest) {
+  .directive('asignarArea', function (poluxRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -29,7 +29,7 @@ angular.module('poluxClienteApp')
         });
         /**/
         self.asignarArea=function(){
-          self.Nombre=cadenaRequest.cambiarTipoTitulo(self.Nombre);
+          //self.Nombre=cadenaRequest.cambiarTipoTitulo(self.Nombre);
           //verifica que el Nombre sea el mismo y asigna el Id(necesario para tablas con llave compuesta)
 
           angular.forEach($scope.setareas,function(value){
@@ -40,9 +40,10 @@ angular.module('poluxClienteApp')
                   /*  { "Id":self.Id,
                     "Nombre": self.Nombre
                   }*/
-                  value
-                );
+                     value
+                  );
                 }
+                self.Nombre = "";
             }
 
           });
@@ -52,7 +53,7 @@ angular.module('poluxClienteApp')
         };
         /**/
         self.verificarAreas=function(nombreArea){
-          nombreArea=cadenaRequest.cambiarTipoTitulo(nombreArea);
+          //nombreArea=cadenaRequest.cambiarTipoTitulo(nombreArea);
           if ($scope.setareas==null) {
             return true;
           }
