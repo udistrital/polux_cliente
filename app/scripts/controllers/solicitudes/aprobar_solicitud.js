@@ -678,7 +678,8 @@ angular.module('poluxClienteApp')
                         },
                         "TrabajoGrado": {
                           "Id": 0
-                        }
+                        },
+                        "Activo": true,
                       }
                       data_areas.push(area);
                     });
