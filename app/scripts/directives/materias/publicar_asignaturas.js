@@ -34,20 +34,6 @@ angular.module('poluxClienteApp')
           //showGridFooter: true
         };
 
-        ctrl.gridOptions.columnDefs = [
-          { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "15%" },
-          { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
-          { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "15%" },
-          {
-            name: 'check',
-            displayName: $translate.instant('SELECCIONAR'),
-            type: 'boolean',
-            width: "15%",
-            //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
-            cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
-          }
-        ];
-
         $scope.$watch("pensum", function () {
           ctrl.pensum = $scope.pensum;
           ctrl.asignaturas = [];
@@ -58,7 +44,7 @@ angular.module('poluxClienteApp')
             academicaRequest.buscarAsignaturas({
               'carrera': $scope.carrera,
               'pensum': $scope.pensum,
-              'semestre': 1
+              //'semestre': 1
             }).then(function (response) {
               ctrl.asignaturas = response;
               ctrl.habilitar = false;
@@ -80,6 +66,21 @@ angular.module('poluxClienteApp')
                 minRowsToShow: ctrl.gridOptions.data.length,
 
               };
+
+              ctrl.gridOptions.columnDefs = [
+              { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "10%" },
+              { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
+              { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "10%" },
+              { name: 'semestre', displayName: $translate.instant('SEMESTRE'), width: "10%" },
+              {
+                name: 'check',
+                displayName: $translate.instant('SELECCIONAR'),
+                type: 'boolean',
+                width: "15%",
+                //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
+                cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
+              }
+            ];
             });
           }
 
@@ -131,6 +132,7 @@ angular.module('poluxClienteApp')
                     asignatura: asignatura[0].ASI_COD,
                     nombre: asignatura[0].ASI_NOMBRE,
                     creditos: asignatura[0].PEN_CRE,
+                    semestre: asignatura[0].PEN_SEM,
                     check: response.data[0].Activo
                   };
 
@@ -147,6 +149,7 @@ angular.module('poluxClienteApp')
                     asignatura: asignatura[0].ASI_COD,
                     nombre: asignatura[0].ASI_NOMBRE,
                     creditos: asignatura[0].PEN_CRE,
+                    semestre: asignatura[0].PEN_SEM,
                     check: false
                   };
                   ctrl.mostrar.push(nuevo);
@@ -164,6 +167,7 @@ angular.module('poluxClienteApp')
                 asignatura: asignatura[0].ASI_COD,
                 nombre: asignatura[0].ASI_NOMBRE,
                 creditos: asignatura[0].PEN_CRE,
+                semestre: asignatura[0].PEN_SEM,
                 check: false
               };
               ctrl.mostrar.push(nuevo);
@@ -366,8 +370,8 @@ angular.module('poluxClienteApp')
             });
 
             swal(
-              'Espacios Académicos Guardados',
-              'Los espacios académicos seleccionados podrán ser elegidos por los estudiantes para optar por la modalidad de trabajo de grado',
+              $translate.instant('ESPACIOS_ACADEMICOS_GUARDADOS'),
+              $translate.instant('MENSAJE_ESPACIOS_ACADEMICOS_GUARDADOS'),
               'success'
             );
             $route.reload();
@@ -375,8 +379,8 @@ angular.module('poluxClienteApp')
 
           else {
             swal(
-              'Seleccione más espacios académicos',
-              "La cantidad de créditos de los espacios académicos seleccionados debe ser igual o superior a " + ctrl.creditosMinimos + " créditos",
+              $translate.instant('MAS_ESPACIOS_ACADEMICOS'),
+              $translate.instant('CREDITOS_ESPACIOS_ACADEMICOS_INSUFICIENTES', {creditos:ctrl.creditosMinimos}),
               'warning'
             );
             ctrl.habilitar = false;
