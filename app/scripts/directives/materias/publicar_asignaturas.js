@@ -7,7 +7,7 @@
  * # materias/publicarAsignaturas
  */
 angular.module('poluxClienteApp')
-  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest) {
+  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q) {
     return {
       restrict: 'E',
       scope: {
@@ -20,21 +20,23 @@ angular.module('poluxClienteApp')
 
       templateUrl: 'views/directives/materias/publicar_asignaturas.html',
       controller: function ($scope, $route, $translate) {
+        $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
+        $scope.load = true;
         var ctrl = this;
         ctrl.creditosMinimos = 0;
         ctrl.selected = [];
         ctrl.creditos = 0;
         ctrl.totalCreditos = 0;
-        ctrl.pensum = 0;
         ctrl.habilitar = true;
         ctrl.habilitar2 = true;
 
-        //uigrid
         ctrl.gridOptions = {
           //showGridFooter: true
         };
 
         $scope.$watch("pensum", function () {
+          $scope.load = true;
+          var promiseArr = [];
           ctrl.pensum = $scope.pensum;
           ctrl.asignaturas = [];
           ctrl.mostrar = [];
@@ -51,6 +53,9 @@ angular.module('poluxClienteApp')
               ctrl.habilitar2 = true;
 
               angular.forEach(ctrl.asignaturas, function (value) {
+                var defered = $q.defer();
+                var promise = defered.promise;
+                promiseArr.push(promise);
                 ctrl.totalCreditos = 0;
 
                 academicaRequest.buscarAsignaturas({
@@ -58,31 +63,35 @@ angular.module('poluxClienteApp')
                 }).then(function (response) {
                   ctrl.asignatura = response;
                   ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, ctrl.asignatura);
+                  defered.resolve(response);
                 });
 
               });
-              ctrl.gridOptions = {
-                data: ctrl.mostrar,
-                minRowsToShow: ctrl.gridOptions.data.length,
 
-              };
-
-              ctrl.gridOptions.columnDefs = [
-              { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "10%" },
-              { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
-              { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "10%" },
-              { name: 'semestre', displayName: $translate.instant('SEMESTRE'), width: "10%" },
-              {
-                name: 'check',
-                displayName: $translate.instant('SELECCIONAR'),
-                type: 'boolean',
-                width: "15%",
-                //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
-                cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
-              }
-            ];
+              $q.all(promiseArr).then(function(){
+                  ctrl.gridOptions.data = ctrl.mostrar;
+                  $scope.load = false;
+                  ctrl.gridOptions.columnDefs = [
+                    { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "10%" },
+                    { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
+                    { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "10%" },
+                    { name: 'semestre', displayName: $translate.instant('SEMESTRE'), width: "10%" },
+                    {
+                      name: 'check',
+                      displayName: $translate.instant('SELECCIONAR'),
+                      type: 'boolean',
+                      width: "15%",
+                      //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
+                      cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
+                    }
+                  ];
+              }).catch(function(error){
+                  console.log(error);
+              });
             });
+
           }
+
 
         });
 
@@ -109,7 +118,6 @@ angular.module('poluxClienteApp')
             query: "CodigoCarrera:" + carrera + ",Anio:" + anio + ",Periodo:" + periodo + ",CodigoPensum:" + pensum
           });
           poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-            console.log(response);
             if (response.data != null) {
               ctrl.id = response.data[0].Id
 

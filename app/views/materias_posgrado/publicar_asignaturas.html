@@ -9,13 +9,16 @@
               <p>Usuario:  <input type="text" name="userId" ng-model="userId" required></input><br></p>
             </div>
         </div>
-
-        <div ng-if="publicarAsignaturas.carreras.length>0">
+        <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
+        <div ng-if="publicarAsignaturas.carreras.length>0 && load!==true">
           <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
           <label for="anioSel" class="col-sm-10 control-label">{{publicarAsignaturas.periodo.APE_ANO}}</label>
 
           <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
           <label for="anioSel" class="col-sm-10 control-label">{{publicarAsignaturas.periodo.APE_PER}}</label>
+
+          <!--<pre>{{publicarAsignaturas.pensumSeleccionado}}</pre>
+          <pre>{{publicarAsignaturas.carreraSeleccionada}}</pre>-->
 
           <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
           <div class="col-sm-10">
@@ -31,7 +34,7 @@
               </form>
           </div>
 
-          <div ng-if="publicarAsignaturas.pensums">
+          <div ng-if="publicarAsignaturas.pensums && load!==true">
             <form name="myForm2">
               <label for="pensum" class="col-sm-2 control-label">{{'PENSUM' | translate}}</label>
               <div class="col-sm-10">
@@ -57,7 +60,7 @@
           </div>
         </div>
 
-        <div ng-if="publicarAsignaturas.carreras.length===0" class="alert alert-danger">
+        <div ng-if="publicarAsignaturas.carreras.length===0 && load!==true" class="alert alert-danger">
           {{'NO_CARRERAS_POSGRADO' | translate}}
         </div>
 

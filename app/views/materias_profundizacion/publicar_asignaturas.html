@@ -2,25 +2,24 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         {{'PUBLICACION_DE_ESPACIOS' | translate}} </div>
-
     <div class="panel-body">
 
-      <div class="row">
-          <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-6">
               <p>Usuario:  <input type="text" name="userId" ng-model="userId" required></input><br></p>
-          </div>
-      </div>
+            </div>
+        </div>
+        <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
+        <div ng-if="profundizacion_publicarAsignaturas.carreras.length>0 && load!==true">
+          <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_ANO}}</label>
 
-      <div ng-if="profundizacion_publicarAsignaturas.carreras.length>0">
-        <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
-        <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_ANO}}</label>
+          <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_PER}}</label>
 
-        <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
-        <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_PER}}</label>
-
-        <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
-        <div class="col-sm-10">
-            <form name="myForm">
+          <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
+          <div class="col-sm-10">
+              <form name="myForm">
                 <ui-select name="carrera" ng-model="profundizacion_publicarAsignaturas.carreraSeleccionada" required on-select="profundizacion_publicarAsignaturas.myFunc(profundizacion_publicarAsignaturas.carreraSeleccionada)" style="width:95%;" theme="bootstrap" >
                     <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.CODIGO_CARRERA}} - {{$select.selected.CARRERA}}
                     </ui-select-match>
@@ -28,42 +27,42 @@
                         <span ng-bind="item.CODIGO_CARRERA"></span> - <span ng-bind="item.CARRERA"></span>
                     </ui-select-choices>
                 </ui-select>
-                <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}} </span>
-            </form>
-        </div>
+                  <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}}</span>
+              </form>
+          </div>
 
-        <div ng-if="profundizacion_publicarAsignaturas.pensums">
-          <form name="myForm2">
-            <label for="carrera" class="col-sm-2 control-label">{{'PENSUM' | translate}}</label>
-            <div class="col-sm-10">
-                <ui-select ng-model="profundizacion_publicarAsignaturas.pensumSeleccionado" required style="width:95%; margin-top: 10px;" name="pensum" theme="bootstrap" >
-                    <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.PEN_NRO}}
-                    </ui-select-match>
-                    <ui-select-choices repeat="item.PEN_NRO as item in profundizacion_publicarAsignaturas.pensums| filter: $select.search">
-                        <span ng-bind="item.PEN_NRO"></span>
-                    </ui-select-choices>
-                </ui-select>
-                <span ng-show="myForm2.pensum.$invalid" style="color: red">{{'SELECCIONAR_PENSUM' | translate}}</span>
-            </div>
-          </form>
-          <div ng-if="profundizacion_publicarAsignaturas.pensumSeleccionado">
-            <div class="col-sm-12">
-                <publicar-asignaturas anio="profundizacion_publicarAsignaturas.periodo.APE_ANO" periodo=profundizacion_publicarAsignaturas.periodo.APE_PER carrera=profundizacion_publicarAsignaturas.carreraSeleccionada pensum=profundizacion_publicarAsignaturas.pensumSeleccionado modalidad=profundizacion_publicarAsignaturas.modalidad />
+          <div ng-if="profundizacion_publicarAsignaturas.pensums && load!==true">
+            <form name="myForm2">
+              <label for="pensum" class="col-sm-2 control-label">{{'PENSUM' | translate}}</label>
+              <div class="col-sm-10">
+                    <ui-select ng-model="profundizacion_publicarAsignaturas.pensumSeleccionado" required style="width:95%; margin-top: 10px;" name="pensum" theme="bootstrap" >
+                        <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.PEN_NRO}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="item.PEN_NRO as item in profundizacion_publicarAsignaturas.pensums| filter: $select.search">
+                            <span ng-bind="item.PEN_NRO"></span>
+                        </ui-select-choices>
+                    </ui-select>
+                    <span ng-show="myForm2.pensum.$invalid" style="color: red">{{'SELECCIONAR_PENSUM' | translate}}</span>
+              </div>
+            </form>
+            <div ng-if="profundizacion_publicarAsignaturas.pensumSeleccionado">
+                <div class="col-sm-12">
+                    <publicar-asignaturas anio="profundizacion_publicarAsignaturas.periodo.APE_ANO" periodo=profundizacion_publicarAsignaturas.periodo.APE_PER carrera=profundizacion_publicarAsignaturas.carreraSeleccionada pensum=profundizacion_publicarAsignaturas.pensumSeleccionado modalidad=profundizacion_publicarAsignaturas.modalidad />
+                </div>
             </div>
           </div>
 
+          <div ng-if="profundizacion_publicarAsignaturas.pensums.length===0" class="alert alert-danger" >
+            <strong>{{'ERROR' | translate}}</strong> {{'NO_PENSUMS' | translate}}
+          </div>
         </div>
-        <div ng-if="profundizacion_publicarAsignaturas.pensums.length===0" class="alert alert-danger" >
-          <strong>{{'ERROR' | translate}}</strong> {{'NO_PENSUMS' | translate}}
+
+        <div ng-if="profundizacion_publicarAsignaturas.carreras.length===0 && load!==true" class="alert alert-danger">
+          {{'NO_CARRERAS_POSGRADO' | translate}}
         </div>
-      </div>
 
-      <div ng-if="profundizacion_publicarAsignaturas.carreras.length===0" class="alert alert-danger">
-        {{'NO_CARRERAS_PREGRADO' | translate}}
-      </div>
-
-</div>
-<div class="panel-footer">
-    Panel Footer
-</div>
+    </div>
+    <div class="panel-footer">
+        Panel Footer
+    </div>
 </div>

@@ -254,6 +254,8 @@ var text_es = {
       CARGANDO_SOLICITUDES:"Cargando solicitudes",
       CARGANDO_DOCUMENTO:"Cargando documento",
       CARGANDO_DETALLES_SOLICITUD:"Cargando detalles de la solicitud",
+      CARGANDO_ASIGNATURAS:"Cargando espacios académicos",
+      CARGANDO_PENSUMS:"Cargando pensums",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -553,6 +555,8 @@ var text_en = {
       CARGANDO_SOLICITUDES:"Loading requests",
       CARGANDO_DOCUMENTO:"Loading document",
       CARGANDO_DETALLES_SOLICITUD:"Loading request details",
+      CARGANDO_ASIGNATURAS:"Loading academic spaces",
+      CARGANDO_PENSUMS:"Loading pensums",
     },
     SELECT:{
       SELECCIONE:"Select an option",
