@@ -23,6 +23,9 @@ angular.module('poluxClienteApp')
         ctrl.carreras = [];
         ctrl.gridOptions = {};
         ctrl.estudiante = $scope.estudiante;
+        if($scope.estudiante.Modalidad===3){
+          $scope.estudiante.Tipo="PREGRADO";
+        }
         ctrl.tipo = $scope.estudiante.Tipo;
         $scope.sols = [];
         if($scope.e===undefined){
@@ -51,7 +54,6 @@ angular.module('poluxClienteApp')
             fields: "CodigoCarrera,CodigoPensum"
           });
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
-            //carreras
 
             angular.forEach(response.data, function(value) {
               if(value.CodigoCarrera!==$scope.e.Codigo){
@@ -60,14 +62,14 @@ angular.module('poluxClienteApp')
                 'tipo': ctrl.tipo
                };
                academicaRequest.obtenerCarreras(parametros).then(function(response2) {
-                if (response2 != null) {
+
+                if (response2 !== 'null') {
                   var carrera = {
                     "Codigo": value.CodigoCarrera,
                     "Nombre": response2[0].NOMBRE,
                     "Pensum": value.CodigoPensum
                   };
                     ctrl.carreras.push(carrera);
-
                 }
 
                });
