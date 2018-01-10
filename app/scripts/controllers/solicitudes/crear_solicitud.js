@@ -754,7 +754,7 @@ angular.module('poluxClienteApp')
                     .then(function(doc) {
                       var url = doc.uid;
                       callback(url);
-                       defered.resolve(url);
+                      defered.resolve(url);
                     })
                     .catch(function(error) {
                       throw error;
@@ -868,16 +868,16 @@ angular.module('poluxClienteApp')
         });
         //estudiantes que ya pertenecian al tg
         //si es diferente a una solicitud de cancelación
-        if(ctrl.TipoSolicitud.TipoSolicitud.Id!==3){
-          angular.forEach(ctrl.estudiantesTg, function(estudiante){
-            data_usuarios.push({
-              "Usuario":estudiante,
-              "SolicitudTrabajoGrado": {
-                "Id": 0
-              }
+          if(ctrl.TipoSolicitud.TipoSolicitud.Id!==3){
+            angular.forEach(ctrl.estudiantesTg, function(estudiante){
+              data_usuarios.push({
+                "Usuario":estudiante,
+                "SolicitudTrabajoGrado": {
+                  "Id": 0
+                }
+              });
             });
-          });
-        }
+          }
         //estudiantes agregados en la solicitudi inicial
         angular.forEach(ctrl.estudiantes, function(estudiante){
           data_usuarios.push({
