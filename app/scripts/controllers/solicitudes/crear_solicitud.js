@@ -793,8 +793,8 @@ angular.module('poluxClienteApp')
                       ctrl.cargarSolicitudes();
                   }).catch(function(error){
                       swal(
-                        $translate.instant("ERROR.SUBIR_DOCUMENTO"),
-                        $translate.instant("VERIFICAR_DOCUMENTO"),
+                        $translate.instant("ERROR.CARGA_SOLICITUDES"),
+                        $translate.instant("ERROR.ENVIO_SOLICITUD"),
                         'warning'
                       );
                       $scope.loadFormulario = false;
@@ -868,6 +868,7 @@ angular.module('poluxClienteApp')
         });
         //estudiantes que ya pertenecian al tg
         //si es diferente a una solicitud de cancelación
+        if(ctrl.TipoSolicitud.TipoSolicitud!== undefined){
           if(ctrl.TipoSolicitud.TipoSolicitud.Id!==3){
             angular.forEach(ctrl.estudiantesTg, function(estudiante){
               data_usuarios.push({
@@ -878,7 +879,8 @@ angular.module('poluxClienteApp')
               });
             });
           }
-        //estudiantes agregados en la solicitudi inicial
+        }
+        //estudiantes agregados en la solicitud inicial
         angular.forEach(ctrl.estudiantes, function(estudiante){
           data_usuarios.push({
             "Usuario":estudiante,
@@ -887,7 +889,6 @@ angular.module('poluxClienteApp')
             }
           });
         });
-
 
         //Respuesta de la solicitud
          data_respuesta={
