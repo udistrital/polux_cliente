@@ -78,7 +78,7 @@ angular.module('poluxClienteApp')
         ];
 
 
-        $http.get('http://10.20.0.254/configuracion_api/v1/menu_opcion_padre/ArbolMenus/Admin Polux')
+        $http.get('http://10.20.0.254/configuracion_api/v1/menu_opcion_padre/ArbolMenus/Admin%20Polux/Pólux')
             .then(function(response) {
                 $scope.menu_service = response.data;
                 recorrerArbol($scope.menu_service, "");

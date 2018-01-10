@@ -505,7 +505,7 @@ angular.module('poluxClienteApp')
                       }
                   });
               }else{
-                  console.log("hay solicitudes pendietnes");
+                  console.log("hay solicitudes pendientes");
                   ctrl.siPuedeAnteriores = true;
                   $scope.loadDetalles = false;
                   ctrl.detalles = [];
@@ -912,6 +912,7 @@ angular.module('poluxClienteApp')
            UsuariosSolicitud: data_usuarios
          }
 
+         console.log(ctrl.solicitud);
 
          poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
             console.log(response.data);
