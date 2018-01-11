@@ -12,7 +12,7 @@ angular.module('academicaService', [])
 
         var path = "http://10.20.0.127/polux/index.php?data=";
         //var periodo = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0On4uKrtXAvwZ0V0Rn0jx7a9DpWV8USQg0uH8PEHS9mgJw";
-        var carreras = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OlFcjLj2zQ5wW34uJpjj5pwevOJCnr9Xzx9Z7KT38Atd3O0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb";
+        //var carreras = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OlFcjLj2zQ5wW34uJpjj5pwevOJCnr9Xzx9Z7KT38Atd3O0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb";
         //var pensums = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OnIVBtC05kzstJX6_qx6LgDBlcNYcrQP1Lz8z2iiZvWgQ";
         var asignaturas = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OnPocKxqi6prdfjXOq1yymHX3abRIdvETpaO8S9lxTuR4Xq2CqQ4Xv9hT1-aS2d1AWBjKJ3XZ5zFWIghLxhGhnA";
         var promedio = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmC_hbsex4Tv1IrqkTYjEq0MQj_sfpjVUNQ7FG1R2tKwmypXuJCD3kPEhE-4YJTOXR-nf3m2xfG7TTOR1itS2t-";
@@ -46,10 +46,6 @@ angular.module('academicaService', [])
 
             obtenerCoordinador: function(parametros) {
                 return this.obtener(coordinador_carrera, parametros);
-            },
-
-            obtenerCarreras: function(parametros) {
-                return this.obtener(carreras, parametros);
             },
 
             buscarAsignaturas: function(parametros) {

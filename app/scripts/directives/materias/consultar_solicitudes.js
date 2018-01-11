@@ -109,14 +109,10 @@ angular.module('poluxClienteApp')
 
                     angular.forEach(response.data, function(value) {
                       ctrl.solicitud2.push(value);
-                      //buscar nombre de la carrera
-                      var parametros = {
-                        'codigo': value.CodigoCarrera
-                      };
                       ctrl.carreras.push(value.CodigoCarrera);
-                      console.log(ctrl.carreras);
 
-                      academicaRequest.obtenerCarreras(parametros).then(function(resp){
+                      //buscar nombre de la carrera
+                      academicaRequest.get("carrera", value.CodigoCarrera).then(function(resp){
                         var parametros=$.param({
                           query:"SolicitudMaterias:"+value.Id,
                           related:"IdAsignaturasElegibles"
@@ -141,12 +137,17 @@ angular.module('poluxClienteApp')
                           ctrl.asignaturas=resp2.data;
                           var aaa=ctrl.obtenerNombres(resp2.data);
 
+                          var resultado=null;
+                          if (!angular.isUndefined(resp2.data.carrerasCollection.carrera)) {
+                              var resultado=response2.data.carrerasCollection.carrera[0];
+                          }
+
                           var sol = {
                             "Id": value.Id,
                             "Fecha": value.Fecha,
                             "Estado": value.Estado,
                             "Formalizacion": value.Formalizacion,
-                            "Carrera": resp[0].NOMBRE
+                            "Carrera": resultado.nombre
                           };
                           var data = {
                             "Solicitud": sol,

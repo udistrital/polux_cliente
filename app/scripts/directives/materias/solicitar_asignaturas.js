@@ -45,33 +45,39 @@ angular.module('poluxClienteApp')
         }
 
         academicaRequest.get("periodo_academico","X").then(function(response){
+          console.log(response);
           if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
               ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
           }
 
           //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
           var parametros = $.param({
-            query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER,
+            query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo,
             fields: "CodigoCarrera,CodigoPensum"
           });
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
-
+            console.log(response);
             angular.forEach(response.data, function(value) {
               if(value.CodigoCarrera!==$scope.e.Codigo){
-               var parametros = {
+               /*var parametros = {
                 'codigo': value.CodigoCarrera,
                 'tipo': ctrl.tipo
-               };
-               academicaRequest.obtenerCarreras(parametros).then(function(response2) {
+              };*/
 
-                if (response2 !== 'null') {
-                  var carrera = {
-                    "Codigo": value.CodigoCarrera,
-                    "Nombre": response2[0].NOMBRE,
-                    "Pensum": value.CodigoPensum
-                  };
-                    ctrl.carreras.push(carrera);
-                }
+               academicaRequest.get("carrera_codigo_nivel",value.CodigoCarrera+"/"+ctrl.tipo).then(function(response2){
+                 console.log(response2);
+                 var resultado=null;
+                 if (!angular.isUndefined(response2.data.carrerasCollection.carrera)) {
+                     var resultado=response2.data.carrerasCollection.carrera[0];
+                 }
+                 if(resultado!==null){
+                   var carrera = {
+                     "Codigo": value.CodigoCarrera,
+                     "Nombre": resultado.nombre,
+                     "Pensum": value.CodigoPensum
+                   };
+                     ctrl.carreras.push(carrera);
+                 }
 
                });
              }
@@ -92,7 +98,7 @@ angular.module('poluxClienteApp')
 
           //buscar la carrera en: carrera_elegible
           var parametros = $.param({
-            query: "Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER +",CodigoCarrera:"+carreraSeleccionada.Codigo
+            query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo +",CodigoCarrera:"+carreraSeleccionada.Codigo
           });
 
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
