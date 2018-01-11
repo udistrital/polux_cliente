@@ -65,11 +65,10 @@ angular.module('poluxClienteApp')
       }
   });
 
-  var parametros = {
-    'tipo': 'POSGRADO'
-  };
-  academicaRequest.obtenerCarreras(parametros).then(function(response){
-    ctrl.carreras=response;
+  academicaRequest.get("carreras","POSGRADO").then(function(response){
+    if (!angular.isUndefined(response.data.carrerasCollection.carrera)) {
+        ctrl.carreras=response.data.carrerasCollection.carrera;
+    }
   });
 
 //solicitudes iniciales de la modalidad de materias de posgrado

@@ -6,17 +6,17 @@
     <div class="panel-body">
       <!--<pre>{{listarsolicitudes.sols | json}}</pre>-->
       <label for="anio" class="col-sm-2 control-label"> {{'ANO' | translate}}</label>
-      <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_listarSolicitudes.periodo.APE_ANO}}</label>
+      <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_listarSolicitudes.periodo.anio}}</label>
 
       <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
-      <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_listarSolicitudes.periodo.APE_PER}}</label>
+      <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_listarSolicitudes.periodo.periodo}}</label>
 
       <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
       <div class="col-sm-10">
         <form name="myForm">
           <select ng-model="carreraSeleccionada" name="carrera"  class="form-control" required
           ng-change="profundizacion_listarSolicitudes.buscarSolicitudes(carreraSeleccionada)">
-          <option ng-repeat="p in profundizacion_listarSolicitudes.carreras" ng-value="p.CODIGO">{{p.NOMBRE}} </option>
+          <option ng-repeat="p in profundizacion_listarSolicitudes.carreras" ng-value="p.codigo">{{p.nombre}} </option>
           </select>
           <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}} </span>
         </form>

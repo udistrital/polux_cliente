@@ -25,10 +25,8 @@ angular.module('poluxClienteApp')
                 ctrl.modalidades = response.data;
             });
 
-            academicaRequest.obtenerCarreras({
-                'tipo': 'PREGRADO'
-            }).then(function(response) {
-                ctrl.carreras = response;
+            academicaRequest.get("carreras","PREGRADO").then(function(response){
+                ctrl.carreras = response.data.carrerasCollection;
             });
         };
 

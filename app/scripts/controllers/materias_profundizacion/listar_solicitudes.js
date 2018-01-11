@@ -31,11 +31,10 @@ angular.module('poluxClienteApp')
         }
     });
 
-    var parametros = {
-      'tipo': 'PREGRADO'
-   };
-    academicaRequest.obtenerCarreras(parametros).then(function(response){
-      ctrl.carreras=response;
+    academicaRequest.get("carreras","PREGRADO").then(function(response){
+      if (!angular.isUndefined(response.data.carrerasCollection.carrera)) {
+          ctrl.carreras=response.data.carrerasCollection.carrera;
+      }
     });
 
     ctrl.buscarSolicitudes = function(carrera){

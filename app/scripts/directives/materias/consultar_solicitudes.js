@@ -173,12 +173,8 @@ angular.module('poluxClienteApp')
                     });
                     //buscar la solicitud asociada al TG
                     poluxRequest.get("solicitud_materias",parametros).then(function(response){
-                      //buscar nombre de la carrera
-                      var parametros = {
-                        'codigo': response.data[0].CodigoCarrera
-                     };
 
-                      academicaRequest.obtenerCarreras(parametros).then(function(resp){
+                      academicaRequest.get("carrera", response.data[0].CodigoCarrera).then(function(resp){
 
                         var parametros=$.param({
                           query:"IdSolicitudMaterias:"+response.data[0].Id,
@@ -202,12 +198,15 @@ angular.module('poluxClienteApp')
                           ctrl.asignaturas=resp2.data;
                           var aaa=ctrl.obtenerNombres(resp2.data);
 
+                          if (!angular.isUndefined(resp.data.carrerasCollection.carrera)) {
+                              var carrera=response.data.carrerasCollection.carrera[0].nombre;
+                          }
                           var sol = {
                             "Id": response.data[0].Id,
                             "Fecha": response.data[0].Fecha,
                             "Estado": response.data[0].Estado,
                             "Formalizacion": response.data[0].Formalizacion,
-                            "Carrera": resp[0].NOMBRE
+                            "Carrera":carrera
                           };
                           var data = {
                             "Solicitud": sol,
