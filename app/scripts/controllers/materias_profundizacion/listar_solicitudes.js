@@ -43,7 +43,7 @@ angular.module('poluxClienteApp')
       if(carrera){
         $scope.sols=[];
         var parametros=$.param({
-          query:"Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER+",CodigoCarrera:"+carrera
+          query:"Anio:"+ctrl.periodo.periodo+",Periodo:"+ctrl.periodo.anio+",CodigoCarrera:"+carrera
         });
         //buscar solicitudes
         poluxRequest.get("solicitud_materias",parametros).then(function(response){

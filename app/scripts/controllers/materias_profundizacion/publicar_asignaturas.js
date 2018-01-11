@@ -41,13 +41,13 @@ angular.module('poluxClienteApp')
       ctrl.pensums=[];
       $scope.msgCargandoPensums = $translate.instant('LOADING.CARGANDO_PENSUMS');
       $scope.load = true;
-      academicaRequest.obtenerPensums({
-       'carrera' : carreraSeleccionada
-      }).then(function(response){
-        ctrl.carrera=carreraSeleccionada;
-        ctrl.pensums=response;
-        ctrl.pensumSeleccionado=null;
-        $scope.load = false;
+      academicaRequest.get("pensums",carreraSeleccionada).then(function(response){
+          if (!angular.isUndefined(response.data.pensums.pensum)) {
+              ctrl.carrera=carreraSeleccionada;
+              ctrl.pensums=response.data.pensums.pensum;
+              ctrl.pensumSeleccionado=null;
+              $scope.load = false;
+          }
       });
     };
   });
