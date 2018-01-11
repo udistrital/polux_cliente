@@ -9,13 +9,14 @@
               <p>Usuario:  <input type="text" name="userId" ng-model="userId" required></input><br></p>
             </div>
         </div>
+
         <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
         <div ng-if="profundizacion_publicarAsignaturas.carreras.length>0 && load!==true">
           <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}:</label>
-          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_ANO}}</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.anio}}</label>
 
           <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}:</label>
-          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.APE_PER}}</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.periodo}}</label>
 
           <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
           <div class="col-sm-10">

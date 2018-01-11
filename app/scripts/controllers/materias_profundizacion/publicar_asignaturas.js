@@ -15,8 +15,10 @@ angular.module('poluxClienteApp')
     ctrl.modalidad="PREGRADO";
     $scope.pensumSeleccionado=null;
 
-    academicaRequest.obtenerPeriodo().then(function(response){
-      ctrl.periodo=response[0];
+    academicaRequest.get("periodo_academico","X").then(function(response){
+        if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
+            ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+        }
     });
 
     $scope.$watch("userId",function() {

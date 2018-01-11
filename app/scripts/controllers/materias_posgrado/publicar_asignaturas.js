@@ -8,14 +8,16 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('MateriasPosgradoPublicarAsignaturasCtrl', function (academicaRequest, $scope,$translate) {
+  .controller('MateriasPosgradoPublicarAsignaturasCtrl', function (academicaRequest, $scope, $translate) {
     var ctrl = this;
     $scope.userId = "19187046";
     ctrl.periodo=[];
     ctrl.modalidad="POSGRADO";
 
-    academicaRequest.obtenerPeriodo().then(function(response){
-      ctrl.periodo=response[0];
+    academicaRequest.get("periodo_academico","X").then(function(response){
+        if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
+            ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+        }
     });
 
     $scope.$watch("userId",function() {

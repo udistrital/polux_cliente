@@ -25,8 +25,10 @@ angular.module('poluxClienteApp')
     ];
 
 
-    academicaRequest.obtenerPeriodo().then(function(response){
-      ctrl.periodo=response[0];
+    academicaRequest.get("periodo_academico","X").then(function(response){
+        if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
+            ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+        }
     });
 
     var parametros = {

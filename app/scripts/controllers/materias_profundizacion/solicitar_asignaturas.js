@@ -14,13 +14,13 @@ angular.module('poluxClienteApp')
 
     $scope.$watch("codigo",function() {
 
-      academicaRequest.periodoAnterior().then(function(periodoAnterior){
+      academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
         var parametros = {
           "codigo": $scope.codigo,
           //periodo anterior
-          'ano' : periodoAnterior[0].APE_ANO,
-          'periodo' :periodoAnterior[0].APE_PER,
+          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
+          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
           'sin_rendimiento':1
         };
 

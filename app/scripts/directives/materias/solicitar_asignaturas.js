@@ -44,9 +44,10 @@ angular.module('poluxClienteApp')
           ctrl.creditosMinimos = 6;
         }
 
-        academicaRequest.obtenerPeriodo().then(function(response) {
-          ctrl.periodo = response[0];
-
+        academicaRequest.get("periodo_academico","X").then(function(response){
+          if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
+              ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+          }
 
           //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
           var parametros = $.param({

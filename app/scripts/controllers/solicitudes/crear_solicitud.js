@@ -551,15 +551,13 @@ angular.module('poluxClienteApp')
       }
 
       ctrl.obtenerDatosEstudiante = function(){
-        console.log("Piosioasdf");
-        console.log(ctrl.codigo);
-        academicaRequest.periodoAnterior().then(function(periodoAnterior){
+        academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
           var parametros = {
             "codigo": ctrl.codigo,
             //periodo anterior
-            'ano' : periodoAnterior[0].APE_ANO,
-            'periodo' :periodoAnterior[0].APE_PER
+            'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
+            'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
           };
 
           academicaRequest.promedioEstudiante(parametros).then(function(response2){

@@ -59,8 +59,10 @@ angular.module('poluxClienteApp')
     console.log(rta);
   });
 
-  academicaRequest.obtenerPeriodo().then(function(response){
-    ctrl.periodo=response[0];
+  academicaRequest.get("periodo_academico","X").then(function(response){
+      if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
+          ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+      }
   });
 
   var parametros = {
@@ -105,11 +107,11 @@ angular.module('poluxClienteApp')
                   });
                   poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
-                    academicaRequest.periodoAnterior().then(function(periodoAnterior){
+                    academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
                         var parametros = {
                           'codigo' : usuarioSolicitud.data[0].Usuario,
-                          'ano' : periodoAnterior[0].APE_ANO,
-                          'periodo' :periodoAnterior[0].APE_PER
+                          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
+                          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
                         };
                         academicaRequest.promedioEstudiante(parametros).then(function(response2){
                           var solicitud = {
@@ -171,12 +173,12 @@ angular.module('poluxClienteApp')
     });
     //buscar la solicitudes
 
-    academicaRequest.periodoAnterior().then(function(periodoAnterior){
+    academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
       poluxRequest.get("estudiante_tg",parametros).then(function(response){
         var parametros = {
           'codigo' : response.data[0].CodigoEstudiante,
-          'ano' : periodoAnterior[0].APE_ANO,
-          'periodo' :periodoAnterior[0].APE_PER
+          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
+          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
         };
         academicaRequest.promedioEstudiante(parametros).then(function(response2){
           var solicitud = {
@@ -434,11 +436,11 @@ angular.module('poluxClienteApp')
                                       });
                                       poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
-                                        academicaRequest.periodoAnterior().then(function(periodoAnterior){
+                                        academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
                                             var parametros = {
                                               'codigo' : usuarioSolicitud.data[0].Usuario,
-                                              'ano' : periodoAnterior[0].APE_ANO,
-                                              'periodo' :periodoAnterior[0].APE_PER
+                                              'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico.anio,
+                                              'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico.periodo
                                             };
                                             academicaRequest.promedioEstudiante(parametros).then(function(response2){
                                               var solicitud = {

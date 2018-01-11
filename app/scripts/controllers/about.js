@@ -11,8 +11,7 @@ angular.module('poluxClienteApp')
     .controller('AboutCtrl', function(nuxeo, $http, $scope, $sce, poluxRequest) {
         var ctrl = this;
         ctrl.nuxeo = nuxeo;
-        
-        /*$http.get('http://athento.udistritaloas.edu.co:8080/nuxeo/api/v1/user/search?q=Administrator', {
+      /*  $http.get('http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy/periodo_academico/A', {
 
         }).then(function(response) {
           console.log(response)

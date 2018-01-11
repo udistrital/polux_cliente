@@ -8,7 +8,7 @@
  * Factory in the poluxClienteApp.
  */
 angular.module('academicaService', [])
-    .factory('academicaRequest', function($http) {
+    .factory('academicaRequest', function($http, CONF) {
 
         var path = "http://10.20.0.127/polux/index.php?data=";
         var periodo = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0On4uKrtXAvwZ0V0Rn0jx7a9DpWV8USQg0uH8PEHS9mgJw";
@@ -23,6 +23,7 @@ angular.module('academicaService', [])
         var coordinador_carrera = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmXyQ-hqKi02A-HoywRRQVhzx5WnJ2f7qi-ei4TkWGaUAFeySeBzV_jUp-Cp2YQC3-Q5iMzSdWmVtIklG3eZ8s2";
         var docentesTG = "sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdr0eXTqZJyKMJkeoxrgxRwA3AZcDeYW7lkxP8XpjclOP";
 
+        var nueva_ruta = CONF.GENERAL.ACADEMICA_SERVICE;
 
         return {
 
@@ -45,10 +46,6 @@ angular.module('academicaService', [])
 
             obtenerCoordinador: function(parametros) {
                 return this.obtener(coordinador_carrera, parametros);
-            },
-
-            obtenerPeriodo: function(parametros) {
-                return this.obtener(periodo, parametros);
             },
 
             obtenerCarreras: function(parametros) {
@@ -89,6 +86,17 @@ angular.module('academicaService', [])
             periodoAnterior: function(parametros) {
                 return this.obtener(periodo_anterior, parametros);
             },
+
+            get: function(service, params) {
+                var param_string = "";
+
+                /*angular.forEach(params, function(p) {
+                    param_string += "/" + p.value;
+                    console.log(p);
+                });*/
+                //return $http.get(nueva_ruta + "/" + service + param_string, { headers: { 'Accept': 'application/json' } });
+                return $http.get(nueva_ruta + "/" + service + "/" +params, { headers: { 'Accept': 'application/json' } });
+            }
 
         };
     });

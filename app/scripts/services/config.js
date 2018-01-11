@@ -13,6 +13,7 @@
  };
 
  var conf_pruebas = {
+    ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     POLUX_SERVICE: "http://10.20.0.254/polux_api_crud/v1/",
     POLUX_MID_SERVICE: "http://10.20.0.254/polux_api_mid/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
@@ -30,6 +31,7 @@
 };
 
 var conf_local = {
+    ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
