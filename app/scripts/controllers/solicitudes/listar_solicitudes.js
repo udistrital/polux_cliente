@@ -64,7 +64,7 @@ angular.module('poluxClienteApp')
             promises.push(getNombreDocente(vinculado));
           });
           $q.all(promises).then(function(){
-            var directorInterno = $translate.instant("DIRECTOR_INTERNO");  
+            var directorInterno = $translate.instant("DIRECTOR_INTERNO");
             var evaluador = $translate.instant("EVALUADOR");
             angular.forEach(responseVinculados.data, function(vinculado){
                if(vinculado.RolTrabajoGrado.Id===1){
@@ -174,7 +174,7 @@ angular.module('poluxClienteApp')
         //default
         default:
           defered.resolve(resultado);
-          break;          
+          break;
       }
 
     }else{
@@ -272,6 +272,7 @@ angular.module('poluxClienteApp')
 
         var parametrosCoordinador = {
           "identificacion":$scope.userId,
+          "tipo": "PREGRADO"
         };
 
         tablaConsulta = "respuesta_solicitud";
