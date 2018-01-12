@@ -189,6 +189,8 @@ var text_es = {
         DOCENTE_DUPLICADO:"Por favor seleccione docentes diferentes en los campos de director y evaluador(es)",
         CARGA_SOLICITUDES:"Error al cargar las solicitudes",
         ENVIO_SOLICITUD:"Error al enviar la solicitud",
+        NO_AREAS_CARGADAS:"Error al intentar cargar las áreas de conocimiento",
+        NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcles básicos",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -258,6 +260,7 @@ var text_es = {
       CARGANDO_DETALLES_SOLICITUD:"Cargando detalles de la solicitud",
       CARGANDO_ASIGNATURAS:"Cargando espacios académicos",
       CARGANDO_PENSUMS:"Cargando pensums",
+      CARGANDO_AREAS:"Cargando áreas de SNIES",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -270,6 +273,8 @@ var text_es = {
       TIPO_DISTINCION:"Seleccione el tipo de distinción",
       TRABAJO_GRADO_EVALUAR:"Seleccione el trabajo de grado que desea evaluar",
       EVALUADOR_NUMERO:"Seleccione el evaluador numero {{numero}}",
+      AREA_SNIES:"Seleccione el área de SNIES",
+      NUCLEO_SNIES:"Seleccione el núcleo básico",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Cargar documento",
@@ -314,6 +319,16 @@ var text_es = {
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
         PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
     },
+    AREAS:{
+        DATOS_AREA:"Datos para registrar área",
+        INGRESE_NOMBRE_AREA:"Ingrese el nombre de la nueva área",
+        INGRESE_DESCRIPCION_AREA:"Ingrese la descripción del área",
+        REGISTRAR_AREA:"Registrar área",
+        AREA_REGISTRADA:"El área  de conocimiento se registro correctamente.",
+        ERROR_REGISTRAR_AREA:"No se pudo registrar el area.",
+        AREA_EXISTENTE:"El área de conocimiento ya está registrada",
+    },
+    REGISTRO_EXITOSO:"Registro exitoso",
     DOCUMENTO_RESPUESTA_SOLICITUD:"Documento con el que se respondió la solicitud",
     EVALUADOR:"Evaluador(es)",
     DIRECTOR_INTERNO:"Director interno",
@@ -321,6 +336,9 @@ var text_es = {
     MENSAJE_ESPACIOS_ACADEMICOS_GUARDADOS:"Los espacios académicos seleccionados podrán ser elegidos por los estudiantes para optar por la modalidad de trabajo de grado",
     MAS_ESPACIOS_ACADEMICOS:"Seleccione más espacios académicos",
     CREDITOS_ESPACIOS_ACADEMICOS_INSUFICIENTES:"La cantidad de créditos de los espacios académicos seleccionados debe ser igual o superior a {{creditos}} créditos",
+    ADMINISTRAR_AREAS:"Administrar áreas de conocimiento",
+    SIN_AREAS:"Actualmente no hay áreas de conocimiento registradas para esta área del SNIES",
+    DESCRIPCION:"Descripción",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -491,6 +509,8 @@ var text_en = {
         HAY_SOLICITUD_PENDIENTE:"Currently the student already has a grade job request that is pending by response.",
         DOCENTE_DUPLICADO:"Please select different teachers in the fields of director and evaluator(s)",
         CARGA_SOLICITUDES:"Error loading requests",
+        NO_AREAS_CARGADAS:"Error trying to load knowledge areas",
+        NO_NUCLEOS_CARGADOS:"Error trying to load basic cores",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -560,6 +580,7 @@ var text_en = {
       CARGANDO_DETALLES_SOLICITUD:"Loading request details",
       CARGANDO_ASIGNATURAS:"Loading academic spaces",
       CARGANDO_PENSUMS:"Loading pensums",
+      CARGANDO_AREAS:"Loading areas of SNIES",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -572,6 +593,8 @@ var text_en = {
       TIPO_DISTINCION:"Select the type of distinction",
       TRABAJO_GRADO_EVALUAR:"Select the degree job you want to evaluate",
       EVALUADOR_NUMERO:"Select the evaluator number {{numero}}",
+      AREA_SNIES:"Select the SNIES area",
+      NUCLEO_SNIES:"Select the basic core",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Load document",
@@ -616,6 +639,16 @@ var text_en = {
         EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
         PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
     },
+    AREAS:{
+        DATOS_AREA:"Data to register area",
+        INGRESE_NOMBRE_AREA:"Enter the name of the new area",
+        INGRESE_DESCRIPCION_AREA:"Enter the description of the area",
+        REGISTRAR_AREA:"Register area",
+        AREA_REGISTRADA:"The knowledge area was correctly registered",
+        ERROR_REGISTRAR_AREA:"Could not register the area",
+        AREA_EXISTENTE:"The knowledge area is already registered",
+    },
+    REGISTRO_EXITOSO:"Successful registration",
     DOCUMENTO_RESPUESTA_SOLICITUD:"Document with which the request was answered",
     EVALUADOR:"Evaluator(s)",
     DIRECTOR_INTERNO:"Internal director",
@@ -623,7 +656,9 @@ var text_en = {
     MENSAJE_ESPACIOS_ACADEMICOS_GUARDADOS:"The selected academic spaces can be chosen by the students to choose the modality of work of degree",
     MAS_ESPACIOS_ACADEMICOS:"Select more academic spaces",
     CREDITOS_ESPACIOS_ACADEMICOS_INSUFICIENTES:"The amount of credits of the academic spaces selected must be equal to or greater than {{creditos}} credits",
-
+    ADMINISTRAR_AREAS:"Manage knowledge areas",
+    SIN_AREAS:"Currently there are no registered areas of knowledge for this SNIES area",
+    DESCRIPCION:"Description",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

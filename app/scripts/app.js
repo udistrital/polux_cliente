@@ -215,6 +215,11 @@ angular
               controller: 'FormatoEvaluarCtrl',
               controllerAs: 'evaluarTG'
             })
+            .when('/administracion/areas', {
+              templateUrl: 'views/administracion/areas.html',
+              controller: 'AdministracionAreasCtrl',
+              controllerAs: 'administrarAreas'
+            })
             .otherwise({
                 redirectTo: '/'
             });
