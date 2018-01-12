@@ -8,7 +8,7 @@
         autocomplete="off"></input>
         <datalist class="selector" id="listaAreas">
           <!--ng-if="idarea.indexOf(a.Id) !== -1"-->
-          <option ng-repeat="a in setareas" value="{{a.Nombre}}"></option>
+          <option ng-repeat="a in setareas" value="{{a.Nombre}} - {{a.Snies}}"></option>
         </datalist>
         <span class="input-group-btn">
         <input type="submit" ng-click="d_asignarArea.asignarArea()"

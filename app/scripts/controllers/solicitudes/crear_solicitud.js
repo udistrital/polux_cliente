@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesCrearSolicitudCtrl', function ($window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest, $location) {
+  .controller('SolicitudesCrearSolicitudCtrl', function (coreService,$window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest, $location) {
       $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -241,9 +241,18 @@ angular.module('poluxClienteApp')
         ctrl.obtenerAreas = function (){
             poluxRequest.get("area_conocimiento").then(function(responseAreas){
                 ctrl.areas = responseAreas.data;
+                coreService.get("snies_area").then(function(responseAreas){
+                  var areasSnies = responseAreas.data;
+                  angular.forEach(ctrl.areas, function(area){
+                    angular.forEach(areasSnies, function(areaSnies){
+                      if(area.SniesArea === areaSnies.Id){
+                        area.Snies = areaSnies.Nombre;
+                      }
+                    });
+                  });
+                });
             });
-
-          }
+        }
 
 
 
