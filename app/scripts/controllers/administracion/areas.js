@@ -10,7 +10,9 @@
 angular.module('poluxClienteApp')
   .controller('AdministracionAreasCtrl', function ($scope,coreService, poluxRequest,$translate) {
     $scope.msgCargandoAreas = $translate.instant('LOADING.CARGANDO_AREAS');
+    $scope.msgRegistrandoArea = $translate.instant('LOADING.REGISTRANDO_AREA');
     $scope.loadAreas = true;
+    $scope.loadCargandoArea = false;
 
     var ctrl = this;
     ctrl.areasSnies = [];
@@ -98,12 +100,12 @@ angular.module('poluxClienteApp')
       }
 
       var cambiarFormato = function(texto){
-        return quitarAcentos(ctrl.nombreArea).toUpperCase().replace(" ","");
+        return quitarAcentos(texto).toUpperCase().replace(" ","");
       }
 
       var areaNueva = cambiarFormato(ctrl.nombreArea);
       angular.forEach(ctrl.areasConocimiento,function(area){
-        if(areaNueva === cambiarFormato(area)){
+        if(areaNueva === cambiarFormato(area.Nombre)){
           error = true;
         }
       });
@@ -112,7 +114,11 @@ angular.module('poluxClienteApp')
     }
 
     ctrl.cargarArea = function(){
+      $scope.loadCargandoArea = true;
       if(ctrl.verificarArea()){
+        $scope.loadCargandoArea = false;
+        ctrl.nombreArea = "";
+        ctrl.descripcionArea = "";
         swal(
           $translate.instant("ERROR"),
           $translate.instant("AREAS.AREA_EXISTENTE"),
@@ -128,17 +134,19 @@ angular.module('poluxClienteApp')
         }
         poluxRequest.post("area_conocimiento",dataArea)
         .then(function(){
+          $('#modalAgregarArea').modal('hide');
+          $scope.loadCargandoArea = false;
           swal(
             $translate.instant("REGISTRO_EXITOSO"),
             $translate.instant("AREAS.AREA_REGISTRADA"),
             'success'
           );
           ctrl.areasConocimiento.push(dataArea);
-          $('#modalAgregarArea').modal('hide');
           ctrl.nombreArea = "";
           ctrl.descripcionArea = "";
         })
         .catch(function(){
+          $scope.loadCargandoArea = false;
           swal(
             $translate.instant("ERROR"),
             $translate.instant("AREAS.ERROR_REGISTRAR_AREA"),

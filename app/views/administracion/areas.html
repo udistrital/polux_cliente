@@ -48,7 +48,8 @@
                 {{'AREAS.DATOS_AREA'| translate}}
             </div>       
             <div class="panel-body"> 
-                <form method="post" name="formularioArea" ng-submit="administrarAreas.cargarArea()">
+                <loading tam="4" load="loadCargandoArea" message="msgRegistrandoArea"> </loading>
+                <form ng-if="!loadCargandoArea" method="post" name="formularioArea" ng-submit="administrarAreas.cargarArea()">
                     <div class="row">
                         <label class="col-sm-4 control-label"> {{'AREAS.INGRESE_NOMBRE_AREA'|translate}}:  </label>
                         <div class="col-sm-8">

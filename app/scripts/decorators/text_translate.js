@@ -261,6 +261,7 @@ var text_es = {
       CARGANDO_ASIGNATURAS:"Cargando espacios académicos",
       CARGANDO_PENSUMS:"Cargando pensums",
       CARGANDO_AREAS:"Cargando áreas de SNIES",
+      REGISTRANDO_AREA:"Registrando Área",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -581,6 +582,7 @@ var text_en = {
       CARGANDO_ASIGNATURAS:"Loading academic spaces",
       CARGANDO_PENSUMS:"Loading pensums",
       CARGANDO_AREAS:"Loading areas of SNIES",
+      REGISTRANDO_AREA:"Registering area",
     },
     SELECT:{
       SELECCIONE:"Select an option",
