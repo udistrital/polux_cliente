@@ -31,9 +31,8 @@ angular.module('poluxClienteApp')
         self.asignarArea=function(){
           //self.Nombre=cadenaRequest.cambiarTipoTitulo(self.Nombre);
           //verifica que el Nombre sea el mismo y asigna el Id(necesario para tablas con llave compuesta)
-
           angular.forEach($scope.setareas,function(value){
-            if (value.Nombre==self.Nombre) {
+            if (value.Nombre+" - "+value.Snies==self.Nombre) {
               self.Id=value.Id;
                 if(self.nuevaArea.indexOf(value) === -1){
                   self.nuevaArea.push(
@@ -56,11 +55,10 @@ angular.module('poluxClienteApp')
           //nombreArea=cadenaRequest.cambiarTipoTitulo(nombreArea);
           if ($scope.setareas==null) {
             return true;
-          }
-          else {
+          }else {
             var result=true;
             for (var i = 0; i < $scope.setareas.length; i++) {
-              if ($scope.setareas[i].Nombre==nombreArea) {
+              if ($scope.setareas[i].Nombre+" - "+$scope.setareas[i].Snies==nombreArea) {
                 result= false;
               }
             }
