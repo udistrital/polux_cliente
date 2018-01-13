@@ -177,7 +177,7 @@ angular.module('poluxClienteApp')
 
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
                 ctrl.isInicial = true;
-                //Si no es de materias de posgrado y profundizaciÃ³n trae los docentes
+                //Si no es de materias de posgrado y profundización trae los docentes
                 academicaRequest.obtenerDocentesTG().then(function(docentes){
                   ctrl.docentes=docentes;
                   console.log(ctrl.docentes);
@@ -538,6 +538,7 @@ angular.module('poluxClienteApp')
                   var data_estudiantes = [];
                   var otro={};
                   var estudiante={};
+                  var solicitudInicial={};
 
                   console.log(ctrl.detallesSolicitud);
                   angular.forEach(ctrl.detallesSolicitud, function(detalle){
@@ -737,6 +738,11 @@ angular.module('poluxClienteApp')
                        }
                        console.log(ctrl.trabajo_grado);
 
+                       solicitudInicial=responseRta.data[0].SolicitudTrabajoGrado;
+                       solicitudInicial.TrabajoGrado={
+                          "Id": 0
+                        }
+
                        ctrl.rtaSol={
                          RespuestaAnterior:objRtaAnterior,
                          RespuestaNueva:objRtaNueva,
@@ -745,7 +751,8 @@ angular.module('poluxClienteApp')
                          Vinculaciones: null,
                          EstudianteTrabajoGrado: null,
                          TrTrabajoGrado: ctrl.trabajo_grado,
-                         ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
+                         ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
+                         SolicitudTrabajoGrado:solicitudInicial
                        };
                        console.log(ctrl.rtaSol);
                        if(!errorDocente){
@@ -777,10 +784,7 @@ angular.module('poluxClienteApp')
           });
         }
 
-
-
         });
-
 
       }else{
         ctrl.mostrarRespuesta("SELECCIONE_ACTA");
