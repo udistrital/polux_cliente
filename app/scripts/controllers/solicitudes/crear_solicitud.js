@@ -239,7 +239,11 @@ angular.module('poluxClienteApp')
 
 
         ctrl.obtenerAreas = function (){
-            poluxRequest.get("area_conocimiento").then(function(responseAreas){
+          var parametrosAreas = $.param({
+            query:"Activo:TRUE",
+            limit:0,
+          });
+            poluxRequest.get("area_conocimiento",parametrosAreas).then(function(responseAreas){
                 ctrl.areas = responseAreas.data;
                 coreService.get("snies_area").then(function(responseAreas){
                   var areasSnies = responseAreas.data;

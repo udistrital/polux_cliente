@@ -58,6 +58,7 @@ angular.module('poluxClienteApp')
 
     ctrl.cargarAreasConocimiento = function(area){
       ctrl.areasConocimiento = [];
+      ctrl.gridOptions.data = ctrl.areasConocimiento;
       $scope.loadAreasConocimiento = true;
       ctrl.areaSnies = area.Id;
       var parametrosAreasConocimiento = $.param({
