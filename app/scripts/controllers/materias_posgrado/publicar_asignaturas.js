@@ -10,7 +10,7 @@
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoPublicarAsignaturasCtrl', function (academicaRequest, $scope, $translate) {
     var ctrl = this;
-    $scope.userId = "19187046";
+    $scope.userId = "12237136";
     ctrl.periodo=[];
     ctrl.modalidad="POSGRADO";
 

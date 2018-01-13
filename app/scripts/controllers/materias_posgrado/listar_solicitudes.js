@@ -85,61 +85,52 @@ angular.module('poluxClienteApp')
           poluxRequest.get("respuesta_solicitud",parametros).then(function(respuestaSolicitud){
 
             angular.forEach(respuestaSolicitud.data, function(value) {
-            console.log(value);
+
             if(value!=null){
                 //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
                 var parametros=$.param({
                   query:"DetalleTipoSolicitud:37"+",SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
                 });
                 poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
-                  if(detalleSolicitud.data!=null){
-                  var res = detalleSolicitud.data[0].Descripcion.split(",");
-                  //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-                  var parametros = {
-                   'codigo': res[0]
-                  };
+                  if(detalleSolicitud.data!==null){
+                      var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
 
-                  academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                if(ctrl.carrera==resp[0].PEN_CRA_COD){
-                  var parametros=$.param({
-                    query:"SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
-                  });
-                  poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
-
-                    academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-                        var parametros = {
-                          'codigo' : usuarioSolicitud.data[0].Usuario,
-                          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-                          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
-                        };
-                        academicaRequest.promedioEstudiante(parametros).then(function(response2){
-                          var solicitud = {
-                            "solicitud": value.Id,
-                            "fecha": value.Fecha,
-                            "estudiante": usuarioSolicitud.data[0].Usuario,
-                            "nombre": response2[0].NOMBRE,
-                            "promedio": response2[0].PROMEDIO,
-                            "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                            "estado": value.EstadoSolicitud,
-                            "respuesta": ""+value.Id
-                          };
-                          $scope.sols.push(solicitud);
+                      if(ctrl.carrera==carreraSolicitud.Codigo){
+                        var parametros=$.param({
+                          query:"SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
                         });
+                        poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
-                    });
+                          academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
+                              var parametros = {
+                                'codigo' : usuarioSolicitud.data[0].Usuario,
+                                'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
+                                'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
+                                'sin_rendimiento':1
+                              };
+                              academicaRequest.promedioEstudiante(parametros).then(function(response2){
+                                var solicitud = {
+                                  "solicitud": value.Id,
+                                  "fecha": value.Fecha,
+                                  "estudiante": usuarioSolicitud.data[0].Usuario,
+                                  "nombre": response2[0].NOMBRE,
+                                  "promedio": response2[0].PROMEDIO,
+                                  "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+                                  "estado": value.EstadoSolicitud,
+                                  "respuesta": ""+value.Id
+                                };
+                                $scope.sols.push(solicitud);
+                              });
 
-                  });
-                }
-              });
-            }
+                          });
+
+                        });
+                      }
+                  }
                 });
             }
           });
-          });
-
-        /*angular.forEach(response.data, function(value) {
-          ctrl.buscarEstudianteTg(value);
-        });*/
+        });
 
       ctrl.gridOptions.data = $scope.sols;
     }
@@ -177,7 +168,8 @@ angular.module('poluxClienteApp')
         var parametros = {
           'codigo' : response.data[0].CodigoEstudiante,
           'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
+          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
+          'sin_rendimiento':1
         };
         academicaRequest.promedioEstudiante(parametros).then(function(response2){
           var solicitud = {
@@ -312,18 +304,12 @@ angular.module('poluxClienteApp')
                         poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
                             if(detalleSolicitud.data!=null){
                                 var res = detalleSolicitud.data[0].Descripcion.split(",");
-                                //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-                                var parametros = {
-                                    'codigo': res[0]
-                                };
-                                academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                                    defered.resolve(value);
-                                    if($scope.carrera==resp[0].PEN_CRA_COD){
-                                      $scope.aprobadas.push(value);
-                                    }
-                                    console.log($scope.aprobadas);
+                                var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
 
-                                });
+                                defered.resolve(value);
+                                if(ctrl.carrera==carreraSolicitud.Codigo){
+                                  $scope.aprobadas.push(value);
+                                }
                             }
                         });
                         arrayPromise.push(promise);

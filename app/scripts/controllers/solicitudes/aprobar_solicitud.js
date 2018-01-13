@@ -45,6 +45,7 @@ angular.module('poluxClienteApp')
     //carreras del coordinador
     var parametrosCoordinador = {
       "identificacion":19451396,
+      "tipo":"PREGRADO",
     };
     ctrl.carrerasCoordinador = [];
     academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
@@ -59,7 +60,6 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("respuesta_solicitud",parametros).then(function(responseRespuesta){
           ctrl.estadoSolicitud=responseRespuesta.data[0];
-          console.log(ctrl.estadoSolicitud);
       });
 
       var defered = $q.defer();

@@ -43,12 +43,10 @@ angular.module('poluxClienteApp')
           ctrl.gridOptions.data = [];
 
           if ($scope.carrera && $scope.pensum) {
-            academicaRequest.buscarAsignaturas({
-              'carrera': $scope.carrera,
-              'pensum': $scope.pensum,
-              //'semestre': 1
-            }).then(function (response) {
-              ctrl.asignaturas = response;
+            academicaRequest.get("asignaturas_carrera_pensum",$scope.carrera+"/"+$scope.pensum).then(function(response){
+              if (!angular.isUndefined(response.data.asignaturaCollection.asignatura)) {
+                  ctrl.asignaturas=response.data.asignaturaCollection.asignatura;
+              }
               ctrl.habilitar = false;
               ctrl.habilitar2 = true;
 
@@ -59,7 +57,7 @@ angular.module('poluxClienteApp')
                 ctrl.totalCreditos = 0;
 
                 academicaRequest.buscarAsignaturas({
-                  'codigo': value.ASI_COD
+                  'codigo': value.codigo
                 }).then(function (response) {
                   ctrl.asignatura = response;
                   ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, ctrl.asignatura);
