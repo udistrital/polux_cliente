@@ -570,11 +570,13 @@ angular.module('poluxClienteApp')
             "codigo": ctrl.codigo,
             //periodo anterior
             'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-            'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
+            //'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
+            'periodo' :1
           };
 
           academicaRequest.promedioEstudiante(parametros).then(function(response2){
             if(response2){
+              console.log(response2);
               //porcentaje cursado
               var parametros2 = {
                 "codigo": parametros.codigo
