@@ -340,6 +340,7 @@ var text_es = {
     ADMINISTRAR_AREAS:"Administrar áreas de conocimiento",
     SIN_AREAS:"Actualmente no hay áreas de conocimiento registradas para esta área del SNIES",
     DESCRIPCION:"Descripción",
+    NO_SOLICITUDES_POSGRADO:"No existen solicitudes en la modalidad de espacios académicos de posgrado para la carrera seleccionada"
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -661,6 +662,7 @@ var text_en = {
     ADMINISTRAR_AREAS:"Manage knowledge areas",
     SIN_AREAS:"Currently there are no registered areas of knowledge for this SNIES area",
     DESCRIPCION:"Description",
+    NO_SOLICITUDES_POSGRADO:"There are no requests in the graduate academic spaces modality for the selected career"
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

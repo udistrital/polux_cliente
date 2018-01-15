@@ -121,6 +121,7 @@ angular.module('poluxClienteApp')
                         console.log("si se puede");
                         defered.resolve(true);
                     }else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
+                      console.log(actuales);
                         console.log("es inicial y se deben restringir las demás");
                         ctrl.restringirModalidades = true;
                         defered.resolve(true);

@@ -25,21 +25,27 @@
         </form>
        </div>
 
-       <div class="panel panel-default panel-body col-md-12">
+       <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
+
+       <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="sols.length>0 && load!==true">
          <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div><br>
            <center>
-          <button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
-          <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
-          <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>
-           </center>
+          <button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
+          <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
+          <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>
+        </center><br>
+
+           <pre>
+             {{'FECHA_ACTUAL' | translate}} {{fechaActual| date:'dd-MM-yyyy'}}
+             {{'FECHA_INICIO' | translate}} {{fecha_inicio|date:'dd-MM-yyyy'}}
+             {{'FECHA_INICIO_DOS' | translate}} {{segunda_fecha| date:'dd-MM-yyyy'}}
+             {{'FECHA_FIN' | translate}}  {{fecha_fin| date:'dd-MM-yyyy'}}
+           </pre>
       </div>
 
-      <pre>
-        {{'FECHA_ACTUAL' | translate}} {{fechaActual| date:'dd-MM-yyyy'}}
-        {{'FECHA_INICIO' | translate}} {{fecha_inicio|date:'dd-MM-yyyy'}}
-        {{'FECHA_INICIO_DOS' | translate}} {{segunda_fecha| date:'dd-MM-yyyy'}}
-        {{'FECHA_FIN' | translate}}  {{fecha_fin| date:'dd-MM-yyyy'}}
-      </pre>
+      <div ng-if="sols.length===0 && load!==true" class="alert alert-danger col-sm-12 control-label" style="margin-top: 20px;">
+        {{'NO_SOLICITUDES_POSGRADO' | translate}}
+      </div>
 
         <!--
       <script type="text/ng-template" id="dialog.tmpl.html">

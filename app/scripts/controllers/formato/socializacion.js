@@ -10,11 +10,35 @@
 angular.module('poluxClienteApp')
     .controller('SocializacionCtrl', function(poluxRequest, oikosRequest, $translate, $scope) {
         var ctrl = this;
+
         ctrl.get_socializacion = function() {
+          ctrl.socializacion=[];
             poluxRequest.get("socializacion", $.param({
                 limit: "-1"
             })).then(function(response) {
-                ctrl.socializacion = response.data;
+                console.log(response);
+                //ctrl.socializacion = response.data;
+
+                angular.forEach(response.data, function(s) {
+                  console.log(s);
+                  //buscar datos tg
+                  poluxRequest.get("trabajo_grado", $.param({
+                      query: "Id:" + s.TrabajoGrado.Id
+                  })).then(function(response2) {
+                      s.TrabajoGrado = response2.data[0];
+                      //buscar lugar
+                      oikosRequest.get("espacio_fisico", $.param({
+                          query: "Id:" + s.Lugar
+                      })).then(function(response3) {
+                        s.Lugar = response3.data[0];
+                      });
+                  });
+                  console.log(s);
+                  ctrl.socializacion.push(s);
+
+                });
+
+                console.log(ctrl.socializacion);
                 ctrl.gridOptions.data = ctrl.socializacion;
                 angular.forEach(ctrl.socializacion, function(social) {
                     oikosRequest.get("espacio_fisico", $.param({
@@ -22,7 +46,7 @@ angular.module('poluxClienteApp')
                         limit: "-1",
                     })).then(function(response) {
                         ctrl.lugares = response.data;
-                        social.Lugar = response.data[0];
+                        //social.Lugar = response.data[0];
                     });
                 });
             });
@@ -44,16 +68,19 @@ angular.module('poluxClienteApp')
         };
         ctrl.add_socializacion = function() {
             var data = {};
-            data.IdTrabajoGrado = ctrl.trabajo_grado.selected;
-            data.Lugar = ctrl.lugar.selected.Codigo;
+            console.log(ctrl.trabajo_grado.selected);
+            ctrl.trabajo_grado.selected.$$hashKey = undefined;
+            data.TrabajoGrado = ctrl.trabajo_grado.selected;
+            data.Lugar = ctrl.lugar.selected.Id;
             data.Fecha = ctrl.fecha;
+            console.log(data);
             poluxRequest.post("socializacion", data)
                 .then(function(response) {
                     console.log(response.data);
                     $('#add').modal('hide');
                     swal(
                         '',
-                        'Ha Asignado al proyecto' + response.data.IdTrabajoGrado.Titulo + ' Una Socialización',
+                        'Ha Asignado al proyecto ' + response.data.TrabajoGrado.Titulo + ' una socialización',
                         'success'
                     );
                     ctrl.get_socializacion();
@@ -81,13 +108,14 @@ angular.module('poluxClienteApp')
                     width: '5%'
                 },
                 {
-                    field: 'IdTrabajoGrado.Titulo',
+                    field: 'TrabajoGrado.Titulo',
                     displayName: $translate.instant('TITULO_PROPUESTA'),
                     width: '60%'
                 },
                 {
                     field: 'Lugar.Nombre',
                     displayName: $translate.instant('LUGAR'),
+                    cellTemplate: '<div align="center"><span>{{row.entity.Lugar.Codigo}} - {{row.entity.Lugar.Nombre}}</span></div>',
                     width: '15%'
                 },
                 {

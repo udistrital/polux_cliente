@@ -73,6 +73,7 @@ angular.module('poluxClienteApp')
 
 //solicitudes iniciales de la modalidad de materias de posgrado
   ctrl.buscarSolicitudes = function(carrera){
+    $scope.load = true;
     ctrl.carrera=carrera;
     $scope.carrera=carrera;
     if(carrera){
@@ -105,12 +106,13 @@ angular.module('poluxClienteApp')
                               var parametros = {
                                 'codigo' : usuarioSolicitud.data[0].Usuario,
                                 'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-                                'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
-                                'sin_rendimiento':1
+                                //'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
+                                'periodo' :1
+                                //'sin_rendimiento':1
                               };
                               academicaRequest.promedioEstudiante(parametros).then(function(response2){
                                 var solicitud = {
-                                  "solicitud": value.Id,
+                                  "solicitud": value.SolicitudTrabajoGrado.Id,
                                   "fecha": value.Fecha,
                                   "estudiante": usuarioSolicitud.data[0].Usuario,
                                   "nombre": response2[0].NOMBRE,
@@ -128,11 +130,13 @@ angular.module('poluxClienteApp')
                       }
                   }
                 });
+                $scope.load = false;
             }
           });
         });
 
       ctrl.gridOptions.data = $scope.sols;
+      $scope.load = false;
     }
   }
 
