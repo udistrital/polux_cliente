@@ -43,14 +43,16 @@ angular.module('poluxClienteApp')
     };
 
     //carreras del coordinador
-    var parametrosCoordinador = {
+  /*  var parametrosCoordinador = {
       "identificacion":19451396,
       "tipo":"PREGRADO",
-    };
+    };*/
+    $scope.userId=19451396;
     ctrl.carrerasCoordinador = [];
-    academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
-      if(responseCoordinador!=="null"){
-        ctrl.carrerasCoordinador = responseCoordinador;
+    academicaRequest.get("coordinador_carrera2",$scope.userId+"/"+"PREGRADO").then(function(response){
+      console.log(response);
+      if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
+          ctrl.carrerasCoordinador=response.data.coordinadorCollection.coordinador;
       }
     });
 

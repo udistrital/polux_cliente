@@ -283,13 +283,14 @@ angular.module('poluxClienteApp')
             limit:0
         });
 
-      academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
+        academicaRequest.get("coordinador_carrera2",$scope.userId+"/"+"PREGRADO").then(function(responseCoordinador){
               ctrl.carrerasCoordinador = [];
               var carreras  = [];
-              if(responseCoordinador!=="null"){
-              ctrl.carrerasCoordinador = responseCoordinador;
-              angular.forEach(responseCoordinador, function(carrera){
-                  carreras.push(carrera.CODIGO_CARRERA);
+              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
+
+              ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
+              angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera){
+                  carreras.push(carrera.codigo_proyecto_curricular);
               });
 
               poluxRequest.get(tablaConsulta, parametrosSolicitudes).then(function(responseSolicitudes){
