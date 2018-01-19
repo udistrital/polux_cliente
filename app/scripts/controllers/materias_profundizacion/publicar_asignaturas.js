@@ -25,15 +25,12 @@ angular.module('poluxClienteApp')
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
       $scope.load = true;
       ctrl.carreras = [];
-        var parametrosCoordinador = {
-          'identificacion':$scope.userId,
-          'tipo': 'PREGRADO'
-        };
-        academicaRequest.obtenerCoordinador(parametrosCoordinador).then(function(responseCoordinador){
-              if(responseCoordinador!=="null"){
-                  ctrl.carreras = responseCoordinador;
-              }
-        });
+      academicaRequest.get("coordinador_carrera2",$scope.userId+"/"+"PREGRADO").then(function(response){
+        console.log(response);
+        if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
+            ctrl.carreras=response.data.coordinadorCollection.coordinador;
+        }
+      });
       $scope.load = false;
     });
 

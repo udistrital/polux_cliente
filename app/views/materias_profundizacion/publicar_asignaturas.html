@@ -22,10 +22,10 @@
           <div class="col-sm-10">
               <form name="myForm">
                 <ui-select name="carrera" ng-model="profundizacion_publicarAsignaturas.carreraSeleccionada" required on-select="profundizacion_publicarAsignaturas.myFunc(profundizacion_publicarAsignaturas.carreraSeleccionada)" style="width:95%;" theme="bootstrap" >
-                    <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.CODIGO_CARRERA}} - {{$select.selected.CARRERA}}
+                    <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
                     </ui-select-match>
-                    <ui-select-choices repeat="item.CODIGO_CARRERA as item in profundizacion_publicarAsignaturas.carreras| filter: $select.search">
-                        <span ng-bind="item.CODIGO_CARRERA"></span> - <span ng-bind="item.CARRERA"></span>
+                    <ui-select-choices repeat="item.codigo_proyecto_curricular as item in profundizacion_publicarAsignaturas.carreras| filter: $select.search">
+                        <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
                     </ui-select-choices>
                 </ui-select>
                   <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}}</span>
@@ -48,7 +48,7 @@
             </form>
             <div ng-if="profundizacion_publicarAsignaturas.pensumSeleccionado">
                 <div class="col-sm-12">
-                    <publicar-asignaturas anio="profundizacion_publicarAsignaturas.periodo.APE_ANO" periodo=profundizacion_publicarAsignaturas.periodo.APE_PER carrera=profundizacion_publicarAsignaturas.carreraSeleccionada pensum=profundizacion_publicarAsignaturas.pensumSeleccionado modalidad=profundizacion_publicarAsignaturas.modalidad />
+                    <publicar-asignaturas anio="profundizacion_publicarAsignaturas.periodo.anio" periodo=profundizacion_publicarAsignaturas.periodo.periodo carrera=profundizacion_publicarAsignaturas.carreraSeleccionada pensum=profundizacion_publicarAsignaturas.pensumSeleccionado modalidad=profundizacion_publicarAsignaturas.modalidad />
                 </div>
             </div>
           </div>
