@@ -79,7 +79,13 @@ angular.module('academicaService', [])
                     console.log(p);
                 });*/
                 //return $http.get(nueva_ruta + "/" + service + param_string, { headers: { 'Accept': 'application/json' } });
-                return $http.get(nueva_ruta + "/" + service + "/" +params, { headers: { 'Accept': 'application/json' } });
+                if(params){
+                  return $http.get(nueva_ruta + "/" + service + "/" +params, { headers: { 'Accept': 'application/json' } });
+                }else{
+                  return $http.get(nueva_ruta + "/" + service, { headers: { 'Accept': 'application/json' } });
+                }
+
+
             }
 
         };

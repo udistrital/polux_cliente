@@ -470,21 +470,23 @@ angular.module('poluxClienteApp')
                             if(parametrosServicio[0]==="academica"){
                                 if(parametrosServicio[1]==="docente"){
                                       //detalle.opciones=academicaRequest.obtenerDocentesJson();
-                                      academicaRequest.obtenerDocentesTG().then(function(docentes){
-                                        var vinculados = [];
-                                        angular.forEach(docentes, function(docente){
-                                            //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
-                                            if(ctrl.docenteVinculado(docente.DIR_NRO_IDEN)){
-                                              vinculados.push(docente);
-                                            }else{
-                                              docente.bd = docente.DIR_NRO_IDEN;
-                                            }
-                                        });
-                                        angular.forEach(vinculados, function(docente){
-                                            var index = docentes.indexOf(docente);
-                                            docentes.splice(index, 1);
-                                        });
-                                        detalle.opciones=docentes;
+                                      academicaRequest.get("docentes_tg").then(function(response){
+                                          if (!angular.isUndefined(response.data.docentesTg.docente)) {
+                                              var vinculados = [];
+                                              angular.forEach(response.data.docentesTg.docente, function(docente){
+                                                  //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
+                                                  if(ctrl.docenteVinculado(docente.id)){
+                                                    vinculados.push(docente);
+                                                  }else{
+                                                    docente.bd = docente.id;
+                                                  }
+                                              });
+                                              angular.forEach(vinculados, function(docente){
+                                                  var index = docentes.indexOf(docente);
+                                                  docentes.splice(index, 1);
+                                              });
+                                              detalle.opciones=docentes;
+                                          }
                                       });
                                 }
                             }
