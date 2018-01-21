@@ -420,15 +420,15 @@ angular.module('poluxClienteApp')
                                     else if(detalle.Detalle.Nombre.includes("Evaluador Actual")){
                                       console.log(responseOpciones.data);
                                       angular.forEach(responseOpciones.data,function(evaluador){
-                                        var parametrosDocentesUD = {
-                                          "identificacion":evaluador.Usuario
-                                        };
-                                        academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                                          detalle.opciones.push({
-                                            "NOMBRE":docente[0].NOMBRE,
-                                            "bd":  docente.bd = docente[0].DOC_NRO_IDEN
-                                          });
-                                          console.log(detalle.opciones);
+
+                                        academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente){
+                                          if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                            detalle.opciones.push({
+                                              "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                                              "bd":  docente.bd = docente.data.docenteTg.docente[0].id
+                                            });
+                                            console.log(detalle.opciones);
+                                          }
                                         });
                                       });
                                     }
@@ -437,14 +437,17 @@ angular.module('poluxClienteApp')
                                             "identificacion":ctrl.Trabajo.directorInterno.Usuario
                                           };
                                           console.log("parametrosDocentesUD", parametrosDocentesUD);
-                                        academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                                          console.log("Respuesta docente", docente);
-                                          detalle.opciones.push({
-                                            "NOMBRE":docente[0].NOMBRE,
-                                            //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
-                                            "bd":  docente.bd = docente[0].DOC_NRO_IDEN
-                                          });
-                                          console.log(detalle.opciones);
+
+                                          academicaRequest.get("docente_tg", [ctrl.Trabajo.directorInterno.Usuario]).then(function(docente){
+                                            if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                              console.log("Respuesta docente", docente.data.docenteTg.docente);
+                                              detalle.opciones.push({
+                                                "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                                                //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                                                "bd":  docente.bd = docente.data.docenteTg.docente[0].id
+                                              });
+                                              console.log(detalle.opciones);
+                                            }
                                         });
 
                                     }else if(detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")){
@@ -469,12 +472,10 @@ angular.module('poluxClienteApp')
                             }
                             if(parametrosServicio[0]==="academica"){
                                 if(parametrosServicio[1]==="docente"){
-                                      //detalle.opciones=academicaRequest.obtenerDocentesJson();
                                       academicaRequest.get("docentes_tg").then(function(response){
                                           if (!angular.isUndefined(response.data.docentesTg.docente)) {
                                               var vinculados = [];
                                               angular.forEach(response.data.docentesTg.docente, function(docente){
-                                                  //docente.bd = docente.DIR_NRO_IDEN+"-"+docente.NOMBRE;
                                                   if(ctrl.docenteVinculado(docente.id)){
                                                     vinculados.push(docente);
                                                   }else{

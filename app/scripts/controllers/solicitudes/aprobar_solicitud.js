@@ -91,32 +91,28 @@ angular.module('poluxClienteApp')
                     if(id===49){
                        detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48){
-                      var parametrosDocentesUD = {
-                        "identificacion":detalle.Descripcion
-                        //"identificacion":"80093200"
-                      };
-                      academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                        console.log("detalle",detalle);
-                        console.log("docente",docente);
-                        detalle.Descripcion = docente[0].DOC_NRO_IDEN+" "+docente[0].NOMBRE;
 
-                        if(id === 9){
-                          ctrl.docenteDirector = {
-                            "NOMBRE":docente[0].NOMBRE,
-                            "DIR_NRO_IDEN":docente[0].DOC_NRO_IDEN,
-                          };
-                          //console.log(ctrl.docenteDirector);
+                      academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
+                        if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                          console.log(docente.data.docenteTg.docente[0]);
+                          detalle.Descripcion=docente.data.docenteTg.docente[0].id+" "+docente.data.docenteTg.docente[0].nombre;
+                          if(id === 9){
+                            ctrl.docenteDirector = {
+                              "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                              "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                            };
+                            //console.log(ctrl.docenteDirector);
+                          }
+
+                          //docente solicitado para el cambio
+                          if(id === 15 || id===17){
+                            ctrl.docenteCambio = {
+                              "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                              "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                            };
+                          //  console.log("docente cambio", ctrl.docenteCambio);
+                          }
                         }
-
-                        //docente solicitado para el cambio
-                        if(id === 15 || id===17){
-                          ctrl.docenteCambio = {
-                            "NOMBRE":docente[0].NOMBRE,
-                            "DIR_NRO_IDEN":docente[0].DOC_NRO_IDEN,
-                          };
-                        //  console.log("docente cambio", ctrl.docenteCambio);
-                        }
-
                       });
 
                     }else if(detalle.Descripcion.includes("JSON-")){

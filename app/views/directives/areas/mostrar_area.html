@@ -11,7 +11,7 @@
             <select ng-model="docenteSeleccionado" name="docente" class="form-control" required
             ng-change="d_mostrarArea.mostrarAreasDocente(docenteSeleccionado)">
             <option ng-repeat="p in docenteParam"
-            value="{{p.DOC_NRO_IDEN}}">{{p.NOMBRE }}</option>
+            value="{{p.id}}">{{p.NOMBRE }}</option>
           </select>
         </form>
         </div>

@@ -10,7 +10,6 @@
 angular.module('poluxClienteApp')
     .controller('AreasDocenteCtrl', function(academicaRequest, poluxRequest) {
         var self = this;
-        var parametros;
         self.buttonDirective = "Agregar Área";
         self.removable = false;
         self.menucreacion = false;
@@ -25,8 +24,10 @@ angular.module('poluxClienteApp')
                 return false;
             } else { self.buttonDirective = "Agregar Área"; return true; }
         };
-        academicaRequest.obtenerDocentes(parametros).then(function(response) {
-            self.docentes = response;
+        academicaRequest.get("docentes_tg").then(function(docentes){
+          if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
+              self.docentes=docentes.data.docentesTg.docente;
+          }
         });
         //necesario para cargar las peticiones de áreas en el primer intento
         poluxRequest.get("area_conocimiento", "").then(function(response) {

@@ -49,12 +49,11 @@ angular.module('poluxClienteApp')
 
           var getNombreDocente = function(docente){
             var defer = $q.defer();
-            var parametrosDocentesUD = {
-              "identificacion":docente.Usuario
-            };
-            academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(responseDocente){
-                docente.nombre =  responseDocente[0].NOMBRE;
-                defer.resolve(docente);
+            academicaRequest.get("docente_tg", [docente.Usuario]).then(function(responseDocente){
+                if (!angular.isUndefined(responseDocente.data.docenteTg.docente)) {
+                  docente.nombre =  responseDocente.data.docenteTg.docente[0].nombre;
+                  defer.resolve(docente);
+                }
             });
             return defer.promise;
           }
@@ -102,13 +101,14 @@ angular.module('poluxClienteApp')
         limit:1
       });
       poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculado).then(function(responseVinculado){
-        var parametrosDocentesUD = {
-          "identificacion":responseVinculado.data[0].Usuario
-        };
-        academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-            docente = docente[0].NOMBRE;
+
+        academicaRequest.get("docente_tg", [responseVinculado.data[0].Usuario]).then(function(docente){
+            if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+
+            docente = docente.data.docenteTg.docente[0].nombre;
             defered.resolve(docente);
           //ctrl.detallesSolicitud.resultado = ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud);
+        }
         });
 
       });
@@ -499,12 +499,10 @@ angular.module('poluxClienteApp')
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48){
-                      var parametrosDocentesUD = {
-                        "identificacion":detalle.Descripcion
-                      };
-                      academicaRequest.obtenerDocentes(parametrosDocentesUD).then(function(docente){
-                        detalle.Descripcion = docente[0].NOMBRE;
-                        //ctrl.detallesSolicitud.resultado = ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud);
+                      academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
+                        if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                          detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
+                        }
                       });
 
                     }else if(detalle.Descripcion.includes("JSON-")){
