@@ -112,7 +112,7 @@ angular.module('poluxClienteApp')
                       ctrl.carreras.push(value.CodigoCarrera);
 
                       //buscar nombre de la carrera
-                      academicaRequest.get("carrera", value.CodigoCarrera).then(function(resp){
+                      academicaRequest.get("carrera", [value.CodigoCarrera]).then(function(resp){
                         var parametros=$.param({
                           query:"SolicitudMaterias:"+value.Id,
                           related:"IdAsignaturasElegibles"
@@ -174,8 +174,7 @@ angular.module('poluxClienteApp')
                     });
                     //buscar la solicitud asociada al TG
                     poluxRequest.get("solicitud_materias",parametros).then(function(response){
-
-                      academicaRequest.get("carrera", response.data[0].CodigoCarrera).then(function(resp){
+                      academicaRequest.get("carrera", [response.data[0].CodigoCarrera]).then(function(resp){
 
                         var parametros=$.param({
                           query:"IdSolicitudMaterias:"+response.data[0].Id,

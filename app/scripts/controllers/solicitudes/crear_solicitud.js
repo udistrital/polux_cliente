@@ -485,7 +485,7 @@ angular.module('poluxClienteApp')
                                                   var index = docentes.indexOf(docente);
                                                   docentes.splice(index, 1);
                                               });
-                                              detalle.opciones=docentes;
+                                              detalle.opciones=response.data.docentesTg.docente;
                                           }
                                       });
                                 }

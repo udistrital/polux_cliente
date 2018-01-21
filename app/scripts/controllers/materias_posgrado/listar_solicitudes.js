@@ -64,8 +64,7 @@ angular.module('poluxClienteApp')
           ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
       }
   });
-
-  academicaRequest.get("carreras","POSGRADO").then(function(response){
+  academicaRequest.get("carreras",["POSGRADO"]).then(function(response){
     if (!angular.isUndefined(response.data.carrerasCollection.carrera)) {
         ctrl.carreras=response.data.carrerasCollection.carrera;
     }

@@ -24,8 +24,7 @@ angular.module('poluxClienteApp')
             })).then(function(response) {
                 ctrl.modalidades = response.data;
             });
-
-            academicaRequest.get("carreras","PREGRADO").then(function(response){
+            academicaRequest.get("carreras",["PREGRADO"]).then(function(response){
                 ctrl.carreras = response.data.carrerasCollection;
             });
         };

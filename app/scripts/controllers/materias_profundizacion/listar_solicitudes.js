@@ -24,14 +24,13 @@ angular.module('poluxClienteApp')
       { name: 'estado', displayName: 'Estado', width: "15%"  },
     ];
 
-
     academicaRequest.get("periodo_academico","X").then(function(response){
         if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
             ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
         }
     });
-
-    academicaRequest.get("carreras","PREGRADO").then(function(response){
+    
+    academicaRequest.get("carreras",["PREGRADO"]).then(function(response){
       if (!angular.isUndefined(response.data.carrerasCollection.carrera)) {
           ctrl.carreras=response.data.carrerasCollection.carrera;
       }

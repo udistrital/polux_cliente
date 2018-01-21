@@ -283,7 +283,7 @@ angular.module('poluxClienteApp')
             limit:0
         });
 
-        academicaRequest.get("coordinador_carrera2",$scope.userId+"/"+"PREGRADO").then(function(responseCoordinador){
+        academicaRequest.get("coordinador_carrera2",[$scope.userId, "PREGRADO"]).then(function(responseCoordinador){
               ctrl.carrerasCoordinador = [];
               var carreras  = [];
               if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {

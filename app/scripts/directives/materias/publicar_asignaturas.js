@@ -43,7 +43,7 @@ angular.module('poluxClienteApp')
           ctrl.gridOptions.data = [];
 
           if ($scope.carrera && $scope.pensum) {
-            academicaRequest.get("asignaturas_carrera_pensum",$scope.carrera+"/"+$scope.pensum).then(function(response){
+            academicaRequest.get("asignaturas_carrera_pensum",[$scope.carrera, $scope.pensum]).then(function(response){
               if (!angular.isUndefined(response.data.asignaturaCollection.asignatura)) {
                   ctrl.asignaturas=response.data.asignaturaCollection.asignatura;
               }

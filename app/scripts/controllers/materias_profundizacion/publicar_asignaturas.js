@@ -25,7 +25,7 @@ angular.module('poluxClienteApp')
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
       $scope.load = true;
       ctrl.carreras = [];
-      academicaRequest.get("coordinador_carrera2",$scope.userId+"/"+"PREGRADO").then(function(response){
+      academicaRequest.get("coordinador_carrera2",[$scope.userId, "PREGRADO"]).then(function(response){
         console.log(response);
         if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
             ctrl.carreras=response.data.coordinadorCollection.coordinador;
@@ -38,7 +38,7 @@ angular.module('poluxClienteApp')
       ctrl.pensums=[];
       $scope.msgCargandoPensums = $translate.instant('LOADING.CARGANDO_PENSUMS');
       $scope.load = true;
-      academicaRequest.get("pensums",carreraSeleccionada).then(function(response){
+      academicaRequest.get("pensums",[carreraSeleccionada]).then(function(response){
           if (!angular.isUndefined(response.data.pensums.pensum)) {
               ctrl.carrera=carreraSeleccionada;
               ctrl.pensums=response.data.pensums.pensum;

@@ -25,7 +25,6 @@ angular.module('poluxClienteApp')
                 return false;
             } else { self.buttonDirective = "Agregar Área"; return true; }
         };
-        //cuando se trabaje con el servidor cambiar a:  self.docentes=academicaRequest.obtenerDocentes();
         academicaRequest.obtenerDocentes(parametros).then(function(response) {
             self.docentes = response;
         });

@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
     };*/
     $scope.userId=19451396;
     ctrl.carrerasCoordinador = [];
-    academicaRequest.get("coordinador_carrera2",$scope.userId+"/"+"PREGRADO").then(function(response){
+    academicaRequest.get("coordinador_carrera2",[$scope.userId, "PREGRADO"]).then(function(response){
       console.log(response);
       if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
           ctrl.carrerasCoordinador=response.data.coordinadorCollection.coordinador;
@@ -180,11 +180,13 @@ angular.module('poluxClienteApp')
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
                 ctrl.isInicial = true;
                 //Si no es de materias de posgrado y profundización trae los docentes
-                academicaRequest.obtenerDocentesTG().then(function(docentes){
-                  ctrl.docentes=docentes;
-                  console.log(ctrl.docentes);
-                  defered.resolve(ctrl.docentes);
+                academicaRequest.get("docentes_tg").then(function(docentes){
+                  if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
+                      ctrl.docentes=docentes.data.docentesTg.docente;
+                      defered.resolve(ctrl.docentes);
+                  }
                 });
+
                 if(ctrl.dataSolicitud.modalidad === 1){
                   ctrl.isPasantia = true;
                 }
@@ -193,10 +195,11 @@ angular.module('poluxClienteApp')
             }
       }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 ){
         ctrl.isCambio = true;
-        academicaRequest.obtenerDocentesTG().then(function(docentes){
-          ctrl.docentes=docentes;
-          //console.log(ctrl.docentes);
-          defered.resolve(ctrl.docentes);
+        academicaRequest.get("docentes_tg").then(function(docentes){
+          if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
+            ctrl.docentes=docentes.data.docentesTg.docente;
+            defered.resolve(ctrl.docentes);
+          }
         });
       }else{
         defered.resolve(ctrl.dataSolicitud.modalidad);
@@ -1045,7 +1048,7 @@ angular.module('poluxClienteApp')
         */
         var sql = "";
         angular.forEach(ctrl.carrerasCoordinador, function(carrera){
-            sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.CODIGO_CARRERA;
+            sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.codigo_proyecto_curricular;
 
             var parametrosDocumentos = $.param({
               query:"TipoDocumentoEscrito:1"+sql,

@@ -56,16 +56,10 @@ angular.module('poluxClienteApp')
             fields: "CodigoCarrera,CodigoPensum"
           });
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
-            console.log(response);
             angular.forEach(response.data, function(value) {
               if(value.CodigoCarrera!==$scope.e.Codigo){
-               /*var parametros = {
-                'codigo': value.CodigoCarrera,
-                'tipo': ctrl.tipo
-              };*/
 
-               academicaRequest.get("carrera_codigo_nivel",value.CodigoCarrera+"/"+ctrl.tipo).then(function(response2){
-                 console.log(response2);
+               academicaRequest.get("carrera_codigo_nivel",[value.CodigoCarrera, ctrl.tipo]).then(function(response2){
                  var resultado=null;
                  if (!angular.isUndefined(response2.data.carrerasCollection.carrera)) {
                      var resultado=response2.data.carrerasCollection.carrera[0];

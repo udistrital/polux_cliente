@@ -192,7 +192,7 @@
                     <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length>0">
                       <div class="row">
                         <div class="col-sm-9">
-                          <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta"  theme="select2" reset-search-input="false" style="width:100%;">
+                          <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta" theme="select2" reset-search-input="false" style="width:100%;">
                                <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
                                 <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
                                    <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
