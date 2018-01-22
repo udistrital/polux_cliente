@@ -16,48 +16,74 @@ angular.module('poluxClienteApp')
 
       academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
-        var parametros = {
-          "codigo": $scope.codigo,
-          //periodo anterior
-          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
-        };
+      academicaRequest.get("datos_estudiantes",[$scope.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+        if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+            if(response2){
+              academicaRequest.get("creditos_aprobados", [parametros.codigo]).then(function(response3){
+                console.log(response3);
+                ctrl.creditos_aprobados=response3.data.notas.nota[0].creditos_aprobados;
+                //Créditos del pensum
+                academicaRequest.get("creditos_plan", [response2.data.estudiante.estudiante[0].pensum]).then(function(response4) {
+                    console.log(response4)
+                    ctrl.creditos_plan=response2.data.creditosCollection.creditosPlan[0].creditos;
+                    console.log(ctrl.creditos_aprobados+"*100/"+ctrl.creditos_plan);
+                    var porcentaje_cursado=ctrl.creditos_aprobados*100/ctrl.creditos_plan;
+                    console.log(porcentaje_cursado);
 
-        academicaRequest.promedioEstudiante(parametros).then(function(response2){
+                    console.log(response3);
 
-          if(response2){
-            //porcentaje cursado
-            var parametros2 = {
-              "codigo": parametros.codigo
-            };
+                    ctrl.estudiante={
+                      "Codigo": parametros.codigo,
+                      "Nombre": response2.data.estudiante.estudiante[0].nombre,
+                      "Modalidad": 2,
+                      "Tipo": "POSGRADO",
+                      "PorcentajeCursado": porcentaje_cursado,
+                      "Promedio": response2.data.estudiante.estudiante[0].promedio,
+                      "Rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+                      "Estado": response2.data.estudiante.estudiante[0].estado,
+                      "Nivel": response2.data.estudiante.estudiante[0].nivel,
+                      "TipoCarrera": response2.data.estudiante.estudiante[0].tipo_carrera,
 
-            academicaRequest.porcentajeCursado(parametros).then(function(response3){
-              console.log(response3);
+                    };
 
-              ctrl.estudiante={
-                "Codigo": parametros.codigo,
-                "Nombre": response2[0].NOMBRE,
-                "Modalidad": 2,
-                "Tipo": "POSGRADO",
-                "PorcentajeCursado": response3,
-                "Promedio": response2[0].PROMEDIO,
-                "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                "Estado": response2[0].EST_ESTADO_EST,
-                "Nivel": response2[0].TRA_NIVEL,
-                "TipoCarrera": response2[0].TRA_NOMBRE
+                    console.log(ctrl.estudiante);
+                    ctrl.modalidad="MATERIAS POSGRADO";
 
-              };
+                    poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
+                        console.log(response);
+                        ctrl.validar= response.data;
+                    });
 
-              console.log(ctrl.estudiante);
-              ctrl.modalidad="MATERIAS POSGRADO";
-
-              poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
-                  console.log(response);
-                  ctrl.validar= response.data;
+                  });
               });
-            });
-          }
 
+              academicaRequest.porcentajeCursado(parametros).then(function(response3){
+                console.log(response3);
+
+                ctrl.estudiante={
+                  "Codigo": parametros.codigo,
+                  "Nombre": response2[0].NOMBRE,
+                  "Modalidad": 2,
+                  "Tipo": "POSGRADO",
+                  "PorcentajeCursado": response3,
+                  "Promedio": response2[0].PROMEDIO,
+                  "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
+                  "Estado": response2[0].EST_ESTADO_EST,
+                  "Nivel": response2[0].TRA_NIVEL,
+                  "TipoCarrera": response2[0].TRA_NOMBRE
+
+                };
+
+                console.log(ctrl.estudiante);
+                ctrl.modalidad="MATERIAS POSGRADO";
+
+                poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
+                    console.log(response);
+                    ctrl.validar= response.data;
+                });
+              });
+            }
+          }
         });
 
       });

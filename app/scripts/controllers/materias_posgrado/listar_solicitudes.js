@@ -102,25 +102,21 @@ angular.module('poluxClienteApp')
                         poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
                           academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-                              var parametros = {
-                                'codigo' : usuarioSolicitud.data[0].Usuario,
-                                'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-                                //'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
-                                'periodo' :1
-                                //'sin_rendimiento':1
-                              };
-                              academicaRequest.promedioEstudiante(parametros).then(function(response2){
-                                var solicitud = {
-                                  "solicitud": value.SolicitudTrabajoGrado.Id,
-                                  "fecha": value.Fecha,
-                                  "estudiante": usuarioSolicitud.data[0].Usuario,
-                                  "nombre": response2[0].NOMBRE,
-                                  "promedio": response2[0].PROMEDIO,
-                                  "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                                  "estado": value.EstadoSolicitud,
-                                  "respuesta": ""+value.Id
-                                };
-                                $scope.sols.push(solicitud);
+
+                              academicaRequest.get("datos_estudiantes",[usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+                                if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+                                  var solicitud = {
+                                    "solicitud": value.SolicitudTrabajoGrado.Id,
+                                    "fecha": value.Fecha,
+                                    "estudiante": usuarioSolicitud.data[0].Usuario,
+                                    "nombre": response2.data.estudiante.estudiante[0].nombre,
+                                    "promedio": response2.data.estudiante.estudiante[0].promedio,
+                                    "rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+                                    "estado": value.EstadoSolicitud,
+                                    "respuesta": ""+value.Id
+                                  };
+                                  $scope.sols.push(solicitud);
+                                }
                               });
 
                           });
@@ -168,24 +164,20 @@ angular.module('poluxClienteApp')
 
     academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
       poluxRequest.get("estudiante_tg",parametros).then(function(response){
-        var parametros = {
-          'codigo' : response.data[0].CodigoEstudiante,
-          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
-          'sin_rendimiento':1
-        };
-        academicaRequest.promedioEstudiante(parametros).then(function(response2){
-          var solicitud = {
-            "solicitud": tg.Id,
-            "fecha": tg.Fecha,
-            "estudiante": response.data[0].CodigoEstudiante.toString(),
-            "nombre": response2[0].NOMBRE,
-            "promedio": response2[0].PROMEDIO,
-            "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-            "estado": tg.Estado,
-            "formalizacion": tg.Formalizacion
-          };
-          $scope.sols.push(solicitud);
+      academicaRequest.get("datos_estudiantes",[usuarioSolicitud.data[0].CodigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+          if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+            var solicitud = {
+              "solicitud": tg.Id,
+              "fecha": tg.Fecha,
+              "estudiante": response.data[0].CodigoEstudiante.toString(),
+              "nombre": response2.data.estudiante.estudiante[0].nombre,
+              "promedio": response2.data.estudiante.estudiante[0].promedio,
+              "rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+              "estado": tg.Estado,
+              "formalizacion": tg.Formalizacion
+            };
+            $scope.sols.push(solicitud);
+          }
         });
 
       });
@@ -403,7 +395,7 @@ angular.module('poluxClienteApp')
                                   var res = detalleSolicitud.data[0].Descripcion.split(",");
                                   //código la carrera solicitada
                                   var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-                            
+
                                     if(ctrl.carrera==carreraSolicitud.Codigo){
                                       var parametros=$.param({
                                         query:"SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
@@ -411,31 +403,29 @@ angular.module('poluxClienteApp')
                                       poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
                                         academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-                                            var parametros = {
-                                              'codigo' : usuarioSolicitud.data[0].Usuario,
-                                              'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico.anio,
-                                              'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico.periodo
-                                            };
-                                            academicaRequest.promedioEstudiante(parametros).then(function(response2){
-                                              var solicitud = {
-                                                "solicitud": value.Id,
-                                                "fecha": value.Fecha,
-                                                "estudiante": usuarioSolicitud.data[0].Usuario,
-                                                "nombre": response2[0].NOMBRE,
-                                                "promedio": response2[0].PROMEDIO,
-                                                "rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                                                "estado": value.EstadoSolicitud,
-                                                "respuesta": ""+value.Id
-                                              };
-                                              console.log(solicitud);
-                                              ctrl.agregar($scope.solsOpcionados, solicitud);
-                                                if($scope.solsOpcionados.length==responseSolicitudes.data.length){
-                                                  ctrl.rta ={
-                                                    'cupos_excelencia' : cuposDisponibles,
-                                                    'cupos_adicionales' : cuposDisponiblesPago
-                                                  };
-                                                  ctrl.seleccionAdmitidos($scope.solsOpcionados, ctrl.rta);
+                                            academicaRequest.get("datos_estudiantes",[usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+                                              if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+
+                                                var solicitud = {
+                                                  "solicitud": value.Id,
+                                                  "fecha": value.Fecha,
+                                                  "estudiante": usuarioSolicitud.data[0].Usuario,
+                                                  "nombre": response2.data.estudiante.estudiante[0].nombre,
+                                                  "promedio": response2.data.estudiante.estudiante[0].promedio,
+                                                  "rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+                                                  "estado": value.EstadoSolicitud,
+                                                  "respuesta": ""+value.Id
+                                                };
+                                                console.log(solicitud);
+                                                ctrl.agregar($scope.solsOpcionados, solicitud);
+                                                  if($scope.solsOpcionados.length==responseSolicitudes.data.length){
+                                                    ctrl.rta ={
+                                                      'cupos_excelencia' : cuposDisponibles,
+                                                      'cupos_adicionales' : cuposDisponiblesPago
+                                                    };
+                                                    ctrl.seleccionAdmitidos($scope.solsOpcionados, ctrl.rta);
                                                 }
+                                              }
                                             });
 
                                         });

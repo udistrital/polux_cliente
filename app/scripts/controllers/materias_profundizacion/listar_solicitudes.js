@@ -29,7 +29,7 @@ angular.module('poluxClienteApp')
             ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
         }
     });
-    
+
     academicaRequest.get("carreras",["PREGRADO"]).then(function(response){
       if (!angular.isUndefined(response.data.carrerasCollection.carrera)) {
           ctrl.carreras=response.data.carrerasCollection.carrera;
@@ -67,6 +67,8 @@ angular.module('poluxClienteApp')
           'codigo' : response.data[0].CodigoEstudiante,
           'sin_rendimiento':1
         };
+
+
         academicaRequest.promedioEstudiante(parametros).then(function(response2){
 
           var solicitud = {
@@ -78,6 +80,7 @@ angular.module('poluxClienteApp')
             "estado": tg.Estado
           };
           $scope.sols.push(solicitud);
+        }
         });
 
       });

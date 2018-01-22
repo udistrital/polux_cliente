@@ -2,7 +2,7 @@
   "name": "polux-cliente",
   "version": "0.0.0",
   "dependencies": {
-    "angular": "^1.6.3",
+    "angular": "^1.6.8",
     "bootstrap": "3.3.4",
     "angular-animate": "^1.6.3",
     "angular-cookies": "^1.4.0",
