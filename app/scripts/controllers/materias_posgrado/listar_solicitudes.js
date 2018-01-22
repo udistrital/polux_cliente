@@ -220,19 +220,16 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
                     if(detalleSolicitud.data!=null){
+                      console.log(detalleSolicitud.data[0].Descripcion);
                         var res = detalleSolicitud.data[0].Descripcion.split(",");
-                        //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-                        var parametros = {
-                            'codigo': res[0]
-                        };
-                        academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                            if($scope.carrera==resp[0].PEN_CRA_COD){
-                              value.EstadoSolicitud.Id=5;
-                              poluxRequest.put("respuesta_solicitud",value.Id, value).then(function(response){
-                                console.log("response.data confirmado: " + response.data);
-                              });
-                            }
-                        });
+                        //carrera solicitada
+                        var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+                        if($scope.carrera==carreraSolicitud.Codigo){
+                          value.EstadoSolicitud.Id=5;
+                          poluxRequest.put("respuesta_solicitud",value.Id, value).then(function(response){
+                            console.log("response.data confirmado: " + response.data);
+                          });
+                        }
                     }
                 });
             }
@@ -254,18 +251,14 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
                     if(detalleSolicitud.data!=null){
                         var res = detalleSolicitud.data[0].Descripcion.split(",");
-                        //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-                        var parametros = {
-                            'codigo': res[0]
-                        };
-                        academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                            if($scope.carrera==resp[0].PEN_CRA_COD){
-                              value.EstadoSolicitud.Id=5;
-                              poluxRequest.put("respuesta_solicitud",value.Id, value).then(function(response){
-                                console.log("response.data confirmado: " + response.data);
-                              });
-                            }
-                        });
+                        //carrera solicitada
+                        var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+                        if($scope.carrera==carreraSolicitud.Codigo){
+                          value.EstadoSolicitud.Id=5;
+                          poluxRequest.put("respuesta_solicitud",value.Id, value).then(function(response){
+                            console.log("response.data confirmado: " + response.data);
+                          });
+                        }
                     }
                 });
             }
@@ -359,16 +352,12 @@ angular.module('poluxClienteApp')
                         poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
                             if(detalleSolicitud.data!=null){
                                 var res = detalleSolicitud.data[0].Descripcion.split(",");
-                                //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-                                var parametros = {
-                                    'codigo': res[0]
-                                };
-                                academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                                  defered.resolve(value);
-                                    if($scope.carrera==resp[0].PEN_CRA_COD){
-                                      ctrl.aprobadasPago.push(value.SolicitudTrabajoGrado);
-                                    }
-                                });
+                                //carrera solicitada
+                                var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+                                defered.resolve(value);
+                                if($scope.carrera==carreraSolicitud.Codigo){
+                                  ctrl.aprobadasPago.push(value.SolicitudTrabajoGrado);
+                                }
                             }
                         });
                         arrayPromise.push(promise);
@@ -412,13 +401,10 @@ angular.module('poluxClienteApp')
                             poluxRequest.get("detalle_solicitud",parametros).then(function(detalleSolicitud){
                               if(detalleSolicitud.data!=null){
                                   var res = detalleSolicitud.data[0].Descripcion.split(",");
-                                  //buscar 1 de las asignaturas solicitadas, para buscar con el código la carrera solicitada
-                                  var parametros = {
-                                   'codigo': res[0]
-                                  };
-
-                                  academicaRequest.buscarAsignaturas(parametros).then(function(resp){
-                                    if(ctrl.carrera==resp[0].PEN_CRA_COD){
+                                  //código la carrera solicitada
+                                  var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+                            
+                                    if(ctrl.carrera==carreraSolicitud.Codigo){
                                       var parametros=$.param({
                                         query:"SolicitudTrabajoGrado:"+value.SolicitudTrabajoGrado.Id
                                       });
@@ -456,7 +442,6 @@ angular.module('poluxClienteApp')
 
                                       });
                                     }
-                                });
                               }
                             });
                         }

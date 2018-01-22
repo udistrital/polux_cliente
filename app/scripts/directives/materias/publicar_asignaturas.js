@@ -55,15 +55,9 @@ angular.module('poluxClienteApp')
                 var promise = defered.promise;
                 promiseArr.push(promise);
                 ctrl.totalCreditos = 0;
-
-                academicaRequest.buscarAsignaturas({
-                  'codigo': value.codigo
-                }).then(function (response) {
-                  ctrl.asignatura = response;
-                  ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, ctrl.asignatura);
-                  defered.resolve(response);
-                });
-
+                console.log(value);
+                ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, value);
+                defered.resolve(response);
               });
 
               $q.all(promiseArr).then(function(){
@@ -120,7 +114,7 @@ angular.module('poluxClienteApp')
               ctrl.id = response.data[0].Id
 
               var parametros = $.param({
-                query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura[0].ASI_COD
+                query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura.codigo
               });
 
               poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
@@ -135,14 +129,14 @@ angular.module('poluxClienteApp')
                     año: anio,
                     periodo: periodo,
                     pensum: pensum,
-                    asignatura: asignatura[0].ASI_COD,
-                    nombre: asignatura[0].ASI_NOMBRE,
-                    creditos: asignatura[0].PEN_CRE,
-                    semestre: asignatura[0].PEN_SEM,
+                    asignatura: asignatura.codigo,
+                    nombre: asignatura.nombre,
+                    creditos: asignatura.creditos,
+                    semestre: asignatura.semestre,
                     check: response.data[0].Activo
                   };
 
-                  var c = parseInt(asignatura[0].PEN_CRE, 10);
+                  var c = parseInt(asignatura.creditos, 10);
                   ctrl.totalCreditos = ctrl.totalCreditos + c;
                   ctrl.mostrar.push(nuevo);
 
@@ -152,10 +146,10 @@ angular.module('poluxClienteApp')
                     año: anio,
                     periodo: periodo,
                     pensum: pensum,
-                    asignatura: asignatura[0].ASI_COD,
-                    nombre: asignatura[0].ASI_NOMBRE,
-                    creditos: asignatura[0].PEN_CRE,
-                    semestre: asignatura[0].PEN_SEM,
+                    asignatura: asignatura.codigo,
+                    nombre: asignatura.nombre,
+                    creditos: asignatura.creditos,
+                    semestre: asignatura.semestre,
                     check: false
                   };
                   ctrl.mostrar.push(nuevo);
@@ -170,10 +164,10 @@ angular.module('poluxClienteApp')
                 año: anio,
                 periodo: periodo,
                 pensum: pensum,
-                asignatura: asignatura[0].ASI_COD,
-                nombre: asignatura[0].ASI_NOMBRE,
-                creditos: asignatura[0].PEN_CRE,
-                semestre: asignatura[0].PEN_SEM,
+                asignatura: asignatura.codigo,
+                nombre: asignatura.nombre,
+                creditos: asignatura.creditos,
+                semestre: asignatura.semestre,
                 check: false
               };
               ctrl.mostrar.push(nuevo);
