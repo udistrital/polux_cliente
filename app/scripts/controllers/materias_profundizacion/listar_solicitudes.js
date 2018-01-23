@@ -80,7 +80,7 @@ angular.module('poluxClienteApp')
             "estado": tg.Estado
           };
           $scope.sols.push(solicitud);
-        }
+
         });
 
       });

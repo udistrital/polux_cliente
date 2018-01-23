@@ -103,15 +103,15 @@ angular.module('poluxClienteApp')
 
                           academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
-                              academicaRequest.get("datos_estudiantes",[usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
-                                if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+                              academicaRequest.get("datos_estudiante",[usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+                                if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                                   var solicitud = {
                                     "solicitud": value.SolicitudTrabajoGrado.Id,
                                     "fecha": value.Fecha,
                                     "estudiante": usuarioSolicitud.data[0].Usuario,
-                                    "nombre": response2.data.estudiante.estudiante[0].nombre,
-                                    "promedio": response2.data.estudiante.estudiante[0].promedio,
-                                    "rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+                                    "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                                    "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                                    "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                                     "estado": value.EstadoSolicitud,
                                     "respuesta": ""+value.Id
                                   };
@@ -164,15 +164,15 @@ angular.module('poluxClienteApp')
 
     academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
       poluxRequest.get("estudiante_tg",parametros).then(function(response){
-      academicaRequest.get("datos_estudiantes",[usuarioSolicitud.data[0].CodigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
-          if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+      academicaRequest.get("datos_estudiante",[usuarioSolicitud.data[0].CodigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+          if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
             var solicitud = {
               "solicitud": tg.Id,
               "fecha": tg.Fecha,
               "estudiante": response.data[0].CodigoEstudiante.toString(),
-              "nombre": response2.data.estudiante.estudiante[0].nombre,
-              "promedio": response2.data.estudiante.estudiante[0].promedio,
-              "rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+              "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+              "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+              "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
               "estado": tg.Estado,
               "formalizacion": tg.Formalizacion
             };
@@ -403,16 +403,16 @@ angular.module('poluxClienteApp')
                                       poluxRequest.get("usuario_solicitud",parametros).then(function(usuarioSolicitud){
 
                                         academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-                                            academicaRequest.get("datos_estudiantes",[usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
-                                              if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+                                            academicaRequest.get("datos_estudiante",[usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+                                              if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
 
                                                 var solicitud = {
                                                   "solicitud": value.Id,
                                                   "fecha": value.Fecha,
                                                   "estudiante": usuarioSolicitud.data[0].Usuario,
-                                                  "nombre": response2.data.estudiante.estudiante[0].nombre,
-                                                  "promedio": response2.data.estudiante.estudiante[0].promedio,
-                                                  "rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
+                                                  "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                                                  "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                                                  "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                                                   "estado": value.EstadoSolicitud,
                                                   "respuesta": ""+value.Id
                                                 };

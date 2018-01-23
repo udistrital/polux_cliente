@@ -16,8 +16,8 @@ angular.module('poluxClienteApp')
 
       academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
-      academicaRequest.get("datos_estudiantes",[$scope.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
-        if (!angular.isUndefined(response2.data.estudiante.estudiante)) {
+      academicaRequest.get("datos_estudiante",[$scope.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+        if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
             if(response2){
               academicaRequest.get("creditos_aprobados", [parametros.codigo]).then(function(response3){
                 console.log(response3);
@@ -38,11 +38,11 @@ angular.module('poluxClienteApp')
                       "Modalidad": 2,
                       "Tipo": "POSGRADO",
                       "PorcentajeCursado": porcentaje_cursado,
-                      "Promedio": response2.data.estudiante.estudiante[0].promedio,
-                      "Rendimiento": "0"+response2.data.estudiante.estudiante[0].rendimiento,
-                      "Estado": response2.data.estudiante.estudiante[0].estado,
-                      "Nivel": response2.data.estudiante.estudiante[0].nivel,
-                      "TipoCarrera": response2.data.estudiante.estudiante[0].tipo_carrera,
+                      "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                      "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                      "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
+                      "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
+                      "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].tipo_carrera,
 
                     };
 

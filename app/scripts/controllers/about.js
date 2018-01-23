@@ -26,8 +26,7 @@ angular.module('poluxClienteApp')
             console.log('Client is not connected: ' + err);
         });
 */
-//http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy/creditos_aprobados/20102020001
-        $http.get('http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy/creditos_aprobados/20102020001', {
+        /*$http.get('http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy/creditos_aprobados/20102020001', {
 
         }).then(function(response) {
             console.log(response);
@@ -43,7 +42,7 @@ angular.module('poluxClienteApp')
                 console.log(porcentaje_cursado);
 
               });
-          });
+          });*/
 
         ctrl.trustSrc = function(src) {
           return $sce.trustAsResourceUrl(src);
