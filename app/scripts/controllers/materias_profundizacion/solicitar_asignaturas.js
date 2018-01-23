@@ -24,28 +24,20 @@ angular.module('poluxClienteApp')
           'sin_rendimiento':1
         };
 
-        academicaRequest.promedioEstudiante(parametros).then(function(response2){
-
-          if(response2){
-            //porcentaje cursado
-            var parametros2 = {
-              "codigo": parametros.codigo
-            };
-
-            academicaRequest.porcentajeCursado(parametros).then(function(response3){
-              console.log(response3);
+        academicaRequest.get("datos_estudiante",[$scope.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+          if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
 
               ctrl.estudiante={
                 "Codigo": parametros.codigo,
-                "Nombre": response2[0].NOMBRE,
+                "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                 "Modalidad": 7,
                 "Tipo": "PREGRADO",
                 "PorcentajeCursado": response3,
-                "Promedio": response2[0].PROMEDIO,
-                "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                "Estado": response2[0].EST_ESTADO_EST,
-                "Nivel": response2[0].TRA_NIVEL,
-                "TipoCarrera": response2[0].TRA_NOMBRE
+                "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
+                "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
+                "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera
 
               };
 
@@ -57,8 +49,8 @@ angular.module('poluxClienteApp')
                   ctrl.validar= response.data;
               });
             });
-          }
 
+          }
         });
 
       });

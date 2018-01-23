@@ -48,27 +48,20 @@ angular.module('poluxClienteApp')
         ctrl.verificarEstudiante = function(){
           academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
-            var parametros = {
-              "codigo": ctrl.codigoEstudiante,
-              //periodo anterior
-              'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-              'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo
-            };
+              academicaRequest.get("datos_estudiante",[ctrl.codigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+                if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
 
-            academicaRequest.promedioEstudiante(parametros).then(function(response2){
-
-                if(response2!=='null'){
                     ctrl.estudiante={
                       "Codigo": parametros.codigo,
-                      "Nombre": response2[0].NOMBRE,
+                      "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                       "Modalidad": $scope.modalidad,
                       "Tipo": "POSGRADO",
-                      "PorcentajeCursado": response2[0].PORCENTAJE,
-                      "Promedio": response2[0].PROMEDIO,
-                      "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                      "Estado": response2[0].EST_ESTADO_EST,
-                      "Nivel": response2[0].TRA_NIVEL,
-                      "TipoCarrera": response2[0].TRA_NOMBRE
+                      "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje,
+                      "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                      "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                      "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
+                      "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
+                      "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera
                     };
                     console.log(ctrl.estudiante);
 

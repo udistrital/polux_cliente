@@ -63,24 +63,18 @@ angular.module('poluxClienteApp')
       //buscar la solicitudes
       poluxRequest.get("estudiante_tg",parametros).then(function(response){
 
-        var parametros = {
-          'codigo' : response.data[0].CodigoEstudiante,
-          'sin_rendimiento':1
-        };
-
-
-        academicaRequest.promedioEstudiante(parametros).then(function(response2){
-
-          var solicitud = {
-            "solicitud": tg.Id,
-            "fecha": tg.Fecha,
-            "estudiante": response.data[0].CodigoEstudiante,
-            "nombre": response2[0].NOMBRE,
-            "promedio": response2[0].PROMEDIO,
-            "estado": tg.Estado
-          };
-          $scope.sols.push(solicitud);
-
+        academicaRequest.get("datos_estudiante",[response.data[0].CodigoEstudiante, ctrl.periodo.anio,ctrl.periodo.periodo ]).then(function(response2){
+          if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
+            var solicitud = {
+              "solicitud": tg.Id,
+              "fecha": tg.Fecha,
+              "estudiante": response.data[0].CodigoEstudiante,
+              "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+              "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+              "estado": tg.Estado
+            };
+            $scope.sols.push(solicitud);
+          }
         });
 
       });

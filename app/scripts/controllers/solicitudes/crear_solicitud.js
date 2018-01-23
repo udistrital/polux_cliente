@@ -570,34 +570,22 @@ angular.module('poluxClienteApp')
       ctrl.obtenerDatosEstudiante = function(){
         academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
 
-          var parametros = {
-            "codigo": ctrl.codigo,
-            //periodo anterior
-            'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-            //'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
-            'periodo' :1
-          };
 
-          academicaRequest.promedioEstudiante(parametros).then(function(response2){
-            if(response2){
-              console.log(response2);
-              //porcentaje cursado
-              var parametros2 = {
-                "codigo": parametros.codigo
-              };
+          academicaRequest.get("datos_estudiante",[ ctrl.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
+            if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
 
                 ctrl.estudiante={
                   "Codigo": parametros.codigo,
                   "Nombre": response2[0].NOMBRE,
                   "Modalidad": ctrl.modalidad,
                   "Tipo": "POSGRADO",
-                  "PorcentajeCursado": response2[0].PORCENTAJE,
-                  "Promedio": response2[0].PROMEDIO,
-                  "Rendimiento": "0"+response2[0].REG_RENDIMIENTO_AC,
-                  "Estado": response2[0].EST_ESTADO_EST,
-                  "Nivel": response2[0].TRA_NIVEL,
-                  "TipoCarrera": response2[0].TRA_NOMBRE,
-                  "Carrera":response2[0].EST_CRA_COD
+                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje,
+                  "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                  "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                  "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
+                  "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
+                  "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
+                  "Carrera":response2.data.estudianteCollection.datosEstudiante[0].carrera
 
                 };
                 if(ctrl.estudiante.Nombre === undefined){
@@ -611,7 +599,8 @@ angular.module('poluxClienteApp')
                 ctrl.estudiante.areas_elegidas= [];
                 ctrl.estudiante.minimoCreditos = false;
 
-            }
+
+              }
           });
         });
       }
