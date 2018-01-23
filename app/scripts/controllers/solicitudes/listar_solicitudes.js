@@ -331,19 +331,21 @@ angular.module('poluxClienteApp')
                       var parametrosEstudiante = {
                         "codigo":ctrl.est,
                       };
-                      academicaRequest.obtenerEstudiantes(parametrosEstudiante).then(function(responseEstudiante){
-                        console.log(responseEstudiante);
-                        var carreraEstudiante = responseEstudiante[0].CARRERA;
-                        if(carreras.includes(carreraEstudiante)){
-                          solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
-                          solicitud.data.Respuesta = solicitud;
-                         // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
-                          solicitud.data.Carrera = carreraEstudiante;
-                          ctrl.solicitudes.push(solicitud.data);
-                          defered.resolve(solicitud.data);
-                          ctrl.gridOptions.data = ctrl.solicitudes;
-                        }else{
-                          defered.resolve(carreraEstudiante);
+
+                      academicaRequest.get("datos_estudiante",[ctrl.est]).then(function(response2){
+                        if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+                          var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                          if(carreras.includes(carreraEstudiante)){
+                            solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
+                            solicitud.data.Respuesta = solicitud;
+                           // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
+                            solicitud.data.Carrera = carreraEstudiante;
+                            ctrl.solicitudes.push(solicitud.data);
+                            defered.resolve(solicitud.data);
+                            ctrl.gridOptions.data = ctrl.solicitudes;
+                          }else{
+                            defered.resolve(carreraEstudiante);
+                          }
                         }
                       });
 
