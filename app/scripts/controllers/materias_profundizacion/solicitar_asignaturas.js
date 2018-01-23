@@ -11,18 +11,9 @@ angular.module('poluxClienteApp')
   .controller('MateriasProfundizacionSolicitarAsignaturasCtrl', function (poluxMidRequest, academicaRequest, $scope) {
     var ctrl = this;
     $scope.codigo="20112085061";
-
     $scope.$watch("codigo",function() {
 
       academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-
-        var parametros = {
-          "codigo": $scope.codigo,
-          //periodo anterior
-          'ano' : periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,
-          'periodo' :periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo,
-          'sin_rendimiento':1
-        };
 
         academicaRequest.get("datos_estudiante",[$scope.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
           if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
@@ -48,7 +39,6 @@ angular.module('poluxClienteApp')
                   console.log(response);
                   ctrl.validar= response.data;
               });
-            });
 
           }
         });
