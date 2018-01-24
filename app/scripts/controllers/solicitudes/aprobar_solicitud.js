@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
     };*/
     $scope.userId=19451396;
     ctrl.carrerasCoordinador = [];
-    academicaRequest.get("coordinador_carrera2",[$scope.userId, "PREGRADO"]).then(function(response){
+    academicaRequest.get("coordinador_carrera",[$scope.userId, "PREGRADO"]).then(function(response){
       console.log(response);
       if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
           ctrl.carrerasCoordinador=response.data.coordinadorCollection.coordinador;

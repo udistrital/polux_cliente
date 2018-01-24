@@ -24,7 +24,7 @@ angular.module('poluxClienteApp')
         $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
         $scope.load = true;
         ctrl.carreras = [];
-        academicaRequest.get("coordinador_carrera2", [$scope.userId, "POSGRADO"]).then(function(response){
+        academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"]).then(function(response){
           console.log(response);
         	if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
             	ctrl.carreras=response.data.coordinadorCollection.coordinador;
