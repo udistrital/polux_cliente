@@ -8,11 +8,12 @@
  * Factory in the poluxClienteApp.
  */
 angular.module('poluxMidService',[])
-  .factory('poluxMidRequest', function ($http) {
+  .factory('poluxMidRequest', function ($http, CONF) {
     // Service logic
     // ...
     //var path = "http://localhost:8098/v1/";
-    var path = "http://10.20.0.254/polux_api_mid/v1/";
+    //var path = "http://10.20.0.254/polux_api_mid/v1/";
+    var path = CONF.GENERAL.POLUX_MID_SERVICE;
     // Public API here
     return {
       get: function (tabla,params) {
