@@ -17,6 +17,9 @@
     POLUX_SERVICE: "http://10.20.0.254/polux_api_crud/v1/",
     POLUX_MID_SERVICE: "http://10.20.0.254/polux_api_mid/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
+    NUXEO_SERVICE:"https://athento.udistritaloas.edu.co/nuxeo/",
+    CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
+    OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://10.20.0.162:9443/oauth2/authorize",
         CLIENTE_ID: "bfPMflsiPVN6WFjJZIpzjsLdlx8a",
@@ -35,6 +38,9 @@ var conf_local = {
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
+    NUXEO_SERVICE:"https://athento.udistritaloas.edu.co/nuxeo/",
+    CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
+    OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
     TOKEN: {
       AUTORIZATION_URL: "https://10.20.0.162:9443/oauth2/authorize",
       CLIENTE_ID: "NCM5qVWim6MeTGB4Ag4lyLBOlv0a",

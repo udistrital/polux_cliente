@@ -9,9 +9,10 @@
  */
 
 angular.module('oikosService', [])
-    .factory('oikosRequest', function($http) {
+    .factory('oikosRequest', function($http,CONF) {
         // Service logic
-        var path = "http://10.20.0.254/oikos_api/v1/";
+        //var path = "http://10.20.0.254/oikos_api/v1/";
+        var path = CONF.GENERAL.OIKOS_SERVICE;
         // Public API here
         return {
             get: function(tabla, params) {
