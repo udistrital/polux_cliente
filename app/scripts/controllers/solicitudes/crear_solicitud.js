@@ -573,20 +573,18 @@ angular.module('poluxClienteApp')
 
           academicaRequest.get("datos_estudiante",[ ctrl.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-
                 ctrl.estudiante={
-                  "Codigo": parametros.codigo,
-                  "Nombre": response2[0].NOMBRE,
+                  "Codigo": ctrl.codigo,
+                  "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                   "Modalidad": ctrl.modalidad,
                   "Tipo": "POSGRADO",
-                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje,
+                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
                   "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                   "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                   "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
                   "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
                   "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
                   "Carrera":response2.data.estudianteCollection.datosEstudiante[0].carrera
-
                 };
                 if(ctrl.estudiante.Nombre === undefined){
                   ctrl.conEstudiante=false;
