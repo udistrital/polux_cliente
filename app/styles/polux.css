@@ -49,3 +49,22 @@ md-checkbox.md-checked.blue .md-icon {
 .panel panel-default {
     padding: 3%
 }
+
+.center-contents{
+   margin: auto;
+   max-width: 300px;
+}
+
+.row-centered {
+    text-align:center;
+}
+
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+    text-align: center;
+}
