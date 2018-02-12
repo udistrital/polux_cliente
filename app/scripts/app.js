@@ -220,6 +220,11 @@ angular
               controller: 'AdministracionAreasCtrl',
               controllerAs: 'administrarAreas'
             })
+            .when('/pasantia/solicitar_carta', {
+              templateUrl: 'views/pasantia/solicitar_carta.html',
+              controller: 'PasantiaSolicitarCartaCtrl',
+              controllerAs: 'solicitarCarta'
+            })
             .otherwise({
                 redirectTo: '/'
             });

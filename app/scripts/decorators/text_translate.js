@@ -340,7 +340,17 @@ var text_es = {
     ADMINISTRAR_AREAS:"Administrar áreas de conocimiento",
     SIN_AREAS:"Actualmente no hay áreas de conocimiento registradas para esta área del SNIES",
     DESCRIPCION:"Descripción",
-    NO_SOLICITUDES_POSGRADO:"No existen solicitudes en la modalidad de espacios académicos de posgrado para la carrera seleccionada"
+    NO_SOLICITUDES_POSGRADO:"No existen solicitudes en la modalidad de espacios académicos de posgrado para la carrera seleccionada",
+    PASANTIA:{
+      SOLICITAR_CARTA:"Solicitar carta de presentación",
+      INGRESE_NOMBRE_EMPRESA:"Ingrese el nombre de la empressa",
+      INGRESE_NOMBRE_DIRIGIDO:"Ingrese el nombre del destinatario de la carta",
+      INGRESE_CARGO_DIRIGIDO:"Ingrese el cargo del destinatario de la carta",
+      RECLAMAR_CARTA:"Señor estudiante tenga en cuenta que una vez su solicitud de carta de presentación sea aprobada debera acercarse a recogerla en la oficina de pasantias",
+      SEGURO_INFORMACION_CARTA:"Señor estudiante, ¿Está seguro solicitar una carta dirigida al Señor(a) {{nombre}} quien labora como {{cargo}} en la empresa {{empresa}}?, por favor verifique todos los datos.",
+    },
+    ACEPTAR:"Aceptar",
+    CANCELAR:"Cancelar",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -662,7 +672,17 @@ var text_en = {
     ADMINISTRAR_AREAS:"Manage knowledge areas",
     SIN_AREAS:"Currently there are no registered areas of knowledge for this SNIES area",
     DESCRIPCION:"Description",
-    NO_SOLICITUDES_POSGRADO:"There are no requests in the graduate academic spaces modality for the selected career"
+    NO_SOLICITUDES_POSGRADO:"There are no requests in the graduate academic spaces modality for the selected career",
+    PASANTIA:{
+      SOLICITAR_CARTA:"Request presentation's letter",
+      INGRESE_NOMBRE_EMPRESA:"Enter the enterprise name",
+      INGRESE_NOMBRE_DIRIGIDO:"Enter the name of the letter's recipient",
+      INGRESE_CARGO_DIRIGIDO:"Enter the cargo of the letter's recipient",
+      RECLAMAR_CARTA:"Mr. student note that once your request for a cover letter is approved you should go to pick it up at the internship office",
+      SEGURO_INFORMACION_CARTA:"Mr. student, are you sure to request a letter addressed to Mr(s). {{nombre} who works as {{cargo}} in the company {{empresa}} ?, please verify all data."
+    },
+    ACEPTAR:"Accept",
+    CANCELAR:"Cancel",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
