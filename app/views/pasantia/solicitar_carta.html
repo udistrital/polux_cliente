@@ -12,8 +12,14 @@
           <div class="panel-body alert alert-danger" ng-show="solicitarCarta.conEstudiante">
             {{'ESTUDIANTE_NO_ENCONTRADO' | translate}}
           </div>
+          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.conSolicitud">
+            {{'ERROR.HAY_SOLICITUD_PENDIENTE' | translate}}
+          </div>
+          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.conTrabajo">
+            {{'ESTUDIANTE_TRABAJO_GRADO' | translate}}
+          </div>
        </div>
-        <form method="post" name="formularioCarta" ng-submit="solicitarCarta.enviarSolicitud()" ng-if="!loadFormulario && !loadEstudiante && !solicitarCarta.siPuede && !solicitarCarta.conEstudiante">
+        <form method="post" name="formularioCarta" ng-submit="solicitarCarta.enviarSolicitud()" ng-if="!loadFormulario && !loadEstudiante && !solicitarCarta.siPuede && !solicitarCarta.conEstudiante && !solicitarCarta.conSolicitud && !solicitarCarta.conTrabajo">
             <div  class="row">
               <label class="col-sm-3 control-label"> {{'PASANTIA.INGRESE_NOMBRE_EMPRESA' | translate}} </label>
               <div class="col-sm-9 ">

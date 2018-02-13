@@ -16,7 +16,7 @@ angular.module('poluxClienteApp')
     $scope.cargandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
 
     ctrl.validarRequisitosEstudiante = function(){
-      ctrl.codigo = "20141020036";
+      ctrl.codigo = "20131020002";
       academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
         academicaRequest.get("datos_estudiante",[ ctrl.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
           if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
@@ -36,9 +36,70 @@ angular.module('poluxClienteApp')
               if(ctrl.estudiante.Nombre !==  undefined){
                 poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(verificacion){
                   if(verificacion.data==='true'){
-                    ctrl.conEstudiante=false;
-                    ctrl.siPuede=false;
-                    $scope.loadEstudiante = false;
+                    // se verifica que no tenga trabajos de grado actualmente
+                    var parametrosTrabajo = $.param({
+                      query:"EstadoEstudianteTrabajoGrado:1,Estudiante:"+ctrl.codigo,
+                      limit:1,
+                    });
+                    poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajo).then(function(responseTrabajo){
+                      if(responseTrabajo.data===null){
+                        // se verifica que no tenga solicitudes pendientes
+                        var parametrosUsuario = $.param({
+                          query:"usuario:"+ctrl.codigo,
+                          limit:0,
+                        });
+                        poluxRequest.get("usuario_solicitud",parametrosUsuario).then(function(responseSolicitudes){
+                          //no ha hecho solicitudes
+                          if(responseSolicitudes.data===null){
+                            ctrl.conEstudiante=false;
+                            ctrl.siPuede=false;
+                            ctrl.conSolicitud= false;
+                            ctrl.conTrabajo = false;
+                            $scope.loadEstudiante = false;
+                          }else{
+
+                            var requestRespuesta = function(solicitudesActuales, id ){
+                                var defered = $q.defer();
+                                var parametrosSolicitudesActuales = $.param({
+                                  query:"EstadoSolicitud.in:1|2,activo:TRUE,SolicitudTrabajoGrado:"+id,
+                                  limit: 1,
+                                });
+                                poluxRequest.get("respuesta_solicitud",parametrosSolicitudesActuales).then(function(responseSolicitudesActuales){
+                                    if(responseSolicitudesActuales.data!=null){
+                                      defered.resolve(responseSolicitudesActuales.data);
+                                      solicitudesActuales.push(responseSolicitudesActuales.data[0]);
+                                    }else{
+                                      defered.resolve(responseSolicitudesActuales.data);
+                                    }
+                                });
+                                return defered.promise;
+                            }
+                            var actuales = [];
+                            var promesas = [];
+                            angular.forEach(responseSolicitudes.data, function(solicitud){
+                                promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
+                            });
+                            $q.all(promesas).then(function(){
+                              //no tiene solicitudes pendientes por responder
+                              if(actuales.length===0){
+                                ctrl.conEstudiante=false;
+                                ctrl.siPuede=false;
+                                ctrl.conSolicitud= false;
+                                ctrl.conTrabajo = false;
+                                $scope.loadEstudiante = false;
+                              }else{
+                                ctrl.conSolicitud=true;
+                                $scope.loadEstudiante = false
+                              }
+                            });
+
+                          }
+                        });
+                      }else{
+                        ctrl.conTrabajo=true;
+                        $scope.loadEstudiante = false
+                      }
+                    });
                   }else{
                     ctrl.conEstudiante=false;
                     ctrl.siPuede=true;
@@ -46,6 +107,7 @@ angular.module('poluxClienteApp')
                   }
                 });
               }else{
+                //faltan datos del estudiante
                 ctrl.conEstudiante=true;
                 $scope.loadEstudiante = false;
               }
