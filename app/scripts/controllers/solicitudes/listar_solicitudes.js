@@ -280,6 +280,8 @@ angular.module('poluxClienteApp')
         parametrosSolicitudes = $.param({
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
             query:"ESTADOSOLICITUD.ID:1,Activo:true",
+            // excluye las solicitudes de tipo carta de presentacion
+            exclude:"SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:1",
             limit:0
         });
 
