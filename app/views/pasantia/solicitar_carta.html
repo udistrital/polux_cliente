@@ -4,6 +4,7 @@
     </div>
     <div class="panel-body">
         <loading tam="4" load="loadEstudiante" message="cargandoEstudiante"> </loading>
+        <loading tam="4" load="loadFormulario" message="cargandoFormulario"> </loading>
         <div class="col-sm-12">
           <div class="panel-body alert alert-danger" ng-show="solicitarCarta.siPuede">
               {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
@@ -12,7 +13,7 @@
             {{'ESTUDIANTE_NO_ENCONTRADO' | translate}}
           </div>
        </div>
-        <form method="post" name="formularioCarta" ng-submit="solicitarCarta.enviarSolicitud()" ng-if="!loadEstudiante && !solicitarCarta.siPuede && !solicitarCarta.conEstudiante">
+        <form method="post" name="formularioCarta" ng-submit="solicitarCarta.enviarSolicitud()" ng-if="!loadFormulario && !loadEstudiante && !solicitarCarta.siPuede && !solicitarCarta.conEstudiante">
             <div  class="row">
               <label class="col-sm-3 control-label"> {{'PASANTIA.INGRESE_NOMBRE_EMPRESA' | translate}} </label>
               <div class="col-sm-9 ">

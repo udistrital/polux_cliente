@@ -11,6 +11,10 @@ angular.module('poluxClienteApp')
   .controller('PasantiaSolicitarCartaCtrl', function ($location,$q,$scope,$translate,academicaRequest,poluxRequest,poluxMidRequest) {
     var ctrl = this;
 
+    //mensajes para load
+    $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
+    $scope.cargandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
+
     ctrl.validarRequisitosEstudiante = function(){
       ctrl.codigo = "20141020036";
       academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
@@ -146,9 +150,6 @@ angular.module('poluxClienteApp')
     }
 
     ctrl.enviarSolicitud = function(){
-      //alert(ctrl.nombreEmpresa);
-
-      console.log($translate.instant("PASANTIA.SEGURO_INFORMACION_CARTA",{nombre:ctrl.nombreReceptor,cargo:ctrl.cargoReceptor,empresa:ctrl.nombreEmpresa}));
       swal({
                title: $translate.instant("INFORMACION_SOLICITUD"),
                text: $translate.instant("PASANTIA.SEGURO_INFORMACION_CARTA",{nombre:ctrl.nombreReceptor,cargo:ctrl.cargoReceptor,empresa:ctrl.nombreEmpresa}),
@@ -156,36 +157,37 @@ angular.module('poluxClienteApp')
                confirmButtonText: $translate.instant("ACEPTAR"),
                cancelButtonText: $translate.instant("CANCELAR"),
                showCancelButton: true
-      }).then(function(){
-          $scope.loadFormulario = false;
-          ctrl.postSolicitud()
-          .then(function(response){
-            console.log(response.data);
-             if(response.data[0]==="Success"){
-               swal(
-                 $translate.instant("FORMULARIO_SOLICITUD"),
-                 $translate.instant("SOLICITUD_REGISTRADA"),
-                 'success'
-               );
-               $location.path("/solicitudes/listar_solicitudes");
-             }else{
-               swal(
-                 $translate.instant("FORMULARIO_SOLICITUD"),
-                 $translate.instant(response.data[1]),
-                 'warning'
-               );
-             }
-             $scope.loadFormulario = false;
-          })
-          .catch(function(error){
-            swal(
-              $translate.instant("FORMULARIO_SOLICITUD"),
-              $translate.instant("ERROR_CARGAR_SOLICITUDES"),
-              'warning'
-            );
-          })
-
+      }).then(function(responseSwal){
+          if(responseSwal.value){
+            $scope.loadFormulario = true;
+            ctrl.postSolicitud()
+            .then(function(response){
+               if(response.data[0]==="Success"){
+                 swal(
+                   $translate.instant("FORMULARIO_SOLICITUD"),
+                   $translate.instant("SOLICITUD_REGISTRADA"),
+                   'success'
+                 );
+                 $location.path("/solicitudes/listar_solicitudes");
+               }else{
+                 swal(
+                   $translate.instant("FORMULARIO_SOLICITUD"),
+                   $translate.instant(response.data[1]),
+                   'warning'
+                 );
+               }
+               $scope.loadFormulario = false;
+            })
+            .catch(function(error){
+              swal(
+                $translate.instant("FORMULARIO_SOLICITUD"),
+                $translate.instant("ERROR_CARGAR_SOLICITUDES"),
+                'warning'
+              );
+            })
+        }
       });
+
     }
 
   });
