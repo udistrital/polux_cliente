@@ -220,6 +220,11 @@ angular
               controller: 'AdministracionAreasCtrl',
               controllerAs: 'administrarAreas'
             })
+            .when('/materias_posgrado/listar_aprobados', {
+              templateUrl: 'views/materias_posgrado/listar_aprobados.html',
+              controller: 'MateriasPosgradoListarAprobadosCtrl',
+              controllerAs: 'listarAprobados'
+            })
             .otherwise({
                 redirectTo: '/'
             });
