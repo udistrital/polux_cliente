@@ -8,11 +8,12 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('MateriasPosgradoListarAprobadosCtrl', function ($q, $translate, $scope, academicaRequest, poluxRequest) {
+    .controller('MateriasPosgradoListarAprobadosCtrl', function ($q, $location, $translate, $scope, academicaRequest, poluxRequest) {
         var ctrl = this;
 
         $scope.posgradosCargados = true;
         $scope.admitidosCargados = true;
+        $scope.cargandoRegistroPago = false;
         $scope.msgCargandoPosgrados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
         $scope.msgCargandoAdmitidos = $translate.instant("LOADING.CARGANDO_DETALLES_SOLICITUD");
         $scope.msgErrorConsultaAdmitidos = "";
@@ -145,10 +146,13 @@ angular.module('poluxClienteApp')
             .then(function(sinResultados) {
                 $scope.cargandoSolicitudesPosgradoAprobadas = false;
                 ctrl.propiedadesCuadricula.data = $scope.resultadosConsulta;
+                $scope.sinDatosConsulta = sinResultados;
             })
             .catch(function(sinResultados) {
+                $scope.resultadosConsulta = [];
                 $scope.cargandoSolicitudesPosgradoAprobadas = false;
                 $scope.sinResultados = sinResultados;
+                $scope.sinDatosConsulta = sinResultados;
             });
         }
 
@@ -162,7 +166,7 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("respuesta_solicitud", parametrosAdmitidosPosgrado)
                 .then(function(solicitudesPosgradoAprobadas) {
                     angular.forEach(solicitudesPosgradoAprobadas.data, function(solicitudPosgradoAprobada) {
-                        if (solicitudPosgradoAprobada) {
+                        if (solicitudPosgradoAprobada.Activo) {
                             var parametrosDetalleSolicitudAprobada = $.param({
                                 query: "DetalleTipoSolicitud:37,SolicitudTrabajoGrado:" + solicitudPosgradoAprobada.SolicitudTrabajoGrado.Id
                             });
@@ -180,6 +184,7 @@ angular.module('poluxClienteApp')
                                             .then(function(admitidoConsultado){
                                                 if (!angular.isUndefined(admitidoConsultado.data.estudianteCollection.datosEstudiante)) {
                                                     var solicitud = {
+                                                        "respuesta": solicitudPosgradoAprobada,
                                                         "solicitud": solicitudPosgradoAprobada.SolicitudTrabajoGrado.Id,
                                                         "fecha": solicitudPosgradoAprobada.Fecha,
                                                         "estudiante": usuarioSolicitudPosgradoAprobada.data[0].Usuario,
@@ -188,9 +193,7 @@ angular.module('poluxClienteApp')
                                                         "estado": solicitudPosgradoAprobada.EstadoSolicitud,
                                                         "rendimiento": admitidoConsultado.data.estudianteCollection.datosEstudiante[0].rendimiento,
                                                         "posgradoAspirado": posgradoConsultado,
-                                                        "detalleSolicitudPosgradoAprobada": detalleSolicitudPosgradoAprobada.data[0].Descripcion,
-                                                        "admitidoConsultado": admitidoConsultado,
-                                                        "usuarioSolicitudPosgradoAprobada": usuarioSolicitudPosgradoAprobada
+                                                        "detalleSolicitudPosgradoAprobada": detalleSolicitudPosgradoAprobada.data[0].Descripcion
                                                     };
                                                     $scope.resultadosConsulta.push(solicitud);
                                                     defered.resolve(false);
@@ -241,11 +244,10 @@ angular.module('poluxClienteApp')
                             });
                         } else {
                             /**
-                             * Ocurrió un error al iterar sobre la colección de solicitudes de posgrado aprobadas
-                             * Podría deberse a un cambio en el formato de las mismas
+                             * La solicitud es nula, o la solicitud se encuentra en estado inactivo
+                             * Por lo tanto no se toma en cuenta en la iteración
                              */
                             $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.SIN_RESULTADOS");
-                            defered.reject(true);
                         }
                     });
                 })
@@ -267,10 +269,10 @@ angular.module('poluxClienteApp')
         }
 
         ctrl.verDetallesSolicitud = function(filaSolicitud) {
+            ctrl.entity = filaSolicitud.entity;
             ctrl.numeroSolicitud = filaSolicitud.entity.solicitud;
             var fechaCompletaSolicitud = new Date(filaSolicitud.entity.fecha);
             ctrl.fechaSolicitud = ctrl.obtenerFechaGeneral(fechaCompletaSolicitud);
-            ctrl.horaSolicitud = ctrl.obtenerHoraRegistrada(fechaCompletaSolicitud);
             ctrl.estadoSolicitud = filaSolicitud.entity.estado;
             ctrl.nombreEstudianteSolicitante = filaSolicitud.entity.nombre;
             ctrl.codigoEstudianteSolicitante = filaSolicitud.entity.estudiante;
@@ -279,15 +281,58 @@ angular.module('poluxClienteApp')
             ctrl.codigoPosgrado = filaSolicitud.entity.posgradoAspirado.Codigo;
             ctrl.nombrePosgrado = filaSolicitud.entity.posgradoAspirado.Nombre;
             ctrl.pensumPosgrado = filaSolicitud.entity.posgradoAspirado.Pensum;
+            ctrl.respuesta = filaSolicitud.entity.respuesta;
             ctrl.cuadriculaEspaciosAcademicos.data = ctrl.obtenerEspaciosAcademicos(filaSolicitud.entity.detalleSolicitudPosgradoAprobada.split("-").slice(2));
             $('#modalVerSolicitud').modal('show');
         }
 
         ctrl.cambiarEstadoPago = function() {
-            /**
-             * Cambiar el estado del pago según el estudiante asociado
-             */
-            console.log("cambiar el estado del pago");
+            swal({
+                title: $translate.instant("INFORMACION_SOLICITUD"),
+                text: $translate.instant("REGISTRAR_PAGO_POSGRADO", {
+                        nombre: ctrl.nombreEstudianteSolicitante,
+                        codigo: ctrl.codigoEstudianteSolicitante,
+                        estado: ctrl.estadoSolicitud.Nombre
+                    }),
+                type: "warning",
+                confirmButtonText: $translate.instant("ACEPTAR"),
+                cancelButtonText: $translate.instant("CANCELAR"),
+                showCancelButton: true
+            })
+            .then(function(responseSwal) {
+                if (responseSwal.value) {
+                    $scope.cargandoRegistroPago = true;
+                    $scope.loadFormulario = true;
+                    ctrl.solicitarRegistroPago()
+                    .then(function(response) {
+                        if (response.data[0] === "Success") {
+                            $scope.cargandoRegistroPago = false;
+                            swal(
+                                $translate.instant("REGISTRO_PAGO"),
+                                $translate.instant("PAGO_REGISTRADO"),
+                                'success'
+                            );
+                            $scope.cargandoSolicitudesPosgradoAprobadas = true;
+                            ctrl.consultarAprobados();
+                            $('#modalVerSolicitud').modal('hide');
+                        }else{
+                            $scope.cargandoRegistroPago = false;
+                            swal(
+                                $translate.instant("REGISTRO_PAGO"),
+                                $translate.instant(response.data[1]),
+                                'warning'
+                            );
+                        }
+                    })
+                    .catch(function(error) {
+                        swal(
+                            $translate.instant("REGISTRO_PAGO"),
+                            $translate.instant("ERROR.REGISTRAR_PAGO"),
+                            'warning'
+                        );
+                    })
+                }
+            });
         }
 
         $scope.loadrow = function(filaSolicitud) {
@@ -298,26 +343,6 @@ angular.module('poluxClienteApp')
             return fechaCompleta.getFullYear() 
             + "-" + fechaCompleta.getMonth() + 1 
             + "-" + fechaCompleta.getDate();
-        }
-
-        ctrl.obtenerHoraRegistrada = function(fechaCompleta) {
-            var horaDelDia = fechaCompleta.getHours();
-            var minutoDelDia = fechaCompleta.getMinutes();
-            var segundoDelDia = fechaCompleta.getSeconds();
-            if (horaDelDia < 10) {
-                horaDelDia = "0" + horaDelDia;
-            }
-            if (minutoDelDia < 10) {
-                minutoDelDia = "0" + minutoDelDia;
-            }
-            if (segundoDelDia < 10) {
-                segundoDelDia = "0" + segundoDelDia;
-            }
-            if (horaDelDia > 11) {
-                return (horaDelDia - 12 + ":" + minutoDelDia + ":" + segundoDelDia + " PM");
-            } else {
-                return (horaDelDia + ":" + minutoDelDia + ":" + segundoDelDia + " AM");
-            }
         }
 
         ctrl.obtenerEspaciosAcademicos = function(descripcionSolicitud) {
@@ -332,6 +357,41 @@ angular.module('poluxClienteApp')
                 espaciosAcademicos.push(informacionEspacioAcademico);
             });
             return espaciosAcademicos;
+        }
+
+        ctrl.solicitarRegistroPago = function() {
+            var defered = $q.defer();
+
+            ctrl.respuesta.Activo = false;
+
+            ctrl.respuestaNueva = {
+                Activo: true,
+                EnteResponsable: 0,
+                Fecha: new Date(),
+                EstadoSolicitud: {
+                    Id: 8
+                },
+                Justificacion: "Pago registrado",
+                SolicitudTrabajoGrado: {
+                    Id: ctrl.respuesta.SolicitudTrabajoGrado.Id
+                },
+                Usuario: parseInt($scope.userId),
+            };
+
+            ctrl.dataRegistrarPago = {
+                "RespuestaAnterior": ctrl.respuesta,
+                "RespuestaNueva": ctrl.respuestaNueva
+            };
+
+            poluxRequest
+            .post("tr_registrar_pago", ctrl.dataRegistrarPago)
+            .then(function(response) {
+                defered.resolve(response);
+            })
+            .catch(function(error){
+                defered.reject(error);
+            });
+            return defered.promise;
         }
 
     });
