@@ -315,7 +315,7 @@ angular.module('poluxClienteApp')
                             $scope.cargandoSolicitudesPosgradoAprobadas = true;
                             ctrl.consultarAprobados();
                             $('#modalVerSolicitud').modal('hide');
-                        }else{
+                        } else {
                             $scope.cargandoRegistroPago = false;
                             swal(
                                 $translate.instant("REGISTRO_PAGO"),
@@ -378,9 +378,32 @@ angular.module('poluxClienteApp')
                 Usuario: parseInt($scope.userId),
             };
 
+            ctrl.trabajoGrado = {
+                Titulo: "Cursar materias de posgrado en " + ctrl.nombrePosgrado,
+                Modalidad: {
+                    Id: parseInt(ctrl.respuesta.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id)
+                },
+                EstadoTrabajoGrado: {
+                    Id: 1
+                },
+                DistincionTrabajoGrado: null
+            };
+
+            ctrl.estudianteTrabajoGrado = {
+                Estudiante: ctrl.codigoEstudianteSolicitante,
+                TrabajoGrado: {
+                    Id: 0
+                },
+                EstadoEstudianteTrabajoGrado: {
+                    Id: 1
+                }
+            };
+
             ctrl.dataRegistrarPago = {
                 "RespuestaAnterior": ctrl.respuesta,
-                "RespuestaNueva": ctrl.respuestaNueva
+                "RespuestaNueva": ctrl.respuestaNueva,
+                "TrabajoGrado": ctrl.trabajoGrado,
+                "EstudianteTrabajoGrado": ctrl.estudianteTrabajoGrado
             };
 
             poluxRequest
