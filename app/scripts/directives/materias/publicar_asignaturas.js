@@ -87,6 +87,7 @@ angular.module('poluxClienteApp')
 
         });
 
+
         ctrl.cambiar = function () {
           if (ctrl.habilitar == true) {
             ctrl.habilitar = false;
@@ -328,22 +329,23 @@ angular.module('poluxClienteApp')
                     query: "CodigoAsignatura:" + asignatura + " ,CarreraElegible:" + response.data[0].Id
                   });
 
-                  poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
-                    console.log("rta:" + response.data);
+                  poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (responseAsignatura) {
+                    console.log("rta:" + responseAsignatura.data);
 
-                    if (response.data == null) {
+                    if (responseAsignatura.data == null) {
                       console.log(data);
-                      poluxRequest.post("espacios_academicos_elegibles", data).then(function (response) {
+                      poluxRequest.post("espacios_academicos_elegibles", data).then(function (responseEspacios) {
                         ctrl.habilitar = true;
                         ctrl.habilitar2 = false;
-                        console.log("Status respuesta ", response.data);
+                        console.log("Status respuesta ", responseEspacios.data);
                       });
 
 
                     } else {
                       //si está registrada, actualizar el estado
-                      var id = response.data[0].Id;
-                      var estado = response.data[0].Activo;
+                      var id = responseAsignatura.data[0].Id;
+                      var estado = responseAsignatura.data[0].Activo;
+                      console.log("materia",responseAsignatura.data[0]);
                       if (estado === false) {
                         estado = true;
                       } else {
@@ -356,8 +358,8 @@ angular.module('poluxClienteApp')
                         "CarreraElegible": response.data[0]
                       };
 
-                      poluxRequest.put("asignaturas_elegibles", id, dataModificado).then(function (response) {
-                        console.log("Status respuesta ", response.data);
+                      poluxRequest.put("espacios_academicos_elegibles", id, dataModificado).then(function (responseEspacios) {
+                        console.log("Status respuesta ", responseEspacios.data);
                       });
 
                     }
