@@ -6,49 +6,49 @@
  * @description
  * # materias/solicitarAsignaturas
  */
-angular.module('poluxClienteApp')
-  .directive('solicitarAsignaturas', function(poluxRequest, academicaRequest, $route) {
-    return {
-      restrict: 'E',
-      scope: {
-        estudiante: '=',
-        modalidad: '=',
-        e: '=?',
-      },
+ angular.module('poluxClienteApp')
+ .directive('solicitarAsignaturas', function(poluxRequest, academicaRequest, $route) {
+  return {
+    restrict: 'E',
+    scope: {
+      estudiante: '=',
+      modalidad: '=',
+      e: '=?',
+    },
 
-      templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
-      controller: function($scope, $route, $translate) {
-        var ctrl = this;
-        ctrl.maxCreditos = 0;
-        ctrl.carreras = [];
-        ctrl.gridOptions = {};
-        ctrl.estudiante = $scope.estudiante;
-        if($scope.estudiante.Modalidad===3){
-          $scope.estudiante.Tipo="PREGRADO";
-        }
-        ctrl.tipo = $scope.estudiante.Tipo;
-        $scope.sols = [];
-        if($scope.e===undefined){
-          $scope.e = {
-            "codigo":"null",
-          };
-        }
-        console.log("carreras ya elegidas", $scope.e);
+    templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
+    controller: function($scope, $route, $translate) {
+      var ctrl = this;
+      ctrl.maxCreditos = 0;
+      ctrl.carreras = [];
+      ctrl.gridOptions = {};
+      ctrl.estudiante = $scope.estudiante;
+      if($scope.estudiante.Modalidad===3){
+        $scope.estudiante.Tipo="PREGRADO";
+      }
+      ctrl.tipo = $scope.estudiante.Tipo;
+      $scope.sols = [];
+      if($scope.e===undefined){
+        $scope.e = {
+          "codigo":"null",
+        };
+      }
+      console.log("carreras ya elegidas", $scope.e);
         /*número de créditos mínimos, según la modalidad
           modalidad de espacios académicos de posgrado: 8 créditos,
           modalidad de espacios académicos de profundización: 6 créditos*/
-        ctrl.creditosMinimos = 0;
-        if ($scope.modalidad == 2) {
-          ctrl.creditosMinimos = 8;
-        } else {
-          ctrl.creditosMinimos = 6;
-        }
-
-        academicaRequest.get("periodo_academico","X").then(function(response){
-          console.log(response);
-          if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
-              ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+          ctrl.creditosMinimos = 0;
+          if ($scope.modalidad == 2) {
+            ctrl.creditosMinimos = 8;
+          } else {
+            ctrl.creditosMinimos = 6;
           }
+
+          academicaRequest.get("periodo_academico","X").then(function(response){
+            console.log(response);
+            if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
+              ctrl.periodo=response.data.periodoAcademicoCollection.periodoAcademico[0];
+            }
 
           //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
           var parametros = $.param({
@@ -62,7 +62,7 @@ angular.module('poluxClienteApp')
                academicaRequest.get("carrera_codigo_nivel",[value.CodigoCarrera, ctrl.tipo]).then(function(response2){
                  var resultado=null;
                  if (!angular.isUndefined(response2.data.carrerasCollection.carrera)) {
-                     var resultado=response2.data.carrerasCollection.carrera[0];
+                   var resultado=response2.data.carrerasCollection.carrera[0];
                  }
                  if(resultado!==null){
                    var carrera = {
@@ -70,25 +70,25 @@ angular.module('poluxClienteApp')
                      "Nombre": resultado.nombre,
                      "Pensum": value.CodigoPensum
                    };
-                     ctrl.carreras.push(carrera);
+                   ctrl.carreras.push(carrera);
                  }
 
                });
              }
-            });
+           });
 
           });
 
         });
 
 
-        ctrl.cargarMaterias = function(carreraSeleccionada) {
-          ctrl.selected = [];
-          ctrl.selected.push(carreraSeleccionada);
-          $scope.estudiante.asignaturas_elegidas= ctrl.selected;
-          ctrl.asignaturas = [];
+          ctrl.cargarMaterias = function(carreraSeleccionada) {
+            ctrl.selected = [];
+            ctrl.selected.push(carreraSeleccionada);
+            $scope.estudiante.asignaturas_elegidas= ctrl.selected;
+            ctrl.asignaturas = [];
 
-          ctrl.carrera = carreraSeleccionada.Codigo;
+            ctrl.carrera = carreraSeleccionada.Codigo;
 
           //buscar la carrera en: carrera_elegible
           var parametros = $.param({
@@ -106,11 +106,7 @@ angular.module('poluxClienteApp')
               //recorrer data y buscar datos de las asignaturas
               angular.forEach(response.data, function(value) {
                 //buscar asignaturas
-                var parametros = {
-                  'codigo': value.CodigoAsignatura
-                };
-                academicaRequest.buscarAsignaturas(parametros).then(function(response) {
-
+                academicaRequest.get("asignatura_pensum",[value.CodigoAsignatura,value.CarreraElegible.CodigoPensum]).then(function(responseAsignatura){
                   var data = {
                     "Id": value.Id,
                     "Anio": value.Anio,
@@ -118,8 +114,8 @@ angular.module('poluxClienteApp')
                     "CodigoCarrera": value.CodigoCarrera,
                     "CodigoPensum": value.CodigoPensum,
                     "Periodo": value.Periodo,
-                    "Nombre": response[0].ASI_NOMBRE,
-                    "Creditos": response[0].PEN_CRE
+                    "Nombre": responseAsignatura.data.asignatura.datosAsignatura[0].nombre,
+                    "Creditos": responseAsignatura.data.asignatura.datosAsignatura[0].creditos
                   };
 
                   ctrl.asignaturas.push(data);
@@ -176,9 +172,9 @@ angular.module('poluxClienteApp')
           }
 
           if(ctrl.creditos >= ctrl.creditosMinimos){
-                ctrl.minimoCreditos = true;
+            ctrl.minimoCreditos = true;
           }else{
-                ctrl.minimoCreditos = false;
+            ctrl.minimoCreditos = false;
           }
           $scope.estudiante.minimoCreditos = ctrl.minimoCreditos;
           console.log(JSON.stringify($scope.estudiante.asignaturas_elegidas))
