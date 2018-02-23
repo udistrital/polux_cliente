@@ -225,6 +225,11 @@ angular
               controller: 'MateriasPosgradoListarAprobadosCtrl',
               controllerAs: 'listarAprobados'
             })
+            .when('/materias_posgrado/registrar_nota', {
+              templateUrl: 'views/materias_posgrado/registrar_nota.html',
+              controller: 'MateriasPosgradoRegistrarNotaCtrl',
+              controllerAs: 'registrarNota'
+            })
             .otherwise({
                 redirectTo: '/'
             });

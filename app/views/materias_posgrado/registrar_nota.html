@@ -1,19 +1,19 @@
 <div class="panel panel-default">
 
   <div class="panel-heading">
-    {{'LISTAR_APROBADOS' | translate}}
+    {{'REGISTRO_NOTA_POSGRADO' | translate}}
   </div>
 
   <div class="panel-body">
 
-    <loading tam="4" load="posgradosCargados" message="msgCargandoPosgrados"></loading>
-    <div class="row" ng-if="listarAprobados.infoAcademicaCargada && !posgradosCargados">
+    <loading tam="4" load="cargandoPosgrados" message="msgCargandoTrabajosGrado"></loading>
+    <div class="row" ng-if="parametrosCargados">
       <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
       <div class="col-sm-10">
-        <ui-select name="posgrado" ng-model="listarAprobados.posgradoSeleccionado" required on-select="listarAprobados.definirPosgrado()" style="width:97%;" theme="bootstrap">
+        <ui-select name="posgrado" ng-model="registrarNota.posgradoSeleccionado" required on-select="registrarNota.seleccionarPosgrado()" style="width:97%;" theme="bootstrap">
           <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
           </ui-select-match>
-          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in listarAprobados.posgrados | filter: $select.search">
+          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in registrarNota.posgradosDelCoordinador | filter: $select.search">
             <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
           </ui-select-choices>
         </ui-select>
@@ -22,26 +22,26 @@
 
     <br>
 
-    <div class="row" ng-if="listarAprobados.mostrarPeriodo">
+    <div class="row" ng-if="registrarNota.posgradoSeleccionado">
       <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
       <div class="col-sm-10">
-        <select ng-model="listarAprobados.periodoSeleccionado" ng-change="listarAprobados.consultarAprobados()">
-          <option ng-repeat="periodo in listarAprobados.periodos" ng-value="periodo">
+        <select ng-model="registrarNota.periodoSeleccionado" ng-change="registrarNota.consultarAprobados()">
+          <option ng-repeat="periodo in registrarNota.periodosAcademicos" ng-value="periodo">
             {{periodo.anio}}-{{periodo.periodo}}
           </option>
         </select>
       </div>
     </div>
 
-    <div class="row" ng-if="!listarAprobados.infoAcademicaCargada">
+    <div class="row" ng-if="errorCargandoParametros">
       <div class="col-sm-10">
         <label>{{'ERROR.SIN_INFO_ACADEMICA' | translate}}</label>
       </div>
     </div>
     
-    <loading tam="4" load="cargandoSolicitudesPosgradoAprobadas" message="msgCargandoAdmitidos"></loading>
-    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="resultadosConsulta.length > 0 && !sinDatosConsulta">
-      <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.propiedadesCuadricula"></div>
+    <loading tam="4" load="cargandoTrabajosGradoEnCurso" message="msgCargandoTrabajosGrado"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="resultadosConsulta.length > 0">
+      <div class="mi-grid" id="mi-grid" ui-grid="registrarNota.propiedadesCuadricula"></div>
     </div>
 
     <br>
@@ -55,7 +55,7 @@
   <div id="modalVerSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
     <div class="modal-content col-md-offset-2 col-md-8">
       <div class="modal-header">
-        {{listarAprobados.tituloVerSolicitud}}
+        {{registrarNota.tituloVerSolicitud}}
         <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
         <br>
       </div>
@@ -66,19 +66,19 @@
         <div class="panel-body">
           <div class="row">
             <label class="col-sm-4 control-label"> {{'SOLICITANTE' | translate}}:  </label>
-            <label class="col-sm-8 control-label"> {{listarAprobados.nombreEstudianteSolicitante}} </label>
+            <label class="col-sm-8 control-label"> {{registrarNota.nombreEstudianteSolicitante}} </label>
           </div>
           <div class="row">
             <label class="col-sm-4 control-label"> {{'CODIGO' | translate}}:  </label>
-            <label class="col-sm-8 control-label"> {{listarAprobados.codigoEstudianteSolicitante}} </label>
+            <label class="col-sm-8 control-label"> {{registrarNota.codigoEstudianteSolicitante}} </label>
           </div>
           <div class="row">
             <label class="col-sm-4 control-label"> {{'PROMEDIO' | translate}}:  </label>
-            <label class="col-sm-8 control-label"> {{listarAprobados.promedioEstudianteSolicitante}} </label>
+            <label class="col-sm-8 control-label"> {{registrarNota.promedioEstudianteSolicitante}} </label>
           </div>
           <div class="row">
             <label class="col-sm-4 control-label"> {{'RENDIMIENTO' | translate}}:  </label>
-            <label class="col-sm-8 control-label"> {{listarAprobados.rendimientoEstudianteSolicitante}} </label>
+            <label class="col-sm-8 control-label"> {{registrarNota.rendimientoEstudianteSolicitante}} </label>
           </div>
         </div>
       </div>
@@ -91,31 +91,31 @@
           <div ng-if="!cargandoRegistroPago">
             <div class="row">
               <label class="col-sm-4 control-label"> {{'SOLICITUD' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.numeroSolicitud}} </label>
+              <label class="col-sm-8 control-label"> {{registrarNota.numeroSolicitud}} </label>
             </div>
             <div class="row">
               <label class="col-sm-4 control-label"> {{'FECHA' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.fechaSolicitud}} </label>
+              <label class="col-sm-8 control-label"> {{registrarNota.fechaSolicitud}} </label>
             </div>
             <div class="row">
               <label class="col-sm-4 control-label"> {{'ESTADO_SOLICITUD' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.estadoSolicitud.Nombre}} </label>
+              <label class="col-sm-8 control-label"> {{registrarNota.estadoSolicitud.Nombre}} </label>
             </div>
             <div class="row">
               <label class="col-sm-4 control-label"> {{'CODIGO_POSGRADO' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.codigoPosgrado}} </label>
+              <label class="col-sm-8 control-label"> {{registrarNota.codigoPosgrado}} </label>
             </div>
             <div class="row">
               <label class="col-sm-4 control-label"> {{'POSGRADO' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.nombrePosgrado}} </label>
+              <label class="col-sm-8 control-label"> {{registrarNota.nombrePosgrado}} </label>
             </div>
             <div class="row">
               <label class="col-sm-4 control-label"> {{'CODIGO_PENSUM_POSGRADO' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.pensumPosgrado}} </label>
+              <label class="col-sm-8 control-label"> {{registrarNota.pensumPosgrado}} </label>
             </div>
-            <div class="row row-centered" ng-if="listarAprobados.estadoSolicitud.Id === 8">
+            <div class="row row-centered" ng-if="registrarNota.estadoSolicitud.Id === 8">
               <div class="col-sm-2 col-centered">
-                <input type="submit" class="btn btn-success" value="{{'BTN.REGISTRAR_PAGO'|translate}}" ng-click="listarAprobados.cambiarEstadoPago()">
+                <input type="submit" class="btn btn-success" value="{{'BTN.REGISTRAR_PAGO'|translate}}" ng-click="registrarNota.registrarNotaIngresada()">
               </div>
             </div>
           </div>
@@ -126,14 +126,15 @@
           {{'ESP_ACADEMICOS' | translate}}
         </div>
         <div class="panel-body">
-          <div ng-if="listarAprobados.cuadriculaEspaciosAcademicos.data.length > 0">
+          <div ng-if="registrarNota.cuadriculaEspaciosAcademicos.data.length > 0">
             <div class="panel col-md-12">
-              <div ui-grid="listarAprobados.cuadriculaEspaciosAcademicos" ui-grid-auto-resize class="mi-grid" id="mi-grid" style="height: {{(listarAprobados.cuadriculaEspaciosAcademicos.data.length * 35) + 40}}px" ui-grid-cellNav></div>
+              <div ui-grid="registrarNota.cuadriculaEspaciosAcademicos" ui-grid-auto-resize class="mi-grid" id="mi-grid" style="height: {{(registrarNota.cuadriculaEspaciosAcademicos.data.length * 35) + 40}}px" ui-grid-cellNav></div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
 </div>
