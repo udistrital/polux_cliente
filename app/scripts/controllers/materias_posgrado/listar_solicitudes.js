@@ -259,7 +259,7 @@ angular.module('poluxClienteApp')
 
       //obtener # de cupos
       var parametros=$.param({
-        query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+        query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.anio+",Periodo:"+ctrl.periodo.periodo
       });
 
       poluxRequest.get("carrera_elegible",parametros).then(function(response){
@@ -515,7 +515,7 @@ angular.module('poluxClienteApp')
 
 
         var parametros=$.param({
-          query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+          query:"CodigoCarrera:"+ctrl.carrera+",Anio:"+ctrl.periodo.anio+",Periodo:"+ctrl.periodo.periodo
         });
         poluxRequest.get("carrera_elegible",parametros).then(function(response){
           console.log(response.data);
@@ -570,7 +570,7 @@ angular.module('poluxClienteApp')
       //Guardar el # de cupos ingresados
       /* buscar carrera en carrera_elegible*/
       var parametros=$.param({
-        query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+        query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.anio+",Periodo:"+ctrl.periodo.periodo
       });
       poluxRequest.get("carrera_elegible",parametros).then(function(response){
 
@@ -621,7 +621,7 @@ angular.module('poluxClienteApp')
           //Guardar el # de cupos ingresados
           /* buscar carrera en carrera_elegible*/
           var parametros=$.param({
-            query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+            query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.anio+",Periodo:"+ctrl.periodo.periodo
           });
           poluxRequest.get("carrera_elegible",parametros).then(function(response){
 
@@ -674,7 +674,7 @@ angular.module('poluxClienteApp')
           //Guardar el # de cupos ingresados
           /* buscar carrera en carrera_elegible*/
           var parametros=$.param({
-            query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.APE_ANO+",Periodo:"+ctrl.periodo.APE_PER
+            query:"CodigoCarrera:"+$scope.carrera+",Anio:"+ctrl.periodo.anio+",Periodo:"+ctrl.periodo.periodo
           });
           poluxRequest.get("carrera_elegible",parametros).then(function(response){
 
