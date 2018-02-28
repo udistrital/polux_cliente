@@ -7,30 +7,14 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('menuCtrl', function($location, $http, $scope, token_service, notificacion, $translate, $route, $mdSidenav, $localStorage) {
+    .controller('menuCtrl', function(configuracionRequest,$location, $http, $scope, token_service, notificacion, $translate, $route, $mdSidenav) {
         var paths = [];
         $scope.language = {
             es: "btn btn-primary btn-circle btn-outline active",
             en: "btn btn-primary btn-circle btn-outline"
         };
-
-        $http.get('scripts/models/roles.json')
-            .then(function(response) {
-                angular.forEach(response.data.users, function(element) {
-                    if (!token_service.live_token) {
-                        if (element.user == token_service.user) {
-                            token_service.all_perfil = element;
-                        }
-                    } else {
-                        if (element.user == "fabianLeon") {
-                            token_service.all_perfil = element;
-                        }
-                    }
-                });
-                $localStorage.all_perfil = token_service.all_perfil;
-                console.log($localStorage.all_perfil);
-            });
-
+        $scope.token_service = token_service;
+       
         $scope.notificacion = notificacion;
         $scope.actual = "";
         $scope.token_service = token_service;
@@ -77,13 +61,19 @@ angular.module('poluxClienteApp')
             }
         ];
 
-
-        $http.get('http://10.20.0.254/configuracion_api/v1/menu_opcion_padre/ArbolMenus/ADMIN_POLUX/Pólux')
+        if(token_service.live_token()){
+            token_service.token.role.pop();
+            var roles = token_service.token.role.toString();
+            //para agregar menus 
+            roles = roles+',ADMIN_POLUX';
+             configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '')
             .then(function(response) {
                 $scope.menu_service = response.data;
                 recorrerArbol($scope.menu_service, "");
                 update_url();
             });
+        }
+
 
         var recorrerArbol = function(item, padre) {
             var padres = "";
