@@ -46,7 +46,8 @@ angular
         'file-model',
         'angularBootstrapFileinput',
         'infinite-scroll',
-        'uiSwitch'
+        'uiSwitch',
+        'configuracionService'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
