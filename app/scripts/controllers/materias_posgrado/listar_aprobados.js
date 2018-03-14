@@ -159,8 +159,14 @@ angular.module('poluxClienteApp')
         ctrl.cargarAprobados = function() {
             var defered = $q.defer();
             if (ctrl.posgradoSeleccionado) {
+                /**
+                 * Se traen las solicitudes cuyo estado sean:
+                 * - Aprobado con beneficio económico
+                 * - Aprobado sin beneficio económico
+                 * - Formalizada (ya se definió el posgrado para cursar)
+                 */
                 var parametrosAdmitidosPosgrado = $.param({
-                    query: "EstadoSolicitud.Id.in:7|8,Activo:True",
+                    query: "EstadoSolicitud.Id.in:7|8|9,Activo:True",
                     limit: 0
                 });
                 poluxRequest.get("respuesta_solicitud", parametrosAdmitidosPosgrado)
@@ -372,7 +378,7 @@ angular.module('poluxClienteApp')
                 EnteResponsable: 0,
                 Fecha: new Date(),
                 EstadoSolicitud: {
-                    Id: 3
+                    Id: 9
                 },
                 Justificacion: "Pago registrado",
                 SolicitudTrabajoGrado: {
