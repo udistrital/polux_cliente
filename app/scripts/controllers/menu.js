@@ -60,7 +60,12 @@ angular.module('poluxClienteApp')
                 url: "http://10.20.0.254/kronos"
             }
         ];
-
+        configuracionRequest.get('menu_opcion_padre/ArbolMenus/ADMIN_POLUX/Polux', '')
+            .then(function(response) {
+                $scope.menu_service = response.data;
+                recorrerArbol($scope.menu_service, "");
+                update_url();
+            });
         if(token_service.live_token()){
             token_service.token.role.pop();
             var roles = token_service.token.role.toString();

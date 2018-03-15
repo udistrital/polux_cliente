@@ -8,7 +8,7 @@
 * Controller of the poluxClienteApp
 */
 angular.module('poluxClienteApp')
-.controller('MateriasPosgradoListarSolicitudesCtrl', function ($q, uiGridConstants,poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
+.controller('MateriasPosgradoListarSolicitudesCtrl', function (sesionesRequest, $q, uiGridConstants,poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
   $scope.$ = $;
   var ctrl = this;
   ctrl.periodo=[];
@@ -20,6 +20,7 @@ angular.module('poluxClienteApp')
   ctrl.gridOptions = {
     enableSorting: false,
   };
+
   ctrl.gridOptions.columnDefs = [
   { name: 'solicitud', displayName: 'Solicitud', width: "8%"  },
   { name: 'fecha', displayName: 'Fecha', type: 'date', cellFilter: 'date:\'yyyy-MM-dd\'', width: "8%"  },
