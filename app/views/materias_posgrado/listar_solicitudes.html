@@ -35,7 +35,8 @@
         <loading tam="4" load="loadSolicitudes" message="msgCargandoSolicitudes"> </loading>
       </div>
 
-      <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true">
+      <div class="col-sm-12">
+      <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true">
        <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div><br>
        <center>
         <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
@@ -47,9 +48,10 @@
 
     </div>
 
-    <div ng-if="sols.length===0 && loadSolicitudes!==true" class="alert alert-danger col-sm-12 control-label" style="margin-top: 20px;">
+    <div ng-if="sols.length===0 && loadSolicitudes!==true" class="alert alert-danger control-label" style="margin-top: 20px;">
       {{'NO_SOLICITUDES_POSGRADO' | translate}}
     </div>
+  </div>
   </div>
     <!--pre>
      {{'FECHA_ACTUAL' | translate}}  {{fechaActual| date:'dd-MM-yyyy'}}
