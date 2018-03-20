@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
  angular.module('poluxClienteApp')
- .controller('SolicitudesCrearSolicitudCtrl', function (coreService,$window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest, $location) {
+ .controller('SolicitudesCrearSolicitudCtrl', function (sesionesRequest,coreService,$window,$sce,$scope, nuxeo, $q,$translate, poluxMidRequest,poluxRequest,$routeParams,academicaRequest,cidcRequest, $location) {
   $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
   $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
   $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -282,6 +282,92 @@ ctrl.cargarTipoSolicitud= function (modalidad) {
           });
 };
 
+ctrl.verificarRequisitos = function(tipoSolicitud, modalidad){
+  var defer = $q.defer();
+
+  var obtenerPeriodo  = function(){
+    var defer =  $q.defer()
+    academicaRequest.get("periodo_academico", "X")
+    .then(function (responsePeriodo) {
+      if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
+        ctrl.periodo = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+        defer.resolve(ctrl.periodo);
+      }else{
+        ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
+        defer.reject("sin periodo");
+      }        
+    })
+    .catch(function(){
+      ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+      defer.reject("no se pudo cargar periodo");
+    }); 
+    return defer.promise;
+  }
+
+  var verificarRequisitosModalidad = function(){
+    var deferModalidad = $q.defer();
+    poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad){
+      var cumpleRequisitosModalidad = false;
+      if(responseModalidad.data==="true"){
+        cumpleRequisitosModalidad = true;
+      }
+      deferModalidad.resolve(cumpleRequisitosModalidad);
+    });
+    return deferModalidad.promise;
+  }
+
+  var verificarFechas = function(tipoSolicitud, modalidad,periodo){
+    var deferFechas = $q.defer();
+    //si la solicitud es de materias de posgrado e inicial
+    if(tipoSolicitud === 2 && modalidad === 2 ){
+      ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:MM");
+      //traer fechas
+      var parametrosSesiones = $.param({
+        query:"SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:"+periodo.anio+periodo.periodo,
+        limit:1
+      });
+      sesionesRequest.get("relacion_sesiones",parametrosSesiones).then(function(responseFechas){
+        if(responseFechas.data !== null){
+          console.log(responseFechas.data[0]);
+          var sesion = responseFechas.data[0];
+          ctrl.fechaInicio = moment(new Date(sesion.SesionHijo.FechaInicio)).format("YYYY-MM-DD HH:MM");
+          ctrl.fechaFin = moment(new Date(sesion.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");
+          if(ctrl.fechaInicio<=ctrl.fechaActual && ctrl.fechaActual<=ctrl.fechaFin){
+            deferFechas.resolve(true);
+          }else{
+            ctrl.textoErrorFechas = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
+            deferFechas.resolve(false);
+          }
+          console.log(ctrl.fechaFin);
+          
+        }else{
+          ctrl.textoErrorFechas = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+          deferFechas.resolve(false);
+        }
+      });
+    }else{
+      deferFechas.resolve(true);
+    }
+    return deferFechas.promise;
+  }
+
+  obtenerPeriodo().then(function(periodo){
+    $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud,modalidad,periodo)])
+    .then(function(responseRequisitos){
+       var puede =  responseRequisitos[0] && responseRequisitos[1];
+       if(!responseRequisitos[0]){
+        ctrl.siPuede=true;
+      } else if(!responseRequisitos[1]){
+        ctrl.puedeFechas = true;
+      }
+      alert(responseRequisitos[1])
+      defer.resolve(puede)
+    });
+  });
+
+  return defer.promise;
+}
+
 ctrl.cargarDetalles= function (tipoSolicitudSeleccionada, modalidad_seleccionada) {
   $scope.loadDetalles = true;
   ctrl.siPuede=false;
@@ -297,42 +383,43 @@ ctrl.cargarDetalles= function (tipoSolicitudSeleccionada, modalidad_seleccionada
     ctrl.modalidad = modalidad_seleccionada;
   }
   console.log(ctrl.estudiante);
-  poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
+  //poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(puede){
+    //if(puede.data==="true"){
+      ctrl.verificarRequisitos(tipoSolicitudSeleccionada, modalidad_seleccionada).then(function(puede){
+        if(puede){
+          if(ctrl.puedeSolicitudAnterior){
+            console.log("no hay solicitudes pendietnes");
+            console.log(ctrl.estudiante);
+            ctrl.soliciudConDetalles = true;
+            ctrl.detalles = [];
+            var parametrosDetalles;
+            if(modalidad_seleccionada===undefined){
+              parametrosDetalles = $.param({
+                query:"Activo:TRUE,ModalidadTipoSolicitud:"+tipoSolicitud,
+                limit:0,
+                sortby: "NumeroOrden",
+                order: "asc"
+              });
+            }else{
+              parametrosDetalles = $.param({
+                query:"Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
+                limit:0,
+                sortby: "NumeroOrden",
+                order: "asc"
+              });
+              var parametrosModalidadTipoSolicitud = $.param({
+                query:"TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
+                limit:1,
 
-    if(puede.data==="true"){
-      if(ctrl.puedeSolicitudAnterior){
-        console.log("no hay solicitudes pendietnes");
-        console.log(ctrl.estudiante);
-        ctrl.soliciudConDetalles = true;
-        ctrl.detalles = [];
-        var parametrosDetalles;
-        if(modalidad_seleccionada===undefined){
-          parametrosDetalles = $.param({
-            query:"Activo:TRUE,ModalidadTipoSolicitud:"+tipoSolicitud,
-            limit:0,
-            sortby: "NumeroOrden",
-            order: "asc"
-          });
-        }else{
-          parametrosDetalles = $.param({
-            query:"Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:"+modalidad_seleccionada,
-            limit:0,
-            sortby: "NumeroOrden",
-            order: "asc"
-          });
-          var parametrosModalidadTipoSolicitud = $.param({
-            query:"TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:"+modalidad_seleccionada,
-            limit:1,
-
-          });
-          poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud){
-            ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
-          });
-        }
-        poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
-          $scope.loadDetalles = false;
-          ctrl.detalles = responseDetalles.data;
-          console.log(ctrl.detalles);
+              });
+              poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud){
+                ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
+              });
+            }
+            poluxRequest.get("detalle_tipo_solicitud",parametrosDetalles).then(function(responseDetalles){
+              $scope.loadDetalles = false;
+              ctrl.detalles = responseDetalles.data;
+              console.log(ctrl.detalles);
                       //Se cargan opciones de los detalles
                       angular.forEach(ctrl.detalles, function(detalle){
                         //Se internacionalizan variables y se crean labels de los detalles
@@ -530,7 +617,7 @@ if(ctrl.detalles == null){
 
 }else{
   $scope.loadDetalles = false;
-  ctrl.siPuede=true;
+  //ctrl.siPuede=true;
   ctrl.detalles = [];
 }
 });

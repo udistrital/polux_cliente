@@ -198,6 +198,7 @@ var text_es = {
         SIN_FECHAS_MODALIDAD_POSGRADO:"Actualmenten no hay fechas para los procesos de la modadlidad de materias de posgrado asociadas al periodo academico.",
         SIN_CARRERAS_POSGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de POSGRADO",
         SIN_PERIODO:"Actualmente no hay registrado un periodo siguiente.",
+        NO_EN_FECHAS_INSCRIPCION_POSGRADO:"El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -543,6 +544,7 @@ var text_en = {
         SIN_FECHAS_MODALIDAD_POSGRADO:"Currently there are no dates for the processes of the postgraduate subjects modality associated with the academic period.",
         SIN_CARRERAS_POSGRADO:"Mr. Coordinator, you have not assigned careers with a POSTGRADUATE level.",
         SIN_PERIODO:"Currently there is no period recorded.",
+        NO_EN_FECHAS_INSCRIPCION_POSGRADO:"The process of registration of subjects to course the postgraduate subjects modality is not in force.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
