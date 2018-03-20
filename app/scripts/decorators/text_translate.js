@@ -192,6 +192,12 @@ var text_es = {
         ENVIO_SOLICITUD:"Error al enviar la solicitud",
         NO_AREAS_CARGADAS:"Error al intentar cargar las áreas de conocimiento",
         NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcles básicos",
+        CARGAR_PERIODO:"Ocurrio un error al cargar el periodo, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_CARRERAS:"Ocurrio un error al cargar las carreras asociadas al coordinador, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_FECHAS_MODALIDAD_POSGRADO:"Ocurrio un error al cargar las fechas asociadas a los procesos de la modalidad de materias de posgrado, por favor verifique su conexión e intente de nuevo.",
+        SIN_FECHAS_MODALIDAD_POSGRADO:"Actualmenten no hay fechas para los procesos de la modadlidad de materias de posgrado asociadas al periodo academico.",
+        SIN_CARRERAS_POSGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de POSGRADO",
+        SIN_PERIODO:"Actualmente no hay registrado un periodo siguiente.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -263,6 +269,7 @@ var text_es = {
       CARGANDO_PENSUMS:"Cargando pensums",
       CARGANDO_AREAS:"Cargando áreas de SNIES",
       REGISTRANDO_AREA:"Registrando Área",
+      CARGANDO_PARAMETROS:"Cargando parámetros",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -525,6 +532,14 @@ var text_en = {
         CARGA_SOLICITUDES:"Error loading requests",
         NO_AREAS_CARGADAS:"Error trying to load knowledge areas",
         NO_NUCLEOS_CARGADOS:"Error trying to load basic cores",
+        NO_AREAS_CARGADAS:"Error trying to load knowledge areas",
+        NO_NUCLEOS_CARGADOS:"Error trying to load basic numbers",
+        CARGAR_PERIODO:"An error occurred loading the period, please verify your connection and try again.",
+        CARGAR_CARRERAS:"An error occurred loading the races associated with the coordinator, please verify your connection and try again.",
+        CARGAR_FECHAS_MODALIDAD_POSGRADO:"An error occurred loading the dates associated with the processes of the postgraduate course mode, please verify your connection and try again.",
+        SIN_FECHAS_MODALIDAD_POSGRADO:"Currently there are no dates for the processes of the postgraduate subjects modality associated with the academic period.",
+        SIN_CARRERAS_POSGRADO:"Mr. Coordinator, you have not assigned careers with a POSTGRADUATE level.",
+        SIN_PERIODO:"Currently there is no period recorded.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -596,6 +611,7 @@ var text_en = {
       CARGANDO_PENSUMS:"Loading pensums",
       CARGANDO_AREAS:"Loading areas of SNIES",
       REGISTRANDO_AREA:"Registering area",
+      CARGANDO_PARAMETROS:"Loading parameterss",
     },
     SELECT:{
       SELECCIONE:"Select an option",
