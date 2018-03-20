@@ -6,11 +6,11 @@
   <div class="panel-body">
     <loading tam="4" load="loadParametros" message="cargandoParametros"> </loading>
     <div class="panel-body alert alert-danger" ng-if="!loadParametros && listarSolicitudes.errorCargarParametros">
-        {{listarSolicitudes.mensajeError}}
+      {{listarSolicitudes.mensajeError}}
     </div>
     <div ng-if="!loadParametros && !listarSolicitudes.errorCargarParametros">
       <!--<pre>{{listarsolicitudes.sols | json}}</pre>-->
-      
+      <div class="row">
       <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
       <label for="anioSel" class="col-sm-10 control-label">{{listarSolicitudes.periodo.anio}}</label>
 
@@ -31,27 +31,53 @@
         </form>
       </div>
 
-      <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
+      <div class="panel col-sm-12" ng-if="loadSolicitudes">      
+        <loading tam="4" load="loadSolicitudes" message="msgCargandoSolicitudes"> </loading>
+      </div>
 
-      <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="sols.length>0 && load!==true">
+      <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true">
        <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div><br>
        <center>
-        <button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
+        <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
-        <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>
+        <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>-->
+        <button ng-if="listarSolicitudes.primeraFecha.inicio<=fechaActual && listarSolicitudes.primeraFecha.fin>=fechaActual" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
+        <button ng-if="listarSolicitudes.segundaFecha.inicio<=fechaActual && listarSolicitudes.segundaFecha.fin>=fechaActual" ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
       </center><br>
 
-      <pre>
-       {{'FECHA_ACTUAL' | translate}} {{fechaActual| date:'dd-MM-yyyy'}}
-       {{'FECHA_INICIO' | translate}} {{fecha_inicio|date:'dd-MM-yyyy'}}
-       {{'FECHA_INICIO_DOS' | translate}} {{segunda_fecha| date:'dd-MM-yyyy'}}
-       {{'FECHA_FIN' | translate}}  {{fecha_fin| date:'dd-MM-yyyy'}}
-     </pre>
-   </div>
+    </div>
 
-   <div ng-if="sols.length===0 && load!==true" class="alert alert-danger col-sm-12 control-label" style="margin-top: 20px;">
-    {{'NO_SOLICITUDES_POSGRADO' | translate}}
+    <div ng-if="sols.length===0 && loadSolicitudes!==true" class="alert alert-danger col-sm-12 control-label" style="margin-top: 20px;">
+      {{'NO_SOLICITUDES_POSGRADO' | translate}}
+    </div>
   </div>
+    <!--pre>
+     {{'FECHA_ACTUAL' | translate}}  {{fechaActual| date:'dd-MM-yyyy'}}
+     {{'FECHA_INICIO' | translate}} {{'INICIO' | translate}} {{listarSolicitudes.primeraFecha.inicio}} {{'FIN' | translate}} {{listarSolicitudes.primeraFecha.fin}}
+     {{'FECHA_INICIO_DOS' | translate}}  {{'INICIO' | translate}} {{listarSolicitudes.segundaFecha.inicio}} {{'FIN' | translate}} {{listarSolicitudes.segundaFecha.fin}}
+   </pre-->
+    <br>
+    <div class="panel panel-default" >
+      <div class="panel-heading">
+        {{'FECHAS_PROCESO_MATERIAS_POSGRADO' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row" ng-repeat="fecha in listarSolicitudes.fechas">
+            <label class="col-sm-12"> {{fecha.SesionHijo.Descripcion}} </label>
+            <!--label class="col-sm-5"> {{fecha.SesionHijo.TipoSesion.Nombre}} </label-->
+            <label class="col-sm-2">{{'FECHA_INICIO' | translate}}:</label>
+            <label class="col-sm-4">{{fecha.inicio}}</label>
+            <label class="col-sm-2">{{'FECHA_FIN' | translate}}:</label>
+            <label class="col-sm-4">{{fecha.fin}}</label>
+        </div>
+      </div>
+    </div>
+
+
+    
+
+  
+
 
         <!--
       <script type="text/ng-template" id="dialog.tmpl.html">
@@ -99,6 +125,7 @@
   Panel Footer
 </div>
 </div>
+
 
 <div id="modalCupos" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
   <div class="modal-content col-md-offset-2 col-md-8">

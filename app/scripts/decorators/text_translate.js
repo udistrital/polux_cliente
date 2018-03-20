@@ -53,7 +53,7 @@ var text_es = {
     ADMITIDOS_POR_RENDIMIENTO: "Admitidos por rendimiento:",
     ADMITIDOS_POR_ECONOMIA: "Admitidos por pago:",
     FECHA_ACTUAL: "Fecha actual:",
-    FECHA_INICIO: "Primera fecha de inicio:",
+    FECHA_INICIO_UNO: "Primera fecha de inicio:",
     FECHA_INICIO_DOS: "Segunda fecha de inicio:",
     FECHA_FIN: "Fecha de finalización:",
     SELECCION_DE_ADMITIDOS: "Selección de Admitidos",
@@ -359,6 +359,9 @@ var text_es = {
     },
     ACEPTAR:"Aceptar",
     CANCELAR:"Cancelar",
+    FECHAS_PROCESO_MATERIAS_POSGRADO:"Fechas del proceso de la modalidad de materias de posgrado",
+    FECHA_INICIO:"Fecha de inicio",
+    FECHA_FIN:"Fecha fin",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -391,7 +394,7 @@ var text_en = {
     ADMITIDOS_POR_RENDIMIENTO: "Admited by academic performance:",
     ADMITIDOS_POR_ECONOMIA: "Admited by payment:",
     FECHA_ACTUAL: "Current date:",
-    FECHA_INICIO: "Start date:",
+    FECHA_INICIO_UNO: "Start date:",
     FECHA_INICIO_DOS: "Second start date:",
     FECHA_FIN: "Ending date:",
     SELECCION_DE_ADMITIDOS: "Selection of admitted students",
@@ -701,6 +704,9 @@ var text_en = {
     },
     ACEPTAR:"Accept",
     CANCELAR:"Cancel",
+    FECHAS_PROCESO_MATERIAS_POSGRADO:"Dates of the process of the postgraduate subjects modality",
+    FECHA_INICIO:"Start date",
+    FECHA_FIN:"End date",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

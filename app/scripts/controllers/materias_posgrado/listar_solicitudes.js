@@ -13,6 +13,7 @@
 
   $scope.loadParametros = true;
   $scope.cargandoParametros = $translate.instant("LOADING.CARGANDO_PARAMETROS");
+  $scope.cargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
 
   var ctrl = this;
 
@@ -150,9 +151,7 @@
     ctrl.getFechas = function(periodo){
       var defer =  $q.defer()
       var momentDate = null;
-      $scope.fechaActual = new Date();
-      momentDate = moment($scope.fechaActual);
-      $scope.fechaActual = momentDate.format("YYYY-MM-DD");
+      $scope.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:MM");
       //traer fechas
       var parametrosSesiones = $.param({
         query:"SesionPadre.periodo:"+periodo.anio+periodo.periodo,
@@ -161,6 +160,19 @@
       sesionesRequest.get("relacion_sesiones",parametrosSesiones).then(function(responseFechas){
         if(responseFechas.data !== null){
           ctrl.fechas = responseFechas.data;
+          angular.forEach(ctrl.fechas, function(fecha){
+            console.log(fecha.SesionHijo);
+            fecha.inicio = moment(new Date(fecha.SesionHijo.FechaInicio)).format("YYYY-MM-DD HH:MM");
+            fecha.fin = moment(new Date(fecha.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");           
+            if(fecha.SesionHijo.TipoSesion.Id===4){
+              //primera fecha de selección de admitidos
+              ctrl.primeraFecha = fecha;
+              //console.log(fecha.inicio, ctrl.primeraFecha.inicio<=$scope.fechaActual && ctrl.primeraFecha.fin>=$scope.fechaActual);
+            } else if(fecha.SesionHijo.TipoSesion.Id===6){
+              //segunda fecha de selección de admitidos
+              ctrl.segundaFecha = fecha;
+            }
+          });
           defer.resolve(ctrl.fechas);
         }else{
           ctrl.mensajeError = $translate.instant("ERROR.SIN_FECHAS_MODALIDAD_POSGRADO");
@@ -209,7 +221,7 @@
 
     //solicitudes iniciales de la modalidad de materias de posgrado
     ctrl.buscarSolicitudes = function (carrera) {
-      $scope.load = true;
+      $scope.loadSolicitudes = true;
       ctrl.carrera = carrera;
       $scope.carrera = carrera;
       if (carrera) {
@@ -263,13 +275,13 @@
                   }
                 }
               });
-              $scope.load = false;
             }
           });
+          $scope.loadSolicitudes = false;
         });
 
         ctrl.gridOptions.data = $scope.sols;
-        $scope.load = false;
+ 
       }
     }
 
