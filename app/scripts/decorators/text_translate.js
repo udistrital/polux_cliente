@@ -53,7 +53,7 @@ var text_es = {
     ADMITIDOS_POR_RENDIMIENTO: "Admitidos por rendimiento:",
     ADMITIDOS_POR_ECONOMIA: "Admitidos por pago:",
     FECHA_ACTUAL: "Fecha actual:",
-    FECHA_INICIO: "Primera fecha de inicio:",
+    FECHA_INICIO_UNO: "Primera fecha de inicio:",
     FECHA_INICIO_DOS: "Segunda fecha de inicio:",
     FECHA_FIN: "Fecha de finalización:",
     SELECCION_DE_ADMITIDOS: "Selección de Admitidos",
@@ -192,6 +192,13 @@ var text_es = {
         ENVIO_SOLICITUD:"Error al enviar la solicitud",
         NO_AREAS_CARGADAS:"Error al intentar cargar las áreas de conocimiento",
         NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcles básicos",
+        CARGAR_PERIODO:"Ocurrio un error al cargar el periodo, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_CARRERAS:"Ocurrio un error al cargar las carreras asociadas al coordinador, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_FECHAS_MODALIDAD_POSGRADO:"Ocurrio un error al cargar las fechas asociadas a los procesos de la modalidad de materias de posgrado, por favor verifique su conexión e intente de nuevo.",
+        SIN_FECHAS_MODALIDAD_POSGRADO:"Actualmenten no hay fechas para los procesos de la modadlidad de materias de posgrado asociadas al periodo academico.",
+        SIN_CARRERAS_POSGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de POSGRADO",
+        SIN_PERIODO:"Actualmente no hay registrado un periodo siguiente.",
+        NO_EN_FECHAS_INSCRIPCION_POSGRADO:"El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -263,6 +270,7 @@ var text_es = {
       CARGANDO_PENSUMS:"Cargando pensums",
       CARGANDO_AREAS:"Cargando áreas de SNIES",
       REGISTRANDO_AREA:"Registrando Área",
+      CARGANDO_PARAMETROS:"Cargando parámetros",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -352,6 +360,9 @@ var text_es = {
     },
     ACEPTAR:"Aceptar",
     CANCELAR:"Cancelar",
+    FECHAS_PROCESO_MATERIAS_POSGRADO:"Fechas del proceso de la modalidad de materias de posgrado",
+    FECHA_INICIO:"Fecha de inicio",
+    FECHA_FIN:"Fecha fin",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -384,7 +395,7 @@ var text_en = {
     ADMITIDOS_POR_RENDIMIENTO: "Admited by academic performance:",
     ADMITIDOS_POR_ECONOMIA: "Admited by payment:",
     FECHA_ACTUAL: "Current date:",
-    FECHA_INICIO: "Start date:",
+    FECHA_INICIO_UNO: "Start date:",
     FECHA_INICIO_DOS: "Second start date:",
     FECHA_FIN: "Ending date:",
     SELECCION_DE_ADMITIDOS: "Selection of admitted students",
@@ -525,6 +536,15 @@ var text_en = {
         CARGA_SOLICITUDES:"Error loading requests",
         NO_AREAS_CARGADAS:"Error trying to load knowledge areas",
         NO_NUCLEOS_CARGADOS:"Error trying to load basic cores",
+        NO_AREAS_CARGADAS:"Error trying to load knowledge areas",
+        NO_NUCLEOS_CARGADOS:"Error trying to load basic numbers",
+        CARGAR_PERIODO:"An error occurred loading the period, please verify your connection and try again.",
+        CARGAR_CARRERAS:"An error occurred loading the races associated with the coordinator, please verify your connection and try again.",
+        CARGAR_FECHAS_MODALIDAD_POSGRADO:"An error occurred loading the dates associated with the processes of the postgraduate course mode, please verify your connection and try again.",
+        SIN_FECHAS_MODALIDAD_POSGRADO:"Currently there are no dates for the processes of the postgraduate subjects modality associated with the academic period.",
+        SIN_CARRERAS_POSGRADO:"Mr. Coordinator, you have not assigned careers with a POSTGRADUATE level.",
+        SIN_PERIODO:"Currently there is no period recorded.",
+        NO_EN_FECHAS_INSCRIPCION_POSGRADO:"The process of registration of subjects to course the postgraduate subjects modality is not in force.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -596,6 +616,7 @@ var text_en = {
       CARGANDO_PENSUMS:"Loading pensums",
       CARGANDO_AREAS:"Loading areas of SNIES",
       REGISTRANDO_AREA:"Registering area",
+      CARGANDO_PARAMETROS:"Loading parameterss",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -685,6 +706,9 @@ var text_en = {
     },
     ACEPTAR:"Accept",
     CANCELAR:"Cancel",
+    FECHAS_PROCESO_MATERIAS_POSGRADO:"Dates of the process of the postgraduate subjects modality",
+    FECHA_INICIO:"Start date",
+    FECHA_FIN:"End date",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

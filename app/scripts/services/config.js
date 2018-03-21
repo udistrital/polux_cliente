@@ -20,6 +20,7 @@
     NUXEO_SERVICE:"https://athento.udistritaloas.edu.co/nuxeo/",
     CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
     OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
+    SESIONES_SERVICE:"http://localhost:8081/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.udistrital.edu.co/oauth2/userinfo",
@@ -44,6 +45,7 @@ var conf_local = {
     NUXEO_SERVICE:"https://athento.udistritaloas.edu.co/nuxeo/",
     CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
     OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
+    SESIONES_SERVICE:"http://localhost:8081/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.udistrital.edu.co/oauth2/userinfo",
@@ -62,5 +64,5 @@ var conf_local = {
 
 angular.module('poluxClienteApp')
   .constant('CONF', {
-      GENERAL: conf_pruebas
+      GENERAL: conf_local
   });
