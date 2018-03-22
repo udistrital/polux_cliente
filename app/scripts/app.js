@@ -230,6 +230,11 @@ angular
               controller: 'MateriasPosgradoRegistrarNotaCtrl',
               controllerAs: 'registrarNota'
             })
+            .when('/materias_posgrado/formalizar_solicitud', {
+              templateUrl: 'views/materias_posgrado/formalizar_solicitud.html',
+              controller: 'MateriasPosgradoFormalizarSolicitudCtrl',
+              controllerAs: 'formalizarSolicitud'
+            })
             .otherwise({
                 redirectTo: '/'
             });

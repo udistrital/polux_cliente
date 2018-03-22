@@ -110,6 +110,7 @@ var text_es = {
     SOLICITUDES_DEL_ESTUDIANTE: "Solicitudes del estudiante",
     NINGUNA_SOLICITUD_REALIZADA: "Ninguna solicitud realizada",
     SOLICITUD_NUM: "Solicitud N° ",
+    FORMALIZAR_SOLICITUD: "Formalizar Solicitud",
     FORMALIZACION: "Formalización: ",
     CREDITOS: "Créditos ",
     SEMESTRE: "Semestre ",
@@ -212,6 +213,7 @@ var text_es = {
         SIN_RESULTADOS:"No existen resultados asociados a los datos ingresados.",
         REGISTRAR_PAGO:"Error al registrar el pago",
         REGISTRAR_NOTA:"Error al registrar las notas",
+        SIN_SOLICITUDES:"No existen solicitudes asociadas.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -460,6 +462,7 @@ var text_en = {
     SOLICITUDES_DEL_ESTUDIANTE: "Student solicitudes",
     NINGUNA_SOLICITUD_REALIZADA: "You have not done any request",
     SOLICITUD_NUM: "Request N° ",
+    FORMALIZAR_SOLICITUD: "Formalize Request",
     FORMALIZACION: "Formalization ",
     CREDITOS: "Credits ",
     SEMESTRE: "Semester ",
@@ -561,6 +564,7 @@ var text_en = {
         SIN_RESULTADOS:"There are no results associated with the data requested.",
         REGISTRAR_PAGO:"Error registering the payment",
         REGISTRAR_NOTA:"Error registering the grades",
+        SIN_SOLICITUDES:"There are not associated requests.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
