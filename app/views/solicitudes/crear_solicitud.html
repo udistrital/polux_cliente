@@ -26,6 +26,9 @@
 </div>
 <loading tam="4" load="loadFormulario" message="enviandoFormulario"> </loading>
 <loading tam="4" load="loadDetalles"  message="cargandoDetalles"> </loading>
+<div class="panel-body alert alert-danger" ng-show="crearSolicitud.puedeFechas">
+    {{crearSolicitud.textoErrorFechas}}
+</div>
 <div class="panel-body alert alert-danger" ng-show="crearSolicitud.siPuede">
     {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
 </div>

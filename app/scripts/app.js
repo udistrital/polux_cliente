@@ -46,7 +46,8 @@ angular
         'file-model',
         'angularBootstrapFileinput',
         'infinite-scroll',
-        'uiSwitch'
+        'uiSwitch',
+        'configuracionService'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
@@ -74,8 +75,7 @@ angular
                 controller: 'AboutCtrl',
                 controllerAs: 'about'
             })
-
-        .when('/materias_posgrado/listar_solicitudes', {
+            .when('/materias_posgrado/listar_solicitudes', {
                 templateUrl: 'views/materias_posgrado/listar_solicitudes.html',
                 controller: 'MateriasPosgradoListarSolicitudesCtrl',
                 controllerAs: 'listarSolicitudes'
@@ -234,6 +234,11 @@ angular
               templateUrl: 'views/materias_posgrado/formalizar_solicitud.html',
               controller: 'MateriasPosgradoFormalizarSolicitudCtrl',
               controllerAs: 'formalizarSolicitud'
+            })
+            .when('/pasantia/solicitar_carta', {
+              templateUrl: 'views/pasantia/solicitar_carta.html',
+              controller: 'PasantiaSolicitarCartaCtrl',
+              controllerAs: 'solicitarCarta'
             })
             .otherwise({
                 redirectTo: '/'
