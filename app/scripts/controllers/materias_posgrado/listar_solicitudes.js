@@ -285,7 +285,7 @@
         $scope.sols = [];
 
         var parametros = $.param({
-          query: "Activo:true,EstadoSolicitud.Id.in:6|7|8|9|10,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+          query: "Activo:true,EstadoSolicitud.Id.in:3|5|7|8,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
           limit: 0
         });
         poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
