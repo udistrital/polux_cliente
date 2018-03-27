@@ -43,12 +43,12 @@
     {
       name: 'estudiante',
       displayName: 'Código',
-      width: "12%"
+      width: "10%"
     },
     {
       name: 'nombre',
       displayName: 'Nombre',
-      width: "27%"
+      width: "23%"
     },
     {
       name: 'promedio',
@@ -62,7 +62,7 @@
     {
       name: 'rendimiento',
       displayName: 'Rendimiento Académico',
-      width: "17%",
+      width: "15%",
       sort: {
         direction: uiGridConstants.DESC,
         priority: 1
@@ -71,7 +71,13 @@
     {
       name: 'estado.Nombre',
       displayName: 'Estado',
-      width: "18%"
+      width: "16%"
+    },
+    {
+      name: 'aprobar',
+      displayName: 'Admitir',
+      width: "10%",
+      cellTemplate: '<center><md-checkbox class="blue" ng-model="row.entity.aprobado" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div><center>',
     }
     ];
 
@@ -147,6 +153,7 @@
       });
       return defer.promise
     }
+
 
     ctrl.getFechas = function(periodo){
       var defer =  $q.defer()
@@ -253,14 +260,21 @@
                       "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                       "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                       "estado": value.EstadoSolicitud,
+                      "aprobado": false,
                               //"respuesta": ""+value.Id,
                               "respuestaSolicitud": value
-                            };
-                            $scope.sols.push(solicitud);
+                    };
+                    console.log(solicitud.estado);
+                    if(solicitud.estado.Id==3 || solicitud.estado.Id==5){
+                      solicitud.permitirAprobar = true;
+                    }else{
+                      solicitud.permitirAprobar = false;
+                    }
+                    $scope.sols.push(solicitud);
                             
-                          }
-                        defer.resolve();
-                        });
+                  }
+                  defer.resolve();
+                });
 
               });
 

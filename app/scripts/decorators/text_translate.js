@@ -364,6 +364,7 @@ var text_es = {
     FECHA_INICIO:"Fecha de inicio",
     FECHA_FIN:"Fecha fin",
     PERIODO_ACADEMICO:"Período académico",
+    SOLICITUD_NO_PUEDE_APROBARSE:"La solicitud no puede ser aprobada",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -711,6 +712,7 @@ var text_en = {
     FECHA_INICIO:"Start date",
     FECHA_FIN:"End date",
     PERIODO_ACADEMICO:"Academic period",
+    SOLICITUD_NO_PUEDE_APROBARSE:"The request can not be approved",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
