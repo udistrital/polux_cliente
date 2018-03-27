@@ -225,8 +225,59 @@
 
     ctrl.cargarParametros();
 
+    ctrl.cargarParametrosSolicitud = function(value){
+      var defer = $q.defer();
+      //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
+      var parametros = $.param({
+        query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
+      });
+      poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
+        if (detalleSolicitud.data !== null) {
+          var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+
+          if (ctrl.carrera == carreraSolicitud.Codigo) {
+            var parametros = $.param({
+              query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
+            });
+            poluxRequest.get("usuario_solicitud", parametros).then(function (usuarioSolicitud) {
+
+              academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
+
+                academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
+                  if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
+                    var solicitud = {
+                      "solicitud": value.SolicitudTrabajoGrado.Id,
+                      "fecha": value.Fecha,
+                      "estudiante": usuarioSolicitud.data[0].Usuario,
+                      "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                      "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                      "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                      "estado": value.EstadoSolicitud,
+                              //"respuesta": ""+value.Id,
+                              "respuestaSolicitud": value
+                            };
+                            $scope.sols.push(solicitud);
+                            
+                          }
+                        defer.resolve();
+                        });
+
+              });
+
+            });
+          }else{
+            defer.resolve();
+          }
+        }else{
+          defer.resolve();
+        }
+      });
+      return defer.promise;
+    }
+
     //solicitudes iniciales de la modalidad de materias de posgrado
     ctrl.buscarSolicitudes = function (carrera) {
+
       $scope.loadSolicitudes = true;
       ctrl.carrera = carrera;
       $scope.carrera = carrera;
@@ -234,56 +285,19 @@
         $scope.sols = [];
 
         var parametros = $.param({
-          query: "Activo:true,EstadoSolicitud.Id.in:6|7|8|9|10",
+          query: "Activo:true,EstadoSolicitud.Id.in:6|7|8|9|10,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
           limit: 0
         });
         poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
-
+          var promises = [];
           angular.forEach(respuestaSolicitud.data, function (value) {
-
             if (value != null) {
-              //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
-              var parametros = $.param({
-                query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-              });
-              poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                if (detalleSolicitud.data !== null) {
-                  var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-
-                  if (ctrl.carrera == carreraSolicitud.Codigo) {
-                    var parametros = $.param({
-                      query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-                    });
-                    poluxRequest.get("usuario_solicitud", parametros).then(function (usuarioSolicitud) {
-
-                      academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
-
-                        academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
-                          if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-                            var solicitud = {
-                              "solicitud": value.SolicitudTrabajoGrado.Id,
-                              "fecha": value.Fecha,
-                              "estudiante": usuarioSolicitud.data[0].Usuario,
-                              "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                              "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                              "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                              "estado": value.EstadoSolicitud,
-                              //"respuesta": ""+value.Id,
-                              "respuestaSolicitud": value
-                            };
-                            $scope.sols.push(solicitud);
-                          }
-                        });
-
-                      });
-
-                    });
-                  }
-                }
-              });
+              promises.push(ctrl.cargarParametrosSolicitud(value));
             }
           });
-          $scope.loadSolicitudes = false;
+          $q.all(promises).then(function(){
+            $scope.loadSolicitudes = false;
+          })
         });
 
         ctrl.gridOptions.data = $scope.sols;
