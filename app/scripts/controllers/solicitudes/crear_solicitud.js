@@ -360,7 +360,6 @@ ctrl.verificarRequisitos = function(tipoSolicitud, modalidad){
       } else if(!responseRequisitos[1]){
         ctrl.puedeFechas = true;
       }
-      alert(responseRequisitos[1])
       defer.resolve(puede)
     });
   });
