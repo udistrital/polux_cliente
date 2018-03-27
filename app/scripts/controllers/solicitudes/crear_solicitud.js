@@ -120,7 +120,8 @@
                     if(actuales.length==0){
                       console.log("si se puede");
                       defered.resolve(true);
-                    }else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
+                    //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
+                    }else if(actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
                       console.log(actuales);
                       console.log("es inicial y se deben restringir las demás");
                       ctrl.restringirModalidades = true;
@@ -235,8 +236,45 @@
                     }
                     ctrl.obtenerDatosEstudiante();
                     ctrl.obtenerAreas();
+                    ctrl.getPeriodoSiguiente();
+                    ctrl.getPeriodoActual();
                   });
 });
+
+ctrl.getPeriodoSiguiente  = function(){
+      academicaRequest.get("periodo_academico", "X")
+      .then(function (responsePeriodo) {
+        if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
+          ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+          console.log(ctrl.periodoSiguiente);
+          defer.resolve();
+        }else{
+          ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
+          defer.reject("sin periodo");
+        }        
+      })
+      .catch(function(){
+        ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+      }); 
+    }
+
+ctrl.getPeriodoActual  = function(){
+      academicaRequest.get("periodo_academico", "A")
+      .then(function (responsePeriodo) {
+        if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
+          ctrl.periodoActual = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+          console.log(ctrl.periodoActual);
+          ctrl.periodo = ctrl.periodoActual.anio+periodoActual.periodo;
+          defer.resolve();
+        }else{
+          ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
+          defer.reject("sin periodo");
+        }        
+      })
+      .catch(function(){
+        ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+      }); 
+    }
 
 
 ctrl.obtenerAreas = function (){
@@ -320,6 +358,7 @@ ctrl.verificarRequisitos = function(tipoSolicitud, modalidad){
     var deferFechas = $q.defer();
     //si la solicitud es de materias de posgrado e inicial
     if(tipoSolicitud === 2 && modalidad === 2 ){
+      ctrl.periodo = ctrl.periodoSiguiente.anio+ctrl.periodoSiguiente.periodo;
       ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
       //traer fechas
       var parametrosSesiones = $.param({
@@ -938,14 +977,16 @@ ctrl.docenteVinculado = function(docente){
             },
             "TrabajoGrado": {
               "Id": ctrl.trabajo_grado
-            }
+            },
+            "PeriodoAcademico":parseInt(ctrl.periodo)
           };
         }else{
           data_solicitud={
             "Fecha": fecha,
             "ModalidadTipoSolicitud": {
               "Id": ctrl.ModalidadTipoSolicitud
-            }
+            },
+            "PeriodoAcademico":parseInt(ctrl.periodo)
           };
         }
         angular.forEach(ctrl.detalles, function(detalle){

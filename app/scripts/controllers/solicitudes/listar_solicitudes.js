@@ -261,6 +261,7 @@ angular.module('poluxClienteApp')
                     ctrl.conSolicitudes = true;
                   }
                   ctrl.gridOptions.data = ctrl.solicitudes;
+                  console.log(ctrl.solicitudes)
                   $scope.load = false;
               }).catch(function(error){
                   console.log(error);
@@ -486,6 +487,7 @@ angular.module('poluxClienteApp')
               ctrl.detallesSolicitud.fechaSolicitud = fila.entity.Fecha;
               ctrl.detallesSolicitud.estado = fila.entity.Estado;
               ctrl.detallesSolicitud.modalidad = fila.entity.Modalidad;
+              ctrl.detallesSolicitud.PeriodoAcademico = fila.entity.Respuesta.SolicitudTrabajoGrado.PeriodoAcademico;
               ctrl.detallesSolicitud.respuesta= fila.entity.Respuesta.Justificacion;
               ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud).then(function(resultado){
                 ctrl.detallesSolicitud.resultado = resultado;

@@ -363,6 +363,7 @@ var text_es = {
     FECHAS_PROCESO_MATERIAS_POSGRADO:"Fechas del proceso de la modalidad de materias de posgrado",
     FECHA_INICIO:"Fecha de inicio",
     FECHA_FIN:"Fecha fin",
+    PERIODO_ACADEMICO:"Período académico",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -709,6 +710,7 @@ var text_en = {
     FECHAS_PROCESO_MATERIAS_POSGRADO:"Dates of the process of the postgraduate subjects modality",
     FECHA_INICIO:"Start date",
     FECHA_FIN:"End date",
+    PERIODO_ACADEMICO:"Academic period",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
