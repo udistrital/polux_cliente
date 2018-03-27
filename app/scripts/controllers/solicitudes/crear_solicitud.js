@@ -320,7 +320,7 @@ ctrl.verificarRequisitos = function(tipoSolicitud, modalidad){
     var deferFechas = $q.defer();
     //si la solicitud es de materias de posgrado e inicial
     if(tipoSolicitud === 2 && modalidad === 2 ){
-      ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:MM");
+      ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
       //traer fechas
       var parametrosSesiones = $.param({
         query:"SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:"+periodo.anio+periodo.periodo,
@@ -330,8 +330,15 @@ ctrl.verificarRequisitos = function(tipoSolicitud, modalidad){
         if(responseFechas.data !== null){
           console.log(responseFechas.data[0]);
           var sesion = responseFechas.data[0];
-          ctrl.fechaInicio = moment(new Date(sesion.SesionHijo.FechaInicio)).format("YYYY-MM-DD HH:MM");
-          ctrl.fechaFin = moment(new Date(sesion.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");
+          var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
+          fechaHijoInicio.setTime( fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset()*60*1000 );
+          ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+          var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
+          fechaHijoFin.setTime( fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset()*60*1000 );
+          ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+          ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
+          //console.log("fechas", ctrl.fechaInicio);
+          //console.log("fechas", ctrl.fechaFin);
           if(ctrl.fechaInicio<=ctrl.fechaActual && ctrl.fechaActual<=ctrl.fechaFin){
             deferFechas.resolve(true);
           }else{
@@ -360,7 +367,6 @@ ctrl.verificarRequisitos = function(tipoSolicitud, modalidad){
       } else if(!responseRequisitos[1]){
         ctrl.puedeFechas = true;
       }
-      alert(responseRequisitos[1])
       defer.resolve(puede)
     });
   });

@@ -151,7 +151,7 @@
     ctrl.getFechas = function(periodo){
       var defer =  $q.defer()
       var momentDate = null;
-      $scope.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:MM");
+      $scope.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
       //traer fechas
       var parametrosSesiones = $.param({
         query:"SesionPadre.periodo:"+periodo.anio+periodo.periodo,
@@ -161,9 +161,15 @@
         if(responseFechas.data !== null){
           ctrl.fechas = responseFechas.data;
           angular.forEach(ctrl.fechas, function(fecha){
-            console.log(fecha.SesionHijo);
-            fecha.inicio = moment(new Date(fecha.SesionHijo.FechaInicio)).format("YYYY-MM-DD HH:MM");
-            fecha.fin = moment(new Date(fecha.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");           
+            //console.log(fecha.SesionHijo);
+            var fechaInicio = new Date(fecha.SesionHijo.FechaInicio);
+            fechaInicio.setTime( fechaInicio.getTime() + fechaInicio.getTimezoneOffset()*60*1000 );;
+            var fechaFin = new Date(fecha.SesionHijo.FechaFin);
+            fechaFin.setTime( fechaFin.getTime() + fechaFin.getTimezoneOffset()*60*1000 );
+            fecha.inicio = moment(fechaInicio).format("YYYY-MM-DD HH:mm");
+            fecha.fin = moment(fechaFin).format("YYYY-MM-DD HH:mm");
+            //fecha.inicio = moment(new Date(fecha.SesionHijo.FechaInicio)).format("YYYY-MM-DD HH:MM");
+            //fecha.fin = moment(new Date(fecha.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");           
             if(fecha.SesionHijo.TipoSesion.Id===4){
               //primera fecha de selección de admitidos
               ctrl.primeraFecha = fecha;
@@ -281,7 +287,7 @@
         });
 
         ctrl.gridOptions.data = $scope.sols;
- 
+
       }
     }
 
