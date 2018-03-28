@@ -271,6 +271,7 @@ var text_es = {
       CARGANDO_AREAS:"Cargando áreas de SNIES",
       REGISTRANDO_AREA:"Registrando Área",
       CARGANDO_PARAMETROS:"Cargando parámetros",
+      REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -365,6 +366,15 @@ var text_es = {
     FECHA_FIN:"Fecha fin",
     PERIODO_ACADEMICO:"Período académico",
     SOLICITUD_NO_PUEDE_APROBARSE:"La solicitud no puede ser aprobada",
+    MATERIAS_POSGRADO:{
+        CONFIRMACION_ADMITIR:"Confirmación de admitidos",
+        CONFIRMAR:"Al presionar aceptar confirma que desea ejecutar el proceso de admisión con los estudiantes seleccionados, esta acción no puede deshacerse.",
+        ADMITIDOS:"Se admitirán los siguientes estudiantes:",
+        OPCIONADOS:"Los siguientes estudiantes serán opcionados para la segunda convocatoria:",
+        NO_ADMITIDOS:"Los siguientes estudiantes no se admitirán por falta de cupos:",
+        PROCESO_ADMISION_COMPLETO:"Proceso de admisión completado",
+        RESPUESTAS_SOLICITUD:"Se han registrado los datos del proceso de admisión exitosamente",
+    },
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -619,6 +629,7 @@ var text_en = {
       CARGANDO_AREAS:"Loading areas of SNIES",
       REGISTRANDO_AREA:"Registering area",
       CARGANDO_PARAMETROS:"Loading parameterss",
+      REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -713,6 +724,15 @@ var text_en = {
     FECHA_FIN:"End date",
     PERIODO_ACADEMICO:"Academic period",
     SOLICITUD_NO_PUEDE_APROBARSE:"The request can not be approved",
+    MATERIAS_POSGRADO:{
+        CONFIRMACION_ADMITIR:"Confirmation of admitted",
+        CONFIRMAR:"Pressing accept confirms that you want to execute the admission process with the selected students, this action can not be undone.",
+        ADMITIDOS:"The following students will be admitted:",
+        OPCIONADOS:"The following students will be eligible for the second call:",
+        NO_ADMITIDOS:"The following students will not be admitted due to lack of quotas:",
+        PROCESO_ADMISION_COMPLETO:"Admission process completed",
+        RESPUESTAS_SOLICITUD:"The data of the admission process has been registered successfully",
+    },
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
