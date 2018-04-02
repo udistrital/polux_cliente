@@ -20,38 +20,51 @@ angular.module('poluxClienteApp')
 
     // Se define el objeto que carga las solicitudes para formalizar y que serán visualizadas
     ctrl.cuadriculaSolicitudesParaFormalizar = {};
+
+    // Se configura el botón por el cual el usuario podrá formalizar la solicitud
+    $scope.botonFormalizarSolicitud = [
+      {
+        clase_color: "ver",
+        clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
+        titulo: $translate.instant('BTN.VER_DETALLES'),
+        operacion: 'verDetallesSolicitud',
+        estado: true
+      }
+    ];
+
     // Se definen los espacios a mostrar por cada solicitud
     ctrl.cuadriculaSolicitudesParaFormalizar.columnDefs = [
     	{
-        name: 'solicitud',
+        name: 'idSolicitud',
         displayName: $translate.instant("SOLICITUD"),
-        width: '10%'
+        width: '12%'
     	},
     	{
-        name: 'estado',
-        displayName: $translate.instant("ESTADO"),
-        width: '18%'
+        name: 'estadoSolicitud',
+        displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
+        width: '12%'
     	},
     	{
-        name: 'descripcion',
+        name: 'descripcionSolicitud',
         displayName: $translate.instant("DESCRIPCION"),
-        width: '18%'
+        width: '15%'
     	},
     	{
         name: 'posgrado',
         displayName: $translate.instant("POSGRADO"),
-        width: '18%'
+        width: '15%'
     	},
     	{
         name: 'espaciosAcademicosSolicitados',
         displayName: $translate.instant("ESPACIOS_ACADEMICOS"),
-        width: '18%'
+        width: '31%',
+        cellTemplate: '<div style="margin-top: 5px;"><div ng-repeat="espacioAcademico in row.entity[col.field]">{{espacioAcademico.nombre}}</div></div>'
     	},
     	{
-        name: 'opciones',
-        displayName: $translate.instant("OPCIONES"),
+        name: 'formalizarSolicitud',
+        displayName: $translate.instant("FORMALIZAR_SOLICITUD"),
         width: '15%',
-        cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila)" grupobotones="grid.appScope.opcionesSolicitud" fila="row"></btn-registro>'
+        cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila)" grupobotones="grid.appScope.botonFormalizarSolicitud" fila="row"></btn-registro>'
     	}
     ];
 
@@ -267,20 +280,19 @@ angular.module('poluxClienteApp')
     	$scope.cargandoSolicitudes = false;
     	if (coleccionSolicitudesParaFormalizar.length > 0) {
     		var solicitudesParaFormalizarRegistradas = [];
-    		angular.forEach(coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
-	    		solicitudesParaFormalizarRegistradas.push({
-	    			"idSolicitud": solicitudParaFormalizar.Id,
-		        "estadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Nombre,
-		        "descripcionSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Descripcion,
-		        "posgrado": ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleSolicitud).Nombre,
-		        // Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-		        // para obtener el objeto que contiene la información de los espacios académicos,
-		        // como argumento de la función que los ordena en un arreglo por el nombre
-		        "espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud)
-	    		});
-	    	});
-	    	ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
-	    	console.log(ctrl.cuadriculaSolicitudesParaFormalizar.data);
+        angular.forEach(coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
+          solicitudesParaFormalizarRegistradas.push({
+            "idSolicitud": solicitudParaFormalizar.Id,
+            "estadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Nombre,
+            "descripcionSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Descripcion,
+            "posgrado": ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleSolicitud).Nombre,
+            // Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
+            // para obtener el objeto que contiene la información de los espacios académicos,
+            // como argumento de la función que los ordena en un arreglo por el nombre
+            "espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud),
+          });
+        });
+        ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
     	} else {
     		$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
     	}
