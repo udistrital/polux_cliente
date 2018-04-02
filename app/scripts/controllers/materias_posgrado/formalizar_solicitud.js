@@ -11,13 +11,17 @@ angular.module('poluxClienteApp')
   .controller('MateriasPosgradoFormalizarSolicitudCtrl', function ($q, $location, $translate, $scope, academicaRequest, poluxRequest) {
     var ctrl = this;
     
+    // El Id del usuario depende de la sesión
     $scope.userId = "20112020004";
     
-    $scope.solicitudesCargadas = true;
-    $scope.msgCargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
+    // En el inicio de la página, se están cargando las solicitudes
+    $scope.cargandoSolicitudes = true;
+    $scope.mensajeCargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
 
-    ctrl.propiedadesCuadriculaSolicitudes = {};
-    ctrl.propiedadesCuadriculaSolicitudes.columnDefs = [
+    // Se define el objeto que carga las solicitudes para formalizar y que serán visualizadas
+    ctrl.cuadriculaSolicitudesParaFormalizar = {};
+    // Se definen los espacios a mostrar por cada solicitud
+    ctrl.cuadriculaSolicitudesParaFormalizar.columnDefs = [
     	{
         name: 'solicitud',
         displayName: $translate.instant("SOLICITUD"),
@@ -51,9 +55,6 @@ angular.module('poluxClienteApp')
     	}
     ];
 
-    // Yo pensaría en validar desde aquí las fechas de formalización
-    // Y dependiendo de eso se habilitan las opciones
-
     /**
      * [Función que define los parámetros para consultar en la tabla usuario_solicitud]
      * @return {[param]} [Se retorna la sentencia para la consulta]
@@ -78,17 +79,17 @@ angular.module('poluxClienteApp')
      */
     ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
     	return $.param({
+    		query: "SolicitudTrabajoGrado.Id:" 
+				+ idSolicitudTrabajoGrado
     		/**
 				 * El estado de la solicitud que se encuentre en los estados 7 u 8 corresponde a:
 				 * 7 - Aprobada exenta de pago
 				 * 8 - Aprobada no exenta de pago
 				 * Tabla: estado_solicitud
 				 */
-    		query: "SolicitudTrabajoGrado.Id:" 
-				+ idSolicitudTrabajoGrado
 				+ ",EstadoSolicitud.Id.in:7|8" 
 				+ ",Activo:true",
-				limit: 0
+				limit: 1
     		});
     }
 
@@ -101,9 +102,133 @@ angular.module('poluxClienteApp')
     	return $.param({
     		query: "DetalleTipoSolicitud.Id:37" 
     		+ ",SolicitudTrabajoGrado.Id:" + idSolicitudTrabajoGrado,
-				limit: 0
+				limit: 1
         });
     }
+
+    /**
+     * [Función que según la solicitud, carga la información correspondiente a la respuesta de la misma]
+     * @param  {[Object]} solicitudAsociada [La solicitud para obtener el identificador y cargar la información correspondiente a la respuesta]
+     * @return {[Promise]}                   [La solicitud con la respuesta asociada dentro, o la excepción generada]
+     */
+  	ctrl.consultarRespuestaSolicitud = function(solicitudAsociada) {
+  		// Se trae el diferido desde el servicio para manejar las promesas
+  		var deferred = $q.defer();
+  		// Se traen los datos de la respuesta respecto a la solicitud asociada, por medio del Id.
+  		poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(solicitudAsociada.Id))
+  		.then(function(respuestaSolicitud) {
+  			// Se comprueba que se trajeron datos no vacíos
+  			if (respuestaSolicitud.data) {
+  				// Se adquieren los datos de la respuesta de la solicitud dentro de la misma solicitud
+	  			solicitudAsociada.respuestaSolicitud = respuestaSolicitud.data[0];
+	  			// Se resuelve la solicitud con los datos de la respuesta cargados
+	  			deferred.resolve(solicitudAsociada);
+  			} else {
+  				// Se establece el mensaje de error con la nula existencia de datos
+  				$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES");
+  			}
+  		})
+  		.catch(function(excepcionRespuestaSolicitud) {
+  			// Se establece el mensaje de error con la excepción al cargar la respuesta de la solicitud
+  			$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
+  			// Se rechaza la consulta con la excepción generada al momento de traer los datos
+  			deferred.reject(excepcionRespuestaSolicitud);
+  		});
+  		// Se devuelve el diferido que maneja la promesa
+  		return deferred.promise;
+  	}
+
+  	/**
+     * [Función que según la solicitud, carga la información correspondiente al detalle de la misma]
+     * @param  {[Object]} solicitudAsociada [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
+     * @return {[Promise]}                   [La solicitud con el detalle asociado dentro, o la excepción generada]
+     */
+  	ctrl.consultarDetalleSolicitud = function(solicitudAsociada) {
+  		// Se trae el diferido desde el servicio para manejar las promesas
+  		var deferred = $q.defer();
+  		// Se traen los datos del detalle respecto a la solicitud asociada, por medio del Id.
+  		poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitud(solicitudAsociada.Id))
+  		.then(function(detalleSolicitud) {
+  			// Se comprueba que se trajeron datos no vacíos
+  			if (detalleSolicitud.data) {
+  				// Se adquieren los datos del detalle de la solicitud dentro de la misma solicitud
+	  			solicitudAsociada.detalleSolicitud = detalleSolicitud.data[0];
+	  			// Se resuelve la solicitud con los datos de la respuesta cargados
+	  			deferred.resolve(solicitudAsociada);
+  			} else {
+  				// Se establece el mensaje de error con la nula existencia de datos
+  				$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES");
+  			}
+  		})
+  		.catch(function(excepcionDetalleSolicitud) {
+  			// Se establece el mensaje de error con la excepción al cargar el detalle de la solicitud
+  			$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
+  			// Se rechaza la consulta con la excepción generada al momento de traer los datos
+  			deferred.reject(excepcionDetalleSolicitud);
+  		});
+  		// Se devuelve el diferido que maneja la promesa
+  		return deferred.promise;
+  	}
+
+  	/**
+  	 * [Función que recorre la base de datos de acuerdo al usuario en sesión y sus solicitudes en espera de ser formalizadas]
+  	 * @return {[Promise]} [La colección de solicitudes para formalizar, o la excepción generada]
+  	 */
+  	ctrl.cargarUsuariosConSolicitudes = function() {
+  		// Se trae el diferido desde el servicio para manejar las promesas
+  		var deferred = $q.defer();
+  		// Se establece un conjunto de procesamiento de solicitudes que reúne los procesos que deben cargarse antes de ofrecer funcionalidades
+  		var conjuntoProcesamientoDeSolicitudes = [];
+  		// Se establece una colección de solicitudes asociadas al usuario y que traen la información necesaria para formalizar
+  		ctrl.coleccionSolicitudesParaFormalizar = [];
+    	// Se traen los usuarios con solicitudes
+  		poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuariosConSolicitudes())
+  		.then(function(usuariosConSolicitudes) {
+	  		// Se comprueba que existen registros
+  			if (usuariosConSolicitudes.data) {
+	  			// Se recorre la colección de usuarios con solicitudes
+  				angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
+  					// Se agrega la solicitud asociada al usuario a la colección de solicitudes para formalizar
+	  				ctrl.coleccionSolicitudesParaFormalizar.push(usuarioConSolicitud.SolicitudTrabajoGrado);
+	  				// Se agrega el proceso de consulta hacia la respuesta de la solicitud
+	  				conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarRespuestaSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado));
+	  				// Se agrega el proceso de consulta hacia el detalle de la solicitud
+	  				conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarDetalleSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado));
+	  			});
+	  			// Se garantiza que se cumplan todos los procesos agregados
+	  			$q.all(conjuntoProcesamientoDeSolicitudes)
+	  			.then(function(resultadoDelProcesamiento) {
+	  				// Se resuelve la colección de solicitudes para formalizar
+	  				deferred.resolve(ctrl.coleccionSolicitudesParaFormalizar);
+	  			})
+	  			.catch(function(excepcionDuranteProcesamiento) {
+	  				// Se establece el mensaje de error con la excepción durante el procesamiento de las promesas
+	  				$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
+	  				// Se rechaza la carga con la excepción generada
+	  				deferred.reject(excepcionUsuariosConSolicitudes);
+	  			});
+  			} else {
+  				// Se establece el mensaje de error con la nula existencia de datos
+  				$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES");
+  			}
+  		})
+  		.catch(function(excepcionUsuariosConSolicitudes) {
+  			// Se establece el mensaje de error con la excepción durante la consulta de usuarios con solicitudes
+	  		$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
+	  		// Se rechaza la carga con la excepción generada
+  			deferred.reject(excepcionUsuariosConSolicitudes);
+  		});
+  		return deferred.promise;
+  	}
+
+  	/**
+  	 * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
+  	 * @param  {[type]} detalleSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
+  	 * @return {[type]}                  [El objeto con los datos del posgrado]
+  	 */
+  	ctrl.obtenerDatosDelPosgrado = function(detalleSolicitud) {
+  		return JSON.parse(detalleSolicitud.Descripcion.split("-")[1]);
+  	}
 
     /**
      * [Función que obtiene los espacios académicos por su nombre]
@@ -113,8 +238,11 @@ angular.module('poluxClienteApp')
   	ctrl.obtenerEspaciosAcademicos = function(detalleSolicitud) {
   		// Se prepara una colección que contendrá los espacios académicos
   		var espaciosAcademicos = [];
+  		// Se define una variable que interprete el formato del detalle de la solicitud recibida
+  		// de modo que se obtenga la información de los espacios académicos (estos inician desde el índice 2)
+  		var detallePosgrado = detalleSolicitud.Descripcion.split("-").slice(2);
   		// Se recorre la información de los espacios académicos almacenados
-      angular.forEach(detalleSolicitud, function(espacioAcademico) {
+      angular.forEach(detallePosgrado, function(espacioAcademico) {
       	// Como el formato de almacenado guarda en cada posición el objeto de espacio académico,
       	// se pasa a formato JSON para obtener su contenido
         var objetoEspacioAcademico = JSON.parse(espacioAcademico);
@@ -130,253 +258,35 @@ angular.module('poluxClienteApp')
       return espaciosAcademicos;
   	}
 
-  	ctrl.getDetalleSolicitud = function(solicitud){
-  		var defer = $q.defer();
-  		var detalleParams = $.param({
-  			query:"DetalleTipoSolicitud.Id:37,SolicitudTrabajoGrado.Id:" + solicitud.Id,
-  			limit:1
-  		});
-  		poluxRequest.get("detalle_solicitud", detalleParams)
-  		.then(function(detalleSolicitud) {
-  			if (detalleSolicitud.data) {
-  				solicitud.detalle = detalleSolicitud.data[0];
-					defer.resolve(detalleSolicitud.data);
-  			} else {
-  				defer.reject(null);
-  			}
-  		})
-  		//.catch()
-  		return defer.promise;
-  	}
-
-  	ctrl.getRespuestaSolicitud = function(solicitud){
-  		var defer = $q.defer();
-  		var respuestaParams = $.param({
-  			query:"Activo:True,SolicitudTrabajoGrado.Id:"+solicitud.Id,
-  			limit:1
-  		});
-  		poluxRequest.get("respuesta_solicitud",respuestaParams)
-  		.then(function(respuesta){
-  			solicitud.respuesta = respuesta.data[0];
-  			defer.resolve(solicitud);
-  		})
-  		//.catch()
-  		return defer.promise;
-  	}
-
-  	ctrl.cargarUsuariosConSolicitudes = function() {
-  		// Se trae el diferido desde el servicio para manejar las promesas
-  		var deferred = $q.defer();
-  		// Se establece un conjunto de procesamiento de solicitudes que reúne los procesos que deben cargarse antes de ofrecer funcionalidades
-  		var conjuntoProcesamientoDeSolicitudes = [];
-  		// Se establece una colección de solicitudes asociadas al usuario y que traen la información necesaria para formalizar
-  		ctrl.solicitudes = [];
-    	// Se traen los usuarios con solicitudes
-  		poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuariosConSolicitudes())
-  		.then(function(usuariosConSolicitudes) {
-	  		// Se comprueba que existen registros
-  			if (usuariosConSolicitudes.data) {
-	  			// Se recorre la colección de usuarios con solicitudes
-  				angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
-	  				ctrl.solicitudes.push(usuarioConSolicitud.SolicitudTrabajoGrado);
-	  				conjuntoProcesamientoDeSolicitudes.push(ctrl.getRespuestaSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado));
-	  				conjuntoProcesamientoDeSolicitudes.push(ctrl.getDetalleSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado));
-	  			});
-	  			$q.all(conjuntoProcesamientoDeSolicitudes)
-	  			.then(function(){
-	  				console.log(ctrl.solicitudes);
-	  				deferred.resolve(ctrl.solicitudes);
-	  			})
-	  			.catch(function(excepcionUsuariosConSolicitudes) {
-	  				$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
-	  				deferred.reject(excepcionUsuariosConSolicitudes);
-	  			});
-  			} else {
-  				$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES");
-  			}
-  		})
-  		.catch(function(excepcionUsuariosConSolicitudes) {
-  			$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
-  			deferred.reject(excepcionUsuariosConSolicitudes);
-  		});
-  		return deferred.promise;
-  	}
-
-  	ctrl.cargarSolicitudesRespondidas = function() {
-  		var deferred = $q.defer();
-  		ctrl.coleccionSolicitudesParaFormalizar = [];
-  		angular.forEach(ctrl.coleccionUsuariosConSolicitudes, function(usuarioConSolicitud) {
-  			poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(usuarioConSolicitud.SolicitudTrabajoGrado.Id))
-	  		.then(function(solicitudesRespondidas) {
-	  			if (solicitudesRespondidas.data) {
-	  				angular.forEach(solicitudesRespondidas.data, function(solicitudRespondida) {
-	  					ctrl.cargarDetalleSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado.Id)
-		  				.then(function(detalleSolicitud) {
-		  					// Se aplica la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-								// para obtener el objeto que contiene la información del posgrado
-								var datosDelPosgrado = JSON.parse(detalleSolicitud[0].Descripcion.split("-")[1]);
-								ctrl.coleccionSolicitudesParaFormalizar.push({
-									"idSolicitud": solicitudRespondida.Id,
-									"estadoSolicitud": solicitudRespondida.EstadoSolicitud.Nombre,
-									"descripcionSolicitud": solicitudRespondida.EstadoSolicitud.Descripcion,
-									"posgrado": datosDelPosgrado.Nombre,
-									// Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-									// para obtener el objeto que contiene la información de los espacios académicos,
-									// como argumento de la función que los ordena en un arreglo por el nombre
-									"espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(detalleSolicitud[0].Descripcion.split("-").slice(2)),
-								});
-		  				})
-		  				.catch(function(excepcionDetalleSolicitud) {
-		  					deferred.reject(excepcionDetalleSolicitud);
-		  				});
-	  				});
-	  			}
-	  		})
-	  		.catch(function(excepcionSolicitudesRespondidas) {
-	  			deferred.reject(excepcionSolicitudesRespondidas);
-	  		});
-  		});
-  		deferred.resolve(ctrl.coleccionSolicitudesParaFormalizar);
-  		return deferred.promise;
-  	}
-
-  	ctrl.cargarDetalleSolicitud = function(idSolicitudTrabajoGrado) {
-  		var deferred = $q.defer();
-  		poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitud(idSolicitudTrabajoGrado))
-  		.then(function(detalleSolicitud) {
-  			if (detalleSolicitud.data) {
-					deferred.resolve(detalleSolicitud.data);
-  			} else {
-  				deferred.reject(null);
-  			}
-  		})
-  		.catch(function(excepcionDetalleSolicitud) {
-  			deferred.reject(excepcionDetalleSolicitud);
-  		});
-  		return deferred.promise;
-  	}
-
-  	ctrl.cargarSolicitudesFormalizar = function() {
-  		
-  	}
-
   	/**
-  	 * [Función que carga las solicitudes asociadas al usuario en sesión]
-  	 * @return {[type]} [nada por el momento]
+  	 * Se lanza la función para que puedan visualizarse las solicitudes para formalizar,
+  	 * una vez el estudiante en sesión esté en este escenario.
   	 */
-    ctrl.cargarSolicitudesPendientes = function() {
-    	var deferred = $q.defer();
-    	ctrl.coleccionSolicitudesParaFormalizar = [];
-    	// Se traen los usuarios con solicitudes
-	  	poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuariosConSolicitudes())
-	  	.then(function(usuariosConSolicitudes) {
-	  		// Se comprueba que existen registros
-	  		if (usuariosConSolicitudes.data) {
-	  			// Una vez se sabe que existen registros, se detiene la animación de cargando
-	  			$scope.solicitudesCargadas = false;
-	  			// Se recorre la colección de usuarios con solicitudes
-	  			angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
-	  				// Se comprueba que el usuario consultado es el usuario en sesión
-	  				if (usuarioConSolicitud.Usuario == $scope.userId) {
-	  					// Se almacena el id de la solicitud para trabajo de grado que corresponde
-	  					var idSolicitudTrabajoGrado = usuarioConSolicitud.SolicitudTrabajoGrado.Id;
-	  					// Se traen las solicitudes respondidas de acuerdo al id de la solicitud para trabajo de grado
-	  					poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(idSolicitudTrabajoGrado))
-	  					.then(function(solicitudesRespondidas) {
-	  						// Se comprueba que existen registros
-	  						if (solicitudesRespondidas.data) {
-	  							// Se recorre la colección de solicitudes respondidas
-	  							angular.forEach(solicitudesRespondidas.data, function(solicitudRespondida) {
-	  								// Se trae el detalle de la solicitud asociada al id de la solicitud para trabajo de grado
-	  								poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitud(idSolicitudTrabajoGrado))
-	  								.then(function(detalleSolicitud) {
-	  									// Se comprueba que existen registros
-	  									if (detalleSolicitud.data) {
-	  										// Se aplica la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-	  										// para obtener el objeto que contiene la información del posgrado
-	  										var datosDelPosgrado = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-			  								ctrl.coleccionSolicitudesParaFormalizar.push({
-			  									"idSolicitud": solicitudRespondida.Id,
-			  									"estadoSolicitud": solicitudRespondida.EstadoSolicitud.Nombre,
-			  									"descripcionSolicitud": solicitudRespondida.EstadoSolicitud.Descripcion,
-			  									"posgrado": datosDelPosgrado.Nombre,
-			  									// Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-			  									// para obtener el objeto que contiene la información de los espacios académicos,
-			  									// como argumento de la función que los ordena en un arreglo por el nombre
-			  									"espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(detalleSolicitud.data[0].Descripcion.split("-").slice(2)),
-			  								});
-	  									} else {
-								  			/**
-								  			 * El detalle de la solicitud asociada es nula
-								  			 */
-								  			$scope.errorCargandoSolicitudes = true;
-								    		$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES");
-	  									}
-	  								})
-	  								.catch(function(excepcionDetalleSolicitud) {
-	  									/**
-	  						 				* Error al consultar la tabla respuesta_solicitud
-	  						 			*/
-	  									$scope.errorCargandoSolicitudes = true;
-	    								$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
-	  								});
-	  							});
-	  						}
-	  					})
-	  					.catch(function(excepcionSolicitudesRespondidas) {
-	  						/**
-	  						 * Error al consultar la tabla respuesta_solicitud
-	  						 */
-	  						$scope.errorCargandoSolicitudes = true;
-	    					$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
-	  					});
-	  				}
-	  			});
-	  			deferred.resolve(ctrl.coleccionSolicitudesParaFormalizar);
-	  			return deferred.promise;
-	  		} else {
-	  			/**
-	  			 * La información de los usuarios consultados es nula
-	  			 */
-	  			$scope.solicitudesCargadas = false;
-	  			$scope.errorCargandoSolicitudes = true;
-	    		$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES");
-	  		}
-	  	})
-	  	.catch(function(excepcionUsuariosConSolicitudes) {
-	  		/**
-	  		 * Error al consultar hacia la tabla usuario_solicitud
-	  		 */
-	  		$scope.solicitudesCargadas = false;
-	  		$scope.errorCargandoSolicitudes = true;
-	    	$scope.msgErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
-	  	});
-	  	return deferred.promise;
-    }
-    
-    ctrl.mostrarSolicitudesParaFormalizar = function() {
-    	ctrl.coleccionSolicitudesParaFormalizar = [];
-    	ctrl.cargarUsuariosConSolicitudes()
-    	.then(function(usuariosConSolicitudes) {
-    		ctrl.cargarSolicitudesRespondidas()
-	    	.then(function(solicitudesRespondidas) {
-	    		$scope.solicitudesCargadas = false;
-	    		ctrl.propiedadesCuadriculaSolicitudes.data = solicitudesRespondidas;
-	    		console.log(solicitudesRespondidas);
-	    	})
-	    	.catch(function(excepcionSolicitudesRespondidas) {
-	    		
+    ctrl.cargarUsuariosConSolicitudes()
+    .then(function(coleccionSolicitudesParaFormalizar){
+    	$scope.cargandoSolicitudes = false;
+    	if (coleccionSolicitudesParaFormalizar.length > 0) {
+    		var solicitudesParaFormalizarRegistradas = [];
+    		angular.forEach(coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
+	    		solicitudesParaFormalizarRegistradas.push({
+	    			"idSolicitud": solicitudParaFormalizar.Id,
+		        "estadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Nombre,
+		        "descripcionSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Descripcion,
+		        "posgrado": ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleSolicitud).Nombre,
+		        // Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
+		        // para obtener el objeto que contiene la información de los espacios académicos,
+		        // como argumento de la función que los ordena en un arreglo por el nombre
+		        "espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud)
+	    		});
 	    	});
-    	})
-    	.catch(function(excepcionUsuariosConSolicitudes) {
-    		
-    	});	
-    }
-
-    //ctrl.mostrarSolicitudesParaFormalizar();
-    ctrl.cargarUsuariosConSolicitudes().then(function(resolve){
-    	console.log("respuesta", resolve);
-    	console.log(ctrl.solicitudes)
+	    	ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
+	    	console.log(ctrl.cuadriculaSolicitudesParaFormalizar.data);
+    	} else {
+    		$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
+    	}
+    }).catch(function(excepcionCargandoUsuariosConSolicitudes) {
+    	$scope.cargandoSolicitudes = false;
+    	$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGA_SOLICITUDES");
     });
 
   });
