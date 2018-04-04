@@ -8,7 +8,8 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('MateriasPosgradoFormalizarSolicitudCtrl', function ($q, $location, $translate, $scope, academicaRequest, poluxRequest) {
+  .controller('MateriasPosgradoFormalizarSolicitudCtrl', 
+  	function ($location, $q, $scope, $translate, poluxRequest) {
     var ctrl = this;
     
     // El Id del usuario depende de la sesión
@@ -336,7 +337,7 @@ angular.module('poluxClienteApp')
   	 * @param  {[row]} filaAsociada [Es la solicitud que el usuario seleccionó]
   	 */
   	$scope.cargarFila = function(filaAsociada) {
-      ctrl.formalizarSolicitudSeleccionada(filaAsociada);
+      ctrl.formalizarSolicitudSeleccionada(filaAsociada.entity);
     };
 
     /**
@@ -353,9 +354,9 @@ angular.module('poluxClienteApp')
 
   	/**
   	 * [Función que formaliza la solicitud a petición del usuario]
-  	 * @param  {[row]} filaAsociada [La solicitud que el usuario desea formalizar]
+  	 * @param  {[row]} solicitudSeleccionada [La solicitud que el usuario desea formalizar]
   	 */
-  	ctrl.formalizarSolicitudSeleccionada = function(filaAsociada) {
+  	ctrl.formalizarSolicitudSeleccionada = function(solicitudSeleccionada) {
   		// Se verifica que el periodo corresponde al pediodo de formalización
   		if (ctrl.verificarPeriodoFormalizacion()) {
   			// Se despliega la ventana de confirmación
@@ -363,9 +364,9 @@ angular.module('poluxClienteApp')
 	        title: $translate.instant("CONFORMACION_FORMALIZAR_SOLICITUD"),
 	        text: $translate.instant("INFORMACION_FORMALIZACION", {
 	        	// Se cargan datos de la solicitud para que el usuario pueda verificar antes de confirmar
-	        	idSolicitud: filaAsociada.entity.idSolicitud,
-	        	nombreEstado: filaAsociada.entity.estadoSolicitud,
-	        	nombrePosgrado: filaAsociada.entity.posgrado
+	        	idSolicitud: solicitudSeleccionada.idSolicitud,
+	        	nombreEstado: solicitudSeleccionada.estadoSolicitud,
+	        	nombrePosgrado: solicitudSeleccionada.posgrado
 	        }),
 	        type: "info",
 	        confirmButtonText: $translate.instant("ACEPTAR"),
@@ -378,7 +379,7 @@ angular.module('poluxClienteApp')
 	        	// Se inicia la carga del formulario mientras se formaliza
             $scope.cargandoFormalizacionSolicitud = true;
             // Se lanza la transacción
-            ctrl.registrarFormalizacion()
+            ctrl.registrarFormalizacion(solicitudSeleccionada)
             .then(function(respuestaFormalizarSolicitud) {
             	// Se detiene la carga
             	$scope.cargandoFormalizacionSolicitud = false;
@@ -390,7 +391,7 @@ angular.module('poluxClienteApp')
                   $translate.instant("SOLICITUD_FORMALIZADA"),
                   'success'
 	              );
-	              // Actualizar la página
+                // Reload page
             	} else {
             		// Se despliega el mensaje que muestra el error traído desde la transacción
 								swal(
@@ -401,6 +402,7 @@ angular.module('poluxClienteApp')
             	}
             })
             .catch(function(excepcionFormalizarSolicitud) {
+              console.log(excepcionFormalizarSolicitud);
             	// Se detiene la carga
             	$scope.cargandoFormalizacionSolicitud = false;
             	// Se despliega el mensaje de error durante la transacción
@@ -426,21 +428,59 @@ angular.module('poluxClienteApp')
   	 * [Función que realiza la transacción de registro de la formalización]
   	 * @return {[promise]} [El resultado de efectuar la transacción]
   	 */
-  	ctrl.registrarFormalizacion = function() {
+  	ctrl.registrarFormalizacion = function(solicitudSeleccionada) {
   		// Se trae el diferido desde el servicio para manejar las promesas
   		var deferred = $q.defer();
+  		// Se prepara una colección que cargue las solicitudes actualizadas
+  		ctrl.coleccionSolicitudesActualizadas = [];
+  		// Se recorre la colección de solicitudes para formalizar
+  		angular.forEach(ctrl.coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
+        // Para preguntar:
+        // solicitudParaFormalizar.respuestaSolicitud.EnteResponsable = 0;
+        // 
+        // Se utiliza la respuesta de la solicitud que fue cargada a la colección de solicitudes para formalizar, 
+        // Se actualizan sus campos y se envían para registrarse
+        // 
+        // También preguntar: el campo usuario de respuesta_solicitud es integer, y por lo tanto, el código es muy largo para este tipo de dato, sugiero cambiarlo a character varying (15)
+        // solicitudParaFormalizar.respuestaSolicitud.Usuario = parseInt($scope.userId);
+        solicitudParaFormalizar.respuestaSolicitud.Usuario = 1;
+				// Se verifica si la solicitud es la seleccionada
+  			if (solicitudParaFormalizar.Id == solicitudSeleccionada.idSolicitud) {
+  				// Se estudia el estado de la solicitud
+  				// Se verifica si la solicitud está aprobada exenta de pago (7)
+  				if (solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id == 7) {
+						// Entonces su nuevo estado será formalizada exenta de pago (9)
+						solicitudParaFormalizar.respuestaSolicitud.Justificacion = "Su solicitud ha sido formalizada con exención de pago";
+	  				solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id = 9;
+  				// En caso contrario, la solicitud está aprobada no exenta de pago (8)
+  				} else {
+  					// Entonces su nuevo estado será formalizada no exenta de pago (10)
+						solicitudParaFormalizar.respuestaSolicitud.Justificacion = "Su solicitud ha sido formalizada con condiciones económicas";
+	  				solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id = 10;
+  				}
+  				solicitudParaFormalizar.respuestaSolicitud.Activo = true;
+  			} else {
+					solicitudParaFormalizar.respuestaSolicitud.Justificacion = "Su solicitud ha quedado sin formalizar debido a que ya formalizó una solicitud";
+	  			solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id = 11;
+	  			solicitudParaFormalizar.respuestaSolicitud.Activo = false;
+  			}
+  			ctrl.coleccionSolicitudesActualizadas.push(solicitudParaFormalizar.respuestaSolicitud);
+  		});
 
-  		// Se establece la información que será enviada para la transacción
-  		ctrl.informacionFormalizarSolicitud = {};
+      // Se define el objeto para enviar como información para actualizar
+      ctrl.informacionParaActualizar = {
+        "SolicitudesActualizadas": ctrl.coleccionSolicitudesActualizadas
+      };
+
   		// Se realiza la petición post hacia la transacción con la información para formalizar la solicitud
-  		poluxRequest.post("tr_formalizar_solicitud", ctrl.informacionFormalizarSolicitud)
+  		poluxRequest.post("tr_formalizar_solicitud", ctrl.informacionParaActualizar)
       .then(function(respuestaFormalizarSolicitud) {
       	// Se resuelve la respuesta de realizar la formalización de la solicitud
-        defered.resolve(respuestaFormalizarSolicitud);
+        deferred.resolve(respuestaFormalizarSolicitud);
       })
       .catch(function(excepcionFormalizarSolicitud){
-      	// Se rechaza la excepción que ocurrió durante la transacción
-        defered.reject(excepcionFormalizarSolicitud);
+      	// Se rechaza la excepción que ocurrió durante la transacción 
+        deferred.reject(excepcionFormalizarSolicitud);
       });
   		return deferred.promise;
   	}
