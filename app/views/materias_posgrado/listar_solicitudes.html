@@ -38,7 +38,7 @@
 
       <div class="col-sm-12">
       <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true">
-       <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions"></div><br>
+       <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-auto-resize></div><br>
        <center>
         <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
@@ -82,7 +82,6 @@
 </div>
 </div>
 
-
 <div id="modalAdmitir" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
   <div class="modal-content col-md-offset-2 col-md-8">
     <div class="modal-header">
@@ -111,7 +110,7 @@
           <div class="col-md-12">
                <div class="panel panel-default panel-body" style="margin-top: 20px;">
                  <center>
-                  <div ui-grid="listarSolicitudes.gridOptionsAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsAdmitidos.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                  <div ui-grid="listarSolicitudes.gridOptionsAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsAdmitidos.data.length*35)+40}}px" ui-grid-auto-resize></div>
                 </center>
               </div>
           </div>
@@ -125,7 +124,7 @@
           <div class="col-md-12">
                <div class="panel panel-default panel-body" style="margin-top: 20px;">
                  <center>
-                  <div ui-grid="listarSolicitudes.gridOptionsOpcionados" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsOpcionados.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                  <div ui-grid="listarSolicitudes.gridOptionsOpcionados" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsOpcionados.data.length*35)+40}}px" ui-grid-auto-resize></div>
                 </center>
               </div>
           </div>

@@ -331,6 +331,8 @@
       ctrl.opcionados = [];
       ctrl.admitidos = [];
       ctrl.noAdmitidos = [];
+      ctrl.gridOptionsAdmitidos.data = [];
+      ctrl.gridOptionsOpcionados.data = [];
       angular.forEach($scope.sols, function(solicitud){
         if(solicitud.aprobado===true){
           ctrl.admitidos.push(solicitud);
@@ -341,7 +343,7 @@
       ctrl.fecha = 1;
       ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
       ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
-      console.log(ctrl.admitidos, ctrl.opcionados);
+      //console.log(ctrl.admitidos, ctrl.opcionados);
       $('#modalAdmitir').modal('show')
     }
 
@@ -349,6 +351,8 @@
       ctrl.opcionados = [];
       ctrl.admitidos = [];
       ctrl.noAdmitidos = [];
+      ctrl.gridOptionsAdmitidos.data = [];
+      ctrl.gridOptionsNoAdmitidos.data = [];
       angular.forEach($scope.sols, function(solicitud){
         if(solicitud.aprobado===true){
           ctrl.admitidos.push(solicitud);
@@ -359,34 +363,75 @@
       ctrl.fecha = 2;
       ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
       ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
-      console.log(ctrl.admitidos, ctrl.noAdmitidos);
+      //console.log(ctrl.admitidos, ctrl.noAdmitidos);
       $('#modalAdmitir').modal('show')
     }
 
     ctrl.admitir = function(){
+      var date = new Date();
+      var respuestasNuevas = [];
+      var respuestasUpdate = [];
+      angular.forEach($scope.sols, function(solicitud){
+        if(solicitud.permitirAprobar){
+          solicitud.respuestaSolicitud.Activo = false;
+          respuestasUpdate.push(solicitud.respuestaSolicitud);
+          var respuestaTemp = {
+            "Activo":true,
+            "EnteResponsable":0,
+            "Usuario": parseInt($scope.userId),
+            "EstadoSolicitud":{
+              "Id": 0,
+            },
+            "Fecha":date,
+            "SolicitudTrabajoGrado":{
+              "Id": solicitud.solicitud,
+            }
+          }
+          if(solicitud.aprobado === true){
+            respuestaTemp.EstadoSolicitud.Id = 7;
+            respuestaTemp.Justificacion = "Solicitud Aprobado"
+          }else{
+            respuestaTemp.EstadoSolicitud.Id = (ctrl.fecha===1)? 5 : 6;
+            respuestaTemp.Justificacion = (ctrl.fecha===1)? "Opcionada para segunda convocatoria" : "Rechazada por falta de cupos";
+          }
+          respuestasNuevas.push(respuestaTemp);
+        }
+      });
       var dataAdmitidos = {
-        "FechaSeleccion":ctrl.fecha,
-        "Solicitudes": $scope.sols,
+        "RespuestasNuevas": respuestasNuevas,
+        "RespuestasAntiguas": respuestasUpdate,
       }
       $scope.loadRespuestas = true;
+      console.log("dataAdmitidos",dataAdmitidos)
       $('#modalAdmitir').modal('hide')
-      poluxMidRequest.post("seleccion/Seleccionar", dataAdmitidos).then(function (response) {
+      poluxRequest.post("tr_seleccion_admitidos", dataAdmitidos).then(function (response) {
         $scope.loadRespuestas = false;
-        swal(
-          $translate.instant('MATERIAS_POSGRADO.PROCESO_ADMISION_COMPLETO'),
-          $translate.instant('MATERIAS_POSGRADO.RESPUESTAS_SOLICITUD'),
-          'success'
+        console.log("Repsuesta",response.data);
+        if(response.data[0]==="Success"){
+          swal(
+            $translate.instant('MATERIAS_POSGRADO.PROCESO_ADMISION_COMPLETO'),
+            $translate.instant('MATERIAS_POSGRADO.RESPUESTAS_SOLICITUD'),
+            'success'
           )
-        //recargar datos
-        ctrl.buscarSolicitudes($scope.carrera);
-      })
+          //recargar datos
+          ctrl.buscarSolicitudes($scope.carrera);
+        }else{
+          swal(
+            $translate.instant('ERROR'),
+            $translate.instant(response.data[1]),
+            'warning'
+          )
+        }
+
+    })
       .catch(function(error){
+        console.log(error);
         $scope.loadRespuestas = false;
         swal(
           $translate.instant('ERROR'),
           $translate.instant('ERROR_CARGAR_SOLICITUDES'),
           'warning'
-          )
+        )
       });
     }
 
