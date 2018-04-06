@@ -9,7 +9,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoFormalizarSolicitudCtrl', 
-  	function ($location, $q, $scope, $translate, poluxRequest) {
+  	function ($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest) {
     var ctrl = this;
     
     // El Id del usuario depende de la sesión
@@ -177,6 +177,8 @@ angular.module('poluxClienteApp')
   			} else {
   				// Se establece el mensaje de error con la nula existencia de datos
   				$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
+          ctrl.coleccionSolicitudesParaFormalizar.pop();
+          deferred.resolve(null);
   			}
   		})
   		.catch(function(excepcionRespuestaSolicitud) {
@@ -209,6 +211,8 @@ angular.module('poluxClienteApp')
   			} else {
   				// Se establece el mensaje de error con la nula existencia de datos
   				$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
+          ctrl.coleccionSolicitudesParaFormalizar.pop();
+          deferred.resolve(null);
   			}
   		})
   		.catch(function(excepcionDetalleSolicitud) {
@@ -269,12 +273,13 @@ angular.module('poluxClienteApp')
 	  		// Se rechaza la carga con la excepción generada
   			deferred.reject(excepcionUsuariosConSolicitudes);
   		});
+      // Se devuelve el diferido que maneja la promesa
   		return deferred.promise;
   	}
 
   	/**
   	 * [Función que carga el contenido de las funciones para formalizar]
-  	 * @return {[type]} [description]
+  	 * @return {[Promise]} [La colección de solicitudes para formalizar, o la excepción generada]
   	 */
   	ctrl.cargarSolicitudesParaFormalizar = function() {
   		// Se trae el diferido desde el servicio para manejar las promesas
@@ -312,6 +317,7 @@ angular.module('poluxClienteApp')
 	    	deferred.reject(null);
 	    	$scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
 	    });
+      // Se devuelve el diferido que maneja la promesa
 	    return deferred.promise;
   	}
 
@@ -341,15 +347,98 @@ angular.module('poluxClienteApp')
     };
 
     /**
-     * [Función que comprueba que el periodo corresponde al periodo de formalización de solicitudes]
+     * [Función que obtiene el periodo académico según los parámetros de consulta]
+     * @return {[Promise]} [El periodo académico, o la excepción generada]
+     */
+    ctrl.obtenerPeriodo = function() {
+      // Se trae el diferido desde el servicio para manejar las promesas
+      var deferred = $q.defer();
+      // Se consulta hacia el periodo académico con el servicio de academicaRequest
+      // El parámetro "X" consulta el siguiente periodo académico al actual
+      academicaRequest.get("periodo_academico", "X")
+      .then(function(periodoAcademicoConsultado) {
+        // Se verifica que la respuesta está definida
+        if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
+          // Se resuelve el periodo académico correspondiente
+          deferred.resolve(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0]);
+        } else {
+          // En caso de error se prepara el mensaje y se rechaza con nulo
+          ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_PERIODO");
+          deferred.reject(null);
+        }  
+      })
+      .catch(function(excepcionPeriodoAcademicoConsultado) {
+        // En caso de excepción se prepara el mensaje y se rechaza con nulo
+        ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGAR_PERIODO");
+        deferred.reject(null);
+      });
+      // Se devuelve el diferido que maneja la promesa
+      return deferred.promise;
+    }
+
+    ctrl.consultarSesiones = function() {
+      // Se trae el diferido desde el servicio para manejar las promesas
+      var deferred = $q.defer();
+
+      ctrl.obtenerPeriodo()
+      .then(function(periodoAcademicoCorrespondiente) {
+        var parametrosSesiones = $.param({
+          query: "SesionHijo.TipoSesion.Id.in:5|7,SesionPadre.periodo:" 
+          + periodoAcademicoCorrespondiente.anio 
+          + periodoAcademicoCorrespondiente.periodo,
+          limit: 0
+        });
+        sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+        .then(function(sesionesDeFormalizacion) {
+          console.log(sesionesDeFormalizacion);
+          deferred.resolve(sesionesDeFormalizacion);
+        }).catch(function(excepcionSesionesDeFormalizacion) {
+          console.log(excepcionSesionesDeFormalizacion);
+          deferred.reject(excepcionSesionesDeFormalizacion);
+        });
+      })
+      .catch(function(excepcionPeriodoAcademicoConsultado) {
+        deferred.reject(excepcionPeriodoAcademicoConsultado);
+      });
+      // Se devuelve el diferido que maneja la promesa
+      return deferred.promise;
+    }
+
+    /**
+     * [Función que comprueba que la sesión permite la formalización de solicitudes]
+     * @return {[type]} [description]
+     */
+    ctrl.comprobarPeriodoFormalizacion = function() {
+      // Se trae el diferido desde el servicio para manejar las promesas
+      var deferred = $q.defer();
+      ctrl.consultarSesiones()
+      .then(function(sesionesDeFormalizacion) {
+        console.log("sí:", sesionesDeFormalizacion);
+        // Se define la fecha de sesión
+        ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+        console.log(ctrl.fechaActual)
+        deferred.resolve(true);
+      })
+      .catch(function(excepcionSesionesDeFormalizacion) {
+        console.log("no", excepcionSesionesDeFormalizacion);
+        deferred.resolve(false);
+      });
+      // Se devuelve el diferido que maneja la promesa
+      return deferred.promise;
+    }
+
+    /**
+     * [Función que autoriza que el periodo corresponde al periodo de formalización de solicitudes]
      * @return {[boolean]} [La respuesta de si el periodo corresponde al periodo de formalización de solicitudes]
      */
-  	ctrl.verificarPeriodoFormalizacion = function() {
-  		if (2 === 2) {
-  			return true;
-  		} else {
-  			return false;
-  		}
+  	ctrl.autorizarPeriodoFormalizacion = function() {
+      ctrl.comprobarPeriodoFormalizacion()
+      .then(function(resultadoComprobacion) {
+        return resultadoComprobacion;
+      })
+      .catch(function(excepcionComprobacion) {
+        return excepcionComprobacion;
+      });
   	}
 
   	/**
@@ -358,7 +447,7 @@ angular.module('poluxClienteApp')
   	 */
   	ctrl.formalizarSolicitudSeleccionada = function(solicitudSeleccionada) {
   		// Se verifica que el periodo corresponde al pediodo de formalización
-  		if (ctrl.verificarPeriodoFormalizacion()) {
+  		if (ctrl.autorizarPeriodoFormalizacion()) {
   			// Se despliega la ventana de confirmación
   			swal({
 	        title: $translate.instant("CONFORMACION_FORMALIZAR_SOLICITUD"),
@@ -376,13 +465,15 @@ angular.module('poluxClienteApp')
 		    .then(function(confirmacionDelUsuario) {
 		    	// Se valida que el usuario haya confirmado la formalización
 	        if (confirmacionDelUsuario.value) {
+            // Se detiene la visualización de solicitudes mientras se formaliza
+            ctrl.cuadriculaSolicitudesParaFormalizar.data = [];
 	        	// Se inicia la carga del formulario mientras se formaliza
-            $scope.cargandoFormalizacionSolicitud = true;
+            $scope.cargandoSolicitudes = true;
             // Se lanza la transacción
             ctrl.registrarFormalizacion(solicitudSeleccionada)
             .then(function(respuestaFormalizarSolicitud) {
             	// Se detiene la carga
-            	$scope.cargandoFormalizacionSolicitud = false;
+            	$scope.cargandoSolicitudes = false;
             	// Se verifica que la respuesta es exitosa
             	if (respuestaFormalizarSolicitud.data[0] === "Success") {
             		// Se despliega el mensaje que confirma el registro de la formalización
@@ -391,7 +482,6 @@ angular.module('poluxClienteApp')
                   $translate.instant("SOLICITUD_FORMALIZADA"),
                   'success'
 	              );
-                // Reload page
             	} else {
             		// Se despliega el mensaje que muestra el error traído desde la transacción
 								swal(
@@ -400,17 +490,36 @@ angular.module('poluxClienteApp')
                   'warning'
               	);
             	}
+              // Se actualiza la información de la cuadrícula
+              ctrl.cargarSolicitudesParaFormalizar()
+              .then(function(solicitudesParaFormalizarRegistradas) {
+                // Se carga la información a la cuadrícula
+                ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
+              })
+              .catch(function(excepcionCargandoSolicitudesParaFormalizar) {
+                // Se habilita el mensaje de error
+                $scope.errorCargandoSolicitudes = true;
+              });
             })
             .catch(function(excepcionFormalizarSolicitud) {
-              console.log(excepcionFormalizarSolicitud);
             	// Se detiene la carga
-            	$scope.cargandoFormalizacionSolicitud = false;
+            	$scope.cargandoSolicitudes = false;
             	// Se despliega el mensaje de error durante la transacción
               swal(
                 $translate.instant("FORMALIZAR_SOLICITUD"),
                 $translate.instant("ERROR.FORMALIZAR_SOLICITUD"),
                 'warning'
               );
+              // Se actualiza la información de la cuadrícula
+              ctrl.cargarSolicitudesParaFormalizar()
+              .then(function(solicitudesParaFormalizarRegistradas) {
+                // Se carga la información a la cuadrícula
+                ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
+              })
+              .catch(function(excepcionCargandoSolicitudesParaFormalizar) {
+                // Se habilita el mensaje de error
+                $scope.errorCargandoSolicitudes = true;
+              });
             });
 	        }
 		    });
@@ -482,6 +591,7 @@ angular.module('poluxClienteApp')
       	// Se rechaza la excepción que ocurrió durante la transacción 
         deferred.reject(excepcionFormalizarSolicitud);
       });
+      // Se devuelve el diferido que maneja la promesa
   		return deferred.promise;
   	}
     
