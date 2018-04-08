@@ -326,6 +326,9 @@ var text_es = {
     RESULTADO_SOLICITUD:"Resultado de la solicitud",
     SOLICITUD_RECHAZADA:"La solicitud fue rechazada",
     SOLICITUD_ES_APROBADA:"La solicitud fue aprobada",
+    SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA:"La solicitud esta opcionada para el segundo proceso de admisión.",
+    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES:"La solicitud fue rechazada por disponibilidad de cupos en el posgrado.",
+    SOLICITUD_APROBADA_EXENTA:"La solicitud fue aprobada exenta de pago, el estudiante puede formalizarla.",
     INFORMACION_PRORROGA:"Información importante sobre la prórroga",
     MENSAJE_PRORROGA:"Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a una prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
     APROBADO : {
@@ -688,6 +691,9 @@ var text_en = {
     RESULTADO_SOLICITUD:"Result of the request",
     SOLICITUD_RECHAZADA:"The request was rejected",
     SOLICITUD_ES_APROBADA:"The request was approved",
+    SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA:"The application is optional for the second admission process.",
+    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES:"The application was rejected due to the availability of places in the postgraduate program.",
+    SOLICITUD_APROBADA_EXENTA:"The application was approved free of charge, the student can formalize it.",
     INFORMACION_PRORROGA:"Important information about the extension",
     MENSAJE_PRORROGA:"Mr. student, you are informed that in accordance with the provisions of Agreement 038 of July 2015 issued by the academic council of the Francisco José de Caldas District University, you only have the right to an extension, that is, once you make this application regardless of the nature (extension to socialize or formalize) and is approved, you can not request it again.",
     APROBADO : {

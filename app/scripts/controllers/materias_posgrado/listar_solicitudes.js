@@ -465,7 +465,7 @@
           }
           if(solicitud.aprobado === true){
             respuestaTemp.EstadoSolicitud.Id = 7;
-            respuestaTemp.Justificacion = "Solicitud Aprobado"
+            respuestaTemp.Justificacion = "Solicitud Aprobada por el Posgrado"
           }else{
             respuestaTemp.EstadoSolicitud.Id = (ctrl.fecha===1)? 5 : 6;
             respuestaTemp.Justificacion = (ctrl.fecha===1)? "Opcionada para segunda convocatoria" : "Rechazada por falta de cupos";
