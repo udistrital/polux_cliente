@@ -321,28 +321,28 @@
                   $scope.sols.push(solicitud);        
                   defer.resolve();
                 }else{
-                  defer.reject("Sin data de la solicitud");
+                  defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
                 }
               })
               .catch(function(error){
                 console.log(error);
-                defer.reject("error al traer datos del estudiante");
+                defer.reject("ERROR.CARGAR_DATOS_ESTUDIANTES");
               });
             })
             .catch(function(error){
               console.log(error);
-              defer.reject("error al traer el estudiante");
+              defer.reject("ERROR.CARGAR_SOLICITANTES");
             });
           }else{
             //solicitud no pertenece a la carrera
             defer.resolve();
           }
         }else{
-          defer.reject("Data de la solicitud vvacia");
+          defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
         }
       })
       .catch(function(){
-        defer.reject("Error al traer la data de la solicitud");
+        defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
       });
       return defer.promise;
     }
@@ -370,10 +370,16 @@
             $scope.loadSolicitudes = false;
           })
           .catch(function(error){
+            $scope.mensajeErrorSolicitudes = $translate.instant(error);
+            $scope.errorCargarSolicitudes = true;
+            $scope.loadSolicitudes = false;
             console.log(error);
          });
         })
         .catch(function(){
+          $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+          $scope.errorCargarSolicitudes = true;
+          $scope.loadSolicitudes = false;
           console.log("error traer respuestas")
         });
         ctrl.gridOptions.data = $scope.sols;

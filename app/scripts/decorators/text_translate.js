@@ -201,6 +201,10 @@ var text_es = {
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
         CARGAR_CUPOS:"Ocurrio un error al cargar el número de cupos disponibles, por favor verifique su conexión e intente de nuevo",
         NUMERO_ADMITIDOS:"El numero de admitidos es mayor al número de cupos disponibles ({{cuposDisponibles}})",
+        CARGAR_DATOS_SOLICITUDES:"Ocurrio un error al cargar los datos de las solicitudes, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DATOS_ESTUDIANTES:"Ocurrio un error al cargar la información de los estudiantes, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_SOLICITANTES:"Ocurrio un error al cargar los solicitantes, por favor verifique su conexión e intente de nuevo.",
+
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -560,6 +564,9 @@ var text_en = {
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"The process of registration of subjects to course the postgraduate subjects modality is not in force.",
         CARGAR_CUPOS:"There was an error lloading the number of avaliable quotas, please verify your connection and try again.",
         NUMERO_ADMITIDOS:"The number of admitted is greater than the number of available places ({{cuposDisponibles}})",
+        CARGAR_DATOS_SOLICITUDES:"There was an error occurred loading the requests data, please check your connection and try again.",
+        CARGAR_DATOS_ESTUDIANTES:"There was an error occurred loading the students information, please check your connection and try again.",
+        CARGAR_SOLICITANTES:"There was an error occurred loading the requests, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {

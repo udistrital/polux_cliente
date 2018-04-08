@@ -49,10 +49,15 @@
 
     </div>
 
-    <div ng-if="sols.length===0 && loadSolicitudes!==true" class="alert alert-danger control-label" style="margin-top: 20px;">
+    <div ng-if="sols.length===0 && loadSolicitudes!==true && !errorCargarSolicitudes" class="alert alert-danger control-label" style="margin-top: 20px;">
       {{'NO_SOLICITUDES_POSGRADO' | translate}}
     </div>
+
+    <div ng-if="errorCargarSolicitudes" class="alert alert-danger control-label" style="margin-top: 20px;">
+      {{mensajeErrorSolicitudes}}
+    </div>
   </div>
+
   </div>
     <!--pre>
      {{'FECHA_ACTUAL' | translate}}  {{fechaActual| date:'dd-MM-yyyy'}}
