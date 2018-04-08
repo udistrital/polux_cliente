@@ -199,6 +199,8 @@ var text_es = {
         SIN_CARRERAS_POSGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de POSGRADO",
         SIN_PERIODO:"Actualmente no hay registrado un periodo siguiente.",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
+        CARGAR_CUPOS:"Ocurrio un error al cargar el número de cupos disponibles, por favor verifique su conexión e intente de nuevo",
+        NUMERO_ADMITIDOS:"El numero de admitidos es mayor al número de cupos disponibles ({{cuposDisponibles}})",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -539,7 +541,6 @@ var text_en = {
     ERROR_RTA_SOLICITUD_11: "There was an error inserting the document of the graduation work.",
     ERROR_RTA_SOLICITUD_12: "There was an error inserting the written document to the proposal of the graduation work.",
     ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
-
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
         HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
@@ -557,6 +558,8 @@ var text_en = {
         SIN_CARRERAS_POSGRADO:"Mr. Coordinator, you have not assigned careers with a POSTGRADUATE level.",
         SIN_PERIODO:"Currently there is no period recorded.",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"The process of registration of subjects to course the postgraduate subjects modality is not in force.",
+        CARGAR_CUPOS:"There was an error lloading the number of avaliable quotas, please verify your connection and try again.",
+        NUMERO_ADMITIDOS:"The number of admitted is greater than the number of available places ({{cuposDisponibles}})",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
