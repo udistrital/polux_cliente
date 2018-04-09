@@ -90,13 +90,32 @@
           var defered = $q.defer();
 
           var parametrosSolicitudesActuales = $.param({
-            query:"EstadoSolicitud.in:1|2,activo:TRUE,SolicitudTrabajoGrado:"+id,
+            query:"EstadoSolicitud.in:1,activo:TRUE,SolicitudTrabajoGrado:"+id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud",parametrosSolicitudesActuales).then(function(responseSolicitudesActuales){
             if(responseSolicitudesActuales.data!=null){
-              defered.resolve(responseSolicitudesActuales.data);
               solActuales.push(responseSolicitudesActuales.data[0]);
+              defered.resolve(responseSolicitudesActuales.data);
+            }else{
+              defered.resolve(responseSolicitudesActuales.data);
+            }
+          });
+
+          return defered.promise;
+        }
+
+        var requestRespuestaMateriasPosgrado = function(solActuales, id ){
+          var defered = $q.defer();
+
+          var parametrosSolicitudesActuales = $.param({
+            query:"EstadoSolicitud.in:1|3|4|5|7,activo:TRUE,SolicitudTrabajoGrado:"+id,
+            limit: 1,
+          });
+          poluxRequest.get("respuesta_solicitud",parametrosSolicitudesActuales).then(function(responseSolicitudesActuales){
+            if(responseSolicitudesActuales.data!=null){
+              solActuales.push(responseSolicitudesActuales.data[0]);
+              defered.resolve(responseSolicitudesActuales.data);
             }else{
               defered.resolve(responseSolicitudesActuales.data);
             }
@@ -113,7 +132,12 @@
                   //otras solicitudes
                   angular.forEach(solicitudesUsuario, function(solicitud){
                      //console.log(solicitud.SolicitudTrabajoGrado.Id);
-                     promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
+                     if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id != 13){
+                        promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
+                     }else{
+                        promesas.push(requestRespuestaMateriasPosgrado(actuales, solicitud.SolicitudTrabajoGrado.Id));
+                     }
+                     
                    });
                   $q.all(promesas).then(function(){
                     console.log("actuales",actuales);
