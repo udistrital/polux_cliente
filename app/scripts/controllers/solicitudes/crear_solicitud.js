@@ -109,7 +109,7 @@
           var defered = $q.defer();
 
           var parametrosSolicitudesActuales = $.param({
-            query:"EstadoSolicitud.in:1|3|4|5|7,activo:TRUE,SolicitudTrabajoGrado:"+id,
+            query:"EstadoSolicitud.in:1|3|4|5|7|9|10,activo:TRUE,SolicitudTrabajoGrado:"+id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud",parametrosSolicitudesActuales).then(function(responseSolicitudesActuales){
