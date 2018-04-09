@@ -6,14 +6,14 @@
 
   <div class="panel-body">
 
-    <loading tam="4" load="posgradosCargados" message="msgCargandoPosgrados"></loading>
-    <div class="row" ng-if="listarAprobados.infoAcademicaCargada && !posgradosCargados">
+    <loading tam="4" load="cargandoPosgrados" message="mensajeCargandoPosgrados"></loading>
+    <div class="row" ng-if="listarAprobados.posgradosAsociados.length > 0">
       <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
       <div class="col-sm-10">
-        <ui-select name="posgrado" ng-model="listarAprobados.posgradoSeleccionado" required on-select="listarAprobados.definirPosgrado()" style="width:97%;" theme="bootstrap">
+        <ui-select name="posgrado" ng-model="listarAprobados.posgradoSeleccionado" required on-select="listarAprobados.escogerPosgrado()" style="width:97%;" theme="bootstrap">
           <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
           </ui-select-match>
-          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in listarAprobados.posgrados | filter: $select.search">
+          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in listarAprobados.posgradosAsociados | filter: $select.search">
             <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
           </ui-select-choices>
         </ui-select>
@@ -22,18 +22,18 @@
 
     <br>
 
-    <div class="row" ng-if="listarAprobados.mostrarPeriodo">
+    <div class="row" ng-if="seleccionDePosgrado">
       <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
       <div class="col-sm-10">
         <select ng-model="listarAprobados.periodoSeleccionado" ng-change="listarAprobados.consultarAprobados()">
-          <option ng-repeat="periodo in listarAprobados.periodos" ng-value="periodo">
+          <option ng-repeat="periodo in listarAprobados.periodosCorrespondientes" ng-value="periodo">
             {{periodo.anio}}-{{periodo.periodo}}
           </option>
         </select>
       </div>
     </div>
 
-    <div class="row" ng-if="!listarAprobados.infoAcademicaCargada">
+    <div class="row" ng-if="errorCargandoConsultasIniciales">
       <div class="col-sm-10">
         <label>{{'ERROR.SIN_INFO_ACADEMICA' | translate}}</label>
       </div>

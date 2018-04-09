@@ -23,15 +23,13 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaSolicitudesParaFormalizar = {};
 
       // Se configura el botón por el cual el usuario podrá formalizar la solicitud
-      $scope.botonFormalizarSolicitud = [
-        {
+      $scope.botonFormalizarSolicitud = [{
           clase_color: "ver",
           clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
           titulo: $translate.instant('BTN.VER_DETALLES'),
           operacion: 'formalizarSolicitudSeleccionada',
           estado: true
-        }
-      ];
+        }];
 
       // Se definen los espacios a mostrar por cada solicitud
       ctrl.cuadriculaSolicitudesParaFormalizar.columnDefs = [
