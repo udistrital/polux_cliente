@@ -204,7 +204,7 @@ var text_es = {
         CARGAR_DATOS_SOLICITUDES:"Ocurrio un error al cargar los datos de las solicitudes, por favor verifique su conexión e intente de nuevo.",
         CARGAR_DATOS_ESTUDIANTES:"Ocurrio un error al cargar la información de los estudiantes, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_SOLICITANTES:"Ocurrio un error al cargar los solicitantes, por favor verifique su conexión e intente de nuevo.",
-
+        VARLIDAR_REQUISITOS:"Ocurrio un error al validar los requisitos de la solicitud, por favor verifique su conexión e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -570,6 +570,7 @@ var text_en = {
         CARGAR_DATOS_SOLICITUDES:"There was an error occurred loading the requests data, please check your connection and try again.",
         CARGAR_DATOS_ESTUDIANTES:"There was an error occurred loading the students information, please check your connection and try again.",
         CARGAR_SOLICITANTES:"There was an error occurred loading the requests, please check your connection and try again.",
+        VARLIDAR_REQUISITOS:"here was an error occurred by validating the requirements of the application, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
