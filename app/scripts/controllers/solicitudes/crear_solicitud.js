@@ -273,7 +273,7 @@
       .then(function(responsePeriodo) {
         if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
           ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
-          console.log(ctrl.periodoSiguiente);
+          console.log("periodo siguiente",ctrl.periodoSiguiente);
           defer.resolve();
         } else {
           ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
@@ -290,8 +290,7 @@
       .then(function(responsePeriodo) {
         if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
           ctrl.periodoActual = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
-          console.log(ctrl.periodoActual);
-          ctrl.periodo = ctrl.periodoActual.anio + periodoActual.periodo;
+          ctrl.periodo = ctrl.periodoActual.anio + ctrl.periodoActual.periodo;
           defer.resolve();
         } else {
           ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
@@ -433,6 +432,7 @@
     }
 
     obtenerPeriodo().then(function(periodo) {
+      console.log("Periodo", ctrl.periodo)
       $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, periodo)])
         .then(function(responseRequisitos) {
           var puede = responseRequisitos[0] && responseRequisitos[1];
@@ -455,7 +455,6 @@
     $scope.loadDetalles = true;
     ctrl.siPuede = false;
     ctrl.detallesCargados = false;
-    ctrl.espaciosElegidos = [];
     ctrl.estudiantes = [];
     ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
     var tipoSolicitud = tipoSolicitudSeleccionada.Id;
@@ -581,11 +580,10 @@
                       });
                     } else if (detalle.Detalle.Nombre.includes("Espacio Academico Anterior")) {
                       angular.forEach(responseOpciones.data, function(espacio) {
-
                         academicaRequest.get("asignatura_pensum",[espacio.EspaciosAcademicosElegibles.CodigoAsignatura,espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum]).then(function(asignatura){
                             detalle.opciones.push({
                               "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre,
-                              "bd": espacio.EspaciosAcademicosElegibles.CodigoAsignatura,
+                              "bd": espacio.EspaciosAcademicosElegibles.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre,
                             });
                           });
                       });
@@ -633,7 +631,7 @@
                           academicaRequest.get("asignatura_pensum",[espacio.CodigoAsignatura,espacio.CarreraElegible.CodigoPensum]).then(function(asignatura){
                             detalle.opciones.push({
                               "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre,
-                              "bd": espacio.CodigoAsignatura
+                              "bd": espacio.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre
                             });
                           });
                         }
@@ -865,8 +863,9 @@
       }
       if (detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista") {
         var contiene = false;
+        console.log(detalle.opciones, detalle.respuesta, typeof(detalle.respuesta));
         angular.forEach(detalle.opciones, function(opcion) {
-          if (opcion.bd === detalle.respuesta) {
+          if (opcion.bd == detalle.respuesta) {
             contiene = true;
           };
         });
