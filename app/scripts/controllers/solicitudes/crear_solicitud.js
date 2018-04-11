@@ -538,33 +538,15 @@
   ctrl.verificarRequisitos = function(tipoSolicitud, modalidad) {
     var defer = $q.defer();
 
-    var obtenerPeriodo = function() {
-      var defer = $q.defer()
-      academicaRequest.get("periodo_academico", "X")
-        .then(function(responsePeriodo) {
-          if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
-            ctrl.periodo = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
-            defer.resolve(ctrl.periodo);
-          } else {
-            ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
-            defer.reject("sin periodo");
-          }
-        })
-        .catch(function() {
-          ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
-          defer.reject("no se pudo cargar periodo");
-        });
-      return defer.promise;
-    }
-
     var verificarRequisitosModalidad = function() {
       var deferModalidad = $q.defer();
       poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {
-          var cumpleRequisitosModalidad = false;
           if (responseModalidad.data === "true") {
-            cumpleRequisitosModalidad = true;
+            defer.resolve(true);
+          } else {
+            ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
+            defer.reject('No cumple con los requisitos');
           }
-          deferModalidad.resolve(cumpleRequisitosModalidad);
         })
         .catch(function() {
           ctrl.mensajeError = $translate.instant("ERROR.VALIDAR_REQUISITOS");
@@ -600,14 +582,14 @@
               if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                 deferFechas.resolve(true);
               } else {
-                ctrl.textoErrorFechas = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
-                deferFechas.resolve(false);
+                ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
+                deferFechas.reject(false);
               }
               console.log(ctrl.fechaFin);
 
             } else {
-              ctrl.textoErrorFechas = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
-              deferFechas.resolve(false);
+              ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+              deferFechas.reject(false);
             }
           })
           .catch(function() {
@@ -620,24 +602,46 @@
       return deferFechas.promise;
     }
 
-    obtenerPeriodo().then(function(periodo) {
-      console.log("Periodo", ctrl.periodo)
-      $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, periodo)])
-        .then(function(responseRequisitos) {
-          var puede = responseRequisitos[0] && responseRequisitos[1];
-          if (!responseRequisitos[0]) {
-            ctrl.siPuede = true;
-          } else if (!responseRequisitos[1]) {
-            ctrl.puedeFechas = true;
-          }
-          defer.resolve(puede)
-        })
-        .catch(function(error) {
-          defer.reject(error);
-        });
-    });
+    $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente)])
+      .then(function() {
+        var puede = responseRequisitos[0] && responseRequisitos[1];
+        defer.resolve(true)
+      })
+      .catch(function(error) {
+        defer.reject(error);
+      });
 
     return defer.promise;
+  }
+
+  ctrl.docenteVinculado = function(docente) {
+    if (ctrl.Trabajo != undefined) {
+      if (ctrl.Trabajo.directorInterno !== undefined) {
+        if (ctrl.Trabajo.directorInterno.Usuario == docente) {
+          return true;
+        }
+      }
+      if (ctrl.Trabajo.directorExterno !== undefined) {
+        if (ctrl.Trabajo.directorInterno.Usuario == docente) {
+          return true;
+        }
+      }
+      if (ctrl.Trabajo.evaluadores != undefined) {
+        var esta = false;
+        angular.forEach(ctrl.Trabajo.evaluadores, function(evaluador) {
+          if (evaluador.Usuario == docente) {
+            esta = true;
+          }
+        });
+        if (esta) {
+          return true;
+        }
+      }
+    }
+    //console.log("directorInterno",ctrl.Trabajo.directorInterno);
+    //console.log("directorExterno",ctrl.Trabajo.directorExterno);
+    //console.log("evaluadores",ctrl.Trabajo.evaluadores);
+    return false;
   }
 
   ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {
@@ -885,43 +889,13 @@
         //ctrl.siPuede=true;
         ctrl.detalles = [];
       }
-    }).catch(function() {
+    }).catch(function(error) {
       ctrl.errorParametros = true;
       $scope.loadDetalles = false;
-      //ctrl.siPuede=true;
       ctrl.detalles = [];
+      console.log(error);
     });
   };
-
-  ctrl.docenteVinculado = function(docente) {
-    if (ctrl.Trabajo != undefined) {
-      if (ctrl.Trabajo.directorInterno !== undefined) {
-        if (ctrl.Trabajo.directorInterno.Usuario == docente) {
-          return true;
-        }
-      }
-      if (ctrl.Trabajo.directorExterno !== undefined) {
-        if (ctrl.Trabajo.directorInterno.Usuario == docente) {
-          return true;
-        }
-      }
-      if (ctrl.Trabajo.evaluadores != undefined) {
-        var esta = false;
-        angular.forEach(ctrl.Trabajo.evaluadores, function(evaluador) {
-          if (evaluador.Usuario == docente) {
-            esta = true;
-          }
-        });
-        if (esta) {
-          return true;
-        }
-      }
-    }
-    //console.log("directorInterno",ctrl.Trabajo.directorInterno);
-    //console.log("directorExterno",ctrl.Trabajo.directorExterno);
-    //console.log("evaluadores",ctrl.Trabajo.evaluadores);
-    return false;
-  }
 
   ctrl.validarFormularioSolicitud = function() {
     console.log("detalles");

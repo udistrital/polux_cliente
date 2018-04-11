@@ -29,12 +29,6 @@
 <div class="panel-body alert alert-danger" ng-show="crearSolicitud.errorParametros">
     {{crearSolicitud.mensajeError}}
 </div>
-<div class="panel-body alert alert-danger" ng-show="crearSolicitud.puedeFechas">
-    {{crearSolicitud.textoErrorFechas}}
-</div>
-<div class="panel-body alert alert-danger" ng-show="crearSolicitud.siPuede">
-    {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
-</div>
 <div class="panel panel-default" ng-show="crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario">
     <div class="panel-heading">
         {{'FORMULARIO_SOLICITUD' | translate}}
