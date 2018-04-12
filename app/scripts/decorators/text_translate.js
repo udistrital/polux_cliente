@@ -235,6 +235,7 @@ var text_es = {
         CARGANDO_SOLICITUDES_PARA_FORMALIZAR: "Ocurrió un error al cargar las solicitudes para formalizar. Comuníquese con el proyecto curricular.",
         FUERA_PERIODO_FORMALIZACION: "Este periodo no corresponde al periodo de formalización de solicitudes",
         FORMALIZAR_SOLICITUD: "Error al formalizar la solicitud",
+        NO_PERIODO_FORMALIZACION: "Este periodo no corresponde a las fechas de formalización. Verifique que se encuentra en las fechas de formalización indicadas.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -622,6 +623,7 @@ var text_en = {
         CARGANDO_SOLICITUDES_PARA_FORMALIZAR: "There was an error loading the requests to formalize. Communicate with the curricular project.",
         FUERA_PERIODO_FORMALIZACION: "This period does not correspond to the period of requests formalization",
         FORMALIZAR_SOLICITUD: "Error formalizing the request",
+        NO_PERIODO_FORMALIZACION: "This period does not correspond to the formalization dates. Verify that you are in the indicated formalization dates.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
