@@ -9,7 +9,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoFormalizarSolicitudCtrl',
-    function ($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest) {
+    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest) {
       var ctrl = this;
       
       // El Id del usuario depende de la sesión
@@ -24,111 +24,46 @@ angular.module('poluxClienteApp')
 
       // Se configura el botón por el cual el usuario podrá formalizar la solicitud
       $scope.botonFormalizarSolicitud = [{
-          clase_color: "ver",
-          clase_css: "fa fa-check fa-lg  faa-shake animated-hover",
-          titulo: $translate.instant('BTN.VER_DETALLES'),
-          operacion: 'formalizarSolicitudSeleccionada',
-          estado: true
-        }];
+        clase_color: "ver",
+        clase_css: "fa fa-check fa-lg  faa-shake animated-hover",
+        titulo: $translate.instant('BTN.VER_DETALLES'),
+        operacion: 'formalizarSolicitudSeleccionada',
+        estado: true
+      }];
 
       // Se definen los espacios a mostrar por cada solicitud
-      ctrl.cuadriculaSolicitudesParaFormalizar.columnDefs = [
-        {
-          name: 'idSolicitud',
-          displayName: $translate.instant("SOLICITUD"),
-          width: '12%'
-        },
-        {
-          name: 'estadoSolicitud',
-          displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
-          width: '12%'
-        },
-        {
-          name: 'descripcionSolicitud',
-          displayName: $translate.instant("DESCRIPCION"),
-          width: '15%'
-        },
-        {
-          name: 'posgrado',
-          displayName: $translate.instant("POSGRADO"),
-          width: '15%'
-        },
-        {
-          name: 'espaciosStr',
-          displayName: $translate.instant("ESPACIOS_ACADEMICOS"),
-          width: '31%',
-          //cellTemplate: '<div ng-repeat="espacioAcademico in row.entity[col.field]">{{espacioAcademico.nombre}}</div>'
-        },
-        {
-          name: 'formalizarSolicitud',
-          displayName: $translate.instant("FORMALIZAR_SOLICITUD"),
-          width: '15%',
-          cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro>'
-        }
-      ];
-
-      /**
-       * [Función que define los parámetros para consultar en la tabla usuario_solicitud]
-       * @return {[param]} [Se retorna la sentencia para la consulta]
-       */
-      ctrl.obtenerParametrosUsuariosConSolicitudes = function() {
-        return $.param({
-          /**
-           * La modalidad asociada al tipo de solicitud 13 es la que relaciona solicitud inicial con espacios académicos de posgrado
-           * Tabla: modalidad_tipo_solicitud
-           * Tablas asociadas: tipo_solicitud (2) y modalidad (2)
-           */
-          query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13"
-          + ",Usuario:" + $scope.userId,
-          limit: 0
-          });
-      }
-
-      /**
-       * [Función que define los parámetros para consultar en la tabla respuesta_solicitud]
-       * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
-       * @return {[param]}                         [Se retorna la sentencia para la consulta]
-       */
-      ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
-        return $.param({
-          query: "SolicitudTrabajoGrado.Id:"
-          + idSolicitudTrabajoGrado
-          /**
-           * El estado de la solicitud que se encuentre en los estados 5, 7 u 8 corresponde a:
-           * 5 - Opcionada para segunda convocatoria
-           * 7 - Aprobada exenta de pago
-           * 8 - Aprobada no exenta de pago
-           * Tabla: estado_solicitud
-           */
-          + ",EstadoSolicitud.Id.in:5|7|8"
-          + ",Activo:true",
-          limit: 1
-          });
-      }
-
-      /**
-       * [Función que define los parámetros para consultar en la tabla detalle_solicitud]
-       * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
-       * @return {[param]}                         [Se retorna la sentencia para la consulta]
-       */
-      ctrl.obtenerParametrosDetalleSolicitud = function(idSolicitudTrabajoGrado) {
-        return $.param({
-          /**
-           * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado 
-           * Tabla: detalle_solicitud
-           * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
-           */
-          query: "DetalleTipoSolicitud.Id:37"
-          + ",SolicitudTrabajoGrado.Id:" + idSolicitudTrabajoGrado,
-          limit: 1
-          });
-      }
+      ctrl.cuadriculaSolicitudesParaFormalizar.columnDefs = [{
+        name: 'idSolicitud',
+        displayName: $translate.instant("SOLICITUD"),
+        width: '12%'
+      }, {
+        name: 'estadoSolicitud',
+        displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
+        width: '12%'
+      }, {
+        name: 'descripcionSolicitud',
+        displayName: $translate.instant("DESCRIPCION"),
+        width: '15%'
+      }, {
+        name: 'posgrado',
+        displayName: $translate.instant("POSGRADO"),
+        width: '15%'
+      }, {
+        name: 'espaciosAcademicos',
+        displayName: $translate.instant("ESPACIOS_ACADEMICOS"),
+        width: '31%',
+      }, {
+        name: 'formalizarSolicitud',
+        displayName: $translate.instant("FORMALIZAR_SOLICITUD"),
+        width: '15%',
+        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro>'
+      }];
 
       /**
        * [Función que obtiene el periodo académico según los parámetros de consulta]
        * @return {[Promise]} [El periodo académico, o la excepción generada]
        */
-      ctrl.obtenerPeriodo = function() {
+      ctrl.obtenerPeriodoCorrespondiente = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se consulta hacia el periodo académico con el servicio de academicaRequest
@@ -157,33 +92,51 @@ angular.module('poluxClienteApp')
       }
 
       /**
+       * [Función que define los parámetros para consultar en la tabla relacion_sesiones]
+       * @return {[param]} [Se retorna la sentencia para la consulta]
+       */
+      ctrl.obtenerParametrosSesionesDeFormalizacion = function(periodoAcademicoCorrespondiente) {
+        return $.param({
+          /**
+           * El tipo de sesión 1 trae las sesiones asociadas a la modalidad de materias de posgrado
+           * Tabla: relacion_sesiones
+           * Tablas asociadas: tipo_sesion (1) y sesion
+           */
+          query: "SesionPadre.TipoSesion.Id:1,SesionPadre.periodo:" +
+            periodoAcademicoCorrespondiente.anio +
+            periodoAcademicoCorrespondiente.periodo,
+          limit: 0
+        });
+      }
+
+      /**
        * [Función que consulta las sesiones almacenadas en la base de datos]
        * @return {[Promise]} [La colección de sesiones consultadas, o la excepción generada]
        */
       ctrl.consultarSesiones = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
-
-        ctrl.obtenerPeriodo()
+        // Se consulta el periodo correspondiente
+        ctrl.obtenerPeriodoCorrespondiente()
         .then(function(periodoAcademicoCorrespondiente) {
-          var parametrosSesiones = $.param({
-            //query: "SesionHijo.TipoSesion.Id.in:5|7,SesionPadre.periodo:" 
-            //+ periodoAcademicoCorrespondiente.anio 
-            //+ periodoAcademicoCorrespondiente.periodo,
-            limit: 0
-          });
-          sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+          // Se consultan las sesiones registradas según el periodo correspondiente
+          sesionesRequest.get("relacion_sesiones", ctrl.obtenerParametrosSesionesDeFormalizacion(periodoAcademicoCorrespondiente))
           .then(function(sesionesDeFormalizacion) {
+            // Se estudia que las sesiones tengan contenido
             if (sesionesDeFormalizacion.data) {
+              // Se resuelve la información de las sesiones consultadas
               deferred.resolve(sesionesDeFormalizacion.data);
             } else {
+              // Se rechaza la consulta cuando es vacía
               deferred.reject(null);
             }
           }).catch(function(excepcionSesionesDeFormalizacion) {
+            // Se rechaza la consulta cuando falla la obtención de sesiones
             deferred.reject(excepcionSesionesDeFormalizacion);
           });
         })
         .catch(function(excepcionPeriodoAcademicoConsultado) {
+          // Se rechaza la consulta cuando falla la obtención de periodo
           deferred.reject(excepcionPeriodoAcademicoConsultado);
         });
         // Se devuelve el diferido que maneja la promesa
@@ -203,32 +156,47 @@ angular.module('poluxClienteApp')
           ctrl.coleccionFechasFormalizacion = [];
           // Se define la fecha actual de sesión
           var fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+          // Se recorre la colección de sesiones de formalización consultadas
           angular.forEach(sesionesDeFormalizacion, function(sesionDeFormalizacion) {
+            /**
+             * Se estudia que el Id del tipo de sesión corresponda a los periodos de formalización
+             * 5 - Primera fecha de formalización
+             * 7 - Segunda fecha de formalización
+             */
             if (sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 5 || sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 7) {
+              // Se ajusta el formato de la fecha de inicio de formalización
               var registroInicioDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaInicio);
               registroInicioDeFormalizacion.setTime(
                 registroInicioDeFormalizacion.getTime()
                 + registroInicioDeFormalizacion.getTimezoneOffset() * 60 * 1000
                 );
+              // Se establece la fecha de inicio de formalización comparable
               var fechaInicioDeFormalizacion = moment(registroInicioDeFormalizacion).format("YYYY-MM-DD HH:mm");
+              // Se ajusta el formato de la fecha de inicio de formalización
               var registroFinDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaFin);
               registroFinDeFormalizacion.setTime(
                 registroFinDeFormalizacion.getTime()
                 + registroFinDeFormalizacion.getTimezoneOffset() * 60 * 1000
                 );
+              // Se establece la fecha de inicio de formalización comparable
               var fechaFinDeFormalizacion = moment(registroFinDeFormalizacion).format("YYYY-MM-DD HH:mm");
+              // Se almacenan las fechas de inicio y fin de formalización para enseñarlas al usuario
               ctrl.coleccionFechasFormalizacion.push({
                 fechaInicioDeFormalizacion: fechaInicioDeFormalizacion,
                 fechaFinDeFormalizacion: fechaFinDeFormalizacion
               });
+              // Se estudia que el periodo actual corresponda a las fechas de formalización
               if (fechaInicioDeFormalizacion <= fechaActual && fechaActual <= fechaFinDeFormalizacion) {
+                // Se resuelve la comprobación
                 deferred.resolve(true);
               }
             }
           });
+          // Si se recorre toda la colección y no se resuelve, se rechaza la comprobación
           deferred.reject(false);
         })
         .catch(function(excepcionSesionesDeFormalizacion) {
+          // De fallar la consulta, se rechaza la comprobación
           deferred.reject(false);
         });
         // Se devuelve el diferido que maneja la promesa
@@ -259,11 +227,6 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * Se lanza la función que, una vez autorizada la formalización por periodo, actualiza el contenido de la cuadrícula
-       */
-      ctrl.autorizarFormalizacionDeSolicitudes();
-
-      /**
        * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
        * @param  {[type]} detalleSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
        * @return {[type]}                  [El objeto con los datos del posgrado]
@@ -288,6 +251,7 @@ angular.module('poluxClienteApp')
           // Como el formato de almacenado guarda en cada posición el objeto de espacio académico,
           // se pasa a formato JSON para obtener su contenido
           var objetoEspacioAcademico = JSON.parse(espacioAcademico);
+          // Se ajusta la información para conformar el objeto de espacio académico
           var informacionEspacioAcademico = {
             "id": objetoEspacioAcademico.Id,
             "codigo": objetoEspacioAcademico.CodigoAsignatura,
@@ -298,6 +262,50 @@ angular.module('poluxClienteApp')
           espaciosAcademicos.push(informacionEspacioAcademico);
         });
         return espaciosAcademicos;
+      }
+
+      /**
+       * [Función que obtiene los espacios académicos por su nombre]
+       * @param  {[Array]} coleccionEspaciosAcademicos [Tiene la colección de espacios académicos como objetos]
+       * @return {[String]}                  [Devuelve la cadena de espacios académicos por su nombre]
+       */
+      ctrl.obtenerEspaciosAcademicosPorNombre = function(coleccionEspaciosAcademicos) {
+        console.log(coleccionEspaciosAcademicos)
+        // Se define una variable que cargue el contenido
+        var espaciosAcademicosPorNombre = "";
+        // Se recorre la colección de objetos que son espacios académicos
+        angular.forEach(coleccionEspaciosAcademicos, function(espacioAcademico) {
+          // Se añade cada nombre a la cadena unido por una coma (,)
+          espaciosAcademicosPorNombre += espacioAcademico.nombre + ", ";
+        });
+        // Se elimina el espacio y la coma (, ) del final de la cadena
+        espaciosAcademicosPorNombre = espaciosAcademicosPorNombre.substring(0, espaciosAcademicosPorNombre.length - 2);
+        // Se retorna la cadena para mostrar en la cuadrícula
+        return espaciosAcademicosPorNombre;
+      }
+
+      /**
+       * [Función que define los parámetros para consultar en la tabla respuesta_solicitud]
+       * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
+       * @return {[param]}                         [Se retorna la sentencia para la consulta]
+       */
+      ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
+        return $.param({
+          query: "SolicitudTrabajoGrado.Id:"
+          + idSolicitudTrabajoGrado
+          /**
+           * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
+           * 5 - Opcionada para segunda convocatoria
+           * 6 - Rechazada por cupos insuficientes
+           * 7 - Aprobada exenta de pago
+           * 8 - Aprobada no exenta de pago
+           * Tabla: respuesta_solicitud
+           * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
+           */
+          + ",EstadoSolicitud.Id.in:5|6|7|8"
+          + ",Activo:true",
+          limit: 1
+          });
       }
 
       /**
@@ -335,6 +343,24 @@ angular.module('poluxClienteApp')
       }
 
       /**
+       * [Función que define los parámetros para consultar en la tabla detalle_solicitud]
+       * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
+       * @return {[param]}                         [Se retorna la sentencia para la consulta]
+       */
+      ctrl.obtenerParametrosDetalleSolicitud = function(idSolicitudTrabajoGrado) {
+        return $.param({
+          /**
+           * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado 
+           * Tabla: detalle_solicitud
+           * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
+           */
+          query: "DetalleTipoSolicitud.Id:37"
+          + ",SolicitudTrabajoGrado.Id:" + idSolicitudTrabajoGrado,
+          limit: 1
+          });
+      }
+
+      /**
        * [Función que según la solicitud, carga la información correspondiente al detalle de la misma]
        * @param  {[Object]} solicitudAsociada [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
        * @return {[Promise]}                   [La solicitud con el detalle asociado dentro, o la excepción generada]
@@ -366,6 +392,23 @@ angular.module('poluxClienteApp')
         });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
+      }
+
+      /**
+       * [Función que define los parámetros para consultar en la tabla usuario_solicitud]
+       * @return {[param]} [Se retorna la sentencia para la consulta]
+       */
+      ctrl.obtenerParametrosUsuariosConSolicitudes = function() {
+        return $.param({
+          /**
+           * La modalidad asociada al tipo de solicitud 13 es la que relaciona solicitud inicial con espacios académicos de posgrado
+           * Tabla: modalidad_tipo_solicitud
+           * Tablas asociadas: tipo_solicitud (2) y modalidad (2)
+           */
+          query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13"
+          + ",Usuario:" + $scope.userId,
+          limit: 0
+          });
       }
 
       /**
@@ -436,22 +479,19 @@ angular.module('poluxClienteApp')
             var solicitudesParaFormalizarRegistradas = [];
             // Se recorre el resultado de la consulta
             angular.forEach(coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
-              var espacios = "";
-              angular.forEach(ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud), function(espacio) {
-                espacios += espacio.nombre + ", ";
-              });
-              espacios = espacios.substring(0, espacios.length - 2);
+              // Se define una variable que cargue los espacios académicos asociados
+              // Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
+              // para obtener el objeto que contiene la información de los espacios académicos,
+              // como argumento de la función que los ordena en un arreglo
+              var espaciosAcademicosAsociados = ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud);
               // Se agregan los datos de cada item a la colección de solicitudes
               solicitudesParaFormalizarRegistradas.push({
                 "idSolicitud": solicitudParaFormalizar.Id,
                 "estadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Nombre,
                 "descripcionSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Descripcion,
                 "posgrado": ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleSolicitud).Nombre,
-                // Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-                // para obtener el objeto que contiene la información de los espacios académicos,
-                // como argumento de la función que los ordena en un arreglo por el nombre
-                "espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud),
-                "espaciosStr": espacios
+                "espaciosAcademicos": ctrl.obtenerEspaciosAcademicosPorNombre(espaciosAcademicosAsociados),
+                "espaciosAcademicosSolicitados": espaciosAcademicosAsociados,
               });
             });
             // La promesa se resuelve con la colección de información lista para cargar
@@ -462,6 +502,7 @@ angular.module('poluxClienteApp')
             $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
           }
         }).catch(function(excepcionCargandoUsuariosConSolicitudes) {
+          console.log("sad", excepcionCargandoUsuariosConSolicitudes);
           // Ocurre cuando hay un error durante la consulta
           deferred.reject(null);
           $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
@@ -489,6 +530,11 @@ angular.module('poluxClienteApp')
           $scope.errorCargandoSolicitudes = true;
         });
       }
+
+      /**
+       * Se lanza la función que, una vez autorizada la formalización por periodo, actualiza el contenido de la cuadrícula
+       */
+      ctrl.autorizarFormalizacionDeSolicitudes();
 
       /**
        * [Función que carga la fila asociada según la selección del usuario]
