@@ -25,7 +25,7 @@ angular.module('poluxClienteApp')
       // Se configura el botón por el cual el usuario podrá formalizar la solicitud
       $scope.botonFormalizarSolicitud = [{
           clase_color: "ver",
-          clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
+          clase_css: "fa fa-check fa-lg  faa-shake animated-hover",
           titulo: $translate.instant('BTN.VER_DETALLES'),
           operacion: 'formalizarSolicitudSeleccionada',
           estado: true
@@ -54,10 +54,10 @@ angular.module('poluxClienteApp')
           width: '15%'
         },
         {
-          name: 'espaciosAcademicosSolicitados',
+          name: 'espaciosStr',
           displayName: $translate.instant("ESPACIOS_ACADEMICOS"),
           width: '31%',
-          cellTemplate: '<pre ng-repeat="espacioAcademico in row.entity[col.field]">{{espacioAcademico.nombre}}</pre>'
+          //cellTemplate: '<div ng-repeat="espacioAcademico in row.entity[col.field]">{{espacioAcademico.nombre}}</div>'
         },
         {
           name: 'formalizarSolicitud',
@@ -94,12 +94,13 @@ angular.module('poluxClienteApp')
           query: "SolicitudTrabajoGrado.Id:"
           + idSolicitudTrabajoGrado
           /**
-           * El estado de la solicitud que se encuentre en los estados 7 u 8 corresponde a:
+           * El estado de la solicitud que se encuentre en los estados 5, 7 u 8 corresponde a:
+           * 5 - Opcionada para segunda convocatoria
            * 7 - Aprobada exenta de pago
            * 8 - Aprobada no exenta de pago
            * Tabla: estado_solicitud
            */
-          + ",EstadoSolicitud.Id.in:7|8"
+          + ",EstadoSolicitud.Id.in:5|7|8"
           + ",Activo:true",
           limit: 1
           });
@@ -112,11 +113,155 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDetalleSolicitud = function(idSolicitudTrabajoGrado) {
         return $.param({
+          /**
+           * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado 
+           * Tabla: detalle_solicitud
+           * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
+           */
           query: "DetalleTipoSolicitud.Id:37"
           + ",SolicitudTrabajoGrado.Id:" + idSolicitudTrabajoGrado,
           limit: 1
           });
       }
+
+      /**
+       * [Función que obtiene el periodo académico según los parámetros de consulta]
+       * @return {[Promise]} [El periodo académico, o la excepción generada]
+       */
+      ctrl.obtenerPeriodo = function() {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        // Se consulta hacia el periodo académico con el servicio de academicaRequest
+        // El parámetro "X" consulta el siguiente periodo académico al actual
+        academicaRequest.get("periodo_academico", "X")
+        .then(function(periodoAcademicoConsultado) {
+          // Se verifica que la respuesta está definida
+          if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
+            // Se resuelve el periodo académico correspondiente
+            deferred.resolve(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0]);
+          } else {
+            // En caso de error se prepara el mensaje y se rechaza con nulo
+            ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_PERIODO");
+            // Se rechaza nulamente la consulta
+            deferred.reject(null);
+          }
+        })
+        .catch(function(excepcionPeriodoAcademicoConsultado) {
+          // En caso de excepción se prepara el mensaje y se rechaza con nulo
+          ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGAR_PERIODO");
+          // Se rechaza nulamente la consulta
+          deferred.reject(null);
+        });
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
+      }
+
+      /**
+       * [Función que consulta las sesiones almacenadas en la base de datos]
+       * @return {[Promise]} [La colección de sesiones consultadas, o la excepción generada]
+       */
+      ctrl.consultarSesiones = function() {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+
+        ctrl.obtenerPeriodo()
+        .then(function(periodoAcademicoCorrespondiente) {
+          var parametrosSesiones = $.param({
+            //query: "SesionHijo.TipoSesion.Id.in:5|7,SesionPadre.periodo:" 
+            //+ periodoAcademicoCorrespondiente.anio 
+            //+ periodoAcademicoCorrespondiente.periodo,
+            limit: 0
+          });
+          sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+          .then(function(sesionesDeFormalizacion) {
+            if (sesionesDeFormalizacion.data) {
+              deferred.resolve(sesionesDeFormalizacion.data);
+            } else {
+              deferred.reject(null);
+            }
+          }).catch(function(excepcionSesionesDeFormalizacion) {
+            deferred.reject(excepcionSesionesDeFormalizacion);
+          });
+        })
+        .catch(function(excepcionPeriodoAcademicoConsultado) {
+          deferred.reject(excepcionPeriodoAcademicoConsultado);
+        });
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
+      }
+
+      /**
+       * [Función que comprueba que la sesión permite la formalización de solicitudes]
+       * @return {[type]} [description]
+       */
+      ctrl.comprobarPeriodoFormalizacion = function() {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        ctrl.consultarSesiones()
+        .then(function(sesionesDeFormalizacion) {
+          // Se define una colección que trabaje las fechas de formalización
+          ctrl.coleccionFechasFormalizacion = [];
+          // Se define la fecha actual de sesión
+          var fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+          angular.forEach(sesionesDeFormalizacion, function(sesionDeFormalizacion) {
+            if (sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 5 || sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 7) {
+              var registroInicioDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaInicio);
+              registroInicioDeFormalizacion.setTime(
+                registroInicioDeFormalizacion.getTime()
+                + registroInicioDeFormalizacion.getTimezoneOffset() * 60 * 1000
+                );
+              var fechaInicioDeFormalizacion = moment(registroInicioDeFormalizacion).format("YYYY-MM-DD HH:mm");
+              var registroFinDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaFin);
+              registroFinDeFormalizacion.setTime(
+                registroFinDeFormalizacion.getTime()
+                + registroFinDeFormalizacion.getTimezoneOffset() * 60 * 1000
+                );
+              var fechaFinDeFormalizacion = moment(registroFinDeFormalizacion).format("YYYY-MM-DD HH:mm");
+              ctrl.coleccionFechasFormalizacion.push({
+                fechaInicioDeFormalizacion: fechaInicioDeFormalizacion,
+                fechaFinDeFormalizacion: fechaFinDeFormalizacion
+              });
+              if (fechaInicioDeFormalizacion <= fechaActual && fechaActual <= fechaFinDeFormalizacion) {
+                deferred.resolve(true);
+              }
+            }
+          });
+          deferred.reject(false);
+        })
+        .catch(function(excepcionSesionesDeFormalizacion) {
+          deferred.reject(false);
+        });
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
+      }
+
+      /**
+       * [Función que autoriza la formalización del lado del usuario, dependiendo de si se encuentra en el periodo correspondiente]
+       * @return {[void]} [El procedimiento de comprobar el periodo de formalización, o mostrar el mensaje de error]
+       */
+      ctrl.autorizarFormalizacionDeSolicitudes = function() {
+        ctrl.comprobarPeriodoFormalizacion()
+        .then(function(autorizacionPeriodoFormalizacion) {
+          ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
+        })
+        .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
+          // Se establece el mensaje de error porque no se encuentra en el periodo correspondiente
+          angular.forEach(ctrl.coleccionFechasFormalizacion, function(intervaloDeFormalizacion) {
+            console.log("fecha inicio formalización:", intervaloDeFormalizacion.fechaInicioDeFormalizacion);
+            console.log("fecha fin formalización:", intervaloDeFormalizacion.fechaFinDeFormalizacion);
+          });
+          $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.NO_PERIODO_FORMALIZACION");
+          // Se apaga el mensaje de carga
+          $scope.cargandoSolicitudes = false;
+          // Se habilita el mensaje de error
+          $scope.errorCargandoSolicitudes = true;
+        });
+      }
+
+      /**
+       * Se lanza la función que, una vez autorizada la formalización por periodo, actualiza el contenido de la cuadrícula
+       */
+      ctrl.autorizarFormalizacionDeSolicitudes();
 
       /**
        * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
@@ -291,6 +436,11 @@ angular.module('poluxClienteApp')
             var solicitudesParaFormalizarRegistradas = [];
             // Se recorre el resultado de la consulta
             angular.forEach(coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
+              var espacios = "";
+              angular.forEach(ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud), function(espacio) {
+                espacios += espacio.nombre + ", ";
+              });
+              espacios = espacios.substring(0, espacios.length - 2);
               // Se agregan los datos de cada item a la colección de solicitudes
               solicitudesParaFormalizarRegistradas.push({
                 "idSolicitud": solicitudParaFormalizar.Id,
@@ -301,6 +451,7 @@ angular.module('poluxClienteApp')
                 // para obtener el objeto que contiene la información de los espacios académicos,
                 // como argumento de la función que los ordena en un arreglo por el nombre
                 "espaciosAcademicosSolicitados": ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud),
+                "espaciosStr": espacios
               });
             });
             // La promesa se resuelve con la colección de información lista para cargar
@@ -340,11 +491,6 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * Se lanza la función que actualiza el contenido de la cuadrícula
-       */
-      ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
-
-      /**
        * [Función que carga la fila asociada según la selección del usuario]
        * @param  {[row]} filaAsociada [Es la solicitud que el usuario seleccionó]
        */
@@ -353,179 +499,67 @@ angular.module('poluxClienteApp')
       };
 
       /**
-       * [Función que obtiene el periodo académico según los parámetros de consulta]
-       * @return {[Promise]} [El periodo académico, o la excepción generada]
-       */
-      ctrl.obtenerPeriodo = function() {
-        // Se trae el diferido desde el servicio para manejar las promesas
-        var deferred = $q.defer();
-        // Se consulta hacia el periodo académico con el servicio de academicaRequest
-        // El parámetro "X" consulta el siguiente periodo académico al actual
-        academicaRequest.get("periodo_academico", "X")
-        .then(function(periodoAcademicoConsultado) {
-          // Se verifica que la respuesta está definida
-          if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
-            // Se resuelve el periodo académico correspondiente
-            deferred.resolve(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0]);
-          } else {
-            // En caso de error se prepara el mensaje y se rechaza con nulo
-            ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_PERIODO");
-            deferred.reject(null);
-          }
-        })
-        .catch(function(excepcionPeriodoAcademicoConsultado) {
-          // En caso de excepción se prepara el mensaje y se rechaza con nulo
-          ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGAR_PERIODO");
-          deferred.reject(null);
-        });
-        // Se devuelve el diferido que maneja la promesa
-        return deferred.promise;
-      }
-
-      ctrl.consultarSesiones = function() {
-        // Se trae el diferido desde el servicio para manejar las promesas
-        var deferred = $q.defer();
-
-        ctrl.obtenerPeriodo()
-        .then(function(periodoAcademicoCorrespondiente) {
-          var parametrosSesiones = $.param({
-            //query: "SesionHijo.TipoSesion.Id.in:5|7,SesionPadre.periodo:" 
-            //+ periodoAcademicoCorrespondiente.anio 
-            //+ periodoAcademicoCorrespondiente.periodo,
-            limit: 0
-          });
-          sesionesRequest.get("relacion_sesiones", parametrosSesiones)
-          .then(function(sesionesDeFormalizacion) {
-            if (sesionesDeFormalizacion.data) {
-              deferred.resolve(sesionesDeFormalizacion.data);
-            } else {
-              deferred.reject(null);
-            }
-          }).catch(function(excepcionSesionesDeFormalizacion) {
-            deferred.reject(excepcionSesionesDeFormalizacion);
-          });
-        })
-        .catch(function(excepcionPeriodoAcademicoConsultado) {
-          deferred.reject(excepcionPeriodoAcademicoConsultado);
-        });
-        // Se devuelve el diferido que maneja la promesa
-        return deferred.promise;
-      }
-
-      /**
-       * [Función que comprueba que la sesión permite la formalización de solicitudes]
-       * @return {[type]} [description]
-       */
-      ctrl.comprobarPeriodoFormalizacion = function() {
-        // Se trae el diferido desde el servicio para manejar las promesas
-        var deferred = $q.defer();
-        ctrl.consultarSesiones()
-        .then(function(sesionesDeFormalizacion) {
-          // Se define la fecha de sesión
-          var fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
-          angular.forEach(sesionesDeFormalizacion, function(sesionDeFormalizacion) {
-            if (sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 5 || sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 7) {
-              var registroInicioDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaInicio);
-              registroInicioDeFormalizacion.setTime(
-                registroInicioDeFormalizacion.getTime()
-                + registroInicioDeFormalizacion.getTimezoneOffset() * 60 * 1000
-                );
-              var fechaInicioDeFormalizacion = moment(registroInicioDeFormalizacion).format("YYYY-MM-DD HH:mm");
-              var registroFinDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaFin);
-              registroFinDeFormalizacion.setTime(
-                registroFinDeFormalizacion.getTime()
-                + registroFinDeFormalizacion.getTimezoneOffset() * 60 * 1000
-                );
-              var fechaFinDeFormalizacion = moment(registroFinDeFormalizacion).format("YYYY-MM-DD HH:mm");
-              if (fechaInicioDeFormalizacion <= fechaActual && fechaActual <= fechaFinDeFormalizacion) {
-                deferred.resolve(true);
-              }
-            }
-          });
-          deferred.reject(false);
-        })
-        .catch(function(excepcionSesionesDeFormalizacion) {
-          deferred.reject(false);
-        });
-        // Se devuelve el diferido que maneja la promesa
-        return deferred.promise;
-      }
-
-      /**
        * [Función que formaliza la solicitud a petición del usuario]
        * @param  {[row]} solicitudSeleccionada [La solicitud que el usuario desea formalizar]
        */
       ctrl.formalizarSolicitudSeleccionada = function(solicitudSeleccionada) {
-        // Se llama a la función que comprueba el periodo para obtener la autorización, o la excepción en caso contrario
-        ctrl.comprobarPeriodoFormalizacion()
-        .then(function(autorizacionPeriodoFormalizacion) {
-          // Se despliega la ventana de confirmación
-          swal({
-            title: $translate.instant("CONFORMACION_FORMALIZAR_SOLICITUD"),
-            text: $translate.instant("INFORMACION_FORMALIZACION", {
-              // Se cargan datos de la solicitud para que el usuario pueda verificar antes de confirmar
-              idSolicitud: solicitudSeleccionada.idSolicitud,
-              nombreEstado: solicitudSeleccionada.estadoSolicitud,
-              nombrePosgrado: solicitudSeleccionada.posgrado
-            }),
-            type: "info",
-            confirmButtonText: $translate.instant("ACEPTAR"),
-            cancelButtonText: $translate.instant("CANCELAR"),
-            showCancelButton: true
-          })
-          .then(function(confirmacionDelUsuario) {
-            // Se valida que el usuario haya confirmado la formalización
-            if (confirmacionDelUsuario.value) {
-              // Se detiene la visualización de solicitudes mientras se formaliza
-              ctrl.cuadriculaSolicitudesParaFormalizar.data = [];
-              // Se inicia la carga del formulario mientras se formaliza
-              $scope.cargandoSolicitudes = true;
-              // Se lanza la transacción
-              ctrl.registrarFormalizacion(solicitudSeleccionada)
-              .then(function(respuestaFormalizarSolicitud) {
-                // Se detiene la carga
-                $scope.cargandoSolicitudes = false;
-                // Se verifica que la respuesta es exitosa
-                if (respuestaFormalizarSolicitud.data[0] === "Success") {
-                  // Se despliega el mensaje que confirma el registro de la formalización
-                  swal(
-                    $translate.instant("FORMALIZAR_SOLICITUD"),
-                    $translate.instant("SOLICITUD_FORMALIZADA"),
-                    'success'
-                  );
-                } else {
-                  // Se despliega el mensaje que muestra el error traído desde la transacción
-                  swal(
-                    $translate.instant("FORMALIZAR_SOLICITUD"),
-                    $translate.instant(response.data[1]),
-                    'warning'
-                  );
-                }
-                // Se actualiza la información de la cuadrícula
-                ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
-              })
-              .catch(function(excepcionFormalizarSolicitud) {
-                // Se detiene la carga
-                $scope.cargandoSolicitudes = false;
-                // Se despliega el mensaje de error durante la transacción
+        swal({
+          title: $translate.instant("CONFORMACION_FORMALIZAR_SOLICITUD"),
+          text: $translate.instant("INFORMACION_FORMALIZACION", {
+            // Se cargan datos de la solicitud para que el usuario pueda verificar antes de confirmar
+            idSolicitud: solicitudSeleccionada.idSolicitud,
+            nombreEstado: solicitudSeleccionada.estadoSolicitud,
+            nombrePosgrado: solicitudSeleccionada.posgrado
+          }),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          // Se valida que el usuario haya confirmado la formalización
+          if (confirmacionDelUsuario.value) {
+            // Se detiene la visualización de solicitudes mientras se formaliza
+            ctrl.cuadriculaSolicitudesParaFormalizar.data = [];
+            // Se inicia la carga del formulario mientras se formaliza
+            $scope.cargandoSolicitudes = true;
+            // Se lanza la transacción
+            ctrl.registrarFormalizacion(solicitudSeleccionada)
+            .then(function(respuestaFormalizarSolicitud) {
+              // Se detiene la carga
+              $scope.cargandoSolicitudes = false;
+              // Se verifica que la respuesta es exitosa
+              if (respuestaFormalizarSolicitud.data[0] === "Success") {
+                // Se despliega el mensaje que confirma el registro de la formalización
                 swal(
                   $translate.instant("FORMALIZAR_SOLICITUD"),
-                  $translate.instant("ERROR.FORMALIZAR_SOLICITUD"),
+                  $translate.instant("SOLICITUD_FORMALIZADA"),
+                  'success'
+                );
+              } else {
+                // Se despliega el mensaje que muestra el error traído desde la transacción
+                swal(
+                  $translate.instant("FORMALIZAR_SOLICITUD"),
+                  $translate.instant(response.data[1]),
                   'warning'
                 );
-                // Se actualiza la información de la cuadrícula
-                ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
-              });
-            }
-          });
-        })
-        .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
-          // Se despliega el aviso de inconsistencia con el periodo de formalización
-          swal(
-            $translate.instant("ERROR.FUERA_PERIODO_FORMALIZACION"),
-            $translate.instant("REVISAR_FECHAS_FORMALIZACION"),
-            'warning'
-          );
+              }
+              // Se actualiza la información de la cuadrícula
+              ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
+            })
+            .catch(function(excepcionFormalizarSolicitud) {
+              // Se detiene la carga
+              $scope.cargandoSolicitudes = false;
+              // Se despliega el mensaje de error durante la transacción
+              swal(
+                $translate.instant("FORMALIZAR_SOLICITUD"),
+                $translate.instant("ERROR.FORMALIZAR_SOLICITUD"),
+                'warning'
+              );
+              // Se actualiza la información de la cuadrícula
+              ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
+            });
+          }
         });
       }
 
