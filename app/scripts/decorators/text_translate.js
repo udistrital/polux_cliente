@@ -407,6 +407,7 @@ var text_es = {
     FECHA_INICIO:"Fecha de inicio",
     FECHA_FIN:"Fecha fin",
     FECHAS_PARA_FORMALIZACION: "Fechas válidas para realizar el proceso de formalización",
+    FORMALIZACION_NO_HABILITADA: "El estado de esta solicitud no la habilita para ser formalizada",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -796,6 +797,7 @@ var text_en = {
     FECHA_INICIO:"Start date",
     FECHA_FIN:"End date",
     FECHAS_PARA_FORMALIZACION: "Valid dates to carry out the formalization process",
+    FORMALIZACION_NO_HABILITADA: "The status of this request does not enable it to be formalized",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

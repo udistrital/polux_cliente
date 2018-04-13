@@ -56,7 +56,7 @@ angular.module('poluxClienteApp')
         name: 'formalizarSolicitud',
         displayName: $translate.instant("FORMALIZAR_SOLICITUD"),
         width: '15%',
-        cellTemplate: '<btn-registro ng-if="grid.appScope.formalizacionHabilitada" funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro>'
+        cellTemplate: '<btn-registro ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8" funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro><div class="ui-grid-cell-contents" ng-if="row.entity.idEstadoSolicitud != 7 && row.entity.idEstadoSolicitud != 8">{{"FORMALIZACION_NO_HABILITADA" | translate}}</div>',
       }];
 
       /**
@@ -167,21 +167,22 @@ angular.module('poluxClienteApp')
               // Se ajusta el formato de la fecha de inicio de formalización
               var registroInicioDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaInicio);
               registroInicioDeFormalizacion.setTime(
-                registroInicioDeFormalizacion.getTime()
-                + registroInicioDeFormalizacion.getTimezoneOffset() * 60 * 1000
+                registroInicioDeFormalizacion.getTime() +
+                registroInicioDeFormalizacion.getTimezoneOffset() * 60 * 1000
                 );
               // Se establece la fecha de inicio de formalización comparable
               var fechaInicioDeFormalizacion = moment(registroInicioDeFormalizacion).format("YYYY-MM-DD HH:mm");
               // Se ajusta el formato de la fecha de inicio de formalización
               var registroFinDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaFin);
               registroFinDeFormalizacion.setTime(
-                registroFinDeFormalizacion.getTime()
-                + registroFinDeFormalizacion.getTimezoneOffset() * 60 * 1000
+                registroFinDeFormalizacion.getTime() +
+                registroFinDeFormalizacion.getTimezoneOffset() * 60 * 1000
                 );
               // Se establece la fecha de inicio de formalización comparable
               var fechaFinDeFormalizacion = moment(registroFinDeFormalizacion).format("YYYY-MM-DD HH:mm");
               // Se almacenan las fechas de inicio y fin de formalización para enseñarlas al usuario
               ctrl.coleccionFechasFormalizacion.push({
+                descripcionFechaDeFormalizacion: sesionDeFormalizacion.SesionHijo.Descripcion,
                 fechaInicioDeFormalizacion: fechaInicioDeFormalizacion,
                 fechaFinDeFormalizacion: fechaFinDeFormalizacion
               });
@@ -288,21 +289,21 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
         return $.param({
-          query: "SolicitudTrabajoGrado.Id:"
-          + idSolicitudTrabajoGrado
-          /**
-           * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
-           * 5 - Opcionada para segunda convocatoria
-           * 6 - Rechazada por cupos insuficientes
-           * 7 - Aprobada exenta de pago
-           * 8 - Aprobada no exenta de pago
-           * Tabla: respuesta_solicitud
-           * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
-           */
-          + ",EstadoSolicitud.Id.in:5|6|7|8"
-          + ",Activo:true",
+          query: "SolicitudTrabajoGrado.Id:" +
+            idSolicitudTrabajoGrado +
+            /**
+             * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
+             * 5 - Opcionada para segunda convocatoria
+             * 6 - Rechazada por cupos insuficientes
+             * 7 - Aprobada exenta de pago
+             * 8 - Aprobada no exenta de pago
+             * Tabla: respuesta_solicitud
+             * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
+             */
+            ",EstadoSolicitud.Id.in:5|6|7|8" +
+            ",Activo:true",
           limit: 1
-          });
+        });
       }
 
       /**
@@ -351,10 +352,11 @@ angular.module('poluxClienteApp')
            * Tabla: detalle_solicitud
            * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
            */
-          query: "DetalleTipoSolicitud.Id:37"
-          + ",SolicitudTrabajoGrado.Id:" + idSolicitudTrabajoGrado,
+          query: "DetalleTipoSolicitud.Id:37" +
+            ",SolicitudTrabajoGrado.Id:" + 
+            idSolicitudTrabajoGrado,
           limit: 1
-          });
+        });
       }
 
       /**
@@ -402,10 +404,11 @@ angular.module('poluxClienteApp')
            * Tabla: modalidad_tipo_solicitud
            * Tablas asociadas: tipo_solicitud (2) y modalidad (2)
            */
-          query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13"
-          + ",Usuario:" + $scope.userId,
+          query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13" +
+            ",Usuario:" +
+            $scope.userId,
           limit: 0
-          });
+        });
       }
 
       /**
@@ -489,6 +492,7 @@ angular.module('poluxClienteApp')
                 "posgrado": ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleSolicitud).Nombre,
                 "espaciosAcademicos": ctrl.obtenerEspaciosAcademicosPorNombre(espaciosAcademicosAsociados),
                 "espaciosAcademicosSolicitados": espaciosAcademicosAsociados,
+                "idEstadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id,
               });
             });
             // La promesa se resuelve con la colección de información lista para cargar
