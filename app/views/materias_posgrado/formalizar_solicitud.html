@@ -15,6 +15,22 @@
       <span ng-bind="mensajeErrorCargandoSolicitudes"></span>
     </div>
 
+    <div class="panel panel-default" ng-if="periodoDeFormalizacionNoCorrespondiente">
+      <div class="panel-heading">
+        {{'FECHAS_PARA_FORMALIZACION' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row" ng-repeat="periodoDeFormalizacion in formalizarSolicitud.coleccionFechasFormalizacion">
+          <label class="col-sm-12"> {{periodoDeFormalizacion.SesionHijo.Descripcion}} </label>
+          <!--label class="col-sm-5"> {{fecha.SesionHijo.TipoSesion.Nombre}} </label-->
+          <label class="col-sm-2">{{'FECHA_INICIO' | translate}}:</label>
+          <label class="col-sm-4">{{periodoDeFormalizacion.fechaInicioDeFormalizacion}}</label>
+          <label class="col-sm-2">{{'FECHA_FIN' | translate}}:</label>
+          <label class="col-sm-4">{{periodoDeFormalizacion.fechaFinDeFormalizacion}}</label>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div>

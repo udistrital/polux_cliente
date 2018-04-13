@@ -56,7 +56,7 @@ angular.module('poluxClienteApp')
         name: 'formalizarSolicitud',
         displayName: $translate.instant("FORMALIZAR_SOLICITUD"),
         width: '15%',
-        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro>'
+        cellTemplate: '<btn-registro ng-if="grid.appScope.formalizacionHabilitada" funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro>'
       }];
 
       /**
@@ -213,11 +213,9 @@ angular.module('poluxClienteApp')
           ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
         })
         .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
+          // Se define que el periodo no corresponde a la formalización de solicitudes
+          $scope.periodoDeFormalizacionNoCorrespondiente = true;
           // Se establece el mensaje de error porque no se encuentra en el periodo correspondiente
-          angular.forEach(ctrl.coleccionFechasFormalizacion, function(intervaloDeFormalizacion) {
-            console.log("fecha inicio formalización:", intervaloDeFormalizacion.fechaInicioDeFormalizacion);
-            console.log("fecha fin formalización:", intervaloDeFormalizacion.fechaFinDeFormalizacion);
-          });
           $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.NO_PERIODO_FORMALIZACION");
           // Se apaga el mensaje de carga
           $scope.cargandoSolicitudes = false;
@@ -270,7 +268,6 @@ angular.module('poluxClienteApp')
        * @return {[String]}                  [Devuelve la cadena de espacios académicos por su nombre]
        */
       ctrl.obtenerEspaciosAcademicosPorNombre = function(coleccionEspaciosAcademicos) {
-        console.log(coleccionEspaciosAcademicos)
         // Se define una variable que cargue el contenido
         var espaciosAcademicosPorNombre = "";
         // Se recorre la colección de objetos que son espacios académicos
@@ -502,7 +499,6 @@ angular.module('poluxClienteApp')
             $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
           }
         }).catch(function(excepcionCargandoUsuariosConSolicitudes) {
-          console.log("sad", excepcionCargandoUsuariosConSolicitudes);
           // Ocurre cuando hay un error durante la consulta
           deferred.reject(null);
           $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");

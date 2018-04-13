@@ -406,6 +406,7 @@ var text_es = {
     FECHAS_PROCESO_MATERIAS_POSGRADO:"Fechas del proceso de la modalidad de materias de posgrado",
     FECHA_INICIO:"Fecha de inicio",
     FECHA_FIN:"Fecha fin",
+    FECHAS_PARA_FORMALIZACION: "Fechas válidas para realizar el proceso de formalización",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -794,6 +795,7 @@ var text_en = {
     FECHAS_PROCESO_MATERIAS_POSGRADO:"Dates of the process of the postgraduate subjects modality",
     FECHA_INICIO:"Start date",
     FECHA_FIN:"End date",
+    FECHAS_PARA_FORMALIZACION: "Valid dates to carry out the formalization process",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
