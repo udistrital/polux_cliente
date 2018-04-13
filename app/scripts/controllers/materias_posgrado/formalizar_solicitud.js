@@ -289,8 +289,10 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
         return $.param({
-          query: "SolicitudTrabajoGrado.Id:" +
-            idSolicitudTrabajoGrado +
+          query: "Activo:true," +
+            "EstadoSolicitud.Id.in:5|6|7|8," +
+            "SolicitudTrabajoGrado.Id:" +
+            idSolicitudTrabajoGrado,
             /**
              * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
              * 5 - Opcionada para segunda convocatoria
@@ -300,8 +302,6 @@ angular.module('poluxClienteApp')
              * Tabla: respuesta_solicitud
              * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
              */
-            ",EstadoSolicitud.Id.in:5|6|7|8" +
-            ",Activo:true",
           limit: 1
         });
       }
@@ -352,8 +352,8 @@ angular.module('poluxClienteApp')
            * Tabla: detalle_solicitud
            * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
            */
-          query: "DetalleTipoSolicitud.Id:37" +
-            ",SolicitudTrabajoGrado.Id:" +
+          query: "DetalleTipoSolicitud.Id:37," +
+            "SolicitudTrabajoGrado.Id:" +
             idSolicitudTrabajoGrado,
           limit: 1
         });
@@ -404,8 +404,8 @@ angular.module('poluxClienteApp')
            * Tabla: modalidad_tipo_solicitud
            * Tablas asociadas: tipo_solicitud (2) y modalidad (2)
            */
-          query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13" +
-            ",Usuario:" +
+          query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13," +
+            "Usuario:" +
             $scope.userId,
           limit: 0
         });
