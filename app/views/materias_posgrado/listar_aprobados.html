@@ -11,7 +11,8 @@
       <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
       <div class="col-sm-10">
         <ui-select name="posgrado" ng-model="listarAprobados.posgradoSeleccionado" required on-select="listarAprobados.escogerPosgrado()" style="width:97%;" theme="bootstrap">
-          <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
+          <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">
+            {{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
           </ui-select-match>
           <ui-select-choices repeat="item.codigo_proyecto_curricular as item in listarAprobados.posgradosAsociados | filter: $select.search">
             <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
@@ -20,9 +21,9 @@
       </div>
     </div>
 
-    <br>
+    <br ng-if="periodoCorrespondienteHabilitado">
 
-    <div class="row" ng-if="seleccionDePosgrado">
+    <div class="row" ng-if="periodoCorrespondienteHabilitado">
       <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
       <div class="col-sm-10">
         <select ng-model="listarAprobados.periodoSeleccionado" ng-change="listarAprobados.consultarAprobados()">
@@ -33,18 +34,16 @@
       </div>
     </div>
 
-    <div class="row" ng-if="errorCargandoConsultasIniciales">
-      <div class="col-sm-10">
-        <label>{{'ERROR.SIN_INFO_ACADEMICA' | translate}}</label>
-      </div>
+    <div class="panel-body alert alert-danger" ng-if="errorCargandoConsultasIniciales">
+      <span ng-bind="mensajeErrorCargandoConsultasIniciales"></span>
     </div>
     
-    <loading tam="4" load="cargandoSolicitudesPosgradoAprobadas" message="msgCargandoAdmitidos"></loading>
+    <loading tam="4" load="cargandoSolicitudesAprobadas" message="msgCargandoAdmitidos"></loading>
     <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="resultadosConsulta.length > 0 && !sinDatosConsulta">
       <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.propiedadesCuadricula"></div>
     </div>
 
-    <br>
+    <br ng-if="sinResultados">
     
     <div class="panel-body alert alert-danger" ng-if="sinResultados">
       <span ng-bind="msgErrorConsultaAdmitidos"></span>

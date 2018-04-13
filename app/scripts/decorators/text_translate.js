@@ -236,6 +236,8 @@ var text_es = {
         FUERA_PERIODO_FORMALIZACION: "Este periodo no corresponde al periodo de formalización de solicitudes",
         FORMALIZAR_SOLICITUD: "Error al formalizar la solicitud",
         NO_PERIODO_FORMALIZACION: "Este periodo no corresponde a las fechas de formalización. Verifique que se encuentra en las fechas de formalización indicadas.",
+        SIN_INFO_SOLICITUDES_APROBADAS: "Información insuficiente para listar las solicitudes aprobadas al posgrado",
+        CARGANDO_SOLICITUDES_APROBADAS: "Error durante la consulta de las solicitudes aprobadas. Comuníquese con el administrador.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -626,6 +628,8 @@ var text_en = {
         FUERA_PERIODO_FORMALIZACION: "This period does not correspond to the period of requests formalization",
         FORMALIZAR_SOLICITUD: "Error formalizing the request",
         NO_PERIODO_FORMALIZACION: "This period does not correspond to the formalization dates. Verify that you are in the indicated formalization dates.",
+        SIN_INFO_SOLICITUDES_APROBADAS: "Insufficient information to list approved requests to the postgraduate",
+        CARGANDO_SOLICITUDES_APROBADAS: "Error during the query of the approved requests. Contact the administrator.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
