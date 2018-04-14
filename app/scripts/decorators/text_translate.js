@@ -210,6 +210,8 @@ var text_es = {
         ESTUDIANTE_NO_ENCONTRADO:"El estudiante no se encuentra",
         CARGAR_DATOS_TRABAJOS:"Ocurrio un error al cargar los datos de los trabajos de grado, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_TIPOS_SOLICITUD:"Ocurrio un error al cargar los tipos de solicitud, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DETALLES_SOLICITUD:"Ocurrio un error al cargar los detalles de la solicitud, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_OPCIONES_DETALLES_SOLICITUD:"Ocurrio un error al cargar las opciones de los detalles, por favor verifique su conexión, e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
