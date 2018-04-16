@@ -250,7 +250,7 @@
       .then(function(responsePeriodo) {
         if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
           ctrl.periodoActual = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
-          ctrl.periodo = ctrl.periodoActual.anio + ctrl.periodoActual.periodo;
+          ctrl.periodo = ctrl.periodoActual.anio + "-" + ctrl.periodoActual.periodo;
           defer.resolve();
         } else {
           ctrl.mensajeErrorCarga = $translate.instant("ERROR.SIN_PERIODO");
@@ -559,7 +559,7 @@
       var deferFechas = $q.defer();
       //si la solicitud es de materias de posgrado e inicial
       if (tipoSolicitud === 2 && modalidad === 2) {
-        ctrl.periodo = ctrl.periodoSiguiente.anio + ctrl.periodoSiguiente.periodo;
+        ctrl.periodo = ctrl.periodoSiguiente.anio + "-" + ctrl.periodoSiguiente.periodo;
         ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
         //traer fechas
         var parametrosSesiones = $.param({
@@ -776,11 +776,12 @@
                       });
                       defer.resolve();
                     } else if (detalle.Detalle.Nombre.includes("Espacio Academico Anterior")) {
-                      var getEspacio = function(detalle,asignatura,espacio){
+                      var getEspacio = function(detalle,espacio){
                         var defer = $q.defer();
                         academicaRequest.get("asignatura_pensum",[espacio.EspaciosAcademicosElegibles.CodigoAsignatura,espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum]).then(function(asignatura){
+                            detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
                             detalle.opciones.push({
-                              "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre,
+                              "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre + ", creditos: " + asignatura.data.asignatura.datosAsignatura[0].creditos,
                               "bd": espacio.EspaciosAcademicosElegibles.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre,
                             });
                             defer.resolve();
@@ -792,7 +793,7 @@
                       }
                       var promises = [];
                       angular.forEach(responseOpciones.data, function(espacio) {
-                        promises.push(getEspacio(detalle,asignatura,espacio));
+                        promises.push(getEspacio(detalle,espacio));
                       });
                       $q.all(promises).then(function(){
                         defer.resolve()
@@ -848,11 +849,12 @@
                       });
                     } else if (detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")) {
                       var promises = [];
-                      var getEspacio = function(detalle, asignatura, espacio){
+                      var getEspacio = function(detalle, espacio){
                         var defer = $q.defer();
                         academicaRequest.get("asignatura_pensum",[espacio.CodigoAsignatura,espacio.CarreraElegible.CodigoPensum]).then(function(asignatura){
+                          detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
                           detalle.opciones.push({
-                            "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre,
+                            "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre + ", creditos: " + asignatura.data.asignatura.datosAsignatura[0].creditos,
                             "bd": espacio.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre
                           });
                           defer.resolve();
@@ -870,7 +872,7 @@
                           }
                         });
                         if (!esta) {
-                          promises.push(getEspacio(detalle, asignatura, espacio));
+                          promises.push(getEspacio(detalle, espacio));
                         }
                       });
                       $q.all(promises).then(function(){
@@ -1226,7 +1228,7 @@
         "TrabajoGrado": {
           "Id": ctrl.trabajo_grado
         },
-        "PeriodoAcademico": parseInt(ctrl.periodo)
+        "PeriodoAcademico": ctrl.periodo
       };
     } else {
       data_solicitud = {
@@ -1234,7 +1236,7 @@
         "ModalidadTipoSolicitud": {
           "Id": ctrl.ModalidadTipoSolicitud
         },
-        "PeriodoAcademico": parseInt(ctrl.periodo)
+        "PeriodoAcademico": ctrl.periodo
       };
     }
     angular.forEach(ctrl.detalles, function(detalle) {
