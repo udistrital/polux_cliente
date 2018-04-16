@@ -79,6 +79,7 @@ angular.module('poluxClienteApp')
               ctrl.detallesSolicitud.id = ctrl.solicitud;
               ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
               ctrl.detallesSolicitud.fechaSolicitud = ctrl.dataSolicitud.Fecha.toString().substring(0, 10);
+              ctrl.detallesSolicitud.PeriodoAcademico = ctrl.dataSolicitud.PeriodoAcademico;
               angular.forEach(responseEstudiantes.data,function(estudiante){
                   solicitantes += (", "+estudiante.Usuario) ;
               });

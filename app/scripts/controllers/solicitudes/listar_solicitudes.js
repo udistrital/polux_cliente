@@ -13,10 +13,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  $scope.userId = "60261576";
-  ctrl.userRole = "coordinador";
-  //$scope.userId = "20131020002";
-  //ctrl.userRole = "estudiante";
+  //$scope.userId = "60261576";
+  //ctrl.userRole = "coordinador";
+  $scope.userId = "20141020036";
+  ctrl.userRole = "estudiante";
   ctrl.userId = $scope.userId;
 
   $scope.$watch("userId",function() {
@@ -114,10 +114,10 @@ angular.module('poluxClienteApp')
       });
       return promise;
     }
-    if(solicitud.EstadoSolicitud.Nombre === 'Rechazada'){
+    if(solicitud.EstadoSolicitud.Id === 2){
       resultado = $translate.instant('SOLICITUD_RECHAZADA');
       defered.resolve(resultado);
-    } else if(solicitud.EstadoSolicitud.Nombre === 'Aprobada por consejo de carrera'){
+    } else if(solicitud.EstadoSolicitud.Id === 3){
       resultado = $translate.instant('SOLICITUD_ES_APROBADA');
       switch(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id){
         //solicitud inicial
@@ -177,7 +177,16 @@ angular.module('poluxClienteApp')
           break;
       }
 
-    }else{
+    } else if (solicitud.EstadoSolicitud.Id === 5) {
+      resultado = $translate.instant('SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA');
+      defered.resolve(resultado);
+    } else if(solicitud.EstadoSolicitud.Id === 6) {
+      resultado = $translate.instant('SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES');
+      defered.resolve(resultado);
+    } else if(solicitud.EstadoSolicitud.Id === 7) {
+      resultado = $translate.instant("SOLICITUD_APROBADA_EXENTA");
+      defered.resolve(resultado);
+    } else {
       defered.resolve(resultado);
     }
     return promise;
@@ -261,6 +270,7 @@ angular.module('poluxClienteApp')
                     ctrl.conSolicitudes = true;
                   }
                   ctrl.gridOptions.data = ctrl.solicitudes;
+                  console.log(ctrl.solicitudes)
                   $scope.load = false;
               }).catch(function(error){
                   console.log(error);
@@ -463,8 +473,10 @@ angular.module('poluxClienteApp')
             limit:0
           });
           poluxRequest.get("documento_solicitud",parametrosDocumentoSolicitud).then(function(documento){
-            ctrl.detallesSolicitud.documento = documento.data[0].DocumentoEscrito;
-            defer.resolve(documento);
+            if(documento.data !== null){
+              ctrl.detallesSolicitud.documento = documento.data[0].DocumentoEscrito;
+            }
+            defer.resolve();
           });
         }else{
           defer.resolve();
@@ -486,6 +498,7 @@ angular.module('poluxClienteApp')
               ctrl.detallesSolicitud.fechaSolicitud = fila.entity.Fecha;
               ctrl.detallesSolicitud.estado = fila.entity.Estado;
               ctrl.detallesSolicitud.modalidad = fila.entity.Modalidad;
+              ctrl.detallesSolicitud.PeriodoAcademico = fila.entity.Respuesta.SolicitudTrabajoGrado.PeriodoAcademico;
               ctrl.detallesSolicitud.respuesta= fila.entity.Respuesta.Justificacion;
               ctrl.mostrarResultado(fila.entity.Respuesta,ctrl.detallesSolicitud).then(function(resultado){
                 ctrl.detallesSolicitud.resultado = resultado;

@@ -14,6 +14,7 @@
   $scope.loadParametros = true;
   $scope.cargandoParametros = $translate.instant("LOADING.CARGANDO_PARAMETROS");
   $scope.cargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
+  $scope.cargandoRespuestas = $translate.instant('LOADING.REGISTRANDO_RESPUESTAS');
 
   var ctrl = this;
 
@@ -24,6 +25,44 @@
     //cedula coordinador
     $scope.userId = "12237136";
     //uigrid
+    ctrl.gridOptionsAdmitidos = {
+      enableSorting: false,
+    }
+
+    ctrl.gridOptionsAdmitidos.columnDefs = [
+    {
+      name: 'estudiante',
+      displayName: 'Código',
+      width: "20%"
+    },
+    {
+      name: 'nombre',
+      displayName: 'Nombre',
+      width: "40%"
+    },
+    {
+      name: 'promedio',
+      displayName: 'Promedio',
+      width: "15%",
+      sort: {
+        direction: uiGridConstants.DESC,
+        priority: 0
+      }
+    },
+    {
+      name: 'rendimiento',
+      displayName: 'Rendimiento Académico',
+      width: "25%",
+      sort: {
+        direction: uiGridConstants.DESC,
+        priority: 1
+      }
+    },
+    ];
+
+    ctrl.gridOptionsOpcionados = JSON.parse(JSON.stringify(ctrl.gridOptionsAdmitidos));
+    ctrl.gridOptionsNoAdmitidos = JSON.parse(JSON.stringify(ctrl.gridOptionsAdmitidos));
+
     ctrl.gridOptions = {
       enableSorting: false,
     };
@@ -43,12 +82,12 @@
     {
       name: 'estudiante',
       displayName: 'Código',
-      width: "12%"
+      width: "10%"
     },
     {
       name: 'nombre',
       displayName: 'Nombre',
-      width: "27%"
+      width: "23%"
     },
     {
       name: 'promedio',
@@ -62,7 +101,7 @@
     {
       name: 'rendimiento',
       displayName: 'Rendimiento Académico',
-      width: "17%",
+      width: "15%",
       sort: {
         direction: uiGridConstants.DESC,
         priority: 1
@@ -71,45 +110,37 @@
     {
       name: 'estado.Nombre',
       displayName: 'Estado',
-      width: "18%"
+      width: "16%"
+    },
+    {
+      name: 'aprobar',
+      displayName: 'Admitir',
+      width: "10%",
+      cellTemplate: '<center><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div><center>',
     }
     ];
 
+    ctrl.getPeriodoAnterior  = function(){
+      var defer =  $q.defer()
+      academicaRequest.get("periodo_academico", "P")
+      .then(function (responsePeriodo) {
+        if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
+          ctrl.periodoAnterior = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+          console.log(ctrl.periodoAnterior);
+          defer.resolve(ctrl.periodoAnterior);
+        }else{
+          ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
+          defer.reject("sin periodo");
+        }        
+      })
+      .catch(function(){
+        ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+        defer.reject("no se pudo cargar periodo");
+      }); 
+      return defer.promise;
+    }
 
-    /*
-    poluxMidRequest.get("fechas/ObtenerFechas").then(function (response) {
-      var momentDate = null;
-
-      $scope.fechaActual = new Date();
-      momentDate = moment($scope.fechaActual);
-      $scope.fechaActual = momentDate.format("YYYY-MM-DD");
-
-      $scope.fecha_inicio = new Date(response.data['inicio_proceso'].replace(/'/g, ""));
-      momentDate = moment($scope.fecha_inicio);
-      $scope.fecha_inicio = momentDate.format("YYYY-MM-DD");
-
-      $scope.fecha_fin = new Date(response.data['fecha_fin'].replace(/'/g, ""));
-      momentDate = moment($scope.fecha_fin);
-      $scope.fecha_fin = momentDate.format("YYYY-MM-DD");
-
-      $scope.segunda_fecha = new Date(response.data['segunda_fecha'].replace(/'/g, ""));
-      momentDate = moment($scope.segunda_fecha);
-      $scope.segunda_fecha = momentDate.format("YYYY-MM-DD");
-
-      $scope.cupos_excelencia_ingresado = null;
-      $scope.cupos_adicionales_ingresado = null;
-      //Consultar cupos
-      poluxMidRequest.get("cupos/Obtener").then(function (response) {
-        console.log(response.data);
-        $scope.cupos_excelencia = response.data.Cupos_excelencia;
-        $scope.cupos_adicionales = response.data.Cupos_adicionales;
-      });
-
-    }).catch(function (rta) {
-      console.log(rta);
-    });
-    */
-    ctrl.getPeriodo  = function(){
+    ctrl.getPeriodoActual  = function(){
       var defer =  $q.defer()
       academicaRequest.get("periodo_academico", "X")
       .then(function (responsePeriodo) {
@@ -147,6 +178,7 @@
       });
       return defer.promise
     }
+
 
     ctrl.getFechas = function(periodo){
       var defer =  $q.defer()
@@ -192,12 +224,34 @@
       return defer.promise
     }
     
+
+    ctrl.getCupos = function(){
+      var defer = $q.defer();
+      poluxMidRequest.get("cupos/Obtener").then(function (responseCupos) {
+        //$scope.cupos_excelencia = response.data.Cupos_excelencia;
+        //$scope.cupos_adicionales = response.data.Cupos_adicionales;
+        ctrl.cuposDisponibles = responseCupos.data.Cupos_excelencia + responseCupos.data.Cupos_adicionales;
+        ctrl.numeroAdmitidos = 0;
+        defer.resolve(ctrl.cuposDisponibles);
+      })
+      .catch(function(){
+        ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CUPOS");
+        defer.reject("no se pudo cargar fechas")
+      });
+      return defer.promise;
+    }
+
     ctrl.cargarParametros = function(){
-      ctrl.getPeriodo()
+      ctrl.getPeriodoActual()
       .then(function(periodo){
         console.log(periodo)
         if(!angular.isUndefined(periodo)){
-          $q.all([ctrl.getFechas(periodo),ctrl.getCarrerasCoordinador()])
+          var promises = [];
+          promises.push(ctrl.getPeriodoAnterior());
+          promises.push(ctrl.getFechas(periodo));
+          promises.push(ctrl.getCarrerasCoordinador());
+          promises.push(ctrl.getCupos());
+          $q.all(promises)
           .then(function(){
             console.log(periodo)
             console.log(ctrl.fechas);
@@ -225,643 +279,245 @@
 
     ctrl.cargarParametros();
 
+    ctrl.cargarParametrosSolicitud = function(value){
+      var defer = $q.defer();
+      //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
+      var parametros = $.param({
+        query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
+      });
+      poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
+        if (detalleSolicitud.data !== null) {
+          var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+          if (ctrl.carrera == carreraSolicitud.Codigo) {
+            var parametros = $.param({
+              query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
+            });
+            poluxRequest.get("usuario_solicitud", parametros).then(function (usuarioSolicitud) {
+              academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function (response2) {
+              //academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
+                if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
+                  var solicitud = {
+                    "solicitud": value.SolicitudTrabajoGrado.Id,
+                    "fecha": value.Fecha,
+                    "estudiante": usuarioSolicitud.data[0].Usuario,
+                    "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                    "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                    "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                    "estado": value.EstadoSolicitud,
+                    //"respuesta": ""+value.Id,
+                    "respuestaSolicitud": value
+                  };
+                  if(solicitud.estado.Id==7 || solicitud.estado.Id==8){
+                    solicitud.aprobado = true;
+                    ctrl.numeroAdmitidos += 1;
+                  }else{
+                    solicitud.aprobado = false;
+                  }
+                  if(solicitud.estado.Id==3 || solicitud.estado.Id==5){
+                    solicitud.permitirAprobar = true;
+                  }else{
+                    solicitud.permitirAprobar = false;
+                  }
+                  $scope.sols.push(solicitud);        
+                  defer.resolve();
+                }else{
+                  defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
+                }
+              })
+              .catch(function(error){
+                console.log(error);
+                defer.reject("ERROR.CARGAR_DATOS_ESTUDIANTES");
+              });
+            })
+            .catch(function(error){
+              console.log(error);
+              defer.reject("ERROR.CARGAR_SOLICITANTES");
+            });
+          }else{
+            //solicitud no pertenece a la carrera
+            defer.resolve();
+          }
+        }else{
+          defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
+        }
+      })
+      .catch(function(){
+        defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
+      });
+      return defer.promise;
+    }
+
     //solicitudes iniciales de la modalidad de materias de posgrado
     ctrl.buscarSolicitudes = function (carrera) {
       $scope.loadSolicitudes = true;
       ctrl.carrera = carrera;
       $scope.carrera = carrera;
+      ctrl.numeroAdmitidos = 0;
       if (carrera) {
         $scope.sols = [];
-
         var parametros = $.param({
-          query: "Activo:true,EstadoSolicitud.Id.in:6|7|8|9|10",
+          query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
           limit: 0
         });
         poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
-
+          var promises = [];
           angular.forEach(respuestaSolicitud.data, function (value) {
-
             if (value != null) {
-              //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
-              var parametros = $.param({
-                query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-              });
-              poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                if (detalleSolicitud.data !== null) {
-                  var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-
-                  if (ctrl.carrera == carreraSolicitud.Codigo) {
-                    var parametros = $.param({
-                      query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-                    });
-                    poluxRequest.get("usuario_solicitud", parametros).then(function (usuarioSolicitud) {
-
-                      academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
-
-                        academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
-                          if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-                            var solicitud = {
-                              "solicitud": value.SolicitudTrabajoGrado.Id,
-                              "fecha": value.Fecha,
-                              "estudiante": usuarioSolicitud.data[0].Usuario,
-                              "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                              "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                              "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                              "estado": value.EstadoSolicitud,
-                              //"respuesta": ""+value.Id,
-                              "respuestaSolicitud": value
-                            };
-                            $scope.sols.push(solicitud);
-                          }
-                        });
-
-                      });
-
-                    });
-                  }
-                }
-              });
+              promises.push(ctrl.cargarParametrosSolicitud(value));
             }
           });
+          $q.all(promises).then(function(){
+            $scope.loadSolicitudes = false;
+          })
+          .catch(function(error){
+            $scope.mensajeErrorSolicitudes = $translate.instant(error);
+            $scope.errorCargarSolicitudes = true;
+            $scope.loadSolicitudes = false;
+            console.log(error);
+         });
+        })
+        .catch(function(){
+          $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+          $scope.errorCargarSolicitudes = true;
           $scope.loadSolicitudes = false;
+          console.log("error traer respuestas")
         });
-
         ctrl.gridOptions.data = $scope.sols;
-
       }
     }
 
-    ctrl.seleccionAdmitidos = function (sols, rta) {
-      //Enviar las solicitudes y # Admitidos
-      $scope.rta3 = {
-        'Usuario': $scope.userId,
-        'Fecha': new Date(),
-        'NumAdmitidos': rta,
-        'Solicitudes': sols
-      };
-      console.log($scope.rta3);
 
-      poluxMidRequest.post("seleccion/Seleccionar", $scope.rta3).then(function (response) {
+    ctrl.admitirPrimeraFecha = function(){
+      if(ctrl.numeroAdmitidos <= ctrl.cuposDisponibles){
+        ctrl.opcionados = [];
+        ctrl.admitidos = [];
+        ctrl.noAdmitidos = [];
+        ctrl.gridOptionsAdmitidos.data = [];
+        ctrl.gridOptionsOpcionados.data = [];
+        angular.forEach($scope.sols, function(solicitud){
+          if(solicitud.aprobado===true){
+            ctrl.admitidos.push(solicitud);
+          }else{
+            ctrl.opcionados.push(solicitud);
+          }
+        });
+        ctrl.fecha = 1;
+        ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
+        ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
+        //console.log(ctrl.admitidos, ctrl.opcionados);
+        $('#modalAdmitir').modal('show')
+      }else{
         swal(
-          'Solicitudes aprobadas',
-          'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
-          'success'
-          )
-        //recargar datos
-        ctrl.buscarSolicitudes($scope.carrera);
-      });
-
-    }
-
-    ctrl.buscarEstudianteTg = function (tg) {
-      var parametros = $.param({
-        query: "IdTrabajoGrado:" + tg.IdTrabajoGrado.Id,
-        fields: "CodigoEstudiante"
-      });
-      //buscar la solicitudes
-
-      academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
-        poluxRequest.get("estudiante_tg", parametros).then(function (response) {
-          academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].CodigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
-            if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-              var solicitud = {
-                "solicitud": tg.Id,
-                "fecha": tg.Fecha,
-                "estudiante": response.data[0].CodigoEstudiante.toString(),
-                "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                "estado": tg.Estado,
-                "formalizacion": tg.Formalizacion
-              };
-              $scope.sols.push(solicitud);
-            }
-          });
-
-        });
-      });
-
-    }
-
-    ctrl.gridOptions.onRegisterApi = function (gridApi) {
-      ctrl.gridApi = gridApi
-    };
-
-    ctrl.solicitudes2 = function () {
-
-      if ($scope.carrera) {
-        $scope.aprobadas = [];
-        $scope.aprobadas2 = [];
-        ctrl.aprobadasPago = [];
-        ctrl.solsBase = [];
-
-        /*Solicitudes aprobadas y con formalizacion pendiente (7) quedan en estado rechazado (5)
-        Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente*/
-        var parametros = $.param({
-          query: "EstadoSolicitud.Id:7",
-          limit: 0
-        });
-        poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
-          angular.forEach(respuestaSolicitud.data, function (value) {
-            //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
-            if (value != null) {
-              var parametros = $.param({
-                query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-              });
-              poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                if (detalleSolicitud.data != null) {
-                  console.log(detalleSolicitud.data[0].Descripcion);
-                  var res = detalleSolicitud.data[0].Descripcion.split(",");
-                  //carrera solicitada
-                  var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-                  if ($scope.carrera == carreraSolicitud.Codigo) {
-                    value.EstadoSolicitud.Id = 5;
-                    poluxRequest.put("respuesta_solicitud", value.Id, value).then(function (response) {
-                      console.log("response.data confirmado: " + response.data);
-                    });
-                  }
-                }
-              });
-            }
-          });
-        });
-
-        /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
-        var parametros = $.param({
-          query: "EstadoSolicitud.Id:8",
-          limit: 0
-        });
-        poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
-          angular.forEach(respuestaSolicitud.data, function (value) {
-            //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
-            if (value != null) {
-              var parametros = $.param({
-                query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-              });
-              poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                if (detalleSolicitud.data != null) {
-                  var res = detalleSolicitud.data[0].Descripcion.split(",");
-                  //carrera solicitada
-                  var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-                  if ($scope.carrera == carreraSolicitud.Codigo) {
-                    value.EstadoSolicitud.Id = 5;
-                    poluxRequest.put("respuesta_solicitud", value.Id, value).then(function (response) {
-                      console.log("response.data confirmado: " + response.data);
-                    });
-                  }
-                }
-              });
-            }
-          });
-        });
-
-        //obtener # de cupos
-        var parametros = $.param({
-          query: "CodigoCarrera:" + ctrl.carrera + ",Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo
-        });
-
-        poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-
-          if (response.data[0].CuposExcelencia > 0 && response.data[0].CuposAdicionales > 0) {
-            $scope.cupos_excelencia_ingresado = response.data[0].CuposExcelencia;
-            $scope.cupos_adicionales_ingresado = response.data[0].CuposAdicionales;
-
-            //sols aprobadas y con formalizacion:confirmado
-            ctrl.totalSols = 0;
-
-            var parametros = $.param({
-              query: "EstadoSolicitud.Id:9",
-              limit: 0
-            });
-
-            poluxRequest.get("respuesta_solicitud", parametros).then(function (response) {
-              var arrayPromise = [];
-
-              if (response.data != null) {
-                angular.forEach(response.data, function (value) {
-                  var defered = $q.defer();
-                  var promise = defered.promise;
-
-                  //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
-                  if (value != null) {
-                    var parametros = $.param({
-                      query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-                    });
-                    poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                      if (detalleSolicitud.data != null) {
-                        var res = detalleSolicitud.data[0].Descripcion.split(",");
-                        var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-
-                        defered.resolve(value);
-                        if (ctrl.carrera == carreraSolicitud.Codigo) {
-                          $scope.aprobadas.push(value);
-                        }
-                      }
-                    });
-                    arrayPromise.push(promise);
-                  }
-                });
-
-              }
-
-              var cuposDisponibles = 0;
-              $q.all(arrayPromise).then(function () {
-                console.log($scope.aprobadas);
-                console.log($scope.aprobadas.length);
-                if ($scope.aprobadas != null) {
-                  ctrl.totalSols = $scope.aprobadas.length;
-                  console.log(ctrl.totalSols);
-
-                  if ($scope.cupos_excelencia_ingresado != ctrl.totalSols) {
-                    cuposDisponibles = $scope.cupos_excelencia_ingresado - ctrl.totalSols;
-                    console.log("HAY más cupos, Total:" + cuposDisponibles);
-                  } else {
-                    console.log("No hay más cupos");
-                  }
-                }
-              }).catch(function (error) {
-                console.log(error);
-              });
-
-              //sols aprobadas con pago y con formalizacion:confirmado
-              var totalSolsPago = 0;
-              var parametros = $.param({
-                query: "EstadoSolicitud.Id:10",
-                limit: 0
-              });
-              poluxRequest.get("respuesta_solicitud", parametros).then(function (response) {
-                var arrayPromise = [];
-                angular.forEach(response.data, function (value) {
-                  var defered = $q.defer();
-                  var promise = defered.promise;
-                  //verificar carrera solicitada por el estudiante corresponda con carrera del coordinador
-                  if (value != null) {
-                    var parametros = $.param({
-                      query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-                    });
-                    poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                      if (detalleSolicitud.data != null) {
-                        var res = detalleSolicitud.data[0].Descripcion.split(",");
-                        //carrera solicitada
-                        var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-                        defered.resolve(value);
-                        if ($scope.carrera == carreraSolicitud.Codigo) {
-                          ctrl.aprobadasPago.push(value.SolicitudTrabajoGrado);
-                        }
-                      }
-                    });
-                    arrayPromise.push(promise);
-                  }
-                });
-
-                var cuposDisponiblesPago = 0;
-                $q.all(arrayPromise).then(function () {
-                  if (ctrl.aprobadasPago != null) {
-                    totalSolsPago = ctrl.aprobadasPago.length;
-
-                    if ($scope.cupos_adicionales_ingresado != totalSolsPago) {
-                      cuposDisponiblesPago = $scope.cupos_adicionales_ingresado - totalSolsPago;
-                      console.log("HAY más cupos, Total:" + cuposDisponiblesPago);
-                    } else {
-                      console.log("No hay más cupos");
-                    }
-                  }
-                }).catch(function (error) {
-                  console.log(error);
-                });
-
-                //buscar las solicitudes con estado:opcionado
-                if ($scope.carrera) {
-
-                  var parametros = $.param({
-                    query: "EstadoSolicitud.Id:6",
-                    limit: 0
-                  });
-                  //buscar las solicitudes
-                  $scope.solsOpcionados = [];
-                  poluxRequest.get("respuesta_solicitud", parametros).then(function (responseSolicitudes) {
-
-                    angular.forEach(responseSolicitudes.data, function (value) {
-                      console.log(value);
-                      if (value != null) {
-                        //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
-                        var parametros = $.param({
-                          query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-                        });
-                        poluxRequest.get("detalle_solicitud", parametros).then(function (detalleSolicitud) {
-                          if (detalleSolicitud.data != null) {
-                            var res = detalleSolicitud.data[0].Descripcion.split(",");
-                            //código la carrera solicitada
-                            var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
-
-                            if (ctrl.carrera == carreraSolicitud.Codigo) {
-                              var parametros = $.param({
-                                query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
-                              });
-                              poluxRequest.get("usuario_solicitud", parametros).then(function (usuarioSolicitud) {
-
-                                academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
-                                  academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
-                                    if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-
-                                      var solicitud = {
-                                        "solicitud": value.Id,
-                                        "fecha": value.Fecha,
-                                        "estudiante": usuarioSolicitud.data[0].Usuario,
-                                        "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                                        "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                                        "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                                        "estado": value.EstadoSolicitud,
-                                        "respuesta": "" + value.Id
-                                      };
-                                      console.log(solicitud);
-                                      ctrl.agregar($scope.solsOpcionados, solicitud);
-                                      if ($scope.solsOpcionados.length == responseSolicitudes.data.length) {
-                                        ctrl.rta = {
-                                          'cupos_excelencia': cuposDisponibles,
-                                          'cupos_adicionales': cuposDisponiblesPago
-                                        };
-                                        ctrl.seleccionAdmitidos($scope.solsOpcionados, ctrl.rta);
-                                      }
-                                    }
-                                  });
-
-                                });
-
-                              });
-                            }
-                          }
-                        });
-                      }
-                    });
-
-
-                  });
-
-                }
-
-              });
-});
-}
-});
-
-}
-
-}
-
-ctrl.agregar = function (arreglo, solicitud) {
-  arreglo.push(solicitud);
-  console.log(arreglo);
-}
-
-ctrl.solicitudes3 = function () {
-  console.log("Selección de admitidos 3");
-      //Solicitudes aprobadas y con formalizacion pendiente quedan en estado rechazado
-      //Se deben cancelar las Solicitudes aprobadas con formalizacion:pendiente
-      var parametros = $.param({
-        query: "EstadoSolicitud.Id:7",
-        limit: 0
-      });
-      poluxRequest.get("respuesta_solicitud", parametros).then(function (response) {
-        angular.forEach(response.data, function (value) {
-          value.EstadoSolicitud.Id = 5;
-          poluxRequest.put("respuesta_solicitud", value.Id, value).then(function (response) {
-            console.log("response.data confirmado: " + response.data);
-          });
-        });
-      });
-
-      /* Se deben cancelar las Solicitudes aprobadas con pago y que tengan formalizacion:pendiente */
-      var parametros = $.param({
-        query: "EstadoSolicitud.Id:8",
-        limit: 0
-      });
-
-      poluxRequest.get("respuesta_solicitud", parametros).then(function (response) {
-        angular.forEach(response.data, function (value) {
-          value.EstadoSolicitud.Id = 5;
-          poluxRequest.put("respuesta_solicitud", value.Id, value).then(function (response) {
-            console.log("response.data confirmado: " + response.data);
-            swal(
-              'Solicitudes aprobadas',
-              'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
-              'success'
-              )
-            //recargar datos
-            ctrl.buscarSolicitudes($scope.carrera);
-          });
-        });
-      });
-
-      swal(
-        'Solicitudes aprobadas',
-        'Se cancelan las solicitudes aprobadas/aprobadas con pago que no estén formalizadas',
-        'success'
+          $translate.instant('ERROR'),
+          $translate.instant('ERROR.NUMERO_ADMITIDOS',{cuposDisponibles:ctrl.cuposDisponibles}),
+          'warning'
         )
-      //recargar datos
-      ctrl.buscarSolicitudes($scope.carrera);
-
+      }
     }
 
-    ctrl.allsQ = [];
-    ctrl.rendimiento = 0;
-    ctrl.economicas = 0;
-
-    ctrl.openDialog = function ($event) {
-      $mdDialog.show({
-        controller: function ($timeout, $q, $scope, $mdDialog) {
-
-
-          var parametros = $.param({
-            query: "CodigoCarrera:" + ctrl.carrera + ",Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo
-          });
-          poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-            console.log(response.data);
-            if (response.data[0].CuposExcelencia > 0 && response.data[0].CuposAdicionales > 0) {
-              $scope.cupos_excelencia_ingresado = response.data[0].CuposExcelencia;
-              $scope.cupos_adicionales_ingresado = response.data[0].CuposAdicionales;
-            }
-
-          });
-
-          var questList = this;
-          $scope.cancel = function ($event) {
-            $mdDialog.cancel();
-          };
-          $scope.finish = function ($event) {
-            $mdDialog.hide();
-          };
-          $scope.answer = function (answer) {
-            $mdDialog.hide(answer);
-          };
-        },
-
-        controllerAs: 'self',
-        templateUrl: 'dialog.tmpl.html',
-        parent: angular.element(document.body),
-        targetEvent: $event,
-        clickOutsideToClose: true,
-        locals: {
-          parent: $scope
-        },
-          //bindToController: true,
-
-
-          scope: $scope,
-          preserveScope: true,
-
-        })
-      .then(function (answer) {
-        ctrl.status = answer;
-        ctrl.rendimiento = $scope.cupos_excelencia_ingresado;
-        ctrl.economicas = $scope.cupos_adicionales_ingresado;
-
-        ctrl.rta = {
-          'cupos_excelencia': ctrl.rendimiento,
-          'cupos_adicionales': ctrl.economicas
-        };
-
-        ctrl.rta2 = {
-          'NumAdmitidos': ctrl.rta,
-          'Solicitudes': $scope.sols
-        };
-        console.log($scope.sols);
-
-          //Guardar el # de cupos ingresados
-          /* buscar carrera en carrera_elegible*/
-          var parametros = $.param({
-            query: "CodigoCarrera:" + $scope.carrera + ",Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo
-          });
-          poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-
-            if (response.data[0].CuposExcelencia == 0 && response.data[0].CuposAdicionales == 0) {
-              response.data[0].CuposExcelencia = ctrl.rendimiento;
-              response.data[0].CuposAdicionales = ctrl.economicas;
-
-              poluxRequest.put("carrera_elegible", response.data[0].Id, response.data[0]).then(function (response) {
-                console.log(response.data);
-              });
-            }
-
-          });
-
-          //Enviar las solicitudes y # Admitidos
-          poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function (response) {
-            swal(
-              'Solicitudes aprobadas',
-              'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
-              'success'
-              )
-            console.log(response);
-            //recargar datos
-            ctrl.buscarSolicitudes($scope.carrera);
-          });
-        }, function () {
-          ctrl.status = 'You cancelled the dialog.';
+    ctrl.admitirSegundaFecha = function(){
+      if(ctrl.numeroAdmitidos <= ctrl.cuposDisponibles){
+        ctrl.opcionados = [];
+        ctrl.admitidos = [];
+        ctrl.noAdmitidos = [];
+        ctrl.gridOptionsAdmitidos.data = [];
+        ctrl.gridOptionsNoAdmitidos.data = [];
+        angular.forEach($scope.sols, function(solicitud){
+          if(solicitud.aprobado===true){
+            ctrl.admitidos.push(solicitud);
+          }else{
+            ctrl.noAdmitidos.push(solicitud);
+          }
         });
-    };
+        ctrl.fecha = 2;
+        ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
+        ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
+        //console.log(ctrl.admitidos, ctrl.noAdmitidos);
+        $('#modalAdmitir').modal('show')
+      }else{
+        swal(
+          $translate.instant('ERROR'),
+          $translate.instant('ERROR.NUMERO_ADMITIDOS',{cuposDisponibles:ctrl.cuposDisponibles}),
+          'warning'
+        )
+      }
+    }
 
-
-    ctrl.admitidos1 = function () {
-      ctrl.rendimiento = $scope.cupos_excelencia_ingresado;
-      ctrl.economicas = $scope.cupos_adicionales_ingresado;
-
-      ctrl.rta = {
-        'cupos_excelencia': ctrl.rendimiento,
-        'cupos_adicionales': ctrl.economicas
-      };
-
-      ctrl.rta2 = {
-        'NumAdmitidos': ctrl.rta,
-        'Solicitudes': $scope.sols
-      };
-      console.log($scope.sols);
-
-      //Guardar el # de cupos ingresados
-      /* buscar carrera en carrera_elegible*/
-      var parametros = $.param({
-        query: "CodigoCarrera:" + $scope.carrera + ",Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo
+    ctrl.admitir = function(){
+      var date = new Date();
+      var respuestasNuevas = [];
+      var respuestasUpdate = [];
+      angular.forEach($scope.sols, function(solicitud){
+        if(solicitud.permitirAprobar){
+          solicitud.respuestaSolicitud.Activo = false;
+          respuestasUpdate.push(solicitud.respuestaSolicitud);
+          var respuestaTemp = {
+            "Activo":true,
+            "EnteResponsable":0,
+            "Usuario": parseInt($scope.userId),
+            "EstadoSolicitud":{
+              "Id": 0,
+            },
+            "Fecha":date,
+            "SolicitudTrabajoGrado":{
+              "Id": solicitud.solicitud,
+            }
+          }
+          if(solicitud.aprobado === true){
+            respuestaTemp.EstadoSolicitud.Id = 7;
+            respuestaTemp.Justificacion = "Solicitud Aprobada por el Posgrado"
+          }else{
+            respuestaTemp.EstadoSolicitud.Id = (ctrl.fecha===1)? 5 : 6;
+            respuestaTemp.Justificacion = (ctrl.fecha===1)? "Opcionada para segunda convocatoria" : "Rechazada por falta de cupos";
+          }
+          respuestasNuevas.push(respuestaTemp);
+        }
       });
-      poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-
-        if (response.data[0].CuposExcelencia == 0 && response.data[0].CuposAdicionales == 0) {
-          response.data[0].CuposExcelencia = ctrl.rendimiento;
-          response.data[0].CuposAdicionales = ctrl.economicas;
-
-          poluxRequest.put("carrera_elegible", response.data[0].Id, response.data[0]).then(function (response) {
-            console.log(response.data);
-          });
+      var dataAdmitidos = {
+        "RespuestasNuevas": respuestasNuevas,
+        "RespuestasAntiguas": respuestasUpdate,
+      }
+      $scope.loadRespuestas = true;
+      console.log("dataAdmitidos",dataAdmitidos)
+      $('#modalAdmitir').modal('hide')
+      poluxRequest.post("tr_seleccion_admitidos", dataAdmitidos).then(function (response) {
+        $scope.loadRespuestas = false;
+        console.log("Repsuesta",response.data);
+        if(response.data[0]==="Success"){
+          swal(
+            $translate.instant('MATERIAS_POSGRADO.PROCESO_ADMISION_COMPLETO'),
+            $translate.instant('MATERIAS_POSGRADO.RESPUESTAS_SOLICITUD'),
+            'success'
+            )
+          //recargar datos
+          ctrl.buscarSolicitudes($scope.carrera);
+        }else{
+          swal(
+            $translate.instant('ERROR'),
+            $translate.instant(response.data[1]),
+            'warning'
+            )
         }
 
-      });
-
-      //Enviar las solicitudes y # Admitidos
-      poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function (response) {
+      })
+      .catch(function(error){
+        console.log(error);
+        $scope.loadRespuestas = false;
         swal(
-          'Solicitudes aprobadas',
-          'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
-          'success'
+          $translate.instant('ERROR'),
+          $translate.instant('ERROR_CARGAR_SOLICITUDES'),
+          'warning'
           )
-        console.log(response);
-        //recargar datos
-        ctrl.buscarSolicitudes($scope.carrera);
-        $('#modalCupos').modal('hide');
-        $scope.cupos_excelencia_ingresado = "";
-        $scope.cupos_adicionales_ingresado = "";
-
       });
     }
 
-
-    ///////////////////////////////////
-    ctrl.admitidos = function () {
-      ctrl.status = answer;
-      ctrl.rendimiento = $scope.cupos_excelencia_ingresado;
-      ctrl.economicas = $scope.cupos_adicionales_ingresado;
-
-      ctrl.rta = {
-        'cupos_excelencia': ctrl.rendimiento,
-        'cupos_adicionales': ctrl.economicas
-      };
-
-      ctrl.rta2 = {
-        'NumAdmitidos': ctrl.rta,
-        'Solicitudes': $scope.sols
-      };
-      console.log($scope.sols);
-
-      //Guardar el # de cupos ingresados
-      /* buscar carrera en carrera_elegible*/
-      var parametros = $.param({
-        query: "CodigoCarrera:" + $scope.carrera + ",Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo
-      });
-      poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-
-        if (response.data[0].CuposExcelencia == 0 && response.data[0].CuposAdicionales == 0) {
-          response.data[0].CuposExcelencia = ctrl.rendimiento;
-          response.data[0].CuposAdicionales = ctrl.economicas;
-
-          poluxRequest.put("carrera_elegible", response.data[0].Id, response.data[0]).then(function (response) {
-            console.log(response.data);
-          });
-        }
-
-      });
-
-      //Enviar las solicitudes y # Admitidos
-      poluxMidRequest.post("seleccion/Seleccionar", ctrl.rta2).then(function (response) {
-        swal(
-          'Solicitudes aprobadas',
-          'Las solicitudes en la modalidad de espacios académicos de posgrado han sido aprobadas',
-          'success'
-          )
-        console.log(response);
-        //recargar datos
-        ctrl.buscarSolicitudes($scope.carrera);
-      });
-    };
-
-    ///////////////////////////////////
+    ctrl.verificarDisponibilidad = function(solicitud){
+      if(!solicitud.aprobado){
+        ctrl.numeroAdmitidos += 1;
+      }else{
+        ctrl.numeroAdmitidos -= 1;
+      }
+    }
 
   });
 

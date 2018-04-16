@@ -1,217 +1,221 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
-        {{'APROBAR_SOLICITUD'|translate}}
-    </div>
-    <loading tam="4" load="loadSolicitud" message="msgCargandoSolicitud"> </loading>
-    <div class="panel-body" ng-if="!loadSolicitud">
+  <div class="panel-heading">
+    {{'APROBAR_SOLICITUD'|translate}}
+  </div>
+  <loading tam="4" load="loadSolicitud" message="msgCargandoSolicitud"> </loading>
+  <div class="panel-body" ng-if="!loadSolicitud">
 
-      <div class="panel panel-default">
-          <div class="panel-heading">
-              {{'INFORMACION_SOLICITUD' | translate}}
-          </div>
-            <div class="panel-body">
-                <div class="row">
-                    <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label>
-                    <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.id}}  </label>
-                </div>
-                <div class="row">
-                    <label class="col-sm-4 control-label"> {{'FECHA'|translate}}:  </label>
-                    <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.fechaSolicitud}}  </label>
-                </div>
-                <div class="row">
-                    <label class="col-sm-4 control-label"> {{'MODALIDAD' | translate}}:  </label>
-                    <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataSolicitud.NombreModalidad}}  </label>
-                </div>
-                <div class="row">
-                    <label class="col-sm-4 control-label"> {{'TIPO_SOLICITUD' | translate}}:  </label>
-                    <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataSolicitud.NombreTipoSolicitud}}  </label>
-                </div>
-                <div class="row">
-                    <label class="col-sm-4 control-label"> {{'SOLICITANTES'|translate}}:  </label>
-                    <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.solicitantes}}  </label>
-                </div>
-          </div>
-
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {{'INFORMACION_SOLICITUD' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label>
+          <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.id}}  </label>
+        </div>
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'FECHA'|translate}}:  </label>
+          <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.fechaSolicitud}}  </label>
+        </div>
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'PERIODO_ACADEMICO'|translate}}:</label>
+          <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.PeriodoAcademico}}  </label>
+        </div>
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'MODALIDAD' | translate}}:  </label>
+          <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataSolicitud.NombreModalidad}}  </label>
+        </div>
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'TIPO_SOLICITUD' | translate}}:  </label>
+          <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataSolicitud.NombreTipoSolicitud}}  </label>
+        </div>
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'SOLICITANTES'|translate}}:  </label>
+          <label class="col-sm-8 control-label"> {{aprobarSolicitud.detallesSolicitud.solicitantes}}  </label>
+        </div>
       </div>
 
+    </div>
 
 
-      <div class="panel panel-default" ng-if="aprobarSolicitud.detallesSolicitud.length > 0">
-          <div class="panel-heading">
-              {{'DETALLES_SOLICITUD' | translate}}
+
+    <div class="panel panel-default" ng-if="aprobarSolicitud.detallesSolicitud.length > 0">
+      <div class="panel-heading">
+        {{'DETALLES_SOLICITUD' | translate}}
+      </div>
+      <div class="panel-body">
+
+       <div  class="row" ng-repeat="detalle in aprobarSolicitud.detallesSolicitud">
+
+        <label class="col-sm-4 control-label"> {{detalle.DetalleTipoSolicitud.Detalle.Nombre}}:  </label>
+
+
+        <div ng-if="detalle.carrera!==undefined" >
+          <label class="col-sm-8 control-label"> {{'CARRERA' | translate}}: {{detalle.carrera.Nombre}}  </label>
+          <div class="panel col-md-12">
+            <div ui-grid="detalle.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
           </div>
-          <div class="panel-body">
-
-             <div  class="row" ng-repeat="detalle in aprobarSolicitud.detallesSolicitud">
-
-              <label class="col-sm-4 control-label"> {{detalle.DetalleTipoSolicitud.Detalle.Nombre}}:  </label>
-
-
-              <div ng-if="detalle.carrera!==undefined" >
-                    <label class="col-sm-8 control-label"> {{'CARRERA' | translate}}: {{detalle.carrera.Nombre}}  </label>
-                    <div class="panel col-md-12">
-                          <div ui-grid="detalle.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
-                    </div>
-              </div>
-              <div ng-if="detalle.carrera===undefined">
-                <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='linkNuxeo'">
-                    <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
-                </div>
-                <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='linkNuxeo'">
-                    <label ng-click="aprobarSolicitud.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
-                </div>
-              </div>
-
-            </div>
+        </div>
+        <div ng-if="detalle.carrera===undefined">
+          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='linkNuxeo'">
+            <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
           </div>
-
+          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='linkNuxeo'">
+            <label ng-click="aprobarSolicitud.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+          </div>
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                {{'FORMULARIO_APROBACION' | translate}}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      {{'FORMULARIO_APROBACION' | translate}}
+    </div>
+    <loading tam="4" load="loadFormulario" message="msgEnviandFormulario"> </loading>
+    <div class="panel-body" ng-if="!loadFormulario && aprobarSolicitud.estadoSolicitud.EstadoSolicitud.Id==1">
+      <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
+          <div class="col-sm-8">
+            <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required >
+              <option></option>
+              <option value=6> {{'APROBAR_SOLICITUD' | translate}} </option>
+              <option value=5> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+            </select>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
+          <div class="col-sm-8">
+            <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <label class="col-sm-4 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
+          <div class="col-sm-8">
+            <!--<input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>-->
+            <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
+            <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
+          </div>
+        </div>
+        <br>
+        <!--Docente que avala la propuesta -->
+        <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
+          <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
+          <div class="col-sm-8">
+            <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
+             <ui-select-match  placeholder="{{'SELECT.DOCENTE_DIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+             <ui-select-choices  infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+               <span  ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+             </ui-select-choices>
+           </ui-select>
+         </div>
+       </div>
+       <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
+       <!--Docente que evalua la propuesta -->
+       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==6">
+        <div ng-repeat="evaluador in aprobarSolicitud.evaluadoresInicial">
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
+            <div class="col-sm-8">
+              <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="evaluador.docente"  theme="bootstrap" reset-search-input="false" style="width:100%;">
+                <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+                  <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+                </ui-select-choices>
+              </ui-select>
             </div>
-              <loading tam="4" load="loadFormulario" message="msgEnviandFormulario"> </loading>
-              <div class="panel-body" ng-if="!loadFormulario && aprobarSolicitud.estadoSolicitud.EstadoSolicitud.Id==1">
-                  <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
-                    <div class="row">
-                      <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
-                      <div class="col-sm-8">
-                        <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required >
-                              <option></option>
-                              <option value=6> {{'APROBAR_SOLICITUD' | translate}} </option>
-                              <option value=5> {{'RECHAZAR_SOLICITUD' | translate}} </option>
-                        </select>
-                      </div>
-                    </div>
-                  <br>
-                  <div class="row">
-                      <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
-                      <div class="col-sm-8">
-                          <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
-                      </div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <label class="col-sm-4 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
-                    <div class="col-sm-8">
-                      <!--<input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>-->
-                      <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
-                      <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
-                    </div>
-                  </div>
-                  <br>
-                  <!--Docente que avala la propuesta -->
-                  <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
-                    <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
-                    <div class="col-sm-8">
-                    <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
-                           <ui-select-match  placeholder="{{'SELECT.DOCENTE_DIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                           <ui-select-choices  infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
-                               <span  ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
-                           </ui-select-choices>
-                       </ui-select>
-                    </div>
-                  </div>
-                  <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
-                  <!--Docente que evalua la propuesta -->
-                  <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==6">
-                        <div ng-repeat="evaluador in aprobarSolicitud.evaluadoresInicial">
-                            <div class="row">
-                                <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
-                                    <div class="col-sm-8">
-                                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="evaluador.docente"  theme="bootstrap" reset-search-input="false" style="width:100%;">
-                                        <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                                            <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
-                                            <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
-                                        </ui-select-choices>
-                                    </ui-select>
-                                    </div>
-                            </div>
-                            <br>
-                        </div>
-                  </div>
+          </div>
+          <br>
+        </div>
+      </div>
                   <!--<div class="row">
                       <label class="col-sm-5 control-label"> </label>
                       <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
                       <label class="col-sm-5 control-label"> </label>
                     </div>-->
 
-                  <!--para el cambio de docente evaluador o director-->
-                  <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==6">
-                    <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
-                    <div class="col-sm-8">
-                      <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
-                           <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                            <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
-                               <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
-                           </ui-select-choices>
+                    <!--para el cambio de docente evaluador o director-->
+                    <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==6">
+                      <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
+                      <div class="col-sm-8">
+                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
+                         <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                         <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+                           <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+                         </ui-select-choices>
                        </ui-select>
-                    </div>
+                     </div>
+                   </div>
+                   <br ng-if="aprobarSolicitud.isCambio">
+
+                   <br>
+                   <div class="row">
+                    <label class="col-sm-5 control-label"> </label>
+                    <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
+                    <label class="col-sm-5 control-label"> </label>
                   </div>
-                  <br ng-if="aprobarSolicitud.isCambio">
 
-                    <br>
-                    <div class="row">
-                      <label class="col-sm-5 control-label"> </label>
-                      <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
-                      <label class="col-sm-5 control-label"> </label>
-                    </div>
-
-                  </form>
-                </div>
-                <div class="panel-body alert alert-danger" ng-if="!loadFormulario && aprobarSolicitud.estadoSolicitud.EstadoSolicitud.Id!=1">
-                    {{'SOLICITUD_CON_RESPUESTA' | translate}}
-                </div>
+                </form>
+              </div>
+              <div class="panel-body alert alert-danger" ng-if="!loadFormulario && aprobarSolicitud.estadoSolicitud.EstadoSolicitud.Id!=1">
+                {{'SOLICITUD_CON_RESPUESTA' | translate}}
+              </div>
             </div>
+          </div>
+
+
         </div>
-
-
       </div>
     </div>
-</div>
 
 
 
-<div id="modalSeleccionarDocumento" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
-    <div class="modal-content col-md-offset-2 col-md-8">
+    <div id="modalSeleccionarDocumento" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+      <div class="modal-content col-md-offset-2 col-md-8">
         <div class="modal-header">
-            {{'ACTA_RESPUESTA_SOLICITUD' |translate}}
-            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+          {{'ACTA_RESPUESTA_SOLICITUD' |translate}}
+          <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
         </div>
         <div class="panel panel-defaul">
-            <div class="panel-body">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        {{'SELECCIONE_EL_DOCUMENTO' | translate}}
-                    </div>
-                    <loading tam="4" load="loadDocumento"> </loading>
-                    <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length===0" >
-                      <label clase="control-label">No hay documentos que mostrar, por favor cargue uno</label>
-                    </div>
-                    <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length>0">
-                      <div class="row">
-                        <div class="col-sm-9">
-                          <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta" theme="select2" reset-search-input="false" style="width:100%;">
-                               <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
-                                <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
-                                   <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
-                               </ui-select-choices>
-                           </ui-select>
-                        </div>
-                        <div class="col-sm-3">
-                            <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                            <label class="col-sm-4"></label>
-                            <button class="col-sm-4 btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'DOCUMENTO.SELECCIONAR_DOCUMENTO' | translate}}</button>
-                            <label class="col-sm-4"></label>
-                    </div>
+          <div class="panel-body">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                {{'SELECCIONE_EL_DOCUMENTO' | translate}}
+              </div>
+              <loading tam="4" load="loadDocumento"> </loading>
+              <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length===0" >
+                <label clase="control-label">No hay documentos que mostrar, por favor cargue uno</label>
+              </div>
+              <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.documentos.length>0">
+                <div class="row">
+                  <div class="col-sm-9">
+                    <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta" theme="select2" reset-search-input="false" style="width:100%;">
+                     <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
+                     <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
+                       <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
+                     </ui-select-choices>
+                   </ui-select>
+                 </div>
+                 <div class="col-sm-3">
+                  <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
                 </div>
+              </div>
+              <br>
+              <div class="row">
+                <label class="col-sm-4"></label>
+                <button class="col-sm-4 btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'DOCUMENTO.SELECCIONAR_DOCUMENTO' | translate}}</button>
+                <label class="col-sm-4"></label>
+              </div>
             </div>
-              <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
+          </div>
+          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
         </div>
+      </div>
     </div>
-</div>

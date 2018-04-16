@@ -7,7 +7,7 @@
  * # asignarArea
  */
 angular.module('poluxClienteApp')
-  .directive('asignarEstudiantes', function (poluxRequest,academicaRequest,poluxMidRequest) {
+  .directive('asignarEstudiantes', function ($translate, poluxRequest,academicaRequest,poluxMidRequest) {
     return {
       scope: {
         estudiante: '=',
@@ -17,7 +17,7 @@ angular.module('poluxClienteApp')
       templateUrl: 'views/directives/solicitudes/asignar_estudiantes.html',
       controller:function($scope){
         var ctrl = this;
-
+        ctrl.cargando = $translate.instant("LOADING.CARGANDO_ESTUDIANTE");
         ctrl.estudianteRegistrado = false;
         ctrl.estudianteExiste = false;
         ctrl.estudianteValido = false;
@@ -46,23 +46,24 @@ angular.module('poluxClienteApp')
         };
 
         ctrl.verificarEstudiante = function(){
+          ctrl.loading = true;
           academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-
               academicaRequest.get("datos_estudiante",[ctrl.codigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
                 if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-
-                    ctrl.estudiante={
-                      "Codigo": parametros.codigo,
-                      "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                      "Modalidad": $scope.modalidad,
-                      "Tipo": "POSGRADO",
-                      "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje,
-                      "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                      "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                      "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
-                      "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
-                      "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera
-                    };
+                  console.log(ctrl.estudiante);
+                  ctrl.estudiante = {
+                    "Codigo": ctrl.codigoEstudiante,
+                    "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                    "Modalidad": $scope.modalidad,
+                    "Tipo": "POSGRADO",
+                    "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
+                    "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                    "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                    "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
+                    "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
+                    "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
+                    "Carrera": response2.data.estudianteCollection.datosEstudiante[0].carrera
+                  };
                     console.log(ctrl.estudiante);
 
                     poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
@@ -101,35 +102,75 @@ angular.module('poluxClienteApp')
                                           if(resultadoSolicitudes.data===null){
                                             ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
                                             $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                            ctrl.loading = false;
                                           }else{
                                             ctrl.estudianteConSolicitud = true;
                                           }
+                                        })
+                                        .catch(function(error){
+                                          console.log(error);
+                                          ctrl.error = true;
+                                          ctrl.loading = false;
                                         });
                                       }else{
                                         ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
                                         $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                        ctrl.loading = false;
                                       }
+                                    })
+                                    .catch(function(error){
+                                      console.log(error);
+                                      ctrl.error = true;
+                                      ctrl.loading = false;
                                     });
                                   }else{
                                     ctrl.cantidadExcedida = true;
+                                    ctrl.loading = false;
                                   }
-                            });
+                            })
+                            .catch(function(error){
+                              console.log(error);
+                              ctrl.error = true;
+                              ctrl.loading = false;
+                            });;
                           }else{
                               ctrl.estudianteConTrabajo = true;
+                              ctrl.loading = false;
                           }
-                      });
+                      })
+                      .catch(function(error){
+                        console.log(error);
+                        ctrl.error = true;
+                        ctrl.loading = false;
+                      });;
 
                     }else{
                           ctrl.estudianteValido = true;
+                          ctrl.loading = false;
                       }
 
-                    });
+                    })
+                    .catch(function(error){
+                      console.log(error);
+                      ctrl.error = true;
+                      ctrl.loading = false;
+                    });;
               } else {
                 ctrl.estudianteNoEncontrado = true;
+                ctrl.loading = false;
               }
-            });
+            })
+            .catch(function(error){
+              console.log(error);
+              ctrl.error = true;
+              ctrl.loading = false;
+            });;
+          })
+          .catch(function(error){
+            console.log(error);
+            ctrl.error = true;
+            ctrl.loading = false;
           });
-
         }
 
       },
