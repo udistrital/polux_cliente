@@ -399,7 +399,6 @@ var text_es = {
     SIN_AREAS:"Actualmente no hay áreas de conocimiento registradas para esta área del SNIES",
     DESCRIPCION:"Descripción",
     NO_SOLICITUDES_POSGRADO:"No existen solicitudes en la modalidad de espacios académicos de posgrado para la carrera seleccionada",
-    LISTAR_APROBADOS: "Listado de estudiantes admitidos al posgrado",
     SELECCIONAR_PERIODO: "Seleccione el periodo académico",
     PASANTIA:{
       SOLICITAR_CARTA:"Solicitar carta de presentación",
@@ -424,6 +423,11 @@ var text_es = {
         REVISAR_FECHAS_FORMALIZACION: "Revise los periodos de formalización, o comuníquese con el proyecto curricular",
         FECHAS_PARA_FORMALIZACION: "Fechas válidas para realizar el proceso de formalización",
         FORMALIZACION_NO_HABILITADA: "El estado de esta solicitud no la habilita para ser formalizada",
+    },
+    LISTAR_APROBADOS: {
+        TITULO: "Listado de estudiantes admitidos al posgrado",
+        REGISTRAR: "Registrar",
+        DESCRIPCION: "Descripción de la solicitud seleccionada",
     },
 };
 var text_en = {
@@ -807,7 +811,6 @@ var text_en = {
     SIN_AREAS:"Currently there are no registered areas of knowledge for this SNIES area",
     DESCRIPCION:"Description",
     NO_SOLICITUDES_POSGRADO:"There are no requests in the graduate academic spaces modality for the selected career",
-    LISTAR_APROBADOS: "List of students admitted to the postgraduate",
     SELECCIONAR_PERIODO: "Select academic period",
     PASANTIA:{
       SOLICITAR_CARTA:"Request presentation's letter",
@@ -832,6 +835,11 @@ var text_en = {
         FECHAS_PARA_FORMALIZACION: "Valid dates to carry out the formalization process",
         FORMALIZACION_NO_HABILITADA: "The status of this request does not enable it to be formalized",
         REVISAR_FECHAS_FORMALIZACION: "Review the formalization periods, or contact the curricular project",
+    },
+    LISTAR_APROBADOS: {
+        TITULO: "List of students admitted to the postgraduate",
+        REGISTRAR: "Register",
+        DESCRIPCION: "Selected request description",
     },
 };
 angular.module('poluxClienteApp')

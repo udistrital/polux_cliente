@@ -70,9 +70,9 @@ angular.module('poluxClienteApp')
         width: '18%'
       }, {
         name: 'opcionesDeSolicitud',
-        displayName: $translate.instant("OPCIONES"),
+        displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '15%',
-        cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
+        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
       }];
 
       ctrl.cuadriculaEspaciosAcademicos = {};
@@ -229,9 +229,15 @@ angular.module('poluxClienteApp')
               solicitudAprobada.detalleSolicitud = detalleSolicitudRespondida.data[0];
               deferred.resolve(solicitudAprobada);
             } else {
+              // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
+              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
+                .map(function(solicitudAprobadaInconsistente) {
+                  return solicitudAprobadaInconsistente.Id;
+                })
+                .indexOf(solicitudAprobada.Id);
+              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
               $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
-              ctrl.coleccionSolicitudesAprobadas.pop();
               deferred.resolve(null);
             }
           })
@@ -288,9 +294,15 @@ angular.module('poluxClienteApp')
                   deferred.reject(null);
                 });
             } else {
+              // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
+              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
+                .map(function(solicitudAprobadaInconsistente) {
+                  return solicitudAprobadaInconsistente.Id;
+                })
+                .indexOf(solicitudAprobada.Id);
+              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
               $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_USUARIO_SOLICITUD");
-              ctrl.coleccionSolicitudesAprobadas.pop();
               deferred.resolve(null);
             }
           })
@@ -396,22 +408,18 @@ angular.module('poluxClienteApp')
        * @return {[void]}                      [El procedimiento de contruir el arreglo de datos visibles sobre las solicitudes aprobadas]
        */
       ctrl.mostrarSolicitudesAprobadas = function(solicitudesAprobadas) {
-        // Se prepara una colección para almacenar los datos disponibles en la cuadrícula de las solicitudes aprobadas
-        ctrl.coleccionSolicitudesAprobadasVisibles = [];
         // Se recorren las solicitudes aprobadas para obtener los datos correspondientes
         angular.forEach(solicitudesAprobadas, function(solicitudAprobada) {
-          var solicitudAprobadaVisible = {
-            "idSolicitud": solicitudAprobada.SolicitudTrabajoGrado.Id,
-            "fechaSolicitud": solicitudAprobada.Fecha,
-            "codigoEstudiante": solicitudAprobada.estudianteAsociado.codigo,
-            "nombreEstudiante": solicitudAprobada.estudianteAsociado.nombre,
-            "promedioAcademico": solicitudAprobada.estudianteAsociado.promedio,
-            "nombreEstado": solicitudAprobada.EstadoSolicitud.Nombre,
-          };
-          ctrl.coleccionSolicitudesAprobadasVisibles.push(solicitudAprobadaVisible);
+          // Se asignan los campos reconocidos por la cuadrícula
+          solicitudAprobada.idSolicitud = solicitudAprobada.SolicitudTrabajoGrado.Id;
+          solicitudAprobada.fechaSolicitud = solicitudAprobada.Fecha;
+          solicitudAprobada.codigoEstudiante = solicitudAprobada.estudianteAsociado.codigo;
+          solicitudAprobada.nombreEstudiante = solicitudAprobada.estudianteAsociado.nombre;
+          solicitudAprobada.promedioAcademico = solicitudAprobada.estudianteAsociado.promedio;
+          solicitudAprobada.nombreEstado = solicitudAprobada.EstadoSolicitud.Nombre;
         });
         // Se cargan los datos visibles a la cuadrícula
-        ctrl.cuadriculaSolicitudesAprobadas.data = ctrl.coleccionSolicitudesAprobadasVisibles;
+        ctrl.cuadriculaSolicitudesAprobadas.data = solicitudesAprobadas;
       }
 
       /**
@@ -420,7 +428,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.consultarSolicitudesAprobadas = function() {
         // Se recargan las solicitudes visibles
-        ctrl.coleccionSolicitudesAprobadasVisibles = [];
+        ctrl.cuadriculaSolicitudesAprobadas.data = [];
         // Se establece que inicia la carga de las solicitudes aprobadas
         $scope.errorCargandoConsultasIniciales = false;
         $scope.errorCargandoSolicitudesAprobadas = false;
@@ -442,25 +450,84 @@ angular.module('poluxClienteApp')
           });
       }
 
-      ctrl.verDetallesSolicitud = function(filaSolicitud) {
-        ctrl.entity = filaSolicitud.entity;
-        ctrl.numeroSolicitud = filaSolicitud.entity.solicitud;
-        var fechaCompletaSolicitud = new Date(filaSolicitud.entity.fecha);
-        ctrl.fechaSolicitud = ctrl.obtenerFechaGeneral(fechaCompletaSolicitud);
-        ctrl.estadoSolicitud = filaSolicitud.entity.estado;
-        ctrl.nombreEstudianteSolicitante = filaSolicitud.entity.nombre;
-        ctrl.codigoEstudianteSolicitante = filaSolicitud.entity.estudiante;
-        ctrl.promedioEstudianteSolicitante = filaSolicitud.entity.promedio;
-        ctrl.rendimientoEstudianteSolicitante = filaSolicitud.entity.rendimiento;
-        ctrl.codigoPosgrado = filaSolicitud.entity.posgradoAspirado.Codigo;
-        ctrl.nombrePosgrado = filaSolicitud.entity.posgradoAspirado.Nombre;
-        ctrl.pensumPosgrado = filaSolicitud.entity.posgradoAspirado.Pensum;
-        ctrl.respuesta = filaSolicitud.entity.respuesta;
-        ctrl.cuadriculaEspaciosAcademicos.data = ctrl.obtenerEspaciosAcademicos(filaSolicitud.entity.detalleSolicitudPosgradoAprobada.split("-").slice(2));
+      /**
+       * [Función que carga la fila asociada según la selección del usuario]
+       * @param  {[row]} filaAsociada [Es la solicitud que el usuario seleccionó]
+       */
+      $scope.cargarFila = function(filaAsociada) {
+        ctrl.cargarSolicitudSeleccionada(filaAsociada.entity);
+      }
+
+      /**
+       * [Función que recibe una fecha extendida y obtiene sus valores generales de presentación]
+       * @param  {[Date]} fechaCompleta [La fecha en formato extendido]
+       * @return {[String]}               [La cadena de caracteres presentable]
+       */
+      ctrl.obtenerFechaGeneral = function(fechaCompleta) {
+        return fechaCompleta.getFullYear() +
+          "-" + fechaCompleta.getMonth() + 1 +
+          "-" + fechaCompleta.getDate();
+      }
+
+      /**
+       * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
+       * @param  {[type]} detalleSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
+       * @return {[type]}                  [El objeto con los datos del posgrado]
+       */
+      ctrl.obtenerDatosDelPosgrado = function(detalleSolicitud) {
+        return JSON.parse(detalleSolicitud.Descripcion.split("-")[1]);
+      }
+
+      /**
+       * [Función que obtiene los espacios académicos por su nombre]
+       * @param  {[Array]} detalleSolicitud [Tiene la colección de registros en el formato que se almacenan en la base de datos]
+       * @return {[Array]}                  [Devuelve la colección de espacios académicos por nombre]
+       */
+      ctrl.obtenerEspaciosAcademicos = function(detalleSolicitud) {
+        // Se prepara una colección que contendrá los espacios académicos
+        var espaciosAcademicos = [];
+        // Se define una variable que interprete el formato del detalle de la solicitud recibida
+        // de modo que se obtenga la información de los espacios académicos (estos inician desde el índice 2)
+        var detallePosgrado = detalleSolicitud.Descripcion.split("-").slice(2);
+        // Se recorre la información de los espacios académicos almacenados
+        angular.forEach(detallePosgrado, function(espacioAcademico) {
+          // Como el formato de almacenado guarda en cada posición el objeto de espacio académico,
+          // se pasa a formato JSON para obtener su contenido
+          var objetoEspacioAcademico = JSON.parse(espacioAcademico);
+          // Se ajusta la información para conformar el objeto de espacio académico
+          var informacionEspacioAcademico = {
+            "id": objetoEspacioAcademico.Id,
+            "codigo": objetoEspacioAcademico.CodigoAsignatura,
+            "nombre": objetoEspacioAcademico.Nombre,
+            "creditos": objetoEspacioAcademico.Creditos
+          };
+          // Se registra el espacio académico en la colección a modo de objeto
+          espaciosAcademicos.push(informacionEspacioAcademico);
+        });
+        return espaciosAcademicos;
+      }
+
+      /**
+       * [Función que carga la solicitud seleccionada por el coordinador en sesión]
+       * @param  {[row]} solicitudSeleccionada [La solicitud que el coordinador desea registrar]
+       */
+      ctrl.cargarSolicitudSeleccionada = function(solicitudSeleccionada) {
+        // Se establecen los espacios que se verán en la ventana emergente
+        ctrl.nombreEstudianteSolicitante = solicitudSeleccionada.nombreEstudiante;
+        ctrl.codigoEstudianteSolicitante = solicitudSeleccionada.codigoEstudiante;
+        ctrl.promedioEstudianteSolicitante = solicitudSeleccionada.promedioAcademico;
+        ctrl.rendimientoEstudianteSolicitante = solicitudSeleccionada.estudianteAsociado.rendimiento;
+        ctrl.numeroSolicitud = solicitudSeleccionada.SolicitudTrabajoGrado.Id;
+        ctrl.fechaSolicitud = ctrl.obtenerFechaGeneral(new Date(solicitudSeleccionada.Fecha));
+        ctrl.estadoSolicitud = solicitudSeleccionada.nombreEstado;
+        ctrl.codigoPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Codigo;
+        ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
+        ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
+        ctrl.cuadriculaEspaciosAcademicos.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
         $('#modalVerSolicitud').modal('show');
       }
 
-      ctrl.cambiarEstadoPago = function() {
+      ctrl.confirmarRegistroSolicitud = function() {
         swal({
             title: $translate.instant("INFORMACION_SOLICITUD"),
             text: $translate.instant("REGISTRAR_PAGO_POSGRADO", {
@@ -468,7 +535,7 @@ angular.module('poluxClienteApp')
               codigo: ctrl.codigoEstudianteSolicitante,
               estado: ctrl.estadoSolicitud.Nombre
             }),
-            type: "warning",
+            type: "info",
             confirmButtonText: $translate.instant("ACEPTAR"),
             cancelButtonText: $translate.instant("CANCELAR"),
             showCancelButton: true
@@ -508,31 +575,6 @@ angular.module('poluxClienteApp')
                 })
             }
           });
-      }
-
-      $scope.loadrow = function(filaSolicitud) {
-        ctrl.verDetallesSolicitud(filaSolicitud);
-      };
-
-      ctrl.obtenerFechaGeneral = function(fechaCompleta) {
-        return fechaCompleta.getFullYear() +
-          "-" + fechaCompleta.getMonth() + 1 +
-          "-" + fechaCompleta.getDate();
-      }
-
-      ctrl.obtenerEspaciosAcademicos = function(descripcionSolicitud) {
-        var espaciosAcademicos = [];
-        angular.forEach(descripcionSolicitud, function(espacioAcademico) {
-          var objetoEspacioAcademico = JSON.parse(espacioAcademico);
-          var informacionEspacioAcademico = {
-            "id": objetoEspacioAcademico.Id,
-            "codigo": objetoEspacioAcademico.CodigoAsignatura,
-            "nombre": objetoEspacioAcademico.Nombre,
-            "creditos": objetoEspacioAcademico.Creditos
-          };
-          espaciosAcademicos.push(informacionEspacioAcademico);
-        });
-        return espaciosAcademicos;
       }
 
       ctrl.solicitarRegistroPago = function() {
