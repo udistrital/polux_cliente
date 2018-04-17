@@ -184,6 +184,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
+        CARGAR_DOCUMENTO:"Ocurrio un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
         HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
         HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado que se encuentra pendiente por respuesta.",
         DOCENTE_DUPLICADO:"Por favor seleccione docentes diferentes en los campos de director y evaluador(es)",
@@ -562,6 +563,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
+        CARGAR_DOCUMENTO:"An error occurred loading the documents, please verify your connection and try again.",
         HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
         HAY_SOLICITUD_PENDIENTE:"Currently the student already has a grade job request that is pending by response.",
         DOCENTE_DUPLICADO:"Please select different teachers in the fields of director and evaluator(s)",

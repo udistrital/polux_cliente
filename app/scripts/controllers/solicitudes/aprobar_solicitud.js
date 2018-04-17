@@ -1150,6 +1150,11 @@ angular.module('poluxClienteApp')
                       ctrl.documentos.push(tempDoc);
                     });
                   $scope.loadDocumento = false;
+            })
+            .catch(function(error){
+              console.log(error);
+              ctrl.errorCargarDocumento = true;
+              $scope.loadDocumento = false;
             });
         });
 
