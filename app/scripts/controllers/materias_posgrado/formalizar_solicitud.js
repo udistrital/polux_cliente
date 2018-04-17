@@ -555,7 +555,7 @@ angular.module('poluxClienteApp')
        */
       $scope.cargarFila = function(filaAsociada) {
         ctrl.formalizarSolicitudSeleccionada(filaAsociada.entity);
-      };
+      }
 
       /**
        * [Función que formaliza la solicitud a petición del usuario]
@@ -592,7 +592,7 @@ angular.module('poluxClienteApp')
                     // Se despliega el mensaje que confirma el registro de la formalización
                     swal(
                       $translate.instant("FORMALIZAR_SOLICITUD.AVISO"),
-                      $translate.instant("SOLICITUD_FORMALIZADA"),
+                      $translate.instant("FORMALIZAR_SOLICITUD.SOLICITUD_FORMALIZADA"),
                       'success'
                     );
                   } else {
