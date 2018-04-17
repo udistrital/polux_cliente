@@ -22,6 +22,9 @@ angular.module('poluxClienteApp')
       // Se inhabilita la selección del periodo correspondiente
       $scope.periodoCorrespondienteHabilitado = false;
 
+      // Se configura el mensaje mientras se cargan las solicitudes aprobadas
+      $scope.mensajeCargandoSolicitudesAprobadas = $translate.instant("LOADING.CARGANDO_SOLICITUDES_APROBADAS");
+
       // Se configura el mensaje mientras se carga la transacción de registro
       $scope.mensajeCargandoTransaccionRegistro = $translate.instant("LOADING.CARGANDO_TRANSACCION_REGISTRO");
 
@@ -511,6 +514,8 @@ angular.module('poluxClienteApp')
        * @param  {[row]} solicitudSeleccionada [La solicitud que el coordinador desea registrar]
        */
       ctrl.cargarSolicitudSeleccionada = function(solicitudSeleccionada) {
+        // Se establece la variable que mantiene la solicitud seleccionada
+        ctrl.solicitudSeleccionada = solicitudSeleccionada;
         // Se establecen los espacios que se verán en la ventana emergente
         ctrl.nombreEstudianteSolicitante = solicitudSeleccionada.nombreEstudiante;
         ctrl.codigoEstudianteSolicitante = solicitudSeleccionada.codigoEstudiante;
@@ -523,7 +528,7 @@ angular.module('poluxClienteApp')
         ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
         ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
         ctrl.cuadriculaEspaciosAcademicos.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
-        $scope.cargandoTransaccionRegistro = true;
+        $scope.cargandoTransaccionRegistro = false;
         $('#modalVerSolicitud').modal('show');
       }
 
@@ -535,6 +540,7 @@ angular.module('poluxClienteApp')
         swal({
             title: $translate.instant("INFORMACION_SOLICITUD"),
             text: $translate.instant("LISTAR_APROBADOS.REGISTRAR_ESTUDIANTE", {
+              // Se cargan datos de la solicitud para que el coordinador pueda verificar antes de registrar
               nombre: ctrl.nombreEstudianteSolicitante,
               codigo: ctrl.codigoEstudianteSolicitante,
               estado: ctrl.estadoSolicitud
@@ -545,35 +551,37 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
+            // Se valida que el coordinador haya confirmado el registro
             if (confirmacionDelUsuario.value) {
+              // Se detiene la visualización de solicitudes mientras se formaliza
+              ctrl.cuadriculaSolicitudesAprobadas.data = [];
+              // Se inicia la carga del formulario mientras se formaliza
               $scope.cargandoTransaccionRegistro = true;
-              $scope.cargandoRegistroPago = true;
-              $scope.loadFormulario = true;
-              ctrl.solicitarRegistroPago()
-                .then(function(response) {
+              // Se lanza la transacción
+              ctrl.registrarSolicitudAprobada()
+                .then(function(respuestaRegistrarSolicitudAprobada) {
                   if (response.data[0] === "Success") {
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
-                      $translate.instant("REGISTRO_PAGO"),
+                      $translate.instant("LISTAR_APROBADOS.AVISO"),
                       $translate.instant("PAGO_REGISTRADO"),
                       'success'
                     );
-                    $scope.cargandoSolicitudesPosgradoAprobadas = true;
                     ctrl.consultarSolicitudesAprobadas();
                     $('#modalVerSolicitud').modal('hide');
                   } else {
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
-                      $translate.instant("REGISTRO_PAGO"),
+                      $translate.instant("LISTAR_APROBADOS.AVISO"),
                       $translate.instant(response.data[1]),
                       'warning'
                     );
                   }
                 })
-                .catch(function(error) {
+                .catch(function(excepcionRegistrarSolicitudAprobada) {
                   $scope.cargandoTransaccionRegistro = false;
                   swal(
-                    $translate.instant("REGISTRO_PAGO"),
+                    $translate.instant("LISTAR_APROBADOS.AVISO"),
                     $translate.instant("ERROR.REGISTRAR_PAGO"),
                     'warning'
                   );
@@ -582,29 +590,42 @@ angular.module('poluxClienteApp')
           });
       }
 
-      ctrl.solicitarRegistroPago = function() {
+      ctrl.registrarSolicitudAprobada = function() {
         var defered = $q.defer();
 
-        ctrl.respuesta.Activo = false;
+        ctrl.solicitudAprobadaSeleccionada = {
+          Activo: false,
+          EnteResponsable: ctrl.solicitudSeleccionada.EnteResponsable,
+          Fecha: ctrl.solicitudSeleccionada.Fecha,
+          EstadoSolicitud: {
+            Id: ctrl.solicitudSeleccionada.EstadoSolicitud.Id
+          },
+          //Id: ctrl.solicitudSeleccionada.Id,
+          Justificacion: ctrl.solicitudSeleccionada.Justificacion,
+          SolicitudTrabajoGrado: {
+            Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.Id
+          },
+          Usuario: ctrl.solicitudSeleccionada.Usuario
+        };
 
-        ctrl.respuestaNueva = {
+        ctrl.solicitudAprobadaActualizada = {
           Activo: true,
           EnteResponsable: 0,
           Fecha: new Date(),
           EstadoSolicitud: {
-            Id: 9
+            Id: 14
           },
-          Justificacion: "Pago registrado",
+          Justificacion: "Se ha registrado el trabajo de grado del estudiante",
           SolicitudTrabajoGrado: {
-            Id: ctrl.respuesta.SolicitudTrabajoGrado.Id
+            Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.Id
           },
-          Usuario: parseInt($scope.userId),
+          Usuario: parseInt($scope.userId)
         };
 
         ctrl.trabajoGrado = {
           Titulo: "Cursar materias de posgrado en " + ctrl.nombrePosgrado,
           Modalidad: {
-            Id: parseInt(ctrl.respuesta.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id)
+            Id: parseInt(ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id)
           },
           EstadoTrabajoGrado: {
             Id: 4
@@ -625,7 +646,7 @@ angular.module('poluxClienteApp')
         ctrl.espaciosAcademicosInscritos = []
 
         angular.forEach(ctrl.cuadriculaEspaciosAcademicos.data, function(espacioAcademico) {
-          console.log(espacioAcademico);
+          //console.log(espacioAcademico);
           ctrl.espaciosAcademicosInscritos.push({
             Nota: 0,
             EspaciosAcademicosElegibles: {
