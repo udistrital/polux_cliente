@@ -69,7 +69,6 @@ var text_es = {
     RESPUESTA: "Respuesta:",
     DENEGADO: "El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado",
     REGISTRAR_PROPUESTA: "Registrar propuesta.",
-    REGISTRAR_PAGO_POSGRADO: "¿Está seguro de registrar el pago del estudiante {{nombre}}, con código estudiantil {{codigo}} en estado {{estado}}, para la modalidad de materias de posgrado?",
     REGISTRAR_NOTA_POSGRADO: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
     PAGO_REGISTRADO: "El pago fue registrado exitosamente",
     NOTA_REGISTRADA: "Las notas fueron registradas exitosamente",
@@ -320,6 +319,7 @@ var text_es = {
       REGISTRANDO_AREA:"Registrando Área",
       CARGANDO_INFO_ACADEMICA:"Cargando información académica",
       CARGANDO_PARAMETROS:"Cargando parámetros",
+      CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -428,6 +428,7 @@ var text_es = {
         TITULO: "Listado de estudiantes admitidos al posgrado",
         REGISTRAR: "Registrar",
         DESCRIPCION: "Descripción de la solicitud seleccionada",
+        REGISTRAR_ESTUDIANTE: "¿Está seguro de registrar al estudiante {{nombre}}, con código estudiantil {{codigo}} en estado {{estado}}, para la modalidad de materias de posgrado?",
     },
 };
 var text_en = {
@@ -478,7 +479,6 @@ var text_en = {
     RESPUESTA: "Answer:",
     DENEGADO: "The student doesn't meet the requirements in order aply to this modality",
     REGISTRAR_PROPUESTA: "Register proposal.",
-    REGISTRAR_PAGO_POSGRADO: "Are you sure to register the payment of the student {{nombre}}, with student code {{codigo}}, in {{estado}} state, for the postgraduate subjects modality?",
     REGISTRAR_NOTA_POSGRADO: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",
     PAGO_REGISTRADO: "The payment was registered successfully",
     NOTA_REGISTRADA: "The grades were registered successfully",
@@ -732,6 +732,7 @@ var text_en = {
       REGISTRANDO_AREA:"Registering area",
       CARGANDO_INFO_ACADEMICA:"Loading academic information",
       CARGANDO_PARAMETROS:"Loading parameterss",
+      CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -840,6 +841,7 @@ var text_en = {
         TITULO: "List of students admitted to the postgraduate",
         REGISTRAR: "Register",
         DESCRIPCION: "Selected request description",
+        REGISTRAR_ESTUDIANTE: "Are you sure to register the student {{nombre}}, with student code {{codigo}}, in {{estado}} state, for the postgraduate subjects modality?",
     },
 };
 angular.module('poluxClienteApp')

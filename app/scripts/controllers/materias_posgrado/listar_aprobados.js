@@ -22,8 +22,8 @@ angular.module('poluxClienteApp')
       // Se inhabilita la selección del periodo correspondiente
       $scope.periodoCorrespondienteHabilitado = false;
 
-      // Se configura el mensaje mientras se cargan las solicitudes aprobadas
-      $scope.mensajeCargandoAdmitidos = $translate.instant("LOADING.CARGANDO_DETALLES_SOLICITUD");
+      // Se configura el mensaje mientras se carga la transacción de registro
+      $scope.mensajeCargandoTransaccionRegistro = $translate.instant("LOADING.CARGANDO_TRANSACCION_REGISTRO");
 
       $scope.opcionesSolicitud = [{
         clase_color: "ver",
@@ -38,7 +38,6 @@ angular.module('poluxClienteApp')
       ctrl.infoAcademicaCargada = true;
 
       $scope.admitidosCargados = true;
-      $scope.cargandoRegistroPago = false;
 
       // Se define la cuadrícula de las solicitudes aprobadas y las columnas visibles
       ctrl.cuadriculaSolicitudesAprobadas = {};
@@ -524,30 +523,36 @@ angular.module('poluxClienteApp')
         ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
         ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
         ctrl.cuadriculaEspaciosAcademicos.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
+        $scope.cargandoTransaccionRegistro = true;
         $('#modalVerSolicitud').modal('show');
       }
 
+      /**
+       * [Función que maneja la confirmación del coordinador para registrar la solicitud]
+       * @return {[void]} [El procedimiento que regula la confirmación para poder registrar en la base de datos]
+       */
       ctrl.confirmarRegistroSolicitud = function() {
         swal({
             title: $translate.instant("INFORMACION_SOLICITUD"),
-            text: $translate.instant("REGISTRAR_PAGO_POSGRADO", {
+            text: $translate.instant("LISTAR_APROBADOS.REGISTRAR_ESTUDIANTE", {
               nombre: ctrl.nombreEstudianteSolicitante,
               codigo: ctrl.codigoEstudianteSolicitante,
-              estado: ctrl.estadoSolicitud.Nombre
+              estado: ctrl.estadoSolicitud
             }),
             type: "info",
             confirmButtonText: $translate.instant("ACEPTAR"),
             cancelButtonText: $translate.instant("CANCELAR"),
             showCancelButton: true
           })
-          .then(function(responseSwal) {
-            if (responseSwal.value) {
+          .then(function(confirmacionDelUsuario) {
+            if (confirmacionDelUsuario.value) {
+              $scope.cargandoTransaccionRegistro = true;
               $scope.cargandoRegistroPago = true;
               $scope.loadFormulario = true;
               ctrl.solicitarRegistroPago()
                 .then(function(response) {
                   if (response.data[0] === "Success") {
-                    $scope.cargandoRegistroPago = false;
+                    $scope.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("REGISTRO_PAGO"),
                       $translate.instant("PAGO_REGISTRADO"),
@@ -557,7 +562,7 @@ angular.module('poluxClienteApp')
                     ctrl.consultarSolicitudesAprobadas();
                     $('#modalVerSolicitud').modal('hide');
                   } else {
-                    $scope.cargandoRegistroPago = false;
+                    $scope.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("REGISTRO_PAGO"),
                       $translate.instant(response.data[1]),
@@ -566,13 +571,13 @@ angular.module('poluxClienteApp')
                   }
                 })
                 .catch(function(error) {
-                  $scope.cargandoRegistroPago = false;
+                  $scope.cargandoTransaccionRegistro = false;
                   swal(
                     $translate.instant("REGISTRO_PAGO"),
                     $translate.instant("ERROR.REGISTRAR_PAGO"),
                     'warning'
                   );
-                })
+                });
             }
           });
       }
@@ -644,7 +649,7 @@ angular.module('poluxClienteApp')
         };
 
         poluxRequest
-          .post("tr_registrar_pago", ctrl.dataRegistrarPago)
+          .post("tr_registrar_pago!!!!!!!!!!!!!!!!!!", ctrl.dataRegistrarPago)
           .then(function(response) {
             defered.resolve(response);
           })
