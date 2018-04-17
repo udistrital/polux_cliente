@@ -39,14 +39,14 @@
     </div>
     
     <loading tam="4" load="cargandoSolicitudesAprobadas" message="mensajeCargandoAdmitidos"></loading>
-    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="listarAprobados.coleccionSolicitudesAprobadasVisibles.length > 0 && !sinDatosConsulta">
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="listarAprobados.coleccionSolicitudesAprobadasVisibles.length > 0">
       <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.cuadriculaSolicitudesAprobadas"></div>
     </div>
 
-    <br ng-if="sinResultados">
+    <br ng-if="errorCargandoSolicitudesAprobadas">
     
-    <div class="panel-body alert alert-danger" ng-if="sinResultados">
-      <span ng-bind="msgErrorConsultaAdmitidos"></span>
+    <div class="panel-body alert alert-danger" ng-if="errorCargandoSolicitudesAprobadas">
+      <span ng-bind="mensajeErrorCargandoSolicitudesAprobadas"></span>
     </div>
 
   </div>

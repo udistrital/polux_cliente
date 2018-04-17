@@ -19,9 +19,6 @@ angular.module('poluxClienteApp')
       $scope.cargandoPosgrados = true;
       $scope.mensajeCargandoPosgrados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
 
-      // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-      $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
-
       // Se inhabilita la selección del periodo correspondiente
       $scope.periodoCorrespondienteHabilitado = false;
 
@@ -120,6 +117,8 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(excepcionPosgradosAsociados) {
+            // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
+            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
             // Se rechaza la promesa
             deferred.reject(false);
           });
@@ -146,6 +145,8 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(excepcionPeriodosCorrespondientes) {
+            // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
+            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
             // Se rechaza la promesa
             deferred.reject(false);
           });
@@ -168,7 +169,6 @@ angular.module('poluxClienteApp')
             // Se apaga el mensaje de carga
             $scope.cargandoPosgrados = false;
             $scope.errorCargandoConsultasIniciales = true;
-            //ctrl.infoAcademicaCargada = exception;
           });
       }
 
@@ -230,14 +230,14 @@ angular.module('poluxClienteApp')
               deferred.resolve(solicitudAprobada);
             } else {
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_INFO_SOLICITUDES_APROBADAS");
+              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
               ctrl.coleccionSolicitudesAprobadas.pop();
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionDetalleSolicitudRespondida) {
             // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.CARGANDO_SOLICITUDES_APROBADAS");
+            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_DETALLE_SOLICITUD");
             deferred.reject(null);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -285,19 +285,18 @@ angular.module('poluxClienteApp')
                 })
                 .catch(function(excepcionEstudianteConsultado) {
                   // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-                  $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
                   deferred.reject(null);
                 });
             } else {
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_INFO_SOLICITUDES_APROBADAS");
+              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_USUARIO_SOLICITUD");
               ctrl.coleccionSolicitudesAprobadas.pop();
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionUsuarioDeSolicitud) {
             // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.CARGANDO_SOLICITUDES_APROBADAS");
+            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_USUARIO_SOLICITUD");
             deferred.reject(null);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -343,20 +342,18 @@ angular.module('poluxClienteApp')
                   deferred.resolve(ctrl.coleccionSolicitudesAprobadas);
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
-                  // Se establece el mensaje de error con la excepción durante el procesamiento de las promesas
-                  $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.CARGANDO_SOLICITUDES_APROBADAS");
                   // Se rechaza la carga con la excepción generada
                   deferred.reject(excepcionDuranteProcesamiento);
                 });
             } else {
               // Se presenta cuando no hay solicitudes respondidas con los parámetros establecidos
-              $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.SIN_INFO_SOLICITUDES_APROBADAS");
+              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD");
               deferred.reject(null);
             }
           })
           .catch(function(excepcionSolicitudesRespondidas) {
             // Se presenta cuando ocurrió un error al traer las solicitudes desde la tabla respuesta_solicitud
-            $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.CARGANDO_SOLICITUDES_APROBADAS");
+            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD");
             deferred.reject(null);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -380,13 +377,13 @@ angular.module('poluxClienteApp')
               deferred.resolve(estudianteConsultado.data.estudianteCollection.datosEstudiante[0]);
             } else {
               // Se presenta cuando no existe registro de estudiantes con dichas características
-              $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.NO_EXISTE_ESTUDIANTE_POSGRADO");
+              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
               deferred.reject(null);
             }
           })
           .catch(function(excepcionEstudianteConsultado) {
             // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-            $scope.msgErrorConsultaAdmitidos = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
+            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
             deferred.reject(null);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -422,20 +419,26 @@ angular.module('poluxClienteApp')
        * @return {[void]} [El procedimiento de carga, o la excepción generada]
        */
       ctrl.consultarSolicitudesAprobadas = function() {
+        // Se recargan las solicitudes visibles
+        ctrl.coleccionSolicitudesAprobadasVisibles = [];
         // Se establece que inicia la carga de las solicitudes aprobadas
+        $scope.errorCargandoConsultasIniciales = false;
+        $scope.errorCargandoSolicitudesAprobadas = false;
         $scope.cargandoSolicitudesAprobadas = true;
         // Se consultan las solicitudes respondidas
         ctrl.consultarSolicitudesRespondidas()
           .then(function(solicitudesRespondidas) {
-            // Se detiene la carga y se muestra la cuadrícula
+            // Se redefinen los errores, se detiene la carga
+            $scope.errorCargandoConsultasIniciales = false;
+            $scope.errorCargandoSolicitudesAprobadas = false;
             $scope.cargandoSolicitudesAprobadas = false;
+            // Y se muestra la cuadrícula
             ctrl.mostrarSolicitudesAprobadas(solicitudesRespondidas);
           })
-          .catch(function(sinResultados) {
+          .catch(function(excepcionSolicitudesRespondidas) {
             // Se detiene la carga y se muestra el error
+            $scope.errorCargandoSolicitudesAprobadas = true;
             $scope.cargandoSolicitudesAprobadas = false;
-            $scope.sinResultados = sinResultados;
-            $scope.sinDatosConsulta = sinResultados;
           });
       }
 
