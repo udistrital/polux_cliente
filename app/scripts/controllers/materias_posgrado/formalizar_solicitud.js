@@ -54,9 +54,9 @@ angular.module('poluxClienteApp')
         width: '31%',
       }, {
         name: 'formalizarSolicitud',
-        displayName: $translate.instant("FORMALIZAR_SOLICITUD"),
+        displayName: $translate.instant("FORMALIZAR_SOLICITUD.ACCION"),
         width: '15%',
-        cellTemplate: '<btn-registro ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8" funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro><div class="ui-grid-cell-contents" ng-if="row.entity.idEstadoSolicitud != 7 && row.entity.idEstadoSolicitud != 8">{{"FORMALIZACION_NO_HABILITADA" | translate}}</div>',
+        cellTemplate: '<btn-registro ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8" funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro><div class="ui-grid-cell-contents" ng-if="row.entity.idEstadoSolicitud != 7 && row.entity.idEstadoSolicitud != 8">{{"FORMALIZAR_SOLICITUD.FORMALIZACION_NO_HABILITADA" | translate}}</div>',
       }];
 
       /**
@@ -83,7 +83,7 @@ angular.module('poluxClienteApp')
           })
           .catch(function(excepcionPeriodoAcademicoConsultado) {
             // En caso de excepción se prepara el mensaje y se rechaza con nulo
-            ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_PERIODO");
             // Se rechaza nulamente la consulta
             deferred.reject(null);
           });
@@ -127,10 +127,14 @@ angular.module('poluxClienteApp')
                   // Se resuelve la información de las sesiones consultadas
                   deferred.resolve(sesionesDeFormalizacion.data);
                 } else {
+                  // En caso de excepción se prepara el mensaje y se rechaza con nulo
+                  ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_RELACION_SESIONES");
                   // Se rechaza la consulta cuando es vacía
                   deferred.reject(null);
                 }
               }).catch(function(excepcionSesionesDeFormalizacion) {
+                // En caso de excepción se prepara el mensaje y se rechaza con nulo
+                ctrl.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_RELACION_SESIONES");
                 // Se rechaza la consulta cuando falla la obtención de sesiones
                 deferred.reject(excepcionSesionesDeFormalizacion);
               });
@@ -194,6 +198,8 @@ angular.module('poluxClienteApp')
               }
             });
             // Si se recorre toda la colección y no se resuelve, se rechaza la comprobación
+            // y se establece el mensaje de error porque no se encuentra en el periodo correspondiente
+            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.NO_PERIODO_FORMALIZACION");
             deferred.reject(false);
           })
           .catch(function(excepcionSesionesDeFormalizacion) {
@@ -216,8 +222,6 @@ angular.module('poluxClienteApp')
           .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
             // Se define que el periodo no corresponde a la formalización de solicitudes
             $scope.periodoDeFormalizacionNoCorrespondiente = true;
-            // Se establece el mensaje de error porque no se encuentra en el periodo correspondiente
-            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.NO_PERIODO_FORMALIZACION");
             // Se apaga el mensaje de carga
             $scope.cargandoSolicitudes = false;
             // Se habilita el mensaje de error
@@ -289,19 +293,19 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
         return $.param({
+          /**
+           * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
+           * 5 - Opcionada para segunda convocatoria
+           * 6 - Rechazada por cupos insuficientes
+           * 7 - Aprobada exenta de pago
+           * 8 - Aprobada no exenta de pago
+           * Tabla: respuesta_solicitud
+           * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
+           */
           query: "Activo:true," +
             "EstadoSolicitud.Id.in:5|6|7|8," +
             "SolicitudTrabajoGrado.Id:" +
             idSolicitudTrabajoGrado,
-            /**
-             * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
-             * 5 - Opcionada para segunda convocatoria
-             * 6 - Rechazada por cupos insuficientes
-             * 7 - Aprobada exenta de pago
-             * 8 - Aprobada no exenta de pago
-             * Tabla: respuesta_solicitud
-             * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
-             */
           limit: 1
         });
       }
@@ -324,15 +328,21 @@ angular.module('poluxClienteApp')
               // Se resuelve la solicitud con los datos de la respuesta cargados
               deferred.resolve(solicitudAsociada);
             } else {
+              // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
+              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
+                .map(function(solicitudParaFormalizarInconsistente) {
+                  return solicitudParaFormalizarInconsistente.Id;
+                })
+                .indexOf(solicitudAsociada.Id);
+              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
-              ctrl.coleccionSolicitudesParaFormalizar.pop();
+              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD");
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionRespuestaSolicitud) {
             // Se establece el mensaje de error con la excepción al cargar la respuesta de la solicitud
-            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
+            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD");
             // Se rechaza la consulta con la excepción generada al momento de traer los datos
             deferred.reject(excepcionRespuestaSolicitud);
           });
@@ -377,15 +387,21 @@ angular.module('poluxClienteApp')
               // Se resuelve la solicitud con los datos de la respuesta cargados
               deferred.resolve(solicitudAsociada);
             } else {
+              // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
+              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
+                .map(function(solicitudParaFormalizarInconsistente) {
+                  return solicitudParaFormalizarInconsistente.Id;
+                })
+                .indexOf(solicitudAsociada.Id);
+              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
-              ctrl.coleccionSolicitudesParaFormalizar.pop();
+              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionDetalleSolicitud) {
             // Se establece el mensaje de error con la excepción al cargar el detalle de la solicitud
-            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
+            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_DETALLE_SOLICITUD");
             // Se rechaza la consulta con la excepción generada al momento de traer los datos
             deferred.reject(excepcionDetalleSolicitud);
           });
@@ -443,19 +459,17 @@ angular.module('poluxClienteApp')
                   deferred.resolve(ctrl.coleccionSolicitudesParaFormalizar);
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
-                  // Se establece el mensaje de error con la excepción durante el procesamiento de las promesas
-                  $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
                   // Se rechaza la carga con la excepción generada
                   deferred.reject(excepcionDuranteProcesamiento);
                 });
             } else {
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
+              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_USUARIO_SOLICITUD");
             }
           })
           .catch(function(excepcionUsuariosConSolicitudes) {
             // Se establece el mensaje de error con la excepción durante la consulta de usuarios con solicitudes
-            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
+            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_USUARIO_SOLICITUD");
             // Se rechaza la carga con la excepción generada
             deferred.reject(excepcionUsuariosConSolicitudes);
           });
@@ -499,13 +513,12 @@ angular.module('poluxClienteApp')
               deferred.resolve(solicitudesParaFormalizarRegistradas);
             } else {
               // Se entiende que no hay solicitudes para formalizar
-              deferred.reject(null);
               $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR");
+              deferred.reject(null);
             }
           }).catch(function(excepcionCargandoUsuariosConSolicitudes) {
             // Ocurre cuando hay un error durante la consulta
             deferred.reject(null);
-            $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.CARGANDO_SOLICITUDES_PARA_FORMALIZAR");
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -550,8 +563,8 @@ angular.module('poluxClienteApp')
        */
       ctrl.formalizarSolicitudSeleccionada = function(solicitudSeleccionada) {
         swal({
-            title: $translate.instant("CONFORMACION_FORMALIZAR_SOLICITUD"),
-            text: $translate.instant("INFORMACION_FORMALIZACION", {
+            title: $translate.instant("FORMALIZAR_SOLICITUD.CONFIRMACION"),
+            text: $translate.instant("FORMALIZAR_SOLICITUD.MENSAJE_CONFIRMACION", {
               // Se cargan datos de la solicitud para que el usuario pueda verificar antes de confirmar
               idSolicitud: solicitudSeleccionada.idSolicitud,
               nombreEstado: solicitudSeleccionada.estadoSolicitud,
@@ -578,14 +591,14 @@ angular.module('poluxClienteApp')
                   if (respuestaFormalizarSolicitud.data[0] === "Success") {
                     // Se despliega el mensaje que confirma el registro de la formalización
                     swal(
-                      $translate.instant("FORMALIZAR_SOLICITUD"),
+                      $translate.instant("FORMALIZAR_SOLICITUD.AVISO"),
                       $translate.instant("SOLICITUD_FORMALIZADA"),
                       'success'
                     );
                   } else {
                     // Se despliega el mensaje que muestra el error traído desde la transacción
                     swal(
-                      $translate.instant("FORMALIZAR_SOLICITUD"),
+                      $translate.instant("FORMALIZAR_SOLICITUD.AVISO"),
                       $translate.instant(response.data[1]),
                       'warning'
                     );
@@ -598,7 +611,7 @@ angular.module('poluxClienteApp')
                   $scope.cargandoSolicitudes = false;
                   // Se despliega el mensaje de error durante la transacción
                   swal(
-                    $translate.instant("FORMALIZAR_SOLICITUD"),
+                    $translate.instant("FORMALIZAR_SOLICITUD.AVISO"),
                     $translate.instant("ERROR.FORMALIZAR_SOLICITUD"),
                     'warning'
                   );
