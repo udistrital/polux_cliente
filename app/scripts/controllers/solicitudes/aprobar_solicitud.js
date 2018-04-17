@@ -96,7 +96,6 @@ angular.module('poluxClienteApp')
       var defered = $q.defer();
       var promise = defered.promise;
       poluxRequest.get("detalle_solicitud",parametrosDetallesSolicitud).then(function(responseDetalles){
-
           poluxRequest.get("usuario_solicitud",parametrosDetallesSolicitud).then(function(responseEstudiantes){
               if(responseDetalles.data===null){
                 ctrl.detallesSolicitud = [];
@@ -113,6 +112,41 @@ angular.module('poluxClienteApp')
                   solicitantes += (", "+estudiante.Usuario) ;
               });
               ctrl.todoDetalles=[];
+              var promises = [];
+              var getDocente = function(detalle){
+                var defer = $q.defer();
+                academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
+                  if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                    console.log(docente.data.docenteTg.docente[0]);
+                    detalle.Descripcion=docente.data.docenteTg.docente[0].id+" "+docente.data.docenteTg.docente[0].nombre;
+                    if(id === 9){
+                      ctrl.docenteDirector = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                      };
+                      //console.log(ctrl.docenteDirector);
+                    }
+
+                    //docente solicitado para el cambio
+                    if(id === 15 || id===17){
+                      ctrl.docenteCambio = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                      };
+                    //  console.log("docente cambio", ctrl.docenteCambio);
+                    }
+                    defer.resolve();
+                  }else{
+                    ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
+                    defer.reject(error);
+                  }
+                })
+                .catch(function(error){
+                  ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     ctrl.todoDetalles.push(detalle);
                     console.log("detalle",detalle);
@@ -121,30 +155,7 @@ angular.module('poluxClienteApp')
                     if(id===49){
                        detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48){
-
-                      academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
-                        if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                          console.log(docente.data.docenteTg.docente[0]);
-                          detalle.Descripcion=docente.data.docenteTg.docente[0].id+" "+docente.data.docenteTg.docente[0].nombre;
-                          if(id === 9){
-                            ctrl.docenteDirector = {
-                              "NOMBRE":docente.data.docenteTg.docente[0].nombre,
-                              "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
-                            };
-                            //console.log(ctrl.docenteDirector);
-                          }
-
-                          //docente solicitado para el cambio
-                          if(id === 15 || id===17){
-                            ctrl.docenteCambio = {
-                              "NOMBRE":docente.data.docenteTg.docente[0].nombre,
-                              "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
-                            };
-                          //  console.log("docente cambio", ctrl.docenteCambio);
-                          }
-                        }
-                      });
-
+                      promises.push(getDocente(detalle));
                     }else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
@@ -185,10 +196,23 @@ angular.module('poluxClienteApp')
                         }
                     }
               });
-              console.log(ctrl.todoDetalles);
-              ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2);
-              defered.resolve(ctrl.detallesSolicitud);
+              $q.all(promises).then(function(){
+                console.log(ctrl.todoDetalles);
+                ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2);
+                defered.resolve(ctrl.detallesSolicitud);
+              })
+              .catch(function(error){
+                defered.reject(error);
+              });
+          })
+          .catch(function(error){
+            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTES");
+            defered.reject(error);
           });
+      })
+      .catch(function(error){
+        ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DETALLES_SOLICITUD");
+        defered.reject(error);
       });
       return promise;
     };
@@ -202,7 +226,6 @@ angular.module('poluxClienteApp')
       ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
       console.log(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id );
       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2){
-
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
                 ctrl.isInicial = true;
                 //Si no es de materias de posgrado y profundización trae los docentes
@@ -211,8 +234,11 @@ angular.module('poluxClienteApp')
                       ctrl.docentes=docentes.data.docentesTg.docente;
                       defered.resolve(ctrl.docentes);
                   }
+                })
+                .catch(function(error){
+                  ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
+                  defer.reject(error);
                 });
-
                 if(ctrl.dataSolicitud.modalidad === 1){
                   ctrl.isPasantia = true;
                 }
@@ -226,6 +252,10 @@ angular.module('poluxClienteApp')
             ctrl.docentes=docentes.data.docentesTg.docente;
             defered.resolve(ctrl.docentes);
           }
+        })
+        .catch(function(error){
+          ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
+          defer.reject(error);
         });
       }else{
         defered.resolve(ctrl.dataSolicitud.modalidad);
@@ -252,6 +282,16 @@ angular.module('poluxClienteApp')
         defer.reject(error);
       });
       return defer.promise;
+    };
+
+    ctrl.docenteVinculado = function(vinculados,  docente){
+        var esta = false;
+        angular.forEach(vinculados, function(vinculado){
+            if(vinculado.Usuario == docente){
+              esta = true;
+            }
+        });
+        return esta;
     };
 
     var parametrosSolicitud = $.param({
@@ -295,6 +335,12 @@ angular.module('poluxClienteApp')
                 }else{
                   $scope.loadSolicitud = false;
                 }
+            })
+            .catch(function(error){
+              console.log(error);
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
+              ctrl.errorCargarSolicitud = true;
+              $scope.loadSolicitud = false;
             });
           }else{
             $scope.loadSolicitud = false;
@@ -304,7 +350,7 @@ angular.module('poluxClienteApp')
           console.log(error);
           ctrl.errorCargarSolicitud = true;
           $scope.loadSolicitud = false;
-        });;
+        });
       }else{
         ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.SOLICITUD_NO_ENCONTRADA");
         ctrl.errorCargarSolicitud = true;
@@ -317,16 +363,6 @@ angular.module('poluxClienteApp')
       ctrl.errorCargarSolicitud = true;
       $scope.loadSolicitud = false;
     });
-
-    ctrl.docenteVinculado = function(vinculados,  docente){
-        var esta = false;
-        angular.forEach(vinculados, function(vinculado){
-            if(vinculado.Usuario == docente){
-              esta = true;
-            }
-        });
-        return esta;
-    };
 
     ctrl.responder=function(){
 

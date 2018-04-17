@@ -216,6 +216,8 @@ var text_es = {
         CARGAR_DATOS_SOLICITUD:"Ocurrio un error al cargar los datos de las solicitud, por favor verifique su conexión e intente de nuevo.",
         SOLICITUD_NO_ENCONTRADA:"El identificador de la solicitud no ha sido encontrado",
         CARGAR_EVALUADORES:"Ocurrio un error al cargar los docentes evaluadores, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrio un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DOCENTES:"Ocurrio un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -593,6 +595,8 @@ var text_en = {
         CARGAR_DATOS_SOLICITUD:"There was an error occurred loading the request data, please check your connection and try again.",
         SOLICITUD_NO_ENCONTRADA:"The identifier of the request has not been found.",
         CARGAR_EVALUADORES:"There was an error occurred loading the evaluators, please check your connection and try again.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"There was an error occurred loading the teachers related to degree work, please check your connection and try again.",
+        CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
