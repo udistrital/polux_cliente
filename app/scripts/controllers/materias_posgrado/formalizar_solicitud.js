@@ -680,6 +680,7 @@ angular.module('poluxClienteApp')
               }
             }
           } else {
+            // En caso contrario, queda sin formalizar, pues el estudiante ya se ha decidido por otra
             respuestaSolicitudFormalizada.Justificacion = "Su solicitud ha quedado sin formalizar debido a que ya formalizó una solicitud";
             respuestaSolicitudFormalizada.EstadoSolicitud = {
               Id: 11
