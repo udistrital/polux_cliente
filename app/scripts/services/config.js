@@ -42,7 +42,7 @@ var conf_local = {
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
-    NUXEO_SERVICE:"https://documental.udistrital.edu.co/",
+    NUXEO_SERVICE:"https://documental.udistrital.edu.c/",
     CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
     OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
     SESIONES_SERVICE:"http://localhost:8081/v1/",
