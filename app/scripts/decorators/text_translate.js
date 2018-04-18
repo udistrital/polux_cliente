@@ -80,7 +80,6 @@ var text_es = {
     NIVEL_ESTUDIOS: "Nivel de estudios:",
     TIPO_CARRERA: "Tipo de carrera",
     REGISTRAR_TRABAJO_DE_GRADO: "Registrar trabajo de grado.",
-    REGISTRO_NOTA_POSGRADO: "Registro de calificaciones en espacios académicos de posgrado",
     EDICION_FORMATO_EVALUACION: "Edición de Formatos de Evaluación",
     SELECCIONAR_FORMATO: "Seleccionar Formato:",
     EDICION_GENERAL: "Edición general",
@@ -434,6 +433,9 @@ var text_es = {
         AVISO: "Registro de la solicitud aprobada",
         ESTUDIANTE_REGISTRADO: "La modalidad para espacios académicos de posgrado ha sido registrada con éxito",
     },
+    REGISTRAR_NOTA: {
+        TITULO: "Registro de calificaciones en espacios académicos de posgrado",
+    }
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -494,7 +496,6 @@ var text_en = {
     NIVEL_ESTUDIOS: "Level of study:",
     TIPO_CARRERA: "Carrer type",
     REGISTRAR_TRABAJO_DE_GRADO: "Register graduation work.",
-    REGISTRO_NOTA_POSGRADO: "Grades record in academic postgraduate spaces",
     EDICION_FORMATO_EVALUACION: "Edition of test formats",
     SELECCIONAR_FORMATO: "Select format:",
     EDICION_GENERAL: "General edition",
@@ -851,6 +852,9 @@ var text_en = {
         AVISO: "Approved request registration",
         ESTUDIANTE_REGISTRADO: "The modality for postgraduate academic spaces has been successfully registered",
     },
+    REGISTRAR_NOTA: {
+        TITULO: "Grades record in academic postgraduate spaces",
+    }
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
