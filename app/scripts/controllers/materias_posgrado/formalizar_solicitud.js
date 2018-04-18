@@ -693,11 +693,11 @@ angular.module('poluxClienteApp')
         });
         // Se define el objeto para enviar como información para actualizar
         ctrl.informacionParaActualizar = {
-          "RespuestasSolicitudesPrevias": ctrl.coleccionSolicitudesPrevias,
-          "RespuestasSolicitudesFormalizadas": ctrl.coleccionSolicitudesFormalizadas
+          "RespuestasNuevas": ctrl.coleccionSolicitudesFormalizadas,
+          "RespuestasAntiguas": ctrl.coleccionSolicitudesPrevias
         };
         // Se realiza la petición post hacia la transacción con la información para formalizar la solicitud
-        poluxRequest.post("tr_formalizar_solicitud", ctrl.informacionParaActualizar)
+        poluxRequest.post("tr_registrar_respuestas_solicitudes", ctrl.informacionParaActualizar)
           .then(function(respuestaFormalizarSolicitud) {
             // Se resuelve la respuesta de realizar la formalización de la solicitud
             deferred.resolve(respuestaFormalizarSolicitud);
