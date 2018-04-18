@@ -50,7 +50,6 @@ module.exports = function(config) {
       'bower_components/angular-translate/angular-translate.js',
       'bower_components/nuxeo/dist/nuxeo.js',
       'bower_components/angular-file-model/angular-file-model.js',
-      'bower_components/file-saver/FileSaver.js',
       'bower_components/angular-ui-select/dist/select.js',
       'bower_components/select2/select2.js',
       'bower_components/bootstrap-select/dist/js/bootstrap-select.js',

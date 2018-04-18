@@ -629,40 +629,72 @@ angular.module('poluxClienteApp')
       ctrl.registrarFormalizacion = function(solicitudSeleccionada) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
-        // Se prepara una colección que cargue las solicitudes actualizadas
-        ctrl.coleccionSolicitudesActualizadas = [];
+        // Se prepara una colección que cargue las solicitudes previas
+        ctrl.coleccionSolicitudesPrevias = [];
+        // Se prepara una colección que cargue las solicitudes formalizadas
+        ctrl.coleccionSolicitudesFormalizadas = [];
         // Se recorre la colección de solicitudes para formalizar
         angular.forEach(ctrl.coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
+          // Se establece la respuesta de la solicitud previa con los mismos campos, pero con diferente valor de activo
+          var respuestaSolicitudPrevia = {
+            Activo: false,
+            EnteResponsable: solicitudParaFormalizar.respuestaSolicitud.EnteResponsable,
+            Fecha: solicitudParaFormalizar.respuestaSolicitud.Fecha,
+            EstadoSolicitud: {
+              Id: solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id
+            },
+            Id: solicitudParaFormalizar.respuestaSolicitud.Id,
+            Justificacion: solicitudParaFormalizar.respuestaSolicitud.Justificacion,
+            SolicitudTrabajoGrado: {
+              Id: solicitudParaFormalizar.respuestaSolicitud.SolicitudTrabajoGrado.Id
+            },
+            Usuario: solicitudParaFormalizar.respuestaSolicitud.Usuario
+          };
           // Se utiliza la respuesta de la solicitud que fue cargada a la colección de solicitudes para formalizar,
           // Se actualizan sus campos y se envían para registrarse
+          var respuestaSolicitudFormalizada = {
+            Activo: true,
+            EnteResponsable: solicitudParaFormalizar.respuestaSolicitud.EnteResponsable,
+            Fecha: new Date(),
+            SolicitudTrabajoGrado: {
+              Id: solicitudParaFormalizar.respuestaSolicitud.SolicitudTrabajoGrado.Id
+            },
+            Usuario: solicitudParaFormalizar.respuestaSolicitud.Usuario
+          };
           // Se verifica si la solicitud es la seleccionada
           if (solicitudParaFormalizar.Id == solicitudSeleccionada.idSolicitud) {
             // Se estudia el estado de la solicitud
             // Se verifica si la solicitud está aprobada exenta de pago (7)
             if (solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id == 7) {
               // Entonces su nuevo estado será formalizada exenta de pago (9)
-              solicitudParaFormalizar.respuestaSolicitud.Justificacion = "Su solicitud ha sido formalizada con exención de pago";
-              solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id = 9;
+              respuestaSolicitudFormalizada.Justificacion = "Su solicitud fue formalizada con exención de pago";
+              respuestaSolicitudFormalizada.EstadoSolicitud = {
+                Id: 9
+              }
               // En caso contrario, la solicitud está aprobada no exenta de pago (8)
             } else {
               // Entonces su nuevo estado será formalizada no exenta de pago (10)
-              solicitudParaFormalizar.respuestaSolicitud.Justificacion = "Su solicitud ha sido formalizada con condiciones económicas";
-              solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id = 10;
+              respuestaSolicitudFormalizada.Justificacion = "Su solicitud fue formalizada con condiciones económicas";
+              respuestaSolicitudFormalizada.EstadoSolicitud = {
+                Id: 10
+              }
             }
-            solicitudParaFormalizar.respuestaSolicitud.Activo = true;
           } else {
-            solicitudParaFormalizar.respuestaSolicitud.Justificacion = "Su solicitud ha quedado sin formalizar debido a que ya formalizó una solicitud";
-            solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id = 11;
-            solicitudParaFormalizar.respuestaSolicitud.Activo = false;
+            respuestaSolicitudFormalizada.Justificacion = "Su solicitud ha quedado sin formalizar debido a que ya formalizó una solicitud";
+            respuestaSolicitudFormalizada.EstadoSolicitud = {
+              Id: 11
+            }
           }
-          ctrl.coleccionSolicitudesActualizadas.push(solicitudParaFormalizar.respuestaSolicitud);
+          // Se añade la respuesta previa a la colección
+          ctrl.coleccionSolicitudesPrevias.push(respuestaSolicitudPrevia)
+          // Se añade la respuesta formalizada a la colección
+          ctrl.coleccionSolicitudesFormalizadas.push(respuestaSolicitudFormalizada);
         });
-
         // Se define el objeto para enviar como información para actualizar
         ctrl.informacionParaActualizar = {
-          "SolicitudesActualizadas": ctrl.coleccionSolicitudesActualizadas
+          "RespuestasSolicitudesPrevias": ctrl.coleccionSolicitudesPrevias,
+          "RespuestasSolicitudesFormalizadas": ctrl.coleccionSolicitudesFormalizadas
         };
-
         // Se realiza la petición post hacia la transacción con la información para formalizar la solicitud
         poluxRequest.post("tr_formalizar_solicitud", ctrl.informacionParaActualizar)
           .then(function(respuestaFormalizarSolicitud) {

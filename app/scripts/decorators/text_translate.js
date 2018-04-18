@@ -317,8 +317,9 @@ var text_es = {
       CARGANDO_PENSUMS:"Cargando pensums",
       CARGANDO_AREAS:"Cargando áreas de SNIES",
       REGISTRANDO_AREA:"Registrando Área",
-      CARGANDO_INFO_ACADEMICA:"Cargando información académica",
+      CARGANDO_INFO_ACADEMICA: "Cargando información académica",
       CARGANDO_PARAMETROS:"Cargando parámetros",
+      CARGANDO_SOLICITUDES_APROBADAS: "Cargando solicitudes aprobadas",
       CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
     },
     SELECT:{
@@ -429,6 +430,7 @@ var text_es = {
         REGISTRAR: "Registrar",
         DESCRIPCION: "Descripción de la solicitud seleccionada",
         REGISTRAR_ESTUDIANTE: "¿Está seguro de registrar al estudiante {{nombre}}, con código estudiantil {{codigo}} en estado {{estado}}, para la modalidad de materias de posgrado?",
+        AVISO: "Registro de la solicitud aprobada",
     },
 };
 var text_en = {
@@ -730,9 +732,10 @@ var text_en = {
       CARGANDO_PENSUMS:"Loading pensums",
       CARGANDO_AREAS:"Loading areas of SNIES",
       REGISTRANDO_AREA:"Registering area",
-      CARGANDO_INFO_ACADEMICA:"Loading academic information",
-      CARGANDO_PARAMETROS:"Loading parameterss",
+      CARGANDO_INFO_ACADEMICA: "Loading academic information",
+      CARGANDO_PARAMETROS: "Loading parameterss",
       CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
+      CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -842,6 +845,7 @@ var text_en = {
         REGISTRAR: "Register",
         DESCRIPCION: "Selected request description",
         REGISTRAR_ESTUDIANTE: "Are you sure to register the student {{nombre}}, with student code {{codigo}}, in {{estado}} state, for the postgraduate subjects modality?",
+        AVISO: "Approved request registration",
     },
 };
 angular.module('poluxClienteApp')
