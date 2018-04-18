@@ -413,7 +413,24 @@ angular.module('poluxClienteApp')
                console.log(fileURL);
                ctrl.content = $sce.trustAsResourceUrl(fileURL);
                $window.open(fileURL);
+            })
+            .catch(function(error){
+              console.log("error",error);
+              swal(
+                $translate.instant("ERROR"),
+                $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+                'warning'
+              );
             });
+
+        })
+        .catch(function(error){
+          console.log("error",error);
+          swal(
+            $translate.instant("ERROR"),
+            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+            'warning'
+          );
         });
 
   }

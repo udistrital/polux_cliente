@@ -1077,12 +1077,10 @@ angular.module('poluxClienteApp')
     };
 
     ctrl.getDocumento = function(docid){
-        if(docid!== undefined){
+      console.log();
+        if(docid!== undefined && docid!==""){
           $scope.loadDocumento = true;
         nuxeo.header('X-NXDocumentProperties', '*');
-
-
-
           ctrl.obtenerDoc(docid).then(function(){
              ctrl.obtenerFetch(ctrl.document).then(function(r){
                  ctrl.blob=r;
@@ -1091,12 +1089,30 @@ angular.module('poluxClienteApp')
                  ctrl.content = $sce.trustAsResourceUrl(fileURL);
                  $window.open(fileURL);
                  $scope.loadDocumento = false;
+              })
+              .catch(function(error){
+                console.log("error",error);
+                $scope.loadDocumento = false;
+                swal(
+                  $translate.instant("ERROR"),
+                  $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+                  'warning'
+                );
               });
+          })
+          .catch(function(error){
+            console.log("error",error);
+            $scope.loadDocumento = false;
+            swal(
+              $translate.instant("ERROR"),
+              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+              'warning'
+            );
           });
         }else{
           swal(
+            $translate.instant("ERROR"),
             $translate.instant("DOCUMENTO.SIN_DOCUMENTO"),
-            ' ',
             'warning'
           );
         }

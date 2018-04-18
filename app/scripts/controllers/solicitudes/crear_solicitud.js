@@ -274,15 +274,20 @@
       ctrl.areas = responseAreas.data;
       coreService.get("snies_area").then(function(responseAreas) {
         var areasSnies = responseAreas.data;
-        angular.forEach(ctrl.areas, function(area) {
-          angular.forEach(areasSnies, function(areaSnies) {
-            if (area.SniesArea === areaSnies.Id) {
-              area.Snies = areaSnies.Nombre;
-            }
+        if(areasSnies != null){
+          angular.forEach(ctrl.areas, function(area) {
+            angular.forEach(areasSnies, function(areaSnies) {
+              if (area.SniesArea === areaSnies.Id) {
+                area.Snies = areaSnies.Nombre;
+              }
+            });
           });
-        });
-        console.log("areas", ctrl.areas);
-        defer.resolve();
+          console.log("areas", ctrl.areas);
+          defer.resolve();
+        }else{
+          ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
+          defer.reject("no hay areas");
+        }
       })
       .catch(function(error) {
         ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
