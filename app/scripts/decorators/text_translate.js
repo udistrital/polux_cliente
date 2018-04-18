@@ -232,7 +232,7 @@ var text_es = {
         SIN_RELACION_SESIONES: "No hay información asociada a las sesiones de actividad consultadas.",
         CARGANDO_RELACION_SESIONES: "Ocurrió un error al intentar consultar las sesiones de actividad. Comuníquese con el administrador.",
         NO_PERIODO_FORMALIZACION: "Este periodo no corresponde a las fechas de formalización. Verifique que se encuentra en las fechas de formalización indicadas.",
-        SIN_SOLICITUDES_PARA_FORMALIZAR:"No existen solicitudes para formalizar acutalmente.",
+        SIN_SOLICITUDES_PARA_FORMALIZAR: "No existen solicitudes para formalizar acutalmente.",
 
         SIN_INFO_ACADEMICA: "Error al cargar información académica.",
         SIN_DETALLE_SOLICITUD: "No hay información asociada al detalle de las solicitudes consultadas.",
@@ -243,6 +243,7 @@ var text_es = {
         CARGANDO_RESPUESTA_SOLICITUD: "Ocurrió un error al intentar consultar la respuesta de las solicitudes aprobadas. Comuníquese con el administrador.",
         SIN_INFO_ESTUDIANTE: "No hay información asociada a los estudiantes de las solicitudes consultadas.",
         CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al intentar consultar la información académica de las solicitudes aprobadas. Comuníquese con el administrador.",
+        REGISTRANDO_MODALIDAD: "Error al registrar la modalidad seleccionada",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -431,6 +432,7 @@ var text_es = {
         DESCRIPCION: "Descripción de la solicitud seleccionada",
         REGISTRAR_ESTUDIANTE: "¿Está seguro de registrar al estudiante {{nombre}}, con código estudiantil {{codigo}} en estado {{estado}}, para la modalidad de materias de posgrado?",
         AVISO: "Registro de la solicitud aprobada",
+        ESTUDIANTE_REGISTRADO: "La modalidad para espacios académicos de posgrado ha sido registrada con éxito",
     },
 };
 var text_en = {
@@ -654,10 +656,11 @@ var text_en = {
         CARGANDO_DETALLE_SOLICITUD: "An error occurred while trying to query the detail of the approved requests. Contact the administrator.",
         SIN_USUARIO_SOLICITUD: "There is no information associated with the user of the queried requests.",
         CARGANDO_USUARIO_SOLICITUD: "An error occurred while trying to query the user of the approved requests. Contact the administrator.",
-        SIN_USUARIO_SOLICITUD: "There is no information associated with the response of the queried requests.",
-        CARGANDO_USUARIO_SOLICITUD: "An error occurred while trying to query the response of the approved requests. Contact the administrator.",
-        SIN_USUARIO_SOLICITUD: "There is no information associated with the students of the queried requests.",
-        CARGANDO_USUARIO_SOLICITUD: "An error occurred while trying to query the academic information of the approved requests. Contact the administrator.",
+        SIN_RESPUESTA_SOLICITUD: "There is no information associated with the response of the queried requests.",
+        CARGANDO_RESPUESTA_SOLICITUD: "An error occurred while trying to query the response of the approved requests. Contact the administrator.",
+        SIN_INFO_ESTUDIANTE: "There is no information associated with the students of the queried requests.",
+        CARGANDO_INFO_ESTUDIANTE: "An error occurred while trying to query the academic information of the approved requests. Contact the administrator.",
+        REGISTRANDO_MODALIDAD: "Error during register the selected modality",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -846,6 +849,7 @@ var text_en = {
         DESCRIPCION: "Selected request description",
         REGISTRAR_ESTUDIANTE: "Are you sure to register the student {{nombre}}, with student code {{codigo}}, in {{estado}} state, for the postgraduate subjects modality?",
         AVISO: "Approved request registration",
+        ESTUDIANTE_REGISTRADO: "The modality for postgraduate academic spaces has been successfully registered",
     },
 };
 angular.module('poluxClienteApp')

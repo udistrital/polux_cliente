@@ -77,8 +77,9 @@ angular.module('poluxClienteApp')
         cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
       }];
 
-      ctrl.cuadriculaEspaciosAcademicos = {};
-      ctrl.cuadriculaEspaciosAcademicos.columnDefs = [{
+      // Se define la cuadrícula para visualizar los espacios académicos solicitudados
+      ctrl.cuadriculaEspaciosAcademicosSolicitados = {};
+      ctrl.cuadriculaEspaciosAcademicosSolicitados.columnDefs = [{
         name: 'codigo',
         displayName: $translate.instant("CODIGO_ESP_ACADEMICO"),
         width: '35%'
@@ -157,12 +158,45 @@ angular.module('poluxClienteApp')
       }
 
       /**
+       * [Función que obtiene el periodo académico según los parámetros de consulta]
+       * @return {[Promise]} [El periodo académico, o la excepción generada]
+       */
+      ctrl.consultarPeriodoAcademicoPrevio = function() {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        // Se consulta hacia el periodo académico con el servicio de academicaRequest
+        // El parámetro "P" consulta el previo periodo académico al actual
+        academicaRequest.get("periodo_academico", "P")
+          .then(function(periodoAcademicoConsultado) {
+            // Se verifica que la respuesta está definida
+            if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
+              // Se resuelve el periodo académico correspondiente
+              ctrl.periodoAcademicoPrevio = periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0];
+              deferred.resolve(true);
+            } else {
+              // En caso de error se prepara el mensaje y se rechaza con nulo
+              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_PERIODO");
+              // Se rechaza nulamente la consulta
+              deferred.reject(false);
+            }
+          })
+          .catch(function(excepcionPeriodoAcademicoConsultado) {
+            // En caso de excepción se prepara el mensaje y se rechaza con nulo
+            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.CARGANDO_PERIODO");
+            // Se rechaza nulamente la consulta
+            deferred.reject(false);
+          });
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
+      }
+
+      /**
        * [Función que carga las consultas iniciales para poder listar los admitidos]
        * @return {[void]} [El procedimiento de cargar las solicitudes para listar los admitidos]
        */
       ctrl.cargarConsultasIniciales = function() {
         // Se garantiza que se cumplan todas las promesas de carga desde un inicio
-        $q.all([ctrl.consultarPosgradosAsociados(), ctrl.consultarPeriodosCorrespondientes()])
+        $q.all([ctrl.consultarPosgradosAsociados(), ctrl.consultarPeriodosCorrespondientes(), ctrl.consultarPeriodoAcademicoPrevio()])
           .then(function(respuestaConsultas) {
             // Se apaga el mensaje de carga
             $scope.cargandoPosgrados = false;
@@ -323,13 +357,18 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosSolicitudesRespondidas = function() {
         /**
-         * Se traen las solicitudes cuyo estado sean:
+         * Se traen las solicitudes de acuerdo al periodo correspondiente
+         * y cuyo estado sean:
          * 9 - Formalizada exenta de pago
-         * 11 - Oficializada
+         * 12 - Oficializada
          */
         return $.param({
-          query: "EstadoSolicitud.Id.in:9|11," +
-            "Activo:True",
+          query: "EstadoSolicitud.Id.in:9|12," +
+            "Activo:True," +
+            "SolicitudTrabajoGrado.PeriodoAcademico:" +
+            ctrl.periodoSeleccionado.anio +
+            "-" +
+            ctrl.periodoSeleccionado.periodo,
           limit: 0
         });
       }
@@ -370,7 +409,7 @@ angular.module('poluxClienteApp')
             $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD");
             deferred.reject(null);
           });
-        // Se devuelve el diferido que maneja la promesa
+        // Se devuelve el diferido que maperneja la promesa
         return deferred.promise;
       }
 
@@ -383,7 +422,7 @@ angular.module('poluxClienteApp')
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se consulta hacia los datos del estudiante desde el servicio de académica
-        academicaRequest.get("datos_estudiante", [codigoUsuarioConSolicitudAprobada, ctrl.periodoSeleccionado.anio, ctrl.periodoSeleccionado.periodo])
+        academicaRequest.get("datos_estudiante", [codigoUsuarioConSolicitudAprobada, ctrl.periodoAcademicoPrevio.anio, ctrl.periodoAcademicoPrevio.periodo])
           .then(function(estudianteConsultado) {
             // Se estudia si los resultados de la consulta son válidos
             if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
@@ -527,7 +566,7 @@ angular.module('poluxClienteApp')
         ctrl.codigoPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Codigo;
         ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
         ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
-        ctrl.cuadriculaEspaciosAcademicos.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
+        ctrl.cuadriculaEspaciosAcademicosSolicitados.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
         $scope.cargandoTransaccionRegistro = false;
         $('#modalVerSolicitud').modal('show');
       }
@@ -560,29 +599,33 @@ angular.module('poluxClienteApp')
               // Se lanza la transacción
               ctrl.registrarSolicitudAprobada()
                 .then(function(respuestaRegistrarSolicitudAprobada) {
-                  if (response.data[0] === "Success") {
+                  // Se estudia si la transacción fue exitosa
+                  if (respuestaRegistrarSolicitudAprobada.data[0] === "Success") {
+                    // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("LISTAR_APROBADOS.AVISO"),
-                      $translate.instant("PAGO_REGISTRADO"),
+                      $translate.instant("LISTAR_APROBADOS.ESTUDIANTE_REGISTRADO"),
                       'success'
                     );
                     ctrl.consultarSolicitudesAprobadas();
                     $('#modalVerSolicitud').modal('hide');
                   } else {
+                    // De lo contrario, se detiene la carga y notifica al usuario
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("LISTAR_APROBADOS.AVISO"),
-                      $translate.instant(response.data[1]),
+                      $translate.instant(respuestaRegistrarSolicitudAprobada.data[1]),
                       'warning'
                     );
                   }
                 })
                 .catch(function(excepcionRegistrarSolicitudAprobada) {
+                  // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
                   $scope.cargandoTransaccionRegistro = false;
                   swal(
                     $translate.instant("LISTAR_APROBADOS.AVISO"),
-                    $translate.instant("ERROR.REGISTRAR_PAGO"),
+                    $translate.instant("ERROR.REGISTRANDO_MODALIDAD"),
                     'warning'
                   );
                 });
@@ -592,7 +635,7 @@ angular.module('poluxClienteApp')
 
       ctrl.registrarSolicitudAprobada = function() {
         var defered = $q.defer();
-
+        // Se desactiva la solicitud previa y se mantiene el registro
         ctrl.solicitudAprobadaSeleccionada = {
           Activo: false,
           EnteResponsable: ctrl.solicitudSeleccionada.EnteResponsable,
@@ -600,40 +643,43 @@ angular.module('poluxClienteApp')
           EstadoSolicitud: {
             Id: ctrl.solicitudSeleccionada.EstadoSolicitud.Id
           },
-          //Id: ctrl.solicitudSeleccionada.Id,
+          Id: ctrl.solicitudSeleccionada.Id,
           Justificacion: ctrl.solicitudSeleccionada.Justificacion,
           SolicitudTrabajoGrado: {
             Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.Id
           },
           Usuario: ctrl.solicitudSeleccionada.Usuario
         };
-
+        // Se establece la nueva solicitud con cumplida para espacios académicos de posgrado
         ctrl.solicitudAprobadaActualizada = {
           Activo: true,
-          EnteResponsable: 0,
+          EnteResponsable: ctrl.solicitudSeleccionada.EnteResponsable,
           Fecha: new Date(),
           EstadoSolicitud: {
+            // 14 - Cumplida para espacios académicos de posgrado
             Id: 14
           },
-          Justificacion: "Se ha registrado el trabajo de grado del estudiante",
+          Justificacion: "Se ha registrado el trabajo de grado a solicitud del estudiante",
           SolicitudTrabajoGrado: {
             Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.Id
           },
           Usuario: parseInt($scope.userId)
         };
-
-        ctrl.trabajoGrado = {
+        // Se crea el trabajo de grado para ser registrado en la base de datos
+        ctrl.trabajoDeGradoParaRegistrar = {
           Titulo: "Cursar materias de posgrado en " + ctrl.nombrePosgrado,
           Modalidad: {
-            Id: parseInt(ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id)
+            Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id
           },
           EstadoTrabajoGrado: {
-            Id: 4
+            // 20 - Estado de trabajo de grado en cursando espacios académicos de posgrado
+            Id: 20
           },
-          DistincionTrabajoGrado: null
+          DistincionTrabajoGrado: null,
+          PeriodoAcademico: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.PeriodoAcademico
         };
-
-        ctrl.estudianteTrabajoGrado = {
+        // Se inscribe el estudiante solicitante en la base de datos
+        ctrl.estudianteAsociadoTrabajoDeGrado = {
           Estudiante: ctrl.codigoEstudianteSolicitante,
           TrabajoGrado: {
             Id: 0
@@ -642,11 +688,10 @@ angular.module('poluxClienteApp')
             Id: 1
           }
         };
-
+        // Se prepara una colección que maneje los espacios académicos inscritos
         ctrl.espaciosAcademicosInscritos = []
-
-        angular.forEach(ctrl.cuadriculaEspaciosAcademicos.data, function(espacioAcademico) {
-          //console.log(espacioAcademico);
+        // Se recorre la colección de espacios académicos mostrados y se añaden los campos correspondientes a la estructura en la base de datos
+        angular.forEach(ctrl.cuadriculaEspaciosAcademicosSolicitados.data, function(espacioAcademico) {
           ctrl.espaciosAcademicosInscritos.push({
             Nota: 0,
             EspaciosAcademicosElegibles: {
@@ -660,23 +705,24 @@ angular.module('poluxClienteApp')
             }
           });
         });
-
-        ctrl.dataRegistrarPago = {
-          "RespuestaAnterior": ctrl.respuesta,
-          "RespuestaNueva": ctrl.respuestaNueva,
-          "TrabajoGrado": ctrl.trabajoGrado,
-          "EstudianteTrabajoGrado": ctrl.estudianteTrabajoGrado,
-          "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos,
+        // Se define el objeto para enviar como información para actualizar
+        ctrl.informacionParaActualizar = {
+          "RespuestaPrevia": ctrl.solicitudAprobadaSeleccionada,
+          "RespuestaActualizada": ctrl.solicitudAprobadaActualizada,
+          "TrabajoGrado": ctrl.trabajoDeGradoParaRegistrar,
+          "EstudianteTrabajoGrado": ctrl.estudianteAsociadoTrabajoDeGrado,
+          "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos
         };
-
+        // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
         poluxRequest
-          .post("tr_registrar_pago!!!!!!!!!!!!!!!!!!", ctrl.dataRegistrarPago)
-          .then(function(response) {
-            defered.resolve(response);
+          .post("tr_registrar_materias_posgrado", ctrl.informacionParaActualizar)
+          .then(function(respuestaRegistrarMateriasPosgrado) {
+            defered.resolve(respuestaRegistrarMateriasPosgrado);
           })
-          .catch(function(error) {
-            defered.reject(error);
+          .catch(function(excepcionRegistrarMateriasPosgrado) {
+            defered.reject(excepcionRegistrarMateriasPosgrado);
           });
+        // Se devuelve el diferido que maneja la promesa
         return defered.promise;
       }
 
