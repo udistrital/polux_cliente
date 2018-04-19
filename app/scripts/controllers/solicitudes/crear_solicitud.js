@@ -732,6 +732,9 @@
                         if (parametro == "activo") {
                           parametro = parametro;
                         }
+                        if (parametro == "id") {
+                          parametro = parametro + ":" + ctrl.trabajo_grado;
+                        }
                       }
                       if (sql === "") {
                         sql = parametro;
@@ -747,8 +750,8 @@
                   poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones) {
                     if (detalle.Detalle.Nombre.includes("Nombre actual de la propuesta")) {
                       detalle.opciones.push({
-                        "NOMBRE": responseOpciones.data[0].DocumentoEscrito.Titulo,
-                        "bd": responseOpciones.data[0].DocumentoEscrito.Titulo,
+                        "NOMBRE": responseOpciones.data[0].Titulo,
+                        "bd": responseOpciones.data[0].Titulo,
                       });
                       defer.resolve();
                     } else if (detalle.Detalle.Nombre.includes("Actual resumen de la propuesta")) {
@@ -807,7 +810,7 @@
                         defer.reject(error);
                       });
                     } else if (detalle.Detalle.Nombre.includes("Evaluador Actual")) {
-                      var promises = []
+                      var promisesDocente = []
                       var getDocente = function(evaluador, detalle){
                         var defer = $q.defer();
                         academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
@@ -825,12 +828,12 @@
                         return defer.promise;
                       }
                       angular.forEach(responseOpciones.data, function(evaluador) {
-                        promises.push(getDocente(evaluador,detalle));
+                        promisesDocente.push(getDocente(evaluador,detalle));
                       });
-                      $q.all(promises).then(function(){
+                      $q.all(promisesDocente).then(function(){
                         defer.resolve();
                       })
-                      .cath(function(error){
+                      .catch(function(error){
                         defer.reject(error);
                       });
                     } else if (detalle.Detalle.Nombre.includes("Director Actual")) {
@@ -905,8 +908,9 @@
                   if (parametrosServicio[1] === "docente") {
                     academicaRequest.get("docentes_tg").then(function(response) {
                       if (!angular.isUndefined(response.data.docentesTg.docente)) {
+                        var docentes = response.data.docentesTg.docente;
                         var vinculados = [];
-                        angular.forEach(response.data.docentesTg.docente, function(docente) {
+                        angular.forEach(docentes, function(docente) {
                           if (ctrl.docenteVinculado(docente.id)) {
                             vinculados.push(docente);
                           } else {
@@ -917,7 +921,7 @@
                           var index = docentes.indexOf(docente);
                           docentes.splice(index, 1);
                         });
-                        detalle.opciones = response.data.docentesTg.docente
+                        detalle.opciones = docentes;
                         defer.resolve();
                       }
                     })

@@ -88,8 +88,8 @@
           <div class="col-sm-8">
             <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required >
               <option></option>
-              <option value=6> {{'APROBAR_SOLICITUD' | translate}} </option>
-              <option value=5> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+              <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
+              <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
             </select>
           </div>
         </div>
@@ -111,7 +111,7 @@
         </div>
         <br>
         <!--Docente que avala la propuesta -->
-        <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
+        <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3">
           <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
           <div class="col-sm-8">
             <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
@@ -122,9 +122,9 @@
            </ui-select>
          </div>
        </div>
-       <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==6">
+       <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3">
        <!--Docente que evalua la propuesta -->
-       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==6">
+       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==3">
         <div ng-repeat="evaluador in aprobarSolicitud.evaluadoresInicial">
           <div class="row">
             <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
@@ -147,7 +147,7 @@
                     </div>-->
 
                     <!--para el cambio de docente evaluador o director-->
-                    <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==6">
+                    <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==3">
                       <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
                       <div class="col-sm-8">
                         <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
