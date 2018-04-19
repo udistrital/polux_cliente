@@ -36,15 +36,9 @@ angular.module('poluxClienteApp')
         estado: true
       }];
 
-      //ctrl.posgrados = [];
-      ctrl.mostrarPeriodo = false;
-      ctrl.infoAcademicaCargada = true;
-
-      $scope.admitidosCargados = true;
-
-      // Se define la cuadrícula de las solicitudes aprobadas y las columnas visibles
-      ctrl.cuadriculaSolicitudesAprobadas = {};
-      ctrl.cuadriculaSolicitudesAprobadas.columnDefs = [{
+      // Se define la cuadrícula de los trabajos de grados bajo la modalidad de espacios académicos de posgrado
+      ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado = {};
+      ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.columnDefs = [{
         name: 'idSolicitud',
         displayName: $translate.instant("SOLICITUD"),
         width: '10%'
@@ -78,8 +72,8 @@ angular.module('poluxClienteApp')
       }];
 
       // Se define la cuadrícula para visualizar los espacios académicos solicitudados
-      ctrl.cuadriculaEspaciosAcademicosSolicitados = {};
-      ctrl.cuadriculaEspaciosAcademicosSolicitados.columnDefs = [{
+      ctrl.cuadriculaEspaciosAcademicosInscritos = {};
+      ctrl.cuadriculaEspaciosAcademicosInscritos.columnDefs = [{
         name: 'codigo',
         displayName: $translate.instant("CODIGO_ESP_ACADEMICO"),
         width: '35%'
@@ -460,7 +454,7 @@ angular.module('poluxClienteApp')
           solicitudAprobada.nombreEstado = solicitudAprobada.EstadoSolicitud.Nombre;
         });
         // Se cargan los datos visibles a la cuadrícula
-        ctrl.cuadriculaSolicitudesAprobadas.data = solicitudesAprobadas;
+        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = solicitudesAprobadas;
       }
 
       /**
@@ -469,7 +463,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.consultarSolicitudesAprobadas = function() {
         // Se recargan las solicitudes visibles
-        ctrl.cuadriculaSolicitudesAprobadas.data = [];
+        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = [];
         // Se establece que inicia la carga de las solicitudes aprobadas
         $scope.errorCargandoConsultasIniciales = false;
         $scope.errorCargandoSolicitudesAprobadas = false;
@@ -566,7 +560,7 @@ angular.module('poluxClienteApp')
         ctrl.codigoPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Codigo;
         ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
         ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
-        ctrl.cuadriculaEspaciosAcademicosSolicitados.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
+        ctrl.cuadriculaEspaciosAcademicosInscritos.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
         $scope.cargandoTransaccionRegistro = false;
         $('#modalVerSolicitud').modal('show');
       }
@@ -593,7 +587,7 @@ angular.module('poluxClienteApp')
             // Se valida que el coordinador haya confirmado el registro
             if (confirmacionDelUsuario.value) {
               // Se detiene la visualización de solicitudes mientras se formaliza
-              ctrl.cuadriculaSolicitudesAprobadas.data = [];
+              ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = [];
               // Se inicia la carga del formulario mientras se formaliza
               $scope.cargandoTransaccionRegistro = true;
               // Se lanza la transacción
@@ -691,7 +685,7 @@ angular.module('poluxClienteApp')
         // Se prepara una colección que maneje los espacios académicos inscritos
         ctrl.espaciosAcademicosInscritos = []
         // Se recorre la colección de espacios académicos mostrados y se añaden los campos correspondientes a la estructura en la base de datos
-        angular.forEach(ctrl.cuadriculaEspaciosAcademicosSolicitados.data, function(espacioAcademico) {
+        angular.forEach(ctrl.cuadriculaEspaciosAcademicosInscritos.data, function(espacioAcademico) {
           ctrl.espaciosAcademicosInscritos.push({
             Nota: 0,
             EspaciosAcademicosElegibles: {
