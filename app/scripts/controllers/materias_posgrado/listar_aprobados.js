@@ -36,12 +36,6 @@ angular.module('poluxClienteApp')
         estado: true
       }];
 
-      //ctrl.posgrados = [];
-      ctrl.mostrarPeriodo = false;
-      ctrl.infoAcademicaCargada = true;
-
-      $scope.admitidosCargados = true;
-
       // Se define la cuadrícula de las solicitudes aprobadas y las columnas visibles
       ctrl.cuadriculaSolicitudesAprobadas = {};
       ctrl.cuadriculaSolicitudesAprobadas.columnDefs = [{
