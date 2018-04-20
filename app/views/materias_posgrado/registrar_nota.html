@@ -38,15 +38,15 @@
       <span ng-bind="mensajeErrorCargandoConsultasIniciales"></span>
     </div>
     
-    <loading tam="4" load="cargandoSolicitudesAprobadas" message="mensajeCargandoTrabajosDeGrado"></loading>
-    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="registrarNota.cuadriculaSolicitudesAprobadas.data.length > 0">
-      <div class="mi-grid" id="mi-grid" ui-grid="registrarNota.cuadriculaSolicitudesAprobadas"></div>
+    <loading tam="4" load="cargandoTrabajosDeGradoCursados" message="mensajeCargandoTrabajosDeGrado"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="registrarNota.cuadriculaTrabajosDeGradoModalidadPosgrado.data.length > 0">
+      <div class="mi-grid" id="mi-grid" ui-grid="registrarNota.cuadriculaTrabajosDeGradoModalidadPosgrado"></div>
     </div>
 
-    <br ng-if="errorCargandoSolicitudesAprobadas">
+    <br ng-if="errorCargandoTrabajosDeGradoCursados">
     
-    <div class="panel-body alert alert-danger" ng-if="errorCargandoSolicitudesAprobadas">
-      <span ng-bind="mensajeErrorCargandoTrabajosDeGrado"></span>
+    <div class="panel-body alert alert-danger" ng-if="errorCargandoTrabajosDeGradoCursados">
+      <span ng-bind="mensajeErrorCargandoTrabajosDeGradoCursados"></span>
     </div>
 
   </div>

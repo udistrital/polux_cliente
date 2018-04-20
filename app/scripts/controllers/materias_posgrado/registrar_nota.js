@@ -41,21 +41,21 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.columnDefs = [{
         name: 'idTrabajoGrado',
         displayName: $translate.instant("TRABAJO_GRADO"),
-        width: '10%'
+        width: '15%'
       }, {
         name: 'nombreModalidad',
         displayName: $translate.instant("MODALIDAD"),
         type: 'date',
         cellFilter: 'date:\'yyyy-MM-dd\'',
-        width: '8%'
+        width: '15%'
       }, {
         name: 'codigoEstudiante',
         displayName: $translate.instant("CODIGO"),
-        width: '12%'
+        width: '10%'
       }, {
         name: 'nombreEstudiante',
         displayName: $translate.instant("NOMBRE"),
-        width: '27%'
+        width: '25%'
       }, {
         name: 'periodoAcademico',
         displayName: $translate.instant("PERIODO"),
@@ -63,11 +63,11 @@ angular.module('poluxClienteApp')
       }, {
         name: 'nombreEstado',
         displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
-        width: '18%'
+        width: '15%'
       }, {
         name: 'opcionesDeTrabajoDeGrado',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
-        width: '15%',
+        width: '10%',
         cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
       }];
 
@@ -269,13 +269,13 @@ angular.module('poluxClienteApp')
                 .indexOf(trabajoDeGrado.Id);
               ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
+              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionEspaciosAcademicosInscritos) {
             // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
             deferred.reject(excepcionEspaciosAcademicosInscritos);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -327,13 +327,13 @@ angular.module('poluxClienteApp')
                 .indexOf(trabajoDeGrado.Id);
               ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO");
+              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO");
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionUsuarioDeSolicitud) {
             // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO");
+            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO");
             deferred.reject(excepcionUsuarioDeSolicitud);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -391,13 +391,13 @@ angular.module('poluxClienteApp')
                 });
             } else {
               // Se presenta cuando no hay solicitudes respondidas con los parámetros establecidos
-              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_TRABAJO_GRADO");
+              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_TRABAJO_GRADO");
               deferred.reject(null);
             }
           })
           .catch(function(excepcionTrabajosDeGrado) {
             // Se presenta cuando ocurrió un error al traer las solicitudes desde la tabla respuesta_solicitud
-            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_TRABAJO_GRADO");
+            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_TRABAJO_GRADO");
             deferred.reject(excepcionTrabajosDeGrado);
           });
         // Se devuelve el diferido que maperneja la promesa
@@ -421,13 +421,13 @@ angular.module('poluxClienteApp')
               deferred.resolve(estudianteConsultado.data.estudianteCollection.datosEstudiante[0]);
             } else {
               // Se presenta cuando no existe registro de estudiantes con dichas características
-              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
+              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
               deferred.reject(null);
             }
           })
           .catch(function(excepcionEstudianteConsultado) {
             // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
+            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
             deferred.reject(excepcionEstudianteConsultado);
           });
         // Se devuelve el diferido que maneja la promesa
@@ -435,23 +435,23 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que carga las solicitudes aprobadas a la cuadrícula con la información correspondiente]
-       * @param  {[Object]} solicitudesAprobadas [La colección de solicitudes aprobadas ya consultadas]
-       * @return {[void]}                      [El procedimiento de contruir el arreglo de datos visibles sobre las solicitudes aprobadas]
+       * [Función que carga los trabajos de grado cursados a la cuadrícula con la información correspondiente]
+       * @param  {[Object]} trabajosDeGradoCursados [La colección de trabajos de grado cursados ya consultados]
+       * @return {[void]}                      [El procedimiento de contruir el arreglo de datos visibles sobre los trabajos de grado cursados]
        */
-      ctrl.mostrarSolicitudesAprobadas = function(solicitudesAprobadas) {
-        // Se recorren las solicitudes aprobadas para obtener los datos correspondientes
-        angular.forEach(solicitudesAprobadas, function(solicitudAprobada) {
+      ctrl.mostrarSolicitudesAprobadas = function(trabajosDeGradoCursados) {
+        // Se recorren los trabajos de grado cursados para obtener los datos correspondientes
+        angular.forEach(trabajosDeGradoCursados, function(trabajoDeGradoCursado) {
           // Se asignan los campos reconocidos por la cuadrícula
-          solicitudAprobada.idSolicitud = solicitudAprobada.SolicitudTrabajoGrado.Id;
-          solicitudAprobada.fechaSolicitud = solicitudAprobada.Fecha;
-          solicitudAprobada.codigoEstudiante = solicitudAprobada.estudianteAsociado.codigo;
-          solicitudAprobada.nombreEstudiante = solicitudAprobada.estudianteAsociado.nombre;
-          solicitudAprobada.promedioAcademico = solicitudAprobada.estudianteAsociado.promedio;
-          solicitudAprobada.nombreEstado = solicitudAprobada.EstadoSolicitud.Nombre;
+          trabajoDeGradoCursado.idTrabajoGrado = trabajoDeGradoCursado.Id;
+          trabajoDeGradoCursado.nombreModalidad = trabajoDeGradoCursado.Modalidad.Nombre;
+          trabajoDeGradoCursado.codigoEstudiante = trabajoDeGradoCursado.datosEstudiante.codigo;
+          trabajoDeGradoCursado.nombreEstudiante = trabajoDeGradoCursado.datosEstudiante.nombre;
+          trabajoDeGradoCursado.periodoAcademico = trabajoDeGradoCursado.PeriodoAcademico;
+          trabajoDeGradoCursado.nombreEstado = trabajoDeGradoCursado.EstadoTrabajoGrado.Nombre;
         });
         // Se cargan los datos visibles a la cuadrícula
-        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = solicitudesAprobadas;
+        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = trabajosDeGradoCursados;
       }
 
       /**
@@ -463,22 +463,23 @@ angular.module('poluxClienteApp')
         ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = [];
         // Se establece que inicia la carga de las solicitudes aprobadas
         $scope.errorCargandoConsultasIniciales = false;
-        $scope.errorCargandoSolicitudesAprobadas = false;
-        $scope.cargandoSolicitudesAprobadas = true;
+        $scope.errorCargandoTrabajosDeGradoCursados = false;
+        $scope.cargandoTrabajosDeGradoCursados = true;
         // Se consultan las solicitudes respondidas
         ctrl.consultarTrabajosDeGradoCursados()
-          .then(function(solicitudesRespondidas) {
+          .then(function(trabajosDeGradoCursados) {
             // Se redefinen los errores, se detiene la carga
             $scope.errorCargandoConsultasIniciales = false;
-            $scope.errorCargandoSolicitudesAprobadas = false;
-            $scope.cargandoSolicitudesAprobadas = false;
+            $scope.errorCargandoTrabajosDeGradoCursados = false;
+            $scope.cargandoTrabajosDeGradoCursados = false;
             // Y se muestra la cuadrícula
-            ctrl.mostrarSolicitudesAprobadas(solicitudesRespondidas);
+            ctrl.mostrarSolicitudesAprobadas(trabajosDeGradoCursados);
           })
           .catch(function(excepcionSolicitudesRespondidas) {
             // Se detiene la carga y se muestra el error
-            $scope.errorCargandoSolicitudesAprobadas = true;
-            $scope.cargandoSolicitudesAprobadas = false;
+            console.log(excepcionSolicitudesRespondidas);
+            $scope.errorCargandoTrabajosDeGradoCursados = true;
+            $scope.cargandoTrabajosDeGradoCursados = false;
           });
       }
 
