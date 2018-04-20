@@ -389,7 +389,7 @@
     var getEspaciosInscritos = function(idTrabajoGrado){
       var defer = $q.defer();
       var parametrosEspacios = $.param({
-        query: "trabajo_grado:" + idTrabajoGrado,
+        query: "EstadoEspacioAcademicoInscrito:1,trabajo_grado:" + idTrabajoGrado,
         limit: 0
       });
       poluxRequest.get("espacio_academico_inscrito", parametrosEspacios).then(function(responseEspacios) {

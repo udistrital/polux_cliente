@@ -410,7 +410,8 @@ angular.module('poluxClienteApp')
                 TrTrabajoGrado: null,
                 ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
                 TrabajoGrado: null,
-                SolicitudTrabajoGrado: null
+                SolicitudTrabajoGrado: null,
+                EspaciosAcademicos: null,
             };
             //solicitud aprobada
             if(ctrl.respuestaSolicitud == 3){
@@ -430,7 +431,13 @@ angular.module('poluxClienteApp')
                         var aux = detalle.Descripcion.split(" ");
                         ctrl.evaluadorNuevo = Number(aux[0]);
                     } else if(detalle.DetalleTipoSolicitud.Detalle.Enunciado=="ESCRIBA_NOMBRE_NUEVO_PROPUESTA"){
-                      ctrl.tituloNuevo = detalle.Descripcion;
+                        ctrl.tituloNuevo = detalle.Descripcion;
+                    }  else if (detalle.DetalleTipoSolicitud.Detalle.Id == 23){
+                        //Para obtener la asignatura Actual
+                        ctrl.asignaturaActual = Number(detalle.Descripcion.split("-")[0]);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 24){
+                        //Para obtener la asignatura Nueva
+                        ctrl.asignaturaNueva = Number(detalle.Descripcion.split("-")[0]);
                     }
                 });
                 //Se verifica por tipo de solicitud
@@ -653,7 +660,6 @@ angular.module('poluxClienteApp')
                   //solicitud de cancelacion de modalidad
                   //se crea data del estudiante
                   var dataEstudianteTg = {
-                    "Id": 0,
                     "Estudiante": ctrl.detallesSolicitud.solicitantes,
                     "TrabajoGrado" : ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
                     "EstadoEstudianteTrabajoGrado" : {
@@ -673,6 +679,35 @@ angular.module('poluxClienteApp')
                   //Se cambia el titulo
                   tgTemp.Titulo = ctrl.tituloNuevo;
                   ctrl.dataRespuesta.TrabajoGrado = tgTemp;
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 9){
+                  //solicitud de cambio de materia
+                  var espacios = [];
+                  //Asignatura vieja
+                  espacios.push({
+                    "Nota": 0,
+                    "EspaciosAcademicosElegibles":{
+                      "Id": 0,
+                      "CodigoAsignatura": ctrl.asignaturaActual,
+                    },
+                    "EstadoEspacioAcademicoInscrito":{
+                      "Id": 2
+                    },
+                    "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+                  });
+                  //Asignatura Nueva
+                  espacios.push({
+                    "Nota": 0,
+                    "EspaciosAcademicosElegibles":{
+                      "Id": 0,
+                      "CodigoAsignatura": ctrl.asignaturaNueva,
+                    },
+                    "EstadoEspacioAcademicoInscrito":{
+                      "Id": 1
+                    },
+                    "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+                  });
+                  ctrl.dataRespuesta.EspaciosAcademicos = espacios;
+                  console.log("Espacios", ctrl.dataRespuesta.EspaciosAcademicos);
                 }
             }
 
