@@ -38,7 +38,7 @@
       <span ng-bind="mensajeErrorCargandoConsultasIniciales"></span>
     </div>
     
-    <loading tam="4" load="cargandoSolicitudesAprobadas" message="mensajeCargandoSolicitudesAprobadas"></loading>
+    <loading tam="4" load="cargandoSolicitudesAprobadas" message="mensajeCargandoTrabajosDeGrado"></loading>
     <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="registrarNota.cuadriculaSolicitudesAprobadas.data.length > 0">
       <div class="mi-grid" id="mi-grid" ui-grid="registrarNota.cuadriculaSolicitudesAprobadas"></div>
     </div>
@@ -46,7 +46,7 @@
     <br ng-if="errorCargandoSolicitudesAprobadas">
     
     <div class="panel-body alert alert-danger" ng-if="errorCargandoSolicitudesAprobadas">
-      <span ng-bind="mensajeErrorCargandoSolicitudesAprobadas"></span>
+      <span ng-bind="mensajeErrorCargandoTrabajosDeGrado"></span>
     </div>
 
   </div>
@@ -120,13 +120,13 @@
           </div>
         </div>
       </div>
-      <div class="panel panel-default" ng-if="registrarNota.cuadriculaEspaciosAcademicosSolicitados.data.length > 0">
+      <div class="panel panel-default" ng-if="registrarNota.cuadriculaEspaciosAcademicosInscritos.data.length > 0">
         <div class="panel-heading">
           {{'ESP_ACADEMICOS' | translate}}
         </div>
         <div class="panel-body">
           <div class="panel col-md-12">
-            <div ui-grid="registrarNota.cuadriculaEspaciosAcademicosSolicitados" id="mi-grid" style="height: {{(registrarNota.cuadriculaEspaciosAcademicosSolicitados.data.length * 35) + 40}}px"></div>
+            <div ui-grid="registrarNota.cuadriculaEspaciosAcademicosInscritos" id="mi-grid" style="height: {{(registrarNota.cuadriculaEspaciosAcademicosInscritos.data.length * 35) + 40}}px"></div>
           </div>
         </div>
       </div>

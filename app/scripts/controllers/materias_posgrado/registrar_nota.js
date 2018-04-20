@@ -23,7 +23,7 @@ angular.module('poluxClienteApp')
       $scope.periodoCorrespondienteHabilitado = false;
 
       // Se configura el mensaje mientras se cargan las solicitudes aprobadas
-      $scope.mensajeCargandoSolicitudesAprobadas = $translate.instant("LOADING.CARGANDO_SOLICITUDES_APROBADAS");
+      $scope.mensajeCargandoTrabajosDeGrado = $translate.instant("LOADING.CARGANDO_TRABAJOS_DE_GRADO");
 
       // Se configura el mensaje mientras se carga la transacción de registro
       $scope.mensajeCargandoTransaccionRegistro = $translate.instant("LOADING.CARGANDO_TRANSACCION_REGISTRO");
@@ -39,12 +39,12 @@ angular.module('poluxClienteApp')
       // Se define la cuadrícula de los trabajos de grados bajo la modalidad de espacios académicos de posgrado
       ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado = {};
       ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.columnDefs = [{
-        name: 'idSolicitud',
-        displayName: $translate.instant("SOLICITUD"),
+        name: 'idTrabajoGrado',
+        displayName: $translate.instant("TRABAJO_GRADO"),
         width: '10%'
       }, {
-        name: 'fechaSolicitud',
-        displayName: $translate.instant("FECHA"),
+        name: 'nombreModalidad',
+        displayName: $translate.instant("MODALIDAD"),
         type: 'date',
         cellFilter: 'date:\'yyyy-MM-dd\'',
         width: '8%'
@@ -57,15 +57,15 @@ angular.module('poluxClienteApp')
         displayName: $translate.instant("NOMBRE"),
         width: '27%'
       }, {
-        name: 'promedioAcademico',
-        displayName: $translate.instant("PROMEDIO"),
+        name: 'periodoAcademico',
+        displayName: $translate.instant("PERIODO"),
         width: '10%'
       }, {
         name: 'nombreEstado',
         displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
         width: '18%'
       }, {
-        name: 'opcionesDeSolicitud',
+        name: 'opcionesDeTrabajoDeGrado',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '15%',
         cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
@@ -111,13 +111,18 @@ angular.module('poluxClienteApp')
               ctrl.posgradosAsociados = resultadoPosgradosAsociados.data.coordinadorCollection.coordinador;
               // Se resuelve la promesa
               deferred.resolve(true);
+            } else {
+              // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
+              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.INDEFINIDA_INFO_ACADEMICA");
+              // Se rechaza la promesa
+              deferred.resolve(null);
             }
           })
           .catch(function(excepcionPosgradosAsociados) {
             // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
             $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
             // Se rechaza la promesa
-            deferred.reject(false);
+            deferred.reject(excepcionPosgradosAsociados);
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -139,13 +144,18 @@ angular.module('poluxClienteApp')
               ctrl.periodosCorrespondientes = resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos;
               // Se resuelve la promesa
               deferred.resolve(true);
+            } else {
+              // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
+              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.INDEFINIDA_INFO_ACADEMICA");
+              // Se rechaza la promesa
+              deferred.resolve(null);
             }
           })
           .catch(function(excepcionPeriodosCorrespondientes) {
             // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
             $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
             // Se rechaza la promesa
-            deferred.reject(false);
+            deferred.reject(excepcionPeriodosCorrespondientes);
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -178,7 +188,7 @@ angular.module('poluxClienteApp')
             // En caso de excepción se prepara el mensaje y se rechaza con nulo
             $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.CARGANDO_PERIODO");
             // Se rechaza nulamente la consulta
-            deferred.reject(false);
+            deferred.reject(excepcionPeriodoAcademicoConsultado);
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -222,78 +232,65 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que define los parámetros para consultar en la tabla detalle_solicitud]
-       * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
+       * [Función que define los parámetros para consultar en la tabla espacio_academico_inscrito]
+       * @param  {[integer]} idTrabajoGrado [Se recibe el id del trabajo de grado asociado al espacio académico inscrito]
        * @return {[param]}                         [Se retorna la sentencia para la consulta]
        */
-      ctrl.obtenerParametrosDetalleSolicitudRespondida = function(idSolicitudTrabajoGrado) {
+      ctrl.obtenerParametrosEspaciosAcademicosInscritos = function(idTrabajoGrado) {
         return $.param({
-          /**
-           * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado 
-           * Tabla: detalle_solicitud
-           * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
-           */
-          query: "DetalleTipoSolicitud:37," +
-            "SolicitudTrabajoGrado:" +
-            idSolicitudTrabajoGrado,
-          limit: 1
+          query: "TrabajoGrado:" +
+            idTrabajoGrado,
+          limit: 0
         });
       }
 
       /**
        * [Función que según la solicitud, carga la información correspondiente al detalle de la misma]
-       * @param  {[Object]} solicitudAprobada [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
+       * @param  {[Object]} trabajoDeGrado [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
        * @return {[Promise]}                   [La solicitud con el detalle asociado dentro, o la excepción generada]
        */
-      ctrl.consultarDetalleSolicitudRespondida = function(solicitudAprobada) {
+      ctrl.consultarEspaciosAcademicosInscritos = function(trabajoDeGrado) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se consulta hacia el detalle de la solicitud aprobada en la base de datos
-        poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitudRespondida(solicitudAprobada.SolicitudTrabajoGrado.Id))
-          .then(function(detalleSolicitudRespondida) {
+        poluxRequest.get("espacio_academico_inscrito", ctrl.obtenerParametrosEspaciosAcademicosInscritos(trabajoDeGrado.Id))
+          .then(function(espaciosAcademicosInscritos) {
             // Se estudia si la información existe
-            if (detalleSolicitudRespondida.data) {
-              // Se elimina la información redundante
-              delete detalleSolicitudRespondida.data[0].SolicitudTrabajoGrado;
+            if (espaciosAcademicosInscritos.data) {
               // Se resuelve la solicitud aprobada con el detalle dentro
-              solicitudAprobada.detalleSolicitud = detalleSolicitudRespondida.data[0];
-              deferred.resolve(solicitudAprobada);
+              trabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data[0];
+              deferred.resolve(trabajoDeGrado);
             } else {
               // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
-              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
-                .map(function(solicitudAprobadaInconsistente) {
-                  return solicitudAprobadaInconsistente.Id;
+              var itemInconsistente = ctrl.coleccionTrabajosDeGradoCursados
+                .map(function(trabajoDeGradoInconsistente) {
+                  return trabajoDeGradoInconsistente.Id;
                 })
-                .indexOf(solicitudAprobada.Id);
-              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
+                .indexOf(trabajoDeGrado.Id);
+              ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
+              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
               deferred.resolve(null);
             }
           })
-          .catch(function(excepcionDetalleSolicitudRespondida) {
+          .catch(function(excepcionEspaciosAcademicosInscritos) {
             // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_DETALLE_SOLICITUD");
-            deferred.reject(null);
+            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+            deferred.reject(excepcionEspaciosAcademicosInscritos);
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
       }
 
       /**
-       * [Función que define los parámetros para consultar en la tabla usuario_solicitud]
-       * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
+       * [Función que define los parámetros para consultar en la tabla estudiante_trabajo_grado]
+       * @param  {[integer]} idTrabajoGrado [Se recibe el id del trabajo de grado asociado al usuario]
        * @return {[param]}                         [Se retorna la sentencia para la consulta]
        */
-      ctrl.obtenerParametrosUsuarioDeSolicitud = function(idSolicitudTrabajoGrado) {
+      ctrl.obtenerParametrosEstudianteTrabajoGrado = function(idTrabajoGrado) {
         return $.param({
-          /**
-           * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado 
-           * Tabla: detalle_solicitud
-           * Tablas asociadas: detalle (22) y modalidad_tipo_solicitud (13)
-           */
-          query: "SolicitudTrabajoGrado:" +
-            idSolicitudTrabajoGrado,
+          query: "TrabajoGrado:" +
+            idTrabajoGrado,
           limit: 1
         });
       }
@@ -302,44 +299,42 @@ angular.module('poluxClienteApp')
        * [Función que consulta el usuario desde la tabla usuario_solicitud según la solicitud]
        * @return {[Promise]} [Los datos del usuario asociado a la solicitud, o la excepción generada]
        */
-      ctrl.consultarUsuarioDeSolicitud = function(solicitudAprobada) {
+      ctrl.consultarEstudianteTrabajoGrado = function(trabajoDeGrado) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
-        poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuarioDeSolicitud(solicitudAprobada.SolicitudTrabajoGrado.Id))
-          .then(function(usuarioDeSolicitud) {
+        poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(trabajoDeGrado.Id))
+          .then(function(estudianteTrabajoGrado) {
             // Se estudia si la información existe
-            if (usuarioDeSolicitud.data) {
-              // Se elimina la información redundante
-              delete usuarioDeSolicitud.data[0].SolicitudTrabajoGrado;
+            if (estudianteTrabajoGrado.data) {
               // Se resuelve la solicitud aprobada con el usuario dentro
-              solicitudAprobada.usuarioDeSolicitud = usuarioDeSolicitud.data[0];
-              ctrl.consultarInformacionAcademicaDelEstudiante(usuarioDeSolicitud.data[0].Usuario)
+              trabajoDeGrado.estudianteTrabajoGrado = estudianteTrabajoGrado.data[0];
+              ctrl.consultarInformacionAcademicaDelEstudiante(estudianteTrabajoGrado.data[0].Estudiante)
                 .then(function(estudianteConsultado) {
                   // Se resuelve la información académica del estudiante cargada a la solicitud
-                  solicitudAprobada.estudianteAsociado = estudianteConsultado;
-                  deferred.resolve(solicitudAprobada);
+                  trabajoDeGrado.datosEstudiante = estudianteConsultado;
+                  deferred.resolve(trabajoDeGrado);
                 })
                 .catch(function(excepcionEstudianteConsultado) {
                   // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-                  deferred.reject(null);
+                  deferred.reject(excepcionEstudianteConsultado);
                 });
             } else {
               // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
-              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
-                .map(function(solicitudAprobadaInconsistente) {
-                  return solicitudAprobadaInconsistente.Id;
+              var itemInconsistente = ctrl.coleccionTrabajosDeGradoCursados
+                .map(function(trabajoDeGradoInconsistente) {
+                  return trabajoDeGradoInconsistente.Id;
                 })
-                .indexOf(solicitudAprobada.Id);
-              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
+                .indexOf(trabajoDeGrado.Id);
+              ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_USUARIO_SOLICITUD");
+              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO");
               deferred.resolve(null);
             }
           })
           .catch(function(excepcionUsuarioDeSolicitud) {
             // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_USUARIO_SOLICITUD");
-            deferred.reject(null);
+            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO");
+            deferred.reject(excepcionUsuarioDeSolicitud);
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -349,17 +344,15 @@ angular.module('poluxClienteApp')
        * [Función que define los parámetros para consultar en la tabla respuesta_solicitud]
        * @return {[param]}                         [Se retorna la sentencia para la consulta]
        */
-      ctrl.obtenerParametrosSolicitudesRespondidas = function() {
+      ctrl.obtenerParametrosTrabajosDeGrado = function() {
         /**
-         * Se traen las solicitudes de acuerdo al periodo correspondiente
-         * y cuyo estado sean:
-         * 9 - Formalizada exenta de pago
-         * 12 - Oficializada
+         * Se traen los trabajos de grado de acuerdo al periodo académico seleccionado
+         * y cuyo estado sea:
+         * 20 - Cursando espacios académicos de posgrado
          */
         return $.param({
-          query: "EstadoSolicitud.Id.in:9|12," +
-            "Activo:True," +
-            "SolicitudTrabajoGrado.PeriodoAcademico:" +
+          query: "EstadoTrabajoGrado.Id:20," +
+            "PeriodoAcademico:" +
             ctrl.periodoSeleccionado.anio +
             "-" +
             ctrl.periodoSeleccionado.periodo,
@@ -367,26 +360,30 @@ angular.module('poluxClienteApp')
         });
       }
 
-      ctrl.consultarSolicitudesRespondidas = function() {
+      /**
+       * [Función que consulta los trabajos de grado bajo la modalidad de espacios académicos de posgrado y añade los detalles necesarios para registrar las notas]
+       * @return {[Promise]} [La colección de trabajos de grado terminados, o la excepción generada]
+       */
+      ctrl.consultarTrabajosDeGradoCursados = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se establece un conjunto de procesamiento de solicitudes que reúne los procesos que deben cargarse antes de ofrecer funcionalidades
         var conjuntoProcesamientoDeSolicitudes = [];
         // Se establece una colección de solicitudes aprobadas para ser inscritas al posgrado
-        ctrl.coleccionSolicitudesAprobadas = [];
+        ctrl.coleccionTrabajosDeGradoCursados = [];
         // Se consulta hacia las solicitudes respondidas en la base de datos
-        poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudesRespondidas())
-          .then(function(solicitudesRespondidas) {
-            if (solicitudesRespondidas.data) {
-              angular.forEach(solicitudesRespondidas.data, function(solicitudRespondida) {
-                ctrl.coleccionSolicitudesAprobadas.push(solicitudRespondida);
-                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarDetalleSolicitudRespondida(solicitudRespondida));
-                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarUsuarioDeSolicitud(solicitudRespondida));
+        poluxRequest.get("trabajo_grado", ctrl.obtenerParametrosTrabajosDeGrado())
+          .then(function(trabajosDeGrado) {
+            if (trabajosDeGrado.data) {
+              angular.forEach(trabajosDeGrado.data, function(trabajoDeGrado) {
+                ctrl.coleccionTrabajosDeGradoCursados.push(trabajoDeGrado);
+                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarEspaciosAcademicosInscritos(trabajoDeGrado));
+                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarEstudianteTrabajoGrado(trabajoDeGrado));
               });
               $q.all(conjuntoProcesamientoDeSolicitudes)
                 .then(function(resultadoDelProcesamiento) {
                   // Se resuelve la colección de solicitudes para formalizar
-                  deferred.resolve(ctrl.coleccionSolicitudesAprobadas);
+                  deferred.resolve(ctrl.coleccionTrabajosDeGradoCursados);
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
                   // Se rechaza la carga con la excepción generada
@@ -394,14 +391,14 @@ angular.module('poluxClienteApp')
                 });
             } else {
               // Se presenta cuando no hay solicitudes respondidas con los parámetros establecidos
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD");
+              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_TRABAJO_GRADO");
               deferred.reject(null);
             }
           })
-          .catch(function(excepcionSolicitudesRespondidas) {
+          .catch(function(excepcionTrabajosDeGrado) {
             // Se presenta cuando ocurrió un error al traer las solicitudes desde la tabla respuesta_solicitud
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD");
-            deferred.reject(null);
+            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_TRABAJO_GRADO");
+            deferred.reject(excepcionTrabajosDeGrado);
           });
         // Se devuelve el diferido que maperneja la promesa
         return deferred.promise;
@@ -424,14 +421,14 @@ angular.module('poluxClienteApp')
               deferred.resolve(estudianteConsultado.data.estudianteCollection.datosEstudiante[0]);
             } else {
               // Se presenta cuando no existe registro de estudiantes con dichas características
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
+              $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
               deferred.reject(null);
             }
           })
           .catch(function(excepcionEstudianteConsultado) {
             // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
-            deferred.reject(null);
+            $scope.mensajeErrorCargandoTrabajosDeGrado = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
+            deferred.reject(excepcionEstudianteConsultado);
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -469,7 +466,7 @@ angular.module('poluxClienteApp')
         $scope.errorCargandoSolicitudesAprobadas = false;
         $scope.cargandoSolicitudesAprobadas = true;
         // Se consultan las solicitudes respondidas
-        ctrl.consultarSolicitudesRespondidas()
+        ctrl.consultarTrabajosDeGradoCursados()
           .then(function(solicitudesRespondidas) {
             // Se redefinen los errores, se detiene la carga
             $scope.errorCargandoConsultasIniciales = false;
@@ -571,12 +568,11 @@ angular.module('poluxClienteApp')
        */
       ctrl.confirmarRegistroSolicitud = function() {
         swal({
-            title: $translate.instant("INFORMACION_SOLICITUD"),
-            text: $translate.instant("LISTAR_APROBADOS.REGISTRAR_ESTUDIANTE", {
+            title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
+            text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
               // Se cargan datos de la solicitud para que el coordinador pueda verificar antes de registrar
               nombre: ctrl.nombreEstudianteSolicitante,
               codigo: ctrl.codigoEstudianteSolicitante,
-              estado: ctrl.estadoSolicitud
             }),
             type: "info",
             confirmButtonText: $translate.instant("ACEPTAR"),
@@ -598,8 +594,8 @@ angular.module('poluxClienteApp')
                     // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
-                      $translate.instant("LISTAR_APROBADOS.AVISO"),
-                      $translate.instant("LISTAR_APROBADOS.ESTUDIANTE_REGISTRADO"),
+                      $translate.instant("REGISTRAR_NOTA.AVISO"),
+                      $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
                       'success'
                     );
                     ctrl.consultarSolicitudesAprobadas();
@@ -608,7 +604,7 @@ angular.module('poluxClienteApp')
                     // De lo contrario, se detiene la carga y notifica al usuario
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
-                      $translate.instant("LISTAR_APROBADOS.AVISO"),
+                      $translate.instant("REGISTRAR_NOTA.AVISO"),
                       $translate.instant(respuestaRegistrarSolicitudAprobada.data[1]),
                       'warning'
                     );
@@ -618,8 +614,8 @@ angular.module('poluxClienteApp')
                   // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
                   $scope.cargandoTransaccionRegistro = false;
                   swal(
-                    $translate.instant("LISTAR_APROBADOS.AVISO"),
-                    $translate.instant("ERROR.REGISTRANDO_MODALIDAD"),
+                    $translate.instant("REGISTRAR_NOTA.AVISO"),
+                    $translate.instant("ERROR.REGISTRANDO_NOTA"),
                     'warning'
                   );
                 });

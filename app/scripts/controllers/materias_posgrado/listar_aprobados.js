@@ -367,6 +367,10 @@ angular.module('poluxClienteApp')
         });
       }
 
+      /**
+       * [Función que consulta las solicitudes respondidas, y les añade los detalles necesarios para registrar el trabajo de grado]
+       * @return {[Promise]} [La colección de solicitudes aprobadas, o la excepción generada]
+       */
       ctrl.consultarSolicitudesRespondidas = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();

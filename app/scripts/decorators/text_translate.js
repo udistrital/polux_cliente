@@ -69,9 +69,6 @@ var text_es = {
     RESPUESTA: "Respuesta:",
     DENEGADO: "El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado",
     REGISTRAR_PROPUESTA: "Registrar propuesta.",
-    REGISTRAR_NOTA_POSGRADO: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
-    PAGO_REGISTRADO: "El pago fue registrado exitosamente",
-    NOTA_REGISTRADA: "Las notas fueron registradas exitosamente",
     ESTADO: "Estado:",
     ESTADO_SIN_DOSPUNTOS: "Estado",
     PORCENTAJE_CURSADO: "Porcentaje cursado",
@@ -243,6 +240,15 @@ var text_es = {
         SIN_INFO_ESTUDIANTE: "No hay información asociada a los estudiantes de las solicitudes consultadas.",
         CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al intentar consultar la información académica de las solicitudes aprobadas. Comuníquese con el administrador.",
         REGISTRANDO_MODALIDAD: "Error al registrar la modalidad seleccionada",
+
+        INDEFINIDA_INFO_ACADEMICA: "No hay información académica definida para esta operación.",
+        SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "No hay información asociada a los espacios académicos inscritos de los trabajos de grado consultados.",
+        CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS: "Ocurrió un error al intentar consultar los espacios académicos inscritos de los trabajos de grado consultados. Comuníquese con el administrador.",
+        SIN_ESTUDIANTE_TRABAJO_GRADO: "No hay información asociada a los estudiantes de los trabajos de grado consultados.",
+        CARGANDO_ESTUDIANTE_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los estudiantes de los trabajos de grado consultados. Comuníquese con el administrador.",
+        SIN_TRABAJO_GRADO: "No hay información asociada a los trabajos de grado consultados.",
+        CARGANDO_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los trabajos de grado consultados. Comuníquese con el administrador.",
+        REGISTRANDO_NOTA: "Error al registrar las calificaciones ingresadas",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -250,7 +256,7 @@ var text_es = {
         CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos",
         VER_DETALLES: "Ver Detalles",
         RESPONDER_SOLICITUD:"Responder solicitud",
-        REGISTRAR_PAGO:"Registrar pago",
+        REGISTRAR_TRABAJO_GRADO: "Registrar trabajo de grado",
     },
     ENVIAR_SOLICITUD:"Enviar Solicitud",
     INGRESAR_PROPUESTA:"Ingrese el nombre de la propuesta",
@@ -321,6 +327,7 @@ var text_es = {
       CARGANDO_PARAMETROS:"Cargando parámetros",
       CARGANDO_SOLICITUDES_APROBADAS: "Cargando solicitudes aprobadas",
       CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
+      CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado"
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -435,6 +442,10 @@ var text_es = {
     },
     REGISTRAR_NOTA: {
         TITULO: "Registro de calificaciones en espacios académicos de posgrado",
+        CONFIRMACION: "Registrar calificaciones",
+        MENSAJE_CONFIRMACION: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
+        AVISO: "Calificaciones registradas",
+        NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
     }
 };
 var text_en = {
@@ -485,9 +496,6 @@ var text_en = {
     RESPUESTA: "Answer:",
     DENEGADO: "The student doesn't meet the requirements in order aply to this modality",
     REGISTRAR_PROPUESTA: "Register proposal.",
-    REGISTRAR_NOTA_POSGRADO: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",
-    PAGO_REGISTRADO: "The payment was registered successfully",
-    NOTA_REGISTRADA: "The grades were registered successfully",
     ESTADO: "Status:",
     ESTADO_SIN_DOSPUNTOS: "Status",
     PORCENTAJE_CURSADO: "Percentage completed",
@@ -662,6 +670,15 @@ var text_en = {
         SIN_INFO_ESTUDIANTE: "There is no information associated with the students of the queried requests.",
         CARGANDO_INFO_ESTUDIANTE: "An error occurred while trying to query the academic information of the approved requests. Contact the administrator.",
         REGISTRANDO_MODALIDAD: "Error during register the selected modality",
+
+        INDEFINIDA_INFO_ACADEMICA: "There is no academic information defined for this operation.",
+        SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "There is no information associated to the academic spaces enrolled of the degree works consulted.",
+        CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS: "An error occurred when trying to query the academic spaces enrolled for the degree works consulted. Contact the administrator.",
+        SIN_ESTUDIANTE_TRABAJO_GRADO: "There is no information associated to the students of the degree works consulted.",
+        CARGANDO_ESTUDIANTE_TRABAJO_GRADO: "An error occurred when trying to query the students for the degree works consulted. Contact the administrator.",
+        SIN_TRABAJO_GRADO: "There is no information associated to the degree works consulted.",
+        CARGANDO_TRABAJO_GRADO: "An error occurred when trying to query the degree works consulted. Contact the administrator.",
+        REGISTRANDO_NOTA: "Error during register the entered grades",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -669,7 +686,7 @@ var text_en = {
         CAMBIAR_ESPACIOS_ACADEMICOS: "Change academic spaces",
         VER_DETALLES: "View details",
         RESPONDER_SOLICITUD:"Reply request",
-        REGISTRAR_PAGO:"Submit payment",
+        REGISTRAR_TRABAJO_GRADO: "Submit degree work",
     },
     ENVIAR_SOLICITUD:"Send Form",
     INGRESAR_PROPUESTA:"Enter the name of the proposal",
@@ -740,6 +757,7 @@ var text_en = {
       CARGANDO_PARAMETROS: "Loading parameterss",
       CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
       CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
+      CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality"
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -854,6 +872,10 @@ var text_en = {
     },
     REGISTRAR_NOTA: {
         TITULO: "Grades record in academic postgraduate spaces",
+        CONFIRMACION: "Grades registration",
+        MENSAJE_CONFIRMACION: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",
+        AVISO: "Grades registered",
+        NOTA_REGISTRADA: "The entered grades have been registered successfully.",
     }
 };
 angular.module('poluxClienteApp')
