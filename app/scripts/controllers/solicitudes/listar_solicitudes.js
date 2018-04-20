@@ -171,6 +171,20 @@ angular.module('poluxClienteApp')
           resultado += ". " + $translate.instant('APROBADO.CAMBIAR_NOMBRE',{nuevo:nuevo,anterior:anterior});
           defered.resolve(resultado);
           break;
+        //Solicitd de camibio de materias
+        case 9:
+          angular.forEach(detalles, function(detalle){
+            var id = detalle.DetalleTipoSolicitud.Detalle.Id;
+            if (id===23) {
+              anterior = detalle.Descripcion.split("-")[1];
+            }
+            if (id===24) {
+              nuevo = detalle.Descripcion.split("-")[1];
+            }
+          });
+          resultado += ". " + $translate.instant('APROBADO.CAMBIAR_MATERIA',{nuevo:nuevo,anterior:anterior});
+          defered.resolve(resultado);
+          break;
         //default
         default:
           defered.resolve(resultado);
