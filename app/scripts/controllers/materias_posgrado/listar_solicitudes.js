@@ -131,12 +131,12 @@
         }else{
           ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
           defer.reject("sin periodo");
-        }        
+        }
       })
       .catch(function(){
         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
         defer.reject("no se pudo cargar periodo");
-      }); 
+      });
       return defer.promise;
     }
 
@@ -150,15 +150,15 @@
         }else{
           ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
           defer.reject("sin periodo");
-        }        
+        }
       })
       .catch(function(){
         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
         defer.reject("no se pudo cargar periodo");
-      }); 
+      });
       return defer.promise;
     }
-    
+
     ctrl.getCarrerasCoordinador = function(){
       var defer =  $q.defer()
       academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"])
@@ -201,7 +201,7 @@
             fecha.inicio = moment(fechaInicio).format("YYYY-MM-DD HH:mm");
             fecha.fin = moment(fechaFin).format("YYYY-MM-DD HH:mm");
             //fecha.inicio = moment(new Date(fecha.SesionHijo.FechaInicio)).format("YYYY-MM-DD HH:MM");
-            //fecha.fin = moment(new Date(fecha.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");           
+            //fecha.fin = moment(new Date(fecha.SesionHijo.FechaFin)).format("YYYY-MM-DD HH:MM");
             if(fecha.SesionHijo.TipoSesion.Id===4){
               //primera fecha de selección de admitidos
               ctrl.primeraFecha = fecha;
@@ -223,7 +223,7 @@
       });
       return defer.promise
     }
-    
+
 
     ctrl.getCupos = function(){
       var defer = $q.defer();
@@ -318,7 +318,7 @@
                   }else{
                     solicitud.permitirAprobar = false;
                   }
-                  $scope.sols.push(solicitud);        
+                  $scope.sols.push(solicitud);
                   defer.resolve();
                 }else{
                   defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
@@ -480,7 +480,7 @@
       $scope.loadRespuestas = true;
       console.log("dataAdmitidos",dataAdmitidos)
       $('#modalAdmitir').modal('hide')
-      poluxRequest.post("tr_seleccion_admitidos", dataAdmitidos).then(function (response) {
+      poluxRequest.post("tr_registrar_respuestas_solicitudes", dataAdmitidos).then(function (response) {
         $scope.loadRespuestas = false;
         console.log("Repsuesta",response.data);
         if(response.data[0]==="Success"){
@@ -520,4 +520,3 @@
     }
 
   });
-

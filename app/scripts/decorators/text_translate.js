@@ -184,6 +184,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento",
+        CARGAR_DOCUMENTO:"Ocurrio un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
         HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
         HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado que se encuentra pendiente por respuesta.",
         DOCENTE_DUPLICADO:"Por favor seleccione docentes diferentes en los campos de director y evaluador(es)",
@@ -213,6 +214,11 @@ var text_es = {
         CARGAR_DETALLES_SOLICITUD:"Ocurrio un error al cargar los detalles de la solicitud, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_OPCIONES_DETALLES_SOLICITUD:"Ocurrio un error al cargar las opciones de los detalles, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_ASIGNATURAS_SOLICITUD:"Ocurrio un error al cargar las asignaturas disponibles, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DATOS_SOLICITUD:"Ocurrio un error al cargar los datos de las solicitud, por favor verifique su conexión e intente de nuevo.",
+        SOLICITUD_NO_ENCONTRADA:"El identificador de la solicitud no ha sido encontrado",
+        CARGAR_EVALUADORES:"Ocurrio un error al cargar los docentes evaluadores, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrio un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DOCENTES:"Ocurrio un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -346,6 +352,7 @@ var text_es = {
         DIRECTOR_INTERNO:"Se cambio el director interno {{anterior}} por {{nuevo}}",
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
         PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
+        CAMBIAR_MATERIA:"Se cambia la materia {{anterior}} por {{nuevo}}",
     },
     AREAS:{
         DATOS_AREA:"Datos para registrar área",
@@ -557,6 +564,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a documento",
+        CARGAR_DOCUMENTO:"An error occurred loading the documents, please verify your connection and try again.",
         HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
         HAY_SOLICITUD_PENDIENTE:"Currently the student already has a grade job request that is pending by response.",
         DOCENTE_DUPLICADO:"Please select different teachers in the fields of director and evaluator(s)",
@@ -587,6 +595,11 @@ var text_en = {
         CARGAR_DETALLES_SOLICITUD:"There was an error occurred loading the request's details, please check your connection and try again.",
         CARGAR_OPCIONES_DETALLES_SOLICITUD:"There was an error occurred loading the options of the details of the request, please check your connection and try again.",
         CARGAR_ASIGNATURAS_SOLICITUD:"There was an error occurred loading the avaliable subjects, please check your connection and try again.",
+        CARGAR_DATOS_SOLICITUD:"There was an error occurred loading the request data, please check your connection and try again.",
+        SOLICITUD_NO_ENCONTRADA:"The identifier of the request has not been found.",
+        CARGAR_EVALUADORES:"There was an error occurred loading the evaluators, please check your connection and try again.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"There was an error occurred loading the teachers related to degree work, please check your connection and try again.",
+        CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -720,6 +733,7 @@ var text_en = {
         DIRECTOR_INTERNO:"The internal director {{anterior}} was changed to {{nuevo}}",
         EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
         PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
+        CAMBIAR_MATERIA:"Subject {{anterior}} is changed to {{nuevo}}",
     },
     AREAS:{
         DATOS_AREA:"Data to register area",
