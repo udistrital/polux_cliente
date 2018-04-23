@@ -89,7 +89,7 @@ angular.module('poluxClienteApp')
         name: 'nota',
         displayName: $translate.instant("CALIFICACION"),
         width: '20%',
-        cellTemplate: '<input type="number"></input>'
+        cellTemplate: '<input type="number" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="row.nota">'
       }];
 
       /**
@@ -499,12 +499,10 @@ angular.module('poluxClienteApp')
         academicaRequest.get("asignatura_pensum", [espacioAcademicoInscrito.EspaciosAcademicosElegibles.CodigoAsignatura, espacioAcademicoInscrito.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
         .then(function(espacioAcademicoDescrito) {
           if (espacioAcademicoDescrito.data.asignatura.datosAsignatura) {
-            ctrl.descripcionEspaciosAcademicos.push({
-              "codigo": espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].codigo,
-              "nombre": espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].nombre,
-              "creditos": espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].creditos
-            });
-            deferred.resolve(ctrl.descripcionEspaciosAcademicos);
+            espacioAcademicoInscrito.codigo = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].codigo;
+            espacioAcademicoInscrito.nombre = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].nombre;
+            espacioAcademicoInscrito.creditos = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].creditos;
+            deferred.resolve(espacioAcademicoInscrito);
           } else {
             // Se rechaza la petición en caso de no encontrar datos
             $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
@@ -539,8 +537,6 @@ angular.module('poluxClienteApp')
         $('#modalVerSolicitud').modal('show');
         // Se prepara una colección de procesamiento
         var conjuntoProcesamientoEspaciosAcademicos = [];
-        // Se prepara una colección que guarde los espacios académicos
-        ctrl.descripcionEspaciosAcademicos = [];
         // Se recorren y procesan los espacios académicos inscritos
         angular.forEach(trabajoDeGradoSeleccionado.espaciosAcademicosInscritos, function(espacioAcademicoInscrito) {
           conjuntoProcesamientoEspaciosAcademicos.push(ctrl.cargarDescripcionEspaciosAcademicos(espacioAcademicoInscrito));
@@ -552,7 +548,7 @@ angular.module('poluxClienteApp')
           $scope.cargandoTrabajosDeGradoCursados = false;
           $scope.errorCargandoEspaciosAcademicos = false;
           ctrl.trabajoDeGradoSeleccionado = trabajoDeGradoSeleccionado;
-          ctrl.cuadriculaEspaciosAcademicosInscritos.data = ctrl.descripcionEspaciosAcademicos;
+          ctrl.cuadriculaEspaciosAcademicosInscritos.data = trabajoDeGradoSeleccionado.espaciosAcademicosInscritos;
         })
         .catch(function(excepcionEspaciosAcademicosDescritos) {
           // Se detiene la carga y se muestra el error
@@ -561,11 +557,16 @@ angular.module('poluxClienteApp')
         });
       }
 
+      ctrl.verificarIngresoDeNotas = function() {
+        
+      }
+
       /**
        * [Función que maneja la confirmación del coordinador para registrar las notas]
        * @return {[void]} [El procedimiento que regula la confirmación para poder registrar en la base de datos]
        */
       ctrl.confirmarRegistroNotas = function() {
+        ctrl.verificarIngresoDeNotas();
         swal({
             title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
             text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
@@ -586,10 +587,10 @@ angular.module('poluxClienteApp')
               // Se inicia la carga del formulario mientras se formaliza
               $scope.cargandoTransaccionRegistro = true;
               // Se lanza la transacción
-              ctrl.registrarSolicitudAprobada()
-                .then(function(respuestaRegistrarSolicitudAprobada) {
+              ctrl.registrarNotasIngresadas()
+                .then(function(respuestaRegistrarNotasIngresadas) {
                   // Se estudia si la transacción fue exitosa
-                  if (respuestaRegistrarSolicitudAprobada.data[0] === "Success") {
+                  if (respuestaRegistrarNotasIngresadas.data[0] === "Success") {
                     // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
@@ -604,12 +605,12 @@ angular.module('poluxClienteApp')
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("REGISTRAR_NOTA.AVISO"),
-                      $translate.instant(respuestaRegistrarSolicitudAprobada.data[1]),
+                      $translate.instant(respuestaRegistrarNotasIngresadas.data[1]),
                       'warning'
                     );
                   }
                 })
-                .catch(function(excepcionRegistrarSolicitudAprobada) {
+                .catch(function(excepcionRegistrarNotasIngresadas) {
                   // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
                   $scope.cargandoTransaccionRegistro = false;
                   swal(
@@ -622,94 +623,37 @@ angular.module('poluxClienteApp')
           });
       }
 
-      ctrl.registrarSolicitudAprobada = function() {
+      ctrl.registrarNotasIngresadas = function() {
         var defered = $q.defer();
-        // Se desactiva la solicitud previa y se mantiene el registro
-        ctrl.solicitudAprobadaSeleccionada = {
-          Activo: false,
-          EnteResponsable: ctrl.solicitudSeleccionada.EnteResponsable,
-          Fecha: ctrl.solicitudSeleccionada.Fecha,
-          EstadoSolicitud: {
-            Id: ctrl.solicitudSeleccionada.EstadoSolicitud.Id
-          },
-          Id: ctrl.solicitudSeleccionada.Id,
-          Justificacion: ctrl.solicitudSeleccionada.Justificacion,
-          SolicitudTrabajoGrado: {
-            Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.Id
-          },
-          Usuario: ctrl.solicitudSeleccionada.Usuario
-        };
-        // Se establece la nueva solicitud con cumplida para espacios académicos de posgrado
-        ctrl.solicitudAprobadaActualizada = {
-          Activo: true,
-          EnteResponsable: ctrl.solicitudSeleccionada.EnteResponsable,
-          Fecha: new Date(),
-          EstadoSolicitud: {
-            // 14 - Cumplida para espacios académicos de posgrado
-            Id: 14
-          },
-          Justificacion: "Se ha registrado el trabajo de grado a solicitud del estudiante",
-          SolicitudTrabajoGrado: {
-            Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.Id
-          },
-          Usuario: parseInt($scope.userId)
-        };
-        // Se crea el trabajo de grado para ser registrado en la base de datos
-        ctrl.trabajoDeGradoParaRegistrar = {
-          Titulo: "Cursar materias de posgrado en " + ctrl.nombrePosgrado,
-          Modalidad: {
-            Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id
-          },
-          EstadoTrabajoGrado: {
-            // 20 - Estado de trabajo de grado en cursando espacios académicos de posgrado
-            Id: 20
-          },
-          DistincionTrabajoGrado: null,
-          PeriodoAcademico: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.PeriodoAcademico
-        };
-        // Se inscribe el estudiante solicitante en la base de datos
-        ctrl.estudianteAsociadoTrabajoDeGrado = {
-          Estudiante: ctrl.codigoEstudianteSolicitante,
-          TrabajoGrado: {
-            Id: 0
-          },
-          EstadoEstudianteTrabajoGrado: {
-            Id: 1
-          }
-        };
         // Se prepara una colección que maneje los espacios académicos inscritos
-        ctrl.espaciosAcademicosInscritos = []
+        ctrl.espaciosAcademicosCalificados = []
         // Se recorre la colección de espacios académicos mostrados y se añaden los campos correspondientes a la estructura en la base de datos
         angular.forEach(ctrl.cuadriculaEspaciosAcademicosInscritos.data, function(espacioAcademico) {
-          ctrl.espaciosAcademicosInscritos.push({
-            Nota: 0,
+          ctrl.espaciosAcademicosCalificados.push({
+            Nota: espacioAcademico.nota,
             EspaciosAcademicosElegibles: {
-              Id: espacioAcademico.id
+              Id: espacioAcademico.EspaciosAcademicosElegibles.Id
             },
             EstadoEspacioAcademicoInscrito: {
-              Id: 1
+              Id: espacioAcademico.EstadoEspacioAcademicoInscrito.Id
             },
             TrabajoGrado: {
-              Id: 0
+              Id: espacioAcademico.TrabajoGrado.Id
             }
           });
         });
         // Se define el objeto para enviar como información para actualizar
         ctrl.informacionParaActualizar = {
-          "RespuestaPrevia": ctrl.solicitudAprobadaSeleccionada,
-          "RespuestaActualizada": ctrl.solicitudAprobadaActualizada,
-          "TrabajoGrado": ctrl.trabajoDeGradoParaRegistrar,
-          "EstudianteTrabajoGrado": ctrl.estudianteAsociadoTrabajoDeGrado,
-          "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos
+          "espaciosAcademicosInscritos": ctrl.espaciosAcademicosCalificados
         };
         // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
         poluxRequest
-          .post("tr_registrar_materias_posgrado", ctrl.informacionParaActualizar)
-          .then(function(respuestaRegistrarMateriasPosgrado) {
-            defered.resolve(respuestaRegistrarMateriasPosgrado);
+          .post("tr_registrar_nota", ctrl.informacionParaActualizar)
+          .then(function(respuestaRegistrarNota) {
+            defered.resolve(respuestaRegistrarNota);
           })
-          .catch(function(excepcionRegistrarMateriasPosgrado) {
-            defered.reject(excepcionRegistrarMateriasPosgrado);
+          .catch(function(excepcionRegistrarNota) {
+            defered.reject(excepcionRegistrarNota);
           });
         // Se devuelve el diferido que maneja la promesa
         return defered.promise;
