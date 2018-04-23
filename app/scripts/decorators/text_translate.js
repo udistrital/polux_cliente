@@ -257,6 +257,7 @@ var text_es = {
         VER_DETALLES: "Ver Detalles",
         RESPONDER_SOLICITUD:"Responder solicitud",
         REGISTRAR_TRABAJO_GRADO: "Registrar trabajo de grado",
+        REGISTRAR_NOTA: "Registrar calificaciones ingresadas",
     },
     ENVIAR_SOLICITUD:"Enviar Solicitud",
     INGRESAR_PROPUESTA:"Ingrese el nombre de la propuesta",
@@ -312,6 +313,7 @@ var text_es = {
     INFORMACION_ESTUDIANTE: "Información del estudiante",
     SOLICITANTE: "Solicitante",
     SOLICITANTES: "Solicitantes",
+    CALIFICACION: "Calificación",
     LOADING:{
       CARGANDO_ESTUDIANTE:"Cargando datos del estudiante",
       ENVIANDO_FORLMULARIO:"Enviando formulario",
@@ -446,6 +448,7 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
         AVISO: "Calificaciones registradas",
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
+        DESCRIPCION: "Descripción del trabajo de grado seleccionado"
     }
 };
 var text_en = {
@@ -687,6 +690,7 @@ var text_en = {
         VER_DETALLES: "View details",
         RESPONDER_SOLICITUD:"Reply request",
         REGISTRAR_TRABAJO_GRADO: "Submit degree work",
+        REGISTRAR_NOTA: "Submit entered grades",
     },
     ENVIAR_SOLICITUD:"Send Form",
     INGRESAR_PROPUESTA:"Enter the name of the proposal",
@@ -742,6 +746,7 @@ var text_en = {
     INFORMACION_ESTUDIANTE: "Student's information",
     SOLICITANTE: "Applicant",
     SOLICITANTES: "Applicants",
+    CALIFICACION: "Grade",
     LOADING:{
       CARGANDO_ESTUDIANTE:"Loading student data",
       ENVIANDO_FORLMULARIO:"Sending form",
@@ -876,6 +881,7 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",
         AVISO: "Grades registered",
         NOTA_REGISTRADA: "The entered grades have been registered successfully.",
+        DESCRIPCION: "Select degree work description",
     }
 };
 angular.module('poluxClienteApp')

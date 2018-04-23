@@ -28,9 +28,9 @@ angular.module('poluxClienteApp')
       // Se configura el mensaje mientras se carga la transacción de registro
       $scope.mensajeCargandoTransaccionRegistro = $translate.instant("LOADING.CARGANDO_TRANSACCION_REGISTRO");
 
-      $scope.opcionesSolicitud = [{
+      $scope.opcionesTrabajoDeGrado = [{
         clase_color: "ver",
-        clase_css: "fa fa-cog fa-lg  faa-shake animated-hover",
+        clase_css: "fa fa-edit fa-lg  faa-shake animated-hover",
         titulo: $translate.instant('BTN.VER_DETALLES'),
         operacion: 'verDetallesSolicitud',
         estado: true
@@ -68,23 +68,28 @@ angular.module('poluxClienteApp')
         name: 'opcionesDeTrabajoDeGrado',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '10%',
-        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
+        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesTrabajoDeGrado"></btn-registro>'
       }];
 
       // Se define la cuadrícula para visualizar los espacios académicos solicitudados
       ctrl.cuadriculaEspaciosAcademicosInscritos = {};
       ctrl.cuadriculaEspaciosAcademicosInscritos.columnDefs = [{
         name: 'codigo',
-        displayName: $translate.instant("CODIGO_ESP_ACADEMICO"),
-        width: '35%'
+        displayName: $translate.instant("CODIGO"),
+        width: '20%'
       }, {
         name: 'nombre',
         displayName: $translate.instant("NOMBRE_ESP_ACADEMICO"),
-        width: '50%'
+        width: '40%'
       }, {
         name: 'creditos',
         displayName: $translate.instant("CREDITOS"),
-        width: '15%'
+        width: '20%'
+      }, {
+        name: 'nota',
+        displayName: $translate.instant("CALIFICACION"),
+        width: '20%',
+        cellTemplate: '<input type="number"></input>'
       }];
 
       /**
@@ -258,7 +263,7 @@ angular.module('poluxClienteApp')
             // Se estudia si la información existe
             if (espaciosAcademicosInscritos.data) {
               // Se resuelve la solicitud aprobada con el detalle dentro
-              trabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data[0];
+              trabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
               deferred.resolve(trabajoDeGrado);
             } else {
               // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
@@ -368,7 +373,7 @@ angular.module('poluxClienteApp')
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se establece un conjunto de procesamiento de solicitudes que reúne los procesos que deben cargarse antes de ofrecer funcionalidades
-        var conjuntoProcesamientoDeSolicitudes = [];
+        var conjuntoProcesamientoDeTrabajosDeGrado = [];
         // Se establece una colección de solicitudes aprobadas para ser inscritas al posgrado
         ctrl.coleccionTrabajosDeGradoCursados = [];
         // Se consulta hacia las solicitudes respondidas en la base de datos
@@ -377,10 +382,10 @@ angular.module('poluxClienteApp')
             if (trabajosDeGrado.data) {
               angular.forEach(trabajosDeGrado.data, function(trabajoDeGrado) {
                 ctrl.coleccionTrabajosDeGradoCursados.push(trabajoDeGrado);
-                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarEspaciosAcademicosInscritos(trabajoDeGrado));
-                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarEstudianteTrabajoGrado(trabajoDeGrado));
+                conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(trabajoDeGrado));
+                conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEstudianteTrabajoGrado(trabajoDeGrado));
               });
-              $q.all(conjuntoProcesamientoDeSolicitudes)
+              $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
                 .then(function(resultadoDelProcesamiento) {
                   // Se resuelve la colección de solicitudes para formalizar
                   deferred.resolve(ctrl.coleccionTrabajosDeGradoCursados);
@@ -477,103 +482,96 @@ angular.module('poluxClienteApp')
           })
           .catch(function(excepcionSolicitudesRespondidas) {
             // Se detiene la carga y se muestra el error
-            console.log(excepcionSolicitudesRespondidas);
             $scope.errorCargandoTrabajosDeGradoCursados = true;
             $scope.cargandoTrabajosDeGradoCursados = false;
           });
       }
 
       /**
+       * [Función que carga la descripción de los espacios académicos del trabajo de grado]
+       * @param  {[Object]} espacioAcademicoInscrito [El espacio académico al que se cargarán los espacios académicos descritos]
+       * @return {[Promise]}                [Los espacios académicos descritos y cargados, o la excepción generada]
+       */
+      ctrl.cargarDescripcionEspaciosAcademicos = function(espacioAcademicoInscrito) {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        // Se realiza la petición académica
+        academicaRequest.get("asignatura_pensum", [espacioAcademicoInscrito.EspaciosAcademicosElegibles.CodigoAsignatura, espacioAcademicoInscrito.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
+        .then(function(espacioAcademicoDescrito) {
+          if (espacioAcademicoDescrito.data.asignatura.datosAsignatura) {
+            ctrl.descripcionEspaciosAcademicos.push({
+              "codigo": espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].codigo,
+              "nombre": espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].nombre,
+              "creditos": espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].creditos
+            });
+            deferred.resolve(ctrl.descripcionEspaciosAcademicos);
+          } else {
+            // Se rechaza la petición en caso de no encontrar datos
+            $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+            deferred.reject(null);
+          }
+        })
+        .catch(function(excepcionEspacioAcademicoDescrito) {
+          // Se rechaza la petición en caso de encontrar excepciones
+          $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+          deferred.reject(excepcionEspacioAcademicoDescrito);
+        });
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
+      }
+
+      /**
        * [Función que carga la fila asociada según la selección del usuario]
-       * @param  {[row]} filaAsociada [Es la solicitud que el usuario seleccionó]
+       * @param  {[row]} filaAsociada [Es el trabajo de grado que el usuario seleccionó]
        */
       $scope.cargarFila = function(filaAsociada) {
-        ctrl.cargarSolicitudSeleccionada(filaAsociada.entity);
+        ctrl.cargarTrabajoDeGradoSeleccionado(filaAsociada.entity);
       }
 
       /**
-       * [Función que recibe una fecha extendida y obtiene sus valores generales de presentación]
-       * @param  {[Date]} fechaCompleta [La fecha en formato extendido]
-       * @return {[String]}               [La cadena de caracteres presentable]
+       * [Función que carga el trabajo de grado seleccionado por el coordinador en sesión]
+       * @param  {[row]} trabajoDeGradoSeleccionado [El trabajo de grado al que el usuario registrará la nota]
        */
-      ctrl.obtenerFechaGeneral = function(fechaCompleta) {
-        return fechaCompleta.getFullYear() +
-          "-" + fechaCompleta.getMonth() + 1 +
-          "-" + fechaCompleta.getDate();
-      }
-
-      /**
-       * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
-       * @param  {[type]} detalleSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
-       * @return {[type]}                  [El objeto con los datos del posgrado]
-       */
-      ctrl.obtenerDatosDelPosgrado = function(detalleSolicitud) {
-        return JSON.parse(detalleSolicitud.Descripcion.split("-")[1]);
-      }
-
-      /**
-       * [Función que obtiene los espacios académicos por su nombre]
-       * @param  {[Array]} detalleSolicitud [Tiene la colección de registros en el formato que se almacenan en la base de datos]
-       * @return {[Array]}                  [Devuelve la colección de espacios académicos por nombre]
-       */
-      ctrl.obtenerEspaciosAcademicos = function(detalleSolicitud) {
-        // Se prepara una colección que contendrá los espacios académicos
-        var espaciosAcademicos = [];
-        // Se define una variable que interprete el formato del detalle de la solicitud recibida
-        // de modo que se obtenga la información de los espacios académicos (estos inician desde el índice 2)
-        var detallePosgrado = detalleSolicitud.Descripcion.split("-").slice(2);
-        // Se recorre la información de los espacios académicos almacenados
-        angular.forEach(detallePosgrado, function(espacioAcademico) {
-          // Como el formato de almacenado guarda en cada posición el objeto de espacio académico,
-          // se pasa a formato JSON para obtener su contenido
-          var objetoEspacioAcademico = JSON.parse(espacioAcademico);
-          // Se ajusta la información para conformar el objeto de espacio académico
-          var informacionEspacioAcademico = {
-            "id": objetoEspacioAcademico.Id,
-            "codigo": objetoEspacioAcademico.CodigoAsignatura,
-            "nombre": objetoEspacioAcademico.Nombre,
-            "creditos": objetoEspacioAcademico.Creditos
-          };
-          // Se registra el espacio académico en la colección a modo de objeto
-          espaciosAcademicos.push(informacionEspacioAcademico);
-        });
-        return espaciosAcademicos;
-      }
-
-      /**
-       * [Función que carga la solicitud seleccionada por el coordinador en sesión]
-       * @param  {[row]} solicitudSeleccionada [La solicitud que el coordinador desea registrar]
-       */
-      ctrl.cargarSolicitudSeleccionada = function(solicitudSeleccionada) {
-        // Se establece la variable que mantiene la solicitud seleccionada
-        ctrl.solicitudSeleccionada = solicitudSeleccionada;
-        // Se establecen los espacios que se verán en la ventana emergente
-        ctrl.nombreEstudianteSolicitante = solicitudSeleccionada.nombreEstudiante;
-        ctrl.codigoEstudianteSolicitante = solicitudSeleccionada.codigoEstudiante;
-        ctrl.promedioEstudianteSolicitante = solicitudSeleccionada.promedioAcademico;
-        ctrl.rendimientoEstudianteSolicitante = solicitudSeleccionada.estudianteAsociado.rendimiento;
-        ctrl.numeroSolicitud = solicitudSeleccionada.SolicitudTrabajoGrado.Id;
-        ctrl.fechaSolicitud = ctrl.obtenerFechaGeneral(new Date(solicitudSeleccionada.Fecha));
-        ctrl.estadoSolicitud = solicitudSeleccionada.nombreEstado;
-        ctrl.codigoPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Codigo;
-        ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
-        ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
-        ctrl.cuadriculaEspaciosAcademicosInscritos.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
-        $scope.cargandoTransaccionRegistro = false;
+      ctrl.cargarTrabajoDeGradoSeleccionado = function(trabajoDeGradoSeleccionado) {
+        // Se inicia la carga
+        $scope.cargandoTrabajosDeGradoCursados = true;
+        // Se despliega el modal
         $('#modalVerSolicitud').modal('show');
+        // Se prepara una colección de procesamiento
+        var conjuntoProcesamientoEspaciosAcademicos = [];
+        // Se prepara una colección que guarde los espacios académicos
+        ctrl.descripcionEspaciosAcademicos = [];
+        // Se recorren y procesan los espacios académicos inscritos
+        angular.forEach(trabajoDeGradoSeleccionado.espaciosAcademicosInscritos, function(espacioAcademicoInscrito) {
+          conjuntoProcesamientoEspaciosAcademicos.push(ctrl.cargarDescripcionEspaciosAcademicos(espacioAcademicoInscrito));
+        });
+        // Se asegura el cumplimiento de todas las promesas
+        $q.all(conjuntoProcesamientoEspaciosAcademicos)
+        .then(function(espaciosAcademicosDescritos) {
+          // Se detiene la carga y se muestran los resultados
+          $scope.cargandoTrabajosDeGradoCursados = false;
+          $scope.errorCargandoEspaciosAcademicos = false;
+          ctrl.trabajoDeGradoSeleccionado = trabajoDeGradoSeleccionado;
+          ctrl.cuadriculaEspaciosAcademicosInscritos.data = ctrl.descripcionEspaciosAcademicos;
+        })
+        .catch(function(excepcionEspaciosAcademicosDescritos) {
+          // Se detiene la carga y se muestra el error
+          $scope.cargandoTrabajosDeGradoCursados = false;
+          $scope.errorCargandoEspaciosAcademicos = true;
+        });
       }
 
       /**
-       * [Función que maneja la confirmación del coordinador para registrar la solicitud]
+       * [Función que maneja la confirmación del coordinador para registrar las notas]
        * @return {[void]} [El procedimiento que regula la confirmación para poder registrar en la base de datos]
        */
-      ctrl.confirmarRegistroSolicitud = function() {
+      ctrl.confirmarRegistroNotas = function() {
         swal({
             title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
             text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
               // Se cargan datos de la solicitud para que el coordinador pueda verificar antes de registrar
-              nombre: ctrl.nombreEstudianteSolicitante,
-              codigo: ctrl.codigoEstudianteSolicitante,
+              nombre: ctrl.trabajoDeGradoSeleccionado.nombreEstudiante,
+              codigo: ctrl.trabajoDeGradoSeleccionado.codigoEstudiante,
             }),
             type: "info",
             confirmButtonText: $translate.instant("ACEPTAR"),
