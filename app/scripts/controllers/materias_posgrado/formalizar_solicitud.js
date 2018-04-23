@@ -465,6 +465,7 @@ angular.module('poluxClienteApp')
             } else {
               // Se establece el mensaje de error con la nula existencia de datos
               $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.SIN_USUARIO_SOLICITUD");
+              deferred.resolve(null);
             }
           })
           .catch(function(excepcionUsuariosConSolicitudes) {
