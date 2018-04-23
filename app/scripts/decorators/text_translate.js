@@ -228,7 +228,7 @@ var text_es = {
         SIN_RELACION_SESIONES: "No hay información asociada a las sesiones de actividad consultadas.",
         CARGANDO_RELACION_SESIONES: "Ocurrió un error al intentar consultar las sesiones de actividad. Comuníquese con el administrador.",
         NO_PERIODO_FORMALIZACION: "Este periodo no corresponde a las fechas de formalización. Verifique que se encuentra en las fechas de formalización indicadas.",
-        SIN_SOLICITUDES_PARA_FORMALIZAR: "No existen solicitudes para formalizar acutalmente.",
+        SIN_SOLICITUDES_PARA_FORMALIZAR: "No existen solicitudes para formalizar actualmente.",
 
         SIN_INFO_ACADEMICA: "Error al cargar información académica.",
         SIN_DETALLE_SOLICITUD: "No hay información asociada al detalle de las solicitudes consultadas.",
