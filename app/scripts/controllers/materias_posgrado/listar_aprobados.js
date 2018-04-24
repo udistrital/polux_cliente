@@ -631,6 +631,10 @@ angular.module('poluxClienteApp')
           });
       }
 
+      /**
+       * [Función que prepara el contenido de la información para actualizar]
+       * @return {[Promise]} [La respuesta de enviar la información para actualizar a la base de datos]
+       */
       ctrl.registrarSolicitudAprobada = function() {
         var defered = $q.defer();
         // Se desactiva la solicitud previa y se mantiene el registro

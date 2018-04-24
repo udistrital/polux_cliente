@@ -237,8 +237,8 @@ var text_es = {
         CARGANDO_USUARIO_SOLICITUD: "Ocurrió un error al intentar consultar el detalle de las solicitudes aprobadas. Comuníquese con el administrador.",
         SIN_RESPUESTA_SOLICITUD: "No hay información asociada a la respuesta de las solicitudes consultadas.",
         CARGANDO_RESPUESTA_SOLICITUD: "Ocurrió un error al intentar consultar la respuesta de las solicitudes aprobadas. Comuníquese con el administrador.",
-        SIN_INFO_ESTUDIANTE: "No hay información asociada a los estudiantes de las solicitudes consultadas.",
-        CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al intentar consultar la información académica de las solicitudes aprobadas. Comuníquese con el administrador.",
+        SIN_INFO_ESTUDIANTE: "No hay información asociada a los estudiantes necesarios para la consulta.",
+        CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al intentar consultar la información académica de los estudiante asociados. Comuníquese con el administrador.",
         REGISTRANDO_MODALIDAD: "Error al registrar la modalidad seleccionada",
 
         INDEFINIDA_INFO_ACADEMICA: "No hay información académica definida para esta operación.",
@@ -449,7 +449,8 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
         AVISO: "Registro de calificaciones",
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
-        DESCRIPCION: "Descripción del trabajo de grado seleccionado"
+        DESCRIPCION: "Descripción del trabajo de grado seleccionado",
+        INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro."
     }
 };
 var text_en = {
@@ -671,8 +672,8 @@ var text_en = {
         CARGANDO_USUARIO_SOLICITUD: "An error occurred while trying to query the user of the approved requests. Contact the administrator.",
         SIN_RESPUESTA_SOLICITUD: "There is no information associated with the response of the queried requests.",
         CARGANDO_RESPUESTA_SOLICITUD: "An error occurred while trying to query the response of the approved requests. Contact the administrator.",
-        SIN_INFO_ESTUDIANTE: "There is no information associated with the students of the queried requests.",
-        CARGANDO_INFO_ESTUDIANTE: "An error occurred while trying to query the academic information of the approved requests. Contact the administrator.",
+        SIN_INFO_ESTUDIANTE: "There is no information associated with the students needed for the query.",
+        CARGANDO_INFO_ESTUDIANTE: "An error occurred while trying to query the academic information of the associated students. Contact the administrator.",
         REGISTRANDO_MODALIDAD: "Error during register the selected modality",
 
         INDEFINIDA_INFO_ACADEMICA: "There is no academic information defined for this operation.",
@@ -884,6 +885,7 @@ var text_en = {
         AVISO: "Grades registration",
         NOTA_REGISTRADA: "The entered grades have been registered successfully.",
         DESCRIPCION: "Select degree work description",
+        INSTRUCCIONES: "Input the grades obtained by the student by clicking on the corresponding cell. Keep in mind that valid grades range from 0.0 to 5.0, and two (2) decimals of accuracy will be taken for the record.",
     }
 };
 angular.module('poluxClienteApp')
