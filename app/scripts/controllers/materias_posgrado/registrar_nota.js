@@ -76,20 +76,26 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaEspaciosAcademicosInscritos.columnDefs = [{
         name: 'codigo',
         displayName: $translate.instant("CODIGO"),
-        width: '20%'
+        width: '20%',
+        enableCellEdit: false,
+        enableCellEditOnFocus: false
       }, {
         name: 'nombre',
         displayName: $translate.instant("NOMBRE_ESP_ACADEMICO"),
-        width: '40%'
+        width: '40%',
+        enableCellEdit: false,
+        enableCellEditOnFocus: false
       }, {
         name: 'creditos',
         displayName: $translate.instant("CREDITOS"),
-        width: '20%'
+        width: '20%',
+        enableCellEdit: false,
+        enableCellEditOnFocus: false
       }, {
         name: 'nota',
         displayName: $translate.instant("CALIFICACION"),
         width: '20%',
-        cellTemplate: '<input type="number" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="row.nota">'
+        cellTemplate: '<div class="ui-grid-cell-contents">{{row.entity.nota}}</div>'
       }];
 
       /**
@@ -120,7 +126,7 @@ angular.module('poluxClienteApp')
               // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
               $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.INDEFINIDA_INFO_ACADEMICA");
               // Se rechaza la promesa
-              deferred.resolve(null);
+              deferred.reject(null);
             }
           })
           .catch(function(excepcionPosgradosAsociados) {
@@ -153,7 +159,7 @@ angular.module('poluxClienteApp')
               // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
               $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.INDEFINIDA_INFO_ACADEMICA");
               // Se rechaza la promesa
-              deferred.resolve(null);
+              deferred.reject(null);
             }
           })
           .catch(function(excepcionPeriodosCorrespondientes) {
@@ -181,12 +187,12 @@ angular.module('poluxClienteApp')
             if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
               // Se resuelve el periodo académico correspondiente
               ctrl.periodoAcademicoPrevio = periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0];
-              deferred.resolve(true);
+              deferred.resolve(ctrl.periodoAcademicoPrevio);
             } else {
               // En caso de error se prepara el mensaje y se rechaza con nulo
               $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_PERIODO");
               // Se rechaza nulamente la consulta
-              deferred.reject(false);
+              deferred.reject(null);
             }
           })
           .catch(function(excepcionPeriodoAcademicoConsultado) {
@@ -275,7 +281,7 @@ angular.module('poluxClienteApp')
               ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
               $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
-              deferred.resolve(null);
+              deferred.reject(null);
             }
           })
           .catch(function(excepcionEspaciosAcademicosInscritos) {
@@ -333,7 +339,7 @@ angular.module('poluxClienteApp')
               ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
               // Se establece el mensaje de error con la nula existencia de datos
               $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO");
-              deferred.resolve(null);
+              deferred.reject(null);
             }
           })
           .catch(function(excepcionUsuarioDeSolicitud) {
@@ -497,23 +503,24 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         // Se realiza la petición académica
         academicaRequest.get("asignatura_pensum", [espacioAcademicoInscrito.EspaciosAcademicosElegibles.CodigoAsignatura, espacioAcademicoInscrito.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
-        .then(function(espacioAcademicoDescrito) {
-          if (espacioAcademicoDescrito.data.asignatura.datosAsignatura) {
-            espacioAcademicoInscrito.codigo = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].codigo;
-            espacioAcademicoInscrito.nombre = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].nombre;
-            espacioAcademicoInscrito.creditos = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].creditos;
-            deferred.resolve(espacioAcademicoInscrito);
-          } else {
-            // Se rechaza la petición en caso de no encontrar datos
+          .then(function(espacioAcademicoDescrito) {
+            if (espacioAcademicoDescrito.data.asignatura.datosAsignatura) {
+              espacioAcademicoInscrito.codigo = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].codigo;
+              espacioAcademicoInscrito.nombre = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].nombre;
+              espacioAcademicoInscrito.creditos = espacioAcademicoDescrito.data.asignatura.datosAsignatura[0].creditos;
+              espacioAcademicoInscrito.nota = espacioAcademicoInscrito.Nota;
+              deferred.resolve(espacioAcademicoInscrito);
+            } else {
+              // Se rechaza la petición en caso de no encontrar datos
+              $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+              deferred.reject(null);
+            }
+          })
+          .catch(function(excepcionEspacioAcademicoDescrito) {
+            // Se rechaza la petición en caso de encontrar excepciones
             $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-            deferred.reject(null);
-          }
-        })
-        .catch(function(excepcionEspacioAcademicoDescrito) {
-          // Se rechaza la petición en caso de encontrar excepciones
-          $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-          deferred.reject(excepcionEspacioAcademicoDescrito);
-        });
+            deferred.reject(excepcionEspacioAcademicoDescrito);
+          });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
       }
@@ -543,22 +550,40 @@ angular.module('poluxClienteApp')
         });
         // Se asegura el cumplimiento de todas las promesas
         $q.all(conjuntoProcesamientoEspaciosAcademicos)
-        .then(function(espaciosAcademicosDescritos) {
-          // Se detiene la carga y se muestran los resultados
-          $scope.cargandoTrabajosDeGradoCursados = false;
-          $scope.errorCargandoEspaciosAcademicos = false;
-          ctrl.trabajoDeGradoSeleccionado = trabajoDeGradoSeleccionado;
-          ctrl.cuadriculaEspaciosAcademicosInscritos.data = trabajoDeGradoSeleccionado.espaciosAcademicosInscritos;
-        })
-        .catch(function(excepcionEspaciosAcademicosDescritos) {
-          // Se detiene la carga y se muestra el error
-          $scope.cargandoTrabajosDeGradoCursados = false;
-          $scope.errorCargandoEspaciosAcademicos = true;
-        });
+          .then(function(espaciosAcademicosDescritos) {
+            // Se detiene la carga y se muestran los resultados
+            $scope.cargandoTrabajosDeGradoCursados = false;
+            $scope.errorCargandoEspaciosAcademicos = false;
+            ctrl.trabajoDeGradoSeleccionado = trabajoDeGradoSeleccionado;
+            ctrl.cuadriculaEspaciosAcademicosInscritos.data = trabajoDeGradoSeleccionado.espaciosAcademicosInscritos;
+          })
+          .catch(function(excepcionEspaciosAcademicosDescritos) {
+            // Se detiene la carga y se muestra el error
+            $scope.cargandoTrabajosDeGradoCursados = false;
+            $scope.errorCargandoEspaciosAcademicos = true;
+          });
+      }
+
+      ctrl.verificarNotaValida = function(nota) {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
       }
 
       ctrl.verificarIngresoDeNotas = function() {
-        
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        angular.forEach(ctrl.cuadriculaEspaciosAcademicosInscritos.data, function(espacioAcademicoInscrito) {
+          if (typeof espacioAcademicoInscrito.nota != 'number' || isNaN(espacioAcademicoInscrito.nota) || !isFinite(espacioAcademicoInscrito.nota) &&
+            espacioAcademicoInscrito.nota < 0.0 || espacioAcademicoInscrito.nota > 5.0) {
+              deferred.reject(false);
+          }
+        });
+        deferred.resolve(true);
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
       }
 
       /**
@@ -566,60 +591,68 @@ angular.module('poluxClienteApp')
        * @return {[void]} [El procedimiento que regula la confirmación para poder registrar en la base de datos]
        */
       ctrl.confirmarRegistroNotas = function() {
-        ctrl.verificarIngresoDeNotas();
-        swal({
-            title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
-            text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
-              // Se cargan datos de la solicitud para que el coordinador pueda verificar antes de registrar
-              nombre: ctrl.trabajoDeGradoSeleccionado.nombreEstudiante,
-              codigo: ctrl.trabajoDeGradoSeleccionado.codigoEstudiante,
-            }),
-            type: "info",
-            confirmButtonText: $translate.instant("ACEPTAR"),
-            cancelButtonText: $translate.instant("CANCELAR"),
-            showCancelButton: true
-          })
-          .then(function(confirmacionDelUsuario) {
-            // Se valida que el coordinador haya confirmado el registro
-            if (confirmacionDelUsuario.value) {
-              // Se detiene la visualización de solicitudes mientras se formaliza
-              ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = [];
-              // Se inicia la carga del formulario mientras se formaliza
-              $scope.cargandoTransaccionRegistro = true;
-              // Se lanza la transacción
-              ctrl.registrarNotasIngresadas()
-                .then(function(respuestaRegistrarNotasIngresadas) {
-                  // Se estudia si la transacción fue exitosa
-                  if (respuestaRegistrarNotasIngresadas.data[0] === "Success") {
-                    // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
+        ctrl.verificarIngresoDeNotas()
+          .then(function(verificacionNota) {
+            swal({
+              title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
+              text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
+                // Se cargan datos de la solicitud para que el coordinador pueda verificar antes de registrar
+                nombre: ctrl.trabajoDeGradoSeleccionado.nombreEstudiante,
+                codigo: ctrl.trabajoDeGradoSeleccionado.codigoEstudiante,
+              }),
+              type: "info",
+              confirmButtonText: $translate.instant("ACEPTAR"),
+              cancelButtonText: $translate.instant("CANCELAR"),
+              showCancelButton: true
+            })
+            .then(function(confirmacionDelUsuario) {
+              // Se valida que el coordinador haya confirmado el registro
+              if (confirmacionDelUsuario.value) {
+                // Se detiene la visualización de solicitudes mientras se formaliza
+                ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = [];
+                // Se inicia la carga del formulario mientras se formaliza
+                $scope.cargandoTransaccionRegistro = true;
+                // Se lanza la transacción
+                ctrl.registrarNotasIngresadas()
+                  .then(function(respuestaRegistrarNotasIngresadas) {
+                    // Se estudia si la transacción fue exitosa
+                    if (respuestaRegistrarNotasIngresadas.data[0] === "Success") {
+                      // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
+                      $scope.cargandoTransaccionRegistro = false;
+                      swal(
+                        $translate.instant("REGISTRAR_NOTA.AVISO"),
+                        $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
+                        'success'
+                      );
+                      $('#modalVerSolicitud').modal('hide');
+                    } else {
+                      // De lo contrario, se detiene la carga y notifica al usuario
+                      $scope.cargandoTransaccionRegistro = false;
+                      swal(
+                        $translate.instant("REGISTRAR_NOTA.AVISO"),
+                        $translate.instant(respuestaRegistrarNotasIngresadas.data[1]),
+                        'warning'
+                      );
+                    }
+                  })
+                  .catch(function(excepcionRegistrarNotasIngresadas) {
+                    // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
                     $scope.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("REGISTRAR_NOTA.AVISO"),
-                      $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
-                      'success'
-                    );
-                    ctrl.consultarSolicitudesAprobadas();
-                    $('#modalVerSolicitud').modal('hide');
-                  } else {
-                    // De lo contrario, se detiene la carga y notifica al usuario
-                    $scope.cargandoTransaccionRegistro = false;
-                    swal(
-                      $translate.instant("REGISTRAR_NOTA.AVISO"),
-                      $translate.instant(respuestaRegistrarNotasIngresadas.data[1]),
+                      $translate.instant("ERROR.REGISTRANDO_NOTA"),
                       'warning'
                     );
-                  }
-                })
-                .catch(function(excepcionRegistrarNotasIngresadas) {
-                  // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
-                  $scope.cargandoTransaccionRegistro = false;
-                  swal(
-                    $translate.instant("REGISTRAR_NOTA.AVISO"),
-                    $translate.instant("ERROR.REGISTRANDO_NOTA"),
-                    'warning'
-                  );
-                });
-            }
+                  });
+              }
+            });
+          })
+          .catch(function(excepcionNota) {
+            swal(
+              $translate.instant("REGISTRAR_NOTA.AVISO"),
+              $translate.instant("ERROR.NOTA_INVALIDA"),
+              'warning'
+            );
           });
       }
 

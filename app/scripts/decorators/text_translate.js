@@ -249,6 +249,7 @@ var text_es = {
         SIN_TRABAJO_GRADO: "No hay información asociada a los trabajos de grado consultados.",
         CARGANDO_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los trabajos de grado consultados. Comuníquese con el administrador.",
         REGISTRANDO_NOTA: "Error al registrar las calificaciones ingresadas",
+        NOTA_INVALIDA: "Las calificaciones ingresadas son inválidas. Por favor verificar los campos.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -446,7 +447,7 @@ var text_es = {
         TITULO: "Registro de calificaciones en espacios académicos de posgrado",
         CONFIRMACION: "Registrar calificaciones",
         MENSAJE_CONFIRMACION: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
-        AVISO: "Calificaciones registradas",
+        AVISO: "Registro de calificaciones",
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
         DESCRIPCION: "Descripción del trabajo de grado seleccionado"
     }
@@ -682,6 +683,7 @@ var text_en = {
         SIN_TRABAJO_GRADO: "There is no information associated to the degree works consulted.",
         CARGANDO_TRABAJO_GRADO: "An error occurred when trying to query the degree works consulted. Contact the administrator.",
         REGISTRANDO_NOTA: "Error during register the entered grades",
+        NOTA_INVALIDA: "The grades entered are invalid. Please check the fields.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -879,7 +881,7 @@ var text_en = {
         TITULO: "Grades record in academic postgraduate spaces",
         CONFIRMACION: "Grades registration",
         MENSAJE_CONFIRMACION: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",
-        AVISO: "Grades registered",
+        AVISO: "Grades registration",
         NOTA_REGISTRADA: "The entered grades have been registered successfully.",
         DESCRIPCION: "Select degree work description",
     }
