@@ -48,7 +48,7 @@
 
   //buscar prorrogas anteriores
   ctrl.getProrroga = function() {
-    var defered = $q.defer();
+    var defer = $q.defer();
 
     var parametrosTrabajoGrado = $.param({
       query: "TrabajoGrado.EstadoTrabajoGrado.Id:1,Estudiante:" + ctrl.codigo,
@@ -66,17 +66,17 @@
           if (responseProrroga.data != null) {
             ctrl.tieneProrrogas = true;
           }
-          defered.resolve(ctrl.tieneProrrogas);
+          defer.resolve(ctrl.tieneProrrogas);
         });
       } else {
-        defered.resolve(ctrl.tieneProrrogas);
+        defer.resolve(ctrl.tieneProrrogas);
       }
     });
-    return defered.promise;
+    return defer.promise;
   }
 
   ctrl.verificarSolicitudes = function() {
-    var defered = $q.defer();
+    var defer = $q.defer();
     var parametrosUser = $.param({
       query: "usuario:" + ctrl.codigo,
       limit: 0,
@@ -84,7 +84,7 @@
     var actuales = [];
 
     var requestRespuesta = function(solicitudesActuales, id) {
-      var defered = $q.defer();
+      var defer = $q.defer();
 
       var parametrosSolicitudesActuales = $.param({
         query: "EstadoSolicitud.in:1,activo:TRUE,SolicitudTrabajoGrado:" + id,
@@ -93,20 +93,20 @@
       poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
         if (responseSolicitudesActuales.data != null) {
           solicitudesActuales.push(responseSolicitudesActuales.data[0]);
-          defered.resolve(responseSolicitudesActuales.data);
+          defer.resolve(responseSolicitudesActuales.data);
         } else {
-          defered.resolve(responseSolicitudesActuales.data);
+          defer.resolve(responseSolicitudesActuales.data);
         }
       })
       .catch(function(error){
         ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_RESPUESTA_SOLICITUD");
-        defered.reject(error);
+        defer.reject(error);
       });
-      return defered.promise;
+      return defer.promise;
     }
 
     var requestRespuestaMateriasPosgrado = function(solicitudesActuales, id) {
-      var defered = $q.defer();
+      var defer = $q.defer();
 
       var parametrosSolicitudesActuales = $.param({
         query: "EstadoSolicitud.in:1|3|4|5|7|9|10,activo:TRUE,SolicitudTrabajoGrado:" + id,
@@ -114,17 +114,17 @@
       });
       poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
         if (responseSolicitudesActuales.data != null) {
-          solidcitudesActuales.push(responseSolicitudesActuales.data[0]);
-          defered.resolve(responseSolicitudesActuales.data);
+          solicitudesActuales.push(responseSolicitudesActuales.data[0]);
+          defer.resolve(responseSolicitudesActuales.data);
         } else {
-          defered.resolve(responseSolicitudesActuales.data);
+          defer.resolve(responseSolicitudesActuales.data);
         }
       })
       .catch(function(error){
         ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_RESPUESTA_SOLICITUD");
         defer.reject(error);
       });
-      return defered.promise;
+      return defer.promise;
     }
 
     poluxRequest.get("usuario_solicitud", parametrosUser).then(function(responseUser) {
@@ -145,27 +145,27 @@
         console.log("actuales", actuales);
         if (actuales.length == 0) {
           console.log("si se puede");
-          defered.resolve(true);
+          defer.resolve(true);
           //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
         } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
           console.log(actuales);
           console.log("es inicial y se deben restringir las demás");
           ctrl.restringirModalidades = true;
-          defered.resolve(true);
+          defer.resolve(true);
         } else {
           console.log("No puedes");
-          defered.resolve(false);
+          defer.resolve(false);
         }
       })
       .catch(function(error){
-        defered.reject(error);
+        defer.reject(error);
       });
     })
     .catch(function(error){
       ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGA_SOLICITUDES");
-      defered.reject(error);
+      defer.reject(error);
     });
-    return defered.promise;
+    return defer.promise;
   }
 
   ctrl.obtenerDatosEstudiante = function() {
@@ -1119,8 +1119,8 @@
   }
 
   ctrl.cargarDocumento = function(nombre, descripcion, documento, callback) {
-    var defered = $q.defer();
-    var promise = defered.promise;
+    var defer = $q.defer();
+    var promise = defer.promise;
     nuxeo.operation('Document.Create')
       .params({
         type: 'File',
@@ -1149,16 +1149,16 @@
           .then(function(doc) {
             var url = doc.uid;
             callback(url);
-            defered.resolve(url);
+            defer.resolve(url);
           })
           .catch(function(error) {
             throw error;
-            defered.reject(error)
+            defer.reject(error)
           });
       })
       .catch(function(error) {
         throw error;
-        defered.reject(error)
+        defer.reject(error)
       });
 
     return promise;
@@ -1342,7 +1342,7 @@
     nuxeo.header('X-NXDocumentProperties', '*');
 
     ctrl.obtenerDoc = function() {
-      var defered = $q.defer();
+      var defer = $q.defer();
 
       nuxeo.request('/id/' + docid)
         .get()
@@ -1350,26 +1350,26 @@
           ctrl.doc = response;
           var aux = response.get('file:content');
           ctrl.document = response;
-          defered.resolve(response);
+          defer.resolve(response);
         })
         .catch(function(error) {
-          defered.reject(error)
+          defer.reject(error)
         });
-      return defered.promise;
+      return defer.promise;
     };
 
     ctrl.obtenerFetch = function(doc) {
-      var defered = $q.defer();
+      var defer = $q.defer();
 
       doc.fetchBlob()
         .then(function(res) {
-          defered.resolve(res.blob());
+          defer.resolve(res.blob());
 
         })
         .catch(function(error) {
-          defered.reject(error)
+          defer.reject(error)
         });
-      return defered.promise;
+      return defer.promise;
     };
 
     ctrl.obtenerDoc().then(function() {

@@ -399,6 +399,7 @@ var text_es = {
         PROCESO_ADMISION_COMPLETO:"Proceso de admisión completado",
         RESPUESTAS_SOLICITUD:"Se han registrado los datos del proceso de admisión exitosamente",
     },
+    NO_OPCIONES_DISPONIBLES:"No hay opciones dispobiles",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -780,6 +781,7 @@ var text_en = {
         PROCESO_ADMISION_COMPLETO:"Admission process completed",
         RESPUESTAS_SOLICITUD:"The data of the admission process has been registered successfully",
     },
+    NO_OPCIONES_DISPONIBLES:"No options available",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
