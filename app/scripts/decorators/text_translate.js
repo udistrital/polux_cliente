@@ -170,7 +170,6 @@ var text_es = {
     NO_CARRERAS_PREGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de PREGRADO",
     NO_PENSUMS:"La carrera no tiene pensums activos",
     NO_ASIGNATURAS:"No hay espacios académicos pertenecientes al pensum seleccionado",
-    ESTUDIANTE_NO_ENCONTRADO:"Error: El estudiante no se encuentra",
     NOMBRE_EMPRESA:"Escriba el nombre de la empresa",
     REGISTRO_FORMULARIO:"Registro de formulario",
     REGISTRO_PAGO:"Registro del pago",
@@ -195,6 +194,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento.",
+        CARGAR_DOCUMENTO:"Ocurrio un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
         HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
         HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado que se encuentra pendiente por respuesta.",
         DOCENTE_DUPLICADO:"Por favor seleccione docentes diferentes en los campos de director y evaluador(es).",
@@ -222,14 +222,12 @@ var text_es = {
         FORMALIZAR_SOLICITUD: "Error al formalizar la solicitud",
         SIN_INFO_SOLICITUDES_APROBADAS: "Información insuficiente para listar las solicitudes aprobadas al posgrado",
         CARGANDO_SOLICITUDES_APROBADAS: "Error durante la consulta de las solicitudes aprobadas. Comuníquese con el administrador.",
-
         SIN_PERIODO: "No hay información asociada al periodo académico actualmente.",
         CARGANDO_PERIODO: "Ocurrió un error al intentar consultar el periodo académico correspondiente. Comuníquese con el administrador.",
         SIN_RELACION_SESIONES: "No hay información asociada a las sesiones de actividad consultadas.",
         CARGANDO_RELACION_SESIONES: "Ocurrió un error al intentar consultar las sesiones de actividad. Comuníquese con el administrador.",
         NO_PERIODO_FORMALIZACION: "Este periodo no corresponde a las fechas de formalización. Verifique que se encuentra en las fechas de formalización indicadas.",
         SIN_SOLICITUDES_PARA_FORMALIZAR: "No existen solicitudes para formalizar actualmente.",
-
         SIN_INFO_ACADEMICA: "Error al cargar información académica.",
         SIN_DETALLE_SOLICITUD: "No hay información asociada al detalle de las solicitudes consultadas.",
         CARGANDO_DETALLE_SOLICITUD: "Ocurrió un error al intentar consultar el detalle de las solicitudes aprobadas. Comuníquese con el administrador.",
@@ -240,7 +238,6 @@ var text_es = {
         SIN_INFO_ESTUDIANTE: "No hay información asociada a los estudiantes necesarios para la consulta.",
         CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al intentar consultar la información académica de los estudiante asociados. Comuníquese con el administrador.",
         REGISTRANDO_MODALIDAD: "Error al registrar la modalidad seleccionada",
-
         INDEFINIDA_INFO_ACADEMICA: "No hay información académica definida para esta operación.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "No hay información asociada a los espacios académicos inscritos de los trabajos de grado consultados.",
         CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS: "Ocurrió un error al intentar consultar los espacios académicos inscritos de los trabajos de grado consultados. Comuníquese con el administrador.",
@@ -250,6 +247,26 @@ var text_es = {
         CARGANDO_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los trabajos de grado consultados. Comuníquese con el administrador.",
         REGISTRANDO_NOTA: "Error al registrar las calificaciones ingresadas",
         NOTA_INVALIDA: "Las calificaciones ingresadas son inválidas. Por favor verificar los campos.",
+        CARGAR_CUPOS:"Ocurrio un error al cargar el número de cupos disponibles, por favor verifique su conexión e intente de nuevo",
+        NUMERO_ADMITIDOS:"El numero de admitidos es mayor al número de cupos disponibles ({{cuposDisponibles}})",
+        CARGAR_DATOS_SOLICITUDES:"Ocurrio un error al cargar los datos de las solicitudes, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DATOS_ESTUDIANTES:"Ocurrio un error al cargar la información de los estudiantes, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_SOLICITANTES:"Ocurrio un error al cargar los solicitantes, por favor verifique su conexión e intente de nuevo.",
+        VARLIDAR_REQUISITOS:"Ocurrio un error al validar los requisitos de la solicitud, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_RESPUESTA_SOLICITUD:"Ocurrio un error al cargar las respuestas de las solicitudes, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_AREAS:"Ocurrio un error al cargar las áreas de conocimiento, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DATOS_ESTUDIANTE:"Ocurrio un error al cargar la información del estudiante, por favor verifique su conexión, e intente de nuevo.",
+        ESTUDIANTE_NO_ENCONTRADO:"El estudiante no se encuentra",
+        CARGAR_DATOS_TRABAJOS:"Ocurrio un error al cargar los datos de los trabajos de grado, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_TIPOS_SOLICITUD:"Ocurrio un error al cargar los tipos de solicitud, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DETALLES_SOLICITUD:"Ocurrio un error al cargar los detalles de la solicitud, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_OPCIONES_DETALLES_SOLICITUD:"Ocurrio un error al cargar las opciones de los detalles, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_ASIGNATURAS_SOLICITUD:"Ocurrio un error al cargar las asignaturas disponibles, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DATOS_SOLICITUD:"Ocurrio un error al cargar los datos de las solicitud, por favor verifique su conexión e intente de nuevo.",
+        SOLICITUD_NO_ENCONTRADA:"El identificador de la solicitud no ha sido encontrado",
+        CARGAR_EVALUADORES:"Ocurrio un error al cargar los docentes evaluadores, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrio un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DOCENTES:"Ocurrio un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -330,7 +347,8 @@ var text_es = {
       CARGANDO_PARAMETROS:"Cargando parámetros",
       CARGANDO_SOLICITUDES_APROBADAS: "Cargando solicitudes aprobadas",
       CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
-      CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado"
+      CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado",
+      REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -379,6 +397,9 @@ var text_es = {
     RESULTADO_SOLICITUD:"Resultado de la solicitud",
     SOLICITUD_RECHAZADA:"La solicitud fue rechazada",
     SOLICITUD_ES_APROBADA:"La solicitud fue aprobada",
+    SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA:"La solicitud esta opcionada para el segundo proceso de admisión.",
+    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES:"La solicitud fue rechazada por disponibilidad de cupos en el posgrado.",
+    SOLICITUD_APROBADA_EXENTA:"La solicitud fue aprobada exenta de pago, el estudiante puede formalizarla.",
     INFORMACION_PRORROGA:"Información importante sobre la prórroga",
     MENSAJE_PRORROGA:"Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a una prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
     APROBADO : {
@@ -388,6 +409,7 @@ var text_es = {
         DIRECTOR_INTERNO:"Se cambio el director interno {{anterior}} por {{nuevo}}",
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
         PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
+        CAMBIAR_MATERIA:"Se cambia la materia {{anterior}} por {{nuevo}}",
     },
     AREAS:{
         DATOS_AREA:"Datos para registrar área",
@@ -451,7 +473,19 @@ var text_es = {
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
         DESCRIPCION: "Descripción del trabajo de grado seleccionado",
         INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro."
-    }
+    },
+    PERIODO_ACADEMICO:"Período académico",
+    SOLICITUD_NO_PUEDE_APROBARSE:"La solicitud no puede ser aprobada",
+    MATERIAS_POSGRADO:{
+        CONFIRMACION_ADMITIR:"Confirmación de admitidos",
+        CONFIRMAR:"Al presionar aceptar confirma que desea ejecutar el proceso de admisión con los estudiantes seleccionados, esta acción no puede deshacerse.",
+        ADMITIDOS:"Se admitirán los siguientes estudiantes:",
+        OPCIONADOS:"Los siguientes estudiantes serán opcionados para la segunda convocatoria:",
+        NO_ADMITIDOS:"Los siguientes estudiantes no se admitirán por falta de cupos:",
+        PROCESO_ADMISION_COMPLETO:"Proceso de admisión completado",
+        RESPUESTAS_SOLICITUD:"Se han registrado los datos del proceso de admisión exitosamente",
+    },
+    NO_OPCIONES_DISPONIBLES:"No hay opciones dispobiles",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -604,7 +638,6 @@ var text_en = {
     NO_CARRERAS_PREGRADO:"You do not have assigned courses with a UNDERGRADUATE level",
     NO_PENSUMS:"The career does not have active pensums",
     NO_ASIGNATURAS:"There are no academic spaces belonging to the selected curriculum",
-    ESTUDIANTE_NO_ENCONTRADO:"Error: The student is not found",
     NOMBRE_EMPRESA:"Enter the name of the company",
     REGISTRO_FORMULARIO:"Form Submit",
     REGISTRO_PAGO:"Payment submit",
@@ -629,6 +662,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a document.",
+        CARGAR_DOCUMENTO:"An error occurred loading the documents, please verify your connection and try again.",
         HAY_SOLICITUD_DISTINCION:"Currently there is already a request for outstanding distinction for this degree work.",
         HAY_SOLICITUD_PENDIENTE:"Currently the student already has a grade job request that is pending by response.",
         DOCENTE_DUPLICADO:"Please select different teachers in the fields of director and evaluator(s).",
@@ -656,7 +690,6 @@ var text_en = {
         FUERA_PERIODO_FORMALIZACION: "This period does not correspond to the period of requests formalization",
         SIN_INFO_SOLICITUDES_APROBADAS: "Insufficient information to list approved requests to the postgraduate",
         CARGANDO_SOLICITUDES_APROBADAS: "Error during the query of the approved requests. Contact the administrator.",
-
         SIN_PERIODO: "There is not currently information associated with the academic period.",
         CARGANDO_PERIODO: "An error occurred while trying to query the corresponding academic period. Contact the administrator.",
         SIN_RELACION_SESIONES: "There is no information associated with the queried activity sessions.",
@@ -664,7 +697,6 @@ var text_en = {
         NO_PERIODO_FORMALIZACION: "This period does not correspond to the formalization dates. Verify that you are in the indicated formalization dates.",
         SIN_SOLICITUDES_PARA_FORMALIZAR: "There are not currently requests to formalize.",
         FORMALIZAR_SOLICITUD: "Error formalizing the request",
-
         SIN_INFO_ACADEMICA: "Error during academic information load.",
         SIN_DETALLE_SOLICITUD: "There is no information associated with the detail of the queried requests.",
         CARGANDO_DETALLE_SOLICITUD: "An error occurred while trying to query the detail of the approved requests. Contact the administrator.",
@@ -675,7 +707,6 @@ var text_en = {
         SIN_INFO_ESTUDIANTE: "There is no information associated with the students needed for the query.",
         CARGANDO_INFO_ESTUDIANTE: "An error occurred while trying to query the academic information of the associated students. Contact the administrator.",
         REGISTRANDO_MODALIDAD: "Error during register the selected modality",
-
         INDEFINIDA_INFO_ACADEMICA: "There is no academic information defined for this operation.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "There is no information associated to the academic spaces enrolled of the degree works consulted.",
         CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS: "An error occurred when trying to query the academic spaces enrolled for the degree works consulted. Contact the administrator.",
@@ -685,6 +716,26 @@ var text_en = {
         CARGANDO_TRABAJO_GRADO: "An error occurred when trying to query the degree works consulted. Contact the administrator.",
         REGISTRANDO_NOTA: "Error during register the entered grades",
         NOTA_INVALIDA: "The grades entered are invalid. Please check the fields.",
+        CARGAR_CUPOS:"There was an error lloading the number of avaliable quotas, please verify your connection and try again.",
+        NUMERO_ADMITIDOS:"The number of admitted is greater than the number of available places ({{cuposDisponibles}})",
+        CARGAR_DATOS_SOLICITUDES:"There was an error occurred loading the requests data, please check your connection and try again.",
+        CARGAR_DATOS_ESTUDIANTES:"There was an error occurred loading the students information, please check your connection and try again.",
+        CARGAR_SOLICITANTES:"There was an error occurred loading the requests, please check your connection and try again.",
+        VARLIDAR_REQUISITOS:"There was an error occurred by validating the requirements of the application, please check your connection and try again.",
+        CARGAR_RESPUESTA_SOLICITUD:"There was an error occurred loading the request's response, please check your connection and try again.",
+        CARGAR_AREAS:"There was an error occurred loading the areas of knoeledge, please check your connection and try again.",
+        CARGAR_DATOS_ESTUDIANTE:"There was an error occurred loading the student's information, please check your connection and try again.",
+        ESTUDIANTE_NO_ENCONTRADO:"The student is not found",
+        CARGAR_DATOS_TRABAJOS:"There was an error occurred loading the grade job data, please check your connection and try again.",
+        CARGAR_TIPOS_SOLICITUD:"There was an error occurred loading the types of request, please check your connection and try again.",
+        CARGAR_DETALLES_SOLICITUD:"There was an error occurred loading the request's details, please check your connection and try again.",
+        CARGAR_OPCIONES_DETALLES_SOLICITUD:"There was an error occurred loading the options of the details of the request, please check your connection and try again.",
+        CARGAR_ASIGNATURAS_SOLICITUD:"There was an error occurred loading the avaliable subjects, please check your connection and try again.",
+        CARGAR_DATOS_SOLICITUD:"There was an error occurred loading the request data, please check your connection and try again.",
+        SOLICITUD_NO_ENCONTRADA:"The identifier of the request has not been found.",
+        CARGAR_EVALUADORES:"There was an error occurred loading the evaluators, please check your connection and try again.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"There was an error occurred loading the teachers related to degree work, please check your connection and try again.",
+        CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -765,7 +816,9 @@ var text_en = {
       CARGANDO_PARAMETROS: "Loading parameterss",
       CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
       CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
-      CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality"
+      CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
+      CARGANDO_PARAMETROS:"Loading parameterss",
+      REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -814,6 +867,9 @@ var text_en = {
     RESULTADO_SOLICITUD:"Result of the request",
     SOLICITUD_RECHAZADA:"The request was rejected",
     SOLICITUD_ES_APROBADA:"The request was approved",
+    SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA:"The application is optional for the second admission process.",
+    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES:"The application was rejected due to the availability of places in the postgraduate program.",
+    SOLICITUD_APROBADA_EXENTA:"The application was approved free of charge, the student can formalize it.",
     INFORMACION_PRORROGA:"Important information about the extension",
     MENSAJE_PRORROGA:"Mr. student, you are informed that in accordance with the provisions of Agreement 038 of July 2015 issued by the academic council of the Francisco José de Caldas District University, you only have the right to an extension, that is, once you make this application regardless of the nature (extension to socialize or formalize) and is approved, you can not request it again.",
     APROBADO : {
@@ -823,6 +879,7 @@ var text_en = {
         DIRECTOR_INTERNO:"The internal director {{anterior}} was changed to {{nuevo}}",
         EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
         PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
+        CAMBIAR_MATERIA:"Subject {{anterior}} is changed to {{nuevo}}",
     },
     AREAS:{
         DATOS_AREA:"Data to register area",
@@ -886,7 +943,19 @@ var text_en = {
         NOTA_REGISTRADA: "The entered grades have been registered successfully.",
         DESCRIPCION: "Select degree work description",
         INSTRUCCIONES: "Input the grades obtained by the student by clicking on the corresponding cell. Keep in mind that valid grades range from 0.0 to 5.0, and two (2) decimals of accuracy will be taken for the record.",
-    }
+    },
+    PERIODO_ACADEMICO:"Academic period",
+    SOLICITUD_NO_PUEDE_APROBARSE:"The request can not be approved",
+    MATERIAS_POSGRADO:{
+        CONFIRMACION_ADMITIR:"Confirmation of admitted",
+        CONFIRMAR:"Pressing accept confirms that you want to execute the admission process with the selected students, this action can not be undone.",
+        ADMITIDOS:"The following students will be admitted:",
+        OPCIONADOS:"The following students will be eligible for the second call:",
+        NO_ADMITIDOS:"The following students will not be admitted due to lack of quotas:",
+        PROCESO_ADMISION_COMPLETO:"Admission process completed",
+        RESPUESTAS_SOLICITUD:"The data of the admission process has been registered successfully",
+    },
+    NO_OPCIONES_DISPONIBLES:"No options available",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

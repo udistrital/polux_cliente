@@ -1,5 +1,5 @@
-<loading tam="4" load="loadEstudiante" message="cargandoEstudiante"> </loading>
-<div class="panel panel-default" ng-if="crearSolicitud.conEstudiante">
+<loading tam="4" load="loadParametros" message="cargandoParametros"> </loading>
+<div class="panel panel-default"  ng-if="!crearSolicitud.errorCarga && !loadParametros">
     <div class="panel-heading">
         {{'NUEVA_SOLICITUD' | translate}}
     </div>
@@ -26,14 +26,8 @@
 </div>
 <loading tam="4" load="loadFormulario" message="enviandoFormulario"> </loading>
 <loading tam="4" load="loadDetalles"  message="cargandoDetalles"> </loading>
-<div class="panel-body alert alert-danger" ng-show="crearSolicitud.puedeFechas">
-    {{crearSolicitud.textoErrorFechas}}
-</div>
-<div class="panel-body alert alert-danger" ng-show="crearSolicitud.siPuede">
-    {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
-</div>
-<div class="panel-body alert alert-danger" ng-show="crearSolicitud.siPuedeAnteriores">
-    {{'ERROR.HAY_SOLICITUD_PENDIENTE' | translate}}
+<div class="panel-body alert alert-danger" ng-show="crearSolicitud.errorParametros">
+    {{crearSolicitud.mensajeError}}
 </div>
 <div class="panel panel-default" ng-show="crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario">
     <div class="panel-heading">
@@ -89,7 +83,8 @@
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
                <select class="form-control" ng-model="detalle.respuesta" required>
-                     <option  ng-repeat="opcion in detalle.opciones" value="{{opcion.bd}}"> {{opcion.NOMBRE}} </option>
+                    <option ng-if="detalle.opciones.length == 0" value="" selected disabled hidden>{{'NO_OPCIONES_DISPONIBLES' | translate}}</option> 
+                    <option  ng-repeat="opcion in detalle.opciones" value="{{opcion.bd}}"> {{opcion.NOMBRE}} </option>
                </select>
            </div>
          </div>
@@ -149,11 +144,13 @@
     </div>
 
 </div>
-<div class="panel panel-default" ng-if="!crearSolicitud.conEstudiante && !loadEstudiante">
+<div class="panel panel-default" ng-if="crearSolicitud.errorCarga && !loadParametros">
     <div class="panel-heading">
         {{'ERROR' | translate}}
     </div>
-    <div class="panel-body alert alert-danger">
-        {{'ESTUDIANTE_NO_ENCONTRADO' | translate}}
+    <div class="panel-body">
+      <div class="alert alert-danger">
+        {{crearSolicitud.mensajeErrorCarga}}
+      </div>
     </div>
 </div>
