@@ -7,7 +7,7 @@
  * # materias/solicitarAsignaturas
  */
  angular.module('poluxClienteApp')
-.directive('solicitarAsignaturas', function($q,poluxRequest, academicaRequest, $route) {
+.directive('solicitarAsignaturas', function($q,poluxRequest, academicaRequest, $route,poluxMidRequest) {
     return {
         restrict: 'E',
         scope: {
@@ -40,11 +40,11 @@
               modalidad de espacios académicos de posgrado: 8 créditos,
               modalidad de espacios académicos de profundización: 6 créditos*/
             ctrl.creditosMinimos = 0;
-            if ($scope.modalidad == 2) {
-                ctrl.creditosMinimos = 8;
-            } else {
-                ctrl.creditosMinimos = 6;
-            }
+            //if ($scope.modalidad == 2) {
+               // ctrl.creditosMinimos = 8;
+            //} else {
+               // ctrl.creditosMinimos = 6;
+            //}
 
             academicaRequest.get("periodo_academico", "X").then(function(response) {
                 if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
@@ -58,7 +58,21 @@
                 });
                 poluxRequest.get("carrera_elegible", parametros).then(function(response) {
                     var promises = []
-
+                    var getCreditos = function(){
+                        var defer = $q.defer();
+                        poluxMidRequest.get("creditos_materias/ObtenerCreditos").then(function(responseCreditos){
+                            if ($scope.modalidad == 2) {
+                                ctrl.creditosMinimos = responseCreditos.data.MateriasPosgrado;
+                            } else {
+                                ctrl.creditosMinimos = responseCreditos.data.MateriasProfundizacion;
+                            }
+                            defer.resolve()
+                        })
+                        .catch(function(error){
+                            defer.reject(error);
+                        });
+                        return defer.promise;
+                    }
                     var getCarrera = function(value){
                       var defer = $q.defer()
                       academicaRequest.get("carrera_codigo_nivel", [value.CodigoCarrera, ctrl.tipo]).then(function(response2) {
@@ -81,6 +95,7 @@
                       });
                       return defer.promise
                     }
+                    promises.push(getCreditos());
                     angular.forEach(response.data, function(value) {
                         if (value.CodigoCarrera !== $scope.e.Codigo) {
                             promises.push(getCarrera(value));
