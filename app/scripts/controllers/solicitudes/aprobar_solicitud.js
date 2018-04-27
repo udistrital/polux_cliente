@@ -2,7 +2,6 @@
 
 /**
  * @ngdoc function
-
  * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
  * @description
  * # SolicitudesAprobarSolicitudCtrl
@@ -49,9 +48,22 @@ angular.module('poluxClienteApp')
       "identificacion":19451396,
       "tipo":"PREGRADO",
     };*/
+
+    //documento del coordinador
     $scope.userId=19451396;
 
     ctrl.carrerasCoordinador = [];
+    /**
+     * @ngdoc method
+     * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl#getCarrerasCoordinador
+     * @param {undefined} undefined no recibe ningún parametro
+     * @requires $q 
+     * @requires $translate
+     * @returns {Promise} Retorna promesa que dice cuando se cuando se cumple la petición
+     * @description 
+     * Consulta las carreras del coordinado
+     * se consueme el servicio {@link academicaService.service:academicaRequest academicaRequest}
+     */
     //obtener las carreras asociadas al coordinador
     ctrl.getCarrerasCoordinador = function(){
       var defer = $q.defer();
