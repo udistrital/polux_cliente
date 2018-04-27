@@ -56,6 +56,7 @@ angular.module('poluxClienteApp')
     /**
      * @ngdoc method
      * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl#getCarrerasCoordinador
+     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
      * @param {undefined} undefined no recibe ningún parametro
      * @requires $q 
      * @requires $translate

@@ -27,7 +27,7 @@ angular.module('academicaService', [])
              * @ngdoc function
              * @name academicaService.service:academicaRequest#get
              * @methodOf academicaService.service:academicaRequest
-             * @param {string} tabla Nombre de la tabla en el API|Servicio
+             * @param {string} service Nombre de la tabla en el API|Servicio
              * @param {string} params parametros para filtrar la busqueda
              * @return {array|object} objeto u objetos del get
              * @description Metodo GET del servicio
