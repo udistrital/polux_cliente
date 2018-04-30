@@ -25,7 +25,7 @@
         AUTORIZATION_URL: "https://autenticacion.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.udistrital.edu.co/oauth2/userinfo",
         CLIENTE_ID: "pszmROXqfec4pTShgF_fn2DAAX0a",
-        REDIRECT_URL: "http://localhost:9000/",
+        REDIRECT_URL: "http://10.20.0.254/polux",
         RESPONSE_TYPE: "code",
         SCOPE: "openid email",
         BUTTON_CLASS: "btn btn-warning btn-sm",
@@ -64,5 +64,5 @@ var conf_local = {
 
 angular.module('poluxClienteApp')
   .constant('CONF', {
-      GENERAL: conf_local
+      GENERAL: conf_pruebas
   });

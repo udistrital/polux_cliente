@@ -1,0 +1,35 @@
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    {{'FORMALIZAR_SOLICITUD.TITULO' | translate}}
+  </div>
+
+  <div class="panel-body">
+
+    <loading tam="4" load="cargandoSolicitudes" message="mensajeCargandoSolicitudes"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="formalizarSolicitud.cuadriculaSolicitudesParaFormalizar.data.length > 0">
+      <div class="mi-grid" id="mi-grid" ui-grid="formalizarSolicitud.cuadriculaSolicitudesParaFormalizar"></div>
+    </div>
+    
+    <div class="panel-body alert alert-danger" ng-if="errorCargandoSolicitudes">
+      <span ng-bind="mensajeErrorCargandoSolicitudes"></span>
+    </div>
+
+    <div class="panel panel-default" ng-if="periodoDeFormalizacionNoCorrespondiente">
+      <div class="panel-heading">
+        {{'FORMALIZAR_SOLICITUD.FECHAS_PARA_FORMALIZACION' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row" ng-repeat="periodoDeFormalizacion in formalizarSolicitud.coleccionFechasFormalizacion">
+          <label class="col-sm-12">{{periodoDeFormalizacion.descripcionFechaDeFormalizacion}}</label>
+          <label class="col-sm-2">{{'FECHA_INICIO' | translate}}:</label>
+          <label class="col-sm-4">{{periodoDeFormalizacion.fechaInicioDeFormalizacion}}</label>
+          <label class="col-sm-2">{{'FECHA_FIN' | translate}}:</label>
+          <label class="col-sm-4">{{periodoDeFormalizacion.fechaFinDeFormalizacion}}</label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

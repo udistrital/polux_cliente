@@ -1,0 +1,136 @@
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    {{'LISTAR_APROBADOS.TITULO' | translate}}
+  </div>
+
+  <div class="panel-body">
+
+    <loading tam="4" load="cargandoPosgrados" message="mensajeCargandoPosgrados"></loading>
+    <div class="row" ng-if="listarAprobados.posgradosAsociados.length > 0">
+      <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
+      <div class="col-sm-10">
+        <ui-select name="posgrado" ng-model="listarAprobados.posgradoSeleccionado" required on-select="listarAprobados.escogerPosgrado()" style="width:97%;" theme="bootstrap">
+          <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">
+            {{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
+          </ui-select-match>
+          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in listarAprobados.posgradosAsociados | filter: $select.search">
+            <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+
+    <br ng-if="periodoCorrespondienteHabilitado">
+
+    <div class="row" ng-if="periodoCorrespondienteHabilitado">
+      <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
+      <div class="col-sm-10">
+        <select ng-model="listarAprobados.periodoSeleccionado" ng-change="listarAprobados.consultarSolicitudesAprobadas()">
+          <option ng-repeat="periodo in listarAprobados.periodosCorrespondientes" ng-value="periodo">
+            {{periodo.anio}}-{{periodo.periodo}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel-body alert alert-danger" ng-if="errorCargandoConsultasIniciales">
+      <span ng-bind="mensajeErrorCargandoConsultasIniciales"></span>
+    </div>
+    
+    <loading tam="4" load="cargandoSolicitudesAprobadas" message="mensajeCargandoSolicitudesAprobadas"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="listarAprobados.cuadriculaSolicitudesAprobadas.data.length > 0">
+      <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.cuadriculaSolicitudesAprobadas"></div>
+    </div>
+
+    <br ng-if="errorCargandoSolicitudesAprobadas">
+    
+    <div class="panel-body alert alert-danger" ng-if="errorCargandoSolicitudesAprobadas">
+      <span ng-bind="mensajeErrorCargandoSolicitudesAprobadas"></span>
+    </div>
+
+  </div>
+
+  <div id="modalVerSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+      <div class="modal-header">
+        {{'LISTAR_APROBADOS.DESCRIPCION' | translate}}
+        <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+        <br>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          {{'INFORMACION_ESTUDIANTE' | translate}}
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'SOLICITANTE' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.nombreEstudianteSolicitante}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CODIGO' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.codigoEstudianteSolicitante}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'PROMEDIO' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.promedioEstudianteSolicitante}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'RENDIMIENTO' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.rendimientoEstudianteSolicitante}} </label>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          {{'INFORMACION_SOLICITUD' | translate}}
+        </div>
+        <div class="panel-body">
+          <loading tam="4" load="cargandoTransaccionRegistro" message="mensajeCargandoTransaccionRegistro"></loading>
+          <div ng-if="!cargandoTransaccionRegistro">
+            <div class="row">
+              <label class="col-sm-4 control-label"> {{'SOLICITUD' | translate}}: </label>
+              <label class="col-sm-8 control-label"> {{listarAprobados.numeroSolicitud}} </label>
+            </div>
+            <div class="row">
+              <label class="col-sm-4 control-label"> {{'FECHA' | translate}}: </label>
+              <label class="col-sm-8 control-label"> {{listarAprobados.fechaSolicitud}} </label>
+            </div>
+            <div class="row">
+              <label class="col-sm-4 control-label"> {{'ESTADO_SOLICITUD' | translate}}: </label>
+              <label class="col-sm-8 control-label"> {{listarAprobados.estadoSolicitud}} </label>
+            </div>
+            <div class="row">
+              <label class="col-sm-4 control-label"> {{'CODIGO_POSGRADO' | translate}}: </label>
+              <label class="col-sm-8 control-label"> {{listarAprobados.codigoPosgrado}} </label>
+            </div>
+            <div class="row">
+              <label class="col-sm-4 control-label"> {{'POSGRADO' | translate}}: </label>
+              <label class="col-sm-8 control-label"> {{listarAprobados.nombrePosgrado}} </label>
+            </div>
+            <div class="row">
+              <label class="col-sm-4 control-label"> {{'CODIGO_PENSUM_POSGRADO' | translate}}: </label>
+              <label class="col-sm-8 control-label"> {{listarAprobados.pensumPosgrado}} </label>
+            </div>
+            <div class="row row-centered">
+              <div class="col-sm-2 col-centered">
+                <input type="submit" class="btn btn-success" value="{{'BTN.REGISTRAR_TRABAJO_GRADO'|translate}}" ng-click="listarAprobados.confirmarRegistroSolicitud()">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default" ng-if="listarAprobados.cuadriculaEspaciosAcademicosSolicitados.data.length > 0">
+        <div class="panel-heading">
+          {{'ESP_ACADEMICOS' | translate}}
+        </div>
+        <div class="panel-body">
+          <div class="panel col-md-12">
+            <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.cuadriculaEspaciosAcademicosSolicitados" style="height: {{(listarAprobados.cuadriculaEspaciosAcademicosSolicitados.data.length * 35) + 40}}px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
