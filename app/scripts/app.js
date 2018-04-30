@@ -226,6 +226,11 @@ angular
               controller: 'PasantiaSolicitarCartaCtrl',
               controllerAs: 'solicitarCarta'
             })
+            .when('/no_permission', {
+              templateUrl: 'views/no_permission.html',
+              controller: 'NoPermissionCtrl',
+              controllerAs: 'noPermission'
+            })
             .otherwise({
                 redirectTo: '/'
             });

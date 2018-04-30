@@ -219,6 +219,7 @@ var text_es = {
         CARGAR_EVALUADORES:"Ocurrio un error al cargar los docentes evaluadores, por favor verifique su conexión e intente de nuevo.",
         CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrio un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
         CARGAR_DOCENTES:"Ocurrio un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
+        NO_HAY_PERMISO:"Lo sentimos, no cuenta con los permisos necesarios para acceder a esta página.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -400,6 +401,7 @@ var text_es = {
         RESPUESTAS_SOLICITUD:"Se han registrado los datos del proceso de admisión exitosamente",
     },
     NO_OPCIONES_DISPONIBLES:"No hay opciones dispobiles",
+    ACCESO_NEGADO:"Acceso negado",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -601,6 +603,7 @@ var text_en = {
         CARGAR_EVALUADORES:"There was an error occurred loading the evaluators, please check your connection and try again.",
         CARGAR_VINCULADOS_TRABAJO_GRADO:"There was an error occurred loading the teachers related to degree work, please check your connection and try again.",
         CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
+        NO_HAY_PERMISO:"Sorry, you do not have the necessary permissions to access to this page.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -782,6 +785,7 @@ var text_en = {
         RESPUESTAS_SOLICITUD:"The data of the admission process has been registered successfully",
     },
     NO_OPCIONES_DISPONIBLES:"No options available",
+    ACCESO_NEGADO:"Access denied",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

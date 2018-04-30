@@ -60,25 +60,23 @@ angular.module('poluxClienteApp')
                 url: "http://10.20.0.254/kronos"
             }
         ];
-        configuracionRequest.get('menu_opcion_padre/ArbolMenus/ADMIN_POLUX/Polux', '')
-            .then(function(response) {
-                $scope.menu_service = response.data;
-                recorrerArbol($scope.menu_service, "");
-                update_url();
-            });
+
         if(token_service.live_token()){
             token_service.token.role.pop();
             var roles = token_service.token.role.toString();
             //para agregar menus 
-            roles = roles+',ADMIN_POLUX';
+            //roles = roles+',ADMIN_POLUX';
+            //sobrescribir documento
+            //console.log(token_service.token.documento);
              configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '')
             .then(function(response) {
                 $scope.menu_service = response.data;
-                recorrerArbol($scope.menu_service, "");
+                if($scope.menu_service != null){
+                    recorrerArbol($scope.menu_service, "");
+                }
                 update_url();
             });
         }
-
 
         var recorrerArbol = function(item, padre) {
             var padres = "";
@@ -111,11 +109,62 @@ angular.module('poluxClienteApp')
         recorrerArbol($scope.menu_service, "");
         paths.push({ padre: ["", "Notificaciones", "Ver Notificaciones"], path: "notificaciones" });
 
-        $scope.$on('$routeChangeStart', function(next, current) {
-            $scope.actual = $location.path();
-            update_url();
-            console.log(next + current);
-        });
+
+        $scope.havePermission = function(viewPath,menu){
+            var currentPath = viewPath.replace(".html","").split("views/").pop();
+            var head = menu;
+            var permission = 0;
+            if (currentPath !== "main"){
+                permission=$scope.menuWalkThrough(head,currentPath);
+            }else{
+                permission =1;
+             }
+            return permission;
+            
+        };
+
+        $scope.menuWalkThrough = function(head,url){
+            var acum = 0;
+            if(!angular.isUndefined(head)){
+                angular.forEach(head,function(node){
+                    if (node.Opciones === null && node.Url === url){
+                        acum = acum + 1;
+                    }else if (node.Opciones !== null){
+                        acum = acum  + $scope.menuWalkThrough(node.Opciones,url);
+                    }else{
+                        acum = acum + 0;
+                    }
+                });
+                return acum;
+            }else{
+                return acum;
+            }       
+    };
+
+    $scope.$on('$routeChangeStart', function(scope,next, current) {
+        //Si tiene un Token
+        if(token_service.live_token()){
+            //Se consultan los menus disponibles para el rol
+            token_service.token.role.pop();
+            var roles = token_service.token.role.toString();
+            //para agregar menus 
+            //roles = roles+',ADMIN_POLUX';
+            //sobrescribir documento
+            //console.log(token_service.token.documento);
+            configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '')
+            .then(function(response) {
+                $scope.menu_service = response.data;
+                //Si no tiene permiso para ingresar al menu es redirigido
+                if (!$scope.havePermission(next.templateUrl,$scope.menu_service)){
+                    $location.path("/no_permission");
+                }
+            });
+        }else{
+            //Si no tiene token se dirige a la página de inicios
+            $location.path("/");
+        }
+    });
+
 
         $scope.changeLanguage = function(key) {
             $translate.use(key);
