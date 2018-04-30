@@ -148,16 +148,16 @@ angular.module('poluxClienteApp')
             token_service.token.role.pop();
             var roles = token_service.token.role.toString();
             //para agregar menus 
-            //roles = roles+',ADMIN_POLUX';
+            roles = roles+',ADMIN_POLUX';
             //sobrescribir documento
             //console.log(token_service.token.documento);
             configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '')
             .then(function(response) {
-                $scope.menu_service = response.data;
-                //Si no tiene permiso para ingresar al menu es redirigido
+                $scope.menu_service = response.data; 
+                //Si no tiene permiso para ingresar al menu es redirigido               
                 if (!$scope.havePermission(next.templateUrl,$scope.menu_service)){
                     $location.path("/no_permission");
-                }
+                } 
             });
         }else{
             //Si no tiene token se dirige a la página de inicios

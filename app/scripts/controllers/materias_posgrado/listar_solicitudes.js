@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
  angular.module('poluxClienteApp')
- .controller('MateriasPosgradoListarSolicitudesCtrl', function (sesionesRequest, $translate, $q, uiGridConstants, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
+ .controller('MateriasPosgradoListarSolicitudesCtrl', function (sesionesRequest, $translate, $q, uiGridConstants, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window,token_service) {
   $scope.$ = $;
 
   $scope.loadParametros = true;
@@ -23,7 +23,8 @@
   ctrl.carreras = [];
   ctrl.otro = [];
     //cedula coordinador
-    $scope.userId = "12237136";
+    token_service.token.documento = "12237136";
+    $scope.userId = token_service.token.documento;
     //uigrid
     ctrl.gridOptionsAdmitidos = {
       enableSorting: false,

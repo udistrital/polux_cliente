@@ -8,22 +8,24 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-.controller('SolicitudesListarSolicitudesCtrl', function ($filter,$location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope) {
+.controller('SolicitudesListarSolicitudesCtrl', function ($filter,$location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope,token_service) {
   var ctrl = this;
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  //$scope.userId = "60261576";
-  //ctrl.userRole = "coordinador";
-  $scope.userId = "20141020036";
-  ctrl.userRole = "estudiante";
+  token_service.token.documento = "79647592";
+  token_service.token.role.push("COORDINADOR_PREGRADO");
+  //token_service.token.documento = "20141020036";
+  //token_service.token.role.push("ESTUDIANTE");
+  ctrl.userRole = token_service.token.role;
+  $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
 
-  $scope.$watch("userId",function() {
-      ctrl.conSolicitudes = false;
-      ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
-      $scope.load = true;
-    });
+  //$scope.$watch("userId",function() {
+      //ctrl.conSolicitudes = false;
+      //ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
+      //$scope.load = true;
+  //});
 
 
   ctrl.mostrarResultado = function(solicitud,detalles){
@@ -206,7 +208,7 @@ angular.module('poluxClienteApp')
     return promise;
   }
 
-  ctrl.actualizarSolicitudes = function (identificador, rol){
+  ctrl.actualizarSolicitudes = function (identificador, lista_roles){
     var promiseArr = [];
 
       ctrl.solicitudes = [];
@@ -250,7 +252,7 @@ angular.module('poluxClienteApp')
         cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro>'
       }];
 
-      if(rol === "estudiante"){
+      if(lista_roles.includes("ESTUDIANTE")){
         tablaConsulta = "usuario_solicitud";
         parametrosSolicitudes = $.param({
             query:"usuario:"+identificador,
@@ -290,8 +292,7 @@ angular.module('poluxClienteApp')
                   console.log(error);
               });
         });
-      }
-      if(rol === "coordinador"){
+      } else if(lista_roles.includes("COORDINADOR_PREGRADO")){
         $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-cog fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
 
         var parametrosCoordinador = {
@@ -384,6 +385,8 @@ angular.module('poluxClienteApp')
         });
     }
   }
+
+  ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
 
   ctrl.getDocumento = function(docid){
       nuxeo.header('X-NXDocumentProperties', '*');
