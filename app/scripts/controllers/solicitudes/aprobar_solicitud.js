@@ -9,7 +9,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location) {
+  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location,token_service) {
     var ctrl = this;
 
     ctrl.respuestaSolicitud="";
@@ -49,8 +49,10 @@ angular.module('poluxClienteApp')
       "identificacion":19451396,
       "tipo":"PREGRADO",
     };*/
-    $scope.userId=19451396;
-
+    //$scope.userId=19451396;
+    token_service.token.documento = "79647592" //Se sobreescribe el token
+    $scope.userId = parseInt(token_service.token.documento);
+    
     ctrl.carrerasCoordinador = [];
     //obtener las carreras asociadas al coordinador
     ctrl.getCarrerasCoordinador = function(){
@@ -61,7 +63,7 @@ angular.module('poluxClienteApp')
           ctrl.carrerasCoordinador=response.data.coordinadorCollection.coordinador;
           defer.resolve();
         }else{
-          ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGARCARRERAS");
+          ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
           defer.reject("Carreras no definidas");
         }
       })

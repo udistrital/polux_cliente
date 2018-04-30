@@ -9,12 +9,13 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoRegistrarNotaCtrl',
-    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest) {
+    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest,token_service) {
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
-      $scope.userId = "12237136";
-
+      //$scope.userId = "12237136";
+      token_service.token.documento = "12237136";
+      $scope.userId = token_service.token.documento;
       // En el inicio de la página, se están cargando los posgrados
       $scope.cargandoPosgrados = true;
       $scope.mensajeCargandoPosgrados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");

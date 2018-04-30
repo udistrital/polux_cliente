@@ -7,15 +7,6 @@
     </div>
     <div class="panel-body">
 
-          <div class="row">
-            <div class="col-md-6">
-              <p>Código:  <input type="text" name="userId" ng-model="userId" required></input><br></p>
-            </div>
-            <div class="col-md-6">
-             <p>Rol:  <input type="text" name="userRole" ng-model="listarSolicitudes.userRole" required></input><br></p>
-            </div>
-          </div>
-
           <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
 
           <div ng-if="load!==true">
