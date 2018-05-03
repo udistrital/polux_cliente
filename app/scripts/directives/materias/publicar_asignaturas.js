@@ -7,7 +7,7 @@
  * # materias/publicarAsignaturas
  */
 angular.module('poluxClienteApp')
-  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q) {
+  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q,sesionesRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -55,6 +55,9 @@ angular.module('poluxClienteApp')
                 promiseArr.push(ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, value));
               });
 
+              //traer fechas para habilitar botones
+              promiseArr.push(ctrl.verificarFechas($scope.periodo,$scope.anio));
+
               $q.all(promiseArr).then(function(){
                   ctrl.gridOptions.data = ctrl.mostrar;
                   $scope.load = false;
@@ -74,7 +77,6 @@ angular.module('poluxClienteApp')
                   ];
               }).catch(function(error){
                   console.log(error);
-                  ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
                   ctrl.errorCargar = true;
                   $scope.load = false; 
               });
@@ -98,6 +100,48 @@ angular.module('poluxClienteApp')
             ctrl.habilitar2 = false;
           }
         };
+
+        //buscar fechas de publicación de espacios
+        ctrl.verificarFechas = function(periodo,anio) {
+          var deferFechas = $q.defer();
+          ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+          //traer fechas
+          var parametrosSesiones = $.param({
+            query: "SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
+            limit: 1
+          });
+          sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
+              if (responseFechas.data !== null) {
+                console.log(responseFechas.data[0]);
+                var sesion = responseFechas.data[0];
+                var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
+                fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
+                ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
+                fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
+                ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
+                console.log("fechas",ctrl.fechaInicio, ctrl.fechaFin);
+                //console.log("fechas", ctrl.fechaInicio);
+                //console.log("fechas", ctrl.fechaFin);
+                if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
+                  ctrl.mostrarBotones = true;
+                  deferFechas.resolve();
+                } else {
+                  ctrl.mostrarBotones = false;
+                  deferFechas.resolve();
+                }
+              } else {
+                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                deferFechas.reject(false);
+              }
+            })
+            .catch(function(error) {
+              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+              deferFechas.reject(error);
+            });
+          return deferFechas.promise;
+        }
 
         //buscar si hay registros en asignaturas_elegibles
         ctrl.buscarAsignaturasElegibles = function (anio, periodo, carrera, pensum, asignatura) {
@@ -156,6 +200,7 @@ angular.module('poluxClienteApp')
                 defer.resolve();
               })
               .catch(function(error){
+                ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
                 defer.reject(error);
               });
             }
@@ -178,6 +223,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error){
+            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
             defer.reject(error);
           });
           return defer.promise;

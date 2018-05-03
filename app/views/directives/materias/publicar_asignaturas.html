@@ -13,8 +13,11 @@
         <div class="row panel-body">
           <div class="mi-grid" id="mi-grid" ui-grid="d_publicarAsignaturas.gridOptions"></div><br>
         </div>
-
-        <div class="form-group">
+        <div class="panel-body alert alert-danger" ng-if="!d_publicarAsignaturas.mostrarBotones">
+          {{'ERROR.NO_EN_FECHAS_PUBLICACION_POSGRADO' | translate}}
+        </div>
+        
+        <div class="form-group" ng-if="d_publicarAsignaturas.mostrarBotones">
           <div class="row">
             <center>
               <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
