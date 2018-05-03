@@ -64,5 +64,5 @@ var conf_local = {
 
 angular.module('poluxClienteApp')
   .constant('CONF', {
-      GENERAL: conf_local
+      GENERAL: conf_pruebas
   });
