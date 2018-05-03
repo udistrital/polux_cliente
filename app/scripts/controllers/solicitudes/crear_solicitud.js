@@ -47,7 +47,7 @@
 
 
   //ctrl.codigo = $routeParams.idEstudiante;
-  token_service.token.documento = "20141020036";
+  token_service.token.documento = "20131020039";
   ctrl.codigo = token_service.token.documento;
   //buscar prorrogas anteriores
   ctrl.getProrroga = function() {
@@ -438,19 +438,37 @@
       var defer = $q.defer();
       var parametrosSolicitudes = $.param({
         query: "Usuario:" + ctrl.codigo + ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
-        limit: 1,
+        limit: 0,
       });
       poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
         if (responseSolicitudes.data !== null) {
+          console.log("solicitudes hechas",responseSolicitudes.data);
           //si ha hecho una solicitud se obtienen las materias por el detalle
-          var idSolicitud = responseSolicitudes.data[0].SolicitudTrabajoGrado.Id;
-          var parametrosSolicitud = $.param({
-            query: "SolicitudTrabajoGrado:" + idSolicitud + ",DetalleTipoSolicitud:37",
-            limit: 1,
+          var getSolicitud  = function(solicitud){
+            console.log(solicitud);
+            var defer = $q.defer();
+            var parametrosSolicitud = $.param({
+              query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud:37",
+              limit: 1,
+            });
+            poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
+              //se obtiene guarda la carrera que ya eligio
+              ctrl.carrerasElegidas.push(JSON.parse(responseSolicitud.data[0].Descripcion.split("-")[1]).Codigo); 
+              defer.resolve();
+            })
+            .catch(function(error){
+              defer.reject(error);
+            });
+            return defer.promise;
+          }
+          
+          var promises = [];
+          ctrl.carrerasElegidas = [];
+          angular.forEach(responseSolicitudes.data, function(solicitud){
+            promises.push(getSolicitud(solicitud));
           });
-          poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
-            //se obtiene guarda la carrera que ya eligio
-            ctrl.carreraElegida = JSON.parse(responseSolicitud.data[0].Descripcion.split("-")[1]);
+          $q.all(promises).then(function(){
+            console.log("carreras elegidas",ctrl.carrerasElegidas);
             defer.resolve();
           })
           .catch(function(error){

@@ -31,9 +31,10 @@
             ctrl.tipo = $scope.estudiante.Tipo;
             $scope.sols = [];
             if ($scope.e === undefined) {
-                $scope.e = {
-                    "codigo": "null",
-                };
+                $scope.e = [];
+               // $scope.e = {
+                    //"Codigo": "null",
+               // };
             }
             console.log("carreras ya elegidas", $scope.e);
             /*número de créditos mínimos, según la modalidad
@@ -97,7 +98,8 @@
                     }
                     promises.push(getCreditos());
                     angular.forEach(response.data, function(value) {
-                        if (value.CodigoCarrera !== $scope.e.Codigo) {
+                        //if (value.CodigoCarrera !== $scope.e.Codigo) {
+                        if (!$scope.e.includes(value.CodigoCarrera)) {
                             promises.push(getCarrera(value));
                         }
                     });
