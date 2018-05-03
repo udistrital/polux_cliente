@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
 
         ctrl.gridOptions = {
           //showGridFooter: true
-        };
+        }; 
 
         $scope.$watch("pensum", function () {
           $scope.load = true;
@@ -43,21 +43,16 @@ angular.module('poluxClienteApp')
           ctrl.gridOptions.data = [];
 
           if ($scope.carrera && $scope.pensum) {
+           
             academicaRequest.get("asignaturas_carrera_pensum",[$scope.carrera, $scope.pensum]).then(function(response){
               if (!angular.isUndefined(response.data.asignaturaCollection.asignatura)) {
                   ctrl.asignaturas=response.data.asignaturaCollection.asignatura;
               }
               ctrl.habilitar = false;
               ctrl.habilitar2 = true;
-
+              ctrl.totalCreditos = 0;
               angular.forEach(ctrl.asignaturas, function (value) {
-                var defered = $q.defer();
-                var promise = defered.promise;
-                promiseArr.push(promise);
-                ctrl.totalCreditos = 0;
-                console.log(value);
-                ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, value);
-                defered.resolve(response);
+                promiseArr.push(ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, value));
               });
 
               $q.all(promiseArr).then(function(){
@@ -79,12 +74,18 @@ angular.module('poluxClienteApp')
                   ];
               }).catch(function(error){
                   console.log(error);
+                  ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+                  ctrl.errorCargar = true;
+                  $scope.load = false; 
               });
+            })
+            .catch(function(error){
+              console.log(error);
+              ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+              ctrl.errorCargar = true;
+              $scope.load = false; 
             });
-
           }
-
-
         });
 
 
@@ -100,7 +101,7 @@ angular.module('poluxClienteApp')
 
         //buscar si hay registros en asignaturas_elegibles
         ctrl.buscarAsignaturasElegibles = function (anio, periodo, carrera, pensum, asignatura) {
-
+          var defer = $q.defer();
           ctrl.anio = anio;
           ctrl.periodo = periodo;
           ctrl.carrera = carrera;
@@ -113,14 +114,11 @@ angular.module('poluxClienteApp')
           poluxRequest.get("carrera_elegible", parametros).then(function (response) {
             if (response.data != null) {
               ctrl.id = response.data[0].Id
-
               var parametros = $.param({
                 query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura.codigo
               });
 
               poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
-                console.log(response.data);
-
                 if (response.data != null) {
                   ctrl.habilitar = true;
                   ctrl.habilitar2 = false;
@@ -155,6 +153,10 @@ angular.module('poluxClienteApp')
                   };
                   ctrl.mostrar.push(nuevo);
                 }
+                defer.resolve();
+              })
+              .catch(function(error){
+                defer.reject(error);
               });
             }
             //si la carrera no está en la tabla: carrera_elegible
@@ -172,10 +174,13 @@ angular.module('poluxClienteApp')
                 check: false
               };
               ctrl.mostrar.push(nuevo);
-
+              defer.resolve();
             }
+          })
+          .catch(function(error){
+            defer.reject(error);
           });
-
+          return defer.promise;
         };
 
         ctrl.toggle = function (item, list) {
