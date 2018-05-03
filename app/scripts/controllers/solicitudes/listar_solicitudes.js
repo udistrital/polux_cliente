@@ -200,6 +200,9 @@ angular.module('poluxClienteApp')
     } else if(solicitud.EstadoSolicitud.Id === 7) {
       resultado = $translate.instant("SOLICITUD_APROBADA_EXENTA");
       defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 11) {
+      resultado = "asdf";
+      defered.resolve(resultado);
     } else {
       defered.resolve(resultado);
     }

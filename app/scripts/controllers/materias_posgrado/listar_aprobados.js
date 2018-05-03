@@ -111,6 +111,9 @@ angular.module('poluxClienteApp')
               ctrl.posgradosAsociados = resultadoPosgradosAsociados.data.coordinadorCollection.coordinador;
               // Se resuelve la promesa
               deferred.resolve(true);
+            } else {
+              //Creo y ponga el error
+              deferred.reject(false);
             }
           })
           .catch(function(excepcionPosgradosAsociados) {

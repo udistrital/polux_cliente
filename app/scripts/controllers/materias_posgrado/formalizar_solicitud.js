@@ -13,7 +13,7 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
-      $scope.userId = "20112020004";
+      $scope.userId = "20131020036";
 
       // En el inicio de la página, se están cargando las solicitudes
       $scope.cargandoSolicitudes = true;
