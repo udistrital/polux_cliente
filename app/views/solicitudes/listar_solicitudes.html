@@ -29,7 +29,7 @@
                   {{'DIRIGIJASE_SOLICITUD' | translate}} <strong> {{'NUEVA_SOLICITUD' | translate}}</strong>.
                 </p>
             </div>
-            <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRol.includes('COORDINADOR_PREGRADO')" class="alert alert-danger" >
+            <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRole.includes('COORDINADOR_PREGRADO')" class="alert alert-danger" >
                {{'COORDINADOR_SIN_SOLICITUD' | translate}}
             </div>
             <div ng-if="listarSolicitudes.conSolicitudes" class="panel panel-default panel-body col-md-12">
