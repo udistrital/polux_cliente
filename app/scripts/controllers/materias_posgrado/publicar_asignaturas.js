@@ -8,9 +8,10 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('MateriasPosgradoPublicarAsignaturasCtrl', function (academicaRequest, $scope, $translate) {
+  .controller('MateriasPosgradoPublicarAsignaturasCtrl', function (academicaRequest, $scope, $translate,token_service) {
     var ctrl = this;
-    $scope.userId = "12237136";
+    token_service.token.documento = "12237136";
+    $scope.userId = token_service.token.documento;
     ctrl.periodo=[];
     ctrl.modalidad="POSGRADO";
 

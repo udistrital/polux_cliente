@@ -9,11 +9,11 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoFormalizarSolicitudCtrl',
-    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest) {
+    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
       var ctrl = this;
 
-      // El Id del usuario depende de la sesión
-      $scope.userId = "20131020036";
+      token_service.token.documento = "20131020036";
+      $scope.userId = token_service.token.documento;
 
       // En el inicio de la página, se están cargando las solicitudes
       $scope.cargandoSolicitudes = true;

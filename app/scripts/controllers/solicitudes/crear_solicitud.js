@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
  angular.module('poluxClienteApp')
-.controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location) {
+.controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location,token_service) {
   $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
   $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
   $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -44,8 +44,11 @@
   ctrl.detallesConDocumento = [];
   ctrl.siPuede = false;
   ctrl.tieneProrrogas = false;
-  ctrl.codigo = $routeParams.idEstudiante;
 
+
+  //ctrl.codigo = $routeParams.idEstudiante;
+  token_service.token.documento = "20141020036";
+  ctrl.codigo = token_service.token.documento;
   //buscar prorrogas anteriores
   ctrl.getProrroga = function() {
     var defer = $q.defer();

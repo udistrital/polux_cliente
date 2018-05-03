@@ -141,7 +141,7 @@
 
                     //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
                     var parametros = $.param({
-                        query: "CarreraElegible:" + response.data[0].Id
+                        query: "CarreraElegible:" + response.data[0].Id+",Activo:true"
                     });
 
                     poluxRequest.get("espacios_academicos_elegibles", parametros).then(function(response) {
