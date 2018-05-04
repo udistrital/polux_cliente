@@ -258,23 +258,23 @@ angular.module('poluxClienteApp')
         // Se consulta hacia el detalle de la solicitud aprobada en la base de datos
         poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitudRespondida(solicitudAprobada.SolicitudTrabajoGrado.Id))
           .then(function(detalleSolicitudRespondida) {
-            // Se estudia si la información existe
-            if (detalleSolicitudRespondida.data) {
+            // Se estudia si la información existe y corresponde al posgrado seleccionado
+            if (ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data[0]).Codigo == ctrl.posgradoSeleccionado) {
               // Se elimina la información redundante
               delete detalleSolicitudRespondida.data[0].SolicitudTrabajoGrado;
-              // Se resuelve la solicitud aprobada con el detalle dentro
+              // Se actualiza el elemento de la colección
               solicitudAprobada.detalleSolicitud = detalleSolicitudRespondida.data[0];
-              deferred.resolve(solicitudAprobada);
+              deferred.resolve("");
             } else {
               // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
-              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
+              var itemInconsistente = ctrl.coleccionSolicitudesAprobadas
                 .map(function(solicitudAprobadaInconsistente) {
                   return solicitudAprobadaInconsistente.Id;
                 })
                 .indexOf(solicitudAprobada.Id);
-              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
+              ctrl.coleccionSolicitudesAprobadas.splice(itemInconsistente, 1);
+              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
             }
           })
           .catch(function(excepcionDetalleSolicitudRespondida) {
@@ -320,9 +320,9 @@ angular.module('poluxClienteApp')
               solicitudAprobada.usuarioDeSolicitud = usuarioDeSolicitud.data[0];
               ctrl.consultarInformacionAcademicaDelEstudiante(usuarioDeSolicitud.data[0].Usuario)
                 .then(function(estudianteConsultado) {
-                  // Se resuelve la información académica del estudiante cargada a la solicitud
+                  // Se actualiza el elemento de la colección
                   solicitudAprobada.estudianteAsociado = estudianteConsultado;
-                  deferred.resolve(solicitudAprobada);
+                  deferred.resolve("");
                 })
                 .catch(function(excepcionEstudianteConsultado) {
                   // Se presenta cuando ocurrió un error al traer la información desde la petición académica
@@ -330,14 +330,14 @@ angular.module('poluxClienteApp')
                 });
             } else {
               // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
-              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
+              var itemInconsistente = ctrl.coleccionSolicitudesAprobadas
                 .map(function(solicitudAprobadaInconsistente) {
                   return solicitudAprobadaInconsistente.Id;
                 })
                 .indexOf(solicitudAprobada.Id);
-              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_USUARIO_SOLICITUD"));
+              ctrl.coleccionSolicitudesAprobadas.splice(itemInconsistente, 1);
+              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_USUARIO_SOLICITUD"));
             }
           })
           .catch(function(excepcionUsuarioDeSolicitud) {
@@ -393,14 +393,8 @@ angular.module('poluxClienteApp')
               });
               $q.all(conjuntoProcesamientoDeSolicitudes)
                 .then(function(resultadoDelProcesamiento) {
-                  // Se estudia si la colección tiene elementos
-                  if (ctrl.coleccionSolicitudesAprobadas.length > 0) {
-                    // Se resuelve la colección de solicitudes para formalizar
-                    deferred.resolve(ctrl.coleccionSolicitudesAprobadas);
-                  } else {
-                    // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-                    deferred.reject($translate.instant("ERROR.SIN_SOLICITUDES_PARA_APROBAR"));
-                  }
+                  // Se resuelve el resultado del procesamiento
+                  deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
                   // Se rechaza la carga con la excepción generada
@@ -462,6 +456,10 @@ angular.module('poluxClienteApp')
           solicitudAprobada.nombreEstudiante = solicitudAprobada.estudianteAsociado.nombre;
           solicitudAprobada.promedioAcademico = solicitudAprobada.estudianteAsociado.promedio;
           solicitudAprobada.nombreEstado = solicitudAprobada.EstadoSolicitud.Nombre;
+          // Y los campos relacionados con el detalle que se necesitarán para la descripción de la solicitud
+          solicitudAprobada.codigoPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudAprobada.detalleSolicitud).Codigo;
+          solicitudAprobada.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudAprobada.detalleSolicitud).Nombre;
+          solicitudAprobada.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudAprobada.detalleSolicitud).Pensum;
         });
         // Se cargan los datos visibles a la cuadrícula
         ctrl.cuadriculaSolicitudesAprobadas.data = solicitudesAprobadas;
@@ -480,11 +478,22 @@ angular.module('poluxClienteApp')
         $scope.cargandoSolicitudesAprobadas = true;
         // Se consultan las solicitudes respondidas
         ctrl.consultarSolicitudesRespondidas()
-          .then(function(solicitudesRespondidas) {
+          .then(function(resultadoConsultaSolicitudesRespondidas) {
             // Se detiene la carga
             $scope.cargandoSolicitudesAprobadas = false;
-            // Y se muestra la cuadrícula
-            ctrl.mostrarSolicitudesAprobadas(solicitudesRespondidas);
+            if (ctrl.coleccionSolicitudesAprobadas.length > 0) {
+              // Y se muestra la cuadrícula
+              ctrl.mostrarSolicitudesAprobadas(ctrl.coleccionSolicitudesAprobadas);
+            } else {
+              var itemConMensaje = 0;
+              while (resultadoConsultaSolicitudesRespondidas[itemConMensaje] == "") {
+                resultadoConsultaSolicitudesRespondidas.shift();
+                itemConMensaje++;
+              }
+              // O se muestra el mensaje de error
+              $scope.errorCargandoSolicitudesAprobadas = true;
+              $scope.mensajeErrorCargandoSolicitudesAprobadas = resultadoConsultaSolicitudesRespondidas[0];
+            }
           })
           .catch(function(excepcionSolicitudesRespondidas) {
             // Se detiene la carga y se muestra el error
@@ -556,21 +565,12 @@ angular.module('poluxClienteApp')
        * @param  {[row]} solicitudSeleccionada [La solicitud que el coordinador desea registrar]
        */
       ctrl.cargarSolicitudSeleccionada = function(solicitudSeleccionada) {
+        // Se detiene la carga de la transacción
+        $scope.cargandoTransaccionRegistro = false;
         // Se establece la variable que mantiene la solicitud seleccionada
         ctrl.solicitudSeleccionada = solicitudSeleccionada;
-        // Se establecen los espacios que se verán en la ventana emergente
-        ctrl.nombreEstudianteSolicitante = solicitudSeleccionada.nombreEstudiante;
-        ctrl.codigoEstudianteSolicitante = solicitudSeleccionada.codigoEstudiante;
-        ctrl.promedioEstudianteSolicitante = solicitudSeleccionada.promedioAcademico;
-        ctrl.rendimientoEstudianteSolicitante = solicitudSeleccionada.estudianteAsociado.rendimiento;
-        ctrl.numeroSolicitud = solicitudSeleccionada.SolicitudTrabajoGrado.Id;
-        ctrl.fechaSolicitud = ctrl.obtenerFechaGeneral(new Date(solicitudSeleccionada.Fecha));
-        ctrl.estadoSolicitud = solicitudSeleccionada.nombreEstado;
-        ctrl.codigoPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Codigo;
-        ctrl.nombrePosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Nombre;
-        ctrl.pensumPosgrado = ctrl.obtenerDatosDelPosgrado(solicitudSeleccionada.detalleSolicitud).Pensum;
+        // Se establecen los espacios académicos que se verán en la ventana emergente
         ctrl.cuadriculaEspaciosAcademicosSolicitados.data = ctrl.obtenerEspaciosAcademicos(solicitudSeleccionada.detalleSolicitud);
-        $scope.cargandoTransaccionRegistro = false;
         $('#modalVerSolicitud').modal('show');
       }
 
