@@ -29,7 +29,7 @@ angular.module('poluxClienteApp')
       // Se configura el mensaje mientras se carga la transacción de registro
       $scope.mensajeCargandoTransaccionRegistro = $translate.instant("LOADING.CARGANDO_TRANSACCION_REGISTRO");
 
-      $scope.opcionesTrabajoDeGrado = [{
+      $scope.botonRegistrarCalificaciones = [{
         clase_color: "ver",
         clase_css: "fa fa-edit fa-lg  faa-shake animated-hover",
         titulo: $translate.instant('BTN.VER_DETALLES'),
@@ -69,7 +69,10 @@ angular.module('poluxClienteApp')
         name: 'opcionesDeTrabajoDeGrado',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '10%',
-        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesTrabajoDeGrado"></btn-registro>'
+        cellTemplate: '<btn-registro ' +
+          'funcion="grid.appScope.cargarFila(row)" ' +
+          'grupobotones="grid.appScope.botonRegistrarCalificaciones">' +
+          '</btn-registro>'
       }];
 
       // Se define la cuadrícula para visualizar los espacios académicos inscritos
@@ -119,22 +122,16 @@ angular.module('poluxClienteApp')
           .then(function(resultadoPosgradosAsociados) {
             // Se verifica que el resultado y los datos necesarios son válidos
             if (!angular.isUndefined(resultadoPosgradosAsociados.data.coordinadorCollection.coordinador)) {
-              // Se cargan los posgrados asociados
-              ctrl.posgradosAsociados = resultadoPosgradosAsociados.data.coordinadorCollection.coordinador;
-              // Se resuelve la promesa
-              deferred.resolve(true);
+              // Se resuelven los posgrados asociados
+              deferred.resolve(resultadoPosgradosAsociados.data.coordinadorCollection.coordinador);
             } else {
-              // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.INDEFINIDA_INFO_ACADEMICA");
-              // Se rechaza la promesa
-              deferred.reject(null);
+              // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_POSGRADOS"));
             }
           })
           .catch(function(excepcionPosgradosAsociados) {
-            // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
-            // Se rechaza la promesa
-            deferred.reject(excepcionPosgradosAsociados);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_POSGRADOS"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -152,22 +149,16 @@ angular.module('poluxClienteApp')
           .then(function(resultadoPeriodosCorrespondientes) {
             // Se verifica que el resultado y los datos necesarios son válidos
             if (!angular.isUndefined(resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos)) {
-              // Se cargan los periodos correspondientes
-              ctrl.periodosCorrespondientes = resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos;
-              // Se resuelve la promesa
-              deferred.resolve(true);
+              // Se resuelven los periodos correspondientes
+              deferred.resolve(resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos);
             } else {
-              // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.INDEFINIDA_INFO_ACADEMICA");
-              // Se rechaza la promesa
-              deferred.reject(null);
+              // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
             }
           })
           .catch(function(excepcionPeriodosCorrespondientes) {
-            // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
-            // Se rechaza la promesa
-            deferred.reject(excepcionPeriodosCorrespondientes);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -187,20 +178,15 @@ angular.module('poluxClienteApp')
             // Se verifica que la respuesta está definida
             if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
               // Se resuelve el periodo académico correspondiente
-              ctrl.periodoAcademicoPrevio = periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0];
-              deferred.resolve(ctrl.periodoAcademicoPrevio);
+              deferred.resolve(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0]);
             } else {
-              // En caso de error se prepara el mensaje y se rechaza con nulo
-              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_PERIODO");
-              // Se rechaza nulamente la consulta
-              deferred.reject(null);
+              // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
             }
           })
           .catch(function(excepcionPeriodoAcademicoConsultado) {
-            // En caso de excepción se prepara el mensaje y se rechaza con nulo
-            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.CARGANDO_PERIODO");
-            // Se rechaza nulamente la consulta
-            deferred.reject(excepcionPeriodoAcademicoConsultado);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -213,14 +199,19 @@ angular.module('poluxClienteApp')
       ctrl.cargarConsultasIniciales = function() {
         // Se garantiza que se cumplan todas las promesas de carga desde un inicio
         $q.all([ctrl.consultarPosgradosAsociados(), ctrl.consultarPeriodosCorrespondientes(), ctrl.consultarPeriodoAcademicoPrevio()])
-          .then(function(respuestaConsultas) {
+          .then(function(resultadoConsultasIniciales) {
             // Se apaga el mensaje de carga
             $scope.cargandoPosgrados = false;
+            // Y se establecen los resultados obtenidos por las consultas iniciales
+            ctrl.posgradosAsociados = resultadoConsultasIniciales[0];
+            ctrl.periodosCorrespondientes = resultadoConsultasIniciales[1];
+            ctrl.periodoAcademicoPrevio = resultadoConsultasIniciales[2];
           })
-          .catch(function(excepcionConsultas) {
-            // Se apaga el mensaje de carga
+          .catch(function(excepcionConsultasIniciales) {
+            // Se apaga el mensaje de carga y se muestra el error
             $scope.cargandoPosgrados = false;
             $scope.errorCargandoConsultasIniciales = true;
+            $scope.mensajeErrorCargandoConsultasIniciales = excepcionConsultasIniciales;
           });
       }
 
@@ -250,7 +241,17 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosEspaciosAcademicosInscritos = function(idTrabajoGrado) {
         return $.param({
-          query: "TrabajoGrado:" +
+          /**
+           * Los espacios académicos inscritos que estén activos o cursados
+           * ya sea para el primer registro, o para corregir las notas
+           * 1 - Activo
+           * 3 - Cursado
+           * @type {String}
+           */
+          query: "EstadoEspacioAcademicoInscrito.in:1|3," +
+            "EspaciosAcademicosElegibles.CarreraElegible.CodigoCarrera:" +
+            ctrl.posgradoSeleccionado +
+            ",TrabajoGrado:" +
             idTrabajoGrado,
           limit: 0
         });
@@ -269,9 +270,9 @@ angular.module('poluxClienteApp')
           .then(function(espaciosAcademicosInscritos) {
             // Se estudia si la información existe
             if (espaciosAcademicosInscritos.data) {
-              // Se resuelve el trabajo de grado con los espacios académicos inscritos dentro
+              // Se actualiza el elemento de la colección
               trabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
-              deferred.resolve(trabajoDeGrado);
+              deferred.resolve("");
             } else {
               // Se quita la asociación del trabajo de grado con nula información de la colección de trabajos de grado cursados
               var itemInconsistente = ctrl.coleccionTrabajosDeGradoCursados
@@ -280,15 +281,13 @@ angular.module('poluxClienteApp')
                 })
                 .indexOf(trabajoDeGrado.Id);
               ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
-              // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
-              deferred.reject(null);
+              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS"));
             }
           })
           .catch(function(excepcionEspaciosAcademicosInscritos) {
-            // Se presenta cuando ocurrió un error al traer los espacios académicos inscritos del trabajo de grado
-            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-            deferred.reject(excepcionEspaciosAcademicosInscritos);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -324,7 +323,7 @@ angular.module('poluxClienteApp')
                 .then(function(estudianteConsultado) {
                   // Se resuelve la información académica del estudiante cargada al trabajo de grado
                   trabajoDeGrado.datosEstudiante = estudianteConsultado;
-                  deferred.resolve(trabajoDeGrado);
+                  deferred.resolve("");
                 })
                 .catch(function(excepcionEstudianteConsultado) {
                   // Se presenta cuando ocurrió un error al traer la información desde la petición académica
@@ -338,15 +337,13 @@ angular.module('poluxClienteApp')
                 })
                 .indexOf(trabajoDeGrado.Id);
               ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
-              // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO");
-              deferred.reject(null);
+              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
             }
           })
           .catch(function(excepcionEstudianteTrabajoGrado) {
-            // Se presenta cuando ocurrió un error al traer el estudiante asociado al trabajo de grado
-            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO");
-            deferred.reject(excepcionEstudianteTrabajoGrado);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -395,22 +392,20 @@ angular.module('poluxClienteApp')
               $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
                 .then(function(resultadoDelProcesamiento) {
                   // Se resuelve la colección de trabajos de grado cursados
-                  deferred.resolve(ctrl.coleccionTrabajosDeGradoCursados);
+                  deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
                   // Se rechaza la carga con la excepción generada
                   deferred.reject(excepcionDuranteProcesamiento);
                 });
             } else {
-              // Se presenta cuando no hay trabajos de grado asociados
-              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_TRABAJO_GRADO");
-              deferred.reject(null);
+              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
           })
           .catch(function(excepcionTrabajosDeGrado) {
-            // Se presenta cuando ocurrió un error al traer los trabajos de grado desde la tabla trabajo_grado
-            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_TRABAJO_GRADO");
-            deferred.reject(excepcionTrabajosDeGrado);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
           });
         // Se devuelve el diferido que maperneja la promesa
         return deferred.promise;
@@ -432,15 +427,13 @@ angular.module('poluxClienteApp')
               // Se resuelve la información académica del estudiante
               deferred.resolve(estudianteConsultado.data.estudianteCollection.datosEstudiante[0]);
             } else {
-              // Se presenta cuando no existe registro de estudiantes con dichas características
-              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
-              deferred.reject(null);
+              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
             }
           })
           .catch(function(excepcionEstudianteConsultado) {
-            // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
-            deferred.reject(excepcionEstudianteConsultado);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -479,18 +472,29 @@ angular.module('poluxClienteApp')
         $scope.cargandoTrabajosDeGradoCursados = true;
         // Se consultan los trabajos de grado cursados
         ctrl.consultarTrabajosDeGradoCursados()
-          .then(function(trabajosDeGradoCursados) {
-            // Se redefinen los errores, se detiene la carga
-            $scope.errorCargandoConsultasIniciales = false;
-            $scope.errorCargandoTrabajosDeGradoCursados = false;
+          .then(function(resultadoConsultaTrabajosDeGradoCursados) {
+            // Se detiene la carga
             $scope.cargandoTrabajosDeGradoCursados = false;
-            // Y se muestra la cuadrícula
-            ctrl.mostrarTrabajosDeGradoCursados(trabajosDeGradoCursados);
+            // Se estudia si hay resultados válidos
+            if (ctrl.coleccionTrabajosDeGradoCursados.length > 0) {
+              // Y se muestra la cuadrícula
+              ctrl.mostrarTrabajosDeGradoCursados(ctrl.coleccionTrabajosDeGradoCursados);
+            } else {
+              var itemConMensaje = 0;
+              while (resultadoConsultaTrabajosDeGradoCursados[itemConMensaje] == "") {
+                resultadoConsultaTrabajosDeGradoCursados.shift();
+                itemConMensaje++;
+              }
+              // O se muestra el mensaje de error
+              $scope.errorCargandoTrabajosDeGradoCursados = true;
+              $scope.mensajeErrorCargandoTrabajosDeGradoCursados = resultadoConsultaTrabajosDeGradoCursados[0];
+            }
           })
           .catch(function(excepcionTrabajosDeGradoCursados) {
             // Se detiene la carga y se muestra el error
-            $scope.errorCargandoTrabajosDeGradoCursados = true;
             $scope.cargandoTrabajosDeGradoCursados = false;
+            $scope.errorCargandoTrabajosDeGradoCursados = true;
+            $scope.mensajeErrorCargandoTrabajosDeGradoCursados = excepcionTrabajosDeGradoCursados;
           });
       }
 
@@ -667,7 +671,7 @@ angular.module('poluxClienteApp')
               Id: espacioAcademico.EspaciosAcademicosElegibles.Id
             },
             EstadoEspacioAcademicoInscrito: {
-              Id: espacioAcademico.EstadoEspacioAcademicoInscrito.Id
+              Id: 3
             },
             Id: espacioAcademico.Id,
             Nota: espacioAcademico.nota,
@@ -676,13 +680,25 @@ angular.module('poluxClienteApp')
             }
           });
         });
+        // var asignaturaTrabajoGrado = {
+        //   CodigoAsignatura: 0,
+        //   Periodo: ctrl.periodoSeleccionado.periodo,
+        //   Anio: ctrl.periodoSeleccionado.anio,
+        //   Calificacion: 0,
+        //   TrabajoGrado: {
+        //     Id: ctrl.trabajoDeGradoSeleccionado.Id
+        //   },
+        //   EstadoAsignaturaTrabajoGrado: {
+        //     Id: 3 //cursada supongo
+        //   }
+        // }
         // Se define el objeto para enviar como información para actualizar
         ctrl.informacionParaActualizar = {
           "EspaciosAcademicosCalificados": ctrl.espaciosAcademicosCalificados
         };
         // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
         poluxRequest
-          .post("tr_registrar_nota", ctrl.informacionParaActualizar)
+          .post("tr_registrar_nota|", ctrl.informacionParaActualizar)
           .then(function(respuestaRegistrarNota) {
             defered.resolve(respuestaRegistrarNota);
           })

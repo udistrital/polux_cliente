@@ -224,7 +224,7 @@ angular.module('poluxClienteApp')
         // Se estudia si el periodo ha sido seleccionado
         if (ctrl.periodoSeleccionado) {
           // En ese caso, se renueva la consulta de aprobados
-          ctrl.consultarSolicitudesAprobadas();
+          ctrl.actualizarSolicitudesAprobadas();
         }
       }
 
@@ -469,7 +469,7 @@ angular.module('poluxClienteApp')
        * [Función que actualiza el contenido de la lista de aprobados al posgrado]
        * @return {[void]} [El procedimiento de carga, o la excepción generada]
        */
-      ctrl.consultarSolicitudesAprobadas = function() {
+      ctrl.actualizarSolicitudesAprobadas = function() {
         // Se recargan las solicitudes visibles
         ctrl.cuadriculaSolicitudesAprobadas.data = [];
         // Se establece que inicia la carga de las solicitudes aprobadas
@@ -481,6 +481,7 @@ angular.module('poluxClienteApp')
           .then(function(resultadoConsultaSolicitudesRespondidas) {
             // Se detiene la carga
             $scope.cargandoSolicitudesAprobadas = false;
+            // Se estudia si hay resultados válidos
             if (ctrl.coleccionSolicitudesAprobadas.length > 0) {
               // Y se muestra la cuadrícula
               ctrl.mostrarSolicitudesAprobadas(ctrl.coleccionSolicitudesAprobadas);
@@ -611,7 +612,7 @@ angular.module('poluxClienteApp')
                       $translate.instant("LISTAR_APROBADOS.ESTUDIANTE_REGISTRADO"),
                       'success'
                     );
-                    ctrl.consultarSolicitudesAprobadas();
+                    ctrl.actualizarSolicitudesAprobadas();
                     $('#modalVerSolicitud').modal('hide');
                   } else {
                     // De lo contrario, se detiene la carga y notifica al usuario
@@ -674,7 +675,7 @@ angular.module('poluxClienteApp')
         };
         // Se crea el trabajo de grado para ser registrado en la base de datos
         ctrl.trabajoDeGradoParaRegistrar = {
-          Titulo: "Cursar materias de posgrado en " + ctrl.nombrePosgrado,
+          Titulo: "Cursar materias de posgrado en " + ctrl.solicitudSeleccionada.nombrePosgrado,
           Modalidad: {
             Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id
           },
@@ -687,7 +688,7 @@ angular.module('poluxClienteApp')
         };
         // Se inscribe el estudiante solicitante en la base de datos
         ctrl.estudianteAsociadoTrabajoDeGrado = {
-          Estudiante: ctrl.codigoEstudianteSolicitante,
+          Estudiante: ctrl.solicitudSeleccionada.codigoEstudiante,
           TrabajoGrado: {
             Id: 0
           },
