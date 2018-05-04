@@ -229,7 +229,7 @@ var text_es = {
         DISPONIBLE_RELACION_SESIONES: "No es posible consultar los periodos estipulados para la formalización de solicitudes. Compruebe su conexión o comuníquese con el proyecto curricular.",
         NO_PERIODO_FORMALIZACION: "Este periodo no corresponde a las fechas de formalización. Verifique que se encuentra en las fechas de formalización indicadas.",
         SIN_SOLICITUDES_PARA_FORMALIZAR: "No existen solicitudes para formalizar actualmente.",
-        SIN_INFO_ACADEMICA: "Error al cargar información académica.",
+        SIN_SOLICITUDES_PARA_APROBAR: "No existen solicitudes pendientes con los parámetros establecidos.",
         SIN_DETALLE_SOLICITUD: "El detalle de las solicitudes asociadas es insuficiente para realizar esta operación.",
         CARGANDO_DETALLE_SOLICITUD: "Ocurrió un error al consultar el detalle para las solicitudes asociadas. Comuníquese con el administrador.",
         SIN_USUARIO_SOLICITUD: "No existen registros estudiantiles dentro del proceso de solicitud asociado. Verifique que las solicitudes hayan sido atentidas por el proyecto curricular.",
@@ -238,6 +238,8 @@ var text_es = {
         CARGANDO_RESPUESTA_SOLICITUD: "Ocurrió un error al consultar las solicitudes asociadas a esta operación. Comuníquese con el administrador.",
         SIN_INFO_ESTUDIANTE: "La información académica sobre el estudiante consultado es insuficiente para realizar esta operación.",
         CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al consultar la información académica correspondiente. Comuníquese con el administrador.",
+        SIN_POSGRADOS: "No existen registros de posgrado asociados a esta coordinación.",
+        CARGANDO_POSGRADOS: "Ocurrió un error al consultar los posgrados asociados a esta coordinación.",
         REGISTRANDO_MODALIDAD: "Error al registrar la modalidad seleccionada",
         INDEFINIDA_INFO_ACADEMICA: "No hay información académica definida para esta operación.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "No hay información asociada a los espacios académicos inscritos de los trabajos de grado consultados.",
@@ -458,7 +460,7 @@ var text_es = {
         REVISAR_FECHAS_FORMALIZACION: "Revise los periodos de formalización, o comuníquese con el proyecto curricular",
         FECHAS_PARA_FORMALIZACION: "Fechas válidas para realizar el proceso de formalización",
         FORMALIZACION_NO_HABILITADA: "El estado de esta solicitud no la habilita para ser formalizada",
-        SOLICITUD_ATENDIDA: "Esta solicitud ya fue atendida por el estudiante."
+        SOLICITUD_ATENDIDA: "Esta solicitud ya fue atendida por el estudiante"
     },
     LISTAR_APROBADOS: {
         TITULO: "Listado de estudiantes admitidos al posgrado",
@@ -467,6 +469,7 @@ var text_es = {
         REGISTRAR_ESTUDIANTE: "¿Está seguro de registrar al estudiante {{nombre}}, con código estudiantil {{codigo}} en estado {{estado}}, para la modalidad de materias de posgrado?",
         AVISO: "Registro de la solicitud aprobada",
         ESTUDIANTE_REGISTRADO: "La modalidad para espacios académicos de posgrado ha sido registrada con éxito",
+        REGISTRO_NO_HABILITADO: "Esta solicitud ya fue atendida con el registro del trabajo de grado asociado"
     },
     REGISTRAR_NOTA: {
         TITULO: "Registro de calificaciones en espacios académicos de posgrado",
@@ -673,7 +676,6 @@ var text_en = {
         CARGA_SOLICITUDES:"Error loading requests.",
         NO_AREAS_CARGADAS:"Error trying to load knowledge areas.",
         NO_NUCLEOS_CARGADOS:"Error trying to load basic cores.",
-        SIN_INFO_ACADEMICA:"Error during academic information load.",
         NO_EXISTE_ESTUDIANTE_POSGRADO:"There are no records of students with the requested characteristics (Try selecting another academic period).",
         SIN_RESULTADOS:"There are no results associated with the data requested.",
         REGISTRAR_PAGO:"Error registering the payment",
@@ -700,8 +702,8 @@ var text_en = {
         CARGANDO_RELACION_SESIONES: "An error occurred when consulting the sessions of activities associated with this operation. Contact the administrator.",
         NO_PERIODO_FORMALIZACION: "This period does not correspond to the formalization dates. Verify that you are in the indicated formalization dates.",
         SIN_SOLICITUDES_PARA_FORMALIZAR: "There are not currently requests to formalize.",
+        SIN_SOLICITUDES_PARA_APROBAR: "There are no pending requests with the established parameters.",
         FORMALIZAR_SOLICITUD: "There was an error registering the request formalization",
-        SIN_INFO_ACADEMICA: "Error during academic information load.",
         SIN_DETALLE_SOLICITUD: "The detail of the associated requests is insufficient to carry out this operation.",
         CARGANDO_DETALLE_SOLICITUD: "An error occurred when querying the detail for associated requests. Contact the administrator.",
         SIN_USUARIO_SOLICITUD: "There are no student records within the associated request process. Verify that all the requests have been attended by the curricular project.",
@@ -710,6 +712,8 @@ var text_en = {
         CARGANDO_RESPUESTA_SOLICITUD: "An error occurred when querying the requests associated with this operation. Contact the administrator.",
         SIN_INFO_ESTUDIANTE: "The academic information about the queried student is insufficient to carry out this operation.",
         CARGANDO_INFO_ESTUDIANTE: "An error occurred when querying the corresponding academic information. Contact the administrator.",
+        SIN_POSGRADOS: "There are no postgraduate records associated with this coordination.",
+        CARGANDO_POSGRADOS: "An error occurred when querying the postgraduate programs associated with this coordination.",
         REGISTRANDO_MODALIDAD: "Error during register the selected modality",
         INDEFINIDA_INFO_ACADEMICA: "There is no academic information defined for this operation.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "There is no information associated to the academic spaces enrolled of the degree works consulted.",
@@ -822,7 +826,6 @@ var text_en = {
       CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
       CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
       CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
-      CARGANDO_PARAMETROS:"Loading parameterss",
       REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
     },
     SELECT:{
@@ -931,7 +934,7 @@ var text_en = {
         REVISAR_FECHAS_FORMALIZACION: "Review the formalization periods, or contact the curricular project",
         FECHAS_PARA_FORMALIZACION: "Valid dates to carry out the formalization process",
         FORMALIZACION_NO_HABILITADA: "The status of this request does not enable it to be formalized",
-        SOLICITUD_ATENDIDA: "This request was already attended by the student."
+        SOLICITUD_ATENDIDA: "This request was already attended by the student"
     },
     LISTAR_APROBADOS: {
         TITULO: "List of students admitted to the postgraduate",
@@ -940,6 +943,7 @@ var text_en = {
         REGISTRAR_ESTUDIANTE: "Are you sure to register the student {{nombre}}, with student code {{codigo}}, in {{estado}} state, for the postgraduate subjects modality?",
         AVISO: "Approved request registration",
         ESTUDIANTE_REGISTRADO: "The modality for postgraduate academic spaces has been successfully registered",
+        REGISTRO_NO_HABILITADO: "This request was already attended with the associate degree work register"
     },
     REGISTRAR_NOTA: {
         TITULO: "Grades record in academic postgraduate spaces",

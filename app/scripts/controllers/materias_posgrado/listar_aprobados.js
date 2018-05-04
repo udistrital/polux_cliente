@@ -29,7 +29,7 @@ angular.module('poluxClienteApp')
       // Se configura el mensaje mientras se carga la transacción de registro
       $scope.mensajeCargandoTransaccionRegistro = $translate.instant("LOADING.CARGANDO_TRANSACCION_REGISTRO");
 
-      $scope.opcionesSolicitud = [{
+      $scope.botonRegistrarTrabajoDeGrado = [{
         clase_color: "ver",
         clase_css: "fa fa-cog fa-lg  faa-shake animated-hover",
         titulo: $translate.instant('BTN.VER_DETALLES'),
@@ -69,7 +69,15 @@ angular.module('poluxClienteApp')
         name: 'opcionesDeSolicitud',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '15%',
-        cellTemplate: '<btn-registro funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.opcionesSolicitud"></btn-registro>'
+        cellTemplate: '<btn-registro ' + 
+          'ng-if="row.entity.EstadoSolicitud.Id == 9 || row.entity.idEstadoSolicitud == 12"' +
+          'funcion="grid.appScope.cargarFila(row)"' +
+          'grupobotones="grid.appScope.botonRegistrarTrabajoDeGrado">' +
+          '</btn-registro>' +
+          '<div class="ui-grid-cell-contents" ' +
+          'ng-if="row.entity.EstadoSolicitud.Id == 14">' +
+          '{{"LISTAR_APROBADOS.REGISTRO_NO_HABILITADO" | translate}}' +
+          '</div>'
       }];
 
       // Se define la cuadrícula para visualizar los espacios académicos solicitudados
@@ -108,20 +116,16 @@ angular.module('poluxClienteApp')
           .then(function(resultadoPosgradosAsociados) {
             // Se verifica que el resultado y los datos necesarios son válidos
             if (!angular.isUndefined(resultadoPosgradosAsociados.data.coordinadorCollection.coordinador)) {
-              // Se cargan los posgrados asociados
-              ctrl.posgradosAsociados = resultadoPosgradosAsociados.data.coordinadorCollection.coordinador;
-              // Se resuelve la promesa
-              deferred.resolve(true);
+              // Se resuelven los posgrados asociados
+              deferred.resolve(resultadoPosgradosAsociados.data.coordinadorCollection.coordinador);
             } else {
-              //Creo y ponga el error
-              deferred.reject(false);
+              // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_POSGRADOS"));
             }
           })
           .catch(function(excepcionPosgradosAsociados) {
-            // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
-            // Se rechaza la promesa
-            deferred.reject(false);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_POSGRADOS"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -139,17 +143,16 @@ angular.module('poluxClienteApp')
           .then(function(resultadoPeriodosCorrespondientes) {
             // Se verifica que el resultado y los datos necesarios son válidos
             if (!angular.isUndefined(resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos)) {
-              // Se cargan los periodos correspondientes
-              ctrl.periodosCorrespondientes = resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos;
-              // Se resuelve la promesa
-              deferred.resolve(true);
+              // Se resuelven los periodos correspondientes
+              deferred.resolve(resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos);
+            } else {
+              // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
             }
           })
           .catch(function(excepcionPeriodosCorrespondientes) {
-            // Se define el mensaje de error cuando no se pueden cargar los posgrados asociados y los periodos correspondientes
-            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_INFO_ACADEMICA");
-            // Se rechaza la promesa
-            deferred.reject(false);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -169,20 +172,15 @@ angular.module('poluxClienteApp')
             // Se verifica que la respuesta está definida
             if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
               // Se resuelve el periodo académico correspondiente
-              ctrl.periodoAcademicoPrevio = periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0];
-              deferred.resolve(true);
+              deferred.resolve(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0]);
             } else {
-              // En caso de error se prepara el mensaje y se rechaza con nulo
-              $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.SIN_PERIODO");
-              // Se rechaza nulamente la consulta
-              deferred.reject(false);
+              // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
             }
           })
           .catch(function(excepcionPeriodoAcademicoConsultado) {
-            // En caso de excepción se prepara el mensaje y se rechaza con nulo
-            $scope.mensajeErrorCargandoConsultasIniciales = $translate.instant("ERROR.CARGANDO_PERIODO");
-            // Se rechaza nulamente la consulta
-            deferred.reject(false);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -195,14 +193,19 @@ angular.module('poluxClienteApp')
       ctrl.cargarConsultasIniciales = function() {
         // Se garantiza que se cumplan todas las promesas de carga desde un inicio
         $q.all([ctrl.consultarPosgradosAsociados(), ctrl.consultarPeriodosCorrespondientes(), ctrl.consultarPeriodoAcademicoPrevio()])
-          .then(function(respuestaConsultas) {
+          .then(function(resultadoConsultasIniciales) {
             // Se apaga el mensaje de carga
             $scope.cargandoPosgrados = false;
+            // Y se establecen los resultados obtenidos por las consultas iniciales
+            ctrl.posgradosAsociados = resultadoConsultasIniciales[0];
+            ctrl.periodosCorrespondientes = resultadoConsultasIniciales[1];
+            ctrl.periodoAcademicoPrevio = resultadoConsultasIniciales[2];
           })
-          .catch(function(excepcionConsultas) {
-            // Se apaga el mensaje de carga
+          .catch(function(excepcionConsultasIniciales) {
+            // Se apaga el mensaje de carga y se muestra el error
             $scope.cargandoPosgrados = false;
             $scope.errorCargandoConsultasIniciales = true;
+            $scope.mensajeErrorCargandoConsultasIniciales = excepcionConsultasIniciales;
           });
       }
 
@@ -270,15 +273,13 @@ angular.module('poluxClienteApp')
                 })
                 .indexOf(solicitudAprobada.Id);
               ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
-              // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
-              deferred.resolve(null);
+              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
             }
           })
           .catch(function(excepcionDetalleSolicitudRespondida) {
-            // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_DETALLE_SOLICITUD");
-            deferred.reject(null);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_DETALLE_SOLICITUD"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -325,7 +326,7 @@ angular.module('poluxClienteApp')
                 })
                 .catch(function(excepcionEstudianteConsultado) {
                   // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-                  deferred.reject(null);
+                  deferred.reject(excepcionEstudianteConsultado);
                 });
             } else {
               // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
@@ -335,15 +336,13 @@ angular.module('poluxClienteApp')
                 })
                 .indexOf(solicitudAprobada.Id);
               ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
-              // Se establece el mensaje de error con la nula existencia de datos
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_USUARIO_SOLICITUD");
-              deferred.resolve(null);
+              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_USUARIO_SOLICITUD"));
             }
           })
           .catch(function(excepcionUsuarioDeSolicitud) {
-            // Se presenta cuando ocurrió un error al traer el detalle de las solicitudes desde la tabla detalle_solicitud
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_USUARIO_SOLICITUD");
-            deferred.reject(null);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_USUARIO_SOLICITUD"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -359,10 +358,11 @@ angular.module('poluxClienteApp')
          * y cuyo estado sean:
          * 9 - Formalizada exenta de pago
          * 12 - Oficializada
+         * 14 - Cumplida para espacios académicos de posgrado
          */
         return $.param({
-          query: "EstadoSolicitud.Id.in:9|12," +
-            "Activo:True," +
+          query: "Activo:True," +
+            "EstadoSolicitud.Id.in:9|12|14," +
             "SolicitudTrabajoGrado.PeriodoAcademico:" +
             ctrl.periodoSeleccionado.anio +
             "-" +
@@ -393,23 +393,27 @@ angular.module('poluxClienteApp')
               });
               $q.all(conjuntoProcesamientoDeSolicitudes)
                 .then(function(resultadoDelProcesamiento) {
-                  // Se resuelve la colección de solicitudes para formalizar
-                  deferred.resolve(ctrl.coleccionSolicitudesAprobadas);
+                  // Se estudia si la colección tiene elementos
+                  if (ctrl.coleccionSolicitudesAprobadas.length > 0) {
+                    // Se resuelve la colección de solicitudes para formalizar
+                    deferred.resolve(ctrl.coleccionSolicitudesAprobadas);
+                  } else {
+                    // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+                    deferred.reject($translate.instant("ERROR.SIN_SOLICITUDES_PARA_APROBAR"));
+                  }
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
                   // Se rechaza la carga con la excepción generada
                   deferred.reject(excepcionDuranteProcesamiento);
                 });
             } else {
-              // Se presenta cuando no hay solicitudes respondidas con los parámetros establecidos
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD");
-              deferred.reject(null);
+              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
             }
           })
           .catch(function(excepcionSolicitudesRespondidas) {
-            // Se presenta cuando ocurrió un error al traer las solicitudes desde la tabla respuesta_solicitud
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD");
-            deferred.reject(null);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD"));
           });
         // Se devuelve el diferido que maperneja la promesa
         return deferred.promise;
@@ -431,15 +435,13 @@ angular.module('poluxClienteApp')
               // Se resuelve la información académica del estudiante
               deferred.resolve(estudianteConsultado.data.estudianteCollection.datosEstudiante[0]);
             } else {
-              // Se presenta cuando no existe registro de estudiantes con dichas características
-              $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.SIN_INFO_ESTUDIANTE");
-              deferred.reject(null);
+              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
             }
           })
           .catch(function(excepcionEstudianteConsultado) {
-            // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-            $scope.mensajeErrorCargandoSolicitudesAprobadas = $translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE");
-            deferred.reject(null);
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -479,17 +481,16 @@ angular.module('poluxClienteApp')
         // Se consultan las solicitudes respondidas
         ctrl.consultarSolicitudesRespondidas()
           .then(function(solicitudesRespondidas) {
-            // Se redefinen los errores, se detiene la carga
-            $scope.errorCargandoConsultasIniciales = false;
-            $scope.errorCargandoSolicitudesAprobadas = false;
+            // Se detiene la carga
             $scope.cargandoSolicitudesAprobadas = false;
             // Y se muestra la cuadrícula
             ctrl.mostrarSolicitudesAprobadas(solicitudesRespondidas);
           })
           .catch(function(excepcionSolicitudesRespondidas) {
             // Se detiene la carga y se muestra el error
-            $scope.errorCargandoSolicitudesAprobadas = true;
             $scope.cargandoSolicitudesAprobadas = false;
+            $scope.errorCargandoSolicitudesAprobadas = true;
+            $scope.mensajeErrorCargandoSolicitudesAprobadas = excepcionSolicitudesRespondidas;
           });
       }
 

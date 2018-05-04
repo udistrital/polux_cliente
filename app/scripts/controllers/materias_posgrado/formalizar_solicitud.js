@@ -69,7 +69,7 @@ angular.module('poluxClienteApp')
           '<div class="ui-grid-cell-contents" ' +
           'ng-if="row.entity.idEstadoSolicitud == 9 || row.entity.idEstadoSolicitud == 10 || row.entity.idEstadoSolicitud == 11">' +
           '{{"FORMALIZAR_SOLICITUD.SOLICITUD_ATENDIDA" | translate}}' +
-          '</div>',
+          '</div>'
       }];
 
       /**
