@@ -57,7 +57,19 @@ angular.module('poluxClienteApp')
         name: 'formalizarSolicitud',
         displayName: $translate.instant("FORMALIZAR_SOLICITUD.ACCION"),
         width: '15%',
-        cellTemplate: '<btn-registro ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8" funcion="grid.appScope.cargarFila(row)" grupobotones="grid.appScope.botonFormalizarSolicitud"></btn-registro><div class="ui-grid-cell-contents" ng-if="row.entity.idEstadoSolicitud != 7 && row.entity.idEstadoSolicitud != 8">{{"FORMALIZAR_SOLICITUD.FORMALIZACION_NO_HABILITADA" | translate}}</div>',
+        cellTemplate: '<btn-registro ' + 
+          'ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8"' +
+          'funcion="grid.appScope.cargarFila(row)"' +
+          'grupobotones="grid.appScope.botonFormalizarSolicitud">' +
+          '</btn-registro>' +
+          '<div class="ui-grid-cell-contents" ' +
+          'ng-if="row.entity.idEstadoSolicitud == 5 || row.entity.idEstadoSolicitud == 6">' +
+          '{{"FORMALIZAR_SOLICITUD.FORMALIZACION_NO_HABILITADA" | translate}}' +
+          '</div>' +
+          '<div class="ui-grid-cell-contents" ' +
+          'ng-if="row.entity.idEstadoSolicitud == 9 || row.entity.idEstadoSolicitud == 10 || row.entity.idEstadoSolicitud == 11">' +
+          '{{"FORMALIZAR_SOLICITUD.SOLICITUD_ATENDIDA" | translate}}' +
+          '</div>',
       }];
 
       /**
@@ -294,15 +306,19 @@ angular.module('poluxClienteApp')
       ctrl.obtenerParametrosSolicitudRespondida = function(idSolicitudTrabajoGrado) {
         return $.param({
           /**
-           * El estado de la solicitud que se encuentre en los estados 5, 6, 7 u 8 corresponde a:
+           * El estado de la solicitud que se encuentre en los estados 5, 6, 7, 8, 9, 10 u 11 corresponde a:
            * 5 - Opcionada para segunda convocatoria
            * 6 - Rechazada por cupos insuficientes
            * 7 - Aprobada exenta de pago
            * 8 - Aprobada no exenta de pago
+           * 9 - Formalizada exenta de pago
+           * 10 - Formalizada no exenta de pago
+           * 11 - No formalizada
            * Tabla: respuesta_solicitud
            * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
            */
-          query: "EstadoSolicitud.Id.in:5|6|7|8," +
+          query: "Activo:True," +
+            "EstadoSolicitud.Id.in:5|6|7|8|9|10|11," +
             "SolicitudTrabajoGrado.Id:" +
             idSolicitudTrabajoGrado,
           limit: 1
