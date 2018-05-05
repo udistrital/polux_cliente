@@ -13,7 +13,7 @@
 
   $scope.loadParametros = true;
   $scope.cargandoParametros = $translate.instant("LOADING.CARGANDO_PARAMETROS");
-  $scope.cargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
+  $scope.mensajeCargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
   $scope.cargandoRespuestas = $translate.instant('LOADING.REGISTRANDO_RESPUESTAS');
 
   var ctrl = this;
