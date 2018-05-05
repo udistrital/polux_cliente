@@ -366,12 +366,11 @@ angular.module('poluxClienteApp')
         academicaRequest.get("coordinador_carrera",[$scope.userId, "PREGRADO"]).then(function(responseCoordinador){
               ctrl.carrerasCoordinador = [];
               var carreras  = [];
-              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
-
-              ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
-              angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera){
-                  carreras.push(carrera.codigo_proyecto_curricular);
-              });
+              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {   
+                ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
+                angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera){
+                    carreras.push(carrera.codigo_proyecto_curricular);
+                });
 
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes){
                   if(responseSolicitudes.data !== null){
