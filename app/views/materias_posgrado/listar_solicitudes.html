@@ -37,14 +37,14 @@
       </div>
 
       <div class="col-sm-12">
-      <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true">
+      <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true && !errorCargarSolicitudes">
        <div class="mi-grid" id="mi-grid" ui-grid="listarSolicitudes.gridOptions" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-auto-resize></div><br>
        <center>
         <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && listarSolicitudes.carreraSeleccionada != null && listarSolicitudes.gridOptions.data.length>0 " ng-click="listarSolicitudes.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
         <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && listarSolicitudes.listarSolicitudes.gridOptions.data.length>0" ng-click="listarSolicitudes.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>-->
-        <button ng-if="listarSolicitudes.primeraFecha.inicio<=fechaActual && listarSolicitudes.primeraFecha.fin>=fechaActual" ng-click="listarSolicitudes.admitirPrimeraFecha()" class="btn btn-primary">Seleccionar Admitidos</button>
-        <button ng-if="listarSolicitudes.segundaFecha.inicio<=fechaActual && listarSolicitudes.segundaFecha.fin>=fechaActual" ng-click="listarSolicitudes.admitirSegundaFecha()" class="btn btn-success">Seleccionar Admitidos </button>
+        <button ng-if="listarSolicitudes.permitirPrimeraFecha" ng-click="listarSolicitudes.admitirPrimeraFecha()" class="btn btn-primary">Seleccionar Admitidos</button>
+        <button ng-if="listarSolicitudes.permitirSegundaFecha" ng-click="listarSolicitudes.admitirSegundaFecha()" class="btn btn-success">Seleccionar Admitidos </button>
       </center><br>
 
     </div>

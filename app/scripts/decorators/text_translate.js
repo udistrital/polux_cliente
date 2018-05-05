@@ -491,6 +491,7 @@ var text_es = {
     },
     NO_OPCIONES_DISPONIBLES:"No hay opciones dispobiles",
     ACCESO_NEGADO:"Acceso negado",
+    ACCION_NO_DISPONIBLE:"Acción no disponible",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -965,6 +966,7 @@ var text_en = {
     },
     NO_OPCIONES_DISPONIBLES:"No options available",
     ACCESO_NEGADO:"Access denied",
+    ACCION_NO_DISPONIBLE:"Action not available",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
