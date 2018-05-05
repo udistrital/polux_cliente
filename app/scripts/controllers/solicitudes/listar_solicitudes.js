@@ -348,7 +348,7 @@ angular.module('poluxClienteApp')
           $scope.load = false;
         });
       } else if(lista_roles.includes("COORDINADOR_PREGRADO")){
-        $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-cog fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
+        $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
 
         var parametrosCoordinador = {
           "identificacion":$scope.userId,
@@ -367,10 +367,10 @@ angular.module('poluxClienteApp')
               ctrl.carrerasCoordinador = [];
               var carreras  = [];
               if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {   
-                ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
-                angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera){
-                    carreras.push(carrera.codigo_proyecto_curricular);
-                });
+              ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
+              angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera){
+                  carreras.push(carrera.codigo_proyecto_curricular);
+              });
 
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes){
                   if(responseSolicitudes.data !== null){

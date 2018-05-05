@@ -81,6 +81,7 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("respuesta_solicitud",parametros).then(function(responseRespuesta){
           if(responseRespuesta.data != null){
+            ctrl.respuestaActual = responseRespuesta.data[0];
             if(responseRespuesta.data[0].EstadoSolicitud.Id!=1){
               ctrl.mensajeNoAprobar += ' '+$translate.instant('SOLICITUD_CON_RESPUESTA');
               ctrl.noAprobar = true;
