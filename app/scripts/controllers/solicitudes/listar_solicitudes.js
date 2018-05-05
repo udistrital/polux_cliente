@@ -13,10 +13,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  token_service.token.documento = "79647592";
-  token_service.token.role.push("COORDINADOR_PREGRADO");
-  //token_service.token.documento = "20141020033";
-  //token_service.token.role.push("ESTUDIANTE");
+  //token_service.token.documento = "79647592";
+  //token_service.token.role.push("COORDINADOR_PREGRADO");
+  token_service.token.documento = "20131020039";
+  token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
@@ -575,9 +575,9 @@ angular.module('poluxClienteApp')
           limit:0
       });
 
-      var getDocumento = function(fila,solicitud){
+      var getDocumentoRespuesta = function(fila,solicitud){
         var defer = $q.defer();
-        if(fila.entity.Respuesta.EstadoSolicitud.Id!==1 && fila.entity.Respuesta.EstadoSolicitud.Id!==2){
+        if(fila.entity.Respuesta.EstadoSolicitud.Id!==1){
           var parametrosDocumentoSolicitud = $.param({
             query:"SolicitudTrabajoGrado.Id:"+solicitud,
             limit:0
@@ -682,7 +682,7 @@ angular.module('poluxClienteApp')
                     }
               });
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2)+".";
-              promises.push(getDocumento(fila,solicitud));
+              promises.push(getDocumentoRespuesta(fila,solicitud));
               $q.all(promises).then(function(){
                 $('#modalVerSolicitud').modal('show');
               })
