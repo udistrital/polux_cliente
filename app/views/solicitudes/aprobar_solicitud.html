@@ -81,7 +81,14 @@
       {{'FORMULARIO_APROBACION' | translate}}
     </div>
     <loading tam="4" load="loadFormulario" message="msgEnviandFormulario"> </loading>
-    <div class="panel-body" ng-if="!loadFormulario && aprobarSolicitud.respuestaActual.EstadoSolicitud.Id==1">
+    <div class="panel-body" ng-if="!loadFormulario && aprobarSolicitud.noAprobar">
+      <div class="rowr">
+        <div class="col-sm-12 alert alert-danger"> 
+            {{aprobarSolicitud.mensajeNoAprobar}}
+        </div>
+      </div>
+    </div>
+    <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar">
       <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
         <div class="row">
           <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
@@ -168,9 +175,6 @@
                   </div>
 
                 </form>
-              </div>
-              <div class="panel-body alert alert-danger" ng-if="!loadFormulario && aprobarSolicitud.respuestaActual.EstadoSolicitud.Id!=1">
-                {{'SOLICITUD_CON_RESPUESTA' | translate}}
               </div>
             </div>
           </div>

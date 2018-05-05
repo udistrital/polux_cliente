@@ -582,7 +582,7 @@
     }
 
     var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
-      var deferFechas = $q.defer();
+      var defer = $q.defer();
       //si la solicitud es de materias de posgrado e inicial
       if (tipoSolicitud === 2 && modalidad === 2) {
         ctrl.periodo = ctrl.periodoSiguiente.anio + "-" + ctrl.periodoSiguiente.periodo;
@@ -606,16 +606,16 @@
               //console.log("fechas", ctrl.fechaInicio);
               //console.log("fechas", ctrl.fechaFin);
               if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
-                deferFechas.resolve(true);
+                defer.resolve(true);
               } else {
                 ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
-                deferFechas.reject(false);
+                defer.reject(false);
               }
               console.log(ctrl.fechaFin);
 
             } else {
               ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
-              deferFechas.reject(false);
+              defer.reject(false);
             }
           })
           .catch(function() {
@@ -623,9 +623,9 @@
             defer.reject("no se pudo cargar fechas");
           });
       } else {
-        deferFechas.resolve(true);
+        defer.resolve(true);
       }
-      return deferFechas.promise;
+      return defer.promise;
     }
 
     $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente)])
