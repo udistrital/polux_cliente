@@ -47,7 +47,7 @@
 
 
   //ctrl.codigo = $routeParams.idEstudiante;
-  token_service.token.documento = "20131020039";
+  token_service.token.documento = "20141020036";
   ctrl.codigo = token_service.token.documento;
   //buscar prorrogas anteriores
   ctrl.getProrroga = function() {
@@ -392,7 +392,8 @@
     var getEspaciosInscritos = function(idTrabajoGrado){
       var defer = $q.defer();
       var parametrosEspacios = $.param({
-        query: "EstadoEspacioAcademicoInscrito:1,trabajo_grado:" + idTrabajoGrado,
+        //query: "EstadoEspacioAcademicoInscrito:1,trabajo_grado:" + idTrabajoGrado,
+        query: "trabajo_grado:" + idTrabajoGrado,
         limit: 0
       });
       poluxRequest.get("espacio_academico_inscrito", parametrosEspacios).then(function(responseEspacios) {
