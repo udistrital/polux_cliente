@@ -66,7 +66,7 @@ angular.module('poluxClienteApp')
             var roles = token_service.token.role.toString();
             //para agregar menus 
             roles = roles+',ADMIN_POLUX';
-            roles = roles.replace(',Internal/everyone','');
+            roles = roles.replace('/','-');
             //sobrescribir documento
             //console.log(token_service.token.documento);
              configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '')
@@ -151,7 +151,7 @@ angular.module('poluxClienteApp')
             //para agregar menus 
             roles = roles+',ADMIN_POLUX';
             //eliminar rol Internal/everyone por error que causa en url
-            roles = roles.replace(',Internal/everyone','');
+            roles = roles.replace('/','-');
             //sobrescribir documento
             //console.log(token_service.token.documento);
             configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '')
