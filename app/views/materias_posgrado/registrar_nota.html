@@ -58,8 +58,8 @@
         <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
         <br>
       </div>
-      <loading tam="4" load="cargandoEspaciosAcademicos" message="mensajeCargandoEspaciosAcademicos"></loading>
-      <div class="panel panel-default" ng-if="registrarNota.cuadriculaEspaciosAcademicosInscritos.data.length > 0">
+      <loading tam="4" load="cargandoEspaciosAcademicos" message="mensajeCargandoTransaccionRegistro"></loading>
+      <div class="panel panel-default" ng-if="registrarNota.cuadriculaEspaciosAcademicosInscritos.data.length > 0 && !cargandoEspaciosAcademicos">
         <div class="panel-heading">
           {{'ESP_ACADEMICOS' | translate}}
         </div>

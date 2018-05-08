@@ -248,7 +248,8 @@ angular.module('poluxClienteApp')
            * 3 - Cursado
            * @type {String}
            */
-          query: "EstadoEspacioAcademicoInscrito.in:1|3," +
+          query: "EstadoEspacioAcademicoInscrito.Id.in:1|3," +
+            "EspaciosAcademicosElegibles.Activo:True," +
             "EspaciosAcademicosElegibles.CarreraElegible.CodigoCarrera:" +
             ctrl.posgradoSeleccionado +
             ",TrabajoGrado:" +
@@ -259,31 +260,22 @@ angular.module('poluxClienteApp')
 
       /**
        * [Función que según el trabajo de grado, carga la información correspondiente a los espacios académicos inscritos]
-       * @param  {[Object]} trabajoDeGrado [El trabajo de grado para obtener el identificador y cargar la información correspondiente a los espacios académicos inscritos]
+       * @param  {[Object]} estudianteConTrabajoDeGrado [El estudiante para obtener el identificador y cargar la información asociada a los espacios académicos inscritos]
        * @return {[Promise]}                   [El trabajo de grado con los espacios académicos asociados dentro, o la excepción generada]
        */
-      ctrl.consultarEspaciosAcademicosInscritos = function(trabajoDeGrado) {
+      ctrl.consultarEspaciosAcademicosInscritos = function(estudianteConTrabajoDeGrado) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se consulta hacia los espacios académicos inscritos del trabajo de grado en la base de datos
-        poluxRequest.get("espacio_academico_inscrito", ctrl.obtenerParametrosEspaciosAcademicosInscritos(trabajoDeGrado.Id))
+        poluxRequest.get("espacio_academico_inscrito", ctrl.obtenerParametrosEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado.TrabajoGrado.Id))
           .then(function(espaciosAcademicosInscritos) {
             // Se estudia si la información existe
             if (espaciosAcademicosInscritos.data) {
               // Se actualiza el elemento de la colección
-              trabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
-              deferred.resolve("");
-            } else {
-              // Se quita la asociación del trabajo de grado con nula información de la colección de trabajos de grado cursados
-              var itemInconsistente = ctrl.coleccionTrabajosDeGradoCursados
-                .map(function(trabajoDeGradoInconsistente) {
-                  return trabajoDeGradoInconsistente.Id;
-                })
-                .indexOf(trabajoDeGrado.Id);
-              ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
-              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
-              deferred.resolve($translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS"));
+              estudianteConTrabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
             }
+            // Se resuelve el mensaje correspondiente
+            deferred.resolve($translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS"));
           })
           .catch(function(excepcionEspaciosAcademicosInscritos) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
@@ -294,142 +286,23 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que define los parámetros para consultar en la tabla estudiante_trabajo_grado]
-       * @param  {[integer]} idTrabajoGrado [Se recibe el id del trabajo de grado asociado al usuario]
-       * @return {[param]}                         [Se retorna la sentencia para la consulta]
-       */
-      ctrl.obtenerParametrosEstudianteTrabajoGrado = function(idTrabajoGrado) {
-        return $.param({
-          query: "TrabajoGrado:" +
-            idTrabajoGrado,
-          limit: 1
-        });
-      }
-
-      /**
-       * [Función que consulta el estudiante asociado desde la tabla estudiante_trabajo_grado según el trabajo de grado]
-       * @return {[Promise]} [Los datos del estudiante asociado al trabajo de grado, o la excepción generada]
-       */
-      ctrl.consultarEstudianteTrabajoGrado = function(trabajoDeGrado) {
-        // Se trae el diferido desde el servicio para manejar las promesas
-        var deferred = $q.defer();
-        poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(trabajoDeGrado.Id))
-          .then(function(estudianteTrabajoGrado) {
-            // Se estudia si la información existe
-            if (estudianteTrabajoGrado.data) {
-              // Se resuelve el trabajo de grado cursado con el estudiante asociado dentro
-              trabajoDeGrado.estudianteTrabajoGrado = estudianteTrabajoGrado.data[0];
-              ctrl.consultarInformacionAcademicaDelEstudiante(estudianteTrabajoGrado.data[0].Estudiante)
-                .then(function(estudianteConsultado) {
-                  // Se resuelve la información académica del estudiante cargada al trabajo de grado
-                  trabajoDeGrado.datosEstudiante = estudianteConsultado;
-                  deferred.resolve("");
-                })
-                .catch(function(excepcionEstudianteConsultado) {
-                  // Se presenta cuando ocurrió un error al traer la información desde la petición académica
-                  deferred.reject(excepcionEstudianteConsultado);
-                });
-            } else {
-              // Se quita la asociación del trabajo de grado con nula información de la colección de trabajos de grado cursados
-              var itemInconsistente = ctrl.coleccionTrabajosDeGradoCursados
-                .map(function(trabajoDeGradoInconsistente) {
-                  return trabajoDeGradoInconsistente.Id;
-                })
-                .indexOf(trabajoDeGrado.Id);
-              ctrl.coleccionTrabajosDeGradoCursados.splice(itemInconsistente, 1);
-              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
-              deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
-            }
-          })
-          .catch(function(excepcionEstudianteTrabajoGrado) {
-            // En caso de error se rechaza la petición con el mensaje correspondiente
-            deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
-          });
-        // Se devuelve el diferido que maneja la promesa
-        return deferred.promise;
-      }
-
-      /**
-       * [Función que define los parámetros para consultar en la tabla trabajo_grado]
-       * @return {[param]}                         [Se retorna la sentencia para la consulta]
-       */
-      ctrl.obtenerParametrosTrabajosDeGrado = function() {
-        /**
-         * Se traen los trabajos de grado de acuerdo al periodo académico seleccionado
-         * y cuyo estado sea:
-         * 20 - Cursando espacios académicos de posgrado
-         */
-        return $.param({
-          query: "EstadoTrabajoGrado.Id:20," +
-            "PeriodoAcademico:" +
-            ctrl.periodoSeleccionado.anio +
-            "-" +
-            ctrl.periodoSeleccionado.periodo,
-          limit: 0
-        });
-      }
-
-      /**
-       * [Función que consulta los trabajos de grado bajo la modalidad de espacios académicos de posgrado y añade los detalles necesarios para registrar las notas]
-       * @return {[Promise]} [La colección de trabajos de grado terminados, o la excepción generada]
-       */
-      ctrl.consultarTrabajosDeGradoCursados = function() {
-        // Se trae el diferido desde el servicio para manejar las promesas
-        var deferred = $q.defer();
-        // Se establece un conjunto de procesamiento de trabajos de grado que reúne los procesos que deben cargarse antes de ofrecer funcionalidades
-        var conjuntoProcesamientoDeTrabajosDeGrado = [];
-        // Se establece una colección de trabajos de grado cursados
-        ctrl.coleccionTrabajosDeGradoCursados = [];
-        // Se consulta hacia los trabajos de grados registrados en la base de datos
-        poluxRequest.get("trabajo_grado", ctrl.obtenerParametrosTrabajosDeGrado())
-          .then(function(trabajosDeGrado) {
-            if (trabajosDeGrado.data) {
-              angular.forEach(trabajosDeGrado.data, function(trabajoDeGrado) {
-                ctrl.coleccionTrabajosDeGradoCursados.push(trabajoDeGrado);
-                conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(trabajoDeGrado));
-                conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEstudianteTrabajoGrado(trabajoDeGrado));
-              });
-              $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
-                .then(function(resultadoDelProcesamiento) {
-                  // Se resuelve la colección de trabajos de grado cursados
-                  deferred.resolve(resultadoDelProcesamiento);
-                })
-                .catch(function(excepcionDuranteProcesamiento) {
-                  // Se rechaza la carga con la excepción generada
-                  deferred.reject(excepcionDuranteProcesamiento);
-                });
-            } else {
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
-            }
-          })
-          .catch(function(excepcionTrabajosDeGrado) {
-            // En caso de error se rechaza la petición con el mensaje correspondiente
-            deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
-          });
-        // Se devuelve el diferido que maperneja la promesa
-        return deferred.promise;
-      }
-
-      /**
        * [Función que consulta los datos académicos del estudiante asociado al usuario]
-       * @param  {[Integer]} codigoEstudianteTrabajoGrado [El código del estudiante correspondiente]
+       * @param  {[Integer]} estudianteConTrabajoDeGrado [El estudiante correspondiente]
        * @return {[Promise]}                             [Los datos académicos del estudiante, o la excepción generada]
        */
-      ctrl.consultarInformacionAcademicaDelEstudiante = function(codigoEstudianteTrabajoGrado) {
+      ctrl.consultarInformacionAcademicaDelEstudiante = function(estudianteConTrabajoDeGrado) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se consulta hacia los datos del estudiante desde el servicio de académica
-        academicaRequest.get("datos_estudiante", [codigoEstudianteTrabajoGrado, ctrl.periodoAcademicoPrevio.anio, ctrl.periodoAcademicoPrevio.periodo])
+        academicaRequest.get("datos_estudiante", [estudianteConTrabajoDeGrado.Estudiante, ctrl.periodoAcademicoPrevio.anio, ctrl.periodoAcademicoPrevio.periodo])
           .then(function(estudianteConsultado) {
             // Se estudia si los resultados de la consulta son válidos
             if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
               // Se resuelve la información académica del estudiante
-              deferred.resolve(estudianteConsultado.data.estudianteCollection.datosEstudiante[0]);
-            } else {
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
+              estudianteConTrabajoDeGrado.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
             }
+            // Se resuelve el mensaje correspondiente
+            deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
           })
           .catch(function(excepcionEstudianteConsultado) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
@@ -440,23 +313,89 @@ angular.module('poluxClienteApp')
       }
 
       /**
+       * [Función que define los parámetros para consultar en la tabla estudiante_trabajo_grado]
+       * @param  {[integer]} idTrabajoGrado [Se recibe el id del trabajo de grado asociado al usuario]
+       * @return {[param]}                         [Se retorna la sentencia para la consulta]
+       */
+      ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
+        return $.param({
+          /**
+           * [La modalidad 2 corresponde a Espacios Académicos de Posgrado]
+           * [El estado del trabajo de grado 20 corresponde a Cursando espacios académicos de posgrado]
+           * @type {String}
+           */
+          query: "TrabajoGrado.Modalidad.Id:2," +
+            "TrabajoGrado.EstadoTrabajoGrado.Id:20," +
+            "TrabajoGrado.PeriodoAcademico:" +
+            ctrl.periodoSeleccionado.anio +
+            "-" +
+            ctrl.periodoSeleccionado.periodo,
+          limit: 0
+        });
+      }
+
+      /**
+       * [Función que consulta los estudiantes con trabajos de grado bajo la modalidad de espacios académicos de posgrado y añade los detalles necesarios para registrar las notas]
+       * @return {[Promise]} [La colección de trabajos de grado terminados, o la excepción generada]
+       */
+      ctrl.consultarTrabajosDeGradoCursados = function() {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        // Se establece un conjunto de procesamiento de trabajos de grado que reúne los procesos que deben cargarse antes de ofrecer funcionalidades
+        var conjuntoProcesamientoDeTrabajosDeGrado = [];
+        // Se establece una colección de estudiantes para registrar la nota
+        ctrl.coleccionEstudiantesParaRegistrarNota = [];
+        // Se consulta hacia los estudiantes con trabajos de grados registrados en la base de datos
+        poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
+          .then(function(estudiantesCursandoTrabajoDeGrado) {
+            if (estudiantesCursandoTrabajoDeGrado.data) {
+              angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
+                conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(estudianteConTrabajoDeGrado));
+                conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado));
+              });
+              $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
+                .then(function(resultadoEstudiantesProcesados) {
+                  angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
+                    if (estudianteConTrabajoDeGrado.espaciosAcademicosInscritos && estudianteConTrabajoDeGrado.informacionAcademica) {
+                      ctrl.coleccionEstudiantesParaRegistrarNota.push(estudianteConTrabajoDeGrado);
+                    }
+                  });
+                  deferred.resolve(resultadoEstudiantesProcesados);
+                })
+                .catch(function(excepcionEstudiantesProcesados) {
+                  deferred.reject(excepcionEstudiantesProcesados);
+                });
+            } else {
+              // En caso de no estar definida la información, se resuelve el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
+            }
+          })
+          .catch(function(excepcionTrabajosDeGrado) {
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
+          });
+        // Se devuelve el diferido que maperneja la promesa
+        return deferred.promise;
+      }
+
+      /**
        * [Función que carga los trabajos de grado cursados a la cuadrícula con la información correspondiente]
-       * @param  {[Object]} trabajosDeGradoCursados [La colección de trabajos de grado cursados ya consultados]
+       * @param  {[Object]} estudiantesCursandoTrabajoDeGrado [La colección de trabajos de grado cursados ya consultados]
        * @return {[void]}                      [El procedimiento de contruir el arreglo de datos visibles sobre los trabajos de grado cursados]
        */
-      ctrl.mostrarTrabajosDeGradoCursados = function(trabajosDeGradoCursados) {
+      ctrl.mostrarTrabajosDeGradoCursados = function(estudiantesCursandoTrabajoDeGrado) {
         // Se recorren los trabajos de grado cursados para obtener los datos correspondientes
-        angular.forEach(trabajosDeGradoCursados, function(trabajoDeGradoCursado) {
+        angular.forEach(estudiantesCursandoTrabajoDeGrado, function(estudianteConTrabajoDeGrado) {
           // Se asignan los campos reconocidos por la cuadrícula
-          trabajoDeGradoCursado.idTrabajoGrado = trabajoDeGradoCursado.Id;
-          trabajoDeGradoCursado.nombreModalidad = trabajoDeGradoCursado.Modalidad.Nombre;
-          trabajoDeGradoCursado.codigoEstudiante = trabajoDeGradoCursado.datosEstudiante.codigo;
-          trabajoDeGradoCursado.nombreEstudiante = trabajoDeGradoCursado.datosEstudiante.nombre;
-          trabajoDeGradoCursado.periodoAcademico = trabajoDeGradoCursado.PeriodoAcademico;
-          trabajoDeGradoCursado.nombreEstado = trabajoDeGradoCursado.EstadoTrabajoGrado.Nombre;
+          estudianteConTrabajoDeGrado.idTrabajoGrado = estudianteConTrabajoDeGrado.TrabajoGrado.Id;
+          estudianteConTrabajoDeGrado.nombreModalidad = estudianteConTrabajoDeGrado.TrabajoGrado.Modalidad.Nombre;
+          estudianteConTrabajoDeGrado.codigoEstudiante = estudianteConTrabajoDeGrado.informacionAcademica.codigo;
+          estudianteConTrabajoDeGrado.nombreEstudiante = estudianteConTrabajoDeGrado.informacionAcademica.nombre;
+          estudianteConTrabajoDeGrado.periodoAcademico = estudianteConTrabajoDeGrado.TrabajoGrado.PeriodoAcademico;
+          estudianteConTrabajoDeGrado.nombreEstado = estudianteConTrabajoDeGrado.TrabajoGrado.EstadoTrabajoGrado.Nombre;
         });
         // Se cargan los datos visibles a la cuadrícula
-        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = trabajosDeGradoCursados;
+        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = estudiantesCursandoTrabajoDeGrado;
       }
 
       /**
@@ -475,17 +414,11 @@ angular.module('poluxClienteApp')
           .then(function(resultadoConsultaTrabajosDeGradoCursados) {
             // Se detiene la carga
             $scope.cargandoTrabajosDeGradoCursados = false;
-            // Se estudia si hay resultados válidos
-            if (ctrl.coleccionTrabajosDeGradoCursados.length > 0) {
-              // Y se muestra la cuadrícula
-              ctrl.mostrarTrabajosDeGradoCursados(ctrl.coleccionTrabajosDeGradoCursados);
+            if (ctrl.coleccionEstudiantesParaRegistrarNota.length > 0) {
+              // Se muestran los trabajos de grado cursados
+              ctrl.mostrarTrabajosDeGradoCursados(ctrl.coleccionEstudiantesParaRegistrarNota);
             } else {
-              var itemConMensaje = 0;
-              while (resultadoConsultaTrabajosDeGradoCursados[itemConMensaje] == "") {
-                resultadoConsultaTrabajosDeGradoCursados.shift();
-                itemConMensaje++;
-              }
-              // O se muestra el mensaje de error
+              // Se muestra el error
               $scope.errorCargandoTrabajosDeGradoCursados = true;
               $scope.mensajeErrorCargandoTrabajosDeGradoCursados = resultadoConsultaTrabajosDeGradoCursados[0];
             }
@@ -517,14 +450,12 @@ angular.module('poluxClienteApp')
               deferred.resolve(espacioAcademicoInscrito);
             } else {
               // Se rechaza la petición en caso de no encontrar datos
-              $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-              deferred.reject(null);
+              deferred.reject($translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS"));
             }
           })
           .catch(function(excepcionEspacioAcademicoDescrito) {
             // Se rechaza la petición en caso de encontrar excepciones
-            $scope.mensajeErrorCargandoEspaciosAcademicos = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-            deferred.reject(excepcionEspacioAcademicoDescrito);
+            deferred.reject($translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -540,17 +471,20 @@ angular.module('poluxClienteApp')
 
       /**
        * [Función que carga el trabajo de grado seleccionado por el coordinador en sesión]
-       * @param  {[row]} trabajoDeGradoSeleccionado [El trabajo de grado al que el usuario registrará la nota]
+       * @param  {[row]} estudianteSeleccionado [El trabajo de grado al que el usuario registrará la nota]
        */
-      ctrl.cargarTrabajoDeGradoSeleccionado = function(trabajoDeGradoSeleccionado) {
+      ctrl.cargarTrabajoDeGradoSeleccionado = function(estudianteSeleccionado) {
+        // Se retiran los elementos de la cuadrícula de espacios académicos
+        ctrl.cuadriculaEspaciosAcademicosInscritos.data = [];
         // Se inicia la carga
         $scope.cargandoTrabajosDeGradoCursados = true;
+        $scope.cargandoEspaciosAcademicos = true;
         // Se despliega el modal
         $('#modalVerTrabajoDeGrado').modal('show');
         // Se prepara una colección de procesamiento
         var conjuntoProcesamientoEspaciosAcademicos = [];
         // Se recorren y procesan los espacios académicos inscritos
-        angular.forEach(trabajoDeGradoSeleccionado.espaciosAcademicosInscritos, function(espacioAcademicoInscrito) {
+        angular.forEach(estudianteSeleccionado.espaciosAcademicosInscritos, function(espacioAcademicoInscrito) {
           conjuntoProcesamientoEspaciosAcademicos.push(ctrl.cargarDescripcionEspaciosAcademicos(espacioAcademicoInscrito));
         });
         // Se asegura el cumplimiento de todas las promesas
@@ -558,14 +492,17 @@ angular.module('poluxClienteApp')
           .then(function(espaciosAcademicosDescritos) {
             // Se detiene la carga y se muestran los resultados
             $scope.cargandoTrabajosDeGradoCursados = false;
+            $scope.cargandoEspaciosAcademicos = false;
             $scope.errorCargandoEspaciosAcademicos = false;
-            ctrl.trabajoDeGradoSeleccionado = trabajoDeGradoSeleccionado;
-            ctrl.cuadriculaEspaciosAcademicosInscritos.data = trabajoDeGradoSeleccionado.espaciosAcademicosInscritos;
+            ctrl.estudianteSeleccionado = estudianteSeleccionado;
+            ctrl.cuadriculaEspaciosAcademicosInscritos.data = estudianteSeleccionado.espaciosAcademicosInscritos;
           })
           .catch(function(excepcionEspaciosAcademicosDescritos) {
             // Se detiene la carga y se muestra el error
             $scope.cargandoTrabajosDeGradoCursados = false;
+            $scope.cargandoEspaciosAcademicos = false;
             $scope.errorCargandoEspaciosAcademicos = true;
+            $scope.mensajeErrorCargandoEspaciosAcademicos = excepcionEspaciosAcademicosDescritos;
           });
       }
 
@@ -598,8 +535,8 @@ angular.module('poluxClienteApp')
               title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
               text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
                 // Se cargan datos del estudiante asociado al trabajo de grado para que el coordinador pueda verificar antes de registrar
-                nombre: ctrl.trabajoDeGradoSeleccionado.nombreEstudiante,
-                codigo: ctrl.trabajoDeGradoSeleccionado.codigoEstudiante,
+                nombre: ctrl.estudianteSeleccionado.nombreEstudiante,
+                codigo: ctrl.estudianteSeleccionado.codigoEstudiante,
               }),
               type: "info",
               confirmButtonText: $translate.instant("ACEPTAR"),
@@ -611,6 +548,7 @@ angular.module('poluxClienteApp')
               if (confirmacionDelUsuario.value) {
                 // Se detiene la visualización de trabajos de grado
                 $scope.cargandoTrabajosDeGradoCursados = true;
+                $scope.cargandoEspaciosAcademicos = true;
                 // Se lanza la transacción
                 ctrl.registrarNotasIngresadas()
                   .then(function(respuestaRegistrarNotasIngresadas) {
@@ -618,6 +556,7 @@ angular.module('poluxClienteApp')
                     if (respuestaRegistrarNotasIngresadas.data[0] === "Success") {
                       // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
                       $scope.cargandoTrabajosDeGradoCursados = false;
+                      $scope.cargandoEspaciosAcademicos = false;
                       swal(
                         $translate.instant("REGISTRAR_NOTA.AVISO"),
                         $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
@@ -628,6 +567,7 @@ angular.module('poluxClienteApp')
                     } else {
                       // De lo contrario, se detiene la carga y notifica al usuario
                       $scope.cargandoTrabajosDeGradoCursados = false;
+                      $scope.cargandoEspaciosAcademicos = false;
                       swal(
                         $translate.instant("REGISTRAR_NOTA.AVISO"),
                         $translate.instant(respuestaRegistrarNotasIngresadas.data[1]),
@@ -638,6 +578,7 @@ angular.module('poluxClienteApp')
                   .catch(function(excepcionRegistrarNotasIngresadas) {
                     // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
                     $scope.cargandoTrabajosDeGradoCursados = false;
+                    $scope.cargandoEspaciosAcademicos = false;
                     swal(
                       $translate.instant("REGISTRAR_NOTA.AVISO"),
                       $translate.instant("ERROR.REGISTRANDO_NOTA"),
@@ -680,18 +621,6 @@ angular.module('poluxClienteApp')
             }
           });
         });
-        // var asignaturaTrabajoGrado = {
-        //   CodigoAsignatura: 0,
-        //   Periodo: ctrl.periodoSeleccionado.periodo,
-        //   Anio: ctrl.periodoSeleccionado.anio,
-        //   Calificacion: 0,
-        //   TrabajoGrado: {
-        //     Id: ctrl.trabajoDeGradoSeleccionado.Id
-        //   },
-        //   EstadoAsignaturaTrabajoGrado: {
-        //     Id: 3 //cursada supongo
-        //   }
-        // }
         // Se define el objeto para enviar como información para actualizar
         ctrl.informacionParaActualizar = {
           "EspaciosAcademicosCalificados": ctrl.espaciosAcademicosCalificados
