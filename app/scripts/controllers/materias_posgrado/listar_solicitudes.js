@@ -8,12 +8,12 @@
  * Controller of the poluxClienteApp
  */
  angular.module('poluxClienteApp')
- .controller('MateriasPosgradoListarSolicitudesCtrl', function (sesionesRequest, $translate, $q, uiGridConstants, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window) {
+ .controller('MateriasPosgradoListarSolicitudesCtrl', function (sesionesRequest, $translate, $q, uiGridConstants, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window,token_service) {
   $scope.$ = $;
 
   $scope.loadParametros = true;
   $scope.cargandoParametros = $translate.instant("LOADING.CARGANDO_PARAMETROS");
-  $scope.cargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
+  $scope.mensajeCargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
   $scope.cargandoRespuestas = $translate.instant('LOADING.REGISTRANDO_RESPUESTAS');
 
   var ctrl = this;
@@ -23,7 +23,8 @@
   ctrl.carreras = [];
   ctrl.otro = [];
     //cedula coordinador
-    $scope.userId = "12237136";
+    token_service.token.documento = "12237136";
+    $scope.userId = token_service.token.documento;
     //uigrid
     ctrl.gridOptionsAdmitidos = {
       enableSorting: false,
@@ -116,7 +117,7 @@
       name: 'aprobar',
       displayName: 'Admitir',
       width: "10%",
-      cellTemplate: '<center><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div><center>',
+      cellTemplate: '<center><div ng-if="grid.appScope.listarSolicitudes.permitirPrimeraFecha || grid.appScope.listarSolicitudes.permitirPrimeraFecha"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.listarSolicitudes.permitirPrimeraFecha && !grid.appScope.listarSolicitudes.permitirPrimeraFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
     }
     ];
 
@@ -205,12 +206,19 @@
             if(fecha.SesionHijo.TipoSesion.Id===4){
               //primera fecha de selección de admitidos
               ctrl.primeraFecha = fecha;
+              if(ctrl.primeraFecha.inicio<=$scope.fechaActual && ctrl.primeraFecha.fin>=$scope.fechaActual){
+                ctrl.permitirPrimeraFecha = true;
+              }
               //console.log(fecha.inicio, ctrl.primeraFecha.inicio<=$scope.fechaActual && ctrl.primeraFecha.fin>=$scope.fechaActual);
             } else if(fecha.SesionHijo.TipoSesion.Id===6){
               //segunda fecha de selección de admitidos
               ctrl.segundaFecha = fecha;
+              if(ctrl.segundaFecha.inicio<=$scope.fechaActual && ctrl.segundaFecha.fin>=$scope.fechaActual){
+                ctrl.permitirSegundaFecha = true;
+              }
             }
           });
+
           defer.resolve(ctrl.fechas);
         }else{
           ctrl.mensajeError = $translate.instant("ERROR.SIN_FECHAS_MODALIDAD_POSGRADO");
@@ -349,6 +357,7 @@
 
     //solicitudes iniciales de la modalidad de materias de posgrado
     ctrl.buscarSolicitudes = function (carrera) {
+      ctrl.errorCargarSolicitudes = undefined;
       $scope.loadSolicitudes = true;
       ctrl.carrera = carrera;
       $scope.carrera = carrera;

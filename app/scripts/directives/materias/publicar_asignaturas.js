@@ -7,7 +7,7 @@
  * # materias/publicarAsignaturas
  */
 angular.module('poluxClienteApp')
-  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q) {
+  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q,sesionesRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
 
         ctrl.gridOptions = {
           //showGridFooter: true
-        };
+        }; 
 
         $scope.$watch("pensum", function () {
           $scope.load = true;
@@ -43,22 +43,20 @@ angular.module('poluxClienteApp')
           ctrl.gridOptions.data = [];
 
           if ($scope.carrera && $scope.pensum) {
+           
             academicaRequest.get("asignaturas_carrera_pensum",[$scope.carrera, $scope.pensum]).then(function(response){
               if (!angular.isUndefined(response.data.asignaturaCollection.asignatura)) {
                   ctrl.asignaturas=response.data.asignaturaCollection.asignatura;
               }
               ctrl.habilitar = false;
               ctrl.habilitar2 = true;
-
+              ctrl.totalCreditos = 0;
               angular.forEach(ctrl.asignaturas, function (value) {
-                var defered = $q.defer();
-                var promise = defered.promise;
-                promiseArr.push(promise);
-                ctrl.totalCreditos = 0;
-                console.log(value);
-                ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, value);
-                defered.resolve(response);
+                promiseArr.push(ctrl.buscarAsignaturasElegibles($scope.anio, $scope.periodo, $scope.carrera, $scope.pensum, value));
               });
+
+              //traer fechas para habilitar botones
+              promiseArr.push(ctrl.verificarFechas($scope.periodo,$scope.anio));
 
               $q.all(promiseArr).then(function(){
                   ctrl.gridOptions.data = ctrl.mostrar;
@@ -79,12 +77,17 @@ angular.module('poluxClienteApp')
                   ];
               }).catch(function(error){
                   console.log(error);
+                  ctrl.errorCargar = true;
+                  $scope.load = false; 
               });
+            })
+            .catch(function(error){
+              console.log(error);
+              ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+              ctrl.errorCargar = true;
+              $scope.load = false; 
             });
-
           }
-
-
         });
 
 
@@ -98,9 +101,51 @@ angular.module('poluxClienteApp')
           }
         };
 
+        //buscar fechas de publicación de espacios
+        ctrl.verificarFechas = function(periodo,anio) {
+          var deferFechas = $q.defer();
+          ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+          //traer fechas
+          var parametrosSesiones = $.param({
+            query: "SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
+            limit: 1
+          });
+          sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
+              if (responseFechas.data !== null) {
+                console.log(responseFechas.data[0]);
+                var sesion = responseFechas.data[0];
+                var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
+                fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
+                ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
+                fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
+                ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
+                console.log("fechas",ctrl.fechaInicio, ctrl.fechaFin);
+                //console.log("fechas", ctrl.fechaInicio);
+                //console.log("fechas", ctrl.fechaFin);
+                if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
+                  ctrl.mostrarBotones = true;
+                  deferFechas.resolve();
+                } else {
+                  ctrl.mostrarBotones = false;
+                  deferFechas.resolve();
+                }
+              } else {
+                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                deferFechas.reject(false);
+              }
+            })
+            .catch(function(error) {
+              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+              deferFechas.reject(error);
+            });
+          return deferFechas.promise;
+        }
+
         //buscar si hay registros en asignaturas_elegibles
         ctrl.buscarAsignaturasElegibles = function (anio, periodo, carrera, pensum, asignatura) {
-
+          var defer = $q.defer();
           ctrl.anio = anio;
           ctrl.periodo = periodo;
           ctrl.carrera = carrera;
@@ -113,14 +158,11 @@ angular.module('poluxClienteApp')
           poluxRequest.get("carrera_elegible", parametros).then(function (response) {
             if (response.data != null) {
               ctrl.id = response.data[0].Id
-
               var parametros = $.param({
                 query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura.codigo
               });
 
               poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
-                console.log(response.data);
-
                 if (response.data != null) {
                   ctrl.habilitar = true;
                   ctrl.habilitar2 = false;
@@ -155,6 +197,11 @@ angular.module('poluxClienteApp')
                   };
                   ctrl.mostrar.push(nuevo);
                 }
+                defer.resolve();
+              })
+              .catch(function(error){
+                ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+                defer.reject(error);
               });
             }
             //si la carrera no está en la tabla: carrera_elegible
@@ -172,10 +219,14 @@ angular.module('poluxClienteApp')
                 check: false
               };
               ctrl.mostrar.push(nuevo);
-
+              defer.resolve();
             }
+          })
+          .catch(function(error){
+            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+            defer.reject(error);
           });
-
+          return defer.promise;
         };
 
         ctrl.toggle = function (item, list) {

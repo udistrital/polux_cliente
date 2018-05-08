@@ -75,8 +75,7 @@ angular
                 controller: 'AboutCtrl',
                 controllerAs: 'about'
             })
-
-        .when('/materias_posgrado/listar_solicitudes', {
+            .when('/materias_posgrado/listar_solicitudes', {
                 templateUrl: 'views/materias_posgrado/listar_solicitudes.html',
                 controller: 'MateriasPosgradoListarSolicitudesCtrl',
                 controllerAs: 'listarSolicitudes'
@@ -191,11 +190,6 @@ angular
               controller: 'SolicitudesListarSolicitudesCtrl',
               controllerAs: 'listarSolicitudes'
             })
-            .when('/solicitudes/crear_solicitud/:idEstudiante', {
-              templateUrl: 'views/solicitudes/crear_solicitud.html',
-              controller: 'SolicitudesCrearSolicitudCtrl',
-              controllerAs: 'crearSolicitud'
-            })
             .when('/solicitudes/crear_solicitud', {
               templateUrl: 'views/solicitudes/crear_solicitud.html',
               controller: 'SolicitudesCrearSolicitudCtrl',
@@ -221,10 +215,30 @@ angular
               controller: 'AdministracionAreasCtrl',
               controllerAs: 'administrarAreas'
             })
+            .when('/materias_posgrado/listar_aprobados', {
+              templateUrl: 'views/materias_posgrado/listar_aprobados.html',
+              controller: 'MateriasPosgradoListarAprobadosCtrl',
+              controllerAs: 'listarAprobados'
+            })
+            .when('/materias_posgrado/registrar_nota', {
+              templateUrl: 'views/materias_posgrado/registrar_nota.html',
+              controller: 'MateriasPosgradoRegistrarNotaCtrl',
+              controllerAs: 'registrarNota'
+            })
+            .when('/materias_posgrado/formalizar_solicitud', {
+              templateUrl: 'views/materias_posgrado/formalizar_solicitud.html',
+              controller: 'MateriasPosgradoFormalizarSolicitudCtrl',
+              controllerAs: 'formalizarSolicitud'
+            })
             .when('/pasantia/solicitar_carta', {
               templateUrl: 'views/pasantia/solicitar_carta.html',
               controller: 'PasantiaSolicitarCartaCtrl',
               controllerAs: 'solicitarCarta'
+            })
+            .when('/no_permission', {
+              templateUrl: 'views/no_permission.html',
+              controller: 'NoPermissionCtrl',
+              controllerAs: 'noPermission'
             })
             .otherwise({
                 redirectTo: '/'

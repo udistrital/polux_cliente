@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
  angular.module('poluxClienteApp')
-.controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location) {
+.controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location,token_service) {
   $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
   $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
   $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -44,8 +44,11 @@
   ctrl.detallesConDocumento = [];
   ctrl.siPuede = false;
   ctrl.tieneProrrogas = false;
-  ctrl.codigo = $routeParams.idEstudiante;
 
+
+  //ctrl.codigo = $routeParams.idEstudiante;
+  token_service.token.documento = "20141020036";
+  ctrl.codigo = token_service.token.documento;
   //buscar prorrogas anteriores
   ctrl.getProrroga = function() {
     var defer = $q.defer();
@@ -389,7 +392,8 @@
     var getEspaciosInscritos = function(idTrabajoGrado){
       var defer = $q.defer();
       var parametrosEspacios = $.param({
-        query: "EstadoEspacioAcademicoInscrito:1,trabajo_grado:" + idTrabajoGrado,
+        //query: "EstadoEspacioAcademicoInscrito:1,trabajo_grado:" + idTrabajoGrado,
+        query: "trabajo_grado:" + idTrabajoGrado,
         limit: 0
       });
       poluxRequest.get("espacio_academico_inscrito", parametrosEspacios).then(function(responseEspacios) {
@@ -435,19 +439,37 @@
       var defer = $q.defer();
       var parametrosSolicitudes = $.param({
         query: "Usuario:" + ctrl.codigo + ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
-        limit: 1,
+        limit: 0,
       });
       poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
         if (responseSolicitudes.data !== null) {
+          console.log("solicitudes hechas",responseSolicitudes.data);
           //si ha hecho una solicitud se obtienen las materias por el detalle
-          var idSolicitud = responseSolicitudes.data[0].SolicitudTrabajoGrado.Id;
-          var parametrosSolicitud = $.param({
-            query: "SolicitudTrabajoGrado:" + idSolicitud + ",DetalleTipoSolicitud:37",
-            limit: 1,
+          var getSolicitud  = function(solicitud){
+            console.log(solicitud);
+            var defer = $q.defer();
+            var parametrosSolicitud = $.param({
+              query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud:37",
+              limit: 1,
+            });
+            poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
+              //se obtiene guarda la carrera que ya eligio
+              ctrl.carrerasElegidas.push(JSON.parse(responseSolicitud.data[0].Descripcion.split("-")[1]).Codigo); 
+              defer.resolve();
+            })
+            .catch(function(error){
+              defer.reject(error);
+            });
+            return defer.promise;
+          }
+          
+          var promises = [];
+          ctrl.carrerasElegidas = [];
+          angular.forEach(responseSolicitudes.data, function(solicitud){
+            promises.push(getSolicitud(solicitud));
           });
-          poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
-            //se obtiene guarda la carrera que ya eligio
-            ctrl.carreraElegida = JSON.parse(responseSolicitud.data[0].Descripcion.split("-")[1]);
+          $q.all(promises).then(function(){
+            console.log("carreras elegidas",ctrl.carrerasElegidas);
             defer.resolve();
           })
           .catch(function(error){
@@ -561,7 +583,7 @@
     }
 
     var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
-      var deferFechas = $q.defer();
+      var defer = $q.defer();
       //si la solicitud es de materias de posgrado e inicial
       if (tipoSolicitud === 2 && modalidad === 2) {
         ctrl.periodo = ctrl.periodoSiguiente.anio + "-" + ctrl.periodoSiguiente.periodo;
@@ -585,16 +607,16 @@
               //console.log("fechas", ctrl.fechaInicio);
               //console.log("fechas", ctrl.fechaFin);
               if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
-                deferFechas.resolve(true);
+                defer.resolve(true);
               } else {
                 ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
-                deferFechas.reject(false);
+                defer.reject(false);
               }
               console.log(ctrl.fechaFin);
 
             } else {
               ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
-              deferFechas.reject(false);
+              defer.reject(false);
             }
           })
           .catch(function() {
@@ -602,9 +624,9 @@
             defer.reject("no se pudo cargar fechas");
           });
       } else {
-        deferFechas.resolve(true);
+        defer.resolve(true);
       }
-      return deferFechas.promise;
+      return defer.promise;
     }
 
     $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente)])
