@@ -1,11 +1,37 @@
 'use strict';
 
 /**
- * @ngdoc function
+ * @ngdoc controller
  * @name poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
  * @description
  * # MateriasPosgradoListarSolicitudesCtrl
  * Controller of the poluxClienteApp
+ * Controlador de la vista de listar solicitudes, este controlador permite listar las solicitude de estudiantes que han sido aceptadas en los pregrados y realizar el proceso de selección de admitidos al posgrado
+ * @requires services/poluxClienteApp.service:sesionesService
+ * @requires $translate
+ * @requires $q
+ * @requires uiGridConstants
+ * @requires services/poluxMidService.service:poluxMidRequest
+ * @requires services/poluxService.service:poluxRequest
+ * @requires services/academicaService.service:academicaRequest
+ * @requires $scope
+ * @requires $mdDialog
+ * @requires $timeout
+ * @requires $window
+ * @requires services/poluxClienteApp.service:tokenService
+ * @property {object} gridOptionsAdmitidos Almacena las opciones del ui-grid de los estudiantes admitidos
+ * @property {object} gridOptionsopcionados Almacena las opciones del ui-grid de los estudiantes opcionados
+ * @property {object} gridOptionsNoAdmitidos Almacena las opciones del ui-grid de los estudiantes no admitidos
+ * @property {object} gridOptions opciones del grid que muestra todas las solicitudes
+ * @property {object} periodoAnterior Periodo anterior, año y periodo
+ * @property {object} periodoActual Periodo actual, año y periodo
+ * @property {object} carreras Carreras asociadas al coordinador
+ * @property {boolean} permitirPrimeraFecha Flag para permitir realizar el proceso de selección en la primera fecha
+ * @property {boolean} permitirSegundaFecha Flag para permitir realizar el proceso de selección en la segunda fecha
+ * @property {object} fechas Almacena las fechas correspondientes a la modaldiad de materias de posgrado
+ * @property {number} cuposDisponibles Cantidad de cupos disponibles para selección de admitidos
+ * @property {number} numeroAdmitidos Cantidad de personas seleccionadas como admitidos
+ * @property {object} sols Solicitudes de estudiantes
  */
  angular.module('poluxClienteApp')
  .controller('MateriasPosgradoListarSolicitudesCtrl', function (sesionesRequest, $translate, $q, uiGridConstants, poluxMidRequest, poluxRequest, academicaRequest, $scope, $mdDialog, $timeout, $window,token_service) {
@@ -121,6 +147,15 @@
     }
     ];
 
+    /**
+     * @ngdoc method
+     * @name getPeriodoAnterior
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consulta el periodo anterior al actual consultado periodo_academico de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+     */
     ctrl.getPeriodoAnterior  = function(){
       var defer =  $q.defer()
       academicaRequest.get("periodo_academico", "P")
@@ -141,6 +176,15 @@
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name getPeriodoActual
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consulta el periodo academico actual del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo actual
+     */
     ctrl.getPeriodoActual  = function(){
       var defer =  $q.defer()
       academicaRequest.get("periodo_academico", "X")
@@ -160,6 +204,15 @@
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name getCarrerasCoordinador
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consulta las carreras asociadas al coordinador del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto carreras
+     */
     ctrl.getCarrerasCoordinador = function(){
       var defer =  $q.defer()
       academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"])
@@ -180,7 +233,15 @@
       return defer.promise
     }
 
-
+    /**
+     * @ngdoc method
+     * @name getFechas
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consulta las fechas para el proceso de selección de admitidos en {@link services/poluxClienteApp.service:sesionesService sesionesService}
+     * @param {object} periodo Periodo en el cual se buscan las fechas vigentes
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto fechas
+     */
     ctrl.getFechas = function(periodo){
       var defer =  $q.defer()
       var momentDate = null;
@@ -232,7 +293,15 @@
       return defer.promise
     }
 
-
+    /**
+     * @ngdoc method
+     * @name getCupos
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consulta el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para traer el número de cupos disponibles
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
+     */
     ctrl.getCupos = function(){
       var defer = $q.defer();
       poluxMidRequest.get("cupos/Obtener").then(function (responseCupos) {
@@ -249,6 +318,15 @@
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name cargandoParametros
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * llama a las funciones de getPeriodoActual, getPeriodoAnterior, getFechas, getCarrerasCoordinador, getCupos y los une en promesas, los rechaza en caso de que alguan sea rechazada.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {undefined} sin retorno
+     */
     ctrl.cargarParametros = function(){
       ctrl.getPeriodoActual()
       .then(function(periodo){
@@ -287,6 +365,15 @@
 
     ctrl.cargarParametros();
 
+    /**
+     * @ngdoc method
+     * @name cargandoParametrosSolicitud
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener los datos detalles de la solicitud, el usuario y consulta los datos del estudiante del servicio de {@link services/academicaService.service:academicaRequest academicaService}
+     * @param {object} solicitud objeto de tipo solicitud para los parametros de busqueda
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
+     */
     ctrl.cargarParametrosSolicitud = function(value){
       var defer = $q.defer();
       //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
@@ -355,7 +442,16 @@
       return defer.promise;
     }
 
-    //solicitudes iniciales de la modalidad de materias de posgrado
+    /**
+     * @ngdoc method
+     * @name buscarSolicitudes
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener las solicitudes iniciales de la modalidad de materias de posgrado y sus respuestas y llama a la función CargarParametrosSolicitud para cargar los parametros asociados a esta.
+     * @param {object} carrera carrera de la cual se van a consultar las solicitudes
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
+     */
+    //
     ctrl.buscarSolicitudes = function (carrera) {
       ctrl.errorCargarSolicitudes = undefined;
       $scope.loadSolicitudes = true;
@@ -395,7 +491,15 @@
       }
     }
 
-
+    /**
+     * @ngdoc method
+     * @name admitirPrimeraFecha
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * muestra el modal para admitir en priemra fecha si no se encuentra ningun error
+     * @param {undefined} undefined No recibe ningun parametro
+     * @returns {undefined} No retorna nada
+     */
     ctrl.admitirPrimeraFecha = function(){
       if(ctrl.numeroAdmitidos <= ctrl.cuposDisponibles){
         ctrl.opcionados = [];
@@ -424,6 +528,15 @@
       }
     }
 
+    /**
+     * @ngdoc method
+     * @name admitirSegundaFecha
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * muestra el modal para admitir en segunda fecha si no se encuentra ningun error
+     * @param {undefined} undefined No recibe ningun parametro
+     * @returns {undefined} No retorna nada
+     */
     ctrl.admitirSegundaFecha = function(){
       if(ctrl.numeroAdmitidos <= ctrl.cuposDisponibles){
         ctrl.opcionados = [];
@@ -452,6 +565,16 @@
       }
     }
 
+    /**
+     * @ngdoc method
+     * @name admitir
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * funcion que hace la petición post a {@link services/poluxService.service:poluxRequest poluxRequest} para
+     * empezar a ejecutar el proceso de selección de admitidos
+     * @param {undefined} undefined No recibe ningun parametro
+     * @returns {undefined} No retorna nada
+     */
     ctrl.admitir = function(){
       var date = new Date();
       var respuestasNuevas = [];
@@ -520,6 +643,15 @@
       });
     }
 
+    /**
+     * @ngdoc method
+     * @name verificarDisponibilidad
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * aumenta o disminuye el numero de admitidos
+     * @param {object} solicitud Solicitud que se selecciona en el grid
+     * @returns {undefined} No retorna nada
+     */
     ctrl.verificarDisponibilidad = function(solicitud){
       if(!solicitud.aprobado){
         ctrl.numeroAdmitidos += 1;
