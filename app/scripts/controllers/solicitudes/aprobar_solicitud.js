@@ -2,7 +2,6 @@
 
 /**
  * @ngdoc function
-
  * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
  * @description
  * # SolicitudesAprobarSolicitudCtrl
@@ -52,8 +51,20 @@ angular.module('poluxClienteApp')
     //$scope.userId=19451396;
     token_service.token.documento = "79647592" //Se sobreescribe el token
     $scope.userId = parseInt(token_service.token.documento);
-    
+   
     ctrl.carrerasCoordinador = [];
+    /**
+     * @ngdoc method
+     * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl#getCarrerasCoordinador
+     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+     * @param {undefined} undefined no recibe ningún parametro
+     * @requires $q 
+     * @requires $translate
+     * @returns {Promise} Retorna promesa que dice cuando se cuando se cumple la petición
+     * @description 
+     * Consulta las carreras del coordinado
+     * se consueme el servicio {@link academicaService.service:academicaRequest academicaRequest}
+     */
     //obtener las carreras asociadas al coordinador
     ctrl.getCarrerasCoordinador = function(){
       var defer = $q.defer();
