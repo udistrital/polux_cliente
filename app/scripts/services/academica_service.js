@@ -1,17 +1,16 @@
 'use strict';
 
 /**
- * @ngdoc service
- * @name poluxClienteApp.academicaService
- * @description
- * # academicaService
- * Factory in the poluxClienteApp.
- */
+  * @ngdoc overview
+  * @name academicaService
+  * @description Modulo para servicio de academica provee los servicios descritos en {@link academicaService.service:academicaRequest academicaRequest}
+  */
 angular.module('academicaService', [])
     /**
      * @ngdoc service
      * @name academicaService.service:academicaRequest
      * @requires $http
+     * @requires CONF
      * @param {injector} $http componente http de angular
      * @param {injector} CONF compenente de configuración
      * @description
@@ -19,9 +18,14 @@ angular.module('academicaService', [])
      * Fabrica sobre la cual se consumen los servicios proveidos por el API de academica sobre los metodos GET, POST, PUT y DELETE
      */
     .factory('academicaRequest', function($http, CONF) {
-        // Service logic
+        /**
+         * @ngdoc object
+         * @name path
+         * @propertyOf academicaService.service:academicaRequest
+         * @description
+         * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.confService:CONF confService}
+         */
         var path = CONF.GENERAL.ACADEMICA_SERVICE;
-        // Public API here
         return {
             /**
              * @ngdoc function

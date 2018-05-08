@@ -2,33 +2,37 @@
 
 
 /**
- * @ngdoc overview
- * @name configuracionService
- * @description
- * # configuracionService
- * Service in the contractualClienteApp.
- */
-
+  * @ngdoc overview
+  * @name configuracionService
+  * @description Modulo para servicio de configracion provee los servicios descritos en {@link configuracionService.service:configuracionRequest configuracionRequest}
+  */
 angular.module('configuracionService', [])
 
 /**
  * @ngdoc service
  * @name configuracionService.service:configuracionRequest
  * @requires $http
+ * @requires $q
+ * @requires $CONF
+ * @requires token_service
  * @param {injector} $http componente http de angular
- * @requires $websocket
- * @param {injector} $websocket componente websocket de angular-websocket
+ * @param {injector} $q componente para promesas de angular
+ * @param {injector} CONF componente de configuracion
+ * @param {injector} token_service componente de autenticacion
  * @description
  * # configuracionRequest
  * Factory que permite gestionar los servicios para construir y gestion los elementos que se muestran por el cliente a traves del menú
  */
 
 .factory('configuracionRequest', function($http, $q, CONF, token_service) {
-    // Service logic
-    // ...
+    /**
+     * @ngdoc object
+     * @name path
+     * @propertyOf configuracionService.service:configuracionRequest
+     * @description
+     * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.confService:CONF confService}
+     */
     var path = CONF.GENERAL.CONFIGURACION_SERVICE;
-    // Public API here
-
     return {
 
         /**
