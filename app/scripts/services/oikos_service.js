@@ -23,7 +23,7 @@ angular.module('oikosService', [])
          * @name path
          * @propertyOf oikosService.service:oikosRequest
          * @description
-         * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.confService:CONF confService}
+         * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
          */
         var path = CONF.GENERAL.OIKOS_SERVICE;
         return {

@@ -18,7 +18,7 @@ angular.module('poluxClienteApp')
      * @name path
      * @propertyOf poluxClienteApp.service:coreService
      * @description
-     * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.confService:CONF confService}
+     * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
      */
     var path = CONF.GENERAL.CORE_SERVICE;
     return {

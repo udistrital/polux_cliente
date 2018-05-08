@@ -30,7 +30,7 @@ angular.module('configuracionService', [])
      * @name path
      * @propertyOf configuracionService.service:configuracionRequest
      * @description
-     * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.confService:CONF confService}
+     * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
      */
     var path = CONF.GENERAL.CONFIGURACION_SERVICE;
     return {

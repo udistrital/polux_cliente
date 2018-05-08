@@ -23,7 +23,7 @@ angular.module('academicaService', [])
          * @name path
          * @propertyOf academicaService.service:academicaRequest
          * @description
-         * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.confService:CONF confService}
+         * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
          */
         var path = CONF.GENERAL.ACADEMICA_SERVICE;
         return {
