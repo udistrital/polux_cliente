@@ -217,6 +217,8 @@ var text_es = {
         SIN_FECHAS_MODALIDAD_POSGRADO:"Actualmenten no hay fechas para los procesos de la modalidad de materias de posgrado asociadas al periodo académico.",
         SIN_CARRERAS_POSGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de POSGRADO",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
+        NO_EN_FECHAS_PUBLICACION_POSGRADO:"El proceso de publicación de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
+        NO_EN_FECHAS_APROBACION_POSGRADO:"El proceso de aprobación de solicitudes de materias de posgrado no se encuentra vigente, tenga en cuenta que las fechas de aprobación van desde {{inicio}} hasta {{fin}}.",
         CARGANDO_SOLICITUDES_PARA_FORMALIZAR: "Ocurrió un error al cargar las solicitudes para formalizar. Comuníquese con el proyecto curricular.",
         FUERA_PERIODO_FORMALIZACION: "Este periodo no corresponde al periodo de formalización de solicitudes",
         FORMALIZAR_SOLICITUD: "Error al formalizar la solicitud",
@@ -327,6 +329,7 @@ var text_es = {
     ESTUDIANTE_SIN_SOLICITUD : "El estudiante actualmente no ha realizado ninguna solicitud.",
     DIRIGIJASE_SOLICITUD :"Si desea realizar una nueva solicitud dirijase al modulo",
     COORDINADOR_SIN_SOLICITUD : "Señor coordinador actualmente usted no tiene solicitudes por revisar.",
+    COORDINADOR_SIN_SOLICITUD_EN_CARRERA : "Señor coordinador actualmente usted no tiene solicitudes por revisar en esta carrera, por favor seleccione otra.",    
     DETALLES_SOLICITUD: "Detalles de la solicitud",
     INFORMACION_SOLICITUD: "Información de la solicitud",
     INFORMACION_ESTUDIANTE: "Información del estudiante",
@@ -393,7 +396,7 @@ var text_es = {
     JUSTIFICACION_RESPUESTA:"Justificación del estado",
     AUTORIZACION_DERECHOS_AUTOR:"Yo <u> {{nombre}}</u> con código <u>{{codigo}}</u>, manifiesto mi voluntad de ceder los derechos de autor del trabajo de grado <u> {{tg}} </u> a los demás estudiantes relacionados.",
     SELECCIONE_ACTA:"Seleccione el acta mediante la cual se da respuesta a la solicitud",
-    SOLICITUD_CON_RESPUESTA:"La solicitud ya fue atendida",
+    SOLICITUD_CON_RESPUESTA:"La solicitud ya fue atendida.",
     SOLICITUD_SIN_RESPUESTA:"La solicitud no ha sido atendida",
     RESULTADO_SOLICITUD:"Resultado de la solicitud",
     SOLICITUD_RECHAZADA:"La solicitud fue rechazada",
@@ -488,6 +491,7 @@ var text_es = {
     },
     NO_OPCIONES_DISPONIBLES:"No hay opciones disponiles",
     ACCESO_NEGADO:"Acceso negado",
+    ACCION_NO_DISPONIBLE:"Acción no disponible",
 };
 var text_en = {
     TITULO: "GENERATOR-OAS",
@@ -688,6 +692,7 @@ var text_en = {
         SIN_FECHAS_MODALIDAD_POSGRADO:"Currently there are no dates for the processes of the postgraduate subjects modality associated with the academic period.",
         SIN_CARRERAS_POSGRADO:"Mr. Coordinator, you have not assigned careers with a POSTGRADUATE level.",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"The process of registration of subjects to course the postgraduate subjects modality is not in force.",
+        NO_EN_FECHAS_PUBLICACION_POSGRADO:"The process of publication of subjects to course the postgraduate subjects modality is not in force.",
         CARGANDO_SOLICITUDES_PARA_FORMALIZAR: "There was an error loading the requests to formalize. Communicate with the curricular project.",
         FUERA_PERIODO_FORMALIZACION: "This period does not correspond to the period of requests formalization",
         SIN_INFO_SOLICITUDES_APROBADAS: "Insufficient information to list approved requests to the postgraduate",
@@ -798,6 +803,7 @@ var text_en = {
     ESTUDIANTE_SIN_SOLICITUD : "The student has not made any request.",
     DIRIGIJASE_SOLICITUD : "If you want to make a new request go to the module",
     COORDINADOR_SIN_SOLICITUD : "Dear Coordinator, you do not currently have any requests to review.",
+    COORDINADOR_SIN_SOLICITUD_EN_CARRERA : "Mr. Coordinator currently you have no requests to review in this race, please select another.",    
     DETALLES_SOLICITUD: "Request's details",
     INFORMACION_SOLICITUD: "Request's information",
     INFORMACION_ESTUDIANTE: "Student's information",
@@ -865,7 +871,7 @@ var text_en = {
     JUSTIFICACION_RESPUESTA:"Justification of the state.",
     AUTORIZACION_DERECHOS_AUTOR:"I <u> {{nombre}}</u> with code <u>{{codigo}}</u>, I express my desire to assign the copyright of the work of degree to the other related students.",
     SELECCIONE_ACTA:"Select the minutes by which the request is answered",
-    SOLICITUD_CON_RESPUESTA:"The request has already been answered",
+    SOLICITUD_CON_RESPUESTA:"The request has already been answered.",
     SOLICITUD_SIN_RESPUESTA:"The request has not been answered",
     RESULTADO_SOLICITUD:"Result of the request",
     SOLICITUD_RECHAZADA:"The request was rejected",
@@ -960,6 +966,7 @@ var text_en = {
     },
     NO_OPCIONES_DISPONIBLES:"No options available",
     ACCESO_NEGADO:"Access denied",
+    ACCION_NO_DISPONIBLE:"Action not available",
 };
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {

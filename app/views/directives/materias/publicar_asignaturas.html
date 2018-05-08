@@ -6,12 +6,18 @@
 
     <div class="panel-body">
       <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
-      <div ng-if="load!==true">
-        <div class="row">
+      <div class="panel-body alert alert-danger" ng-if="!load && d_publicarAsignaturas.errorCargar">
+        {{d_publicarAsignaturas.mensajeError}}
+      </div>
+      <div ng-if="!load && !d_publicarAsignaturas.errorCargar">
+        <div class="row panel-body">
           <div class="mi-grid" id="mi-grid" ui-grid="d_publicarAsignaturas.gridOptions"></div><br>
         </div>
-
-        <div class="form-group">
+        <div class="panel-body alert alert-danger" ng-if="!d_publicarAsignaturas.mostrarBotones">
+          {{'ERROR.NO_EN_FECHAS_PUBLICACION_POSGRADO' | translate}}
+        </div>
+        
+        <div class="form-group" ng-if="d_publicarAsignaturas.mostrarBotones">
           <div class="row">
             <center>
               <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
