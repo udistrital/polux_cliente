@@ -77,7 +77,7 @@
           </div>
           <div class="row">
             <label class="col-sm-4 control-label"> {{'RENDIMIENTO' | translate}}:  </label>
-            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.estudianteAsociado.rendimiento}} </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.informacionAcademica.rendimiento}} </label>
           </div>
         </div>
       </div>
@@ -86,32 +86,29 @@
           {{'INFORMACION_SOLICITUD' | translate}}
         </div>
         <div class="panel-body">
-          <loading tam="4" load="cargandoTransaccionRegistro" message="mensajeCargandoTransaccionRegistro"></loading>
-          <div ng-if="!cargandoTransaccionRegistro">
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'SOLICITUD' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.SolicitudTrabajoGrado.Id}} </label>
-            </div>
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'FECHA' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.fechaSolicitud}} </label>
-            </div>
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'ESTADO_SOLICITUD' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.nombreEstado}} </label>
-            </div>
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'CODIGO_POSGRADO' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.codigoPosgrado}} </label>
-            </div>
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'POSGRADO' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.nombrePosgrado}} </label>
-            </div>
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'CODIGO_PENSUM_POSGRADO' | translate}}: </label>
-              <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.pensumPosgrado}} </label>
-            </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'SOLICITUD' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.SolicitudTrabajoGrado.Id}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'FECHA' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.fechaSolicitud}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'ESTADO_SOLICITUD' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.nombreEstado}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CODIGO_POSGRADO' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.codigoPosgrado}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'POSGRADO' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.nombrePosgrado}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CODIGO_PENSUM_POSGRADO' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{listarAprobados.solicitudSeleccionada.pensumPosgrado}} </label>
           </div>
         </div>
       </div>
@@ -119,7 +116,8 @@
         <div class="panel-heading">
           {{'ESP_ACADEMICOS' | translate}}
         </div>
-        <div class="panel-body">
+        <loading tam="4" load="cargandoTransaccionRegistro" message="mensajeCargandoTransaccionRegistro"></loading>
+        <div class="panel-body" ng-if="!cargandoTransaccionRegistro">
           <div class="panel col-md-12">
             <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.cuadriculaEspaciosAcademicosSolicitados" style="height: {{(listarAprobados.cuadriculaEspaciosAcademicosSolicitados.data.length * 35) + 40}}px"></div>
           </div>

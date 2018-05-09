@@ -13,7 +13,7 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //El Id del usuario en sesión
-      token_service.token.documento = "20131020039";
+      token_service.token.documento = "20141020036";
       $scope.userId = token_service.token.documento;
 
       // En el inicio de la página, se están cargando las solicitudes
@@ -203,8 +203,8 @@ angular.module('poluxClienteApp')
                 }
               }
             });
-            // Si se recorre toda la colección y no se resuelve, se rechaza la comprobación
-            deferred.reject(false);
+            // Si se recorre toda la colección y no se resuelve, se evita la autorización
+            deferred.resolve(false);
           })
           .catch(function(excepcionSesionesDeFormalizacion) {
             // En caso de no lograr obtener las sesiones de formalización, se rechaza la excepción generada
@@ -221,23 +221,22 @@ angular.module('poluxClienteApp')
       ctrl.autorizarFormalizacionDeSolicitudes = function() {
         ctrl.comprobarPeriodoFormalizacion()
           .then(function(autorizacionPeriodoFormalizacion) {
-            ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
-          })
-          .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
-            // Se apaga el mensaje de carga
-            $scope.cargandoSolicitudes = false;
-            // Se habilita el mensaje de error
-            $scope.errorCargandoSolicitudes = true;
-            // Se estudia si el valor de la autorización es un comprobante
-            if (excepcionAutorizacionPeriodoFormalizacion === false) {
+            if (autorizacionPeriodoFormalizacion) {
+              ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
+            } else {
+              // Se habilita el mensaje de error
+              $scope.errorCargandoSolicitudes = true;
               // Se define que el periodo no corresponde a la formalización de solicitudes
               // Y se establece el mensaje correspondiente
               $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.NO_PERIODO_FORMALIZACION");
               $scope.periodoDeFormalizacionNoCorrespondiente = true;
-            } else {
-              // En caso contrario, se establece el mensaje con la excepción generada
-              $scope.mensajeErrorCargandoSolicitudes = excepcionAutorizacionPeriodoFormalizacion;
             }
+          })
+          .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
+            // Se apaga el mensaje de carga
+            $scope.cargandoSolicitudes = false;
+            // Se establece el mensaje con la excepción generada
+            $scope.mensajeErrorCargandoSolicitudes = excepcionAutorizacionPeriodoFormalizacion;
           });
       }
 
