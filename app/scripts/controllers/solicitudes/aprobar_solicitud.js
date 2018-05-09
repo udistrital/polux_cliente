@@ -21,6 +21,17 @@
  * @requires $location
  * @requires token_service
  * @requires sesionesRequest
+ * @property {object} carrerasCoordinador Objeto que contiene las carreras asociadas al coordinador que aprueba la solicitud
+ * @property {object} respuestaActual Objeto que contiene la respuesta actual de la solicitud, que se encuentra en estado radicada.
+ * @property {boolean} noAprobar booleano que permite saber si se puede permitir o no aprobar a solicitud
+ * @property {object} fechaInicio Contiene la fecha de inicio del proceso de aprobación de solicitudes de materias de posgrado
+ * @property {object} fechaFin Contiene la fecha de fin del proceso de aprobación de solicitudes de materias de posgrado
+ * @property {object} detallesSolicitud Contiene los detalles asociados a la solicitud
+ * @property {object} dataSolicitud Contiene los datos principales de la solicitud
+ * @property {object} docentes Contiene los docientes que pueden ser elegidos como evaluadores o directores de trabajo de grado que no estan asociados al trabajo de grado actual
+ * @property {object} docentesVinculadosTg Contiene los docenes vinculados al trabajo de grado
+ * @property {object} dataRespuesta Contiene la data de la respuesta que se va a registrar cuando se apruebe o rechace la solicitud
+ * @property {object} documentos Contiene las actas subidas a las carreras asocuadas al coordinador
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location,token_service,sesionesRequest) {
