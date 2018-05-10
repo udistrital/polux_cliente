@@ -24,7 +24,21 @@
  * @requires $q
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/poluxMidService.service:poluxMidRequest
- * 
+ * @property {object} modalidades Modalidades disponibles para la elección del estudiante.
+ * @property {object} estudiante Datos del estudiante que esta realizando la solicitud.
+ * @property {object} periodoAnterior Periodo academico anterior.
+ * @property {object} periodoActual Periodo academico actual.
+ * @property {object} periodoSiguiente Periodo academico siguiente.
+ * @property {object} solicitudes Solicitudes realizadas por el estudiante anteriormente
+ * @property {object} detalles Detalles cargados para mostrar en el formulario que se asocian con la modalidad y el tipo de solicitud escogidas por el solicitante.
+ * @property {object} areas Areas del conocimiento.
+ * @property {object} espaciosElegidos Objeto que contiene los espacios elegidos por el estudiante en la solicitud inicial.
+ * @property {boolean} detallesCargados Flag que indica que los detalles terminaron de cargarse..
+ * @property {boolean} siPuede Flag que permite identificar si se puede realizar la solicitud (el estudiante cumple con los requisitos y se encuentra en las fechas para hacerlo)
+ * @property {boolean} restringirModalidades Flag que permite identificar si se deben restringir las demas modalidades debido a que el estudiante ya realizo una solicitud inicial de materias de posgrado.
+ * @property {object} estudiantesTg Estudiantes asociados al tranajo de grado.
+ * @property {object} estudiantes Estudiantes que se agregan a la solicitud inicial.
+ * @property {object} Trabajo Datos del trabajo de grado que cursa el estudiante que esta realizando la solicitud.
  */
 angular.module('poluxClienteApp')
 .controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location,token_service) {
