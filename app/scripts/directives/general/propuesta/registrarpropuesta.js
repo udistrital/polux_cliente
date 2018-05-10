@@ -44,16 +44,7 @@ angular.module('poluxClienteApp')
                     console.log("funciona llamado de directiva hija a directiva padre");
                     console.log(" " + doc.enlace);
                 };
-                /**
-                 * @ngdoc method
-                 * @name asignarEstudiante
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * Mediante la ejecución del ngChange en la vista se guardan los parametros
-                 *
-                 * @param {string} Codigo de estudiante
-                 *
-                 */
+
                 self.asignarEstudiante = function(codEstudiante) {
                     console.log(codEstudiante);
                     codEstudiante = parseInt(codEstudiante);
@@ -61,16 +52,7 @@ angular.module('poluxClienteApp')
                         query: "Estudiante:" + codEstudiante
                     });
                 };
-                /**
-                 * @ngdoc method
-                 * @name asignarModalidad
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * Mediante la ejecución del ngChange en la vista se guardan los parametros
-                 *
-                 * @param {string} Codigo de modalidad
-                 *
-                 */
+
                 self.asignarModalidad = function(codigo) {
                     try {
                         console.log("Codigo Estudiante: " + self.estudianteSeleccionado);
@@ -91,15 +73,6 @@ angular.module('poluxClienteApp')
 
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name verificarRequisitos
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * Mediante el codigo del estudiante verifica los requisitos minimos
-                 * @param {string} Codigo de estudiante
-                 *
-                 */
                 self.verificarRequisitos = function(codigo, codigoModalidad) {
                     codigo = "" + codigo;
                     academicaRequest.periodoAnterior().then(function(periodoAnterior) {
@@ -142,15 +115,6 @@ angular.module('poluxClienteApp')
                         });
                     });
                 };
-                /**
-                 * @ngdoc method
-                 * @name estadoBoton
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * Valida un estado cuando se ejecuta un evento
-                 * @param {string} Descripcion del boton
-                 * @returns {boolean} Estado de verificación del componente
-                 */
 
                 self.estadoboton = function(estadoboton) {
                     self.menucreacion = !self.menucreacion;
@@ -163,14 +127,6 @@ angular.module('poluxClienteApp')
                     }
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name guardar
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * ejecuta las funciones principales para guardar el trabajo de grado
-                 * @param {array|string|string} objeto del documento, codigo del estudiante, codigo de Modalidad
-                 */
                 self.guardar = function(doc, estudiante, idModalidad) {
                     var objModalidad;
                     poluxRequest.get("modalidad", $.param({
@@ -217,15 +173,6 @@ angular.module('poluxClienteApp')
 
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name preguardarTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda un objeto para el trabajo de grado y lo mantiene en memoria
-                 * @param {string|int} titulo del trabajo de grado,codigo de la Modalidad seleccionada
-                 */
-
                 self.preguardarTG = function(title, mod) {
                     self.registro_TG.push({
                         "Distincion": "ninguno", //modificar base de datos para agregar check de "ninguno"
@@ -236,15 +183,6 @@ angular.module('poluxClienteApp')
                         "Titulo": title
                     });
                 };
-
-                /**
-                 * @ngdoc method
-                 * @name guardarTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * crea todos los registros asociados al trabajo de grado y la propuesta
-                 * @param {string|int} titulo del trabajo de grado,codigo de la Modalidad seleccionada
-                 */
 
                 self.guardarTG = function(data, estudiante, doc) {
                     var idEstudianteTG;
@@ -270,15 +208,6 @@ angular.module('poluxClienteApp')
                     });
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name preguardarDocumento
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda un objeto para el documento y lo mantiene en memoria
-                 * @param {string|string|string} titulo del trabajo de grado, resumen, enlace del archivo
-                 * @returns {array} Objeto del documento
-                 */
                 self.preguardarDocumento = function(titulo, resumen, enlace) {
                     self.docregistrado.push({
                         "Titulo": titulo,
@@ -294,15 +223,6 @@ angular.module('poluxClienteApp')
                     return self.docregistrado;
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name preguardarAreasTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda un objeto para la entidad areasTG y lo mantiene en memoria
-                 * @param {int} identificador del trabajo de grado
-                 * @returns {array} Objeto la entidad areasTG
-                 */
                 self.preguardarAreasTG = function(dataIdTG) {
 
                     console.log("Nueva area de conocimiento" + self.nuevaArea);
@@ -320,15 +240,6 @@ angular.module('poluxClienteApp')
                     return self.areas_TG;
 
                 };
-                /**
-                 * @ngdoc method
-                 * @name preguardarAreasTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda un objeto para la entidad areasTG y lo mantiene en memoria
-                 * @param {int} identificador del trabajo de grado
-                 * @returns {array} Objeto la entidad areasTG
-                 */
 
                 self.preguardarEstudianteTG = function(idTG, estudiante) {
                     estudiante = parseInt(estudiante);
@@ -343,30 +254,12 @@ angular.module('poluxClienteApp')
                     return self.estudiante_TG;
                 };
 
-                /**
-                 * @ngdoc method
-                 * @name guardarestudianteTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda el registro de la relación entre estudiante y trabajo de grado
-                 * @param {array} estructura que contiene el dato a insertar
-                 * @returns {int} identificador del registro de estudiante_tg
-                 */
                 self.guardarestudianteTG = function(data) {
                     poluxRequest.post("estudiante_tg", data).then(function(response) {
                         console.log("respuesta del post estudiante_tg: " + response.data.Id);
                         return response.data.Id;
                     });
                 };
-
-                /**
-                 * @ngdoc method
-                 * @name guardarDocumentoTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda el registro de la relación entre documento y trabajo de grado
-                 * @param {int|int} identificador del documento y del trabajo de grado
-                 */
 
                 self.guardarDocumentoTG = function(idDocumento, IdTrabajoGrado) {
                     self.docTG.push({
@@ -389,16 +282,7 @@ angular.module('poluxClienteApp')
                         });
                     });
                 };
-
-                /**
-                 * @ngdoc method
-                 * @name asignarAreasTG
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * guarda el registro de la relación entre areas de conocimiento y trabajo de grado
-                 * @param {array} objeto de areas_trabajo_grado
-                 */
-
+                
                 self.asignarAreasTG = function(parametro) {
                     angular.forEach(parametro, function(valor) {
                         poluxRequest.post("areas_trabajo_grado", valor).then(function(response) {

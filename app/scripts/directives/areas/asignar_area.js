@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:asignarArea
+ * @name poluxClienteApp.directive:asignarAreas
  * @description
  * # asignarArea
  */

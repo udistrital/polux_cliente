@@ -23,7 +23,6 @@
  * @property {object} gridOptions Opciones del ui-grid que contiene las solicitudes.
  * @property {object} solicitudes Solicitudes que se muuestran en el ui-grid.
  * @property {object} detallesSolicitud  Detalles especificos de una solicitud seleccionada en el ui-grid.
-     
  */
 angular.module('poluxClienteApp')
 .controller('SolicitudesListarSolicitudesCtrl', function ($filter,$location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope,token_service) {
