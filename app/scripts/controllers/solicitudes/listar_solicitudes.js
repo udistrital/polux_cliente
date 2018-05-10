@@ -1,11 +1,29 @@
 'use strict';
 
 /**
- * @ngdoc function
+ * @ngdoc controller
  * @name poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
  * @description
  * # SolicitudesListarSolicitudesCtrl
  * Controller of the poluxClienteApp
+ * Controlador que permite listar las solicitudes, en caso del estudiante todas las que haya realizado, en caso de un coordinador de pregrado las solicitudes radicadas y aprobadas
+ * @requires $filter
+ * @requires $location
+ * @requires $q 
+ * @requires $scope
+ * @requires $window
+ * @requires services/poluxClienteApp.service:nuxeoService
+ * @requires decorators/poluxClienteApp.decorator:TextTranslate
+ * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxService.service:poluxRequest
+ * @requires $scope
+ * @requires services/poluxClienteApp.service:tokenService 
+ * @property {number} userId Documento del usuario que ingresa al módulo.
+ * @property {object} userRole Listado de roles que tiene el usuairo que ingresa al módulo.
+ * @property {object} gridOptions Opciones del ui-grid que contiene las solicitudes.
+ * @property {object} solicitudes Solicitudes que se muuestran en el ui-grid.
+ * @property {object} detallesSolicitud  Detalles especificos de una solicitud seleccionada en el ui-grid.
+     
  */
 angular.module('poluxClienteApp')
 .controller('SolicitudesListarSolicitudesCtrl', function ($filter,$location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope,token_service) {
@@ -27,7 +45,18 @@ angular.module('poluxClienteApp')
       //$scope.load = true;
   //});
 
-
+  /**
+     * @ngdoc method
+     * @name mostrarResultado
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @description 
+     * Función que muestra el resultado de la solicitud, esta función muestra lo sucedido con la solicitud cuando fue aprobada o rechazada, y realiza una pequeña descripción de lo que 
+     * sucedio, por ejemplo en el casos de cambio de materias muestra el nombre de la materia que se cancelo y el nombre de la que se registro, en el caso de las iniciales muestra siel estudiante
+     * puede o no cursar la modalidad solicitada, etc.
+     * @param {object} solicitud Solicitud que se consulta
+     * @param {object} detalles Detalles asociados a la solicitud que se esta consultando
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el string resultado
+     */
   ctrl.mostrarResultado = function(solicitud,detalles){
     var defer = $q.defer();
     var promise = defer.promise;
@@ -245,6 +274,18 @@ angular.module('poluxClienteApp')
     return promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name actualizarSolicitudes
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @description 
+     * Esta función primero verifica el rol del usuario para luego consultar las solicitudes y sus datos (detalles, estudiantes, respuesta) en el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}. Si el rol es COORDINADOR_PREGRAO se consultan 
+     * todas las carreras asociadas a este del servicio de {@link services/academicaService.service:academicaRequest academicaRequest} y luego consulta las solicitudes de los estudiantes que pertenececn a estas carreras.
+     * Si el rol es Estudiante consulta las solicitudes asociadas al mismo en la tabla usuario_solicitud.     * 
+     * @param {string} identificador Documento del usuario que consultará las solicitudes.
+     * @param {object} lista_roles Lista de los roles que tiene el usuario que consulta las solicitudes.
+     * @returns {undefined} No retorna nigún valor. 
+     */
   ctrl.actualizarSolicitudes = function (identificador, lista_roles){
       $scope.load = true;
       var promiseArr = [];
@@ -463,9 +504,27 @@ angular.module('poluxClienteApp')
 
   ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
 
+  /**
+     * @ngdoc method
+     * @name getDocumento
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @returns {undefined} No retorna ningún valor
+     * @description 
+     * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
+     */
   ctrl.getDocumento = function(docid){
       nuxeo.header('X-NXDocumentProperties', '*');
 
+      /**
+     * @ngdoc method
+     * @name obtenerDoc
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+     * @description 
+     * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
+     */
       ctrl.obtenerDoc = function () {
         var defer = $q.defer();
 
@@ -483,6 +542,15 @@ angular.module('poluxClienteApp')
         return defer.promise;
       };
 
+      /**
+     * @ngdoc method
+     * @name obtenerFetch
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+     * @description 
+     * Obtiene el blob de un documento
+     */
       ctrl.obtenerFetch = function (doc) {
         var defer = $q.defer();
 
@@ -527,6 +595,15 @@ angular.module('poluxClienteApp')
 
   }
 
+  /**
+     * @ngdoc method
+     * @name filtrarSolicitudes
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @description 
+     * Permite filtrar las solicitudes para cada una de las carreras del coordinador
+     * @param {number} carrera_seleccionada Carrera seleccionada por el coordinador en el filtro
+     * @returns {undefined} No retorna ningún valor
+     */
   ctrl.filtrarSolicitudes = function(carrera_seleccionada){
       var solicitudesTemporales = [];
       angular.forEach(ctrl.solicitudes, function(solicitud){
@@ -537,6 +614,16 @@ angular.module('poluxClienteApp')
       ctrl.gridOptions.data = solicitudesTemporales;
   }
 
+  /**
+     * @ngdoc method
+     * @name obtenerEstudiantes
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @description 
+     * Consulta los estudiantes asociados a la solicitud
+     * @param {object} solicitud Solicitud que se quiere consultar
+     * @param {object} usuario Usuario que se consultara
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con los estudiantes que pertenecen a la solicitud
+     */
   ctrl.obtenerEstudiantes = function(solicitud, usuario){
     var defer = $q.defer();
     if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id===11){//sols de distincion
@@ -568,6 +655,17 @@ angular.module('poluxClienteApp')
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name cargarDetalles
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @description 
+     * Función que se ejecuta cuando un usario desea ver los detalles especificos de una solicitud, se consulta los documentos con los que se aprobó o rechazó la solicitud,
+     * y los detalles asociados a la solicitud del servicio {@link services/poluxService.service:poluxRequest poluxRequest}
+     * {@link services/}
+     * @param {object} fila Fila seleccionada en el uigrid que contiene los detalles de la solicitud que se quiere consultar
+     * @returns {undefined} No retorna ningún valor
+     */
   ctrl.cargarDetalles = function(fila){
       var solicitud = fila.entity.Id;
       var parametrosSolicitud = $.param({
@@ -714,6 +812,16 @@ angular.module('poluxClienteApp')
       });
   }
 
+  /**
+     * @ngdoc method
+     * @name loadrow
+     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+     * @description 
+     * Ejecuta las funciones especificas de los botones seleccionados en el ui-grid
+     * @param {object} row Fila seleccionada en el uigrid que contiene los detalles de la solicitud que se quiere consultar
+     * @param {string} operacion Operación que se debe ejecutar cuando se selecciona el botón
+     * @returns {undefined} No retorna ningún valor
+     */
   $scope.loadrow = function(row, operacion) {
             switch (operacion) {
                 case "ver":
@@ -728,7 +836,4 @@ angular.module('poluxClienteApp')
                     break;
             }
         };
-
-
-
 });
