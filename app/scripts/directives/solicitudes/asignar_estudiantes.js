@@ -50,7 +50,6 @@ angular.module('poluxClienteApp')
           academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
               academicaRequest.get("datos_estudiante",[ctrl.codigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
                 if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-                  console.log(ctrl.estudiante);
                   ctrl.estudiante = {
                     "Codigo": ctrl.codigoEstudiante,
                     "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
@@ -64,7 +63,6 @@ angular.module('poluxClienteApp')
                     "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
                     "Carrera": response2.data.estudianteCollection.datosEstudiante[0].carrera
                   };
-                    console.log(ctrl.estudiante);
 
                     poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
 
@@ -105,6 +103,7 @@ angular.module('poluxClienteApp')
                                             ctrl.loading = false;
                                           }else{
                                             ctrl.estudianteConSolicitud = true;
+                                            ctrl.loading = false;
                                           }
                                         })
                                         .catch(function(error){
