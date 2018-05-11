@@ -2,9 +2,9 @@
 
 /**
  * @ngdoc service
- * @name poluxClienteApp.academicaService
+ * @name poluxClienteApp.cidcService
  * @description
- * # academicaService
+ * # cidcService
  * Factory in the poluxClienteApp.
  */
 angular.module('cidcService', [])

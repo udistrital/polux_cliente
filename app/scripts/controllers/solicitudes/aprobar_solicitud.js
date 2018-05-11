@@ -2,14 +2,13 @@
 
 /**
  * @ngdoc function
-
  * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
  * @description
  * # SolicitudesAprobarSolicitudCtrl
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location,token_service) {
+  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location,token_service,sesionesRequest) {
     var ctrl = this;
 
     ctrl.respuestaSolicitud="";
@@ -52,8 +51,20 @@ angular.module('poluxClienteApp')
     //$scope.userId=19451396;
     token_service.token.documento = "79647592" //Se sobreescribe el token
     $scope.userId = parseInt(token_service.token.documento);
-    
+   
     ctrl.carrerasCoordinador = [];
+    /**
+     * @ngdoc method
+     * @name poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl#getCarrerasCoordinador
+     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+     * @param {undefined} undefined no recibe ningún parametro
+     * @requires $q 
+     * @requires $translate
+     * @returns {Promise} Retorna promesa que dice cuando se cuando se cumple la petición
+     * @description 
+     * Consulta las carreras del coordinado
+     * se consueme el servicio {@link academicaService.service:academicaRequest academicaRequest}
+     */
     //obtener las carreras asociadas al coordinador
     ctrl.getCarrerasCoordinador = function(){
       var defer = $q.defer();
@@ -82,6 +93,10 @@ angular.module('poluxClienteApp')
       poluxRequest.get("respuesta_solicitud",parametros).then(function(responseRespuesta){
           if(responseRespuesta.data != null){
             ctrl.respuestaActual = responseRespuesta.data[0];
+            if(responseRespuesta.data[0].EstadoSolicitud.Id!=1){
+              ctrl.mensajeNoAprobar += ' '+$translate.instant('SOLICITUD_CON_RESPUESTA');
+              ctrl.noAprobar = true;
+            }
             defer.resolve();
           }else{
             ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_RESPUESTA_SOLICITUD");
@@ -95,6 +110,62 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+    ctrl.getFechasAprobacion = function(idModalidadTipoSolicitud){
+      var defer = $q.defer();
+      //si la solicitud es de tipo inicial en la modalidad de materias de posgrado
+      if (idModalidadTipoSolicitud === 13) {
+        academicaRequest.get("periodo_academico", "X")
+        .then(function(responsePeriodo) {
+          if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
+            ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+            var parametrosSesiones = $.param({
+              query: "SesionHijo.TipoSesion.Id:8,SesionPadre.periodo:" + ctrl.periodoSiguiente.anio + ctrl.periodoSiguiente.periodo,
+              limit: 1
+            });
+            sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+              .then(function(responseFechas) {
+                if (responseFechas.data !== null) {
+                  ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+                  var sesion = responseFechas.data[0];
+                  var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
+                  fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
+                  ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                  var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
+                  fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
+                  ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                  ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
+                  if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
+                    console.log();
+                    defer.resolve();
+                  } else {
+                    ctrl.mensajeNoAprobar += ' '+$translate.instant('ERROR.NO_EN_FECHAS_APROBACION_POSGRADO', {inicio: ctrl.fechaInicio, fin: ctrl.fechaFin});
+                    ctrl.noAprobar = true;
+                    defer.resolve();
+                  }
+                } else {
+                  ctrl.mensajeNoAprobar += ' '+$translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                  ctrl.noAprobar = true;
+                  defer.resolve();
+                }
+              })
+              .catch(function() {
+                ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+                defer.reject("no se pudo cargar fechas");
+              });
+          } else {
+            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.SIN_PERIODO");
+            defer.reject("sin periodo");
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_PERIODO");
+          defer.reject(error);
+        });
+      } else {
+        defer.resolve();
+      }
+      return defer.promise;
+    }
 
     ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud){
       var defered = $q.defer();
@@ -308,6 +379,8 @@ angular.module('poluxClienteApp')
             query:"SolicitudTrabajoGrado.Id:"+ctrl.solicitud,
             limit:0
         });
+        ctrl.mensajeNoAprobar = $translate.instant('ERROR')+':';
+
         ctrl.dataSolicitud = responseSolicitud.data[0];
         var promises = [];
         promises.push(ctrl.getDetallesSolicitud(parametrosDetallesSolicitud));
@@ -315,6 +388,8 @@ angular.module('poluxClienteApp')
         promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id));
         promises.push(ctrl.getCarrerasCoordinador());
         promises.push(ctrl.getRespuestaSolicitud());
+        //obtener fechas de aprobación para la solicitud
+        promises.push(ctrl.getFechasAprobacion(responseSolicitud.data[0].ModalidadTipoSolicitud.Id));
         $q.all(promises).then(function(){
           if(ctrl.dataSolicitud.TrabajoGrado !== null){
             var parametrosVinculacion = $.param({

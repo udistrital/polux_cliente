@@ -12,6 +12,9 @@ module.exports = function(grunt) {
     //sonarqube
     grunt.loadNpmTasks('grunt-sonar-runner');
 
+    //ngdocs
+    grunt.loadNpmTasks('grunt-ngdocs');
+
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
 
@@ -482,6 +485,25 @@ ngtemplates: {
                     }
                 }
             }
+        },
+        //ngdocs
+        ngdocs: {
+            options: {
+                dest: 'docs',
+                title: "Documentación Sistema de Trabajos de Grado Pólux",
+            },
+            services:{
+                src: ['app/scripts/services/*.js'],
+                title: 'Services'
+            },
+            controllers: {
+                src: ['app/scripts/controllers/**/*.js'],
+                title: 'Controllers'
+            },
+            api: {
+                src: ['app/scripts/*.js'],
+                title: 'Polux'
+            },
         }
     });
 
