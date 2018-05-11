@@ -64,6 +64,16 @@ angular.module('poluxClienteApp')
           //showGridFooter: true
         }; 
 
+        /**
+         * @ngdoc method
+         * @name watchPensum
+         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+         * @param {undefined} undefined No recibe parametros
+         * @returns {undefined} No retorna ningún valor
+         * @description 
+         * Cada vez que el valor de pensum cambia se consultan las asignaturas elegibles
+         * llamando la función buscarAsignaturasElegibles, los nombres de las materias se consultan de {@link services/academicaService.service:academicaRequest academicaRequest}.
+         */ 
         $scope.$watch("pensum", function () {
           $scope.load = true;
           var promiseArr = [];
@@ -120,7 +130,15 @@ angular.module('poluxClienteApp')
           }
         });
 
-
+         /**
+         * @ngdoc method
+         * @name cambiar
+         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+         * @param {undefined} undefined No recibe parametros
+         * @returns {undefined} No retorna ningún valor
+         * @description 
+         * Permite habilitar los botones de configuracion y guardar configuración.
+         */ 
         ctrl.cambiar = function () {
           if (ctrl.habilitar == true) {
             ctrl.habilitar = false;
@@ -131,7 +149,17 @@ angular.module('poluxClienteApp')
           }
         };
 
-        //buscar fechas de publicación de espacios
+        /**
+         * @ngdoc method
+         * @name verificarFechas
+         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+         * @param {number} anio Año siguiente
+         * @param {number} periodo Periodo siguiente
+         * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto
+         * @description 
+         * Permite consultar las fechas del proceso de publicación de asignaturas y validar si las fechas estan dentro del rango permitido
+         * se consultan las fechas del servicio {@link @requires services/poluxClienteApp.service:sesionesService sesionesService}.
+         */ 
         ctrl.verificarFechas = function(periodo,anio) {
           var deferFechas = $q.defer();
           ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
@@ -173,7 +201,19 @@ angular.module('poluxClienteApp')
           return deferFechas.promise;
         }
 
-        //buscar si hay registros en asignaturas_elegibles
+        /**
+         * @ngdoc method
+         * @name buscarAsignaturasElegibles
+         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+         * @param {number} anio Año siguiente
+         * @param {number} periodo Periodo siguiente
+         * @param {number} carrera Carrera seleccionada por el coordinador
+         * @param {number} pensum Pensum elegio or el coordinador, correponde a la lista de pensums elegibles
+         * @param {number} asignatura Codigo de la asignatura elegible.
+         * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto
+         * @description 
+         * Consulta al servicio {@link services/poluxService.service:poluxRequest poluxRequest} para consultar si ya se seleccionaron alguans asignaturas como elegibles y mostrarlas para permitir hacer cambios.
+         */ 
         ctrl.buscarAsignaturasElegibles = function (anio, periodo, carrera, pensum, asignatura) {
           var defer = $q.defer();
           ctrl.anio = anio;
@@ -259,6 +299,17 @@ angular.module('poluxClienteApp')
           return defer.promise;
         };
 
+        /**
+         * @ngdoc method
+         * @name toggle
+         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+         * @param {object} item Asignatura que se agregará a la lista
+         * @param {object} list Lista de asignaturas
+         * @returns {undefined} No retorna ningún valor.
+         * @description 
+         * Agrega y elimina de la lista las materias seleccionadas por el cooridnador, también se encarga de controlar el número de creditos
+         * seleccionados.
+         */ 
         ctrl.toggle = function (item, list) {
           var idx = list.indexOf(item);
           if (idx > -1) {
@@ -286,6 +337,17 @@ angular.module('poluxClienteApp')
           }
         };
 
+        /**
+         * @ngdoc method
+         * @name add
+         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+         * @param {undefined} undefined No requiere parametros
+         * @returns {undefined} No retorna ningún valor.
+         * @description 
+         * Esta función consulta el número minimo de creditos a {@link ervices/poluxMidService.service:poluxMidRequest poluxMidRequest}
+         * y valida que el número de creditos elegidos no sea menor, si estos e cumple
+         * se crea la data para enviar y registrar las aginaturas elegibles en {@link services/poluxService.service:poluxRequest poluxRequest}.
+         */ 
         ctrl.add = function () {
           poluxMidRequest.get('creditos/ObtenerMinimo').then(function (response) {
             console.log(response.data);
