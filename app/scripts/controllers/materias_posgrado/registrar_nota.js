@@ -46,8 +46,6 @@ angular.module('poluxClienteApp')
       }, {
         name: 'nombreModalidad',
         displayName: $translate.instant("MODALIDAD"),
-        type: 'date',
-        cellFilter: 'date:\'yyyy-MM-dd\'',
         width: '15%'
       }, {
         name: 'codigoEstudiante',

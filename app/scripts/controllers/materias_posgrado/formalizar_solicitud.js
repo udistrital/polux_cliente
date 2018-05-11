@@ -57,7 +57,7 @@ angular.module('poluxClienteApp')
         name: 'formalizarSolicitud',
         displayName: $translate.instant("FORMALIZAR_SOLICITUD.ACCION"),
         width: '15%',
-        cellTemplate: '<btn-registro ' + 
+        cellTemplate: '<btn-registro ' +
           'ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8"' +
           'funcion="grid.appScope.cargarFila(row)"' +
           'grupobotones="grid.appScope.botonFormalizarSolicitud">' +
@@ -204,7 +204,7 @@ angular.module('poluxClienteApp')
               }
             });
             // Si se recorre toda la colección y no se resuelve, se evita la autorización
-            deferred.resolve(false);
+            deferred.reject($translate.instant("ERROR.NO_PERIODO_FORMALIZACION"));
           })
           .catch(function(excepcionSesionesDeFormalizacion) {
             // En caso de no lograr obtener las sesiones de formalización, se rechaza la excepción generada
@@ -221,45 +221,42 @@ angular.module('poluxClienteApp')
       ctrl.autorizarFormalizacionDeSolicitudes = function() {
         ctrl.comprobarPeriodoFormalizacion()
           .then(function(autorizacionPeriodoFormalizacion) {
-            if (autorizacionPeriodoFormalizacion) {
-              ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
-            } else {
-              // Se habilita el mensaje de error
-              $scope.errorCargandoSolicitudes = true;
-              // Se define que el periodo no corresponde a la formalización de solicitudes
-              // Y se establece el mensaje correspondiente
-              $scope.mensajeErrorCargandoSolicitudes = $translate.instant("ERROR.NO_PERIODO_FORMALIZACION");
-              $scope.periodoDeFormalizacionNoCorrespondiente = true;
-            }
+            ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
           })
           .catch(function(excepcionAutorizacionPeriodoFormalizacion) {
             // Se apaga el mensaje de carga
             $scope.cargandoSolicitudes = false;
+            // Se habilita el mensaje de error
+            $scope.errorCargandoSolicitudes = true;
             // Se establece el mensaje con la excepción generada
             $scope.mensajeErrorCargandoSolicitudes = excepcionAutorizacionPeriodoFormalizacion;
+            // Se define que el periodo no corresponde
+            if (ctrl.coleccionFechasFormalizacion.length > 0) {
+              $scope.periodoDeFormalizacionNoCorrespondiente = true;
+            }
           });
       }
 
       /**
        * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
-       * @param  {[Object]} detalleSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
+       * @param  {[Object]} detalleDeSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
        * @return {[JSON]}                  [El objeto con los datos del posgrado]
        */
-      ctrl.obtenerDatosDelPosgrado = function(detalleSolicitud) {
-        return JSON.parse(detalleSolicitud.Descripcion.split("-")[1]);
+      ctrl.obtenerDatosDelPosgrado = function(detalleDeSolicitud) {
+        return JSON.parse(detalleDeSolicitud.split("-")[1]);
       }
 
       /**
        * [Función que obtiene la información de los espacios académicos de acuerdo al detalle de la solicitud]
-       * @param  {[Array]} detalleSolicitud [Tiene la colección de registros en el formato que se almacenan en la base de datos]
+       * @param  {[Array]} detalleDeSolicitud [Tiene la colección de registros en el formato que se almacenan en la base de datos]
        * @return {[Array]}                  [Devuelve la colección de espacios académicos por nombre]
        */
-      ctrl.obtenerEspaciosAcademicos = function(detalleSolicitud) {
+      ctrl.obtenerEspaciosAcademicos = function(detalleDeSolicitud) {
         // Se prepara una colección que contendrá los espacios académicos
         var espaciosAcademicos = [];
         // Se define una variable que interprete el formato del detalle de la solicitud recibida
         // de modo que se obtenga la información de los espacios académicos (estos inician desde el índice 2)
-        var detallePosgrado = detalleSolicitud.Descripcion.split("-").slice(2);
+        var detallePosgrado = detalleDeSolicitud.split("-").slice(2);
         // Se recorre la información de los espacios académicos almacenados
         angular.forEach(detallePosgrado, function(espacioAcademico) {
           // Como el formato de almacenado guarda en cada posición el objeto de espacio académico,
@@ -313,8 +310,6 @@ angular.module('poluxClienteApp')
            * 9 - Formalizada exenta de pago
            * 10 - Formalizada no exenta de pago
            * 11 - No formalizada
-           * Tabla: respuesta_solicitud
-           * Tablas asociadas: estado_solicitud, solicitud_trabajo_grado
            */
           query: "Activo:True," +
             "EstadoSolicitud.Id.in:5|6|7|8|9|10|11," +
@@ -326,32 +321,24 @@ angular.module('poluxClienteApp')
 
       /**
        * [Función que según la solicitud, carga la información correspondiente a la respuesta de la misma]
-       * @param  {[Object]} solicitudAsociada [La solicitud para obtener el identificador y cargar la información correspondiente a la respuesta]
-       * @return {[Promise]}                   [La solicitud con la respuesta asociada dentro, o la excepción generada]
+       * @param  {[Object]} usuarioAsociado [El usuario asociado a la solicitud para obtener el identificador y cargar la información correspondiente a la respuesta]
+       * @return {[Promise]}                   [El mensaje en caso de no corresponder la información, o la excepción generada]
        */
-      ctrl.consultarRespuestaSolicitud = function(solicitudAsociada) {
+      ctrl.consultarRespuestaSolicitud = function(usuarioAsociado) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se traen los datos de la respuesta respecto a la solicitud asociada, por medio del Id.
-        poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(solicitudAsociada.Id))
-          .then(function(respuestaSolicitud) {
+        poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(usuarioAsociado.SolicitudTrabajoGrado.Id))
+          .then(function(respuestaDeSolicitud) {
             // Se comprueba que se trajeron datos no vacíos
-            if (respuestaSolicitud.data) {
+            if (respuestaDeSolicitud.data) {
+              // Se elimina la información redundante
+              delete respuestaDeSolicitud.data[0].SolicitudTrabajoGrado;
               // Se adquieren los datos de la respuesta de la solicitud dentro de la misma solicitud
-              solicitudAsociada.respuestaSolicitud = respuestaSolicitud.data[0];
-              // Se resuelve la solicitud con los datos de la respuesta cargados
-              deferred.resolve(solicitudAsociada);
-            } else {
-              // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
-              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
-                .map(function(solicitudParaFormalizarInconsistente) {
-                  return solicitudParaFormalizarInconsistente.Id;
-                })
-                .indexOf(solicitudAsociada.Id);
-              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
+              usuarioAsociado.respuestaDeSolicitud = respuestaDeSolicitud.data[0];
             }
+            // Se resuelve el mensaje correspondiente
+            deferred.resolve($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
           })
           .catch(function(excepcionRespuestaSolicitud) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
@@ -366,7 +353,7 @@ angular.module('poluxClienteApp')
        * @param  {[integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
        * @return {[param]}                         [Se retorna la sentencia para la consulta]
        */
-      ctrl.obtenerParametrosDetalleSolicitud = function(idSolicitudTrabajoGrado) {
+      ctrl.obtenerParametrosDetalleDeSolicitud = function(idSolicitudTrabajoGrado) {
         return $.param({
           /**
            * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado 
@@ -382,34 +369,24 @@ angular.module('poluxClienteApp')
 
       /**
        * [Función que según la solicitud, carga la información correspondiente al detalle de la misma]
-       * @param  {[Object]} solicitudAsociada [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
+       * @param  {[Object]} usuarioAsociado [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
        * @return {[Promise]}                   [La solicitud con el detalle asociado dentro, o la excepción generada]
        */
-      ctrl.consultarDetalleSolicitud = function(solicitudAsociada) {
+      ctrl.consultarDetalleSolicitud = function(usuarioAsociado) {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se traen los datos del detalle respecto a la solicitud asociada, por medio del Id.
-        poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitud(solicitudAsociada.Id))
-          .then(function(detalleSolicitud) {
+        poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleDeSolicitud(usuarioAsociado.SolicitudTrabajoGrado.Id))
+          .then(function(detalleDeSolicitud) {
             // Se comprueba que se trajeron datos no vacíos
-            if (detalleSolicitud.data) {
+            if (detalleDeSolicitud.data) {
               // Se adquieren los datos del detalle de la solicitud dentro de la misma solicitud
-              solicitudAsociada.detalleSolicitud = detalleSolicitud.data[0];
-              // Se resuelve la solicitud con los datos de la respuesta cargados
-              deferred.resolve(solicitudAsociada);
-            } else {
-              // Se quita la asociación de la solicitud con nula información de la colección de solicitudes
-              var itemInconsistente = ctrl.coleccionSolicitudesParaFormalizar
-                .map(function(solicitudParaFormalizarInconsistente) {
-                  return solicitudParaFormalizarInconsistente.Id;
-                })
-                .indexOf(solicitudAsociada.Id);
-              ctrl.coleccionSolicitudesParaFormalizar.splice(itemInconsistente, 1);
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
+              usuarioAsociado.detalleDeSolicitud = detalleDeSolicitud.data[0].Descripcion;
             }
+            // Se resuelve el mensaje correspondiente
+            deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
           })
-          .catch(function(excepcionDetalleSolicitud) {
+          .catch(function(excepcionDetalleDeSolicitud) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
             deferred.reject($translate.instant("ERROR.CARGANDO_DETALLE_SOLICITUD"));
           });
@@ -453,18 +430,23 @@ angular.module('poluxClienteApp')
             if (usuariosConSolicitudes.data) {
               // Se recorre la colección de usuarios con solicitudes
               angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
-                // Se agrega la solicitud asociada al usuario a la colección de solicitudes para formalizar
-                ctrl.coleccionSolicitudesParaFormalizar.push(usuarioConSolicitud.SolicitudTrabajoGrado);
                 // Se agrega el proceso de consulta hacia la respuesta de la solicitud
-                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarRespuestaSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado));
+                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarRespuestaSolicitud(usuarioConSolicitud));
                 // Se agrega el proceso de consulta hacia el detalle de la solicitud
-                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarDetalleSolicitud(usuarioConSolicitud.SolicitudTrabajoGrado));
+                conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarDetalleSolicitud(usuarioConSolicitud));
               });
               // Se garantiza que se cumplan todos los procesos agregados
               $q.all(conjuntoProcesamientoDeSolicitudes)
                 .then(function(resultadoDelProcesamiento) {
-                  // Se resuelve la colección de solicitudes para formalizar
-                  deferred.resolve(ctrl.coleccionSolicitudesParaFormalizar);
+                  // Se realiza el filtrado de las solicitudes que correspondan a la operación
+                  angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
+                    if (usuarioConSolicitud.respuestaDeSolicitud &&
+                      usuarioConSolicitud.detalleDeSolicitud) {
+                      ctrl.coleccionSolicitudesParaFormalizar.push(usuarioConSolicitud);
+                    }
+                  });
+                  // Se resuelve el resultado del procesamiento
+                  deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDuranteProcesamiento) {
                   // Se rechaza la carga con la excepción generada
@@ -484,49 +466,24 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que carga el contenido de las funciones para formalizar]
-       * @return {[Promise]} [La colección de solicitudes para formalizar, o la excepción generada]
+       * [Función que carga las solicitudes aprobadas a la cuadrícula con la información correspondiente]
+       * @param  {[Object]} solicitudesParaFormalizarRegistradas [La colección de solicitudes aprobadas ya consultadas]
+       * @return {[void]}                      [El procedimiento de contruir el arreglo de datos visibles sobre las solicitudes aprobadas]
        */
-      ctrl.cargarSolicitudesParaFormalizar = function() {
-        // Se trae el diferido desde el servicio para manejar las promesas
-        var deferred = $q.defer();
-        // Se llama a la función que consulta las solicitudes para formalizar del usuario
-        ctrl.consultarUsuariosConSolicitudes()
-          .then(function(coleccionSolicitudesParaFormalizar) {
-            // Se comprueba que el resultado de la consulta contenga elementos
-            if (coleccionSolicitudesParaFormalizar.length > 0) {
-              // Se prepara una colección para manejar las solicitudes para formalizar que están registradas
-              var solicitudesParaFormalizarRegistradas = [];
-              // Se recorre el resultado de la consulta
-              angular.forEach(coleccionSolicitudesParaFormalizar, function(solicitudParaFormalizar) {
-                // Se define una variable que cargue los espacios académicos asociados
-                // Se envía la transformación hacia objeto JSON de la descripción del detalle de la solicitud,
-                // para obtener el objeto que contiene la información de los espacios académicos,
-                // como argumento de la función que los ordena en un arreglo
-                var espaciosAcademicosAsociados = ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleSolicitud);
-                // Se agregan los datos de cada item a la colección de solicitudes
-                solicitudesParaFormalizarRegistradas.push({
-                  "idSolicitud": solicitudParaFormalizar.Id,
-                  "estadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Nombre,
-                  "descripcionSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Descripcion,
-                  "posgrado": ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleSolicitud).Nombre,
-                  "espaciosAcademicos": ctrl.obtenerEspaciosAcademicosPorNombre(espaciosAcademicosAsociados),
-                  "espaciosAcademicosSolicitados": espaciosAcademicosAsociados,
-                  "idEstadoSolicitud": solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id,
-                });
-              });
-              // La promesa se resuelve con la colección de información lista para cargar
-              deferred.resolve(solicitudesParaFormalizarRegistradas);
-            } else {
-              // En caso de no estar definida la información, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_SOLICITUDES_PARA_FORMALIZAR"));
-            }
-          }).catch(function(excepcionCargandoUsuariosConSolicitudes) {
-            // Ocurre cuando hay un error durante la consulta
-            deferred.reject(excepcionCargandoUsuariosConSolicitudes);
-          });
-        // Se devuelve el diferido que maneja la promesa
-        return deferred.promise;
+      ctrl.mostrarSolicitudesParaFormalizar = function(solicitudesParaFormalizarRegistradas) {
+        // Se recorren las solicitudes aprobadas para obtener los datos correspondientes
+        angular.forEach(solicitudesParaFormalizarRegistradas, function(solicitudParaFormalizar) {
+          // Se asignan los campos reconocidos por la cuadrícula
+          solicitudParaFormalizar.idSolicitud = solicitudParaFormalizar.SolicitudTrabajoGrado.Id;
+          solicitudParaFormalizar.estadoSolicitud = solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Nombre;
+          solicitudParaFormalizar.descripcionSolicitud = solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Descripcion;
+          solicitudParaFormalizar.posgrado = ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleDeSolicitud).Nombre;
+          solicitudParaFormalizar.espaciosAcademicosSolicitados = ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleDeSolicitud);
+          solicitudParaFormalizar.espaciosAcademicos = ctrl.obtenerEspaciosAcademicosPorNombre(ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleDeSolicitud));
+          solicitudParaFormalizar.idEstadoSolicitud = solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Id;
+        });
+        // Se cargan los datos visibles a la cuadrícula
+        ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
       }
 
       /**
@@ -534,20 +491,33 @@ angular.module('poluxClienteApp')
        * @return {[void]} [El procedimiento de actualización de la cuadrícula]
        */
       ctrl.actualizarCuadriculaSolicitudesParaFormalizar = function() {
-        ctrl.cargarSolicitudesParaFormalizar()
-          .then(function(solicitudesParaFormalizarRegistradas) {
+        // Se recargan las solicitudes visibles
+        ctrl.cuadriculaSolicitudesParaFormalizar.data = [];
+        // Se establece que inicia la carga de las solicitudes aprobadas
+        $scope.errorCargandoSolicitudes = false;
+        $scope.cargandoSolicitudes = true;
+        // Se consultan las solicitudes respondidas
+        ctrl.consultarUsuariosConSolicitudes()
+          .then(function(resultadoConsultaUsuariosConSolicitudes) {
             // Se apaga el mensaje de carga
             $scope.cargandoSolicitudes = false;
-            // Se carga la información a la cuadrícula
-            ctrl.cuadriculaSolicitudesParaFormalizar.data = solicitudesParaFormalizarRegistradas;
+            if (ctrl.coleccionSolicitudesParaFormalizar.length > 0) {
+              // Se carga la información a la cuadrícula
+              ctrl.mostrarSolicitudesParaFormalizar(ctrl.coleccionSolicitudesParaFormalizar);
+            } else {
+              // Se habilita el mensaje de error
+              $scope.errorCargandoSolicitudes = true;
+              // Se define el mensaje de carga de solicitudes
+              $scope.mensajeErrorCargandoSolicitudes = resultadoConsultaUsuariosConSolicitudes[0];
+            }
           })
-          .catch(function(excepcionCargandoSolicitudesParaFormalizar) {
+          .catch(function(excepcionConsultaUsuariosConSolicitudes) {
             // Se apaga el mensaje de carga
             $scope.cargandoSolicitudes = false;
             // Se habilita el mensaje de error
             $scope.errorCargandoSolicitudes = true;
             // Se define el mensaje de carga de solicitudes
-            $scope.mensajeErrorCargandoSolicitudes = excepcionCargandoSolicitudesParaFormalizar;
+            $scope.mensajeErrorCargandoSolicitudes = excepcionConsultaUsuariosConSolicitudes;
           });
       }
 
@@ -645,34 +615,34 @@ angular.module('poluxClienteApp')
           // Se establece la respuesta de la solicitud previa con los mismos campos, pero con diferente valor de activo
           var respuestaSolicitudPrevia = {
             Activo: false,
-            EnteResponsable: solicitudParaFormalizar.respuestaSolicitud.EnteResponsable,
-            Fecha: solicitudParaFormalizar.respuestaSolicitud.Fecha,
+            EnteResponsable: solicitudParaFormalizar.respuestaDeSolicitud.EnteResponsable,
+            Fecha: solicitudParaFormalizar.respuestaDeSolicitud.Fecha,
             EstadoSolicitud: {
-              Id: solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id
+              Id: solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Id
             },
-            Id: solicitudParaFormalizar.respuestaSolicitud.Id,
-            Justificacion: solicitudParaFormalizar.respuestaSolicitud.Justificacion,
+            Id: solicitudParaFormalizar.respuestaDeSolicitud.Id,
+            Justificacion: solicitudParaFormalizar.respuestaDeSolicitud.Justificacion,
             SolicitudTrabajoGrado: {
-              Id: solicitudParaFormalizar.respuestaSolicitud.SolicitudTrabajoGrado.Id
+              Id: solicitudParaFormalizar.SolicitudTrabajoGrado.Id
             },
-            Usuario: solicitudParaFormalizar.respuestaSolicitud.Usuario
+            Usuario: solicitudParaFormalizar.respuestaDeSolicitud.Usuario
           };
           // Se utiliza la respuesta de la solicitud que fue cargada a la colección de solicitudes para formalizar,
           // Se actualizan sus campos y se envían para registrarse
           var respuestaSolicitudFormalizada = {
             Activo: true,
-            EnteResponsable: solicitudParaFormalizar.respuestaSolicitud.EnteResponsable,
+            EnteResponsable: solicitudParaFormalizar.respuestaDeSolicitud.EnteResponsable,
             Fecha: new Date(),
             SolicitudTrabajoGrado: {
-              Id: solicitudParaFormalizar.respuestaSolicitud.SolicitudTrabajoGrado.Id
+              Id: solicitudParaFormalizar.SolicitudTrabajoGrado.Id
             },
-            Usuario: solicitudParaFormalizar.respuestaSolicitud.Usuario
+            Usuario: solicitudParaFormalizar.respuestaDeSolicitud.Usuario
           };
           // Se verifica si la solicitud es la seleccionada
           if (solicitudParaFormalizar.Id == solicitudSeleccionada.idSolicitud) {
             // Se estudia el estado de la solicitud
             // Se verifica si la solicitud está aprobada exenta de pago (7)
-            if (solicitudParaFormalizar.respuestaSolicitud.EstadoSolicitud.Id == 7) {
+            if (solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Id == 7) {
               // Entonces su nuevo estado será formalizada exenta de pago (9)
               respuestaSolicitudFormalizada.Justificacion = "Su solicitud fue formalizada con exención de pago";
               respuestaSolicitudFormalizada.EstadoSolicitud = {
