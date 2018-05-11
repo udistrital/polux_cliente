@@ -2,9 +2,16 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:materias/publicarAsignaturas
+ * @name poluxClienteApp.directive:publicarAsignaturas
  * @description
  * # materias/publicarAsignaturas
+ * Directiva que permite a un coordinador de posgrado publicar las asignaturas que se ofertaran en el periodo en la modalidad de espacios academicos de posgrado
+ * Controlador: {@link poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl publicarAsignaturasCtrl}
+ * @param {number} anio Año del periodo siguiente
+ * @param {number} periodo Perioodo siguiente
+ * @param {number} carrera Codigo de la carrera escogida por el coordinador de posgrado
+ * @param {number} pensum Número del pensum de la carrera escogido
+ * @param {number} modalidad Identificador de la modalidad
  */
 angular.module('poluxClienteApp')
   .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q,sesionesRequest) {
@@ -17,8 +24,31 @@ angular.module('poluxClienteApp')
         pensum: '=',
         modalidad: '='
       },
-
       templateUrl: 'views/directives/materias/publicar_asignaturas.html',
+      /**
+       * @ngdoc controller
+       * @name poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+       * @description
+       * # PublicarAsignatirasCtrl
+       * Controller of the poluxClienteApp.directive:publicarAsignaturas
+       * Controlador de la directiva publicar asignaturas
+       * @requires $route
+       * @requires decorators/poluxClienteApp.decorator:TextTranslate
+       * @requires $scope
+       * @requires services/poluxMidService.service:poluxMidRequest
+       * @requires services/poluxService.service:poluxRequest
+       * @requires services/academicaService.service:academicaRequest
+       * @requires $q
+       * @requires services/poluxClienteApp.service:sesionesService
+       * @property {number} creditosMinimos Minimo de creditos que pueden ofertarse
+       * @property {object} selected Lista de las materias elegidas por el coordinador
+       * @property {number} totalCreditos Total de creditos publicados
+       * @property {boolean} habilitar Flag para habilitar el botón de modificar publicación-
+       * @property {boolean} habilitar2 Flag para habilitar el botón de guardar cambios
+       * @property {object} gridOptions Opciones del ui-grid donde se listan las asignaturas , los creditos y se da la opción de elegir
+       * @property {object} fechaInicio Fecha de fin del proceso se publicación de asignaturas de la modalidad de materias de posgrado
+       * @property {object} fechaFin Fecha de inicio del proceso se publicación de asignaturas de la modalidad de materias de posgrado
+       */
       controller: function ($scope, $route, $translate) {
         $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
         $scope.load = true;
