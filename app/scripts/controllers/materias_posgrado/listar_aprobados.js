@@ -42,17 +42,17 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaSolicitudesAprobadas.columnDefs = [{
         name: 'idSolicitud',
         displayName: $translate.instant("SOLICITUD"),
-        width: '10%'
+        width: '9%'
       }, {
         name: 'fechaSolicitud',
         displayName: $translate.instant("FECHA"),
         type: 'date',
         cellFilter: 'date:\'yyyy-MM-dd\'',
-        width: '8%'
+        width: '13%'
       }, {
         name: 'codigoEstudiante',
         displayName: $translate.instant("CODIGO"),
-        width: '12%'
+        width: '11%'
       }, {
         name: 'nombreEstudiante',
         displayName: $translate.instant("NOMBRE"),
@@ -68,7 +68,7 @@ angular.module('poluxClienteApp')
       }, {
         name: 'opcionesDeSolicitud',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
-        width: '15%',
+        width: '12%',
         cellTemplate: '<btn-registro ' + 
           'ng-if="row.entity.respuestaDeSolicitud.EstadoSolicitud.Id == 9 || row.entity.respuestaDeSolicitud.EstadoSolicitud == 12"' +
           'funcion="grid.appScope.cargarFila(row)"' +
@@ -238,10 +238,10 @@ angular.module('poluxClienteApp')
           /**
            * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado
            */
-          query: "DetalleTipoSolicitud:37," +
-            "SolicitudTrabajoGrado:" +
+          query: "DetalleTipoSolicitud.Id.in:37|38," +
+            "SolicitudTrabajoGrado.Id:" +
             idSolicitudTrabajoGrado,
-          limit: 1
+          limit: 2
         });
       }
 
@@ -260,6 +260,7 @@ angular.module('poluxClienteApp')
             if (ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data[0].Descripcion).Codigo == ctrl.posgradoSeleccionado) {
               // Se actualiza el elemento de la colección
               solicitudAprobada.detalleDeSolicitud = detalleSolicitudRespondida.data[0].Descripcion;
+              solicitudAprobada.registrarTG1yTG2 = detalleSolicitudRespondida.data[1].Descripcion;
             }
             // Se resuelve el mensaje correspondiente
             deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
@@ -312,7 +313,7 @@ angular.module('poluxClienteApp')
             // Se resuelve el mensaje correspondiente
             deferred.resolve($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
           })
-          .catch(function(excepcionUsuarioDeSolicitud) {
+          .catch(function(excepcionRespuestaDeSolicitud) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
             deferred.reject($translate.instant("ERROR.CARGANDO_RESPUESTA_SOLICITUD"));
           });
@@ -426,7 +427,7 @@ angular.module('poluxClienteApp')
         angular.forEach(solicitudesAprobadas, function(solicitudAprobada) {
           // Se asignan los campos reconocidos por la cuadrícula
           solicitudAprobada.idSolicitud = solicitudAprobada.SolicitudTrabajoGrado.Id;
-          solicitudAprobada.fechaSolicitud = solicitudAprobada.SolicitudTrabajoGrado.Fecha;
+          solicitudAprobada.fechaSolicitud = moment(new Date(solicitudAprobada.SolicitudTrabajoGrado.Fecha)).format("YYYY-MM-DD HH:mm");
           solicitudAprobada.codigoEstudiante = solicitudAprobada.Usuario;
           solicitudAprobada.nombreEstudiante = solicitudAprobada.informacionAcademica.nombre;
           solicitudAprobada.promedioAcademico = solicitudAprobada.informacionAcademica.promedio;
@@ -612,8 +613,8 @@ angular.module('poluxClienteApp')
        * @return {[Promise]} [La respuesta de enviar la información para actualizar a la base de datos]
        */
       ctrl.registrarSolicitudAprobada = function() {
-        var defered = $q.defer();
-        console.log(ctrl.solicitudSeleccionada);
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
         // Se desactiva la solicitud previa y se mantiene el registro
         ctrl.solicitudAprobadaSeleccionada = {
           Activo: false,
@@ -684,25 +685,51 @@ angular.module('poluxClienteApp')
             }
           });
         });
+        // Se prepara una colección que maneje las asignaturas de trabajo de grado
+        ctrl.asignaturasDeTrabajoDeGrado = [];
+        // Se estructura el contenido del objeto asignatura trabajo grado
+        ctrl.asignaturaTrabajoGrado = {
+          CodigoAsignatura: 0,
+          Periodo: parseInt(ctrl.periodoSeleccionado.periodo),
+          Anio: parseInt(ctrl.periodoSeleccionado.anio),
+          Calificacion: 0.0,
+          TrabajoGrado: {
+            Id: 0
+          },
+          // El estado asignatura trabajo grado 1 es cursando
+          EstadoAsignaturaTrabajoGrado: {
+            Id: 1
+          }
+        }
+        // Se estudia si la solicitud indica la inscripción de ambos espacios académicos
+        if (ctrl.solicitudSeleccionada.registrarTG1yTG2 == "SI") {
+          var numeroAsignaturasTrabajoGrado = 2;
+          for (var item = 1; item <= numeroAsignaturasTrabajoGrado; item++) {
+            ctrl.asignaturasDeTrabajoDeGrado.push(ctrl.asignaturaTrabajoGrado);
+          }
+        } else {
+          ctrl.asignaturasDeTrabajoDeGrado.push(ctrl.asignaturaTrabajoGrado);
+        }
         // Se define el objeto para enviar como información para actualizar
         ctrl.informacionParaActualizar = {
           "RespuestaPrevia": ctrl.solicitudAprobadaSeleccionada,
           "RespuestaActualizada": ctrl.solicitudAprobadaActualizada,
           "TrabajoGrado": ctrl.trabajoDeGradoParaRegistrar,
           "EstudianteTrabajoGrado": ctrl.estudianteAsociadoTrabajoDeGrado,
-          "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos
+          "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos,
+          "AsignaturasDeTrabajoDeGrado": ctrl.asignaturasDeTrabajoDeGrado
         };
         // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
         poluxRequest
           .post("tr_registrar_materias_posgrado", ctrl.informacionParaActualizar)
           .then(function(respuestaRegistrarMateriasPosgrado) {
-            defered.resolve(respuestaRegistrarMateriasPosgrado);
+            deferred.resolve(respuestaRegistrarMateriasPosgrado);
           })
           .catch(function(excepcionRegistrarMateriasPosgrado) {
-            defered.reject(excepcionRegistrarMateriasPosgrado);
+            deferred.reject(excepcionRegistrarMateriasPosgrado);
           });
         // Se devuelve el diferido que maneja la promesa
-        return defered.promise;
+        return deferred.promise;
       }
 
     });
