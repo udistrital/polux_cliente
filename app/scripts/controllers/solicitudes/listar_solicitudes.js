@@ -13,10 +13,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  //token_service.token.documento = "79647592";
-  //token_service.token.role.push("COORDINADOR_PREGRADO");
-  token_service.token.documento = "20131020039";
-  token_service.token.role.push("ESTUDIANTE");
+  token_service.token.documento = "79647592";
+  token_service.token.role.push("COORDINADOR_PREGRADO");
+  //token_service.token.documento = "20131020039";
+  //token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
@@ -236,9 +236,40 @@ angular.module('poluxClienteApp')
       defer.resolve(resultado);
     } else if(solicitud.EstadoSolicitud.Id === 7) {
       resultado = $translate.instant("SOLICITUD_APROBADA_EXENTA");
+      detalles.resultado = resultado;
+      defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 8) {
+      resultado = $translate.instant("SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES");
+      detalles.resultado = resultado;
+      defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 9) {
+      resultado = $translate.instant("SOLICITUD_FORMALIZADA_EXENTA_PAGO");
+      detalles.resultado = resultado;
+      defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 10) {
+      resultado = $translate.instant("SOLICITUD_FORMALIZADA_NO_EXENTA_PAGO");
+      resultado = "Formalizada no exenta de pago";
+      detalles.resultado = resultado;
       defered.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 11) {
-      resultado = "asdf";
+      resultado = $translate.instant("SOLICITUD_NO_FORMALIZADA");
+      resultado = "No formalizada";
+      detalles.resultado = resultado;
+      defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 12) {
+      resultado = $translate.instant("SOLICITUD_OFICIALIZADA");
+      resultado = "Oficializada";
+      detalles.resultado = resultado;
+      defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 13) {
+      resultado = $translate.instant("SOLICITUD_NO_OFICIALIZADA");
+      resultado = "No oficializada";
+      detalles.resultado = resultado;
+      defered.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 14) {
+      resultado = $translate.instant("SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO");
+      resultado = "Cumplida para espacios académicos de posgrado";
+      detalles.resultado = resultado;
       defered.resolve(resultado);
     } else {
       detalles.resultado = resultado;

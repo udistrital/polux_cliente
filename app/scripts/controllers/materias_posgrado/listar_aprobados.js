@@ -690,8 +690,8 @@ angular.module('poluxClienteApp')
         // Se estructura el contenido del objeto asignatura trabajo grado
         ctrl.asignaturaTrabajoGrado = {
           CodigoAsignatura: 0,
-          Periodo: ctrl.periodoSeleccionado.periodo,
-          Anio: ctrl.periodoSeleccionado.anio,
+          Periodo: parseInt(ctrl.periodoSeleccionado.periodo),
+          Anio: parseInt(ctrl.periodoSeleccionado.anio),
           Calificacion: 0.0,
           TrabajoGrado: {
             Id: 0
@@ -719,7 +719,6 @@ angular.module('poluxClienteApp')
           "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos,
           "AsignaturasDeTrabajoDeGrado": ctrl.asignaturasDeTrabajoDeGrado
         };
-        console.log(ctrl.informacionParaActualizar);
         // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
         poluxRequest
           .post("tr_registrar_materias_posgrado", ctrl.informacionParaActualizar)

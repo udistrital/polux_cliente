@@ -9,13 +9,13 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoRegistrarNotaCtrl',
-    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest,token_service) {
+    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
       token_service.token.documento = "12237136";
       $scope.userId = token_service.token.documento;
-      
+
       // En el inicio de la página, se están cargando los posgrados
       $scope.cargandoPosgrados = true;
       $scope.mensajeCargandoPosgrados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
@@ -323,7 +323,7 @@ angular.module('poluxClienteApp')
            * @type {String}
            */
           query: "TrabajoGrado.Modalidad.Id:2," +
-            "TrabajoGrado.EstadoTrabajoGrado.Id:20," +
+            "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|3|20," +
             "TrabajoGrado.PeriodoAcademico:" +
             ctrl.periodoSeleccionado.anio +
             "-" +
@@ -514,7 +514,7 @@ angular.module('poluxClienteApp')
         angular.forEach(ctrl.cuadriculaEspaciosAcademicosInscritos.data, function(espacioAcademicoInscrito) {
           if (typeof espacioAcademicoInscrito.nota != 'number' || isNaN(espacioAcademicoInscrito.nota) || !isFinite(espacioAcademicoInscrito.nota) &&
             espacioAcademicoInscrito.nota < 0.0 || espacioAcademicoInscrito.nota > 5.0) {
-              deferred.reject(false);
+            deferred.reject(false);
           }
         });
         deferred.resolve(true);
@@ -530,61 +530,61 @@ angular.module('poluxClienteApp')
         ctrl.verificarIngresoDeNotas()
           .then(function(verificacionNota) {
             swal({
-              title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
-              text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
-                // Se cargan datos del estudiante asociado al trabajo de grado para que el coordinador pueda verificar antes de registrar
-                nombre: ctrl.estudianteSeleccionado.nombreEstudiante,
-                codigo: ctrl.estudianteSeleccionado.codigoEstudiante,
-              }),
-              type: "info",
-              confirmButtonText: $translate.instant("ACEPTAR"),
-              cancelButtonText: $translate.instant("CANCELAR"),
-              showCancelButton: true
-            })
-            .then(function(confirmacionDelUsuario) {
-              // Se valida que el coordinador haya confirmado el registro
-              if (confirmacionDelUsuario.value) {
-                // Se detiene la visualización de trabajos de grado
-                $scope.cargandoTrabajosDeGradoCursados = true;
-                $scope.cargandoEspaciosAcademicos = true;
-                // Se lanza la transacción
-                ctrl.registrarNotasIngresadas()
-                  .then(function(respuestaRegistrarNotasIngresadas) {
-                    // Se estudia si la transacción fue exitosa
-                    if (respuestaRegistrarNotasIngresadas.data[0] === "Success") {
-                      // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
+                title: $translate.instant("REGISTRAR_NOTA.CONFIRMACION"),
+                text: $translate.instant("REGISTRAR_NOTA.MENSAJE_CONFIRMACION", {
+                  // Se cargan datos del estudiante asociado al trabajo de grado para que el coordinador pueda verificar antes de registrar
+                  nombre: ctrl.estudianteSeleccionado.nombreEstudiante,
+                  codigo: ctrl.estudianteSeleccionado.codigoEstudiante,
+                }),
+                type: "info",
+                confirmButtonText: $translate.instant("ACEPTAR"),
+                cancelButtonText: $translate.instant("CANCELAR"),
+                showCancelButton: true
+              })
+              .then(function(confirmacionDelUsuario) {
+                // Se valida que el coordinador haya confirmado el registro
+                if (confirmacionDelUsuario.value) {
+                  // Se detiene la visualización de trabajos de grado
+                  $scope.cargandoTrabajosDeGradoCursados = true;
+                  $scope.cargandoEspaciosAcademicos = true;
+                  // Se lanza la transacción
+                  ctrl.registrarNotasIngresadas()
+                    .then(function(respuestaRegistrarNotasIngresadas) {
+                      // Se estudia si la transacción fue exitosa
+                      if (respuestaRegistrarNotasIngresadas.data[0] === "Success") {
+                        // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
+                        $scope.cargandoTrabajosDeGradoCursados = false;
+                        $scope.cargandoEspaciosAcademicos = false;
+                        swal(
+                          $translate.instant("REGISTRAR_NOTA.AVISO"),
+                          $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
+                          'success'
+                        );
+                        ctrl.actualizarTrabajosDeGradoCursados();
+                        $('#modalVerTrabajoDeGrado').modal('hide');
+                      } else {
+                        // De lo contrario, se detiene la carga y notifica al usuario
+                        $scope.cargandoTrabajosDeGradoCursados = false;
+                        $scope.cargandoEspaciosAcademicos = false;
+                        swal(
+                          $translate.instant("REGISTRAR_NOTA.AVISO"),
+                          $translate.instant(respuestaRegistrarNotasIngresadas.data[1]),
+                          'warning'
+                        );
+                      }
+                    })
+                    .catch(function(excepcionRegistrarNotasIngresadas) {
+                      // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
                       $scope.cargandoTrabajosDeGradoCursados = false;
                       $scope.cargandoEspaciosAcademicos = false;
                       swal(
                         $translate.instant("REGISTRAR_NOTA.AVISO"),
-                        $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
-                        'success'
-                      );
-                      ctrl.actualizarTrabajosDeGradoCursados();
-                      $('#modalVerTrabajoDeGrado').modal('hide');
-                    } else {
-                      // De lo contrario, se detiene la carga y notifica al usuario
-                      $scope.cargandoTrabajosDeGradoCursados = false;
-                      $scope.cargandoEspaciosAcademicos = false;
-                      swal(
-                        $translate.instant("REGISTRAR_NOTA.AVISO"),
-                        $translate.instant(respuestaRegistrarNotasIngresadas.data[1]),
+                        $translate.instant("ERROR.REGISTRANDO_NOTA"),
                         'warning'
                       );
-                    }
-                  })
-                  .catch(function(excepcionRegistrarNotasIngresadas) {
-                    // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
-                    $scope.cargandoTrabajosDeGradoCursados = false;
-                    $scope.cargandoEspaciosAcademicos = false;
-                    swal(
-                      $translate.instant("REGISTRAR_NOTA.AVISO"),
-                      $translate.instant("ERROR.REGISTRANDO_NOTA"),
-                      'warning'
-                    );
-                  });
-              }
-            });
+                    });
+                }
+              });
           })
           .catch(function(excepcionNota) {
             swal(
@@ -600,40 +600,128 @@ angular.module('poluxClienteApp')
        * @return {[Promise]} [La respuesta de enviar la información para actualizar a la base de datos]
        */
       ctrl.registrarNotasIngresadas = function() {
-        var defered = $q.defer();
-        // Se prepara una colección que maneje los espacios académicos inscritos
-        ctrl.espaciosAcademicosCalificados = []
-        // Se recorre la colección de espacios académicos mostrados y se añaden los campos correspondientes a la estructura en la base de datos
-        angular.forEach(ctrl.cuadriculaEspaciosAcademicosInscritos.data, function(espacioAcademico) {
-          ctrl.espaciosAcademicosCalificados.push({
-            EspaciosAcademicosElegibles: {
-              Id: espacioAcademico.EspaciosAcademicosElegibles.Id
-            },
-            EstadoEspacioAcademicoInscrito: {
-              Id: 3
-            },
-            Id: espacioAcademico.Id,
-            Nota: espacioAcademico.nota,
-            TrabajoGrado: {
-              Id: espacioAcademico.TrabajoGrado.Id
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        ctrl.consultarAsignaturasDeTrabajoDeGrado(ctrl.estudianteSeleccionado.TrabajoGrado.Id)
+          .then(function(asignaturasDeTrabajoDeGrado) {
+            // Se prepara una variable con la calificación final
+            var calificacionTrabajoGrado = 0;
+            // Se prepara una colección que maneje los espacios académicos inscritos
+            ctrl.espaciosAcademicosCalificados = [];
+            // Se recorre la colección de espacios académicos mostrados y se añaden los campos correspondientes a la estructura en la base de datos
+            angular.forEach(ctrl.cuadriculaEspaciosAcademicosInscritos.data, function(espacioAcademico) {
+              calificacionTrabajoGrado += espacioAcademico.nota;
+              ctrl.espaciosAcademicosCalificados.push({
+                EspaciosAcademicosElegibles: {
+                  Id: espacioAcademico.EspaciosAcademicosElegibles.Id
+                },
+                EstadoEspacioAcademicoInscrito: {
+                  Id: 3
+                },
+                Id: espacioAcademico.Id,
+                Nota: espacioAcademico.nota,
+                TrabajoGrado: {
+                  Id: espacioAcademico.TrabajoGrado.Id
+                }
+              });
+              // Se recorre la colección de asignaturas de trabajo de grado
+              angular.forEach(asignaturasDeTrabajoDeGrado, function(asignaturaTrabajoGrado) {
+                // Se establece el valor promedio de los espacios académicos
+                asignaturaTrabajoGrado.Calificacion = calificacionTrabajoGrado/ctrl.cuadriculaEspaciosAcademicosInscritos.data.length;
+                asignaturaTrabajoGrado.EstadoAsignaturaTrabajoGrado = {
+                  Id: 2
+                };
+              });
+            });
+            // Se prepara una variable para el trabajo de grado
+            var trabajoDeGrado = ctrl.estudianteSeleccionado.TrabajoGrado;
+            // Se estudia si aprobó la modalidad
+            if (calificacionTrabajoGrado/ctrl.cuadriculaEspaciosAcademicosInscritos.data.length >= 3.0) {
+              trabajoDeGrado.EstadoTrabajoGrado = {
+                Id: 1
+              };
+              trabajoDeGrado.Titulo = "Aprobada la modalidad de cursar espacios académicos de posgrado";
+            } else {
+              trabajoDeGrado.EstadoTrabajoGrado = {
+                Id: 3
+              };
+              trabajoDeGrado.Titulo = "Reprobada la modalidad de cursar espacios académicos de posgrado";
             }
-          });
-        });
-        // Se define el objeto para enviar como información para actualizar
-        ctrl.informacionParaActualizar = {
-          "EspaciosAcademicosCalificados": ctrl.espaciosAcademicosCalificados
-        };
-        // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
-        poluxRequest
-          .post("tr_registrar_nota|", ctrl.informacionParaActualizar)
-          .then(function(respuestaRegistrarNota) {
-            defered.resolve(respuestaRegistrarNota);
+            console.log(trabajoDeGrado);
+            // Se define el objeto para enviar como información para actualizar
+            ctrl.informacionParaActualizar = {
+              "EspaciosAcademicosCalificados": ctrl.espaciosAcademicosCalificados,
+              "AsignaturasDeTrabajoDeGrado": asignaturasDeTrabajoDeGrado,
+              "TrabajoDeGradoTerminado": trabajoDeGrado
+            };
+            // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
+            poluxRequest
+              .post("tr_registrar_nota", ctrl.informacionParaActualizar)
+              .then(function(respuestaRegistrarNota) {
+                deferred.resolve(respuestaRegistrarNota);
+              })
+              .catch(function(excepcionRegistrarNota) {
+                deferred.reject(excepcionRegistrarNota);
+              });
           })
-          .catch(function(excepcionRegistrarNota) {
-            defered.reject(excepcionRegistrarNota);
+          .catch(function(excepcionAsignaturasDeTrabajoDeGrado) {
+            deferred.reject(excepcionAsignaturasDeTrabajoDeGrado);
           });
         // Se devuelve el diferido que maneja la promesa
-        return defered.promise;
+        return deferred.promise;
+      }
+
+      /**
+       * [Función que define los parámetros para consultar en la tabla asignatura_trabajo_grado]
+       * @param  {[integer]} idTrabajoGrado [Se recibe el id del trabajo de grado asociado al espacio académico inscrito]
+       * @return {[param]}                         [Se retorna la sentencia para la consulta]
+       */
+      ctrl.obtenerParametrosAsignaturaTrabajoGrado = function(idTrabajoGrado) {
+        return $.param({
+          /**
+           * Las asignaturas para trabajo grado estén cursándose o cursadas
+           * ya sea para el primer registro, o para corregir las notas
+           * 1 - Cursando
+           * 2 - Cursado
+           * @type {String}
+           */
+          query: "EstadoAsignaturaTrabajoGrado.Id.in:1|2," +
+            "Periodo:" +
+            ctrl.periodoSeleccionado.periodo +
+            ",Anio:" +
+            ctrl.periodoSeleccionado.anio +
+            ",TrabajoGrado:" +
+            idTrabajoGrado,
+          limit: 0
+        });
+      }
+
+      /**
+       * [Función que según el trabajo de grado, consulta la información correspondiente a la(s) asignatura(s) del trabajo de grado]
+       * @param  {[Integer]} idTrabajoGrado [El identificador del trabajo de grado correspondiente]
+       * @return {[Promise]}                   [El trabajo de grado con los espacios académicos asociados dentro, o la excepción generada]
+       */
+      ctrl.consultarAsignaturasDeTrabajoDeGrado = function(idTrabajoGrado) {
+        // Se trae el diferido desde el servicio para manejar las promesas
+        var deferred = $q.defer();
+        // Se consulta hacia los espacios académicos inscritos del trabajo de grado en la base de datos
+        poluxRequest.get("asignatura_trabajo_grado", ctrl.obtenerParametrosAsignaturaTrabajoGrado(idTrabajoGrado))
+          .then(function(asignaturasDeTrabajoDeGrado) {
+            // Se estudia si la información existe
+            if (asignaturasDeTrabajoDeGrado.data) {
+              // Se resuelve el resultado
+              deferred.resolve(asignaturasDeTrabajoDeGrado.data);
+            } else {
+              // Se rechaza el mensaje correspondiente
+              deferred.reject($translate.instant("ERROR.SIN_ASIGNATURA_TRABAJO_GRADO"));
+            }
+          })
+          .catch(function(excepcionAsignaturaTrabajoGrado) {
+            // En caso de error se rechaza la petición con el mensaje correspondiente
+            deferred.reject($translate.instant("ERROR.CARGANDO_ASIGNATURA_TRABAJO_GRADO"));
+          });
+        // Se devuelve el diferido que maneja la promesa
+        return deferred.promise;
       }
 
     });
