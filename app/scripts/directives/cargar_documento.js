@@ -5,6 +5,11 @@
  * @name poluxClienteApp.directive:cargarDocumento
  * @description
  * # cargarDocumento
+ * Directiva que permite cargar un documento a nuxeo.
+ * Controlador: {@link poluxClienteApp.directive:cargarDocumento.controller:cargarDocumentoCtrl cargarDocumentoCtrl}
+ * @param {string} name nombre del documento que se va a subir
+ * @param {object} carreras carreras asociadas al coordinador que va a subir el documento
+ * @param {number} acta Número del acta que se va a cargar
  */
 angular.module('poluxClienteApp')
   .directive('cargarDocumento', function () {
@@ -16,6 +21,21 @@ angular.module('poluxClienteApp')
           acta: '=',
       },
       templateUrl: 'views/directives/cargar_documento.html',
+      /**
+       * @ngdoc controller
+       * @name poluxClienteApp.directive:cargarDocumento.controller:cargarDocumentoCtrl
+       * @description
+       * # MateriasPosgradoFormalizarSolicitudCtrl
+       * Controller of the poluxClienteApp.directive:cargarDocumento
+       * Controlador de la directiva cargar documento.
+       * @requires services/poluxService.service:poluxRequest
+       * @requires decorators/poluxClienteApp.decorator:TextTranslate
+       * @requires $filter
+       * @requires $scope
+       * @requires $q
+       * @requires services/poluxClienteApp.service:nuxeoService
+       * @property {object} documento Documento que se va a cargar
+       */
       controller:function(poluxRequest,$translate,$filter,$scope,$q,nuxeo){
         var ctrl = this;
         ctrl.documento = [];
@@ -27,7 +47,15 @@ angular.module('poluxClienteApp')
                 $scope.carrera = $scope.carreras[0];
             }
         }
-
+        /**
+         * @ngdoc method
+         * @name cargarDocumento
+         * @methodOf poluxClienteApp.directive:cargarDocumento.controller:cargarDocumentoCtrl
+         * @param {undefined} undefined No recibe parametros
+         * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el documento.
+         * @description 
+         * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+         */  
         ctrl.cargarDocumento = function(){
           var defered = $q.defer();
           var promise = defered.promise;
@@ -67,6 +95,16 @@ angular.module('poluxClienteApp')
             return promise;
         }
 
+        /**
+         * @ngdoc method
+         * @name enviarDocumento
+         * @methodOf poluxClienteApp.directive:cargarDocumento.controller:cargarDocumentoCtrl
+         * @param {undefined} undefined No recibe parametros.
+         * @returns {undefined} No retorna ningún valor.
+         * @description 
+         * Crea la data del documento, llama a la funcion ara cargar el documento a nuxeo y luego de cargarlo
+         * lo registra en {@link services/poluxService.service:poluxRequest poluxRequest}
+         */  
         ctrl.enviarDocumento = function(){
           console.log("consecutivo",ctrl.consecutivo);
           if($scope.carreras.length===1){

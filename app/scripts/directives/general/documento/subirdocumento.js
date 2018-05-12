@@ -73,13 +73,6 @@ angular.module('poluxClienteApp')
                             throw error;
                         });
                 };
-                /**
-                 * @ngdoc method
-                 * @name limpiar
-                 * @methodOf poluxClienteApp.registrarPropuesta
-                 * @description
-                 * Limpia el formulario basico mediante un evento click
-                 */
 
                 ctrl.limpiar = function() {
                     ctrl.titulo = angular.copy("");

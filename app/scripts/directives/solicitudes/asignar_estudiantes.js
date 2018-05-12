@@ -2,9 +2,14 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:asignarArea
+ * @name poluxClienteApp.directive:asignarEstudiante
  * @description
- * # asignarArea
+ * # asignarEstudiante
+ * Directiva que permite agregar a un estudiante a una solicitud inicial de trabajo de grado
+ * Controller: {@link poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl asignarEstudianteCtrl}
+ * @param {object} estudiante Estudiante que realiza la solicitud
+ * @param {object} estudiantes Listado de estudiantes asociados a la solicitud
+ * @param {number} modalidad Identificador de la modalidad a la que pertenece la solicitud
  */
 angular.module('poluxClienteApp')
   .directive('asignarEstudiantes', function ($translate, poluxRequest,academicaRequest,poluxMidRequest) {
@@ -15,6 +20,18 @@ angular.module('poluxClienteApp')
         modalidad: '=',
         },
       templateUrl: 'views/directives/solicitudes/asignar_estudiantes.html',
+      /**
+       * @ngdoc controller
+       * @name poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl
+       * @description
+       * # poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl
+       * Controller of the poluxClienteApp.directive:asignarEstudiante
+       * Controlador de la directiva asignarEstudiante que permite agregar estudiantes a la solicitud inical de una modalidad de trabajo de grado
+       * @requires decorators/poluxClienteApp.decorator:TextTranslate
+       * @requires services/poluxService.service:poluxRequest
+       * @requires services/academicaService.service:academicaRequest
+       * @requires services/poluxMidService.service:poluxMidRequest
+       */
       controller:function($scope){
         var ctrl = this;
         ctrl.cargando = $translate.instant("LOADING.CARGANDO_ESTUDIANTE");
@@ -28,6 +45,15 @@ angular.module('poluxClienteApp')
         ctrl.removable=false;
         ctrl.nuevosEstudiantes = [];
 
+        /**
+         * @ngdoc method
+         * @name agregarEstudiante
+         * @methodOf poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl
+         * @param {undefined} undefined No recibe parametros
+         * @returns {undefined} No retorna ningún valor
+         * @description 
+         * Verifica que el estudiante no este agregado en el arreglo de estudiantes y llama la función verificar estudiante.
+         */  
         ctrl.agregarEstudiante = function(){
             ctrl.estudianteRegistrado = false;
             ctrl.estudianteExiste = false;
@@ -45,6 +71,20 @@ angular.module('poluxClienteApp')
             }
         };
 
+        /**
+         * @ngdoc method
+         * @name verificarEstudiante
+         * @methodOf poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl
+         * @param {undefined} undefined No recibe parametros
+         * @returns {undefined} No retorna ningún valor
+         * @description 
+         * Permite agregar al estdiante a la solicitud, se traen los datos del estudiante
+         * del servicio {@link services/academicaService.service:academicaRequest academicaRequest} y se verifica que: el estudiante cumpla con los requisitos para
+         * cursar la modalidad y realizar la solicitud con el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest}, se verifica que el estudiante 
+         * no tenga registrado un trabajo de grado en {@link services/poluxService.service:poluxRequest poluxRequest}, se verifica la cantidad de estudiantes máximos para la solicitud
+         * en {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} y por ultimo se te verifica que no tenga solicitudes activas 
+         * en {@link services/poluxService.service:poluxRequest poluxRequest}.
+         */
         ctrl.verificarEstudiante = function(){
           ctrl.loading = true;
           academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){

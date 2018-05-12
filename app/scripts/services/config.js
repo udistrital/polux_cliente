@@ -1,17 +1,23 @@
 'use strict';
 
 /**
- * @ngdoc service
- * @name poluxClienteApp.config.js
+ * @ngdoc property
+ * @name poluxClienteApp.service:CONF.conf_cloud
+ * @propertyOf poluxClienteApp.service:CONF
  * @description
- * # config.js
- * Service in the poluxClienteApp.
+ * Variables de configuración de la nube
  */
-
  var conf_cloud = {
 
  };
 
+ /**
+ * @ngdoc property
+ * @name poluxClienteApp.service:CONF.conf_pruebas
+ * @propertyOf poluxClienteApp.service:CONF
+ * @description
+ * Variables de configuración de entorno de pruebas
+ */
  var conf_pruebas = {
     ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     POLUX_SERVICE: "http://10.20.0.254/polux_api_crud/v1/",
@@ -37,6 +43,13 @@
     },
 };
 
+ /**
+ * @ngdoc property
+ * @name poluxClienteApp.service:CONF.conf_local
+ * @propertyOf poluxClienteApp.service:CONF
+ * @description
+ * Variables de configuración de entorno local
+ */
 var conf_local = {
     ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     POLUX_SERVICE: "http://localhost:8085/v1/",
@@ -62,6 +75,12 @@ var conf_local = {
     },
 };
 
+/**
+ * @ngdoc service
+ * @name poluxClienteApp.service:CONF
+ * @description
+ * Constante que retorna las direcciones en el servicio
+ */
 angular.module('poluxClienteApp')
   .constant('CONF', {
       GENERAL: conf_local

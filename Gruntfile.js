@@ -492,6 +492,14 @@ ngtemplates: {
                 dest: 'docs',
                 title: "Documentación Sistema de Trabajos de Grado Pólux",
             },
+            directives:{
+                src: ['app/scripts/directives/**/*.js'],
+                title: 'Directives'
+            },
+            decorators:{
+                src: ['app/scripts/decorators/*.js'],
+                title: 'Decorators'
+            },
             services:{
                 src: ['app/scripts/services/*.js'],
                 title: 'Services'

@@ -1,12 +1,10 @@
 'use strict';
 
 /**
- * @ngdoc service
- * @name poluxClienteApp.poluxService
- * @description
- * # poluxService
- * Factory in the poluxClienteApp.
- */
+  * @ngdoc overview
+  * @name poluxService
+  * @description Modulo para servicio de polux provee los servicios descritos en {@link poluxService.service:poluxRequest poluxRequest}
+  */
 angular.module('poluxService', [])
     /**
      * @ngdoc service
@@ -18,9 +16,14 @@ angular.module('poluxService', [])
      * Fabrica sobre la cual se consumen los servicios proveidos por el API de polux sobre los metodos GET, POST, PUT y DELETE
      */
     .factory('poluxRequest', function($http,CONF) {
-        // Service logic
+        /**
+         * @ngdoc object
+         * @name path
+         * @propertyOf poluxService.service:poluxRequest
+         * @description
+         * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
+         */
         var path = CONF.GENERAL.POLUX_SERVICE;
-        // Public API here
         return {
             /**
              * @ngdoc function

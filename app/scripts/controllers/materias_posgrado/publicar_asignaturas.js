@@ -1,11 +1,21 @@
 'use strict';
 
 /**
- * @ngdoc function
+ * @ngdoc controller
  * @name poluxClienteApp.controller:MateriasPosgradoPublicarAsignaturasCtrl
  * @description
  * # MateriasPosgradoPublicarAsignaturasCtrl
  * Controller of the poluxClienteApp
+ * Controlador de la vistar publicar asignaturas que permite al cooridnador de posgrado publicar las asignaturas que se ofertaran en el periodo academico siguiente.
+ * Usa la directiva materias/publicar_asignaturas
+ * @requires services/academicaService.service:academicaRequest
+ * @requires $scope 
+ * @requires $translate
+ * @requires services/poluxClienteApp.service:tokenService
+ * @property {object} periodo Almacena el periodo academico actual
+ * @property {object} carreras Contiene las carreras asociadas al coorinador
+ * @property {object} carrera Carrera seleccionada por el coordinador
+ * @property {object} pensums Pensums asociados a la carrera escogidas
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoPublicarAsignaturasCtrl', function (academicaRequest, $scope, $translate,token_service) {
@@ -15,7 +25,16 @@ angular.module('poluxClienteApp')
     ctrl.periodo=[];
     ctrl.modalidad="POSGRADO";
 
-
+    /**
+     * @ngdoc method
+     * @name watch
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoPublicarAsignaturasCtrl
+     * @description 
+     * Función del $scope que vigila los cambios en el userId y carga las asignaturas y el periodo academico consumiendo
+     * los servicios correspodientes a coordinador_carrera y periodo_academico de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {undefined} Función sin retorno
+     */
     $scope.$watch("userId",function() {
         $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
         $scope.load = true;
@@ -53,6 +72,16 @@ angular.module('poluxClienteApp')
           });
     });
 
+    /**
+     * @ngdoc method
+     * @name getPensums
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoPublicarAsignaturasCtrl
+     * @description 
+     * Función que es llamada cuando se selecciona una carrera en la vista, consulta los pensums de la carrera consulando
+     * el servicio pensums de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {undefined} Función sin retorno
+     */
     ctrl.myFunc = function(carreraSeleccionada) {
       $scope.load = true;
       $scope.pensumSeleccionado=null;
