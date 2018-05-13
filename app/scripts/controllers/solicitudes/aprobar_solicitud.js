@@ -787,7 +787,7 @@ angular.module('poluxClienteApp')
                         // evaluadores
                         angular.forEach(ctrl.evaluadoresInicial, function(docente) {
                             vinculacion = {
-                                "Usuario": Number(docente.docente.DIR_NRO_IDEN),
+                                "Usuario": Number(docente.docente.id),
                                 "Activo": true,
                                 "FechaInicio": fechaRespuesta,
                                 //"FechaFin": null,
@@ -797,12 +797,12 @@ angular.module('poluxClienteApp')
                                 "TrabajoGrado": {
                                     "Id": 0
                                 }
-                            }
+                            };
                             data_vinculacion.push(vinculacion);
-                            if (vinculados.includes(docente.docente.DIR_NRO_IDEN)) {
+                            if (vinculados.includes(docente.docente.id)) {
                                 errorDocente = true;
                             } else {
-                                vinculados.push(docente.docente.DIR_NRO_IDEN);
+                                vinculados.push(docente.docente.id);
                             }
                         });
                         //data para las asignaturas_trabajo_grado
