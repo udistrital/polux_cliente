@@ -1,12 +1,22 @@
 'use strict';
 
 /**
- * @ngdoc service
- * @name poluxClienteApp.token
- * @description
- * # token
- * Factory in the poluxClienteApp.
- */
+   * @ngdoc service
+   * @name poluxClienteApp.service:tokenService
+   * @requires $http
+   * @requires $location
+   * @requires $sessionStorage
+   * @requires CONF
+   * @requires $interval
+   * @param {injector} $http componente http de angular
+   * @param {injector} $location componente de angular
+   * @param {injector} $sessionStorage componente de angular
+   * @param {injector} CONF componente de configuracion
+   * @param {injector} $interval componente de angular
+   * @description
+   * # tokenServie
+   * Fabrica para el servicio de autenticacion
+   */
 
 // First, parse the query string
 var params = {},

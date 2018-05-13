@@ -2,9 +2,14 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:materias/solicitarAsignaturas
+ * @name poluxClienteApp.directive:solicitarAsignaturas
  * @description
  * # materias/solicitarAsignaturas
+ * Directiva que permite solicitar asignaturas para cursar la modalidad de espacios academicos de posgrado o de profundizacion
+ * Controlador: {@link poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl solicitarAsignaturasCtrl}
+ * @param {object} estudiante Estudiante que esta realizando la solicitud
+ * @param {number} modalidad Identificador de la modalidad que cursará el estudiante
+ * @param {object} carrerasElegidas Contiene las carreras que el estudiante escogio si ha realizado solicitudes inicales de materias de posgrado antes para el mismo periodo.
  */
  angular.module('poluxClienteApp')
 .directive('solicitarAsignaturas', function($q,poluxRequest, academicaRequest, $route,poluxMidRequest) {
@@ -15,8 +20,25 @@
             modalidad: '=',
             e: '=?',
         },
-
         templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
+        /**
+         * @ngdoc controller
+         * @name poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
+         * @description
+         * # poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
+         * Controller of the poluxClienteApp.directive:solicitarAsignaturas
+         * Controlador de la directiva Solicitar asignaturas que permite a un estudiante solicitar asignaturas en las modalidades
+         * de materias de posgrado y profundización
+         * @requires $q
+         * @requires $route
+         * @requires services/academicaService.service:academicaRequest
+         * @requires services/poluxMidService.service:poluxMidRequest
+         * @requires services/poluxService.service:poluxRequest
+         * @property {object} creditosMinimos Minimo de créditos que tiene que inscribir el estudiante en la modalidad
+         * @property {object} carreras Listado de carreras elegibles para el estudiante
+         * @property {object} asignaturas Listado de asignaturas elegibles asociadas a una carrera elegible para el estudiante
+         * @property {object} gridOptions Opciones del ui-grid donde se muestran las asignaturas
+         */
         controller: function($scope, $route, $translate) {
             var ctrl = this;
             ctrl.cargando = $translate.instant("LOADING.CARGANDO_ASIGNATURAS");
@@ -46,7 +68,17 @@
             //} else {
                // ctrl.creditosMinimos = 6;
             //}
-
+            /**
+             * @ngdoc method
+             * @name cargarDatos
+             * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
+             * @param {undefined} undefined No recibe parametros
+             * @returns {undefined} No retorna ningún valor
+             * @description 
+             * Permite obtener los datos de las carreras y las asignaturas, primero busa el periodo academeco actual del servicio 
+             * {@link services/academicaService.service:academicaRequest academicaRequest}, consulta en {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} la cantidad de ccreditos que debe cursarse en la modalidad,
+             *  con esto busca las carreras elegibles  del servicio {@link services/poluxService.service:poluxRequest poluxRequest} y los nombres de {@link services/academicaService.service:academicaRequest academicaRequest}.
+             */  
             academicaRequest.get("periodo_academico", "X").then(function(response) {
                 if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
                     ctrl.periodo = response.data.periodoAcademicoCollection.periodoAcademico[0];
@@ -124,7 +156,16 @@
               ctrl.loading = false;
             });
 
-
+            /**
+             * @ngdoc method
+             * @name cargarMaterias
+             * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
+             * @param {number} carreraSeleccionada Identificador de la carrera seleccionada.
+             * @returns {undefined} No retorna ningún valor
+             * @description 
+             * Carga las materias publicadas con la carrera elegible del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y los datos de la misma (nombre y créditos) de 
+             * {@link services/academicaService.service:academicaRequest academicaRequest}.
+             */ 
             ctrl.cargarMaterias = function(carreraSeleccionada) {
                 ctrl.loadingAsignaturas = true;
                 ctrl.selected = [];
@@ -143,7 +184,7 @@
 
                     //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
                     var parametros = $.param({
-                        query: "CarreraElegible:" + response.data[0].Id
+                        query: "CarreraElegible:" + response.data[0].Id+",Activo:true"
                     });
 
                     poluxRequest.get("espacios_academicos_elegibles", parametros).then(function(response) {
@@ -226,6 +267,15 @@
             ctrl.selected = [];
             ctrl.creditos = 0;
 
+            /**
+             * @ngdoc method
+             * @name toggle
+             * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
+             * @param {undefined} undefined No recibe parametros
+             * @returns {undefined} No retorna ningún valor
+             * @description 
+             * Agrega y elimina los elementos de la lista de asignaturas elegidas, y suma y resta el valor de los ccreditos.
+             */  
             ctrl.toggle = function(item, list) {
                 if (ctrl.selected.length == 0) {
                     ctrl.creditos = 0;

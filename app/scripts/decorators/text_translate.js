@@ -1,11 +1,11 @@
 'use strict';
 
-/**
- * @ngdoc function
- * @name poluxClienteApp.decorator:TextTranslate
+ /**
+ * @ngdoc property
+ * @name text_es
+ * @propertyOf poluxClienteApp.decorator:TextTranslate
  * @description
- * # TextTranslate
- * Decorator of the poluxClienteApp
+ * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
     TITULO: "GENERATOR-OAS",
@@ -194,14 +194,14 @@ var text_es = {
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento.",
-        CARGAR_DOCUMENTO:"Ocurrio un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DOCUMENTO:"Ocurrió un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
         HAY_SOLICITUD_DISTINCION:"Actualmente ya hay una solicitud de distinción pendiente para este trabajo de grado.",
         HAY_SOLICITUD_PENDIENTE:"Actualmente el estudiante ya tiene registrada una solicitud de trabajo de grado que se encuentra pendiente por respuesta.",
         DOCENTE_DUPLICADO:"Por favor seleccione docentes diferentes en los campos de director y evaluador(es).",
         CARGA_SOLICITUDES:"Error al cargar las solicitudes.",
         ENVIO_SOLICITUD:"Error al enviar la solicitud.",
         NO_AREAS_CARGADAS:"Error al intentar cargar las áreas de conocimiento.",
-        NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcles básicos.",
+        NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcleos básicos.",
         NO_EXISTE_ESTUDIANTE_POSGRADO:"No existen registros de estudiantes con las características ingresadas (Intente seleccionar otro periodo académico).",
         SIN_RESULTADOS:"No existen resultados asociados a los datos ingresados.",
         REGISTRAR_PAGO:"Error al registrar el pago",
@@ -211,10 +211,10 @@ var text_es = {
         CARGA_SOLICITUDES:"Error al cargar las solicitudes",
         ENVIO_SOLICITUD:"Error al enviar la solicitud",
         NO_AREAS_CARGADAS:"Error al intentar cargar las áreas de conocimiento",
-        NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcles básicos",
-        CARGAR_CARRERAS:"Ocurrio un error al cargar las carreras asociadas al coordinador, por favor verifique su conexión e intente de nuevo.",
-        CARGAR_FECHAS_MODALIDAD_POSGRADO:"Ocurrio un error al cargar las fechas asociadas a los procesos de la modalidad de materias de posgrado, por favor verifique su conexión e intente de nuevo.",
-        SIN_FECHAS_MODALIDAD_POSGRADO:"Actualmenten no hay fechas para los procesos de la modadlidad de materias de posgrado asociadas al periodo academico.",
+        NO_NUCLEOS_CARGADOS:"Error al intentar cargar los núcleos básicos",
+        CARGAR_CARRERAS:"Ocurrió un error al cargar las carreras asociadas al coordinador, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_FECHAS_MODALIDAD_POSGRADO:"Ocurrió un error al cargar las fechas asociadas a los procesos de la modalidad de materias de posgrado, por favor verifique su conexión e intente de nuevo.",
+        SIN_FECHAS_MODALIDAD_POSGRADO:"Actualmenten no hay fechas para los procesos de la modalidad de materias de posgrado asociadas al periodo académico.",
         SIN_CARRERAS_POSGRADO:"Señor Coordinador, no tiene asignadas carreras con nivel de POSGRADO",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO:"El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
         NO_EN_FECHAS_PUBLICACION_POSGRADO:"El proceso de publicación de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
@@ -249,29 +249,29 @@ var text_es = {
         CARGANDO_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los trabajos de grado consultados. Comuníquese con el administrador.",
         REGISTRANDO_NOTA: "Error al registrar las calificaciones ingresadas",
         NOTA_INVALIDA: "Las calificaciones ingresadas son inválidas. Por favor verificar los campos.",
-        CARGAR_CUPOS:"Ocurrio un error al cargar el número de cupos disponibles, por favor verifique su conexión e intente de nuevo",
+        CARGAR_CUPOS:"Ocurrió un error al cargar el número de cupos disponibles, por favor verifique su conexión e intente de nuevo",
         NUMERO_ADMITIDOS:"El numero de admitidos es mayor al número de cupos disponibles ({{cuposDisponibles}})",
-        CARGAR_DATOS_SOLICITUDES:"Ocurrio un error al cargar los datos de las solicitudes, por favor verifique su conexión e intente de nuevo.",
-        CARGAR_DATOS_ESTUDIANTES:"Ocurrio un error al cargar la información de los estudiantes, por favor verifique su conexión, e intente de nuevo.",
-        CARGAR_SOLICITANTES:"Ocurrio un error al cargar los solicitantes, por favor verifique su conexión e intente de nuevo.",
-        VARLIDAR_REQUISITOS:"Ocurrio un error al validar los requisitos de la solicitud, por favor verifique su conexión e intente de nuevo.",
-        CARGAR_RESPUESTA_SOLICITUD:"Ocurrio un error al cargar las respuestas de las solicitudes, por favor verifique su conexión e intente de nuevo.",
-        CARGAR_AREAS:"Ocurrio un error al cargar las áreas de conocimiento, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DATOS_SOLICITUDES:"Ocurrió un error al cargar los datos de las solicitudes, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DATOS_ESTUDIANTES:"Ocurrió un error al cargar la información de los estudiantes, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_SOLICITANTES:"Ocurrió un error al cargar los solicitantes, por favor verifique su conexión e intente de nuevo.",
+        VARLIDAR_REQUISITOS:"Ocurrió un error al validar los requisitos de la solicitud, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_RESPUESTA_SOLICITUD:"Ocurrió un error al cargar las respuestas de las solicitudes, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_AREAS:"Ocurrió un error al cargar las áreas de conocimiento, por favor verifique su conexión e intente de nuevo.",
         CARGAR_DATOS_ESTUDIANTE:"Ocurrio un error al cargar la información del estudiante, por favor verifique su conexión, e intente de nuevo.",
         ESTUDIANTE_NO_ENCONTRADO:"El estudiante no se encuentra",
-        CARGAR_DATOS_TRABAJOS:"Ocurrio un error al cargar los datos de los trabajos de grado, por favor verifique su conexión, e intente de nuevo.",
-        CARGAR_TIPOS_SOLICITUD:"Ocurrio un error al cargar los tipos de solicitud, por favor verifique su conexión, e intente de nuevo.",
-        CARGAR_DETALLES_SOLICITUD:"Ocurrio un error al cargar los detalles de la solicitud, por favor verifique su conexión, e intente de nuevo.",
-        CARGAR_OPCIONES_DETALLES_SOLICITUD:"Ocurrio un error al cargar las opciones de los detalles, por favor verifique su conexión, e intente de nuevo.",
-        CARGAR_ASIGNATURAS_SOLICITUD:"Ocurrio un error al cargar las asignaturas disponibles, por favor verifique su conexión, e intente de nuevo.",
-        CARGAR_DATOS_SOLICITUD:"Ocurrio un error al cargar los datos de las solicitud, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DATOS_TRABAJOS:"Ocurrió un error al cargar los datos de los trabajos de grado, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_TIPOS_SOLICITUD:"Ocurrió un error al cargar los tipos de solicitud, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DETALLES_SOLICITUD:"Ocurrió un error al cargar los detalles de la solicitud, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_OPCIONES_DETALLES_SOLICITUD:"Ocurrió un error al cargar las opciones de los detalles, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_ASIGNATURAS_SOLICITUD:"Ocurrió un error al cargar las asignaturas disponibles, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DATOS_SOLICITUD:"Ocurrió un error al cargar los datos de las solicitud, por favor verifique su conexión e intente de nuevo.",
         SOLICITUD_NO_ENCONTRADA:"El identificador de la solicitud no ha sido encontrado",
-        CARGAR_EVALUADORES:"Ocurrio un error al cargar los docentes evaluadores, por favor verifique su conexión e intente de nuevo.",
-        CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrio un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
-        CARGAR_DOCENTES:"Ocurrio un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_EVALUADORES:"Ocurrió un error al cargar los docentes evaluadores, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrió un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_DOCENTES:"Ocurrió un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
         NO_HAY_PERMISO:"Lo sentimos, no cuenta con los permisos necesarios para acceder a esta página.",
     },
-    VERIFICAR_DOCUMENTO:"Ocurrio un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
+    VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos",
@@ -412,7 +412,7 @@ var text_es = {
         CAMBIAR_NOMBRE:"Se cambio el nombre del trabajo de grado '{{anterior}}' por '{{nuevo}}'",
         DIRECTOR_INTERNO:"Se cambio el director interno {{anterior}} por {{nuevo}}",
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
-        PRORROGA:"Se concede la prorroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
+        PRORROGA:"Se concede la prórroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
         CAMBIAR_MATERIA:"Se cambia la materia {{anterior}} por {{nuevo}}",
     },
     AREAS:{
@@ -489,10 +489,18 @@ var text_es = {
         PROCESO_ADMISION_COMPLETO:"Proceso de admisión completado",
         RESPUESTAS_SOLICITUD:"Se han registrado los datos del proceso de admisión exitosamente",
     },
-    NO_OPCIONES_DISPONIBLES:"No hay opciones dispobiles",
+    NO_OPCIONES_DISPONIBLES:"No hay opciones disponiles",
     ACCESO_NEGADO:"Acceso negado",
     ACCION_NO_DISPONIBLE:"Acción no disponible",
 };
+
+/**
+ * @ngdoc property
+ * @name text_en
+ * @propertyOf poluxClienteApp.decorator:TextTranslate
+ * @description
+ * Contiene las variables del servicio de internacionalización en ingles
+ */
 var text_en = {
     TITULO: "GENERATOR-OAS",
     MENSAJE_INICIAL: "Now get to start to develop",
@@ -968,6 +976,17 @@ var text_en = {
     ACCESO_NEGADO:"Access denied",
     ACCION_NO_DISPONIBLE:"Action not available",
 };
+
+/**
+ * @ngdoc function
+ * @name poluxClienteApp.decorator:TextTranslate
+ * @requires $translateProvider
+ * @param {injector} $translateProvider Proveedor del servicio de internacionalización
+ * @return {undefined} No se retorna ningun parametro
+ * @description
+ * # TextTranslate
+ * Translate text Decorator of the poluxClienteApp 
+ */
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
         $translateProvider

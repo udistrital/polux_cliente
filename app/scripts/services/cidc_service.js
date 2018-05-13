@@ -1,13 +1,18 @@
 'use strict';
 
 /**
- * @ngdoc service
- * @name poluxClienteApp.academicaService
- * @description
- * # academicaService
- * Factory in the poluxClienteApp.
- */
+  * @ngdoc overview
+  * @name cidcService
+  * @description Modulo para servicio de academica provee los servicios descritos en {@link cidcService.service:cidcRequest cidcService}
+  */
 angular.module('cidcService', [])
+    /**
+     * @ngdoc service
+     * @name cidcService.service:cidcRequest
+     * @description
+     * # cidcService
+     * Fabrica sobre la cual se consumen los servicios proveidos por el API del cidc sobre los metodos GET, POST, PUT y DELETE
+     */
   .factory('cidcRequest', function () {
 
     return {
