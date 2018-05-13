@@ -1,11 +1,11 @@
 'use strict';
 
-/**
- * @ngdoc function
- * @name poluxClienteApp.decorator:TextTranslate
+ /**
+ * @ngdoc property
+ * @name text_es
+ * @propertyOf poluxClienteApp.decorator:TextTranslate
  * @description
- * # TextTranslate
- * Decorator of the poluxClienteApp
+ * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
     TITULO: "GENERATOR-OAS",
@@ -493,6 +493,14 @@ var text_es = {
     ACCESO_NEGADO:"Acceso negado",
     ACCION_NO_DISPONIBLE:"Acción no disponible",
 };
+
+/**
+ * @ngdoc property
+ * @name text_en
+ * @propertyOf poluxClienteApp.decorator:TextTranslate
+ * @description
+ * Contiene las variables del servicio de internacionalización en ingles
+ */
 var text_en = {
     TITULO: "GENERATOR-OAS",
     MENSAJE_INICIAL: "Now get to start to develop",
@@ -968,6 +976,17 @@ var text_en = {
     ACCESO_NEGADO:"Access denied",
     ACCION_NO_DISPONIBLE:"Action not available",
 };
+
+/**
+ * @ngdoc function
+ * @name poluxClienteApp.decorator:TextTranslate
+ * @requires $translateProvider
+ * @param {injector} $translateProvider Proveedor del servicio de internacionalización
+ * @return {undefined} No se retorna ningun parametro
+ * @description
+ * # TextTranslate
+ * Translate text Decorator of the poluxClienteApp 
+ */
 angular.module('poluxClienteApp')
     .config(function($translateProvider) {
         $translateProvider

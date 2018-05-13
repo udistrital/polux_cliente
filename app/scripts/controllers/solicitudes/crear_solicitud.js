@@ -1,13 +1,46 @@
 'use strict';
 
 /**
- * @ngdoc function
+ * @ngdoc controller
  * @name poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
- * @descriptioni
+ * @description
  * # SolicitudesCrearSolicitudCtrl
  * Controller of the poluxClienteApp
+ * Controlador que permite al estudiante crear una solicitud, en caso de que cuente con un trabajo de grado muestra los tipos de solicitudes
+ * asociadas a esa modalidad (cancelación, cambio de nombre, cambio de director, entre otros), en caso contrario, muestra una lista de las solicitudes
+ * iniciales de cada modalidad.
+ * @requires services/poluxClienteApp.service:sesionesService
+ * @requires services/poluxClienteApp.service:coreService
+ * @requires $window
+ * @requires $sce
+ * @requires services/poluxClienteApp.service:tokenService
+ * @requires $location
+ * @requires services/cidcRequest.service:cidcService
+ * @requires services/academicaService.service:academicaRequest
+ * @requires $routeParams
+ * @requires services/poluxService.service:poluxRequest
+ * @requires $scope
+ * @requires services/poluxClienteApp.service:nuxeoService
+ * @requires $q
+ * @requires decorators/poluxClienteApp.decorator:TextTranslate
+ * @requires services/poluxMidService.service:poluxMidRequest
+ * @property {object} modalidades Modalidades disponibles para la elección del estudiante.
+ * @property {object} estudiante Datos del estudiante que esta realizando la solicitud.
+ * @property {object} periodoAnterior Periodo academico anterior.
+ * @property {object} periodoActual Periodo academico actual.
+ * @property {object} periodoSiguiente Periodo academico siguiente.
+ * @property {object} solicitudes Solicitudes realizadas por el estudiante anteriormente
+ * @property {object} detalles Detalles cargados para mostrar en el formulario que se asocian con la modalidad y el tipo de solicitud escogidas por el solicitante.
+ * @property {object} areas Areas del conocimiento.
+ * @property {object} espaciosElegidos Objeto que contiene los espacios elegidos por el estudiante en la solicitud inicial.
+ * @property {boolean} detallesCargados Flag que indica que los detalles terminaron de cargarse..
+ * @property {boolean} siPuede Flag que permite identificar si se puede realizar la solicitud (el estudiante cumple con los requisitos y se encuentra en las fechas para hacerlo)
+ * @property {boolean} restringirModalidades Flag que permite identificar si se deben restringir las demas modalidades debido a que el estudiante ya realizo una solicitud inicial de materias de posgrado.
+ * @property {object} estudiantesTg Estudiantes asociados al tranajo de grado.
+ * @property {object} estudiantes Estudiantes que se agregan a la solicitud inicial.
+ * @property {object} Trabajo Datos del trabajo de grado que cursa el estudiante que esta realizando la solicitud.
  */
- angular.module('poluxClienteApp')
+angular.module('poluxClienteApp')
 .controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location,token_service) {
   $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
   $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
@@ -49,7 +82,17 @@
   //ctrl.codigo = $routeParams.idEstudiante;
   token_service.token.documento = "20141020036";
   ctrl.codigo = token_service.token.documento;
-  //buscar prorrogas anteriores
+
+  /**
+     * @ngdoc method
+     * @name getProrroga
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para saber si al trabajo de grado
+     * ya se le concedio una prorroga previamente
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuelve con el objeto tieneProrrogas
+     */
   ctrl.getProrroga = function() {
     var defer = $q.defer();
 
@@ -78,6 +121,18 @@
     return defer.promise;
   }
 
+/**
+     * @ngdoc method
+     * @name verificarSolicitudes
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Función que permite consultar las solicitudes pendientes por respuesta que tenga el estudiante
+     * en el serivicio que provee {@link services/poluxService.service:poluxRequest poluxRequest}.
+     * Si las solicitudes pendientes son de tipo inicial y pertenecen a la modalidad de materias de posgrado se permite que el estudiante
+     * siga solicitando carreras, en cambio si la solicitud es de cualquier otro tipo se bloquea solicitar una solicitud nueva.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto solicitudesActuales
+     */
   ctrl.verificarSolicitudes = function() {
     var defer = $q.defer();
     var parametrosUser = $.param({
@@ -171,6 +226,15 @@
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name obtenerDatosEstudiante
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Permite buscar los datos del estudiante que realiza la solicitud en el servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto estudiannte
+     */
   ctrl.obtenerDatosEstudiante = function() {
     var defer = $q.defer();
     academicaRequest.get("datos_estudiante", [ctrl.codigo, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
@@ -209,6 +273,15 @@
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name getPeriodoAnterior
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Consulta el periodo academico anterior en el servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
   ctrl.getPeriodoAnterior= function() {
     var defer = $q.defer()
     academicaRequest.get("periodo_academico", "P")
@@ -228,6 +301,15 @@
     return defer.promise;
   }
 
+   /**
+     * @ngdoc method
+     * @name getPeriodoSiguiente
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Consulta el periodo academico siguiente en el servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
   ctrl.getPeriodoSiguiente = function() {
     var defer = $q.defer()
     academicaRequest.get("periodo_academico", "X")
@@ -247,6 +329,15 @@
     return defer.promise;
   }
 
+   /**
+     * @ngdoc method
+     * @name getPeriodoActual
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Consulta el periodo academico actual en el servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
   ctrl.getPeriodoActual = function() {
     var defer = $q.defer()
     academicaRequest.get("periodo_academico", "A")
@@ -267,6 +358,16 @@
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name obtenerAreas
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Consulta las áreas de conocimiento del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y las 
+     * areas asociadas del snies en el servicio de {@link services/poluxClienteApp.service:coreService coreService}
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
   ctrl.obtenerAreas = function() {
     var defer = $q.defer();
     var parametrosAreas = $.param({
@@ -304,6 +405,16 @@
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name cargarTipoSolicitud
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Consulta los diferentes tipos de solicitudes del servicio  {@link services/poluxService.service:poluxRequest poluxRequest} 
+     * asociadas a la modalidad que recibe como parametro.
+     * @param {number} modalidad Modalidad asociada al trabajo
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuelve con el objeto solicitudes
+     */
   ctrl.cargarTipoSolicitud = function(modalidad) {
     var defer = $q.defer();
     ctrl.solicitudes = [];
@@ -334,6 +445,17 @@
   };
 
 
+  /**
+     * @ngdoc method
+     * @name getTrabajoGrado
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Función que consulta los datos del trabajo de grado asociado al estudiante que realiza la solicitud.
+     * Consulta todos los estudiantes asociados al trabajo de grado, los docentes vinculados, los espacios inscritos.
+     * Llama a la función para consultar las solicitudes anteriores y verificar si no tiene ninguna pendiente
+     * @param {undefined} undefined  No requiere Parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuelve sin ningún objeto
+     */
   ctrl.getTrabajoGrado = function(){
     var defer = $q.defer();
 
@@ -527,6 +649,16 @@
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name getAllData
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Llama a la función verificarSolicitudes y verifica si se puede realizar una solicitd. Si el estudiante puede entonces
+     * llama a las funciones getPeriodoActual, getPeriodoAnterior, getPeriodoSiguiente, obtenerAreas, obtenerDatosEstudiante y getTrabajoGrado
+     * @param {undefined} undefined  No requiere Parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuelve sin ningún objeto
+     */
   ctrl.verificarSolicitudes().then(function(puede) {
     if(puede){
       var promises = [];
@@ -562,6 +694,18 @@
     $scope.loadParametros = false;
   });
 
+
+  /**
+     * @ngdoc method
+     * @name verificarRequisitos
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Con los datos del estudiante y el tipo de solicitud verifica por medio del servicio {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} si el estudiante cumple o no con los requisitos para realizar la solicitud,
+     * en caso de que la solicitud sea de tipo inicial en la modalidad de materias de posgrado consulta en el servicio {@link services/poluxClienteApp.service:sesionesService sesionesService} si las fechas coinciden con las fechas del proceso
+     * de modalidad de materias de posgrado para el periodo correspondiente.
+     * @param {undefined} undefined  No requiere Parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuelve con un valor True o False que indica si el estudiante puede o no realizar la solicitud.
+     */
   ctrl.verificarRequisitos = function(tipoSolicitud, modalidad) {
     var defer = $q.defer();
 
@@ -641,6 +785,15 @@
     return defer.promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name docenteVinculado
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Verifica si un docente se encuentra vinculado o no a un trabajo de grado, compara el documento con la lista de docentes del objeto Trabajo
+     * @param {number} docente  NDocumento del docente que se verificara
+     * @returns {boolean} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuelve con un valor True o False que indica si el estudiante puede o no realizar la solicitud.
+     */
   ctrl.docenteVinculado = function(docente) {
     if (ctrl.Trabajo != undefined) {
       if (ctrl.Trabajo.directorInterno !== undefined) {
@@ -671,6 +824,22 @@
     return false;
   }
 
+  /**
+     * @ngdoc method
+     * @name cargarDetalles
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Llama la función verificar requisitos para validar que el estudiante cumpla los requisitos para el tipo de solicitud que selecciono, si los cumple carga los detalles asociados a
+     * la modaliad y al tipo de solicitud correspondientes.
+     * Se realiza la internacionalización de los mensajes que se muestran en los labels, en caso de que el detalle tenga una lista consulta los parametros correspondientes  y se ejecutan las consultas necesarias
+     * con los servicios y parametros descritos en la descripción del detalle.
+     * La descripción de los detalles contiene el valor no_service si no requiere nigún tipo de consulta, el valor estatico si los valores no se consultan (valores separados por coma), nombre de algún servicio
+     * separado por punto y coma con la tabla que debe consultar y con comas los parametros que este requiere, por último en valor mensaje si se queire mostrar un mensaje al usuario y contiene la variable de internacinalización a que tiene el texto a mostrar.
+     * @param {number} tipoSolicitudSeleccionada Tipo de solicitud seleccionada por el estudiante
+     * @param {number} modalidad_seleccionada Modalidad seleccionada por el estudiante
+     * @returns {undefined} No retorna ningún valor
+     */
+     
   ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {
     $scope.loadDetalles = true;
     ctrl.errorParametros = false;
@@ -1017,6 +1186,17 @@
     });
   };
 
+  /**
+     * @ngdoc method
+     * @name validarFormularioSolicitud
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Valida que el formulario se haya diligenciado correctamente, con cada tipo de detalle y los campos requeridos,
+     * si el detalle es de tipo lista verifica que el valor seleccionado se encuentre entre la lista de opciones del detalle, también si el tipo es una directiva
+     * verifica que los valores necesarios para la directiva esten bien. Si no se encuentran errores en el formulario llama a la función cargarDocumentos
+     * @param {undefined} undefined No requiere parametros
+     * @returns {undefined} No retorna ningún valor
+     */
   ctrl.validarFormularioSolicitud = function() {
     console.log("detalles");
 
@@ -1140,6 +1320,18 @@
     }
   }
 
+ /**
+     * @ngdoc method
+     * @name cargarDocumento
+     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+     * @param {string} nombre Nombre del documento que se cargara
+     * @param {string} descripcion Descripcion del documento que se cargara
+     * @param {blob} documento Blob del documento que se cargara
+     * @param {function} callback funcion que se ejecuta al cumplirse la promesa
+     * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado. 
+     * @description 
+     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     */
   ctrl.cargarDocumento = function(nombre, descripcion, documento, callback) {
     var defer = $q.defer();
     var promise = defer.promise;
@@ -1186,6 +1378,17 @@
     return promise;
   }
 
+  /**
+     * @ngdoc method
+     * @name cargarDocumentos
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Si los detalles de la solicitud tienen asociados documentos conecta el cliente de nuxeo y llama a la función cargarDocumento para cargar todos 
+     * los documentos a nuxeo, en caso de que no los tenga o que haya terminado de cargarlos llama a la función cargarSolicitudes.
+     * {@link services/}
+     * @param {undefined} undefined No requiere parametros
+     * @returns {undefined} No retorna nigún valor
+     */
   ctrl.cargarDocumentos = function(callFunction) {
     if (ctrl.detallesConDocumento.length > 0) {
       nuxeo.connect().then(function(client) {
@@ -1241,7 +1444,16 @@
     }
   };
 
-
+   /**
+     * @ngdoc method
+     * @name cargarSolicitudes
+     * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+     * @description 
+     * Crea la data necesaria para registrar la solicitud (detalles, respuesta, usuarios y solicitud) y la envia a {@link services/poluxService.service:poluxRequest poluxRequest}
+     * para registrarla
+     * @param {undefined} undefined No requiere parametros
+     * @returns {undefined} No retorna nigún valor
+     */
   ctrl.cargarSolicitudes = function() {
     //var data_solicitud = [];
     var data_solicitud = {};

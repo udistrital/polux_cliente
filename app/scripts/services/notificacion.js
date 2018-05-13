@@ -1,14 +1,13 @@
 'use strict';
-
 /**
  * @ngdoc service
- * @name notificacionesApp.notificacion
+ * @name poluxClienteApp.service:notificacionService
+ * @requires $websocket
+ * @param {injector} $websocket componente websocket de angular
  * @description
- * # notificacion
- * Factory in the notificacionesApp.
+ * # notificacionService
+ * Fabrica sobre la cual se consumen los servicios de notificacion
  */
- //10.20.0.254/notificacion_api/register?id=1&profile=admin
-
 angular.module('poluxClienteApp')
   .factory('notificacion', function($websocket) {
     var dataStream = $websocket("ws://localhost:8080/register?id=2&profile=admin");
