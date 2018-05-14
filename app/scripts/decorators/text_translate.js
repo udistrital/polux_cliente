@@ -271,6 +271,14 @@ var text_es = {
         CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrió un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
         CARGAR_DOCENTES:"Ocurrió un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
         NO_HAY_PERMISO:"Lo sentimos, no cuenta con los permisos necesarios para acceder a esta página.",
+        CODIGO_NO_VALIDO:"El código ingresado no es valido.",
+        ESTUDIANTE_SIN_TRABAJO:"El estudiante actualmente no tiene registrado ningún trabajo de grado activo.",
+        CARGAR_TRABAJO_GRADO:"Ocurrió un error al cargar el trabajo de grado, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DATOS_ASIGNATURAS:"Ocurrió un error al cargar los datos de una asignatura, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_ASIGNATUAS_TRABAJO_GRADO:"Ocurrió un error al cargar las asignaturas del trabajo de grado, por favor verifique su conexión, e intente de nuevo.",
+        SIN_ASIGNATURAS_TRABAJO_GRADO: "No hay asignaturas de trabajo de grado asociadas a la consulta",
+        CARGAR_DATOS_ESTUDIANTE:"Ocurrió un error al cargar los datos básicos del estudiante, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_CARRERA_ESTUDIANTE:"Ocurrió un error al cargar la carrera del estudiante, por favor verifique su conexión, e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -495,6 +503,14 @@ var text_es = {
     ACCESO_NEGADO:"Acceso negado",
     ACCION_NO_DISPONIBLE:"Acción no disponible",
     CONSULTAR_TRABAJO_GRADO:"Consultar trabajo grado",
+    INPUT:{
+        CODIGO_ESTUDIANTE:"Ingrese el código del estudiante",
+        CONSULTAR:"Consultar",
+    },
+    DATOS_ESTUDIANTE:"Datos básicos del estudiante.",
+    DATOS_TRABAJO_GRADO:"Datos del trabajo de grado.",
+    ASIGNATURAS_TRABAJO_GRADO:"Asignaturas del tabajo de grado",
+    ESPACIOS_ACADEMICOS_INSCRITOS:"Espacios academicos inscritos",
 };
 
 /**
@@ -756,6 +772,14 @@ var text_en = {
         CARGAR_VINCULADOS_TRABAJO_GRADO:"There was an error occurred loading the teachers related to degree work, please check your connection and try again.",
         CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
         NO_HAY_PERMISO:"Sorry, you do not have the necessary permissions to access to this page.",
+        CODIGO_NO_VALIDO:"The code entered is not valid.",
+        ESTUDIANTE_SIN_TRABAJO:"The student does not currently have any active degree work registered.",
+        CARGAR_TRABAJO_GRADO:"There was an error occurred loading the degree work, please check your connection and try again.",
+        CARGAR_DATOS_ASIGNATURAS:"There was an error occurred loading the data of a subject, please check your connection and try again.",
+        CARGAR_ASIGNATUAS_TRABAJO_GRADO:"There was an error occurred loading the degree work subject, please check your connection and try again.",
+        SIN_ASIGNATURAS_TRABAJO_GRADO: "There are no undergraduate work subjects associated with the search",
+        CARGAR_DATOS_ESTUDIANTE:"There was an error occurred loading the basic student data, please check your connection and try again.",
+        CARGAR_CARRERA_ESTUDIANTE:"There was an error occurred loading the student's career, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -981,6 +1005,14 @@ var text_en = {
     ACCESO_NEGADO:"Access denied",
     ACCION_NO_DISPONIBLE:"Action not available",
     CONSULTAR_TRABAJO_GRADO:"Search degree work",
+    INPUT:{
+        CODIGO_ESTUDIANTE:"Enter the student code",
+        CONSULTAR:"Search",
+    },
+    DATOS_ESTUDIANTE:"Basic data of the student.",
+    DATOS_TRABAJO_GRADO:"Data of the degree work.",
+    ASIGNATURAS_TRABAJO_GRADO:"Subjects of the degree work",
+    ESPACIOS_ACADEMICOS_INSCRITOS:"Registered academic spaces",
 };
 
 /**

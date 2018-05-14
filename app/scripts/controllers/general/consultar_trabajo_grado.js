@@ -100,7 +100,7 @@ angular.module('poluxClienteApp')
             defer.resolve();
           })
           .catch(function(error){
-            ctrl.mensajeError = $translate.instant('ERROR.CARGANDO_CARRERA_ESTUDIANTE');
+            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_CARRERA_ESTUDIANTE');
             defer.reject(error);
           });
         }else{
@@ -109,7 +109,7 @@ angular.module('poluxClienteApp')
         }
       })
       .catch(function(error){
-        ctrl.mensajeError = $translate.instant('ERROR.CARGANDO_DATOS_ESTUDIANTE');
+        ctrl.mensajeError = $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTE');
         defer.reject(error);
       });
       return defer.promise;
@@ -139,7 +139,7 @@ angular.module('poluxClienteApp')
           });
           defer.resolve();
         }else{
-          ctrl.mensajeError = $translate.instant("ERROR.NO_ASIGNATURAS_TRABAJO_GRADO");
+          ctrl.mensajeError = $translate.instant("ERROR.SIN_ASIGNATURAS_TRABAJO_GRADO");
           defer.reject(error);
         }
       })
@@ -198,11 +198,11 @@ angular.module('poluxClienteApp')
             defer.resolve();
           })
           .catch(function(error){
-            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_DATOS_ASIGNATURAS");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ASIGNATURAS");
             defer.reject(error);
           });
         }else{
-          ctrl.mensajeError = $translate.instant("ERROR.NO_ESPACIOS_ACADEMICOS_INSCRITOS");
+          ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
           defer.reject(error);
         }
       })
@@ -272,12 +272,12 @@ angular.module('poluxClienteApp')
         })
         .catch(function(error){
           console.log(error);
-          ctrl.mensajeError = $translate.instant('ERROR.CARGANDO_TRABAJO');
+          ctrl.mensajeError = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
           ctrl.errorCargandoTrabajoGrado = true;
           ctrl.loadTrabajoGrado = false;
         });
       }else{
-        ctrl.mensajeError = $translate.instant('CODIGO_NO_VALIDO');
+        ctrl.mensajeError = $translate.instant('ERROR.CODIGO_NO_VALIDO');
         ctrl.errorCargandoTrabajoGrado = true;
       }
     }
