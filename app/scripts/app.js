@@ -240,6 +240,11 @@ angular
               controller: 'NoPermissionCtrl',
               controllerAs: 'noPermission'
             })
+            .when('/general/consultar_trabajo_grado', {
+              templateUrl: 'views/general/consultar_trabajo_grado.html',
+              controller: 'GeneralConsultarTrabajoGradoCtrl',
+              controllerAs: 'consultarTrabajoGrado'
+            })
             .otherwise({
                 redirectTo: '/'
             });

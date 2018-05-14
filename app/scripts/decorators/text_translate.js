@@ -354,6 +354,7 @@ var text_es = {
       CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
       CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado",
       REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
+      CARGANDO_DATOS_TRABAJO_GRADO:"Cargando datos del trabajo de grado",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -493,6 +494,7 @@ var text_es = {
     NO_OPCIONES_DISPONIBLES:"No hay opciones disponiles",
     ACCESO_NEGADO:"Acceso negado",
     ACCION_NO_DISPONIBLE:"Acción no disponible",
+    CONSULTAR_TRABAJO_GRADO:"Consultar trabajo grado",
 };
 
 /**
@@ -832,12 +834,13 @@ var text_en = {
       CARGANDO_AREAS:"Loading areas of SNIES",
       REGISTRANDO_AREA:"Registering area",
       CARGANDO_INFO_ACADEMICA: "Loading academic information",
-      CARGANDO_PARAMETROS: "Loading parameterss",
+      CARGANDO_PARAMETROS: "Loading parameters",
       CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
       CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
       CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
       CARGANDO_PARAMETROS:"Loading parameterss",
       REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
+      CARGANDO_DATOS_TRABAJO_GRADO:"Loading degree work data",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -977,6 +980,7 @@ var text_en = {
     NO_OPCIONES_DISPONIBLES:"No options available",
     ACCESO_NEGADO:"Access denied",
     ACCION_NO_DISPONIBLE:"Action not available",
+    CONSULTAR_TRABAJO_GRADO:"Search degree work",
 };
 
 /**
