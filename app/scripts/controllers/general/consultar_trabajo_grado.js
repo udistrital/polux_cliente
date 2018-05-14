@@ -54,8 +54,25 @@ angular.module('poluxClienteApp')
     },
     {
       name: 'EstadoAsignaturaTrabajoGrado.Nombre',
-      displayName: $translate.instant('Estado'),
+      displayName: $translate.instant('ESTADO'),
       width:'20%',
+    }];
+
+    ctrl.gridOptionsEspacios = [];
+    ctrl.gridOptionsEspacios.columnDefs = [{
+      name: 'EspaciosAcademicosElegibles.CodigoAsignatura',
+      displayName: $translate.instant('ESPACIO_ACADEMICO'),
+      width:'20%',
+    },
+    {
+      name: 'NombreEspacio',
+      displayName: $translate.instant('NOMBRE'),
+      width:'50%',
+    },
+    {
+      name: 'EstadoEspacioAcademicoInscrito.Nombre',
+      displayName: $translate.instant('ESTADO'),
+      width:'30%',
     }];
 
     ctrl.cargarEstudiante = function(estudiante){
@@ -119,11 +136,41 @@ angular.module('poluxClienteApp')
         query:"EstadoEspacioAcademicoInscrito.Id:1,TrabajoGrado:"+ctrl.trabajoGrado.Id,
         limit:0,
       });
+
+      var getDataEspacio = function(espacio){
+        var defer = $q.defer();
+        academicaRequest.get("asignatura_pensum", [espacio.EspaciosAcademicosElegibles.CodigoAsignatura, espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
+        .then(function(responseEspacio) {
+          if (responseEspacio.data.asignatura.datosAsignatura) {
+            espacio.NombreEspacio = responseEspacio.data.asignatura.datosAsignatura[0].nombre;
+            defer.resolve();
+          } else {
+            // Se rechaza la petición en caso de no encontrar datos
+            defer.reject("No se encuentran datos de la materia");
+          }
+        }).catch(function(error){
+          defer.reject(error);
+        });
+        return defer.promise;
+      }
+
       poluxRequest.get("espacio_academico_inscrito",parametrosEspaciosAcademicosInscritos)
       .then(function(responseEspacios){
         if(responseEspacios.data != null){
           ctrl.trabajoGrado.espacios = responseEspacios.data;
-          defer.resolve();
+          var promises = [];
+          //Consultar nombres de los espacios
+          angular.forEach(ctrl.trabajoGrado.espacios,function(espacio){
+            promises.push(getDataEspacio(espacio));
+          });
+          $q.all(promises)
+          .then(function(){
+            defer.resolve();
+          })
+          .catch(function(error){
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_DATOS_ASIGNATURAS");
+            defer.reject(error);
+          });
         }else{
           ctrl.mensajeError = $translate.instant("ERROR.NO_ESPACIOS_ACADEMICOS_INSCRITOS");
           defer.reject(error);
@@ -167,6 +214,7 @@ angular.module('poluxClienteApp')
               console.log(ctrl.trabajoGrado);
               console.log(ctrl.trabajoGrado.estudiante);
               ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
+              ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
               ctrl.trabajoCargado = true;
               ctrl.loadTrabajoGrado = false;
             })
