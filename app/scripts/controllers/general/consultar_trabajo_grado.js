@@ -17,15 +17,17 @@
  * @property {object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
  * @property {object} trabajoGrado Contiene toda la información del trabajo de grado
  * @property {object} estudiante Contiene la información del estudiante
+ * @property {object} gridOptionsEspacios Grid options para los espacios academicos
+ * @property {object} gridOptionsAsignatura Grid options para las asignatruas de TG
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q) {
     var ctrl = this;
 
-    //token_service.token.documento = "79647592";
-    //token_service.token.role.push("COORDINADOR_PREGRADO");
-    token_service.token.documento = "20141020036";
-    token_service.token.role.push("ESTUDIANTE");
+    token_service.token.documento = "79647592";
+    token_service.token.role.push("COORDINADOR_PREGRADO");
+    //token_service.token.documento = "20141020036";
+    //token_service.token.role.push("ESTUDIANTE");
     ctrl.userRole = token_service.token.role;
     ctrl.userId  = token_service.token.documento;
 
@@ -75,6 +77,15 @@ angular.module('poluxClienteApp')
       width:'30%',
     }];
 
+    /**
+     * @ngdoc method
+     * @name cargarEstudiante
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Consulta los datos basicos de un estudiante {@link services/academicaService.service:academicaRequest academicaRequest}
+     * @param {object} estudiante Estudiante que se va a consultar
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
     ctrl.cargarEstudiante = function(estudiante){
       var defer = $q.defer();
       //consultar datos básicos del estudiante
@@ -104,6 +115,15 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name cargarAsignaturasTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Consulta las asingaturas TGI y TGII de un trabajo de grado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
     ctrl.cargarAsignaturasTrabajoGrado = function(){
       var defer = $q.defer();
       var parametrosAsignaturasTrabajoGrado = $.param({
@@ -130,6 +150,16 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name getEspaciosAcademicosInscritos
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Consulta los espacios academicos inscritos en modalidad de materias de posgrado del servicio de {@link services/poluxService.service:poluxRequest poluxRequest},
+     * consulta el nombre de {@link services/academicaService.service:academicaRequest academicaRequest}.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
     ctrl.getEspaciosAcademicosInscritos = function(){
       var defer = $q.defer();
       var parametrosEspaciosAcademicosInscritos = $.param({
@@ -183,6 +213,17 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name consultarTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Consulta el trabajo de graod de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
+     * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón 
+     * getEspaciosAcademicosInscritos.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {undefined} No retorna ningún parametro
+     */
     ctrl.consultarTrabajoGrado = function(){
       ctrl.errorCargandoTrabajoGrado = false;
       //Verifica que lo ingresado sea un codigo
@@ -245,8 +286,5 @@ angular.module('poluxClienteApp')
       ctrl.codigoEstudiante = ctrl.userId;
       ctrl.consultarTrabajoGrado();
     }
-
-
-
 
   });
