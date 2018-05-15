@@ -5,7 +5,7 @@
  * @name poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
  * @description
  * # MateriasPosgradoListarAprobadosCtrl
- * Controller of the poluxClienteApp
+ * Controller of the poluxClienteApp.
  * Controlador que regula las acciones necesarias para que el coordinador del posgrado liste las solicitudes aprobadas y registre la modalidad para el trabajo de grado asociado.
  * Se realiza una selección del posgrado y el periodo académico para listar las solicitudes aprobadas y atendidas por los estudiantes.
  * El coordinador hace el registro del trabajo de grado junto a las asignaturas correspondientes, cuando selecciona la solicitud de cada estudiante.
@@ -26,7 +26,7 @@
  * @property {String} mensajeCargandoTransaccionRegistro Mensaje que aparece durante la carga de la transacción que registra el trabajo de grado asociado a la solicitud seleccionada
  * @property {Array} botonRegistrarTrabajoDeGrado Establece las propiedades del botón que se muestra para cada solicitud y efectúa el registro del trabajo de grado
  * @property {Object} cuadriculaSolicitudesAprobadas Almacena y adapta la información de las solicitudes aprobadas y atendidas por el estudiante, de forma que el coordinador observe la información pertinente
- * @property {Object} cuadriculaEspaciosAcademicosSolicitados Almacena y adapta la información de los espacios académicos solicitados por cada estudiante seleccionado.
+ * @property {Object} cuadriculaEspaciosAcademicosSolicitados Almacena y adapta la información de los espacios académicos solicitados por cada estudiante seleccionado
  * @property {Array} posgradosAsociados Define el conjunto de posgrados asociados al coordinador en sesión
  * @property {Array} periodosCorrespondientes Define el conjunto de periodos académicos que corresponden a la modalidad de espacios académicos de posgrado
  * @property {Object} periodoAcademicoPrevio Establece el año y el periodo académico anterior a la operación, para traer los registros académicos de cada estudiante
@@ -463,9 +463,9 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
        * @description
        * Función que consulta las solicitudes respondidas, y les añade la información necesaria para registrar el trabajo de grado.
-       * Llama a las funciones: consultarDetalleSolicitudRespondida, consultarRespuestaDeSolicitud y consultarInformacionAcademicaDelEstudiante.
+       * Llama a las funciones: obtenerParametrosUsuarioDeSolicitud, consultarDetalleSolicitudRespondida, consultarRespuestaDeSolicitud y consultarInformacionAcademicaDelEstudiante.
        * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los usuarios con solicitudes registrados.
-       * @param {Object} solicitudAprobada La solicitud para obtener el identificador y cargar la información correspondiente a la respuesta
+       * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
        */
       ctrl.consultarSolicitudesRespondidas = function() {
