@@ -6,16 +6,35 @@
  * @description
  * # MateriasPosgradoListarAprobadosCtrl
  * Controller of the poluxClienteApp
+ * Controlador que regula las acciones necesarias para que el coordinador del posgrado liste las solicitudes aprobadas y registre la modalidad para el trabajo de grado asociado.
+ * Se realiza una selección del posgrado y el periodo académico para listar las solicitudes aprobadas y atendidas por los estudiantes.
+ * El coordinador hace el registro del trabajo de grado junto a las asignaturas correspondientes, cuando selecciona la solicitud de cada estudiante.
+ * Pueden visualizarse las solicitudes que ya pasaron por el registro, pero a manera de consulta únicamente.
+ * Este procedimiento hace la inserción de la asginatura de trabajo de grado, y pasa el estado de dicha a "Cursando".
+ * @requires $q
+ * @requires $scope
+ * @requires decorators/poluxClienteApp.decorator:TextTranslate
+ * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxService.service:poluxRequest
+ * @requires services/poluxClienteApp.service:sesionesService
+ * @requires services/poluxClienteApp.service:tokenService
+ * @property {Object} cuadriculaSolicitudesAprobadas Almacena y adapta la información de las solicitudes aprobadas y atendidas por el estudiante, de forma que el coordinador observe la información pertinente
+ * @property {Object} cuadriculaEspaciosAcademicosSolicitados Almacena y adapta la información de los espacios académicos solicitados por cada estudiante seleccionado.
+ * @property {Array} posgradosAsociados Define el conjunto de posgrados asociados al coordinador en sesión
+ * @property {Array} periodosCorrespondientes Define el conjunto de periodos académicos que corresponden a la modalidad de espacios académicos de posgrado
+ * @property {Object} periodoAcademicoPrevio Establece el año y el periodo académico anterior a la operación, para traer los registros académicos de cada estudiante
+ * @property {Object} periodoSeleccionado Almacena el periodo académico que el coordinador seleccionó desde la vista
+ * @property {Object} solicitudSeleccionada Es la solicitud que el coordinador seleccionó desde la lista de solicitudes aprobadas y atendidas por el estudiante
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoListarAprobadosCtrl',
-    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
+    function($q, $scope, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
       token_service.token.documento = "12237136";
       $scope.userId = token_service.token.documento;
-      
+
       // En el inicio de la página, se están cargando los posgrados
       $scope.cargandoPosgrados = true;
       $scope.mensajeCargandoPosgrados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
@@ -69,7 +88,7 @@ angular.module('poluxClienteApp')
         name: 'opcionesDeSolicitud',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '12%',
-        cellTemplate: '<btn-registro ' + 
+        cellTemplate: '<btn-registro ' +
           'ng-if="row.entity.respuestaDeSolicitud.EstadoSolicitud.Id == 9 || row.entity.respuestaDeSolicitud.EstadoSolicitud == 12"' +
           'funcion="grid.appScope.cargarFila(row)"' +
           'grupobotones="grid.appScope.botonRegistrarTrabajoDeGrado">' +
@@ -97,16 +116,27 @@ angular.module('poluxClienteApp')
       }];
 
       /**
-       * [Función que define los parámetros para consultar en la tabla coordinador_carrera]
-       * @return {[Array]} [Se retorna la sentencia para la consulta]
+       * @ngdoc method
+       * @name obtenerParametrosPosgradosDelCoordinador
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que define los parámetros para consultar en la tabla coordinador_carrera.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Array} Los parámetros necesarios para realizar la consulta de los posgrados asociados al coordinador
        */
       ctrl.obtenerParametrosPosgradosDelCoordinador = function() {
         return [$scope.userId, "POSGRADO"];
       }
 
       /**
-       * [Función que recorre la base de datos de acuerdo al coordinador en sesión y sus posgrados asociados]
-       * @return {[Promise]} [La colección de posgrados asociados, o la excepción generada]
+       * @ngdoc method
+       * @name consultarPosgradosAsociados
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que recorre la base de datos de acuerdo al coordinador en sesión y sus posgrados asociados.
+       * Llama a la función: obtenerParametrosPosgradosDelCoordinador.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Promise} La colección de posgrados asociados, o la excepción generada
        */
       ctrl.consultarPosgradosAsociados = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -132,8 +162,13 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que recorre la base de datos hacia los periodos académicos]
-       * @return {[Promise]} [La colección de periodos correspondientes, o la excepción generada]
+       * @ngdoc method
+       * @name consultarPeriodosCorrespondientes
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que recorre la base de datos hacia los periodos académicos.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Promise} La colección de periodos correspondientes, o la excepción generada
        */
       ctrl.consultarPeriodosCorrespondientes = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -159,8 +194,13 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que obtiene el periodo académico según los parámetros de consulta]
-       * @return {[Promise]} [El periodo académico, o la excepción generada]
+       * @ngdoc method
+       * @name consultarPeriodoAcademicoPrevio
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que obtiene el periodo académico según los parámetros de consulta.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Promise} El periodo académico previo, o la excepción generada
        */
       ctrl.consultarPeriodoAcademicoPrevio = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -187,8 +227,14 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que carga las consultas iniciales para poder listar los admitidos]
-       * @return {[void]} [El procedimiento de cargar las solicitudes para listar los admitidos]
+       * @ngdoc method
+       * @name cargarConsultasIniciales
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que carga las consultas iniciales para poder listar los admitidos.
+       * Llama a las funciones: consultarPosgradosAsociados, consultarPeriodosCorrespondientes y consultarPeriodoAcademicoPrevio.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.cargarConsultasIniciales = function() {
         // Se garantiza que se cumplan todas las promesas de carga desde un inicio
@@ -215,8 +261,14 @@ angular.module('poluxClienteApp')
       ctrl.cargarConsultasIniciales();
 
       /**
-       * [Función que se ejecuta cuando se escoge el posgrado asociado desde la vista]
-       * @return {[void]} [Procedimiento que habilita escoger el periodo correspondiente, y consulta el listado si es posible]
+       * @ngdoc method
+       * @name escogerPosgrado
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que se ejecuta cuando se escoge el posgrado asociado desde la vista.
+       * Llama a la función: actualizarSolicitudesAprobadas.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No hace retorno de resultado
        */
       ctrl.escogerPosgrado = function() {
         // Se notifica que el posgrado asociado ha sido escogido
@@ -229,15 +281,17 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que define los parámetros para consultar en la tabla detalle_solicitud]
-       * @param  {[Integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
-       * @return {[param]}                         [Se retorna la sentencia para la consulta]
+       * @ngdoc method
+       * @name obtenerParametrosDetalleSolicitudRespondida
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que define los parámetros para consultar en la tabla detalle_solicitud.
+       * El detalle tipo solicitud 37 relaciona el detalle y la modalidad para cursar espacios académicos de posgrado
+       * @param {Number} idSolicitudTrabajoGrado Se recibe el id de la solicitud de trabajo de grado asociada al usuario
+       * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosDetalleSolicitudRespondida = function(idSolicitudTrabajoGrado) {
         return $.param({
-          /**
-           * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado
-           */
           query: "DetalleTipoSolicitud.Id.in:37|38," +
             "SolicitudTrabajoGrado.Id:" +
             idSolicitudTrabajoGrado,
@@ -246,9 +300,15 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que según la solicitud, carga la información correspondiente al detalle de la misma]
-       * @param  {[Object]} solicitudAprobada [La solicitud para obtener el identificador y cargar la información correspondiente al detalle]
-       * @return {[Promise]}                   [La solicitud con el detalle asociado dentro, o la excepción generada]
+       * @ngdoc method
+       * @name consultarDetalleSolicitudRespondida
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que según la solicitud, carga la información correspondiente al detalle de la misma.
+       * Llama a la función: obtenerParametrosDetalleSolicitudRespondida.
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los detalles de las solicitudes.
+       * @param {Object} solicitudAprobada La solicitud para obtener el identificador y cargar la información correspondiente al detalle
+       * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
        */
       ctrl.consultarDetalleSolicitudRespondida = function(solicitudAprobada) {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -272,20 +332,21 @@ angular.module('poluxClienteApp')
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
       }
-      
+
       /**
-       * [Función que define los parámetros para consultar en la tabla respuesta_solicitud]
-       * @param  {[Integer]} idSolicitudTrabajoGrado [Se recibe el id de la solicitud de trabajo de grado asociada al usuario]
-       * @return {[param]} [Se retorna la sentencia para la consulta]
+       * @ngdoc method
+       * @name obtenerParametrosRespuestaDeSolicitud
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que define los parámetros para consultar en la tabla respuesta_solicitud.
+       * Se traen las solicitudes de acuerdo al periodo correspondiente y cuyo estado sean:
+       * 9 - Formalizada exenta de pago;
+       * 12 - Oficializada;
+       * 14 - Cumplida para espacios académicos de posgrado.
+       * @param {Number} idSolicitudTrabajoGrado Se recibe el identificador de la solicitud de trabajo de grado asociada al usuario
+       * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosRespuestaDeSolicitud = function(idSolicitudTrabajoGrado) {
-        /**
-         * Se traen las solicitudes de acuerdo al periodo correspondiente
-         * y cuyo estado sean:
-         * 9 - Formalizada exenta de pago
-         * 12 - Oficializada
-         * 14 - Cumplida para espacios académicos de posgrado
-         */
         return $.param({
           query: "Activo:True," +
             "EstadoSolicitud.Id.in:9|12|14," +
@@ -296,9 +357,15 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que consulta la respuesta de la solicitud desde la tabla respuesta_solicitud]
-       * @param {[Object]} [solicitudAprobada] [La solicitud a la que se cargará la respuesta]
-       * @return {[Promise]} [Los datos del usuario asociado a la solicitud, o la excepción generada]
+       * @ngdoc method
+       * @name consultarRespuestaDeSolicitud
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que según la solicitud, carga la información correspondiente a la respuesta de la misma.
+       * Llama a la función: obtenerParametrosRespuestaDeSolicitud.
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer la respuesta de las solicitudes.
+       * @param {Object} solicitudAprobada La solicitud para obtener el identificador y cargar la información correspondiente a la respuesta
+       * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
        */
       ctrl.consultarRespuestaDeSolicitud = function(solicitudAprobada) {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -322,9 +389,14 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que consulta los datos académicos del estudiante asociado al usuario]
-       * @param  {[Object]} solicitudAsociada [La solicitud a la cual se cargará la información académica del estudiante]
-       * @return {[Promise]}                             [Los datos académicos del estudiante, o la excepción generada]
+       * @ngdoc method
+       * @name consultarInformacionAcademicaDelEstudiante
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que según la solicitud, carga los datos académicos del estudiante asociado.
+       * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica registrada.
+       * @param {Object} solicitudAprobada La solicitud para obtener el identificador y cargar la información académica del estudiante asociado
+       * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
        */
       ctrl.consultarInformacionAcademicaDelEstudiante = function(solicitudAsociada) {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -347,15 +419,21 @@ angular.module('poluxClienteApp')
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
       }
-      
+
       /**
-       * [Función que define los parámetros para consultar en la tabla usuario_solicitud]
-       * @return {[param]} [Se retorna la sentencia para la consulta]
+       * @ngdoc method
+       * @name obtenerParametrosUsuarioDeSolicitud
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que define los parámetros para consultar en la tabla usuario_solicitud.
+       * La modalidad tipo solicitud 13 relaciona el tipo solicitud y modalidad para cursar espacios académicos de posgrado
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosUsuarioDeSolicitud = function() {
         return $.param({
           /**
-           * [La modalidad tipo solicitud 13 relaciona el tipo solicitud y modalidad para espacios académicos de posgrado]
+           * []
            * @type {String}
            */
           query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13," +
@@ -368,8 +446,15 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que consulta las solicitudes respondidas, y les añade los detalles necesarios para registrar el trabajo de grado]
-       * @return {[Promise]} [La colección de solicitudes aprobadas, o la excepción generada]
+       * @ngdoc method
+       * @name consultarSolicitudesRespondidas
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que consulta las solicitudes respondidas, y les añade la información necesaria para registrar el trabajo de grado
+       * Llama a las funciones: consultarDetalleSolicitudRespondida, consultarRespuestaDeSolicitud y consultarInformacionAcademicaDelEstudiante.
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los usuarios con solicitudes registrados.
+       * @param {Object} solicitudAprobada La solicitud para obtener el identificador y cargar la información correspondiente a la respuesta
+       * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
        */
       ctrl.consultarSolicitudesRespondidas = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
@@ -391,8 +476,9 @@ angular.module('poluxClienteApp')
                 .then(function(resultadoSolicitudesProcesadas) {
                   // Se filtra el contenido de las solicitudes aprobadas
                   angular.forEach(usuariosConSolicitudes.data, function(solicitudAprobada) {
-                    if (solicitudAprobada.detalleDeSolicitud && 
-                      solicitudAprobada.respuestaDeSolicitud && 
+                    if (solicitudAprobada.detalleDeSolicitud &&
+                      solicitudAprobada.registrarTG1yTG2 &&
+                      solicitudAprobada.respuestaDeSolicitud &&
                       solicitudAprobada.informacionAcademica) {
                       ctrl.coleccionSolicitudesAprobadas.push(solicitudAprobada);
                     }
@@ -418,9 +504,14 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que carga las solicitudes aprobadas a la cuadrícula con la información correspondiente]
-       * @param  {[Object]} solicitudesAprobadas [La colección de solicitudes aprobadas ya consultadas]
-       * @return {[void]}                      [El procedimiento de contruir el arreglo de datos visibles sobre las solicitudes aprobadas]
+       * @ngdoc method
+       * @name mostrarSolicitudesAprobadas
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que carga las solicitudes aprobadas a la cuadrícula con la información correspondiente.
+       * Llama a la función: obtenerDatosDelPosgrado.
+       * @param {Array} solicitudesAprobadas La colección de solicitudes aprobadas ya consultadas
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.mostrarSolicitudesAprobadas = function(solicitudesAprobadas) {
         // Se recorren las solicitudes aprobadas para obtener los datos correspondientes
@@ -442,8 +533,14 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que actualiza el contenido de la lista de aprobados al posgrado]
-       * @return {[void]} [El procedimiento de carga, o la excepción generada]
+       * @ngdoc method
+       * @name actualizarSolicitudesAprobadas
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que actualiza el contenido de la lista de aprobados al posgrado
+       * Llama a las funciones: consultarSolicitudesRespondidas y mostrarSolicitudesAprobadas.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.actualizarSolicitudesAprobadas = function() {
         // Se recargan las solicitudes visibles
@@ -476,37 +573,40 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que carga la fila asociada según la selección del usuario]
-       * @param  {[row]} filaAsociada [Es la solicitud que el usuario seleccionó]
+       * @ngdoc method
+       * @name cargarFila
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que carga la fila asociada según la selección del usuario.
+       * Llama a la función: cargarSolicitudSeleccionada.
+       * @param {Object} filaAsociada La solicitud que el coordinador seleccionó
+       * @returns {undefined} No hace retorno de resultados
        */
       $scope.cargarFila = function(filaAsociada) {
         ctrl.cargarSolicitudSeleccionada(filaAsociada.entity);
       }
 
       /**
-       * [Función que recibe una fecha extendida y obtiene sus valores generales de presentación]
-       * @param  {[Date]} fechaCompleta [La fecha en formato extendido]
-       * @return {[String]}               [La cadena de caracteres presentable]
-       */
-      ctrl.obtenerFechaGeneral = function(fechaCompleta) {
-        return fechaCompleta.getFullYear() +
-          "-" + fechaCompleta.getMonth() + 1 +
-          "-" + fechaCompleta.getDate();
-      }
-
-      /**
-       * [Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado]
-       * @param  {[type]} detalleDeSolicitud [El detalle de la solicitud con el formato de almacenado en la base de datos]
-       * @return {[type]}                  [El objeto con los datos del posgrado]
+       * @ngdoc method
+       * @name obtenerDatosDelPosgrado
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado
+       * @param {Object} detalleDeSolicitud El detalle de la solicitud con el formato de almacenado en la base de datos
+       * @returns {Object} Los datos del posgrado clasificados en una variable
        */
       ctrl.obtenerDatosDelPosgrado = function(detalleDeSolicitud) {
         return JSON.parse(detalleDeSolicitud.split("-")[1]);
       }
 
       /**
-       * [Función que obtiene los espacios académicos por su nombre]
-       * @param  {[Array]} detalleDeSolicitud [Tiene la colección de registros en el formato que se almacenan en la base de datos]
-       * @return {[Array]}                  [Devuelve la colección de espacios académicos por nombre]
+       * @ngdoc method
+       * @name obtenerEspaciosAcademicos
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que obtiene la información de los espacios académicos de acuerdo al detalle de la solicitud
+       * @param {Array} detalleDeSolicitud La colección de registros en el formato que se almacenan en la base de datos
+       * @returns {Array} La colección de espacios académicos
        */
       ctrl.obtenerEspaciosAcademicos = function(detalleDeSolicitud) {
         // Se prepara una colección que contendrá los espacios académicos
@@ -533,8 +633,14 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que carga la solicitud seleccionada por el coordinador en sesión]
-       * @param  {[row]} solicitudSeleccionada [La solicitud que el coordinador desea registrar]
+       * @ngdoc method
+       * @name cargarSolicitudSeleccionada
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que carga la solicitud seleccionada por el coordinador en sesión.
+       * Llama a la función: obtenerEspaciosAcademicos.
+       * @param {Object} solicitudSeleccionada La solicitud que el coordinador desea registrar
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.cargarSolicitudSeleccionada = function(solicitudSeleccionada) {
         // Se detiene la carga de la transacción
@@ -547,8 +653,14 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que maneja la confirmación del coordinador para registrar la solicitud]
-       * @return {[void]} [El procedimiento que regula la confirmación para poder registrar en la base de datos]
+       * @ngdoc method
+       * @name confirmarRegistroSolicitud
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que maneja la confirmación del coordinador para registrar la solicitud.
+       * Llama a la función: obtenerEspaciosAcademicos.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.confirmarRegistroSolicitud = function() {
         swal({
@@ -609,14 +721,24 @@ angular.module('poluxClienteApp')
       }
 
       /**
-       * [Función que prepara el contenido de la información para actualizar]
+       * []
        * @return {[Promise]} [La respuesta de enviar la información para actualizar a la base de datos]
+       */
+      /**
+       * @ngdoc method
+       * @name registrarSolicitudAprobada
+       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarAprobadosCtrl
+       * @description 
+       * Función que prepara el contenido de la información para actualizar.
+       * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados del registro del trabajo de grado en la base de datos.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.registrarSolicitudAprobada = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se desactiva la solicitud previa y se mantiene el registro
-        ctrl.solicitudAprobadaSeleccionada = {
+        var solicitudAprobadaSeleccionada = {
           Activo: false,
           EnteResponsable: ctrl.solicitudSeleccionada.respuestaDeSolicitud.EnteResponsable,
           Fecha: ctrl.solicitudSeleccionada.respuestaDeSolicitud.Fecha,
@@ -631,7 +753,7 @@ angular.module('poluxClienteApp')
           Usuario: ctrl.solicitudSeleccionada.respuestaDeSolicitud.Usuario
         };
         // Se establece la nueva solicitud con cumplida para espacios académicos de posgrado
-        ctrl.solicitudAprobadaActualizada = {
+        var solicitudAprobadaActualizada = {
           Activo: true,
           EnteResponsable: ctrl.solicitudSeleccionada.respuestaDeSolicitud.EnteResponsable,
           Fecha: new Date(),
@@ -646,7 +768,7 @@ angular.module('poluxClienteApp')
           Usuario: parseInt($scope.userId)
         };
         // Se crea el trabajo de grado para ser registrado en la base de datos
-        ctrl.trabajoDeGradoParaRegistrar = {
+        var trabajoDeGradoParaRegistrar = {
           Titulo: "Cursar materias de posgrado en " + ctrl.solicitudSeleccionada.nombrePosgrado,
           Modalidad: {
             Id: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Id
@@ -659,7 +781,7 @@ angular.module('poluxClienteApp')
           PeriodoAcademico: ctrl.solicitudSeleccionada.SolicitudTrabajoGrado.PeriodoAcademico
         };
         // Se inscribe el estudiante solicitante en la base de datos
-        ctrl.estudianteAsociadoTrabajoDeGrado = {
+        var estudianteAsociadoTrabajoDeGrado = {
           Estudiante: ctrl.solicitudSeleccionada.codigoEstudiante,
           TrabajoGrado: {
             Id: 0
@@ -669,10 +791,10 @@ angular.module('poluxClienteApp')
           }
         };
         // Se prepara una colección que maneje los espacios académicos inscritos
-        ctrl.espaciosAcademicosInscritos = []
+        var espaciosAcademicosInscritos = []
         // Se recorre la colección de espacios académicos mostrados y se añaden los campos correspondientes a la estructura en la base de datos
         angular.forEach(ctrl.cuadriculaEspaciosAcademicosSolicitados.data, function(espacioAcademico) {
-          ctrl.espaciosAcademicosInscritos.push({
+          espaciosAcademicosInscritos.push({
             Nota: 0,
             EspaciosAcademicosElegibles: {
               Id: espacioAcademico.id
@@ -686,9 +808,9 @@ angular.module('poluxClienteApp')
           });
         });
         // Se prepara una colección que maneje las asignaturas de trabajo de grado
-        ctrl.asignaturasDeTrabajoDeGrado = [];
+        var asignaturasDeTrabajoDeGrado = [];
         // Se estructura el contenido del objeto asignatura trabajo grado
-        ctrl.asignaturaTrabajoGrado = {
+        var asignaturaTrabajoGrado = {
           CodigoAsignatura: 0,
           Periodo: parseInt(ctrl.periodoSeleccionado.periodo),
           Anio: parseInt(ctrl.periodoSeleccionado.anio),
@@ -704,24 +826,24 @@ angular.module('poluxClienteApp')
         // Se estudia si la solicitud indica la inscripción de ambos espacios académicos
         if (ctrl.solicitudSeleccionada.registrarTG1yTG2 == "SI") {
           var numeroAsignaturasTrabajoGrado = 2;
-          for (var item = 1; item <= numeroAsignaturasTrabajoGrado; item++) {
-            ctrl.asignaturasDeTrabajoDeGrado.push(ctrl.asignaturaTrabajoGrado);
+          for (var item = 0; item < numeroAsignaturasTrabajoGrado; item++) {
+            asignaturasDeTrabajoDeGrado.push(asignaturaTrabajoGrado);
           }
         } else {
-          ctrl.asignaturasDeTrabajoDeGrado.push(ctrl.asignaturaTrabajoGrado);
+          asignaturasDeTrabajoDeGrado.push(asignaturaTrabajoGrado);
         }
         // Se define el objeto para enviar como información para actualizar
-        ctrl.informacionParaActualizar = {
-          "RespuestaPrevia": ctrl.solicitudAprobadaSeleccionada,
-          "RespuestaActualizada": ctrl.solicitudAprobadaActualizada,
-          "TrabajoGrado": ctrl.trabajoDeGradoParaRegistrar,
-          "EstudianteTrabajoGrado": ctrl.estudianteAsociadoTrabajoDeGrado,
-          "EspaciosAcademicos": ctrl.espaciosAcademicosInscritos,
-          "AsignaturasDeTrabajoDeGrado": ctrl.asignaturasDeTrabajoDeGrado
+        var informacionParaActualizar = {
+          "RespuestaPrevia": solicitudAprobadaSeleccionada,
+          "RespuestaActualizada": solicitudAprobadaActualizada,
+          "TrabajoGrado": trabajoDeGradoParaRegistrar,
+          "EstudianteTrabajoGrado": estudianteAsociadoTrabajoDeGrado,
+          "EspaciosAcademicos": espaciosAcademicosInscritos,
+          "AsignaturasDeTrabajoDeGrado": asignaturasDeTrabajoDeGrado
         };
         // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
         poluxRequest
-          .post("tr_registrar_materias_posgrado", ctrl.informacionParaActualizar)
+          .post("tr_registrar_materias_posgrado", informacionParaActualizar)
           .then(function(respuestaRegistrarMateriasPosgrado) {
             deferred.resolve(respuestaRegistrarMateriasPosgrado);
           })
