@@ -6,8 +6,8 @@
 
   <div class="panel-body">
 
-    <loading tam="4" load="cargandoPosgrados" message="mensajeCargandoPosgrados"></loading>
-    <div class="row" ng-if="listarAprobados.posgradosAsociados.length > 0 && !cargandoPosgrados">
+    <loading tam="4" load="listarAprobados.cargandoPosgradosAsociados" message="listarAprobados.mensajeCargandoPosgradosAsociados"></loading>
+    <div class="row" ng-if="listarAprobados.posgradosAsociados.length > 0 && !listarAprobados.cargandoPosgradosAsociados">
       <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
       <div class="col-sm-10">
         <ui-select name="posgrado" ng-model="listarAprobados.posgradoSeleccionado" required on-select="listarAprobados.escogerPosgrado()" style="width:97%;" theme="bootstrap">
@@ -21,9 +21,9 @@
       </div>
     </div>
 
-    <br ng-if="periodoCorrespondienteHabilitado">
+    <br ng-if="listarAprobados.periodoCorrespondienteHabilitado">
 
-    <div class="row" ng-if="periodoCorrespondienteHabilitado">
+    <div class="row" ng-if="listarAprobados.periodoCorrespondienteHabilitado">
       <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
       <div class="col-sm-10">
         <select ng-model="listarAprobados.periodoSeleccionado" ng-change="listarAprobados.actualizarSolicitudesAprobadas()">
@@ -34,19 +34,19 @@
       </div>
     </div>
 
-    <div class="panel-body alert alert-danger" ng-if="errorCargandoConsultasIniciales">
-      <span ng-bind="mensajeErrorCargandoConsultasIniciales"></span>
+    <div class="panel-body alert alert-danger" ng-if="listarAprobados.errorCargandoConsultasIniciales">
+      <span ng-bind="listarAprobados.mensajeErrorCargandoConsultasIniciales"></span>
     </div>
     
-    <loading tam="4" load="cargandoSolicitudesAprobadas" message="mensajeCargandoSolicitudesAprobadas"></loading>
-    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="listarAprobados.cuadriculaSolicitudesAprobadas.data.length > 0 && !cargandoSolicitudesAprobadas">
+    <loading tam="4" load="listarAprobados.cargandoSolicitudesAprobadas" message="listarAprobados.mensajeCargandoSolicitudesAprobadas"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="listarAprobados.cuadriculaSolicitudesAprobadas.data.length > 0 && !listarAprobados.cargandoSolicitudesAprobadas">
       <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.cuadriculaSolicitudesAprobadas"></div>
     </div>
 
-    <br ng-if="errorCargandoSolicitudesAprobadas">
+    <br ng-if="listarAprobados.errorCargandoSolicitudesAprobadas">
     
-    <div class="panel-body alert alert-danger" ng-if="errorCargandoSolicitudesAprobadas">
-      <span ng-bind="mensajeErrorCargandoSolicitudesAprobadas"></span>
+    <div class="panel-body alert alert-danger" ng-if="listarAprobados.errorCargandoSolicitudesAprobadas">
+      <span ng-bind="listarAprobados.mensajeErrorCargandoSolicitudesAprobadas"></span>
     </div>
 
   </div>
@@ -116,8 +116,8 @@
         <div class="panel-heading">
           {{'ESP_ACADEMICOS' | translate}}
         </div>
-        <loading tam="4" load="cargandoTransaccionRegistro" message="mensajeCargandoTransaccionRegistro"></loading>
-        <div class="panel-body" ng-if="!cargandoTransaccionRegistro">
+        <loading tam="4" load="listarAprobados.cargandoTransaccionRegistro" message="listarAprobados.mensajeCargandoTransaccionRegistro"></loading>
+        <div class="panel-body" ng-if="!listarAprobados.cargandoTransaccionRegistro">
           <div class="panel col-md-12">
             <div class="mi-grid" id="mi-grid" ui-grid="listarAprobados.cuadriculaEspaciosAcademicosSolicitados" style="height: {{(listarAprobados.cuadriculaEspaciosAcademicosSolicitados.data.length * 35) + 40}}px"></div>
           </div>
