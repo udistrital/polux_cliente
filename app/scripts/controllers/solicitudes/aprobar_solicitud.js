@@ -576,6 +576,9 @@ angular.module('poluxClienteApp')
           }
         }
 
+        var anio = ctrl.detallesSolicitud.PeriodoAcademico.split('-')[0];
+        var periodo = ctrl.detallesSolicitud.PeriodoAcademico.split('-')[1];
+
         if (ctrl.acta.id != null) {
             var data_documento = {
               "DocumentoEscrito":{
@@ -713,7 +716,8 @@ angular.module('poluxClienteApp')
                             "EstadoTrabajoGrado": {
                                 "Id": 1
                             },
-                            "DistincionTrabajoGrado": null
+                            "DistincionTrabajoGrado": null,
+                            "PeriodoAcademico":ctrl.detallesSolicitud.PeriodoAcademico,
                         }
                         //se agregan estudiantes
                         var estudiante = {};
@@ -748,7 +752,7 @@ angular.module('poluxClienteApp')
                         //se agregan las areaSnies
                         var area = {};
                         var data_areas = [];
-                        angular.forEach(otro.Areas, function(area) {
+                        angular.forEach(ctrl.areas, function(area) {
                             area = {
                                 "AreaConocimiento": {
                                     "Id": Number(area)
@@ -783,7 +787,7 @@ angular.module('poluxClienteApp')
                         // evaluadores
                         angular.forEach(ctrl.evaluadoresInicial, function(docente) {
                             vinculacion = {
-                                "Usuario": Number(docente.docente.DIR_NRO_IDEN),
+                                "Usuario": Number(docente.docente.id),
                                 "Activo": true,
                                 "FechaInicio": fechaRespuesta,
                                 //"FechaFin": null,
@@ -793,13 +797,41 @@ angular.module('poluxClienteApp')
                                 "TrabajoGrado": {
                                     "Id": 0
                                 }
-                            }
+                            };
                             data_vinculacion.push(vinculacion);
-                            if (vinculados.includes(docente.docente.DIR_NRO_IDEN)) {
+                            if (vinculados.includes(docente.docente.id)) {
                                 errorDocente = true;
                             } else {
-                                vinculados.push(docente.docente.DIR_NRO_IDEN);
+                                vinculados.push(docente.docente.id);
                             }
+                        });
+                        //data para las asignaturas_trabajo_grado
+                        var data_asignaturasTrabajoGrado = [];
+                        //Para asignatura tg1
+                        data_asignaturasTrabajoGrado.push({
+                          "CodigoAsignatura":1,
+                          "Periodo":parseInt(periodo),
+                          "Anio":parseInt(anio),
+                          "Calificacion":0,
+                          "TrabajoGrado":{
+                            "Id":0
+                          },
+                          "EstadoAsignaturaTrabajoGrado":{
+                            "Id":1,
+                          }
+                        });
+                        //Para asignatura tg2
+                        data_asignaturasTrabajoGrado.push({
+                          "CodigoAsignatura":2,
+                          "Periodo":parseInt(periodo),
+                          "Anio":parseInt(anio),
+                          "Calificacion":0,
+                          "TrabajoGrado":{
+                            "Id":0
+                          },
+                          "EstadoAsignaturaTrabajoGrado":{
+                            "Id":1,
+                          }
                         });
                         ctrl.trabajo_grado = {
                             TrabajoGrado: data_trabajo_grado,
@@ -807,9 +839,10 @@ angular.module('poluxClienteApp')
                             DocumentoEscrito: data_propuesta,
                             DocumentoTrabajoGrado: data_documento_tg,
                             AreasTrabajoGrado: data_areas,
-                            VinculacionTrabajoGrado: data_vinculacion
+                            VinculacionTrabajoGrado: data_vinculacion,
+                            AsignaturasTrabajoGRado: data_asignaturasTrabajoGrado
                         }
-                        solicitudInicial = ctrl.respuestaActual.SolicitudTrabajoGrado;
+                        var solicitudInicial = ctrl.respuestaActual.SolicitudTrabajoGrado;
                         solicitudInicial.TrabajoGrado = {
                             "Id": 0
                         }

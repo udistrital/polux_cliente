@@ -1,0 +1,90 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'CONSULTAR_TRABAJO_GRADO' | translate}}
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <form ng-if="consultarTrabajoGrado.userRole.includes('COORDINADOR_PREGRADO')" name="formCodigoEstudiante" ng-submit="consultarTrabajoGrado.consultarTrabajoGrado()">
+                <div class="col-sm-3">
+                    <label class="control-label"> {{'INPUT.CODIGO_ESTUDIANTE' | translate}} </label>
+                </div>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control col-sm-12" ng-model="consultarTrabajoGrado.codigoEstudiante" required>
+                </div>
+                <div class="col-sm-3">
+                        <input type="submit" ng-disabled="consultarTrabajoGrado.codigoEstudiante.length != 11" value="{{'INPUT.CONSULTAR' | translate}}"  class="col-sm-12 btn btn-success" type="submit">
+                </div>
+            </form>
+        </div>
+        <loading tam="4" load="consultarTrabajoGrado.loadTrabajoGrado" message="consultarTrabajoGrado.mensajeCargandoTrabajoGrado"></loading>
+        <div class="row" ng-if="!consultarTrabajoGrado.loadTrabajoGrado && consultarTrabajoGrado.errorCargandoTrabajoGrado">
+            <br>
+            <div class="col-sm-12">
+                <div class="alert alert-danger">
+                    {{'ERROR' | translate}}: {{consultarTrabajoGrado.mensajeError}} 
+                </div>
+            </div>
+        </div>
+        <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado">
+            <br>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{'DATOS_ESTUDIANTE' | translate}}
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'CODIGO' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiante.codigo}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'NOMBRE' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiante.datos.nombre}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'PENSUM' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiante.datos.pensum}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'CARRERA' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiante.datos.proyecto}} </label>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {{'DATOS_TRABAJO_GRADO' | translate}}
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{'Nombre' | translate}}: </label>
+                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Titulo}} </label>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{'MODALIDAD' | translate}}: </label>
+                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Modalidad.Nombre}} </label>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{'PERIODO' | translate}}: </label>
+                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.PeriodoAcademico}} </label>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
+                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
+                        </div>
+                        <div class="row">
+                            <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
+                            <div class="panel col-md-12">
+                                <div ui-grid="consultarTrabajoGrado.gridOptionsAsignaturas" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsAsignaturas.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.espacios.length > 0">
+                            <label class="control-label col-sm-12"> {{'ESPACIOS_ACADEMICOS_INSCRITOS' | translate}}: </label>
+                            <div class="panel col-md-12">
+                                <div ui-grid="consultarTrabajoGrado.gridOptionsEspacios" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsEspacios.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div> 
+</div>

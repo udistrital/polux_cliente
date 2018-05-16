@@ -69,7 +69,7 @@ var text_es = {
     RESPUESTA: "Respuesta:",
     DENEGADO: "El estudiante no cumple con los requisitos exigidos para la Modalidad de Trabajo de Grado",
     REGISTRAR_PROPUESTA: "Registrar propuesta.",
-    ESTADO: "Estado:",
+    ESTADO: "Estado",
     ESTADO_SIN_DOSPUNTOS: "Estado",
     PORCENTAJE_CURSADO: "Porcentaje cursado",
     PROMEDIO: "Promedio",
@@ -192,6 +192,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_11: "Ocurrió un error al registrar el documento de la propuesta de trabajo de grado.",
     ERROR_RTA_SOLICITUD_12: "Ocurrió un error al asociar el documento escrito a la propuesta de trabajo de grado.",
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
+    ERROR_RTA_SOLICITUD_14: "Ocurrió un error al registrar la asignatura de trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento.",
         CARGAR_DOCUMENTO:"Ocurrió un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
@@ -270,6 +271,14 @@ var text_es = {
         CARGAR_VINCULADOS_TRABAJO_GRADO:"Ocurrió un error al cargar los docentes vinculados al trabajo de grado, por favor verifique su conexión e intente de nuevo.",
         CARGAR_DOCENTES:"Ocurrió un error al cargar los docentes disponibles, por favor verifique su conexión e intente de nuevo.",
         NO_HAY_PERMISO:"Lo sentimos, no cuenta con los permisos necesarios para acceder a esta página.",
+        CODIGO_NO_VALIDO:"El código ingresado no es valido.",
+        ESTUDIANTE_SIN_TRABAJO:"El estudiante actualmente no tiene registrado ningún trabajo de grado activo.",
+        CARGAR_TRABAJO_GRADO:"Ocurrió un error al cargar el trabajo de grado, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_DATOS_ASIGNATURAS:"Ocurrió un error al cargar los datos de una asignatura, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_ASIGNATUAS_TRABAJO_GRADO:"Ocurrió un error al cargar las asignaturas del trabajo de grado, por favor verifique su conexión, e intente de nuevo.",
+        SIN_ASIGNATURAS_TRABAJO_GRADO: "No hay asignaturas de trabajo de grado asociadas a la consulta",
+        CARGAR_DATOS_ESTUDIANTE:"Ocurrió un error al cargar los datos básicos del estudiante, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_CARRERA_ESTUDIANTE:"Ocurrió un error al cargar la carrera del estudiante, por favor verifique su conexión, e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -353,6 +362,7 @@ var text_es = {
       CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
       CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado",
       REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
+      CARGANDO_DATOS_TRABAJO_GRADO:"Cargando datos del trabajo de grado",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -492,6 +502,15 @@ var text_es = {
     NO_OPCIONES_DISPONIBLES:"No hay opciones disponiles",
     ACCESO_NEGADO:"Acceso negado",
     ACCION_NO_DISPONIBLE:"Acción no disponible",
+    CONSULTAR_TRABAJO_GRADO:"Consultar trabajo grado",
+    INPUT:{
+        CODIGO_ESTUDIANTE:"Ingrese el código del estudiante",
+        CONSULTAR:"Consultar",
+    },
+    DATOS_ESTUDIANTE:"Datos básicos del estudiante.",
+    DATOS_TRABAJO_GRADO:"Datos del trabajo de grado.",
+    ASIGNATURAS_TRABAJO_GRADO:"Asignaturas del tabajo de grado",
+    ESPACIOS_ACADEMICOS_INSCRITOS:"Espacios academicos inscritos",
 };
 
 /**
@@ -549,7 +568,7 @@ var text_en = {
     RESPUESTA: "Answer:",
     DENEGADO: "The student doesn't meet the requirements in order aply to this modality",
     REGISTRAR_PROPUESTA: "Register proposal.",
-    ESTADO: "Status:",
+    ESTADO: "Status",
     ESTADO_SIN_DOSPUNTOS: "Status",
     PORCENTAJE_CURSADO: "Percentage completed",
     PROMEDIO: "Average",
@@ -674,6 +693,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_11: "There was an error inserting the document of the graduation work.",
     ERROR_RTA_SOLICITUD_12: "There was an error inserting the written document to the proposal of the graduation work.",
     ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
+    ERROR_RTA_SOLICITUD_14: "There was an error inserting the graduation workk subject.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a document.",
         CARGAR_DOCUMENTO:"An error occurred loading the documents, please verify your connection and try again.",
@@ -752,6 +772,14 @@ var text_en = {
         CARGAR_VINCULADOS_TRABAJO_GRADO:"There was an error occurred loading the teachers related to degree work, please check your connection and try again.",
         CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
         NO_HAY_PERMISO:"Sorry, you do not have the necessary permissions to access to this page.",
+        CODIGO_NO_VALIDO:"The code entered is not valid.",
+        ESTUDIANTE_SIN_TRABAJO:"The student does not currently have any active degree work registered.",
+        CARGAR_TRABAJO_GRADO:"There was an error occurred loading the degree work, please check your connection and try again.",
+        CARGAR_DATOS_ASIGNATURAS:"There was an error occurred loading the data of a subject, please check your connection and try again.",
+        CARGAR_ASIGNATUAS_TRABAJO_GRADO:"There was an error occurred loading the degree work subject, please check your connection and try again.",
+        SIN_ASIGNATURAS_TRABAJO_GRADO: "There are no undergraduate work subjects associated with the search",
+        CARGAR_DATOS_ESTUDIANTE:"There was an error occurred loading the basic student data, please check your connection and try again.",
+        CARGAR_CARRERA_ESTUDIANTE:"There was an error occurred loading the student's career, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -830,12 +858,13 @@ var text_en = {
       CARGANDO_AREAS:"Loading areas of SNIES",
       REGISTRANDO_AREA:"Registering area",
       CARGANDO_INFO_ACADEMICA: "Loading academic information",
-      CARGANDO_PARAMETROS: "Loading parameterss",
+      CARGANDO_PARAMETROS: "Loading parameters",
       CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
       CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
       CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
       CARGANDO_PARAMETROS:"Loading parameterss",
       REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
+      CARGANDO_DATOS_TRABAJO_GRADO:"Loading degree work data",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -975,6 +1004,15 @@ var text_en = {
     NO_OPCIONES_DISPONIBLES:"No options available",
     ACCESO_NEGADO:"Access denied",
     ACCION_NO_DISPONIBLE:"Action not available",
+    CONSULTAR_TRABAJO_GRADO:"Search degree work",
+    INPUT:{
+        CODIGO_ESTUDIANTE:"Enter the student code",
+        CONSULTAR:"Search",
+    },
+    DATOS_ESTUDIANTE:"Basic data of the student.",
+    DATOS_TRABAJO_GRADO:"Data of the degree work.",
+    ASIGNATURAS_TRABAJO_GRADO:"Subjects of the degree work",
+    ESPACIOS_ACADEMICOS_INSCRITOS:"Registered academic spaces",
 };
 
 /**
