@@ -522,6 +522,8 @@ var text_es = {
     DATOS_TRABAJO_GRADO:"Datos del trabajo de grado.",
     ASIGNATURAS_TRABAJO_GRADO:"Asignaturas del tabajo de grado",
     ESPACIOS_ACADEMICOS_INSCRITOS:"Espacios academicos inscritos",
+    ASIGNATURA: "Asignatura",
+    NOTA: "Nota",
 };
 
 /**
@@ -1032,6 +1034,8 @@ var text_en = {
     DATOS_TRABAJO_GRADO:"Data of the degree work.",
     ASIGNATURAS_TRABAJO_GRADO:"Subjects of the degree work",
     ESPACIOS_ACADEMICOS_INSCRITOS:"Registered academic spaces",
+    ASIGNATURA: "Subject",
+    NOTA: "Grade",
 };
 
 /**

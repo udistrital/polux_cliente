@@ -63,18 +63,23 @@ angular.module('poluxClienteApp')
     ctrl.gridOptionsEspacios = [];
     ctrl.gridOptionsEspacios.columnDefs = [{
       name: 'EspaciosAcademicosElegibles.CodigoAsignatura',
-      displayName: $translate.instant('ESPACIO_ACADEMICO'),
+      displayName: $translate.instant('CODIGO'),
       width:'20%',
     },
     {
       name: 'NombreEspacio',
       displayName: $translate.instant('NOMBRE'),
-      width:'50%',
+      width:'40%',
     },
     {
       name: 'EstadoEspacioAcademicoInscrito.Nombre',
       displayName: $translate.instant('ESTADO'),
-      width:'30%',
+      width:'20%',
+    },
+    {
+      name: 'Nota',
+      displayName: $translate.instant('NOTA'),
+      width:'20%',
     }];
 
     /**
@@ -163,7 +168,7 @@ angular.module('poluxClienteApp')
     ctrl.getEspaciosAcademicosInscritos = function(){
       var defer = $q.defer();
       var parametrosEspaciosAcademicosInscritos = $.param({
-        query:"EstadoEspacioAcademicoInscrito.Id:1,TrabajoGrado:"+ctrl.trabajoGrado.Id,
+        query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
         limit:0,
       });
 
@@ -203,7 +208,7 @@ angular.module('poluxClienteApp')
           });
         }else{
           ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
-          defer.reject(error);
+          defer.reject("sin espacios académicos inscritos");
         }
       })
       .catch(function(error){
