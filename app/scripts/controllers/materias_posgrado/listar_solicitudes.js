@@ -143,7 +143,7 @@
       name: 'aprobar',
       displayName: 'Admitir',
       width: "10%",
-      cellTemplate: '<center><div ng-if="grid.appScope.listarSolicitudes.permitirPrimeraFecha || grid.appScope.listarSolicitudes.permitirPrimeraFecha"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.listarSolicitudes.permitirPrimeraFecha && !grid.appScope.listarSolicitudes.permitirPrimeraFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
+      cellTemplate: '<center><div ng-if="grid.appScope.listarSolicitudes.permitirPrimeraFecha || grid.appScope.listarSolicitudes.permitirSegundaFecha"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.listarSolicitudes.permitirPrimeraFecha && !grid.appScope.listarSolicitudes.permitirSegundaFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
     }
     ];
 
@@ -402,7 +402,7 @@
                     //"respuesta": ""+value.Id,
                     "respuestaSolicitud": value
                   };
-                  if(solicitud.estado.Id==7 || solicitud.estado.Id==8){
+                  if(solicitud.estado.Id==7 || solicitud.estado.Id==8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10){
                     solicitud.aprobado = true;
                     ctrl.numeroAdmitidos += 1;
                   }else{
@@ -461,7 +461,7 @@
       if (carrera) {
         $scope.sols = [];
         var parametros = $.param({
-          query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+          query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8|9|10|11,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
           limit: 0
         });
         poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {

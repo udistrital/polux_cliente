@@ -34,7 +34,7 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "20141020036";
+			token_service.token.documento = "20131020002";
 			ctrl.usuarioSesion = token_service.token.documento;
 
 			// En el inicio de la página, se están cargando las solicitudes
