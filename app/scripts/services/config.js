@@ -82,6 +82,6 @@ var conf_local = {
  * Constante que retorna las direcciones en el servicio
  */
 angular.module('poluxClienteApp')
-    .constant('CONF', {
-        GENERAL: conf_pruebas
-    });
+  .constant('CONF', {
+      GENERAL: conf_local
+  });
