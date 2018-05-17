@@ -17,6 +17,7 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires uiGridConstants
  * @property {String} usuarioSesion El identificador del estudiante en sesión para consultar sus solicitudes pendientes
  * @property {Boolean} cargandoSolicitudesParaFormalizar Indicador que maneja la carga de las solicitudes para formalizar
  * @property {String} mensajeCargandoSolicitudesParaFormalizar Mensaje que aparece durante la carga de solicitudes para formalizar
@@ -30,7 +31,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('MateriasPosgradoFormalizarSolicitudCtrl',
-		function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
+		function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -56,11 +57,15 @@ angular.module('poluxClienteApp')
 			ctrl.cuadriculaSolicitudesParaFormalizar.columnDefs = [{
 				name: 'idSolicitud',
 				displayName: $translate.instant("SOLICITUD"),
-				width: '12%'
+				width: '12%',
+	      sort: {
+	        direction: uiGridConstants.ASC,
+	        priority: 0
+	      }
 			}, {
 				name: 'estadoSolicitud',
 				displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
-				width: '12%'
+				width: '9%'
 			}, {
 				name: 'descripcionSolicitud',
 				displayName: $translate.instant("DESCRIPCION"),
@@ -72,11 +77,11 @@ angular.module('poluxClienteApp')
 			}, {
 				name: 'espaciosAcademicos',
 				displayName: $translate.instant("ESPACIOS_ACADEMICOS"),
-				width: '31%',
+				width: '30%',
 			}, {
 				name: 'formalizarSolicitud',
 				displayName: $translate.instant("FORMALIZAR_SOLICITUD.ACCION"),
-				width: '15%',
+				width: '18%',
 				cellTemplate: '<btn-registro ' +
 					'ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8"' +
 					'funcion="grid.appScope.formalizarSolicitud.cargarFila(row)"' +
