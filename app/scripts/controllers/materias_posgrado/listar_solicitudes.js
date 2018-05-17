@@ -508,15 +508,18 @@
         ctrl.gridOptionsAdmitidos.data = [];
         ctrl.gridOptionsOpcionados.data = [];
         angular.forEach($scope.sols, function(solicitud){
-          if(solicitud.aprobado===true){
+          if(solicitud.aprobado===true && (solicitud.estado.Id==3 || solicitud.estado.Id==5 || solicitud.estado.Id==7 || solicitud.estado.Id==8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)){
             ctrl.admitidos.push(solicitud);
-          }else{
+          }else if(solicitud.estado.Id==6){
+            ctrl.noAdmitidos.push(solicitud);
+          } else{
             ctrl.opcionados.push(solicitud);
           }
         });
         ctrl.fecha = 1;
         ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
         ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
+        ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;  
         //console.log(ctrl.admitidos, ctrl.opcionados);
         $('#modalAdmitir').modal('show')
       }else{
@@ -545,15 +548,18 @@
         ctrl.gridOptionsAdmitidos.data = [];
         ctrl.gridOptionsNoAdmitidos.data = [];
         angular.forEach($scope.sols, function(solicitud){
-          if(solicitud.aprobado===true){
+          if(solicitud.aprobado===true && (solicitud.estado.Id==3 || solicitud.estado.Id==5 || solicitud.estado.Id==7 || solicitud.estado.Id==8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)){
             ctrl.admitidos.push(solicitud);
-          }else{
+          }else if(solicitud.estado.Id==6){
             ctrl.noAdmitidos.push(solicitud);
+          } else{
+            ctrl.opcionados.push(solicitud);
           }
         });
         ctrl.fecha = 2;
         ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
-        ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
+        ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
+        ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;  ;
         //console.log(ctrl.admitidos, ctrl.noAdmitidos);
         $('#modalAdmitir').modal('show')
       }else{
