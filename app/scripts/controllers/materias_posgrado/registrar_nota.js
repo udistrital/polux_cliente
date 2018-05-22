@@ -18,6 +18,7 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires uiGridConstants
  * @property {String} usuarioSesion El identificador del coordinador en sesión para consultar los posgrados asociados
  * @property {Boolean} cargandoPosgradosAsociados Indicador que maneja la carga de los posgrados asociados al coordinador en sesión
  * @property {String} mensajeCargandoPosgradosAsociados Mensaje que aparece durante la carga de los posgrados asociados al coordinador
@@ -43,7 +44,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoRegistrarNotaCtrl',
-    function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
+    function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
@@ -76,7 +77,11 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.columnDefs = [{
         name: 'idTrabajoGrado',
         displayName: $translate.instant("TRABAJO_GRADO"),
-        width: '15%'
+        width: '15%',
+        sort: {
+          direction: uiGridConstants.ASC,
+          priority: 0
+        }
       }, {
         name: 'nombreModalidad',
         displayName: $translate.instant("MODALIDAD"),
@@ -114,7 +119,11 @@ angular.module('poluxClienteApp')
         displayName: $translate.instant("CODIGO"),
         width: '20%',
         enableCellEdit: false,
-        enableCellEditOnFocus: false
+        enableCellEditOnFocus: false,
+        sort: {
+          direction: uiGridConstants.ASC,
+          priority: 0
+        }
       }, {
         name: 'nombre',
         displayName: $translate.instant("NOMBRE_ESP_ACADEMICO"),

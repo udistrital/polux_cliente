@@ -18,6 +18,7 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires uiGridConstants
  * @property {String} usuarioSesion El identificador del coordinador en sesión para consultar los posgrados asociados
  * @property {Boolean} cargandoPosgradosAsociados Indicador que maneja la carga de los posgrados asociados al coordinador en sesión
  * @property {String} mensajeCargandoPosgradosAsociados Mensaje que aparece durante la carga de los posgrados asociados al coordinador
@@ -41,7 +42,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoListarAprobadosCtrl',
-    function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service) {
+    function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
@@ -74,7 +75,11 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaSolicitudesAprobadas.columnDefs = [{
         name: 'idSolicitud',
         displayName: $translate.instant("SOLICITUD"),
-        width: '9%'
+        width: '9%',
+        sort: {
+          direction: uiGridConstants.ASC,
+          priority: 1
+        }
       }, {
         name: 'fechaSolicitud',
         displayName: $translate.instant("FECHA"),
@@ -88,19 +93,23 @@ angular.module('poluxClienteApp')
       }, {
         name: 'nombreEstudiante',
         displayName: $translate.instant("NOMBRE"),
-        width: '27%'
+        width: '20%'
       }, {
         name: 'promedioAcademico',
         displayName: $translate.instant("PROMEDIO"),
-        width: '10%'
+        width: '10%',
+        sort: {
+          direction: uiGridConstants.DESC,
+          priority: 0
+        }
       }, {
         name: 'nombreEstado',
         displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
-        width: '18%'
+        width: '17%'
       }, {
         name: 'opcionesDeSolicitud',
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
-        width: '12%',
+        width: '20%',
         cellTemplate: '<btn-registro ' +
           'ng-if="row.entity.respuestaDeSolicitud.EstadoSolicitud.Id == 9 || row.entity.respuestaDeSolicitud.EstadoSolicitud == 12"' +
           'funcion="grid.appScope.listarAprobados.cargarFila(row)"' +
@@ -117,7 +126,11 @@ angular.module('poluxClienteApp')
       ctrl.cuadriculaEspaciosAcademicosSolicitados.columnDefs = [{
         name: 'codigo',
         displayName: $translate.instant("CODIGO_ESP_ACADEMICO"),
-        width: '35%'
+        width: '35%',
+        sort: {
+          direction: uiGridConstants.DESC,
+          priority: 0
+        }
       }, {
         name: 'nombre',
         displayName: $translate.instant("NOMBRE_ESP_ACADEMICO"),
@@ -308,10 +321,10 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDetalleSolicitudRespondida = function(idSolicitudTrabajoGrado) {
         return $.param({
-          query: "DetalleTipoSolicitud.Id.in:37|38," +
+          query: "DetalleTipoSolicitud.Id:37," +
             "SolicitudTrabajoGrado.Id:" +
             idSolicitudTrabajoGrado,
-          limit: 2
+          limit: 1
         });
       }
 
@@ -336,7 +349,6 @@ angular.module('poluxClienteApp')
             if (ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data[0].Descripcion).Codigo == ctrl.posgradoSeleccionado) {
               // Se actualiza el elemento de la colección
               solicitudAprobada.detalleDeSolicitud = detalleSolicitudRespondida.data[0].Descripcion;
-              solicitudAprobada.registrarTG1yTG2 = detalleSolicitudRespondida.data[1].Descripcion;
             }
             // Se resuelve el mensaje correspondiente
             deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
@@ -489,7 +501,6 @@ angular.module('poluxClienteApp')
                   // Se filtra el contenido de las solicitudes aprobadas
                   angular.forEach(usuariosConSolicitudes.data, function(solicitudAprobada) {
                     if (solicitudAprobada.detalleDeSolicitud &&
-                      solicitudAprobada.registrarTG1yTG2 &&
                       solicitudAprobada.respuestaDeSolicitud &&
                       solicitudAprobada.informacionAcademica) {
                       ctrl.coleccionSolicitudesAprobadas.push(solicitudAprobada);
@@ -818,27 +829,23 @@ angular.module('poluxClienteApp')
         });
         // Se prepara una colección que maneje las asignaturas de trabajo de grado
         var asignaturasDeTrabajoDeGrado = [];
-        // Se estructura el contenido del objeto asignatura trabajo grado
-        var asignaturaTrabajoGrado = {
-          CodigoAsignatura: 0,
-          Periodo: parseInt(ctrl.periodoSeleccionado.periodo),
-          Anio: parseInt(ctrl.periodoSeleccionado.anio),
-          Calificacion: 0.0,
-          TrabajoGrado: {
-            Id: 0
-          },
-          // El estado asignatura trabajo grado 1 es cursando
-          EstadoAsignaturaTrabajoGrado: {
-            Id: 1
-          }
-        }
-        // Se estudia si la solicitud indica la inscripción de ambos espacios académicos
-        if (ctrl.solicitudSeleccionada.registrarTG1yTG2 == "SI") {
-          var numeroAsignaturasTrabajoGrado = 2;
-          for (var item = 0; item < numeroAsignaturasTrabajoGrado; item++) {
-            asignaturasDeTrabajoDeGrado.push(asignaturaTrabajoGrado);
-          }
-        } else {
+        // Se agregan las asignaturas de trabajo de grado a registrar (2 registros)
+        var numeroAsignaturasTrabajoGrado = 2;
+        for (var item = 1; item <= numeroAsignaturasTrabajoGrado; item++) {
+          // Se estructura el contenido del objeto asignatura trabajo grado
+          var asignaturaTrabajoGrado = {
+            CodigoAsignatura: item,
+            Periodo: parseInt(ctrl.periodoSeleccionado.periodo),
+            Anio: parseInt(ctrl.periodoSeleccionado.anio),
+            Calificacion: 0.0,
+            TrabajoGrado: {
+              Id: 0
+            },
+            // El estado asignatura trabajo grado 1 es cursando
+            EstadoAsignaturaTrabajoGrado: {
+              Id: 1
+            }
+          };
           asignaturasDeTrabajoDeGrado.push(asignaturaTrabajoGrado);
         }
         // Se define el objeto para enviar como información para actualizar
