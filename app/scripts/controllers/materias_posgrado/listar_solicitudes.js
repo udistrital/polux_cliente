@@ -6,7 +6,7 @@
  * @description
  * # MateriasPosgradoListarSolicitudesCtrl
  * Controller of the poluxClienteApp
- * Controlador de la vista de listar solicitudes, este controlador permite listar las solicitude de estudiantes que han sido aceptadas en los pregrados y realizar el proceso de selección de admitidos al posgrado
+ * Controlador de la vista de listar solicitudes, este controlador permite listar las solicitudes de estudiantes que han sido aceptadas en los pregrados y realizar el proceso de selección de admitidos al posgrado
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires $translate
  * @requires $q
@@ -210,7 +210,7 @@
      * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
      * @description 
      * Consulta las carreras asociadas al coordinador del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
-     * @param {undefined} undefined no requiere parametros
+     * @param {undefined} undefined no requiere parámetros
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto carreras
      */
     ctrl.getCarrerasCoordinador = function(){
@@ -299,7 +299,7 @@
      * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
      * @description 
      * Consulta el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para traer el número de cupos disponibles
-     * @param {undefined} undefined no requiere parametros
+     * @param {undefined} undefined no requiere parámetros
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
      */
     ctrl.getCupos = function(){
@@ -496,8 +496,8 @@
      * @name admitirPrimeraFecha
      * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
      * @description 
-     * muestra el modal para admitir en priemra fecha si no se encuentra ningun error
-     * @param {undefined} undefined No recibe ningun parametro
+     * muestra el modal para admitir en primera fecha si no se encuentra ningún error
+     * @param {undefined} undefined No recibe ningún parámetro
      * @returns {undefined} No retorna nada
      */
     ctrl.admitirPrimeraFecha = function(){
@@ -533,7 +533,7 @@
      * @name admitirSegundaFecha
      * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
      * @description 
-     * muestra el modal para admitir en segunda fecha si no se encuentra ningun error
+     * muestra el modal para admitir en segunda fecha si no se encuentra ningún error
      * @param {undefined} undefined No recibe ningun parametro
      * @returns {undefined} No retorna nada
      */
@@ -572,7 +572,7 @@
      * @description 
      * funcion que hace la petición post a {@link services/poluxService.service:poluxRequest poluxRequest} para
      * empezar a ejecutar el proceso de selección de admitidos
-     * @param {undefined} undefined No recibe ningun parametro
+     * @param {undefined} undefined No recibe ningún parámetro
      * @returns {undefined} No retorna nada
      */
     ctrl.admitir = function(){
@@ -648,7 +648,7 @@
      * @name verificarDisponibilidad
      * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
      * @description 
-     * aumenta o disminuye el numero de admitidos
+     * aumenta o disminuye el número de admitidos
      * @param {object} solicitud Solicitud que se selecciona en el grid
      * @returns {undefined} No retorna nada
      */
