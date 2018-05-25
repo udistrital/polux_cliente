@@ -801,6 +801,13 @@ var text_en = {
         SIN_ASIGNATURAS_TRABAJO_GRADO: "There are no undergraduate work subjects associated with the search",
         CARGAR_DATOS_ESTUDIANTE:"There was an error occurred loading the basic student data, please check your connection and try again.",
         CARGAR_CARRERA_ESTUDIANTE:"There was an error occurred loading the student's career, please check your connection and try again.",
+        CARGAR_MINIMO_CREDITOS:"There was an error occurred loading the minumum credit numbers, please check your connection and try again.",
+        CARGAR_CARRERA_ELEGIBLE:"There was an error occurred loading the elegible career, please check your connection and try again.",
+        INSTERTAR_CARRERA_ELEGIBLE:"There was an error occurred inserting the elegible career, please check your connection and try again.",
+        CARGAR_ESPACIO_ACADEMICO_ELEGIBLE:"There was an error occurred loading the elegible academic space, please check your connection and try again.",
+        INSTERTAR_ESPACIO_ACADEMICO_ELEGIBLE:"There was an error occurred inserting the elegible academic space, please check your connection and try again.",
+        ACTUALIZAR_ESPACIO_ACADEMICO_ELEGIBLE:"There was an error occurred updating the elegible academic space, please check your connection and try again.",
+        GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES:"There was an error occurred saving the elegible academic space, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {

@@ -376,10 +376,8 @@ angular.module('poluxClienteApp')
               "CarreraElegible": dataCarreraElegible,
               "EspaciosAcademicosElegibles": dataEspacios,
             }
-            console.log(dataPublicarAsignaturas);
             poluxRequest.post("tr_publicar_asignaturas",dataPublicarAsignaturas)
             .then(function(){
-              console.log("OK");
               swal(
                 $translate.instant('ESPACIOS_ACADEMICOS_GUARDADOS'),
                 $translate.instant('MENSAJE_ESPACIOS_ACADEMICOS_GUARDADOS'),
