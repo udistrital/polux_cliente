@@ -282,6 +282,13 @@ var text_es = {
         SIN_ASIGNATURAS_TRABAJO_GRADO: "No hay asignaturas de trabajo de grado asociadas a la consulta",
         CARGAR_DATOS_ESTUDIANTE:"Ocurrió un error al cargar los datos básicos del estudiante, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_CARRERA_ESTUDIANTE:"Ocurrió un error al cargar la carrera del estudiante, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_MINIMO_CREDITOS:"Ocurrió un error al cargar el minimo de creditos, por favor verifique su conexión, e intente de nuevo.",
+        CARGAR_CARRERA_ELEGIBLE:"Ocurrió un error al cargar los datos de la carrera, por favor verifique su conexión, e intente de nuevo.",
+        INSTERTAR_CARRERA_ELEGIBLE:"Ocurrió un error al insertar la carrera elegible, por favor intente de nuevo",
+        CARGAR_ESPACIO_ACADEMICO_ELEGIBLE:"Ocurrió un error al cargar los datos del espacio academico, por favor verifique su conexión, e intente de nuevo.",
+        INSTERTAR_ESPACIO_ACADEMICO_ELEGIBLE:"Ocurrió un error al insertar el espacio academico, por favor intente de nuevo",
+        ACTUALIZAR_ESPACIO_ACADEMICO_ELEGIBLE:"Ocurrió un error al actualizar el espacio academico, por favor intente de nuevo",
+        GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES:"Ocurrió un error al guardar los espacios academicos elegibles, por favor intente de nuevo",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
