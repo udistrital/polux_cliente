@@ -231,42 +231,30 @@ angular.module('poluxClienteApp')
               var parametros = $.param({
                 query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura.codigo
               });
-
+              var asignaturaActiva = false;
               poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
                 if (response.data != null) {
                   ctrl.habilitar = true;
                   ctrl.habilitar2 = false;
-
-                  var nuevo = {
-                    carrera: carrera,
-                    año: anio,
-                    periodo: periodo,
-                    pensum: pensum,
-                    asignatura: asignatura.codigo,
-                    nombre: asignatura.nombre,
-                    creditos: asignatura.creditos,
-                    semestre: asignatura.semestre,
-                    check: response.data[0].Activo
-                  };
-
-                  var c = parseInt(asignatura.creditos, 10);
-                  ctrl.totalCreditos = ctrl.totalCreditos + c;
-                  ctrl.mostrar.push(nuevo);
-
-                } else {
-                  var nuevo = {
-                    carrera: carrera,
-                    año: anio,
-                    periodo: periodo,
-                    pensum: pensum,
-                    asignatura: asignatura.codigo,
-                    nombre: asignatura.nombre,
-                    creditos: asignatura.creditos,
-                    semestre: asignatura.semestre,
-                    check: false
-                  };
-                  ctrl.mostrar.push(nuevo);
+                  asignaturaActiva = response.data[0].Activo
+                  //si la materia esta activa se suman los creditos
+                  if(response.data[0].Activo){
+                    var c = parseInt(asignatura.creditos, 10);
+                    ctrl.totalCreditos = ctrl.totalCreditos + c;
+                  }
                 }
+                var nuevo = {
+                  carrera: carrera,
+                  año: anio,
+                  periodo: periodo,
+                  pensum: pensum,
+                  asignatura: asignatura.codigo,
+                  nombre: asignatura.nombre,
+                  creditos: asignatura.creditos,
+                  semestre: asignatura.semestre,
+                  check: asignaturaActiva
+                };
+                ctrl.mostrar.push(nuevo);
                 defer.resolve();
               })
               .catch(function(error){
