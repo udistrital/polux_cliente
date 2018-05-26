@@ -431,6 +431,8 @@ var text_es = {
     SOLICITUD_OFICIALIZADA: "La solicitud ha sido oficializada por la notificación del pago realizado por el estudiante.",
     SOLICITUD_NO_OFICIALIZADA: "La solicitud ha quedado sin oficializar porque no se tuvo notificación de que el estudiante realizó el pago asignado.",
     SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO: "La solicitud se resolvió satisfactoriamente para cursar espacios académicos de posgrado.",
+    SOLICITUD_CARTA_APROBADA_PASANTIA:"La solicitud de la carta de presentación fue aprobada por favor vaya a la oficina de pasantias para recogerla.",
+    SOLICITUD_CARTA_RECHAZADA_PASANTIA:"La solicitud de la carta fue rechazada, si tiene alguna inquietud por favor vaya a la oficina de pasantias.",
     INFORMACION_PRORROGA:"Información importante sobre la prórroga",
     MENSAJE_PRORROGA:"Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a una prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
     APROBADO : {
@@ -964,6 +966,8 @@ var text_en = {
     SOLICITUD_OFICIALIZADA: "The request has been made official by the notification of the payment made by the student.",
     SOLICITUD_NO_OFICIALIZADA: "The request has not been made official because there was no notification that the student made the assigned payment.",
     SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO: "The request was satisfactorily resolved to study postgraduate academic spaces.",
+    SOLICITUD_CARTA_APROBADA_PASANTIA:"The application for the presentation letter was approved, please go to the internship office to pick it up.",
+    SOLICITUD_CARTA_RECHAZADA_PASANTIA:"The request for the presentation letter was rejected, if you have any concerns please go to the internship office.",
     INFORMACION_PRORROGA:"Important information about the extension",
     MENSAJE_PRORROGA:"Mr. student, you are informed that in accordance with the provisions of Agreement 038 of July 2015 issued by the academic council of the Francisco José de Caldas District University, you only have the right to an extension, that is, once you make this application regardless of the nature (extension to socialize or formalize) and is approved, you can not request it again.",
     APROBADO : {
