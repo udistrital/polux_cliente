@@ -1,11 +1,25 @@
 'use strict';
 
 /**
- * @ngdoc function
+ * @ngdoc controller
  * @name poluxClienteApp.controller:PasantiaSolicitarCartaCtrl
  * @description
  * # PasantiaSolicitarCartaCtrl
  * Controller of the poluxClienteApp
+ * Controlador que permite a un estudiante crear una solicitud de carta de presentación a una oficina expedida por la oficina de pasantías
+ * @requires $location
+ * @requires $q
+ * @requires $scope
+ * @requires decorators/poluxClienteApp.decorator:TextTranslate
+ * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxService.service:poluxRequest
+ * @requires services/poluxMidService.service:poluxMidRequest
+ * @requires services/poluxClienteApp.service:tokenService
+ * @property {String} codigo Código del estudiante que esta realizando la solicitud.
+ * @property {String} mensajeError Mensaje que se muestra cuando ocurre algún error verificando los datos del estudiante y sus solicitudes.
+ * @property {boolean} errorCargar Bandera que permite identificar cuando ocurre un error veficiando los datos del estudiante y sus solicitudes, permitiendo mostrar el mensaje de error.
+ * @property {Object} estudiante Objeto de tipo JSON que almacena los datos del estudiante.
+ * @property {Object} postSolicitud Data de la solicitud que se envia para registrar en la base de datos.
  */
 angular.module('poluxClienteApp')
   .controller('PasantiaSolicitarCartaCtrl', function ($location,$q,$scope,$translate,academicaRequest,poluxRequest,poluxMidRequest,token_service) {
@@ -19,6 +33,19 @@ angular.module('poluxClienteApp')
     token_service.token.documento = "20131020020";
     ctrl.codigo = token_service.token.documento;
 
+    /**
+     * @ngdoc method
+     * @name validarRequisitosEstudiante
+     * @methodOf poluxClienteApp.controller:PasantiaSolicitarCartaCtrl
+     * @description 
+     * Permite verificar si un estudiante cumple con los requisitos para solicitar la carta, se traen los datos del estudiante
+     * del servicio {@link services/academicaService.service:academicaRequest academicaRequest} y se verifica que: el estudiante cumpla con los requisitos para
+     * cursar la modalidad y realizar la solicitud con el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest}, se verifica que el estudiante 
+     * no tenga registrado un trabajo de grado en {@link services/poluxService.service:poluxRequest poluxRequest}  y por ultimo se te verifica que no tenga solicitudes activas 
+     * en {@link services/poluxService.service:poluxRequest poluxRequest}.
+     * @param {undefined} undefined No requiere parametros.
+     * @returns {undefined} No retorna ningún valor.
+     */
     ctrl.validarRequisitosEstudiante = function(){
       ctrl.mensajeError = "";
       ctrl.errorCargar = false;
@@ -176,6 +203,16 @@ angular.module('poluxClienteApp')
     });
     
 
+    /**
+     * @ngdoc method
+     * @name postSolicitud
+     * @methodOf poluxClienteApp.controller:PasantiaSolicitarCartaCtrl
+     * @description 
+     * Permite realizar el post de la solicitud en {@link services/poluxService.service:poluxRequest poluxRequest}.
+     * @param {undefined} undefined No requiere parametros.
+     * @returns {Promise} Objetio de tipo promesa que permite identificar cuando se completo el post de la solicitud, se resuelve con la
+     * respuesta que retorna el servidor.
+     */
     ctrl.postSolicitud = function(){
       var defer = $q.defer();
 
@@ -265,6 +302,16 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+    /**
+     * @ngdoc method
+     * @name enviarSolicitud
+     * @methodOf poluxClienteApp.controller:PasantiaSolicitarCartaCtrl
+     * @description 
+     * Permite mostrar un mensaje de confirmación al usuario y en caso de que este acepte llama al metodo
+     * postSolicitud para registrar la solicitud
+     * @param {undefined} undefined No requiere parametros.
+     * @returns {undefined} No retorna ningún valor.
+     */
     ctrl.enviarSolicitud = function(){
       swal({
                title: $translate.instant("INFORMACION_SOLICITUD"),
