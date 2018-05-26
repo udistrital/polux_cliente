@@ -289,6 +289,7 @@ var text_es = {
         INSTERTAR_ESPACIO_ACADEMICO_ELEGIBLE:"Ocurrió un error al insertar el espacio academico, por favor intente de nuevo",
         ACTUALIZAR_ESPACIO_ACADEMICO_ELEGIBLE:"Ocurrió un error al actualizar el espacio academico, por favor intente de nuevo",
         GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES:"Ocurrió un error al guardar los espacios academicos elegibles, por favor intente de nuevo",
+        CARGAR_SOLICITUDES:"Ocurrió un error al cargar las solicitudes, por favor verifique su conexión, e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -470,6 +471,10 @@ var text_es = {
       INGRESE_CARGO_DIRIGIDO:"Ingrese el cargo del destinatario de la carta",
       RECLAMAR_CARTA:"Señor estudiante tenga en cuenta que una vez su solicitud de carta de presentación sea aprobada debera acercarse a recogerla en la oficina de pasantias",
       SEGURO_INFORMACION_CARTA:"Señor estudiante, ¿Está seguro solicitar una carta dirigida al Señor(a) {{nombre}} quien labora como {{cargo}} en la empresa {{empresa}}?, por favor verifique todos los datos.",
+      SOLICITUDES_CARTA:"Listado de solicitudes de carta de presentación",
+      ERROR:{
+        SIN_SOLICITUDES_CARTA:"Actualmente no hay ninguna solicitud de carta de presentación pendiente por revisión.",
+      },
     },
     ACEPTAR:"Aceptar",
     CANCELAR:"Cancelar",
@@ -531,6 +536,7 @@ var text_es = {
     ESPACIOS_ACADEMICOS_INSCRITOS:"Espacios academicos inscritos",
     ASIGNATURA: "Asignatura",
     NOTA: "Nota",
+    ACCIONES:"Acciones",
 };
 
 /**
@@ -808,6 +814,7 @@ var text_en = {
         INSTERTAR_ESPACIO_ACADEMICO_ELEGIBLE:"There was an error occurred inserting the elegible academic space, please check your connection and try again.",
         ACTUALIZAR_ESPACIO_ACADEMICO_ELEGIBLE:"There was an error occurred updating the elegible academic space, please check your connection and try again.",
         GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES:"There was an error occurred saving the elegible academic space, please check your connection and try again.",
+        CARGAR_SOLICITUDES:"There was an error occurred loading the requests, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -988,7 +995,11 @@ var text_en = {
       INGRESE_NOMBRE_DIRIGIDO:"Enter the name of the letter's recipient",
       INGRESE_CARGO_DIRIGIDO:"Enter the cargo of the letter's recipient",
       RECLAMAR_CARTA:"Mr. student note that once your request for a cover letter is approved you should go to pick it up at the internship office",
-      SEGURO_INFORMACION_CARTA:"Mr. student, are you sure to request a letter addressed to Mr(s). {{nombre} who works as {{cargo}} in the company {{empresa}} ?, please verify all data."
+      SEGURO_INFORMACION_CARTA:"Mr. student, are you sure to request a letter addressed to Mr(s). {{nombre} who works as {{cargo}} in the company {{empresa}} ?, please verify all data.",
+      SOLICITUDES_CARTA:"List of presentations' letters request",
+      ERROR:{
+        SIN_SOLICITUDES_CARTA:"Currently there is no presentation letters pending of review.",
+      },
     },
     ACEPTAR:"Accept",
     CANCELAR:"Cancel",
@@ -1050,6 +1061,7 @@ var text_en = {
     ESPACIOS_ACADEMICOS_INSCRITOS:"Registered academic spaces",
     ASIGNATURA: "Subject",
     NOTA: "Grade",
+    ACCIONES:"Actions",
 };
 
 /**

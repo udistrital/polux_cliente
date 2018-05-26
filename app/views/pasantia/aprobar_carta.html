@@ -1,14 +1,17 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        pasantia/aprobar_carta.
+        {{ 'PASANTIA.SOLICITUDES_CARTA' | translate }}
     </div>
     <div class="panel-body">
-        <p>
-          Ahora puede empezar a construir la vista de pasantia/aprobar_carta.
-        </p>
-    </div>
-    <div class="panel-footer">
-        Panel Footer
+        <loading tam="4" load="aprobarCarta.cargandoSolicitudes" message="aprobarCarta.mensajeCargandoSolicitudes"> </loading>
+        <div class="panel-body alert alert-danger" ng-if="!aprobarCarta.cargandoSolicitudes && aprobarCarta.errorCargandoSolicitudes">
+            {{aprobarCarta.mensajeError}}
+        </div>
+        <div class="col-sm-12">
+            <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="!aprobarCarta.cargandoSolicitudes && !aprobarCarta.errorCargandoSolicitudes">
+                <div class="mi-grid" id="mi-grid" ui-grid="aprobarCarta.gridOptions" style="height: {{(aprobarCarta.gridOptions.data.length*35)+40}}px" ui-grid-auto-resize></div>
+            </div> 
+        </div>
     </div>
 </div>
