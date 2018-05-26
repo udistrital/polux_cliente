@@ -8,15 +8,18 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('PasantiaSolicitarCartaCtrl', function ($location,$q,$scope,$translate,academicaRequest,poluxRequest,poluxMidRequest) {
+  .controller('PasantiaSolicitarCartaCtrl', function ($location,$q,$scope,$translate,academicaRequest,poluxRequest,poluxMidRequest,token_service) {
     var ctrl = this;
 
     //mensajes para load
     $scope.cargandoEstudiante = $translate.instant('LOADING.CARGANDO_ESTUDIANTE');
     $scope.cargandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
 
+    //código de la pesona que se loguea
+    token_service.token.documento = "20131020020";
+    ctrl.codigo = token_service.token.documento;
+
     ctrl.validarRequisitosEstudiante = function(){
-      ctrl.codigo = "20131020002";
       academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
         academicaRequest.get("datos_estudiante",[ ctrl.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
           if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
