@@ -162,7 +162,19 @@ angular.module('poluxClienteApp')
     }
 
     $scope.loadEstudiante = true;
-    ctrl.validarRequisitosEstudiante();
+    //Se consulta el periodo academico actual
+    academicaRequest.get("periodo_academico","A").then(function(periodoActual){
+      ctrl.periodoAcademicoActual = periodoActual.data.periodoAcademicoCollection.periodoAcademico[0].anio + "-" + periodoActual.data.periodoAcademicoCollection.periodoAcademico[0].periodo;
+      //Se valida que el estudiante cumpla con los requisitos para realizar la solicitud
+      ctrl.validarRequisitosEstudiante();
+    })
+    .catch(function(error){
+      console.log(error);
+      ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
+      ctrl.errorCargar = true;
+      $scope.loadEstudiante = false;
+    });
+    
 
     ctrl.postSolicitud = function(){
       var defer = $q.defer();
@@ -178,7 +190,8 @@ angular.module('poluxClienteApp')
         "ModalidadTipoSolicitud": {
           //id solicitud de carta en modalidad_tipo_solicitud
           "Id": 1
-        }
+        },
+        "PeriodoAcademico": ctrl.periodoAcademicoActual,
       };
 
       //detalles de la solicitud, nombre empresa, nombre encargado y cargo
