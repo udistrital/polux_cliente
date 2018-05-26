@@ -15,3 +15,85 @@
         </div>
     </div>
 </div>
+
+<div id="modalVerSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+              {{aprobarCarta.solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'DETALLES_SOLICITUD' | translate}}
+            </div>
+              <div class="panel-body">
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'NOMBRE_EMPRESA_RECEPTOR'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.NombreEmpresa}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'NOMBRE_RECEPTOR'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.NombreReceptor}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'CARGO_RECEPTOR'|translate}}:</label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.CargoReceptor}}  </label>
+                  </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'DATOS_ESTUDIANTE' | translate}}
+            </div>
+              <div class="panel-body">
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'NOMBRE'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.Estudiante.Nombre}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'CODIGO'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.Estudiante.Codigo}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'PROMEDIO'|translate}}:</label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.Estudiante.Promedio}}  </label>
+                  </div>
+                  <div class="row">
+                    <label class="col-sm-4 control-label"> {{'PORCENTAJE_CURSADO'|translate}}:</label>
+                    <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.Estudiante.PorcentajeCursado}}  </label>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'INFORMACION_SOLICITUD' | translate}}
+            </div>
+              <div class="panel-body">
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.SolicitudTrabajoGrado.Id}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'FECHA'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.Fecha}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'PERIODO_ACADEMICO'|translate}}:</label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.SolicitudTrabajoGrado.PeriodoAcademico}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'TIPO_SOLICITUD' | translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'ESTADO_SOLICITUD'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.EstadoSolicitud.Nombre}}  </label>
+                  </div>
+                  <div class="row">
+                      <label class="col-sm-4 control-label"> {{'JUSTIFICACION_RESPUESTA'|translate}}:  </label>
+                      <label class="col-sm-8 control-label"> {{aprobarCarta.solicitud.Justificacion}}  </label>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -106,7 +106,7 @@ angular.module('poluxClienteApp')
                   "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                   "Modalidad": 1, //id modalidad de pasantia
                   "Tipo": "POSGRADO",
-                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
+                  "PorcentajeCursado": parseFloat(response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado).toFixed(2),
                   "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                   "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                   "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
@@ -163,15 +163,15 @@ angular.module('poluxClienteApp')
           angular.forEach(responseDetalles.data,function(detalle){
             if(detalle.DetalleTipoSolicitud.Id === 1 ){
               //Nombre del receptor de la carta
-              respuestaSolicitud.nombreEmpresa = detalle.Descripcion;
+              respuestaSolicitud.NombreEmpresa = detalle.Descripcion;
             }
             if(detalle.DetalleTipoSolicitud.Id === 2 ){
               //Nombre del receptor de la carta
-              respuestaSolicitud.nombreReceptor = detalle.Descripcion;
+              respuestaSolicitud.NombreReceptor = detalle.Descripcion;
             }
             if(detalle.DetalleTipoSolicitud.Id === 3 ){
               //Cargo del receptor de la carta
-              respuestaSolicitud.cargoReceptor = detalle.Descripcion;
+              respuestaSolicitud.CargoReceptor = detalle.Descripcion;
             }
           });
           defer.resolve();
@@ -261,8 +261,14 @@ angular.module('poluxClienteApp')
     $scope.loadrow = function(row, operacion) {
       switch (operacion) {
         case "ver":
+          ctrl.solicitud = row.entity;
+          console.log(ctrl.solicitud);
           $('#modalVerSolicitud').modal('show');
           break;
+        case "aprobar":
+          break;
+        case "rechazar":
+          
         default:
           break;
       }

@@ -537,6 +537,9 @@ var text_es = {
     ASIGNATURA: "Asignatura",
     NOTA: "Nota",
     ACCIONES:"Acciones",
+    NOMBRE_EMPRESA_RECEPTOR:"Nombre de la empresa",
+    NOMBRE_RECEPTOR:"Nombre del receptor",
+    CARGO_RECEPTOR:"Cargo del receptor",
 };
 
 /**
@@ -1062,6 +1065,9 @@ var text_en = {
     ASIGNATURA: "Subject",
     NOTA: "Grade",
     ACCIONES:"Actions",
+    NOMBRE_EMPRESA_RECEPTOR:"Name of the company",
+    NOMBRE_RECEPTOR:"Receiver name",
+    CARGO_RECEPTOR:"Receiver charge",
 };
 
 /**
