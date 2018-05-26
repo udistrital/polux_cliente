@@ -6,20 +6,11 @@
         <loading tam="4" load="loadEstudiante" message="cargandoEstudiante"> </loading>
         <loading tam="4" load="loadFormulario" message="cargandoFormulario"> </loading>
         <div class="col-sm-12">
-          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.siPuede">
-              {{'ESTUDIANTE_NO_REQUISITOS' | translate}}
-          </div>
-          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.conEstudiante">
-            {{'ESTUDIANTE_NO_ENCONTRADO' | translate}}
-          </div>
-          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.conSolicitud">
-            {{'ERROR.HAY_SOLICITUD_PENDIENTE' | translate}}
-          </div>
-          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.conTrabajo">
-            {{'ESTUDIANTE_TRABAJO_GRADO' | translate}}
+          <div class="panel-body alert alert-danger" ng-show="solicitarCarta.errorCargar">
+            {{solicitarCarta.mensajeError}}
           </div>
        </div>
-        <form method="post" name="formularioCarta" ng-submit="solicitarCarta.enviarSolicitud()" ng-if="!loadFormulario && !loadEstudiante && !solicitarCarta.siPuede && !solicitarCarta.conEstudiante && !solicitarCarta.conSolicitud && !solicitarCarta.conTrabajo">
+        <form method="post" name="formularioCarta" ng-submit="solicitarCarta.enviarSolicitud()" ng-if="!solicitarCarta.errorCargar && !loadFormulario && !loadEstudiante">
             <div  class="row">
               <label class="col-sm-3 control-label"> {{'PASANTIA.INGRESE_NOMBRE_EMPRESA' | translate}} </label>
               <div class="col-sm-9 ">
