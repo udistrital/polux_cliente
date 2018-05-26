@@ -245,6 +245,11 @@ angular
               controller: 'GeneralConsultarTrabajoGradoCtrl',
               controllerAs: 'consultarTrabajoGrado'
             })
+            .when('/pasantia/aprobar_carta', {
+              templateUrl: 'views/pasantia/aprobar_carta.html',
+              controller: 'PasantiaAprobarCartaCtrl',
+              controllerAs: 'aprobarCarta'
+            })
             .otherwise({
                 redirectTo: '/'
             });
