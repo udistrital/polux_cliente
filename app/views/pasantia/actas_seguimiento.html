@@ -1,11 +1,22 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        pasantia/actas_seguimiento.
+        {{'PASANTIA.REGISTRAR_ACTAS_SEGUIMIENTO' | translate}}
     </div>
     <div class="panel-body">
-        <p>
-          Ahora puede empezar a construir la vista de pasantia/actas_seguimiento.
-        </p>
+        <loading tam="4" load="actasSeguimiento.loadingTrabajos" message="actasSeguimiento.mensajeCargandoTrabajos"></loading>
+        <div class="row" ng-if="!actasSeguimiento.loadingTrabajos && actasSeguimiento.errorCargando">
+            <br>
+            <div class="col-sm-12">
+                <div class="alert alert-danger">
+                    {{'ERROR' | translate}}: {{actasSeguimiento.mensajeErrorCargando}} 
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-if="!actasSeguimiento.loadingTrabajos && !actasSeguimiento.errorCargando">
+            <div class="panel col-md-12">
+                <div ui-grid="actasSeguimiento.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(actasSeguimiento.gridOptionsEspacios.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+            </div>
+        </div>
     </div>
 </div>
