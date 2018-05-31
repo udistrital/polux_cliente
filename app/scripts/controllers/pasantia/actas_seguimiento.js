@@ -49,15 +49,19 @@ angular.module('poluxClienteApp')
     {
       name: 'TrabajoGrado.Titulo',
       displayName: $translate.instant('NOMBRE'),
-      width:'40%',
+      width:'30%',
     }, {
       name: 'TrabajoGrado.NombresEstudiantes',
-      displayName: $translate.instant('Estudiantes'),
-      width:'40%',
+      displayName: $translate.instant('ESTUDIANTES'),
+      width:'35%',
+    }, {
+      name: 'TrabajoGrado.Actas.length',
+      displayName: $translate.instant('ACTAS_REGISTRADAS'),
+      width:'20%',
     }, {
       name: 'Acciones',
       displayName: $translate.instant('ACCIONES'),
-      width:'20%',
+      width:'15%',
       type: 'boolean',
       cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro>'
     }
@@ -108,12 +112,35 @@ angular.module('poluxClienteApp')
           defer.reject(error);
         });
       }else{
-        ctrl.mensajeErrorCargando = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTES");
+        ctrl.mensajeErrorCargando = $translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO");
         defer.reject("No se encuentran estudiantes en el trabajo");
       }
     })
     .catch(function(error){
       ctrl.mensajeErrorCargando = $translate.instant("");
+      defer.reject(error);
+    });
+    return defer.promise;
+  }
+
+  ctrl.getActas = function(trabajoGrado){
+    //Se buscan los documentos de tipo acta de seguimiento
+    var defer = $q.defer();
+    var parametrosActas = $.param({
+      query:"DocumentoEscrito.TipoDocumentoEscrito:2,TrabajoGrado:"+trabajoGrado.Id,
+      limit:0
+    });
+    poluxRequest.get("documento_trabajo_grado",parametrosActas)
+    .then(function(responseActas){
+      if(responseActas.data != null){
+        trabajoGrado.Actas = responseActas.data;
+      }else{
+        trabajoGrado.Actas = [];
+      }
+      defer.resolve();
+    })
+    .catch(function(error){
+      ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.CARGANDO_ACTAS_SEGUIMIENTO");
       defer.reject(error);
     });
     return defer.promise;
@@ -134,6 +161,7 @@ angular.module('poluxClienteApp')
         var promises = [];
         angular.forEach(ctrl.trabajosPasantia,function(pasantia){
           promises.push(ctrl.getEstudiantesPasantia(pasantia.TrabajoGrado));
+          promises.push(ctrl.getActas(pasantia.TrabajoGrado));
         });
         $q.all(promises)
         .then(function(){

@@ -485,6 +485,7 @@ var text_es = {
             SIN_SOLICITUDES_CARTA:"Actualmente no hay ninguna solicitud de carta de presentación pendiente por revisión.",
             DOCENTE_DIRECTOR_SIN_PASANTIAS:"Señor docente: Actualmente usted no es director de ningún trabajo de pasantia que se encuentre en estado 'En Curso'.",
             CARGANDO_TRABAJOS_PASANTIA:"Ocurrió un error cargando los trabajos de grado de la modalidad de pasantía, por favor verifique su conexion e intente de nuevo.",
+            CARGANDO_ACTAS_SEGUIMIENTO:"Ocurrió un error cargando las actas de seguimiento, por favor verifique su conexion e intente de nuevo.",
         },
     },
     ACEPTAR:"Aceptar",
@@ -551,6 +552,8 @@ var text_es = {
     NOMBRE_EMPRESA_RECEPTOR:"Nombre de la empresa",
     NOMBRE_RECEPTOR:"Nombre del receptor",
     CARGO_RECEPTOR:"Cargo del receptor",
+    ACTAS_REGISTRADAS:"Actas registradas",
+    ESTUDIANTES:"Estudiantes",
 };
 
 /**
@@ -1024,6 +1027,7 @@ var text_en = {
             SIN_SOLICITUDES_CARTA:"Currently there is no presentation letters pending of review.",
             DOCENTE_DIRECTOR_SIN_PASANTIAS:"Professor: Currently you are not director of any internship work that is in the 'In Progress' state.",
             CARGANDO_TRABAJOS_PASANTIA:"An error occurred loading the internship modality degree works, please check your connection and try again.",
+            CARGANDO_ACTAS_SEGUIMIENTO:"An error occurred loading the follow-up minutes, please check your connection and try again.",
         },
     },
     ACEPTAR:"Accept",
@@ -1090,6 +1094,8 @@ var text_en = {
     NOMBRE_EMPRESA_RECEPTOR:"Name of the company",
     NOMBRE_RECEPTOR:"Receiver name",
     CARGO_RECEPTOR:"Receiver charge",
+    ACTAS_REGISTRADAS:"Registered Minutes",
+    ESTUDIANTES:"Estudents",
 };
 
 /**
