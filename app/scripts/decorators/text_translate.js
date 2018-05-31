@@ -476,6 +476,7 @@ var text_es = {
         SEGURO_INFORMACION_CARTA:"Señor estudiante, ¿Está seguro solicitar una carta dirigida al Señor(a) {{nombre}} quien labora como {{cargo}} en la empresa {{empresa}}?, por favor verifique todos los datos.",
         SOLICITUDES_CARTA:"Listado de solicitudes de carta de presentación",
         REGISTRAR_ACTAS_SEGUIMIENTO:"Registrar actas de seguimiento",
+        INFORMACION_PASANTIA:"Información de la pasantia",
         CARTA:{
             CONFIRMACION:"Confirmación para responder la solicitud",
             MENSAJE_APROBACION:"¿Está seguro de aprobar la solicitud?",
@@ -1018,6 +1019,7 @@ var text_en = {
         SEGURO_INFORMACION_CARTA:"Mr. student, are you sure to request a letter addressed to Mr(s). {{nombre} who works as {{cargo}} in the company {{empresa}} ?, please verify all data.",
         SOLICITUDES_CARTA:"List of presentations' letters request",
         REGISTRAR_ACTAS_SEGUIMIENTO:"Record follow-up minutes",
+        INFORMACION_PASANTIA:"Internship information",
         CARTA:{
             CONFIRMACION:"Confirmation to answer the request",
             MENSAJE_APROBACION:"Are you sure of approve the request?",

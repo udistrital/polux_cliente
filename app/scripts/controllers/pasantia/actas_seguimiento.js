@@ -22,6 +22,7 @@
  * @property {String} mensajeErrorCargando Mensaje que se muestra cuando ocurre un error cargando los trabajos de grado de la modalidad de pasantia.
  * @property {Array} trabajosPasantia Contiene los trabajos de pasantia asociados a un docente
  * @property {Object} gridOptions Contiene las opciones del ui-grid que muestra los trabajos de grado de pasantia
+ * @property {Object} pasantiaSeleccionada Contiene los datos del trabajo seleccionado por el docente
  */
 angular.module('poluxClienteApp')
   .controller('PasantiaActasSeguimientoCtrl', function (token_service,poluxRequest,academicaRequest,$q,$translate,nuxeo,$scope) {
@@ -190,5 +191,27 @@ angular.module('poluxClienteApp')
   }
   //Se cargan trabajos de grado de modalidad de pasantia
   ctrl.getTrabajosGradoPasantia(ctrl.userDocument);
+
+
+  /**
+   * @ngdoc method
+   * @name loadrow
+   * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+   * @description 
+   * Ejecuta las funciones especificas de los botones seleccionados en el ui-grid
+   * @param {object} row Fila seleccionada en el uigrid que contiene los detalles de la solicitud que se quiere consultar
+   * @param {string} operacion Operación que se debe ejecutar cuando se selecciona el botón
+   * @returns {undefined} No retorna ningún valor
+   */
+  $scope.loadrow = function(row, operacion) {
+    switch (operacion) {
+        case "ver":
+            ctrl.pasantiaSeleccionada = row.entity.TrabajoGrado;
+            $('#modalVerPasantia').modal('show');
+            break;
+        default:
+            break;
+    }
+  };
 
   });
