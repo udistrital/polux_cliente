@@ -72,6 +72,17 @@ angular.module('poluxClienteApp')
     }
   ];
 
+  /**
+   * @ngdoc method
+   * @name getEstudiantesPasantia
+   * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
+   * @param {Object} trabajoGrado Trabajo de grado del cual se quieren consultar las actas asociadas
+   * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+   * @description 
+   * Consulta de {@link services/poluxService.service:poluxRequest Polux} los estudiantes asociados al trabajo de grado 
+   * que se recibe y para cada estudiante consulta sus datos básicos en {@link services/academicaService.service:academicaRequest academicaRequest}
+   * para mostrarlos al docente y que sea más fácil  amigable la visualización del modulo.
+   */
   ctrl.getEstudiantesPasantia = function(trabajoGrado){
     var defer = $q.defer()
     var getDatosEstudiante = function(codigoEstudiante){
@@ -128,6 +139,16 @@ angular.module('poluxClienteApp')
     return defer.promise;
   }
 
+  /**
+   * @ngdoc method
+   * @name getActas
+   * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
+   * @param {Object} trabajoGrado Trabajo de grado del cual se quieren consultar las actas asociadas
+   * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+   * @description 
+   * Consulta de {@link services/poluxService.service:poluxRequest Polux} las actas de seguimiento registradas
+   * previamente y las guarda en el mismo objeto qeu recibe como parámetro.
+   */
   ctrl.getActas = function(trabajoGrado){
     //Se buscan los documentos de tipo acta de seguimiento
     var defer = $q.defer();
@@ -151,6 +172,17 @@ angular.module('poluxClienteApp')
     return defer.promise;
   }
 
+  /**
+   * @ngdoc method
+   * @name getTrabajosGradoPasantia
+   * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
+   * @param {String} userDocument Documento del docente que ingresa a registrar las actas
+   * @returns {undefined} No retorna ningún valor
+   * @description 
+   * Consulta de {@link services/poluxService.service:poluxRequest Polux} los trabajos de grado de la modalidad de pasantia en los que el docente se encuentra vinculado con el rol
+   * de director, luego, para cada uno de los trabajos obtenidos, consulta los estudiantes asociados y sus actas llamando a las 
+   * funciones getEstudiantesPasantia y getActas respectivamente.
+   */
   ctrl.getTrabajosGradoPasantia = function(userDocument){
     //Se consultan los trabajos de grado de la modalidad de pasantia de los que el docente es director
     // y que se encuentren en el estado de cursado
@@ -196,6 +228,17 @@ angular.module('poluxClienteApp')
   //Se cargan trabajos de grado de modalidad de pasantia
   ctrl.getTrabajosGradoPasantia(ctrl.userDocument);
 
+  /**
+     * @ngdoc method
+     * @name cargarActa
+     * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
+     * @param {undefined} Undefined No recibe ningun parametro
+     * @returns {undefined} No retorna ningún valor
+     * @description 
+     * Permite guardar un acta de seguimiento, primero registra el documento en el servicio de {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * y si este se carga exitosamente entonces lo registra en el servicio de {@link services/poluxService.service:poluxRequest Polux} usando la transacción
+     * 'tr_registrar_acta_seguimiento'.
+     */
   ctrl.cargarActa = function(){
     ctrl.loadingDocumento = true;
     var nombreDoc = "Acta de seguimiento "+(ctrl.pasantiaSeleccionada.Actas.length+1);
