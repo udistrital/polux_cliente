@@ -40,13 +40,14 @@
                         <label class="col-sm-3 control-label"> {{'ESTUDIANTES'|translate}}:  </label>
                         <label class="col-sm-9 control-label"> {{actasSeguimiento.pasantiaSeleccionada.NombresEstudiantes}}  </label>
                     </div>
-                <div ng-repeat="acta in actasSeguimiento.pasantiaSeleccionada.Actas.length">
+                <div ng-repeat="acta in actasSeguimiento.pasantiaSeleccionada.Actas">
                     <div class="row">
-                        <label class="col-sm-4 control-label"> {{acta.DocumentoEscrito.Titulo}}:  </label>
-                        <label ng-click="actasSeguimiento.getDocumento({{acta.DocumentoEscrito.Enlace}})" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                        <label class="col-sm-3 control-label"> {{acta.DocumentoEscrito.Titulo}}:  </label>
+                        <label ng-click="actasSeguimiento.getDocumento(acta.DocumentoEscrito.Enlace)" class="col-sm-9" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
                     </div>
                 </div>
-                <form ng-if="actasSeguimiento.pasantiaSeleccionada.Actas.length<3" method="post" name="formRegistrarActa" ng-submit="actasSeguimiento.cargarActa()">
+                <loading tam="4" load="actasSeguimiento.loadingDocumento" message="actasSeguimiento.mensajeCargandoDocumento"></loading>
+                <form ng-if="actasSeguimiento.pasantiaSeleccionada.Actas.length<3 && !actasSeguimiento.loadingDocumento" method="post" name="formRegistrarActa" ng-submit="actasSeguimiento.cargarActa()">
                     <div class="row">
                         <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' |translate}}:</label>
                         <div class="col-sm-9 ">

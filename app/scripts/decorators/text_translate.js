@@ -477,6 +477,8 @@ var text_es = {
         SOLICITUDES_CARTA:"Listado de solicitudes de carta de presentación",
         REGISTRAR_ACTAS_SEGUIMIENTO:"Registrar actas de seguimiento",
         INFORMACION_PASANTIA:"Información de la pasantia",
+        ACTA_REGISTRADA:"Acta registrada",
+        ACTA_REGISTRADA_CORRECTAMENTE:"El acta de seguimiento fue registrada exitosamente",
         CARTA:{
             CONFIRMACION:"Confirmación para responder la solicitud",
             MENSAJE_APROBACION:"¿Está seguro de aprobar la solicitud?",
@@ -1020,6 +1022,8 @@ var text_en = {
         SOLICITUDES_CARTA:"List of presentations' letters request",
         REGISTRAR_ACTAS_SEGUIMIENTO:"Record follow-up minutes",
         INFORMACION_PASANTIA:"Internship information",
+        ACTA_REGISTRADA:"Minute registered",
+        ACTA_REGISTRADA_CORRECTAMENTE:"The follow-up act was registered successfully",
         CARTA:{
             CONFIRMACION:"Confirmation to answer the request",
             MENSAJE_APROBACION:"Are you sure of approve the request?",
