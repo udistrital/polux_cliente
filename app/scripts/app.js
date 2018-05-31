@@ -250,6 +250,11 @@ angular
               controller: 'PasantiaAprobarCartaCtrl',
               controllerAs: 'aprobarCarta'
             })
+            .when('/pasantia/actas_seguimiento', {
+              templateUrl: 'views/pasantia/actas_seguimiento.html',
+              controller: 'PasantiaActasSeguimientoCtrl',
+              controllerAs: 'pasantia/actasSeguimiento'
+            })
             .otherwise({
                 redirectTo: '/'
             });
