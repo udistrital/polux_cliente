@@ -479,6 +479,7 @@ var text_es = {
         INFORMACION_PASANTIA:"Información de la pasantia",
         ACTA_REGISTRADA:"Acta registrada",
         ACTA_REGISTRADA_CORRECTAMENTE:"El acta de seguimiento fue registrada exitosamente",
+        NO_ACTAS_REGISTRADAS_ACTUALMENTE:"Actualmente no hay ningún acta de seguimiento asociada a este trabajo de grado.",
         CARTA:{
             CONFIRMACION:"Confirmación para responder la solicitud",
             MENSAJE_APROBACION:"¿Está seguro de aprobar la solicitud?",
@@ -1024,6 +1025,7 @@ var text_en = {
         INFORMACION_PASANTIA:"Internship information",
         ACTA_REGISTRADA:"Minute registered",
         ACTA_REGISTRADA_CORRECTAMENTE:"The follow-up act was registered successfully",
+        NO_ACTAS_REGISTRADAS_ACTUALMENTE:"Currently there is no follow-up act associated with this degree work.",
         CARTA:{
             CONFIRMACION:"Confirmation to answer the request",
             MENSAJE_APROBACION:"Are you sure of approve the request?",

@@ -83,6 +83,22 @@
                                 <div ui-grid="consultarTrabajoGrado.gridOptionsEspacios" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsEspacios.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
                             </div>
                         </div>
+                        <div ng-if="consultarTrabajoGrado.trabajoGrado.Modalidad.Id === 1">
+                            <div ng-repeat="acta in consultarTrabajoGrado.trabajoGrado.Actas">
+                                <div class="row">
+                                    <label class="col-sm-3 control-label"> {{acta.DocumentoEscrito.Titulo}}:  </label>
+                                    <label ng-click="consultarTrabajoGrado.getDocumento(acta.DocumentoEscrito.Enlace)" class="col-sm-9" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                                </div>
+                            </div>
+                            <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.Actas.length===0">
+                                <br>
+                                <div class="col-sm-12">
+                                    <div class="alert alert-danger">
+                                        {{'PASANTIA.NO_ACTAS_REGISTRADAS_ACTUALMENTE' | translate}} 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
         </div>

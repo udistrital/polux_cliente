@@ -11,6 +11,8 @@
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/poluxService.service:poluxRequest
  * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxClienteApp.service:nuxeoService
+ * @requires $window
  * @requires $q
  * @property {number} userId Documento del usuario que ingresa al módulo.
  * @property {number} codigoEstudiante Documento del estudiante que se va a consultar
@@ -21,13 +23,13 @@
  * @property {object} gridOptionsAsignatura Grid options para las asignatruas de TG
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q) {
+  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q,nuxeo,$window) {
     var ctrl = this;
 
-    token_service.token.documento = "79647592";
-    token_service.token.role.push("COORDINADOR_PREGRADO");
-    //token_service.token.documento = "20141020036";
-    //token_service.token.role.push("ESTUDIANTE");
+    //token_service.token.documento = "79647592";
+    //token_service.token.role.push("COORDINADOR_PREGRADO");
+    token_service.token.documento = "20141020036";
+    token_service.token.role.push("ESTUDIANTE");
     ctrl.userRole = token_service.token.role;
     ctrl.userId  = token_service.token.documento;
 
@@ -220,6 +222,129 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
+     * @name getActas
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {undefined} undefined No recibe ningún parametro
+     * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+     * @description 
+     * Consulta de {@link services/poluxService.service:poluxRequest Polux} las actas de seguimiento registradas
+     * previamente y las guarda en el mismo objeto qeu recibe como parámetro.
+     */
+    ctrl.getActas = function(){
+      //Se buscan los documentos de tipo acta de seguimiento
+      var defer = $q.defer();
+      var parametrosActas = $.param({
+        query:"DocumentoEscrito.TipoDocumentoEscrito:2,TrabajoGrado:"+ctrl.trabajoGrado.Id,
+        limit:0
+      });
+      poluxRequest.get("documento_trabajo_grado",parametrosActas)
+      .then(function(responseActas){
+        if(responseActas.data != null){
+          ctrl.trabajoGrado.Actas = responseActas.data;
+        }else{
+          ctrl.trabajoGrado.Actas = [];
+        }
+        defer.resolve();
+      })
+      .catch(function(error){
+        ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.CARGANDO_ACTAS_SEGUIMIENTO");
+        defer.reject(error);
+      });
+      return defer.promise;
+    }
+
+      /**
+     * @ngdoc method
+     * @name getDocumento
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @returns {undefined} No retorna ningún valor
+     * @description 
+     * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
+     */
+    ctrl.getDocumento = function(docid){
+      nuxeo.header('X-NXDocumentProperties', '*');
+
+      /**
+     * @ngdoc method
+     * @name obtenerDoc
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+     * @description 
+     * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
+     */
+      ctrl.obtenerDoc = function () {
+        var defer = $q.defer();
+
+        nuxeo.request('/id/'+docid)
+            .get()
+            .then(function(response) {
+              ctrl.doc=response;
+              var aux=response.get('file:content');
+              ctrl.document=response;
+              defer.resolve(response);
+            })
+            .catch(function(error){
+                defer.reject(error)
+            });
+        return defer.promise;
+      };
+
+      /**
+     * @ngdoc method
+     * @name obtenerFetch
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+     * @description 
+     * Obtiene el blob de un documento
+     */
+      ctrl.obtenerFetch = function (doc) {
+        var defer = $q.defer();
+
+        doc.fetchBlob()
+          .then(function(res) {
+            defer.resolve(res.blob());
+
+          })
+          .catch(function(error){
+                defer.reject(error)
+            });
+        return defer.promise;
+      };
+
+        ctrl.obtenerDoc().then(function(){
+
+           ctrl.obtenerFetch(ctrl.document).then(function(r){
+               ctrl.blob=r;
+               var fileURL = URL.createObjectURL(ctrl.blob);
+               console.log(fileURL);
+               $window.open(fileURL);
+            })
+            .catch(function(error){
+              console.log("error",error);
+              swal(
+                $translate.instant("ERROR"),
+                $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+                'warning'
+              );
+            });
+
+        })
+        .catch(function(error){
+          console.log("error",error);
+          swal(
+            $translate.instant("ERROR"),
+            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+            'warning'
+          );
+        });
+
+    }
+    
+    /**
+     * @ngdoc method
      * @name consultarTrabajoGrado
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description 
@@ -253,6 +378,10 @@ angular.module('poluxClienteApp')
             //si la modalidad es 2 trae los espacios academicos
             if(ctrl.trabajoGrado.Modalidad.Id === 2){
               promises.push(ctrl.getEspaciosAcademicosInscritos());
+            }
+            //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
+            if(ctrl.trabajoGrado.Modalidad.Id === 1){
+              promises.push(ctrl.getActas());
             }
 
             $q.all(promises)
