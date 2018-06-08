@@ -766,7 +766,7 @@ angular.module('poluxClienteApp')
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48){
-                      promses.push(getDocente(detalle));
+                      promises.push(getDocente(detalle));
                     }else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
