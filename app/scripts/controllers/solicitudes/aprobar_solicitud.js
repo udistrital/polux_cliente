@@ -690,8 +690,8 @@ angular.module('poluxClienteApp')
                             ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
                         };
                         */
-                    } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55) {
-                        //Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
+                    } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55) {
+                        //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                         //se obtienen datos para crear el trabajo
                         var tempTrabajo ={};
                         angular.forEach(ctrl.detallesSolicitud, function(detalle) {
