@@ -251,7 +251,7 @@ angular.module('poluxClienteApp')
                   if (!angular.isUndefined(docente.data.docenteTg.docente)) {
                     console.log(docente.data.docenteTg.docente[0]);
                     detalle.Descripcion=docente.data.docenteTg.docente[0].id+" "+docente.data.docenteTg.docente[0].nombre;
-                    if(id === 9){
+                    if(id === 9 || id === 37){
                       ctrl.docenteDirector = {
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
                         "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
@@ -286,7 +286,7 @@ angular.module('poluxClienteApp')
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id
                     if(id===49){
                        detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48){
+                    } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
                       promises.push(getDocente(id,detalle));
                     }else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
@@ -690,7 +690,7 @@ angular.module('poluxClienteApp')
                             ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
                         };
                         */
-                    } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55) {
+                    } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55  || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28) {
                         //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                         //se obtienen datos para crear el trabajo
                         var tempTrabajo ={};

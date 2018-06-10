@@ -30,10 +30,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  //token_service.token.documento = "79647592";
-  //token_service.token.role.push("COORDINADOR_PREGRADO");
-  token_service.token.documento = "20131020020";
-  token_service.token.role.push("ESTUDIANTE");
+  token_service.token.documento = "79647592";
+  token_service.token.role.push("COORDINADOR_PREGRADO");
+  //token_service.token.documento = "20131020020";
+  //token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
@@ -773,7 +773,7 @@ angular.module('poluxClienteApp')
                     }
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48){
+                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
                       promises.push(getDocente(detalle));
                     }else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
