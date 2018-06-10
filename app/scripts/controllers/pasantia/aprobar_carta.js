@@ -30,7 +30,8 @@ angular.module('poluxClienteApp')
     ctrl.mensajeCargandoSolicitudes = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
     
     //Documento de la persona que aprueba la solicitud
-    ctrl.documento = "1018494294"
+    token_service.token.documento = "1018494294";
+    ctrl.documento  = token_service.token.documento;
 
     //Botones de las acciones que se pueden ejecutar con la solicitud
     $scope.botonesAprobar = [
