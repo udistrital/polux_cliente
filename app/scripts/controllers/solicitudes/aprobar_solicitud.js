@@ -602,6 +602,7 @@ angular.module('poluxClienteApp')
                 TrabajoGrado: null,
                 SolicitudTrabajoGrado: null,
                 EspaciosAcademicos: null,
+                DetallesPasantia: null,
             };
             //solicitud aprobada
             if(ctrl.respuestaSolicitud == 3){
@@ -705,7 +706,13 @@ angular.module('poluxClienteApp')
                                 tempTrabajo.Resumen = detalle.Descripcion;
                             } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Áreas de conocimiento") {
                                 tempTrabajo.Areas = ctrl.areas;
-                            }
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Empresa") {
+                              tempTrabajo.Empresa = detalle.Descripcion;
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director externo") {
+                              tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director externo") {
+                              tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
+                            } 
                         });
                         //data para crear el trabajo de grado
                         var data_trabajo_grado = {
@@ -833,6 +840,31 @@ angular.module('poluxClienteApp')
                             "Id":1,
                           }
                         });
+                        //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
+                        if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2){
+                          ctrl.dataRespuesta.DetallesPasantia = {
+                            Empresa: 0,
+                            Horas: 0,
+                            ObjetoContrato:"Contrato de aprendizaje",
+                            Observaciones:"Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno + ".",
+                            TrabajoGrado:{
+                              Id: 0,
+                            }
+                          }
+                          //Docente director
+                          data_vinculacion.push({
+                            "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
+                            "Activo": true,
+                            "FechaInicio": fechaRespuesta,
+                            //"FechaFin": null,
+                            "RolTrabajoGrado": {
+                                "Id": 2
+                            },
+                            "TrabajoGrado": {
+                                "Id": 0
+                            }
+                          });
+                        }
                         ctrl.trabajo_grado = {
                             TrabajoGrado: data_trabajo_grado,
                             EstudianteTrabajoGrado: data_estudiantes,
