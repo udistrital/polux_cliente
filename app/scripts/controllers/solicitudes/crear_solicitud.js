@@ -1203,6 +1203,9 @@ angular.module('poluxClienteApp')
     ctrl.detallesConDocumento = [];
 
     angular.forEach(ctrl.detalles, function(detalle) {
+      if (detalle.Detalle.TipoDetalle.Nombre === 'Numerico') {
+        detalle.respuesta = detalle.respuesta+"";
+      }
       if (detalle.Detalle.TipoDetalle.Nombre === 'Label') {
         detalle.respuesta = detalle.opciones[0].bd;
       }
