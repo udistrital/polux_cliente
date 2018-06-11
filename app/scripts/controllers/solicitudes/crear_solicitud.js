@@ -1080,7 +1080,15 @@ angular.module('poluxClienteApp')
                       .catch(function(error){
                         defer.reject(error);
                       });
-                      //Resolve promesa
+                    } else if (detalle.Detalle.Nombre.includes("Nombre del anterior director externo")){
+                      var temp = responseOpciones.data[0].Observaciones.split(" y dirigida por ");
+                      temp = temp[1].split(" con número de identificacion ");
+                      detalle.opciones.push({
+                        "NOMBRE": temp[1] + " - " + temp[0],
+                        "bd": temp[1]
+                      });
+                      defer.resolve();
+                    //Resolve promesa
                     } else {
                       detalle.opciones = responseOpciones.data;
                       defer.resolve();

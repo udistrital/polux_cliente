@@ -846,7 +846,7 @@ angular.module('poluxClienteApp')
                             Empresa: 0,
                             Horas: 0,
                             ObjetoContrato:"Contrato de aprendizaje",
-                            Observaciones:"Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno + ".",
+                            Observaciones:"Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno,
                             TrabajoGrado:{
                               Id: 0,
                             }
