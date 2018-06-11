@@ -471,6 +471,7 @@ var text_es = {
     NO_SOLICITUDES_POSGRADO:"No existen solicitudes en la modalidad de espacios académicos de posgrado para la carrera seleccionada",
     SELECCIONAR_PERIODO: "Seleccione el periodo académico",
     PASANTIA:{
+        DETALLE_PASANTIA:"Detalle de la pasantia",
         SOLICITAR_CARTA:"Solicitar carta de presentación",
         INGRESE_NOMBRE_EMPRESA:"Ingrese el nombre de la empressa",
         INGRESE_NOMBRE_DIRIGIDO:"Ingrese el nombre del destinatario de la carta",
@@ -493,6 +494,8 @@ var text_es = {
             DOCENTE_DIRECTOR_SIN_PASANTIAS:"Señor docente: Actualmente usted no es director de ningún trabajo de pasantia que se encuentre en estado 'En Curso'.",
             CARGANDO_TRABAJOS_PASANTIA:"Ocurrió un error cargando los trabajos de grado de la modalidad de pasantía, por favor verifique su conexion e intente de nuevo.",
             CARGANDO_ACTAS_SEGUIMIENTO:"Ocurrió un error cargando las actas de seguimiento, por favor verifique su conexion e intente de nuevo.",
+            CARGANDO_DETALLES:"Ocurrió un error cargando los de talles de la pasantia, por favor verifique su conexion e intente de nuevo.",
+            SIN_DETALLES:"No hay detalles de la pasantia registrados.",
         },
     },
     ACEPTAR:"Aceptar",
@@ -1020,6 +1023,7 @@ var text_en = {
     NO_SOLICITUDES_POSGRADO:"There are no requests in the graduate academic spaces modality for the selected career",
     SELECCIONAR_PERIODO: "Select academic period",
     PASANTIA:{
+        DETALLE_PASANTIA:"Internship's details",
         SOLICITAR_CARTA:"Request presentation's letter",
         INGRESE_NOMBRE_EMPRESA:"Enter the enterprise name",
         INGRESE_NOMBRE_DIRIGIDO:"Enter the name of the letter's recipient",
@@ -1042,6 +1046,8 @@ var text_en = {
             DOCENTE_DIRECTOR_SIN_PASANTIAS:"Professor: Currently you are not director of any internship work that is in the 'In Progress' state.",
             CARGANDO_TRABAJOS_PASANTIA:"An error occurred loading the internship modality degree works, please check your connection and try again.",
             CARGANDO_ACTAS_SEGUIMIENTO:"An error occurred loading the follow-up minutes, please check your connection and try again.",
+            CARGANDO_DETALLES:"An error occurred loading the internship's details, please check your connection and try again.",
+            SIN_DETALLES:"There are not internship's details registered.",
         },
     },
     ACEPTAR:"Accept",

@@ -222,6 +222,40 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
+     * @name getDetallePasantia
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {undefined} undefined No recibe ningún parametro
+     * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+     * @description 
+     * Consulta de {@link services/poluxService.service:poluxRequest Polux} los detalles de la pasantia
+     */
+    ctrl.getDetallePasantia = function(){
+      //Se buscan los documentos de tipo acta de seguimiento
+      var defer = $q.defer();
+      var parametrosPasantia = $.param({
+        query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
+        limit:1
+      });
+      poluxRequest.get("detalle_pasantia",parametrosPasantia)
+      .then(function(responsePasantia){
+        if(responsePasantia.data != null){
+          ctrl.trabajoGrado.DetallePasantia = responsePasantia.data[0].Observaciones;
+          defer.resolve();
+        }else{
+          ctrl.mensajeError = $translate.instant("PASANTIA.ERROR.SIN_DETALLES");
+          defer.reject("No hay detalle de la pasantia");
+        }
+      })
+      .catch(function(error){
+        ctrl.mensajeError = $translate.instant("PASANTIA.ERROR.CARGANDO_DETALLES");
+        defer.reject(error);
+      });
+      return defer.promise;
+    }
+
+    
+    /**
+     * @ngdoc method
      * @name getActas
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @param {undefined} undefined No recibe ningún parametro
@@ -247,7 +281,7 @@ angular.module('poluxClienteApp')
         defer.resolve();
       })
       .catch(function(error){
-        ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.CARGANDO_ACTAS_SEGUIMIENTO");
+        ctrl.mensajeError = $translate.instant("PASANTIA.ERROR.CARGANDO_ACTAS_SEGUIMIENTO");
         defer.reject(error);
       });
       return defer.promise;
@@ -380,8 +414,10 @@ angular.module('poluxClienteApp')
               promises.push(ctrl.getEspaciosAcademicosInscritos());
             }
             //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
+            // y el detalel de la pasantia
             if(ctrl.trabajoGrado.Modalidad.Id === 1){
               promises.push(ctrl.getActas());
+              promises.push(ctrl.getDetallePasantia());
             }
 
             $q.all(promises)
