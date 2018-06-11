@@ -449,6 +449,7 @@ var text_es = {
         EVALUADOR:"Se cambio el evaluador {{anterior}} por {{nuevo}}",
         PRORROGA:"Se concede la prórroga solicitada, por lo tanto el estudiante no podrá volver a solicitar una",
         CAMBIAR_MATERIA:"Se cambia la materia {{anterior}} por {{nuevo}}",
+        DIRECTOR_EXTERNO:"Se cambia el director externo por el solicitado.",
     },
     AREAS:{
         DATOS_AREA:"Datos para registrar área",
@@ -1004,6 +1005,7 @@ var text_en = {
         EVALUADOR:"The evaluator {{anterior}} was changed to {{nuevo}}",
         PRORROGA:"The requested extension is granted, therefore the student will not be able to request one again",
         CAMBIAR_MATERIA:"Subject {{anterior}} is changed to {{nuevo}}",
+        DIRECTOR_EXTERNO:"The external director was changed by the requested",
     },
     AREAS:{
         DATOS_AREA:"Data to register area",

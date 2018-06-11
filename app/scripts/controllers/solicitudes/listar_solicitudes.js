@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
   ctrl.carrerasCoordinador = [];
   token_service.token.documento = "79647592";
   token_service.token.role.push("COORDINADOR_PREGRADO");
-  //token_service.token.documento = "20131020020";
+  //token_service.token.documento = "20141020036";
   //token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
@@ -197,6 +197,12 @@ angular.module('poluxClienteApp')
           .catch(function(error){
             defer.reject(error);
           });
+          break;
+        //solicitud de cambio de director externo
+        case 5:
+          resultado += ". " + $translate.instant('APROBADO.DIRECTOR_EXTERNO');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
           break;
         //solicitud de cambio de director interno
         case 10:
