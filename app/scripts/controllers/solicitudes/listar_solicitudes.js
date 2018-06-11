@@ -754,28 +754,55 @@ angular.module('poluxClienteApp')
               angular.forEach(responseEstudiantes.data,function(estudiante){
                   solicitantes += (", "+estudiante.Usuario) ;
               });
+
+              var getDocente = function(detalle){
+                var defer = $q.defer();
+                academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
+                  if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                    detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
+                    defer.resolve();
+                  }
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
+              var getExterno = function(detalle){
+                var defer = $q.defer();
+                var parametrosVinculado = $.param({
+                  query:"TrabajoGrado:"+detalle.Descripcion,
+                  limit:0
+                });
+                poluxRequest.get("detalle_pasantia")
+                .then(function(dataExterno){
+                  if(dataExterno.data != null){
+                    var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+                    temp = temp[1].split(" con número de identificacion ");
+                    detalle.Descripcion = temp[0];
+                    defer.resolve();
+                  }else{
+                    defer.reject("No hay datos relacionados al director externo");
+                  }
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id;
-
-                    var getDocente = function(detalle){
-                      var defer = $q.defer();
-                      academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
-                        if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                          detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
-                          defer.resolve();
-                        }
-                      })
-                      .catch(function(error){
-                        defer.reject(error);
-                      });
-                      return defer.promise;
-                    }
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
                       promises.push(getDocente(detalle));
-                    }else if(detalle.Descripcion.includes("JSON-")){
+                    }else if(id == 39) {
+                      //detalle de director externo anterior
+                      promises.push(getExterno(detalle));
+                    } else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
                           var datosAreas = detalle.Descripcion.split("-");

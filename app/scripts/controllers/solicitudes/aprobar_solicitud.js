@@ -279,6 +279,30 @@ angular.module('poluxClienteApp')
                 });
                 return defer.promise;
               }
+
+              var getExterno = function(detalle){
+                var defer = $q.defer();
+                var parametrosVinculado = $.param({
+                  query:"TrabajoGrado:"+detalle.Descripcion,
+                  limit:0
+                });
+                poluxRequest.get("detalle_pasantia")
+                .then(function(dataExterno){
+                  if(dataExterno.data != null){
+                    var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+                    temp = temp[1].split(" con número de identificacion ");
+                    detalle.Descripcion = temp[0];
+                    defer.resolve();
+                  }else{
+                    defer.reject("No hay datos relacionados al director externo");
+                  }
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+              
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     ctrl.todoDetalles.push(detalle);
                     console.log("detalle",detalle);
@@ -288,7 +312,10 @@ angular.module('poluxClienteApp')
                        detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
                       promises.push(getDocente(id,detalle));
-                    }else if(detalle.Descripcion.includes("JSON-")){
+                    }else if(id == 39) {
+                      //detalle de director externo anterior
+                      promises.push(getExterno(detalle));
+                    } else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
                           ctrl.areas=[];
