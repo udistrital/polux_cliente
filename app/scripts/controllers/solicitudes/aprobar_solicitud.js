@@ -292,6 +292,7 @@ angular.module('poluxClienteApp')
                     var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
                     temp = temp[1].split(" con número de identificacion ");
                     detalle.Descripcion = temp[0];
+                    detalle.documentoExterno = temp[1];
                     defer.resolve();
                   }else{
                     defer.reject("No hay datos relacionados al director externo");
@@ -526,7 +527,6 @@ angular.module('poluxClienteApp')
             poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(docentesVinculados){
                 if(docentesVinculados.data !== null){
                   var vinculados = [];
-                  console.log("docentes", ctrl.docentes);
                   ctrl.docentesVinculadosTg = docentesVinculados.data;
                   angular.forEach(ctrl.docentes, function(docente){
                       if(ctrl.docenteVinculado(docentesVinculados.data, docente.DIR_NRO_IDEN)){
@@ -656,6 +656,17 @@ angular.module('poluxClienteApp')
                     } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 24){
                         //Para obtener la asignatura Nueva
                         ctrl.asignaturaNueva = Number(detalle.Descripcion.split("-")[0]);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 39){
+                      //Director externo anterior
+                      ctrl.directorExternoActual = Number(detalle.documentoExterno);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 40){
+                      //Nombre del nuevo director Externo
+                      ctrl.nombreDirectorExternoNuevo = detalle.Descripcion;
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 55){
+                      //Documento del nuevo director Externo
+                      ctrl.docenteCambio = {
+                        DIR_NRO_IDEN: detalle.Descripcion,
+                      }
                     }
                 });
                 //Se verifica por tipo de solicitud
@@ -909,14 +920,17 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.TrTrabajoGrado = ctrl.trabajo_grado;
                         ctrl.dataRespuesta.SolicitudTrabajoGrado = solicitudInicial;
                     }
-                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10){
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5){
                   //cambio de director interno o evaluadores
+                  // 5 cambio de director externo
                   var vinculaciones = [];
                   var vinculacionActual =  [];
                   angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
                     if(docenteVinculado.Usuario === ctrl.directorActual){
                       vinculacionActual = docenteVinculado;
                     }else if(docenteVinculado.Usuario === ctrl.evaluadorActual){
+                      vinculacionActual = docenteVinculado;
+                    } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
                       vinculacionActual = docenteVinculado;
                     }
                   });
@@ -935,6 +949,18 @@ angular.module('poluxClienteApp')
                   console.log(vinculaciones);
                   //Se escribe la data de las vinculaciones
                   ctrl.dataRespuesta.Vinculaciones = vinculaciones;
+                  //Si la solicitud es de cambio de director externo se envia el detalle de la pasantia para actualizarlo
+                  if(ctrl.dataSolicitud.TipoSolicitud == 5){
+                    ctrl.dataRespuesta.DetallesPasantia = {
+                      Empresa: 0,
+                      Horas: 0,
+                      ObjetoContrato:"Contrato de aprendizaje",
+                      Observaciones:" y dirigida por " + ctrl.nombreDirectorExternoNuevo + " con número de identificacion " + ctrl.docenteCambio.DIR_NRO_IDEN,
+                      TrabajoGrado:{
+                        Id: nuevaVinculacion.TrabajoGrado.Id,
+                      }
+                    }
+                  }
                 } else if(ctrl.dataSolicitud.TipoSolicitud == 3){
                   //solicitud de cancelacion de modalidad
                   //se crea data del estudiante

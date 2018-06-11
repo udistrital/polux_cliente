@@ -303,7 +303,7 @@ angular.module('poluxClienteApp')
           query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
           limit:0
         });
-        poluxRequest.get("detalle_pasantia")
+        poluxRequest.get("detalle_pasantia",parametrosVinculado)
         .then(function(dataExterno){
           if(dataExterno.data != null){
             var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
@@ -325,6 +325,7 @@ angular.module('poluxClienteApp')
         .then(function(docente){
           if (!angular.isUndefined(docente.data.docenteTg.docente)) {
             vinculado.Nombre =  docente.data.docenteTg.docente[0].nombre;
+            defer.resolve();
           }else{
             defer.reject("No hay datos relacionados al docente");
           }
@@ -348,10 +349,10 @@ angular.module('poluxClienteApp')
           angular.forEach(ctrl.trabajoGrado.Vinculados,function(vinculado){
             if(vinculado.RolTrabajoGrado.Id === 2){
               //director externo
-              getExterno(vinculado);
+              promises.push(getExterno(vinculado));
             } else {
               //Director interno y evaluadores
-              getInterno(vinculado);
+              promises.push(getInterno(vinculado));
             }
           });
           $q.all(promises)

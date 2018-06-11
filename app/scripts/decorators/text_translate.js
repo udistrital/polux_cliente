@@ -194,6 +194,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_13: "Ocurrió un error al actualizar el trabajo de grado.",
     ERROR_RTA_SOLICITUD_14: "Ocurrió un error al registrar la asignatura de trabajo de grado.",
     ERROR_RTA_SOLICITUD_15: "Ocurrió un error al registrar el detalle de la pasantia.",
+    ERROR_RTA_SOLICITUD_16: "Ocurrió un error al actualizar el detalle de la pasantia.",
     ERROR: {
         SUBIR_DOCUMENTO:"Error al intentar subir un documento.",
         CARGAR_DOCUMENTO:"Ocurrió un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
@@ -750,6 +751,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_13: "There was an error to update the graduation work.",
     ERROR_RTA_SOLICITUD_14: "There was an error inserting the graduation workk subject.",
     ERROR_RTA_SOLICITUD_15: "There was an error inserting the  internship's details",
+    ERROR_RTA_SOLICITUD_16: "There was an error updating the  internship's details",
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a document.",
         CARGAR_DOCUMENTO:"An error occurred loading the documents, please verify your connection and try again.",
