@@ -564,6 +564,7 @@ var text_es = {
     CARGO_RECEPTOR:"Cargo del receptor",
     ACTAS_REGISTRADAS:"Actas registradas",
     ESTUDIANTES:"Estudiantes",
+    VINCULACIONES_TRABAJO_GRADO:"Personas vinculadas al trabajo de grado",
 };
 
 /**
@@ -1116,6 +1117,7 @@ var text_en = {
     CARGO_RECEPTOR:"Receiver charge",
     ACTAS_REGISTRADAS:"Registered Minutes",
     ESTUDIANTES:"Estudents",
+    VINCULACIONES_TRABAJO_GRADO:"People linked to the degree work",
 };
 
 /**

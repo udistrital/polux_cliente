@@ -230,7 +230,6 @@ angular.module('poluxClienteApp')
      * Consulta de {@link services/poluxService.service:poluxRequest Polux} los detalles de la pasantia
      */
     ctrl.getDetallePasantia = function(){
-      //Se buscan los documentos de tipo acta de seguimiento
       var defer = $q.defer();
       var parametrosPasantia = $.param({
         query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
@@ -282,6 +281,94 @@ angular.module('poluxClienteApp')
       })
       .catch(function(error){
         ctrl.mensajeError = $translate.instant("PASANTIA.ERROR.CARGANDO_ACTAS_SEGUIMIENTO");
+        defer.reject(error);
+      });
+      return defer.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name getvinculaciones
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {undefined} undefined No recibe ningún parametro
+     * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+     * @description 
+     * Consulta de {@link services/poluxService.service:poluxRequest Polux} las personas vinculadas al trabajo
+     * que se esta consultando
+     */
+    ctrl.getVinculaciones = function(){
+      var getExterno = function(vinculado){
+        var defer = $q.defer();
+        var parametrosVinculado = $.param({
+          query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
+          limit:0
+        });
+        poluxRequest.get("detalle_pasantia")
+        .then(function(dataExterno){
+          if(dataExterno.data != null){
+            var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+            temp = temp[1].split(" con número de identificacion ");
+            vinculado.Nombre = temp[0];
+            defer.resolve();
+          }else{
+            defer.reject("No hay datos relacionados al director externo");
+          }
+        })
+        .catch(function(error){
+          defer.reject(error);
+        });
+        return defer.promise;
+      }
+      var getInterno = function(vinculado){
+        var defer = $q.defer();
+        academicaRequest.get("docente_tg",[vinculado.Usuario])
+        .then(function(docente){
+          if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+            vinculado.Nombre =  docente.data.docenteTg.docente[0].nombre;
+          }else{
+            defer.reject("No hay datos relacionados al docente");
+          }
+        })
+        .catch(function(error){
+          defer.reject(error);
+        });
+        return defer.promise;
+      }
+      //Se buscan los vinculados 
+      var defer = $q.defer();
+      var parametrosVinculados = $.param({
+        query:"Activo:True,TrabajoGrado:"+ctrl.trabajoGrado.Id,
+        limit:0
+      });
+      poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculados)
+      .then(function(responseVinculados){
+        if(responseVinculados.data != null){
+          ctrl.trabajoGrado.Vinculados = responseVinculados.data;
+          var promises = [];
+          angular.forEach(ctrl.trabajoGrado.Vinculados,function(vinculado){
+            if(vinculado.RolTrabajoGrado.Id === 2){
+              //director externo
+              getExterno(vinculado);
+            } else {
+              //Director interno y evaluadores
+              getInterno(vinculado);
+            }
+          });
+          $q.all(promises)
+          .then(function(){
+            defer.resolve();
+          })
+          .catch(function(error){
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
+            defer.reject(error);
+          });
+        }else{
+          ctrl.trabajoGrado.Vinculados = [];
+          defer.resolve();
+        }
+      })
+      .catch(function(error){
+        ctrl.mensajeError = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
         defer.reject(error);
       });
       return defer.promise;
@@ -408,6 +495,11 @@ angular.module('poluxClienteApp')
             }
             promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
             promises.push(ctrl.cargarAsignaturasTrabajoGrado());
+
+            //Consulta las vinculaciones 
+            if(ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3){
+              promises.push(ctrl.getVinculaciones());
+            }
 
             //si la modalidad es 2 trae los espacios academicos
             if(ctrl.trabajoGrado.Modalidad.Id === 2){
