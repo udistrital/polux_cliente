@@ -245,6 +245,11 @@ angular
               controller: 'GeneralConsultarTrabajoGradoCtrl',
               controllerAs: 'consultarTrabajoGrado'
             })
+            .when('/trabajo_grado/revisar_anteproyecto', {
+              templateUrl: 'views/trabajo_grado/revisar_anteproyecto.html',
+              controller: 'TrabajoGradoRevisarAnteproyectoCtrl',
+              controllerAs: 'revisarAnteproyecto'
+            })
             .otherwise({
                 redirectTo: '/'
             });

@@ -366,6 +366,7 @@ var text_es = {
       CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado",
       REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
       CARGANDO_DATOS_TRABAJO_GRADO:"Cargando datos del trabajo de grado",
+      CARGANDO_ANTEPROYECTOS: "Cargando anteproyectos",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -524,6 +525,12 @@ var text_es = {
     ESPACIOS_ACADEMICOS_INSCRITOS:"Espacios academicos inscritos",
     ASIGNATURA: "Asignatura",
     NOTA: "Nota",
+    REVISAR_ANTEPROYECTO: {
+        TITULO: "Revisión de anteproyectos de grado",
+        ACCION: "Opciones de revisión",
+    },
+    ANTEPROYECTO: "Anteproyecto",
+    ROL: "Papel",
 };
 
 /**
@@ -878,6 +885,7 @@ var text_en = {
       CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
       REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
       CARGANDO_DATOS_TRABAJO_GRADO:"Loading degree work data",
+      CARGANDO_ANTEPROYECTOS: "Loading degree work proposals",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -1036,6 +1044,12 @@ var text_en = {
     ESPACIOS_ACADEMICOS_INSCRITOS:"Registered academic spaces",
     ASIGNATURA: "Subject",
     NOTA: "Grade",
+    REVISAR_ANTEPROYECTO: {
+        TITULO: "Degree work proposals review",
+        ACCION: "Review options",
+    },
+    ANTEPROYECTO: "Degree work proposal",
+    ROL: "Role",
 };
 
 /**
