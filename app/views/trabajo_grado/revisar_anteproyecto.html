@@ -7,7 +7,7 @@
   <div class="panel-body">
 
     <loading tam="4" load="revisarAnteproyecto.cargandoAnteproyectos" message="revisarAnteproyecto.mensajeCargandoAnteproyectos"></loading>
-    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="formalizarSolicitud.cuadriculaAnteproyectos.data.length > 0 && !formalizarSolicitud.cargandoAnteproyectos">
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="revisarAnteproyecto.cuadriculaAnteproyectos.data.length > 0 && !revisarAnteproyecto.cargandoAnteproyectos">
       <div class="mi-grid" id="mi-grid" ui-grid="revisarAnteproyecto.cuadriculaAnteproyectos"></div>
     </div>
     <!--

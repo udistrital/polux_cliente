@@ -251,7 +251,7 @@ angular.module('poluxClienteApp')
                   if (!angular.isUndefined(docente.data.docenteTg.docente)) {
                     console.log(docente.data.docenteTg.docente[0]);
                     detalle.Descripcion=docente.data.docenteTg.docente[0].id+" "+docente.data.docenteTg.docente[0].nombre;
-                    if(id === 9){
+                    if(id === 9 || id === 37){
                       ctrl.docenteDirector = {
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
                         "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
@@ -279,6 +279,31 @@ angular.module('poluxClienteApp')
                 });
                 return defer.promise;
               }
+
+              var getExterno = function(detalle){
+                var defer = $q.defer();
+                var parametrosVinculado = $.param({
+                  query:"TrabajoGrado:"+detalle.Descripcion,
+                  limit:0
+                });
+                poluxRequest.get("detalle_pasantia")
+                .then(function(dataExterno){
+                  if(dataExterno.data != null){
+                    var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+                    temp = temp[1].split(" con número de identificacion ");
+                    detalle.Descripcion = temp[0];
+                    detalle.documentoExterno = temp[1];
+                    defer.resolve();
+                  }else{
+                    defer.reject("No hay datos relacionados al director externo");
+                  }
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+              
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     ctrl.todoDetalles.push(detalle);
                     console.log("detalle",detalle);
@@ -286,9 +311,12 @@ angular.module('poluxClienteApp')
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id
                     if(id===49){
                        detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48){
+                    } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
                       promises.push(getDocente(id,detalle));
-                    }else if(detalle.Descripcion.includes("JSON-")){
+                    }else if(id == 39) {
+                      //detalle de director externo anterior
+                      promises.push(getExterno(detalle));
+                    } else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
                           ctrl.areas=[];
@@ -499,7 +527,6 @@ angular.module('poluxClienteApp')
             poluxRequest.get("vinculacion_trabajo_grado",parametrosVinculacion).then(function(docentesVinculados){
                 if(docentesVinculados.data !== null){
                   var vinculados = [];
-                  console.log("docentes", ctrl.docentes);
                   ctrl.docentesVinculadosTg = docentesVinculados.data;
                   angular.forEach(ctrl.docentes, function(docente){
                       if(ctrl.docenteVinculado(docentesVinculados.data, docente.DIR_NRO_IDEN)){
@@ -602,6 +629,7 @@ angular.module('poluxClienteApp')
                 TrabajoGrado: null,
                 SolicitudTrabajoGrado: null,
                 EspaciosAcademicos: null,
+                DetallesPasantia: null,
             };
             //solicitud aprobada
             if(ctrl.respuestaSolicitud == 3){
@@ -628,6 +656,17 @@ angular.module('poluxClienteApp')
                     } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 24){
                         //Para obtener la asignatura Nueva
                         ctrl.asignaturaNueva = Number(detalle.Descripcion.split("-")[0]);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 39){
+                      //Director externo anterior
+                      ctrl.directorExternoActual = Number(detalle.documentoExterno);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 40){
+                      //Nombre del nuevo director Externo
+                      ctrl.nombreDirectorExternoNuevo = detalle.Descripcion;
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 55){
+                      //Documento del nuevo director Externo
+                      ctrl.docenteCambio = {
+                        DIR_NRO_IDEN: detalle.Descripcion,
+                      }
                     }
                 });
                 //Se verifica por tipo de solicitud
@@ -668,7 +707,6 @@ angular.module('poluxClienteApp')
                         console.log(estudiante);
                         data_estudiantes.push(estudiante);
                         console.log(data_estudiantes);
-
                         ctrl.trabajo_grado = {
                             TrabajoGrado: data_trabajo_grado,
                             EstudianteTrabajoGrado: data_estudiantes,
@@ -678,7 +716,6 @@ angular.module('poluxClienteApp')
                             VinculacionTrabajoGrado: null
                         }
                         console.log(ctrl.trabajo_grado);
-
                         ctrl.rtaSol = {
                             RespuestaAnterior: objRtaAnterior,
                             RespuestaNueva: objRtaNueva,
@@ -690,8 +727,8 @@ angular.module('poluxClienteApp')
                             ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
                         };
                         */
-                    } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55) {
-                        //Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
+                    } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55  || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28) {
+                        //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                         //se obtienen datos para crear el trabajo
                         var tempTrabajo ={};
                         angular.forEach(ctrl.detallesSolicitud, function(detalle) {
@@ -705,8 +742,20 @@ angular.module('poluxClienteApp')
                                 tempTrabajo.Resumen = detalle.Descripcion;
                             } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Áreas de conocimiento") {
                                 tempTrabajo.Areas = ctrl.areas;
-                            }
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Empresa") {
+                              tempTrabajo.Empresa = detalle.Descripcion;
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director externo") {
+                              tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director externo") {
+                              tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
+                            } 
                         });
+                        // por defecto el estado es En evaluación por revisor
+                        var estadoTrabajoGrado = 4;
+                        // si  la modalidad es de producción academica de una se vez se crea en curso
+                        if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+                          estadoTrabajoGrado = 13;
+                        }
                         //data para crear el trabajo de grado
                         var data_trabajo_grado = {
                             "Titulo": tempTrabajo.Titulo,
@@ -714,7 +763,7 @@ angular.module('poluxClienteApp')
                                 "Id": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Id
                             },
                             "EstadoTrabajoGrado": {
-                                "Id": 1
+                                "Id": estadoTrabajoGrado,
                             },
                             "DistincionTrabajoGrado": null,
                             "PeriodoAcademico":ctrl.detallesSolicitud.PeriodoAcademico,
@@ -833,6 +882,31 @@ angular.module('poluxClienteApp')
                             "Id":1,
                           }
                         });
+                        //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
+                        if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2){
+                          ctrl.dataRespuesta.DetallesPasantia = {
+                            Empresa: 0,
+                            Horas: 0,
+                            ObjetoContrato:"Contrato de aprendizaje",
+                            Observaciones:"Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno,
+                            TrabajoGrado:{
+                              Id: 0,
+                            }
+                          }
+                          //Docente director
+                          data_vinculacion.push({
+                            "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
+                            "Activo": true,
+                            "FechaInicio": fechaRespuesta,
+                            //"FechaFin": null,
+                            "RolTrabajoGrado": {
+                                "Id": 2
+                            },
+                            "TrabajoGrado": {
+                                "Id": 0
+                            }
+                          });
+                        }
                         ctrl.trabajo_grado = {
                             TrabajoGrado: data_trabajo_grado,
                             EstudianteTrabajoGrado: data_estudiantes,
@@ -850,14 +924,17 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.TrTrabajoGrado = ctrl.trabajo_grado;
                         ctrl.dataRespuesta.SolicitudTrabajoGrado = solicitudInicial;
                     }
-                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10){
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5){
                   //cambio de director interno o evaluadores
+                  // 5 cambio de director externo
                   var vinculaciones = [];
                   var vinculacionActual =  [];
                   angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
                     if(docenteVinculado.Usuario === ctrl.directorActual){
                       vinculacionActual = docenteVinculado;
                     }else if(docenteVinculado.Usuario === ctrl.evaluadorActual){
+                      vinculacionActual = docenteVinculado;
+                    } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
                       vinculacionActual = docenteVinculado;
                     }
                   });
@@ -876,6 +953,18 @@ angular.module('poluxClienteApp')
                   console.log(vinculaciones);
                   //Se escribe la data de las vinculaciones
                   ctrl.dataRespuesta.Vinculaciones = vinculaciones;
+                  //Si la solicitud es de cambio de director externo se envia el detalle de la pasantia para actualizarlo
+                  if(ctrl.dataSolicitud.TipoSolicitud == 5){
+                    ctrl.dataRespuesta.DetallesPasantia = {
+                      Empresa: 0,
+                      Horas: 0,
+                      ObjetoContrato:"Contrato de aprendizaje",
+                      Observaciones:" y dirigida por " + ctrl.nombreDirectorExternoNuevo + " con número de identificacion " + ctrl.docenteCambio.DIR_NRO_IDEN,
+                      TrabajoGrado:{
+                        Id: nuevaVinculacion.TrabajoGrado.Id,
+                      }
+                    }
+                  }
                 } else if(ctrl.dataSolicitud.TipoSolicitud == 3){
                   //solicitud de cancelacion de modalidad
                   //se crea data del estudiante
