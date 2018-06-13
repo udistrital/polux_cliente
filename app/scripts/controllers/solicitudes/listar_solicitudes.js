@@ -803,8 +803,10 @@ angular.module('poluxClienteApp')
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
-                      promises.push(getDocente(detalle));
+                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48 || id === 37 || id === 56) {
+                      if(detalle.Descripcion != "No solicita"){
+                        promises.push(getDocente(detalle));
+                      }
                     }else if(id == 39) {
                       //detalle de director externo anterior
                       promises.push(getExterno(detalle));
