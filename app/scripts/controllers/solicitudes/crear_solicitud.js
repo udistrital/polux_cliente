@@ -80,7 +80,7 @@ angular.module('poluxClienteApp')
 
 
   //ctrl.codigo = $routeParams.idEstudiante;
-  token_service.token.documento = "20141020036";
+  token_service.token.documento = "20131020020";
   ctrl.codigo = token_service.token.documento;
 
   /**
@@ -1269,7 +1269,7 @@ angular.module('poluxClienteApp')
         //console.log("Diligencie correctamente el formulario por favor.");
         ctrl.erroresFormulario = true;
       }
-      if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle.Nombre !== "Directiva") {
+      if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle.Nombre !== "Directiva" && detalle.Detalle.TipoDetalle.Nombre !== "Selector") {
         swal(
           'Validación del formulario',
           "Debe completar todos los campos del formulario.",
@@ -1297,12 +1297,17 @@ angular.module('poluxClienteApp')
       }
       if (detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista") {
         var contiene = false;
-        console.log(detalle.opciones, detalle.respuesta, typeof(detalle.respuesta));
+        //console.log(detalle.opciones, detalle.respuesta, typeof(detalle.respuesta));
         angular.forEach(detalle.opciones, function(opcion) {
           if (opcion.bd == detalle.respuesta) {
             contiene = true;
           };
         });
+        //Si el detalle es de docente co-director se puede dejar vacio
+        if(detalle.Detalle.Id == 56 && (detalle.respuesta == "" || detalle.respuesta == "No solicita")){
+          detalle.respuesta = "No solicita";
+          contiene = true;
+        }
         if (!contiene) {
           swal(
             'Validación del formulario',
