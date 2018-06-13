@@ -259,6 +259,15 @@ angular.module('poluxClienteApp')
                       //console.log(ctrl.docenteDirector);
                     }
 
+                    //docente codirector solicitado
+                    if(id === 56){
+                      ctrl.docenteCoDirector = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                      };
+                      console.log(ctrl.docenteCoDirector);
+                    }
+
                     //docente solicitado para el cambio
                     if(id === 15 || id===17){
                       ctrl.docenteCambio = {
@@ -267,6 +276,7 @@ angular.module('poluxClienteApp')
                       };
                     //  console.log("docente cambio", ctrl.docenteCambio);
                     }
+
                     defer.resolve();
                   }else{
                     ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
@@ -400,6 +410,9 @@ angular.module('poluxClienteApp')
       if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2){
             if(ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3){
                 ctrl.isInicial = true;
+                if(ctrl.dataSolicitud.modalidad == 4){
+                  ctrl.tieneCoDirector = true;
+                }
                 //Si no es de materias de posgrado y profundización trae los docentes
                 academicaRequest.get("docentes_tg").then(function(docentes){
                   if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
