@@ -752,6 +752,12 @@ angular.module('poluxClienteApp')
                               tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
                             } 
                         });
+                        // por defecto el estado es En evaluación por revisor
+                        var estadoTrabajoGrado = 4;
+                        // si  la modalidad es de producción academica de una se vez se crea en curso
+                        if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+                          estadoTrabajoGrado = 13;
+                        }
                         //data para crear el trabajo de grado
                         var data_trabajo_grado = {
                             "Titulo": tempTrabajo.Titulo,
@@ -759,7 +765,7 @@ angular.module('poluxClienteApp')
                                 "Id": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Id
                             },
                             "EstadoTrabajoGrado": {
-                                "Id": 1
+                                "Id": estadoTrabajoGrado,
                             },
                             "DistincionTrabajoGrado": null,
                             "PeriodoAcademico":ctrl.detallesSolicitud.PeriodoAcademico,
