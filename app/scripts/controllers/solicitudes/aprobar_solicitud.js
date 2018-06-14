@@ -268,7 +268,7 @@ angular.module('poluxClienteApp')
                     }
 
                     //docente solicitado para el cambio
-                    if(id === 15 || id===17){
+                    if(id === 15 || id===17 || id===58){
                       ctrl.docenteCambio = {
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
                         "id":docente.data.docenteTg.docente[0].id,
@@ -429,7 +429,7 @@ angular.module('poluxClienteApp')
             }else{
               defered.resolve(ctrl.dataSolicitud.modalidad);
             }
-      }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 ){
+      }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  12 ){
         ctrl.isCambio = true;
         academicaRequest.get("docentes_tg").then(function(docentes){
           if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
@@ -681,6 +681,10 @@ angular.module('poluxClienteApp')
                       ctrl.docenteCambio = {
                         id: detalle.Descripcion,
                       }
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 57){
+                      //Documento del codirector
+                      var aux = detalle.Descripcion.split(" ");
+                      ctrl.codirector = Number(aux[0]);
                     }
                 });
                 //Se verifica por tipo de solicitud
@@ -962,17 +966,19 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.TrTrabajoGrado = ctrl.trabajo_grado;
                         ctrl.dataRespuesta.SolicitudTrabajoGrado = solicitudInicial;
                     }
-                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5){
-                  //cambio de director interno o evaluadores
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5 || ctrl.dataSolicitud.TipoSolicitud == 12){
+                  //cambio de director interno, codirector o evaluadores
                   // 5 cambio de director externo
                   var vinculaciones = [];
                   var vinculacionActual =  [];
                   angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
                     if(docenteVinculado.Usuario === ctrl.directorActual){
                       vinculacionActual = docenteVinculado;
-                    }else if(docenteVinculado.Usuario === ctrl.evaluadorActual){
+                    } else if(docenteVinculado.Usuario === ctrl.evaluadorActual){
                       vinculacionActual = docenteVinculado;
                     } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
+                      vinculacionActual = docenteVinculado;
+                    } else if(docenteVinculado.Usuario === Number(ctrl.codirector)){
                       vinculacionActual = docenteVinculado;
                     }
                   });
@@ -1059,18 +1065,18 @@ angular.module('poluxClienteApp')
             }
             
             if (!errorDocente) {
-              console.log("envia");
-                poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function(response) {
-                    ctrl.mostrarRespuesta(response);
-                })
-                .catch(function(error){
-                  console.log(error);
-                  swal(
-                      $translate.instant("ERROR"),
-                      $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                      'warning'
-                  );
-                });
+              //console.log("envia", ctrl.dataRespuesta);
+              poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function(response) {
+                  ctrl.mostrarRespuesta(response);
+              })
+              .catch(function(error){
+                console.log(error);
+                swal(
+                    $translate.instant("ERROR"),
+                    $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                    'warning'
+                );
+              });
             } else {
                 swal(
                     $translate.instant("ERROR"),

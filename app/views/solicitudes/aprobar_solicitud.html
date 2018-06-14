@@ -174,11 +174,11 @@
                       <label class="col-sm-5 control-label"> </label>
                     </div>-->
 
-                    <!--para el cambio de docente evaluador o director-->
+                    <!--para el cambio de docente evaluador, codirector o director-->
                     <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==3">
                       <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
                       <div class="col-sm-8">
-                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
+                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;" required>
                          <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                          <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
                            <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
