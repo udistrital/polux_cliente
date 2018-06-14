@@ -498,8 +498,12 @@ angular.module('poluxClienteApp')
           if (vinculado.RolTrabajoGrado.Id == 3) {
             ctrl.Trabajo.evaluadores.push(vinculado);
           }
+          if (vinculado.RolTrabajoGrado.Id == 4) {
+            ctrl.Trabajo.codirector = vinculado;
+          }
         });
         console.log("directorInterno", ctrl.Trabajo.directorInterno);
+        console.log("directorInterno", ctrl.Trabajo.codirector);
         console.log("directorExterno", ctrl.Trabajo.directorExterno);
         console.log("evaluadores", ctrl.Trabajo.evaluadores);
         defer.resolve();
@@ -817,8 +821,14 @@ angular.module('poluxClienteApp')
           return true;
         }
       }
+      if (ctrl.Trabajo.codirector !== undefined) {
+        if (ctrl.Trabajo.codirector.Usuario == docente) {
+          return true;
+        }
+      }
     }
     //console.log("directorInterno",ctrl.Trabajo.directorInterno);
+    //console.log("directorInterno",ctrl.Trabajo.codirector);
     //console.log("directorExterno",ctrl.Trabajo.directorExterno);
     //console.log("evaluadores",ctrl.Trabajo.evaluadores);
     return false;
@@ -1046,6 +1056,29 @@ angular.module('poluxClienteApp')
                       .catch(function(error){
                         defer.reject(error);
                       });
+                    } else if (detalle.Detalle.Nombre.includes("Codirector Actual")) {
+                      if(!angular.isUndefined(ctrl.Trabajo.codirector)){
+                        var parametrosDocentesUD = {
+                          "identificacion": ctrl.Trabajo.codirector.Usuario
+                        };
+                        academicaRequest.get("docente_tg", [ctrl.Trabajo.codirector.Usuario]).then(function(docente) {
+                          if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                            console.log("Respuesta docente", docente.data.docenteTg.docente);
+                            detalle.opciones.push({
+                              "NOMBRE": docente.data.docenteTg.docente[0].nombre,
+                              //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                              "bd": docente.bd = docente.data.docenteTg.docente[0].id
+                            });
+                            console.log(detalle.opciones);
+                          }
+                          defer.resolve();
+                        })
+                        .catch(function(error){
+                          defer.reject(error);
+                        });
+                      }else{
+                        defer.reject("Sin codirector");
+                      }
                     } else if (detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")) {
                       var promises = [];
                       var getEspacio = function(detalle, espacio){
@@ -1168,6 +1201,9 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error) {
             ctrl.mensajeError  = $translate.instant("ERROR.CARGAR_OPCIONES_DETALLES_SOLICITUD");
+            if(error === "Sin codirector"){
+              ctrl.mensajeError  = $translate.instant("ERROR.SIN_CODIRECTOR");
+            }
             ctrl.errorParametros = true;
             $scope.loadDetalles = false;
             ctrl.detalles = [];
