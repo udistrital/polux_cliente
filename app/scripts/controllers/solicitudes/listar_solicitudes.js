@@ -30,10 +30,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  token_service.token.documento = "79647592";
-  token_service.token.role.push("COORDINADOR_PREGRADO");
-  //token_service.token.documento = "20131020020";
-  //token_service.token.role.push("ESTUDIANTE");
+  //token_service.token.documento = "79647592";
+  //token_service.token.role.push("COORDINADOR_PREGRADO");
+  token_service.token.documento = "20131020020";
+  token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
@@ -252,6 +252,18 @@ angular.module('poluxClienteApp')
           resultado += ". " + $translate.instant('APROBADO.CAMBIAR_MATERIA',{nuevo:nuevo,anterior:anterior});
           detalles.resultado = resultado;
           defer.resolve(resultado);
+          break;
+        case 12:
+          $q.all([getVinculado(solicitud,4,"Fin"),getVinculado(solicitud,4,"Inicio")]).then(function(response){
+            nuevo = response[1];
+            anterior = response[0];
+            resultado += ". " + $translate.instant('APROBADO.CODIRECTOR',{nuevo:nuevo,anterior:anterior});
+            detalles.resultado = resultado;
+            defer.resolve(resultado);
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });
           break;
         //default
         default:
