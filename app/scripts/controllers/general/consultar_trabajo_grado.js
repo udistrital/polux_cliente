@@ -403,7 +403,7 @@ angular.module('poluxClienteApp')
             .get()
             .then(function(response) {
               ctrl.doc=response;
-              var aux=response.get('file:content');
+              //var aux=response.get('file:content');
               ctrl.document=response;
               defer.resolve(response);
             })

@@ -171,7 +171,7 @@ angular.module('poluxClienteApp')
                               console.log(error);
                               ctrl.error = true;
                               ctrl.loading = false;
-                            });;
+                            });
                           }else{
                               ctrl.estudianteConTrabajo = true;
                               ctrl.loading = false;
@@ -181,7 +181,7 @@ angular.module('poluxClienteApp')
                         console.log(error);
                         ctrl.error = true;
                         ctrl.loading = false;
-                      });;
+                      });
 
                     }else{
                           ctrl.estudianteValido = true;
@@ -193,7 +193,7 @@ angular.module('poluxClienteApp')
                       console.log(error);
                       ctrl.error = true;
                       ctrl.loading = false;
-                    });;
+                    });
               } else {
                 ctrl.estudianteNoEncontrado = true;
                 ctrl.loading = false;
@@ -203,7 +203,7 @@ angular.module('poluxClienteApp')
               console.log(error);
               ctrl.error = true;
               ctrl.loading = false;
-            });;
+            });
           })
           .catch(function(error){
             console.log(error);

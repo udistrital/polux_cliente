@@ -137,7 +137,9 @@ angular.module('poluxClienteApp')
                           ctrl.asignaturas=resp2.data;
                           var aaa=ctrl.obtenerNombres(resp2.data);
 
-                          var resultado=null;
+                          var resultado={
+                            nombre = "",
+                          };
                           if (!angular.isUndefined(resp2.data.carrerasCollection.carrera)) {
                               var resultado=response2.data.carrerasCollection.carrera[0];
                           }

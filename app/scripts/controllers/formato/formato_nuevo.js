@@ -10,7 +10,6 @@
 angular.module('poluxClienteApp')
     .controller('FormatoNuevoCtrl', function(poluxRequest, $scope, $location, $route) {
 
-        var ctrl = this;
         $scope.formatos = [];
         //Preguntas existentes en la base de datos
         $scope.preguntas = [];
@@ -88,11 +87,7 @@ angular.module('poluxClienteApp')
                 }]
             }],
             isRowSelectable: function(row) {
-                if (row.treeLevel === 0) {
-                    return true;
-                } else {
-                    return false;
-                };
+                return row.treeLevel === 0;
             },
 
             onRegisterApi: function(gridApi) {

@@ -141,8 +141,8 @@ angular.module('poluxClienteApp')
                             poluxRequest.put("correccion", ctrl.correcciones[i].Id, ctrl.correcciones[i]);
                         }
                     }
-                    for (var i = 0; i < ctrl.correcciones_eliminadas.length; i++) {
-                        poluxRequest.delete("correccion", ctrl.correcciones_eliminadas[i].Id);
+                    for (var j = 0; j < ctrl.correcciones_eliminadas.length; j++) {
+                        poluxRequest.delete("correccion", ctrl.correcciones_eliminadas[j].Id);
                     }
                 };
 

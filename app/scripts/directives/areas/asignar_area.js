@@ -64,12 +64,12 @@ angular.module('poluxClienteApp')
             }
             return result;
           }
-          if (nombreArea==null ) {
+          /*if (nombreArea==null ) {
             return false;
           }
           else {
             return true;
-          }
+          }*/
         };
       },
       controllerAs:'d_asignarArea'

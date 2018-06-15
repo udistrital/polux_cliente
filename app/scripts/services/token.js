@@ -87,7 +87,7 @@ angular.module('poluxClienteApp')
               }
             };
             return true;
-          } else {}
+          }
         }
       },
       logout: function () {

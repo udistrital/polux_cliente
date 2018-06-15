@@ -444,11 +444,6 @@ angular.module('poluxClienteApp')
       } else if(lista_roles.includes("COORDINADOR_PREGRADO")){
         $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
 
-        var parametrosCoordinador = {
-          "identificacion":$scope.userId,
-          "tipo": "PREGRADO"
-        };
-
         parametrosSolicitudes = $.param({
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
             query:"ESTADOSOLICITUD.ID:1,Activo:true",
@@ -472,7 +467,6 @@ angular.module('poluxClienteApp')
                   }
                   var verificarSolicitud = function(solicitud){
                     var defer = $q.defer();
-                    var promise = defer.promise;
                     solicitud.data = {
                       'Id':solicitud.SolicitudTrabajoGrado.Id,
                       'Modalidad':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Nombre,
@@ -585,7 +579,7 @@ angular.module('poluxClienteApp')
             .get()
             .then(function(response) {
               ctrl.doc=response;
-              var aux=response.get('file:content');
+              //var aux=response.get('file:content');
               ctrl.document=response;
               defer.resolve(response);
             })
@@ -793,7 +787,7 @@ angular.module('poluxClienteApp')
                   query:"TrabajoGrado:"+detalle.Descripcion,
                   limit:0
                 });
-                poluxRequest.get("detalle_pasantia")
+                poluxRequest.get("detalle_pasantia",parametrosVinculado)
                 .then(function(dataExterno){
                   if(dataExterno.data != null){
                     var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");

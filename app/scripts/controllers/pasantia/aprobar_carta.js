@@ -364,7 +364,7 @@ angular.module('poluxClienteApp')
           .then(function(response) {
             // Se valida que el usuario haya confirmado la formalización
             if (response.value) {
-              ctrl.postRespuesta(row.entity,false,"La solicitud fue rechazada, para cualquier inquietud acerqeuse a la oficina de pasantias.");
+              ctrl.postRespuesta(row.entity,false,"La solicitud fue rechazada, para cualquier inquietud acerquese a la oficina de pasantias.");
             }
           });
         default:

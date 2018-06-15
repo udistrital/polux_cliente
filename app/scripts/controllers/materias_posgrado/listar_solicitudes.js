@@ -244,7 +244,6 @@
      */
     ctrl.getFechas = function(periodo){
       var defer =  $q.defer()
-      var momentDate = null;
       $scope.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
       //traer fechas
       var parametrosSesiones = $.param({
@@ -257,7 +256,7 @@
           angular.forEach(ctrl.fechas, function(fecha){
             //console.log(fecha.SesionHijo);
             var fechaInicio = new Date(fecha.SesionHijo.FechaInicio);
-            fechaInicio.setTime( fechaInicio.getTime() + fechaInicio.getTimezoneOffset()*60*1000 );;
+            fechaInicio.setTime( fechaInicio.getTime() + fechaInicio.getTimezoneOffset()*60*1000 );
             var fechaFin = new Date(fecha.SesionHijo.FechaFin);
             fechaFin.setTime( fechaFin.getTime() + fechaFin.getTimezoneOffset()*60*1000 );
             fecha.inicio = moment(fechaInicio).format("YYYY-MM-DD HH:mm");
@@ -559,7 +558,7 @@
         ctrl.fecha = 2;
         ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
         ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
-        ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;  ;
+        ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
         //console.log(ctrl.admitidos, ctrl.noAdmitidos);
         $('#modalAdmitir').modal('show')
       }else{

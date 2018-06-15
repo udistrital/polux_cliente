@@ -152,11 +152,7 @@ angular.module('poluxClienteApp')
       }],
 
       isRowSelectable: function(row) {
-        if (row.treeLevel === 0) {
-          return true;
-        } else {
-          return false;
-        };
+        return row.treeLevel === 0;
       },
 
       onRegisterApi: function(gridApi) {
@@ -185,11 +181,11 @@ angular.module('poluxClienteApp')
         var seleccion = $scope.gridApi.selection.getSelectedRows();
         var pos = 0;
         var respuesta = null;
-        for (var i = 0; i < $scope.respuestas.length; i++) {
-          if ($scope.respuestas[i].Descripcion === $scope.rSeleccion) {
+        for (var j = 0; j < $scope.respuestas.length; j++) {
+          if ($scope.respuestas[j].Descripcion === $scope.rSeleccion) {
             respuesta = {
-              Id: $scope.respuestas[i].Id,
-              Enunciado: $scope.respuestas[i].Descripcion
+              Id: $scope.respuestas[j].Id,
+              Enunciado: $scope.respuestas[j].Descripcion
             }
           }
         }
@@ -237,7 +233,7 @@ angular.module('poluxClienteApp')
         var seleccion = $scope.gridApi.selection.getSelectedRows();
         if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
           var objeto = null;
-          for (var i = 0; i < $scope.gridOptions.data.length; i++) {
+          for (i = 0; i < $scope.gridOptions.data.length; i++) {
             if ($scope.gridOptions.data[i].$$hashKey === seleccion[0].$$hashKey) {
               pos = i;
               objeto = {
@@ -275,7 +271,7 @@ angular.module('poluxClienteApp')
         for (var i = 0; i < $scope.gridOptions.data.length; i++) {
 
           if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey) {
-            var pos = i;
+            pos = i;
             for (var j = i + 1; j < $scope.gridOptions.data.length; j++) {
               if ($scope.gridOptions.data[j].padre === seleccion[0].$$hashKey) {
                 $scope.gridOptions.data.splice(j, 1);

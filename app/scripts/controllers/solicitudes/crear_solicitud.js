@@ -887,13 +887,19 @@ angular.module('poluxClienteApp')
             order: "asc"
           });
           var getModalidadTipoSolicitud = function(modalidad_seleccionada){
+            var defer = $q.defer();
             var parametrosModalidadTipoSolicitud = $.param({
               query: "TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:" + modalidad_seleccionada,
               limit: 1,
             });
             poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
               ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
+              defer.resolve();
+            })
+            .catch(function(error){
+              defer.reject(error);
             });
+            return defer.promise;
           }
           promises.push(getModalidadTipoSolicitud(modalidad_seleccionada));
         }
@@ -917,9 +923,6 @@ angular.module('poluxClienteApp')
               if (parametrosServicio[0] === "polux") {
                 var getOpcionesPolux = function(parametrosServicio){
                   var defer = $q.defer()
-                  var parametros = $.param({
-                    limit: 0
-                  });
                   if (parametrosServicio[2] !== undefined) {
                     parametrosConsulta = parametrosServicio[2].split(",");
                     angular.forEach(parametrosConsulta, function(parametro) {
@@ -930,9 +933,10 @@ angular.module('poluxClienteApp')
                         if (parametro == "carrera_elegible") {
                           parametro = parametro + ":" + ctrl.carreraElegida;
                         }
+                        /* //Si el parametro es activo se deja tal y como esta en la bd
                         if (parametro == "activo") {
                           parametro = parametro;
-                        }
+                        }*/
                         if (parametro == "id") {
                           parametro = parametro + ":" + ctrl.trabajo_grado;
                         }
@@ -985,7 +989,7 @@ angular.module('poluxClienteApp')
                       });
                       defer.resolve();
                     } else if (detalle.Detalle.Nombre.includes("Espacio Academico Anterior")) {
-                      var getEspacio = function(detalle,espacio){
+                      var getEspacioAnterior = function(detalle,espacio){
                         var defer = $q.defer();
                         academicaRequest.get("asignatura_pensum",[espacio.EspaciosAcademicosElegibles.CodigoAsignatura,espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum]).then(function(asignatura){
                             detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
@@ -1000,11 +1004,11 @@ angular.module('poluxClienteApp')
                         });
                         return defer.promise;
                       }
-                      var promises = [];
+                      var promisesEspacio = [];
                       angular.forEach(responseOpciones.data, function(espacio) {
-                        promises.push(getEspacio(detalle,espacio));
+                        promisesEspacio.push(getEspacioAnterior(detalle,espacio));
                       });
-                      $q.all(promises).then(function(){
+                      $q.all(promisesEspacio).then(function(){
                         defer.resolve()
                       })
                       .catch(function(error){
@@ -1038,9 +1042,6 @@ angular.module('poluxClienteApp')
                         defer.reject(error);
                       });
                     } else if (detalle.Detalle.Nombre.includes("Director Actual")) {
-                      var parametrosDocentesUD = {
-                        "identificacion": ctrl.Trabajo.directorInterno.Usuario
-                      };
                       academicaRequest.get("docente_tg", [ctrl.Trabajo.directorInterno.Usuario]).then(function(docente) {
                         if (!angular.isUndefined(docente.data.docenteTg.docente)) {
                           console.log("Respuesta docente", docente.data.docenteTg.docente);
@@ -1058,9 +1059,6 @@ angular.module('poluxClienteApp')
                       });
                     } else if (detalle.Detalle.Nombre.includes("Codirector Actual")) {
                       if(!angular.isUndefined(ctrl.Trabajo.codirector)){
-                        var parametrosDocentesUD = {
-                          "identificacion": ctrl.Trabajo.codirector.Usuario
-                        };
                         academicaRequest.get("docente_tg", [ctrl.Trabajo.codirector.Usuario]).then(function(docente) {
                           if (!angular.isUndefined(docente.data.docenteTg.docente)) {
                             console.log("Respuesta docente", docente.data.docenteTg.docente);
@@ -1190,7 +1188,7 @@ angular.module('poluxClienteApp')
                   "bd": $translate.instant(parametrosServicio[1])
                 });
               }
-            };
+            }
           });
           $q.all(promises).then(function(){
             $scope.loadDetalles = false;
@@ -1337,7 +1335,7 @@ angular.module('poluxClienteApp')
         angular.forEach(detalle.opciones, function(opcion) {
           if (opcion.bd == detalle.respuesta) {
             contiene = true;
-          };
+          }
         });
         //Si el detalle es de docente co-director se puede dejar vacio
         if(detalle.Detalle.Id == 56 && (detalle.respuesta == "" || detalle.respuesta == "No solicita")){
@@ -1418,12 +1416,10 @@ angular.module('poluxClienteApp')
             defer.resolve(url);
           })
           .catch(function(error) {
-            throw error;
             defer.reject(error)
           });
       })
       .catch(function(error) {
-        throw error;
         defer.reject(error)
       });
 
@@ -1634,7 +1630,7 @@ angular.module('poluxClienteApp')
         .get()
         .then(function(response) {
           ctrl.doc = response;
-          var aux = response.get('file:content');
+          //var aux = response.get('file:content');
           ctrl.document = response;
           defer.resolve(response);
         })

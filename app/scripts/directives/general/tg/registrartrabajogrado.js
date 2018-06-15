@@ -36,7 +36,11 @@ angular.module('poluxClienteApp')
               query: "CodigoEstudiante:" + response.data.CodigoEstudiante
             }));
           });
-          alert("Registro de trabajo de grado agregado a estudiante: "+ codEstudiante);
+          swal({
+            title: 'Ok',
+            text: "Registro de trabajo de grado agregado a estudiante: "+ codEstudiante,
+            type: 'success',
+          })
         };
         self.agregarRegistro=function(estudiante,mod,title){
           mod=parseInt(mod);

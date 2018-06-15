@@ -16,7 +16,6 @@ angular.module('poluxClienteApp')
       */
       templateUrl: 'views/directives/general/propuesta/consultar-propuesta.html',
       controller:function(){
-        var ctrl = this;
       },
       controllerAs:'d_conProp'
     };

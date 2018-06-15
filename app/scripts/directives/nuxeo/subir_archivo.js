@@ -16,7 +16,6 @@ angular.module('poluxClienteApp')
       */
       templateUrl: 'add-view.html',
       controller:function(){
-        var ctrl = this;
       },
       controllerAs:'d_nuxeo/subirArchivo'
     };

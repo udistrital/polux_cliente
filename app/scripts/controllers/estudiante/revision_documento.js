@@ -83,10 +83,8 @@ angular.module('poluxClienteApp')
         };
 
         ctrl.solicitar_revision = function() {
-            var docente = {};
             $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + ctrl.vinculacion_info.Usuario)
                 .then(function(response) {
-                    docente = response.data[0];
                     swal({
                         title: 'Solicitud de Revisión?',
                         html: "Desea realizar la solicitud de revisión para <b>" + ctrl.vinculacion_info.TrabajoGrado.Titulo + "</b> al docente " + response.data[0].NOMBRE,

@@ -295,7 +295,7 @@ angular.module('poluxClienteApp')
                   query:"TrabajoGrado:"+detalle.Descripcion,
                   limit:0
                 });
-                poluxRequest.get("detalle_pasantia")
+                poluxRequest.get("detalle_pasantia",parametrosVinculado)
                 .then(function(dataExterno){
                   if(dataExterno.data != null){
                     var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
@@ -819,10 +819,9 @@ angular.module('poluxClienteApp')
                             }
                         }
                         //se agregan las areaSnies
-                        var area = {};
                         var data_areas = [];
                         angular.forEach(ctrl.areas, function(area) {
-                            area = {
+                          data_areas.push({
                                 "AreaConocimiento": {
                                     "Id": Number(area)
                                 },
@@ -831,7 +830,7 @@ angular.module('poluxClienteApp')
                                 },
                                 "Activo": true,
                             }
-                            data_areas.push(area);
+                          );
                         });
                         // se agregan las vinculaciones del tg
                         var vinculacion = {};
@@ -1173,15 +1172,13 @@ angular.module('poluxClienteApp')
                     defered.resolve(url);
                   })
                   .catch(function(error) {
-                    throw error;
-                    ctrl.swalError();
+                    console.log(error);
                     $scope.loadFormulario = false;
                     defered.reject(error);
                   });
               })
               .catch(function(error) {
-                  throw error;
-                  ctrl.swalError();
+                  console.log(error);
                   $scope.loadFormulario = false;
                   defered.reject(error);
               });
@@ -1268,7 +1265,7 @@ angular.module('poluxClienteApp')
           .get()
           .then(function(response) {
             ctrl.doc=response;
-            var aux=response.get('file:content');
+            //var aux=response.get('file:content');
             ctrl.document=response;
             defered.resolve(response);
           })
