@@ -21,13 +21,14 @@
  * @property {String} usuarioSesion El identificador del docente en sesión para consultar y revisar sus anteproyectos pendientes
  * @property {Boolean} cargandoAnteproyectos Indicador que maneja la carga de los anteproyectos para revisar
  * @property {String} mensajeCargandoAnteproyectos Mensaje que aparece durante la carga de anteproyectos para revisar
- * @property {Array} botonFormalizarSolicitud Establece las propiedades del botón que se muestra para cada solicitud pendiente de formalización
+ * @property {Array} botonVerDocumento Establece las propiedades del botón que se muestra para ver el documento asociado a cada anteproyecto
+ * @property {Array} botonRevisarAnteproyecto Establece las propiedades del botón que se muestra para dar respuesta a la revisión del anteproyecto asignado
  * @property {Object} cuadriculaAnteproyectos Almacena y adapta la información de los anteproyectos para visualizar el contenido y poder hacer la revisión del mismo
- * @property {Array} coleccionFechasFormalizacion Almacena las fechas de inicio y cierre de periodos para la formalización de solicitudes
- * @property {Boolean} errorCargandoSolicitudesParaFormalizar Indicador que maneja la aparición de un error durante la carga de solicitudes para formalizar
- * @property {String} mensajeErrorCargandoSolicitudesParaFormalizar Mensaje que aparece en caso de error durante la carga de solicitudes para formalizar
- * @property {Boolean} periodoDeFormalizacionNoCorrespondiente Indicador que maneja la correspondencia de periodos para efectuar la formalización de solicitudes
- * @property {Array} coleccionSolicitudesParaFormalizar Almacena las solicitudes pendientes de formalización para obtener la información visible para el usuario y necesaria para la transacción
+ * @property {Boolean} errorCargandoAnteproyectos Indicador que maneja la aparición de un error durante la carga de los anteproyectos pendientes.
+ * @property {String} mensajeErrorCargandoAnteproyectos Mensaje que aparece en caso de error durante la carga de los anteproyectos pendientes.
+ * @property {Boolean} cargandoDatosEstudiantiles Indicador que maneja carga de los datos de los estudiantes asociados al anteproyecto seleccionado
+ * @property {Boolean} errorCargandoDatosEstudiantiles Indicador que maneja la aparición de un error durante la carga de los datos de los estudiantes.
+ * @property {String} mensajeErrorCargandoDatosEstudiantiles Mensaje que aparece en caso de error durante la carga de los datos de los estudiantes.
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
@@ -41,18 +42,24 @@ angular.module('poluxClienteApp')
 			ctrl.cargandoAnteproyectos = true;
 			ctrl.mensajeCargandoAnteproyectos = $translate.instant("LOADING.CARGANDO_ANTEPROYECTOS");
 
-			ctrl.botonFormalizarSolicitud = [{
+			ctrl.botonVerDocumento = [{
 				clase_color: "ver",
-				clase_css: "fa fa-check fa-lg  faa-shake animated-hover",
-				titulo: $translate.instant('BTN.VER_DETALLES'),
-				operacion: 'formalizarSolicitudSeleccionada',
+				clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
+				titulo: $translate.instant('VER_DOCUMENTO'),
+				estado: true
+			}];
+
+			ctrl.botonRevisarAnteproyecto = [{
+				clase_color: "ver",
+				clase_css: "fa fa-cog fa-lg  faa-shake animated-hover",
+				titulo: $translate.instant('BTN.REVISAR_ANTEPROYECTO'),
 				estado: true
 			}];
 
 			ctrl.cuadriculaAnteproyectos = {};
 
 			ctrl.cuadriculaAnteproyectos.columnDefs = [{
-				name: 'idAnteproyecto',
+				name: 'TrabajoGrado.Id',
 				displayName: $translate.instant("NUMERO"),
 				width: '6%',
 				sort: {
@@ -60,19 +67,19 @@ angular.module('poluxClienteApp')
 					priority: 0
 				}
 			}, {
-				name: 'tituloAnteproyecto',
+				name: 'TrabajoGrado.Titulo',
 				displayName: $translate.instant("TITULO_PROPUESTA"),
 				width: '20%'
 			}, {
-				name: 'modalidadAnteproyecto',
+				name: 'TrabajoGrado.Modalidad.Nombre',
 				displayName: $translate.instant("MODALIDAD"),
 				width: '13%'
 			}, {
-				name: 'estadoAnteproyecto',
+				name: 'TrabajoGrado.EstadoTrabajoGrado.Nombre',
 				displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
 				width: '13%'
 			}, {
-				name: 'papelRevisor',
+				name: 'RolTrabajoGrado.Nombre',
 				displayName: $translate.instant("ROL"),
 				width: '13%',
 			}, {
@@ -84,61 +91,129 @@ angular.module('poluxClienteApp')
 				displayName: $translate.instant("REVISAR_ANTEPROYECTO.ACCION"),
 				width: '15%',
 				cellTemplate: '<btn-registro ' +
-					'funcion="grid.appScope.formalizarSolicitud.cargarFila(row)"' +
+					'funcion="grid.appScope.revisarAnteproyecto.verDocumentoAnteproyecto(row)"' +
+					'grupobotones="grid.appScope.revisarAnteproyecto.botonVerDocumento">' +
+					'</btn-registro>' +
+					'<btn-registro ' +
+					'funcion="grid.appScope.revisarAnteproyecto.revisarAnteproyectoSeleccionado(row)"' +
 					'grupobotones="grid.appScope.revisarAnteproyecto.botonRevisarAnteproyecto">' +
 					'</btn-registro>'
 			}];
 
-      /**
-       * @ngdoc method
-       * @name consultarPeriodoAcademicoPrevio
-       * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-       * @description
-       * Función que obtiene el periodo académico previo dado el parámetro "P" de consulta.
-       * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer el periodo académico previo al actual.
-       * @param {undefined} undefined No requiere parámetros
-       * @returns {Promise} El periodo académico previo, o la excepción generada
-       */
-      ctrl.consultarPeriodoAcademicoPrevio = function() {
-        var deferred = $q.defer();
-        academicaRequest.get("periodo_academico", "P")
-          .then(function(periodoAcademicoConsultado) {
-            if (!angular.isUndefined(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico)) {
-              deferred.resolve(periodoAcademicoConsultado.data.periodoAcademicoCollection.periodoAcademico[0]);
-            } else {
-              deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
-            }
-          })
-          .catch(function(excepcionPeriodoAcademicoConsultado) {
-            deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
-          });
-        return deferred.promise;
-      }
+			ctrl.cuadriculaEstudiantesDelAnteproyecto = {};
+
+			ctrl.cuadriculaEstudiantesDelAnteproyecto.columnDefs = [{
+				name: 'TrabajoGrado.Id',
+				displayName: $translate.instant("CODIGO"),
+				width: '6%',
+			}, {
+				name: 'TrabajoGrado.Titulo',
+				displayName: $translate.instant("NOMBRE"),
+				width: '20%'
+			}];
+
+			/**
+			 * @ngdoc method
+			 * @name obtenerParametrosEstudianteTrabajoGrado
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que define los parámetros para consultar en la tabla estudiante_trabajo_grado.
+			 * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+			 * @returns {String} La sentencia para la consulta correspondiente
+			 */
+			ctrl.obtenerParametrosEstudianteTrabajoGrado = function(idTrabajoGrado) {
+				return $.param({
+					query: "TrabajoGrado.Id:" +
+						idTrabajoGrado,
+					limit: 0
+				});
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name consultarEstudiantesAsociados
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que recorre la base de datos de acuerdo al docente en sesión para traer los anteproyectos asignados para revisión.
+			 * Llama a la función: obtenerParametrosVinculacionTrabajoGrado.
+			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+			 * @param {Object} anteproyecto El anteproyecto al que se le cargarán los estudiantes asociados
+			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 */
+			ctrl.consultarEstudiantesAsociados = function(anteproyecto) {
+				var deferred = $q.defer();
+				var conjuntoProcesamientoDeAnteproyectos = [];
+				ctrl.coleccionAnteproyectos = [];
+				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(anteproyecto.TrabajoGrado.Id))
+					.then(function(estudiantesAsociados) {
+						if (estudiantesAsociados.data) {
+							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
+						}
+						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
+					})
+					.catch(function(excepcionVinculacionTrabajoGrado) {
+						deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
+					});
+				return deferred.promise;
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name consultarPeriodoAcademicoPrevio
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que obtiene el periodo académico previo dado el parámetro "P" de consulta.
+			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer el periodo académico previo al actual.
+			 * @param {undefined} undefined No requiere parámetros
+			 * @returns {Promise} El periodo académico previo, o la excepción generada
+			 */
+			ctrl.consultarPeriodoAcademicoPrevio = function() {
+				var deferred = $q.defer();
+				academicaRequest.get("periodo_academico", "P")
+					.then(function(periodoAcademicoPrevio) {
+						if (!angular.isUndefined(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico)) {
+							deferred.resolve(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico[0]);
+						} else {
+							deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
+						}
+					})
+					.catch(function(excepcionPeriodoAcademico) {
+						deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
+					});
+				return deferred.promise;
+			}
 
 			/**
 			 * @ngdoc method
 			 * @name consultarInformacionAcademicaDelEstudiante
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
-			 * Función que según el estudiante registrado al trabajo de grado asocia la información académica correspondiente.
+			 * Función que según el estudiante asociado, carga la información académica correspondiente.
+			 * Llama a la función: consultarPeriodoAcademicoPrevio.
 			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica registrada.
 			 * @param {Object} estudianteAsociado El estudiante al que se le cargará la información académica
 			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
 			 */
 			ctrl.consultarInformacionAcademicaDelEstudiante = function(estudianteAsociado) {
-        var deferred = $q.defer();
-        academicaRequest.get("datos_estudiante", [estudianteAsociado.Estudiante, ctrl.periodoAcademicoPrevio.anio, ctrl.periodoAcademicoPrevio.periodo])
-          .then(function(estudianteConsultado) {
-            if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
-              solicitudAsociada.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
-            }
-            deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
-          })
-          .catch(function(excepcionEstudianteConsultado) {
-            deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
-          });
-        return deferred.promise;
-      }
+				var deferred = $q.defer();
+				ctrl.consultarPeriodoAcademicoPrevio
+					.then(function(periodoAcademicoPrevio) {
+						academicaRequest.get("datos_estudiante", [estudianteAsociado.Estudiante, periodoAcademicoPrevio.anio, periodoAcademicoPrevio.periodo])
+							.then(function(estudianteConsultado) {
+								if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
+									estudianteAsociado.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
+								}
+								deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
+							})
+							.catch(function(excepcionEstudianteConsultado) {
+								deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
+							});
+					})
+					.catch(function(excepcionPeriodoAcademico) {
+						deferred.reject(excepcionPeriodoAcademico);
+					});
+				return deferred.promise;
+			}
 
 			/**
 			 * @ngdoc method
@@ -174,36 +249,137 @@ angular.module('poluxClienteApp')
 			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
 			 */
 			ctrl.consultarAnteproyectos = function() {
-				// Se trae el diferido desde el servicio para manejar las promesas
 				var deferred = $q.defer();
-				// Se define una colección de procedimientos necesarios para cargar la información
 				var conjuntoProcesamientoDeAnteproyectos = [];
-				// Se define una colección general para los anteproyectos
 				ctrl.coleccionAnteproyectos = [];
 				poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
 					.then(function(anteproyectosPendientes) {
 						if (anteproyectosPendientes.data) {
 							angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
-								console.log(anteproyecto);
-								anteproyecto.idAnteproyecto = 1;
-								anteproyecto.tituloAnteproyecto = "titulo";
-								anteproyecto.modalidadAnteproyecto = "modalidad";
-								anteproyecto.estadoAnteproyecto = "estado";
-								anteproyecto.papelRevisor = "papel";
-								anteproyecto.autores = "autores";
-								ctrl.cuadriculaAnteproyectos.data.push(anteproyecto);
+								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarEstudiantesAsociados(anteproyecto));
 							});
-							ctrl.cargandoAnteproyectos = false;
+							$q.all(conjuntoProcesamientoDeAnteproyectos)
+								.then(function(resultadoDelProcesamiento) {
+									angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
+										if (anteproyecto.EstudiantesTrabajoGrado) {
+											ctrl.coleccionAnteproyectos.push(anteproyecto);
+										}
+									});
+									deferred.resolve(resultadoDelProcesamiento);
+								})
+								.catch(function(excepcionDuranteProcesamiento) {
+									deferred.reject(excepcionDuranteProcesamiento);
+								});
+						} else {
+							deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
 						}
 					})
 					.catch(function(excepcionVinculacionTrabajoGrado) {
-						// En caso de error se rechaza la petición con el mensaje correspondiente
-						deferred.reject($translate.instant("ERROR.CARGANDO_USUARIO_SOLICITUD"));
+						deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
 					});
-				// Se devuelve el diferido que maneja la promesa
 				return deferred.promise;
 			}
 
-			ctrl.consultarAnteproyectos();
+			/**
+			 * @ngdoc method
+			 * @name obtenerCodigosEstudiantiles
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que obtiene los códigos desde los objetos que guardan la información de los estudiantes del trabajo de grado.
+			 * @param {Object} estudianteTrabajoGrado El objeto que contiene los datos del estudiante registrado.
+			 * @returns {String} La cadena de texto acerca de los códigos estudiantiles asociados al anteproyecto
+			 */
+			ctrl.obtenerCodigosEstudiantiles = function(estudiantesTrabajoGrado) {
+				var codigosEstudiantiles = "";
+				angular.forEach(estudiantesTrabajoGrado, function(estudianteTrabajoGrado) {
+					codigosEstudiantiles += estudianteTrabajoGrado.Estudiante + ", "
+				});
+				return codigosEstudiantiles.substring(0, codigosEstudiantiles.length - 2);
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name mostrarAnteproyectos
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que carga el contenido de los anteproyectos a la cuadrícula correspondiente.
+			 * @param {Array} anteproyectos No requiere parámetros
+			 * @returns {undefined} No hace retorno de resultados
+			 */
+			ctrl.mostrarAnteproyectos = function(anteproyectos) {
+				angular.forEach(anteproyectos, function(anteproyecto) {
+					anteproyecto.autores = ctrl.obtenerCodigosEstudiantiles(anteproyecto.EstudiantesTrabajoGrado);
+				});
+				ctrl.cuadriculaAnteproyectos.data = anteproyectos;
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name actualizarCuadriculaDeAnteproyectos
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que actualiza el contenido de la cuadrícula según la consulta de los anteproyectos existentes.
+			 * Llama a las funciones: consultarAnteproyectos y mostrarAnteproyectos.
+			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+			 * @param {undefined} undefined No requiere parámetros
+			 * @returns {undefined} No hace retorno de resultados
+			 */
+			ctrl.actualizarCuadriculaDeAnteproyectos = function() {
+				ctrl.cargandoAnteproyectos = false;
+				ctrl.errorCargandoAnteproyectos = false;
+				ctrl.consultarAnteproyectos()
+					.then(function(respuestaConsultandoAnteproyectos) {
+						if (ctrl.coleccionAnteproyectos.length > 0) {
+							ctrl.mostrarAnteproyectos(ctrl.coleccionAnteproyectos);
+						} else {
+							ctrl.errorCargandoAnteproyectos = true;
+							ctrl.mensajeErrorCargandoAnteproyectos = respuestaConsultandoAnteproyectos[0];
+						}
+					})
+					.catch(function(excepcionConsultandoAnteproyectos) {
+						ctrl.errorCargandoAnteproyectos = true;
+						ctrl.mensajeErrorCargandoAnteproyectos = excepcionConsultandoAnteproyectos;
+					});
+			}
+
+			//Invocación del método inicial
+			ctrl.actualizarCuadriculaDeAnteproyectos();
+
+			/**
+			 * @ngdoc method
+			 * @name verDocumentoAnteproyecto
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que se dispara al momento de seleccionar la opción de visualización del documento del anteproyecto, y permite desplegar el contenido del mismo.
+			 * Llama a las funciones: 
+			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
+			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 */
+			ctrl.verDocumentoAnteproyecto = function(filaAsociada) {
+				console.log("ver documento");
+				console.log(filaAsociada.entity);
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name revisarAnteproyectoSeleccionado
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que despliega la ventana emergente que describe el anteproyecto seleccionado y le permite al docente brindar la respuesta asociada a su revisión.
+			 * Llama a las funciones: .
+			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
+			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 */
+			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
+				console.log("revisar anteproyecto seleccionado");
+				console.log(filaAsociada.entity);
+				ctrl.cuadriculaEspaciosAcademicosInscritos.data = [];
+				ctrl.cargandoTrabajosDeGradoCursados = true;
+				ctrl.cargandoEspaciosAcademicos = true;
+				$('#modalRevisarAnteproyecto').modal('show');
+				var conjuntoProcesamientoEspaciosAcademicos = [];
+			}
 
 		});
