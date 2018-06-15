@@ -477,7 +477,7 @@ ngtemplates: {
                             url: 'http://localhost:9000'
                         },
                         projectKey: 'sonar:polux_cliente:20180615',
-                        projectName: 'Grunt Sonar Runner',
+                        projectName: 'polux_cliente',
                         projectVersion: '0.10',
                         sources: ['app','test'].join(','),
                         language: 'js',
