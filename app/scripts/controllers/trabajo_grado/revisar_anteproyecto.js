@@ -41,6 +41,7 @@ angular.module('poluxClienteApp')
 
 			ctrl.cargandoAnteproyectos = true;
 			ctrl.mensajeCargandoAnteproyectos = $translate.instant("LOADING.CARGANDO_ANTEPROYECTOS");
+			ctrl.mensajeCargandoDatosEstudiantiles = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
 
 			ctrl.botonVerDocumento = [{
 				clase_color: "ver",
@@ -103,14 +104,73 @@ angular.module('poluxClienteApp')
 			ctrl.cuadriculaEstudiantesDelAnteproyecto = {};
 
 			ctrl.cuadriculaEstudiantesDelAnteproyecto.columnDefs = [{
-				name: 'TrabajoGrado.Id',
+				name: 'codigo',
 				displayName: $translate.instant("CODIGO"),
-				width: '6%',
+				width: '25%',
 			}, {
-				name: 'TrabajoGrado.Titulo',
+				name: 'nombre',
 				displayName: $translate.instant("NOMBRE"),
-				width: '20%'
+				width: '75%'
 			}];
+
+
+			/**
+			 * @ngdoc method
+			 * @name consultarPeriodoAcademicoPrevio
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que obtiene el periodo académico previo dado el parámetro "P" de consulta.
+			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer el periodo académico previo al actual.
+			 * @param {undefined} undefined No requiere parámetros
+			 * @returns {Promise} El periodo académico previo, o la excepción generada
+			 */
+			ctrl.consultarPeriodoAcademicoPrevio = function() {
+				var deferred = $q.defer();
+				academicaRequest.get("periodo_academico", "P")
+					.then(function(periodoAcademicoPrevio) {
+						if (!angular.isUndefined(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico)) {
+							deferred.resolve(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico[0]);
+						} else {
+							deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
+						}
+					})
+					.catch(function(excepcionPeriodoAcademico) {
+						deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
+					});
+				return deferred.promise;
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name consultarInformacionAcademicaDelEstudiante
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que según el estudiante asociado, carga la información académica correspondiente.
+			 * Llama a la función: consultarPeriodoAcademicoPrevio.
+			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica registrada.
+			 * @param {Object} estudianteAsociado El estudiante al que se le cargará la información académica
+			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 */
+			ctrl.consultarInformacionAcademicaDelEstudiante = function(estudianteAsociado) {
+				var deferred = $q.defer();
+				ctrl.consultarPeriodoAcademicoPrevio()
+					.then(function(periodoAcademicoPrevio) {
+						academicaRequest.get("datos_estudiante", [estudianteAsociado.Estudiante, periodoAcademicoPrevio.anio, periodoAcademicoPrevio.periodo])
+							.then(function(estudianteConsultado) {
+								if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
+									estudianteAsociado.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
+								}
+								deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
+							})
+							.catch(function(excepcionEstudianteConsultado) {
+								deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
+							});
+					})
+					.catch(function(excepcionPeriodoAcademico) {
+						deferred.reject(excepcionPeriodoAcademico);
+					});
+				return deferred.promise;
+			}
 
 			/**
 			 * @ngdoc method
@@ -153,64 +213,6 @@ angular.module('poluxClienteApp')
 					})
 					.catch(function(excepcionVinculacionTrabajoGrado) {
 						deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
-					});
-				return deferred.promise;
-			}
-
-			/**
-			 * @ngdoc method
-			 * @name consultarPeriodoAcademicoPrevio
-			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-			 * @description
-			 * Función que obtiene el periodo académico previo dado el parámetro "P" de consulta.
-			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer el periodo académico previo al actual.
-			 * @param {undefined} undefined No requiere parámetros
-			 * @returns {Promise} El periodo académico previo, o la excepción generada
-			 */
-			ctrl.consultarPeriodoAcademicoPrevio = function() {
-				var deferred = $q.defer();
-				academicaRequest.get("periodo_academico", "P")
-					.then(function(periodoAcademicoPrevio) {
-						if (!angular.isUndefined(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico)) {
-							deferred.resolve(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico[0]);
-						} else {
-							deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
-						}
-					})
-					.catch(function(excepcionPeriodoAcademico) {
-						deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
-					});
-				return deferred.promise;
-			}
-
-			/**
-			 * @ngdoc method
-			 * @name consultarInformacionAcademicaDelEstudiante
-			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-			 * @description
-			 * Función que según el estudiante asociado, carga la información académica correspondiente.
-			 * Llama a la función: consultarPeriodoAcademicoPrevio.
-			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica registrada.
-			 * @param {Object} estudianteAsociado El estudiante al que se le cargará la información académica
-			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
-			 */
-			ctrl.consultarInformacionAcademicaDelEstudiante = function(estudianteAsociado) {
-				var deferred = $q.defer();
-				ctrl.consultarPeriodoAcademicoPrevio
-					.then(function(periodoAcademicoPrevio) {
-						academicaRequest.get("datos_estudiante", [estudianteAsociado.Estudiante, periodoAcademicoPrevio.anio, periodoAcademicoPrevio.periodo])
-							.then(function(estudianteConsultado) {
-								if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
-									estudianteAsociado.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
-								}
-								deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
-							})
-							.catch(function(excepcionEstudianteConsultado) {
-								deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
-							});
-					})
-					.catch(function(excepcionPeriodoAcademico) {
-						deferred.reject(excepcionPeriodoAcademico);
 					});
 				return deferred.promise;
 			}
@@ -373,13 +375,164 @@ angular.module('poluxClienteApp')
 			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
 			 */
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
-				console.log("revisar anteproyecto seleccionado");
-				console.log(filaAsociada.entity);
-				ctrl.cuadriculaEspaciosAcademicosInscritos.data = [];
-				ctrl.cargandoTrabajosDeGradoCursados = true;
-				ctrl.cargandoEspaciosAcademicos = true;
+				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
+				ctrl.coleccionRespuestasAnteproyecto = [];
+				if (ctrl.anteproyectoSeleccionado.TrabajoGrado.EstadoTrabajoGrado.Id == 4) {
+					ctrl.coleccionRespuestasAnteproyecto = [{
+						idEstadoTrabajoGrado: 5,
+						nombreEstadoTrabajoGrado: "Viable",
+					}, {
+						idEstadoTrabajoGrado: 6,
+						nombreEstadoTrabajoGrado: "Modificable",
+					}, {
+						idEstadoTrabajoGrado: 7,
+						nombreEstadoTrabajoGrado: "No viable",
+					}];
+				} else {
+					ctrl.coleccionRespuestasAnteproyecto = [{
+						idEstadoTrabajoGrado: 10,
+						nombreEstadoTrabajoGrado: "Viable",
+					}, {
+						idEstadoTrabajoGrado: 11,
+						nombreEstadoTrabajoGrado: "Modificable",
+					}, {
+						idEstadoTrabajoGrado: 12,
+						nombreEstadoTrabajoGrado: "No viable",
+					}];
+				}
+				ctrl.cuadriculaEstudiantesDelAnteproyecto.data = [];
+				ctrl.cargandoDatosEstudiantiles = true;
+				ctrl.errorCargandoDatosEstudiantiles = false;
 				$('#modalRevisarAnteproyecto').modal('show');
-				var conjuntoProcesamientoEspaciosAcademicos = [];
+				var conjuntoProcesamientoDatosEstudiantiles = [];
+				angular.forEach(ctrl.anteproyectoSeleccionado.EstudiantesTrabajoGrado, function(estudianteTrabajoGrado) {
+					conjuntoProcesamientoDatosEstudiantiles.push(ctrl.consultarInformacionAcademicaDelEstudiante(estudianteTrabajoGrado));
+				});
+				$q.all(conjuntoProcesamientoDatosEstudiantiles)
+					.then(function(resultadoDelProcesamiento) {
+						ctrl.cargandoDatosEstudiantiles = false;
+						angular.forEach(ctrl.anteproyectoSeleccionado.EstudiantesTrabajoGrado, function(estudianteTrabajoGrado) {
+							if (estudianteTrabajoGrado.informacionAcademica) {
+								estudianteTrabajoGrado.codigo = estudianteTrabajoGrado.informacionAcademica.codigo;
+								estudianteTrabajoGrado.nombre = estudianteTrabajoGrado.informacionAcademica.nombre;
+								ctrl.cuadriculaEstudiantesDelAnteproyecto.data.push(estudianteTrabajoGrado);
+							} else {
+								ctrl.errorCargandoDatosEstudiantiles = true;
+								ctrl.mensajeErrorCargandoDatosEstudiantiles = resultadoDelProcesamiento[0];
+							}
+						});
+					})
+					.catch(function(excepcionDuranteProcesamiento) {
+						ctrl.cargandoDatosEstudiantiles = false;
+						ctrl.errorCargandoDatosEstudiantiles = true;
+						ctrl.mensajeErrorCargandoDatosEstudiantiles = excepcionDuranteProcesamiento;
+					});
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name confirmarRevision
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que maneja la confirmación del usuario al haber revisado el proyecto de grado.
+			 * Llama a las funciones: .
+			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
+			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 */
+			ctrl.confirmarRevision = function() {
+				
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name getDocumento
+			 * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+			 * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+			 * @returns {undefined} No retorna ningún valor
+			 * @description 
+			 * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
+			 */
+			ctrl.getDocumento = function(docid) {
+				nuxeo.header('X-NXDocumentProperties', '*');
+
+				/**
+				 * @ngdoc method
+				 * @name obtenerDoc
+				 * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+				 * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+				 * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+				 * @description 
+				 * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
+				 */
+				ctrl.obtenerDoc = function() {
+					var defer = $q.defer();
+
+					nuxeo.request('/id/' + docid)
+						.get()
+						.then(function(response) {
+							ctrl.doc = response;
+							//var aux = response.get('file:content');
+							ctrl.document = response;
+							defer.resolve(response);
+						})
+						.catch(function(error) {
+							defer.reject(error)
+						});
+					return defer.promise;
+				};
+
+				/**
+				 * @ngdoc method
+				 * @name obtenerFetch
+				 * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
+				 * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
+				 * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+				 * @description 
+				 * Obtiene el blob de un documento
+				 */
+				ctrl.obtenerFetch = function(doc) {
+					var defer = $q.defer();
+
+					doc.fetchBlob()
+						.then(function(res) {
+							defer.resolve(res.blob());
+
+						})
+						.catch(function(error) {
+							defer.reject(error)
+						});
+					return defer.promise;
+				};
+
+				ctrl.obtenerDoc().then(function() {
+
+						ctrl.obtenerFetch(ctrl.document).then(function(r) {
+								ctrl.blob = r;
+								var fileURL = URL.createObjectURL(ctrl.blob);
+								console.log(fileURL);
+								ctrl.content = $sce.trustAsResourceUrl(fileURL);
+								$window.open(fileURL);
+							})
+							.catch(function(error) {
+								console.log("error", error);
+								swal(
+									$translate.instant("ERROR"),
+									$translate.instant("ERROR.CARGAR_DOCUMENTO"),
+									'warning'
+								);
+							});
+
+					})
+					.catch(function(error) {
+						console.log("error", error);
+						swal(
+							$translate.instant("ERROR"),
+							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
+							'warning'
+						);
+					});
+
 			}
 
 		});
