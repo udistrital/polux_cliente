@@ -286,6 +286,7 @@ var text_es = {
         GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES:"Ocurrió un error al guardar los espacios academicos elegibles, por favor intente de nuevo",
         CARGAR_SOLICITUDES:"Ocurrió un error al cargar las solicitudes, por favor verifique su conexión, e intente de nuevo.",
         SIN_CODIRECTOR:"El trabajo de grado no tiene un codirector registrado",
+        ESTADO_TRABAJO_GRADO_NO_PERMITE:"El estado '{{estado_tg}}' del trabajo de grado no permite realizar la {{tipoSolicitud}}",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -845,6 +846,7 @@ var text_en = {
         GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES:"There was an error occurred saving the elegible academic space, please check your connection and try again.",
         CARGAR_SOLICITUDES:"There was an error occurred loading the requests, please check your connection and try again.",
         SIN_CODIRECTOR:"The degree work does not have a registered co-director",
+        ESTADO_TRABAJO_GRADO_NO_PERMITE:"The state '{{estado_tg}}' of the degree work does not allow to perform {{tipoSolicitud}}",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {

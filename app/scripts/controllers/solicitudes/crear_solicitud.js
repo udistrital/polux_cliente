@@ -624,6 +624,7 @@ angular.module('poluxClienteApp')
         ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
         ctrl.trabajo_grado_completo = responseTrabajoEstudiante.data[0].TrabajoGrado;
         ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
+        ctrl.trabajoGrado = responseTrabajoEstudiante.data[0].TrabajoGrado;
         ctrl.siModalidad = true;
         ctrl.modalidad_select = true;
         //buscar # de autores del tg
@@ -777,7 +778,39 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
-    $q.all([verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente)])
+    var verificarTipoSolicitud = function(tipoSolicitud){
+      var defer = $q.defer();
+      if(tipoSolicitud.TipoSolicitud.Id === 6){
+        // solicitud de socialización
+        // el estado del trabajo de grado debe ser Listo para sustentar Id 17
+        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id === 17) {
+          defer.resolve(true);
+        } else {
+          ctrl.mensajeError = $translate.instant("ERROR.ESTADO_TRABAJO_GRADO_NO_PERMITE",{
+            estado_tg: ctrl.trabajoGrado.EstadoTrabajoGrado.Nombre,
+            tipoSolicitud: tipoSolicitud.TipoSolicitud.Nombre,
+          });
+          defer.reject(false);
+        }        
+      } else if (tipoSolicitud.TipoSolicitud.Id === 13){
+        // solicitud de revisión de jurado 
+        // el estado del trabajo de grado debe ser en curso Id 13 o en Modificable 16
+        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id === 13 || ctrl.trabajoGrado.EstadoTrabajoGrado.Id === 16 ) {
+          defer.resolve(true);
+        } else {
+          ctrl.mensajeError = $translate.instant("ERROR.ESTADO_TRABAJO_GRADO_NO_PERMITE",{
+            estado_tg: ctrl.trabajoGrado.EstadoTrabajoGrado.Nombre,
+            tipoSolicitud: tipoSolicitud.TipoSolicitud.Nombre,
+          });
+          defer.reject(false);
+        }        
+      } else {
+        defer.resolve(true);
+      }
+      return defer.promise;
+    }
+
+    $q.all([verificarTipoSolicitud(tipoSolicitud),verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente)])
       .then(function() {
         //var puede = responseRequisitos[0] && responseRequisitos[1];
         defer.resolve(true)
