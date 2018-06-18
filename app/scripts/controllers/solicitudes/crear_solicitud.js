@@ -80,7 +80,7 @@ angular.module('poluxClienteApp')
 
 
   //ctrl.codigo = $routeParams.idEstudiante;
-  token_service.token.documento = "20131020020";
+  token_service.token.documento = "20141020036";
   ctrl.codigo = token_service.token.documento;
 
   /**
@@ -200,18 +200,18 @@ angular.module('poluxClienteApp')
         }
       });
       $q.all(promesas).then(function() {
-        console.log("actuales", actuales);
+        //console.log("actuales", actuales);
         if (actuales.length == 0) {
-          console.log("si se puede");
+          //console.log("si se puede");
           defer.resolve(true);
           //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
         } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
-          console.log(actuales);
-          console.log("es inicial y se deben restringir las demás");
+          //console.log(actuales);
+          //console.log("es inicial y se deben restringir las demás");
           ctrl.restringirModalidades = true;
           defer.resolve(true);
         } else {
-          console.log("No puedes");
+          //console.log("No puedes");
           defer.resolve(false);
         }
       })
@@ -386,7 +386,7 @@ angular.module('poluxClienteApp')
               }
             });
           });
-          console.log("areas", ctrl.areas);
+          //console.log("areas", ctrl.areas);
           defer.resolve();
         }else{
           ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
@@ -424,7 +424,7 @@ angular.module('poluxClienteApp')
     });
     poluxRequest.get("modalidad_tipo_solicitud", parametrosTiposSolicitudes).then(function(responseTiposSolicitudes) {
       //ctrl.solicitudes = responseTiposSolicitudes.data;
-      console.log("Prorrogas", ctrl.tieneProrrogas);
+      //console.log("Prorrogas", ctrl.tieneProrrogas);
       if (ctrl.tieneProrrogas) {
         angular.forEach(responseTiposSolicitudes.data, function(solicitud) {
           //si la solicitud es diferente de una de prorroga
@@ -502,10 +502,10 @@ angular.module('poluxClienteApp')
             ctrl.Trabajo.codirector = vinculado;
           }
         });
-        console.log("directorInterno", ctrl.Trabajo.directorInterno);
-        console.log("directorInterno", ctrl.Trabajo.codirector);
-        console.log("directorExterno", ctrl.Trabajo.directorExterno);
-        console.log("evaluadores", ctrl.Trabajo.evaluadores);
+        //console.log("directorInterno", ctrl.Trabajo.directorInterno);
+        //console.log("directorInterno", ctrl.Trabajo.codirector);
+        //console.log("directorExterno", ctrl.Trabajo.directorExterno);
+        //console.log("evaluadores", ctrl.Trabajo.evaluadores);
         defer.resolve();
       })
       .catch(function(error){
@@ -527,7 +527,7 @@ angular.module('poluxClienteApp')
           angular.forEach(responseEspacios.data, function(espacio) {
             ctrl.espaciosElegidos.push(espacio.EspaciosAcademicosElegibles);
           });
-          console.log("espacios", ctrl.espaciosElegidos);
+          //console.log("espacios", ctrl.espaciosElegidos);
           ctrl.carreraElegida = responseEspacios.data[0].EspaciosAcademicosElegibles.CarreraElegible.Id;
         }
         defer.resolve();
@@ -569,10 +569,10 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
         if (responseSolicitudes.data !== null) {
-          console.log("solicitudes hechas",responseSolicitudes.data);
+          //console.log("solicitudes hechas",responseSolicitudes.data);
           //si ha hecho una solicitud se obtienen las materias por el detalle
           var getSolicitud  = function(solicitud){
-            console.log(solicitud);
+            //console.log(solicitud);
             var defer = $q.defer();
             var parametrosSolicitud = $.param({
               query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud:37",
@@ -595,7 +595,7 @@ angular.module('poluxClienteApp')
             promises.push(getSolicitud(solicitud));
           });
           $q.all(promises).then(function(){
-            console.log("carreras elegidas",ctrl.carrerasElegidas);
+            //console.log("carreras elegidas",ctrl.carrerasElegidas);
             defer.resolve();
           })
           .catch(function(error){
@@ -743,7 +743,7 @@ angular.module('poluxClienteApp')
         });
         sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
             if (responseFechas.data !== null) {
-              console.log(responseFechas.data[0]);
+              //console.log(responseFechas.data[0]);
               var sesion = responseFechas.data[0];
               var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
               fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
@@ -967,10 +967,10 @@ angular.module('poluxClienteApp')
                       defer.resolve();
                     } else if (detalle.Detalle.Nombre.includes("Propuesta actual")) {
                       detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
-                      console.log("Documento", detalle.respuesta);
+                      //console.log("Documento", detalle.respuesta);
                       defer.resolve();
                     } else if (detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")) {
-                      console.log("Opciones", responseOpciones);
+                      //console.log("Opciones", responseOpciones);
                       var areasString = "";
                       angular.forEach(responseOpciones.data, function(area) {
                         areasString = areasString + ", " + area.AreaConocimiento.Nombre;
@@ -1044,13 +1044,13 @@ angular.module('poluxClienteApp')
                     } else if (detalle.Detalle.Nombre.includes("Director Actual")) {
                       academicaRequest.get("docente_tg", [ctrl.Trabajo.directorInterno.Usuario]).then(function(docente) {
                         if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                          console.log("Respuesta docente", docente.data.docenteTg.docente);
+                          //console.log("Respuesta docente", docente.data.docenteTg.docente);
                           detalle.opciones.push({
                             "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                             //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
                             "bd": docente.bd = docente.data.docenteTg.docente[0].id
                           });
-                          console.log(detalle.opciones);
+                          //console.log(detalle.opciones);
                         }
                         defer.resolve();
                       })
@@ -1061,13 +1061,13 @@ angular.module('poluxClienteApp')
                       if(!angular.isUndefined(ctrl.Trabajo.codirector)){
                         academicaRequest.get("docente_tg", [ctrl.Trabajo.codirector.Usuario]).then(function(docente) {
                           if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                            console.log("Respuesta docente", docente.data.docenteTg.docente);
+                            //console.log("Respuesta docente", docente.data.docenteTg.docente);
                             detalle.opciones.push({
                               "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                               //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
                               "bd": docente.bd = docente.data.docenteTg.docente[0].id
                             });
-                            console.log(detalle.opciones);
+                            //console.log(detalle.opciones);
                           }
                           defer.resolve();
                         })
@@ -1119,7 +1119,36 @@ angular.module('poluxClienteApp')
                         "bd": temp[1]
                       });
                       defer.resolve();
-                    //Resolve promesa
+                    } else if  (detalle.Detalle.Nombre.includes("Nombre de evaluador(es) actuales")) {
+                      var promisesDocente = []
+                      var getDocente = function(evaluador, detalle){
+                        var defer = $q.defer();
+                        academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
+                          var nombre = "";
+                          if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                            nombre = docente.data.docenteTg.docente[0].nombre;
+                          }
+                          defer.resolve(nombre);
+                        })
+                        .catch(function(error){
+                          defer.reject(error);
+                        });
+                        return defer.promise;
+                      }
+                      angular.forEach(responseOpciones.data, function(evaluador) {
+                        promisesDocente.push(getDocente(evaluador,detalle));
+                      });
+                      $q.all(promisesDocente).then(function(nombresDocentes){
+                        detalle.opciones.push({
+                          "NOMBRE": nombresDocentes.join(", "),
+                          "bd": nombresDocentes.join(", ")
+                        });
+                        defer.resolve();
+                      })
+                      .catch(function(error){
+                        defer.reject(error);
+                      });
+                      //Resolve promesa
                     } else {
                       detalle.opciones = responseOpciones.data;
                       defer.resolve();
@@ -1240,7 +1269,7 @@ angular.module('poluxClienteApp')
      * @returns {undefined} No retorna ningún valor
      */
   ctrl.validarFormularioSolicitud = function() {
-    console.log("detalles");
+   // console.log("detalles");
 
     ctrl.detallesConDocumento = [];
 
@@ -1659,7 +1688,7 @@ angular.module('poluxClienteApp')
       ctrl.obtenerFetch(ctrl.document).then(function(r) {
         ctrl.blob = r;
         var fileURL = URL.createObjectURL(ctrl.blob);
-        console.log(fileURL);
+        //console.log(fileURL);
         ctrl.content = $sce.trustAsResourceUrl(fileURL);
         $window.open(fileURL);
       });
