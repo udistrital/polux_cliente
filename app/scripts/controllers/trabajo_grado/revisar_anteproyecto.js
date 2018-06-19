@@ -24,14 +24,17 @@
  * @property {String} usuarioSesion El identificador del docente en sesión para consultar y revisar sus anteproyectos pendientes
  * @property {Boolean} cargandoAnteproyectos Indicador que maneja la carga de los anteproyectos para revisar
  * @property {String} mensajeCargandoAnteproyectos Mensaje que aparece durante la carga de anteproyectos para revisar
+ * @property {String} mensajeCargandoDatosEstudiantiles Mensjae que aparece durante la carga de los datos de los estudiantes asociados al anteproyecto seleccionado
  * @property {Array} botonVerDocumento Establece las propiedades del botón que se muestra para ver el documento asociado a cada anteproyecto
  * @property {Array} botonRevisarAnteproyecto Establece las propiedades del botón que se muestra para dar respuesta a la revisión del anteproyecto asignado
  * @property {Object} cuadriculaAnteproyectos Almacena y adapta la información de los anteproyectos para visualizar el contenido y poder hacer la revisión del mismo
- * @property {Boolean} errorCargandoAnteproyectos Indicador que maneja la aparición de un error durante la carga de los anteproyectos pendientes.
- * @property {String} mensajeErrorCargandoAnteproyectos Mensaje que aparece en caso de error durante la carga de los anteproyectos pendientes.
+ * @property {Object} cuadriculaEstudiantesDelAnteproyecto Almacena y adapta la información de los datos estudiantiles sobre los autores del anteproyecto
+ * @property {Boolean} errorCargandoAnteproyectos Indicador que maneja la aparición de un error durante la carga de los anteproyectos pendientes
+ * @property {String} mensajeErrorCargandoAnteproyectos Mensaje que aparece en caso de error durante la carga de los anteproyectos pendientes
  * @property {Boolean} cargandoDatosEstudiantiles Indicador que maneja carga de los datos de los estudiantes asociados al anteproyecto seleccionado
- * @property {Boolean} errorCargandoDatosEstudiantiles Indicador que maneja la aparición de un error durante la carga de los datos de los estudiantes.
- * @property {String} mensajeErrorCargandoDatosEstudiantiles Mensaje que aparece en caso de error durante la carga de los datos de los estudiantes.
+ * @property {Boolean} errorCargandoDatosEstudiantiles Indicador que maneja la aparición de un error durante la carga de los datos de los estudiantes
+ * @property {String} mensajeErrorCargandoDatosEstudiantiles Mensaje que aparece en caso de error durante la carga de los datos de los estudiantes
+ * @property {Object} anteproyectoSeleccionado Objeto que carga el anteproyecto que el usuario selecciona desde la vista
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
