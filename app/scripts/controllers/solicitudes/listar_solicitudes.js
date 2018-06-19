@@ -30,10 +30,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  token_service.token.documento = "79647592";
-  token_service.token.role.push("COORDINADOR_PREGRADO");
-  //token_service.token.documento = "20131020020";
-  //token_service.token.role.push("ESTUDIANTE");
+  //token_service.token.documento = "79647592";
+  //token_service.token.role.push("COORDINADOR_PREGRADO");
+  token_service.token.documento = "20141020036";
+  token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
@@ -62,7 +62,7 @@ angular.module('poluxClienteApp')
     var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
     var nuevo = "";
     var anterior = "";
-
+    /*
     var getVinculadosIniciales = function(solicitud){
       var defer = $q.defer();
       var docentes = "";
@@ -158,7 +158,7 @@ angular.module('poluxClienteApp')
       });
       return promise;
     }
-
+    */
     if(solicitud.EstadoSolicitud.Id === 2){
       resultado = $translate.instant('SOLICITUD_RECHAZADA');
       detalles.resultado = resultado;
@@ -168,7 +168,11 @@ angular.module('poluxClienteApp')
       switch(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id){
         //solicitud inicial
         case 2:
-          getVinculadosIniciales(solicitud)
+          resultado += ". " + $translate.instant('APROBADO.CURSAR_MODALIDAD') + ctrl.detallesSolicitud.modalidad;
+          //resultado += response;
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          /*getVinculadosIniciales(solicitud)
           .then(function(response){
             resultado += ". " + $translate.instant('APROBADO.CURSAR_MODALIDAD') + ctrl.detallesSolicitud.modalidad;
             resultado += response;
@@ -177,7 +181,7 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error){
             defer.reject(error);
-          });
+          });*/
           break;
         //solicitud de cancelación de modalidad
         case 3:
@@ -187,7 +191,7 @@ angular.module('poluxClienteApp')
           break;
         //solicitud de cambio de director interno
         case 4:
-          $q.all([getVinculado(solicitud,1,"Fin"),getVinculado(solicitud,1,"Inicio")]).then(function(response){
+          /*$q.all([getVinculado(solicitud,1,"Fin"),getVinculado(solicitud,1,"Inicio")]).then(function(response){
             nuevo = response[1];
             anterior = response[0];
             resultado += ". " + $translate.instant('APROBADO.DIRECTOR_INTERNO',{nuevo:nuevo,anterior:anterior});
@@ -196,7 +200,10 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error){
             defer.reject(error);
-          });
+          });*/
+          resultado += ". " + $translate.instant('APROBADO.DIRECTOR_INTERNO');
+          detalles.resultado = resultado;
+          defer.resolve(resultado)
           break;
         //solicitud de cambio de director externo
         case 5:
@@ -204,18 +211,11 @@ angular.module('poluxClienteApp')
           detalles.resultado = resultado;
           defer.resolve(resultado);
           break;
-        //solicitud de cambio de director interno
-        case 10:
-          $q.all([getVinculado(solicitud,3,"Fin"),getVinculado(solicitud,3,"Inicio")]).then(function(response){
-            nuevo = response[1];
-            anterior = response[0];
-            resultado += ". " + $translate.instant('APROBADO.EVALUADOR',{nuevo:nuevo,anterior:anterior});
-            detalles.resultado = resultado;
-            defer.resolve(resultado);
-          })
-          .catch(function(error){
-            defer.reject(error);
-          });
+        // solicitud de socialización
+        case 6:
+          resultado += ". " + $translate.instant('APROBADO.SOCIALIZACION');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
           break;
         //solicitud de prorroga
         case 7:
@@ -253,8 +253,25 @@ angular.module('poluxClienteApp')
           detalles.resultado = resultado;
           defer.resolve(resultado);
           break;
+        //solicitud de cambio de director interno
+        case 10:
+          /*$q.all([getVinculado(solicitud,3,"Fin"),getVinculado(solicitud,3,"Inicio")]).then(function(response){
+            nuevo = response[1];
+            anterior = response[0];
+            resultado += ". " + $translate.instant('APROBADO.EVALUADOR',{nuevo:nuevo,anterior:anterior});
+            detalles.resultado = resultado;
+            defer.resolve(resultado);
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });*/
+          resultado += ". " + $translate.instant('APROBADO.EVALUADOR');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          break;
+        //Solicitud de cambio de codirector
         case 12:
-          $q.all([getVinculado(solicitud,4,"Fin"),getVinculado(solicitud,4,"Inicio")]).then(function(response){
+          /*$q.all([getVinculado(solicitud,4,"Fin"),getVinculado(solicitud,4,"Inicio")]).then(function(response){
             nuevo = response[1];
             anterior = response[0];
             resultado += ". " + $translate.instant('APROBADO.CODIRECTOR',{nuevo:nuevo,anterior:anterior});
@@ -263,7 +280,16 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error){
             defer.reject(error);
-          });
+          });*/
+          resultado += ". " + $translate.instant('APROBADO.CODIRECTOR');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          break;
+        // solicitud de revisión
+        case 13:
+          resultado += ". " + $translate.instant('APROBADO.REVISION');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
           break;
         //default
         default:
