@@ -256,7 +256,7 @@ angular.module('poluxClienteApp')
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
                         "id":docente.data.docenteTg.docente[0].id,
                       };
-                      //console.log(ctrl.docenteDirector);
+                      console.log(ctrl.docenteDirector);
                     }
 
                     //docente codirector solicitado
@@ -274,6 +274,18 @@ angular.module('poluxClienteApp')
                         "id":docente.data.docenteTg.docente[0].id,
                       };
                     //  console.log("docente cambio", ctrl.docenteCambio);
+                    }
+
+                    //docente en solicitud de socialización o de director
+                    if(id === 14){
+                      ctrl.directorActualTg = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "id":docente.data.docenteTg.docente[0].id,
+                      };
+                      ctrl.directorOpcionTg = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "id":docente.data.docenteTg.docente[0].id,
+                      };
                     }
 
                     defer.resolve();
@@ -296,6 +308,7 @@ angular.module('poluxClienteApp')
                 angular.forEach(detalle.Descripcion.split(","), function(docDocente){
                   var detalleTemp  = {
                     Descripcion : docDocente,
+                    id: docDocente,
                   }
                   detallesTemporales.push(detalleTemp);
                   promesasDocentes.push(getDocente(0,detalleTemp));
@@ -303,6 +316,14 @@ angular.module('poluxClienteApp')
                 $q.all(promesasDocentes)
                 .then(function(){
                   detalle.Descripcion = detallesTemporales.map(function(detalleTemp) {return detalleTemp.Descripcion}).join(", ");
+                  if(detalle.DetalleTipoSolicitud.Detalle.Id == 61){
+                    for(var j = 0; j < detallesTemporales.length ; j++){
+                      detallesTemporales[j].NOMBRE = detallesTemporales[j].Descripcion.substring(detallesTemporales[j].Descripcion.indexOf(" ")+1)
+                      detallesTemporales[j].label = (detallesTemporales.length>1)?$translate.instant('SELECT.EVALUADOR_NUMERO',{numero:(j+1)}):$translate.instant('SELECT.DOCENTE_REVISOR');                 
+                    }
+                    ctrl.evaluadoresActualesTg = angular.copy(detallesTemporales);
+                    ctrl.evaluadoresOpcionesTg = angular.copy(detallesTemporales);
+                  }
                   defer.resolve();
                 })
                 .catch(function(error){
@@ -426,8 +447,8 @@ angular.module('poluxClienteApp')
      * para dirigir trabajos de grado del servicio docentes_tg de {@link services/academicaService.service:academicaRequest academicaRequest}.
      */
     ctrl.evaluarSolicitud = function(){
-      var defered = $q.defer();
-      var promise = defered.promise;
+      var defer = $q.defer();
+      var promise = defer.promise;
       ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
       ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Nombre;
       ctrl.dataSolicitud.NombreModalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Nombre;
@@ -440,7 +461,7 @@ angular.module('poluxClienteApp')
                 academicaRequest.get("docentes_tg").then(function(docentes){
                   if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
                       ctrl.docentes=docentes.data.docentesTg.docente;
-                      defered.resolve(ctrl.docentes);
+                      defer.resolve(ctrl.docentes);
                   }
                 })
                 .catch(function(error){
@@ -451,22 +472,34 @@ angular.module('poluxClienteApp')
                   ctrl.isPasantia = true;
                 }
             }else{
-              defered.resolve(ctrl.dataSolicitud.modalidad);
+              defer.resolve(ctrl.dataSolicitud.modalidad);
             }
       }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  12 ){
         ctrl.isCambio = true;
         academicaRequest.get("docentes_tg").then(function(docentes){
           if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
             ctrl.docentes=docentes.data.docentesTg.docente;
-            defered.resolve(ctrl.docentes);
+            defer.resolve(ctrl.docentes);
           }
         })
         .catch(function(error){
           ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
           defer.reject(error);
         });
-      }else{
-        defered.resolve(ctrl.dataSolicitud.modalidad);
+      }else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  6) {
+        ctrl.isRevision  = true;
+        academicaRequest.get("docentes_tg").then(function(docentes){
+          if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
+              ctrl.docentes=docentes.data.docentesTg.docente;
+              defer.resolve(ctrl.docentes);
+          }
+        })
+        .catch(function(error){
+          ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
+          defer.reject(error);
+        });
+      } else{
+        defer.resolve(ctrl.dataSolicitud.modalidad);
       }
       return promise;
     };

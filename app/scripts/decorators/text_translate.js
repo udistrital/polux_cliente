@@ -398,6 +398,7 @@ var text_es = {
       AREA_SNIES:"Seleccione el área de SNIES",
       NUCLEO_SNIES:"Seleccione el núcleo básico",
       INCLUIR_CODIRECTOR:"¿Desea incluir codirector en el proyecto?",
+      DESEA_CAMBIAR_VINCULADO:"¿Desea cambiar alguno de los docentes vinculados al proyecto?",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Cargar documento",
@@ -958,6 +959,7 @@ var text_en = {
       AREA_SNIES:"Select the SNIES area",
       NUCLEO_SNIES:"Select the basic core",
       INCLUIR_CODIRECTOR:"Do you want to include a co-director in the project?",
+      DESEA_CAMBIAR_VINCULADO:"¿Do you want to change any of the teachers linked to the project?",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Load document",
