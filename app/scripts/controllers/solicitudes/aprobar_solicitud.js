@@ -256,7 +256,7 @@ angular.module('poluxClienteApp')
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
                         "id":docente.data.docenteTg.docente[0].id,
                       };
-                      console.log(ctrl.docenteDirector);
+                      //console.log(ctrl.docenteDirector);
                     }
 
                     //docente codirector solicitado
@@ -308,7 +308,7 @@ angular.module('poluxClienteApp')
                 angular.forEach(detalle.Descripcion.split(","), function(docDocente){
                   var detalleTemp  = {
                     Descripcion : docDocente,
-                    id: docDocente,
+                    id : docDocente,
                   }
                   detallesTemporales.push(detalleTemp);
                   promesasDocentes.push(getDocente(0,detalleTemp));
@@ -318,8 +318,11 @@ angular.module('poluxClienteApp')
                   detalle.Descripcion = detallesTemporales.map(function(detalleTemp) {return detalleTemp.Descripcion}).join(", ");
                   if(detalle.DetalleTipoSolicitud.Detalle.Id == 61){
                     for(var j = 0; j < detallesTemporales.length ; j++){
-                      detallesTemporales[j].NOMBRE = detallesTemporales[j].Descripcion.substring(detallesTemporales[j].Descripcion.indexOf(" ")+1)
                       detallesTemporales[j].label = (detallesTemporales.length>1)?$translate.instant('SELECT.EVALUADOR_NUMERO',{numero:(j+1)}):$translate.instant('SELECT.DOCENTE_REVISOR');                 
+                      detallesTemporales[j].docente = {
+                        NOMBRE: detallesTemporales[j].Descripcion.substring(detallesTemporales[j].Descripcion.indexOf(" ")+1), 
+                        id: detallesTemporales[j].id,
+                      }
                     }
                     ctrl.evaluadoresActualesTg = angular.copy(detallesTemporales);
                     ctrl.evaluadoresOpcionesTg = angular.copy(detallesTemporales);
@@ -701,6 +704,7 @@ angular.module('poluxClienteApp')
                 SolicitudTrabajoGrado: null,
                 EspaciosAcademicos: null,
                 DetallesPasantia: null,
+                TrRevision: null,
             };
             //solicitud aprobada
             if(ctrl.respuestaSolicitud == 3){
@@ -742,6 +746,9 @@ angular.module('poluxClienteApp')
                       //Documento del codirector
                       var aux = detalle.Descripcion.split(" ");
                       ctrl.codirector = Number(aux[0]);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59){
+                      //Documento del codirector
+                      ctrl.docPropuestaFinal = detalle.Descripcion;
                     }
                 });
                 //Se verifica por tipo de solicitud
@@ -1117,6 +1124,82 @@ angular.module('poluxClienteApp')
                   });
                   ctrl.dataRespuesta.EspaciosAcademicos = espacios;
                   console.log("Espacios", ctrl.dataRespuesta.EspaciosAcademicos);
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 13 ){
+                  //Solicitud de revisión de tg
+                  var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
+                  //trabajo de grado en revisión id 15
+                  data_tg.EstadoTrabajoGrado = {
+                    Id: 15 
+                  };
+                  //Vinculaciones del tg
+                  var data_vinculaciones = [];
+                  //Si se escogio cambiar la vinculación
+                  if(ctrl.switchRevision){
+                    var addVinculacion = function(vinculaciones, documentoActual, documentoNuevo){
+                      var vinculacionActual =  [];
+                      angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
+                        if(docenteVinculado.Usuario === Number(documentoActual)){
+                          vinculacionActual = docenteVinculado;
+                        } 
+                      });
+                      var nuevaVinculacion = angular.copy(vinculacionActual);
+                      //actualizar vinculacion actual
+                      vinculacionActual.Activo=false;
+                      vinculacionActual.FechaFin=fechaRespuesta;
+                      //nueva vinculacion
+                      nuevaVinculacion.Id=null;
+                      nuevaVinculacion.Usuario=Number(documentoNuevo);
+                      nuevaVinculacion.FechaInicio=fechaRespuesta;
+                      //nuevaVinculacion.FechaFin=null;
+                      vinculaciones.push(vinculacionActual);
+                      vinculaciones.push(nuevaVinculacion);
+                    }
+                    var data_vinculaciones = [];
+                    //Si se cambio el  director original
+                    if(ctrl.directorOpcionTg.id != ctrl.directorActualTg.id){
+                      //Cambiar vinculaciones
+                     // console.log("Cambia director");
+                      addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
+                    }
+                    //Si se cambiaron los directores actuales
+                    for(var e = 0; e < ctrl.evaluadoresActualesTg.length; e++){
+                      if(ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id){
+                        //Cambiar vinculaciones                  
+                        //console.log(ctrl.evaluadoresOpcionesTg[e].docente.id, ctrl.evaluadoresActualesTg[e].docente.id);
+                        //console.log("Cambia evaluador"+(e+1));
+                        addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
+                      }
+                    }
+                    //console.log("Vinculaciones revisión", data_vinculaciones);
+                    //buscar si hay algun valor repetido
+                    angular.forEach(data_vinculaciones, function(vinculacion){
+                        if (data_vinculaciones.filter(function(value){ return value.Usuario === vinculacion.Usuario }).length > 1) {
+                          errorDocente = true;
+                        }
+                    });
+                  }
+                  //Documento escrito
+                  var data_documentoEscrito = {
+                    Id: 0,
+                    Titulo: data_tg.Titulo,
+                    Enlace: ctrl.docPropuestaFinal,
+                    Resumen: "Documento para revisión final del trabajo de grado",
+                    //Tipo documento 5 para revisión final
+                    TipoDocumentoEscrito: 5
+                  };
+                  var data_revision = {
+                    TrabajoGrado: data_tg,
+                    Vinculaciones: data_vinculaciones,
+                    DocumentoEscrito: data_documentoEscrito,
+                    DocumentoTrabajoGrado: {
+                      Id:0,
+                      DocumentoEscrito:{
+                        Id: 0,
+                      },
+                      TrabajoGrado:data_tg,
+                    }
+                  }
+                  ctrl.dataRespuesta.TrRevision = data_revision;
                 }
             }
             
