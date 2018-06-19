@@ -751,6 +751,27 @@ angular.module('poluxClienteApp')
                       ctrl.docPropuestaFinal = detalle.Descripcion;
                     }
                 });
+
+                //funcion para cambiar vinculaciones
+                var addVinculacion = function(vinculaciones, documentoActual, documentoNuevo){
+                  var vinculacionActual =  [];
+                  angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
+                    if(docenteVinculado.Usuario === Number(documentoActual)){
+                      vinculacionActual = docenteVinculado;
+                    } 
+                  });
+                  var nuevaVinculacion = angular.copy(vinculacionActual);
+                  //actualizar vinculacion actual
+                  vinculacionActual.Activo=false;
+                  vinculacionActual.FechaFin=fechaRespuesta;
+                  //nueva vinculacion
+                  nuevaVinculacion.Id=null;
+                  nuevaVinculacion.Usuario=Number(documentoNuevo);
+                  nuevaVinculacion.FechaInicio=fechaRespuesta;
+                  //nuevaVinculacion.FechaFin=null;
+                  vinculaciones.push(vinculacionActual);
+                  vinculaciones.push(nuevaVinculacion);
+                }
                 //Se verifica por tipo de solicitud
                 if (ctrl.dataSolicitud.TipoSolicitud == 2) {
                    //solicitud inicial
@@ -1135,48 +1156,30 @@ angular.module('poluxClienteApp')
                   var data_vinculaciones = [];
                   //Si se escogio cambiar la vinculación
                   if(ctrl.switchRevision){
-                    var addVinculacion = function(vinculaciones, documentoActual, documentoNuevo){
-                      var vinculacionActual =  [];
-                      angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
-                        if(docenteVinculado.Usuario === Number(documentoActual)){
-                          vinculacionActual = docenteVinculado;
-                        } 
-                      });
-                      var nuevaVinculacion = angular.copy(vinculacionActual);
-                      //actualizar vinculacion actual
-                      vinculacionActual.Activo=false;
-                      vinculacionActual.FechaFin=fechaRespuesta;
-                      //nueva vinculacion
-                      nuevaVinculacion.Id=null;
-                      nuevaVinculacion.Usuario=Number(documentoNuevo);
-                      nuevaVinculacion.FechaInicio=fechaRespuesta;
-                      //nuevaVinculacion.FechaFin=null;
-                      vinculaciones.push(vinculacionActual);
-                      vinculaciones.push(nuevaVinculacion);
-                    }
-                    var data_vinculaciones = [];
                     //Si se cambio el  director original
                     if(ctrl.directorOpcionTg.id != ctrl.directorActualTg.id){
                       //Cambiar vinculaciones
                      // console.log("Cambia director");
                       addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
                     }
-                    //Si se cambiaron los directores actuales
-                    for(var e = 0; e < ctrl.evaluadoresActualesTg.length; e++){
-                      if(ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id){
-                        //Cambiar vinculaciones                  
-                        //console.log(ctrl.evaluadoresOpcionesTg[e].docente.id, ctrl.evaluadoresActualesTg[e].docente.id);
-                        //console.log("Cambia evaluador"+(e+1));
-                        addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
-                      }
-                    }
-                    //console.log("Vinculaciones revisión", data_vinculaciones);
-                    //buscar si hay algun valor repetido
-                    angular.forEach(data_vinculaciones, function(vinculacion){
-                        if (data_vinculaciones.filter(function(value){ return value.Usuario === vinculacion.Usuario }).length > 1) {
-                          errorDocente = true;
+                    //Si se cambiaron los evaluadores actuales
+                    if(ctrl.evaluadoresActualesTg != undefined){
+                      for(var e = 0; e < ctrl.evaluadoresActualesTg.length; e++){
+                        if(ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id){
+                          //Cambiar vinculaciones                  
+                          //console.log(ctrl.evaluadoresOpcionesTg[e].docente.id, ctrl.evaluadoresActualesTg[e].docente.id);
+                          //console.log("Cambia evaluador"+(e+1));
+                          addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
                         }
-                    });
+                      }
+                      //console.log("Vinculaciones revisión", data_vinculaciones);
+                      //buscar si hay algun valor repetido
+                      angular.forEach(data_vinculaciones, function(vinculacion){
+                          if (data_vinculaciones.filter(function(value){ return value.Usuario === vinculacion.Usuario }).length > 1) {
+                            errorDocente = true;
+                          }
+                      });
+                    }
                   }
                   //Documento escrito
                   var data_documentoEscrito = {
@@ -1200,6 +1203,34 @@ angular.module('poluxClienteApp')
                     }
                   }
                   ctrl.dataRespuesta.TrRevision = data_revision;
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 6 ){
+                  //Solicitud de socialización
+                  //Vinculaciones del tg
+                  var data_vinculaciones = [];
+                  //Si se escogio cambiar las vinculaciones se cambian, el resto de la justificación va en la data
+                  if(ctrl.switchRevision){
+                    //Si se cambio el  director original
+                    if(ctrl.directorOpcionTg.id != ctrl.directorActualTg.id){
+                      //Cambiar vinculaciones
+                      addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
+                    }
+                    //Si se cambiaron los evaluadores actuales
+                    if (ctrl.evaluadoresActualesTg != undefined) {
+                      for(var e = 0; e < ctrl.evaluadoresActualesTg.length; e++){
+                        if(ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id){
+                          //Cambiar vinculaciones                  
+                          addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
+                        }
+                      }
+                      //buscar si hay algun valor repetido
+                      angular.forEach(data_vinculaciones, function(vinculacion){
+                          if (data_vinculaciones.filter(function(value){ return value.Usuario === vinculacion.Usuario }).length > 1) {
+                            errorDocente = true;
+                          }
+                      });
+                    }
+                  }
+                  ctrl.dataRespuesta.Vinculaciones = data_vinculaciones;
                 }
             }
             
