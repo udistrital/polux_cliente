@@ -12,8 +12,11 @@
  * El trabajo de grado cambia de estado según corresponda (viable, modificable o no viable).
  * Este procedimiento puede aplicarse a docentes que son primer o segundo revisor.
  * @requires $q
+ * @requires $sce
+ * @requires $window
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxClienteApp.service:nuxeoService nuxeo
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
@@ -32,7 +35,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -92,13 +95,19 @@ angular.module('poluxClienteApp')
 				displayName: $translate.instant("REVISAR_ANTEPROYECTO.ACCION"),
 				width: '15%',
 				cellTemplate: '<btn-registro ' +
+					'ng-if="row.entity.TrabajoGrado.EstadoTrabajoGrado.Id == 4 || row.entity.TrabajoGrado.EstadoTrabajoGrado.Id == 9"' +
 					'funcion="grid.appScope.revisarAnteproyecto.verDocumentoAnteproyecto(row)"' +
 					'grupobotones="grid.appScope.revisarAnteproyecto.botonVerDocumento">' +
 					'</btn-registro>' +
 					'<btn-registro ' +
+					'ng-if="row.entity.TrabajoGrado.EstadoTrabajoGrado.Id == 4 || row.entity.TrabajoGrado.EstadoTrabajoGrado.Id == 9"' +
 					'funcion="grid.appScope.revisarAnteproyecto.revisarAnteproyectoSeleccionado(row)"' +
 					'grupobotones="grid.appScope.revisarAnteproyecto.botonRevisarAnteproyecto">' +
-					'</btn-registro>'
+					'</btn-registro>' +
+					'<div class="ui-grid-cell-contents" ' +
+					'ng-if="row.entity.TrabajoGrado.EstadoTrabajoGrado.Id != 4 && row.entity.TrabajoGrado.EstadoTrabajoGrado.Id != 9">' +
+					'{{"REVISAR_ANTEPROYECTO.REGISTRO_NO_HABILITADO" | translate}}' +
+					'</div>'
 			}];
 
 			ctrl.cuadriculaEstudiantesDelAnteproyecto = {};
@@ -202,12 +211,55 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.consultarEstudiantesAsociados = function(anteproyecto) {
 				var deferred = $q.defer();
-				var conjuntoProcesamientoDeAnteproyectos = [];
-				ctrl.coleccionAnteproyectos = [];
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
 						if (estudiantesAsociados.data) {
 							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
+						}
+						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
+					})
+					.catch(function(excepcionVinculacionTrabajoGrado) {
+						deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
+					});
+				return deferred.promise;
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name obtenerParametrosDocumentoTrabajoGrado
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que define los parámetros para consultar en la tabla documento_trabajo_grado.
+			 * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+			 * @returns {String} La sentencia para la consulta correspondiente
+			 */
+			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+				return $.param({
+					query: "TrabajoGrado.Id:" +
+						idTrabajoGrado,
+					limit: 1
+				});
+			}
+
+
+			/**
+			 * @ngdoc method
+			 * @name consultarDocumentoTrabajoGrado
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que recorre la base de datos de acuerdo al trabajo de grado vinculado y trae el documento asociado.
+			 * Llama a la función: obtenerParametrosDocumentoTrabajoGrado.
+			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+			 * @param {Object} anteproyecto El anteproyecto para cargar la información del documento
+			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 */
+			ctrl.consultarDocumentoTrabajoGrado = function(anteproyecto) {
+				var deferred = $q.defer();
+				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(anteproyecto.TrabajoGrado.Id))
+					.then(function(documentoAsociado) {
+						if (documentoAsociado.data) {
+							anteproyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
+							anteproyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -245,7 +297,7 @@ angular.module('poluxClienteApp')
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
 			 * Función que recorre la base de datos de acuerdo al docente en sesión para traer los anteproyectos asignados para revisión.
-			 * Llama a las funciones: obtenerParametrosVinculacionTrabajoGrado.
+			 * Llama a las funciones: obtenerParametrosVinculacionTrabajoGrado, consultarEstudiantesAsociados y consultarDocumentoTrabajoGrado.
 			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
 			 * @param {undefined} undefined No requiere parámetros
 			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
@@ -259,11 +311,14 @@ angular.module('poluxClienteApp')
 						if (anteproyectosPendientes.data) {
 							angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarEstudiantesAsociados(anteproyecto));
+								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarDocumentoTrabajoGrado(anteproyecto));
 							});
 							$q.all(conjuntoProcesamientoDeAnteproyectos)
 								.then(function(resultadoDelProcesamiento) {
 									angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
-										if (anteproyecto.EstudiantesTrabajoGrado) {
+										if (anteproyecto.EstudiantesTrabajoGrado &&
+											anteproyecto.documentoTrabajoGrado &&
+											anteproyecto.documentoEscrito) {
 											ctrl.coleccionAnteproyectos.push(anteproyecto);
 										}
 									});
@@ -284,33 +339,19 @@ angular.module('poluxClienteApp')
 
 			/**
 			 * @ngdoc method
-			 * @name obtenerCodigosEstudiantiles
-			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-			 * @description
-			 * Función que obtiene los códigos desde los objetos que guardan la información de los estudiantes del trabajo de grado.
-			 * @param {Object} estudianteTrabajoGrado El objeto que contiene los datos del estudiante registrado.
-			 * @returns {String} La cadena de texto acerca de los códigos estudiantiles asociados al anteproyecto
-			 */
-			ctrl.obtenerCodigosEstudiantiles = function(estudiantesTrabajoGrado) {
-				var codigosEstudiantiles = "";
-				angular.forEach(estudiantesTrabajoGrado, function(estudianteTrabajoGrado) {
-					codigosEstudiantiles += estudianteTrabajoGrado.Estudiante + ", "
-				});
-				return codigosEstudiantiles.substring(0, codigosEstudiantiles.length - 2);
-			}
-
-			/**
-			 * @ngdoc method
 			 * @name mostrarAnteproyectos
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
 			 * Función que carga el contenido de los anteproyectos a la cuadrícula correspondiente.
-			 * @param {Array} anteproyectos No requiere parámetros
+			 * @param {Array} anteproyectos La colección de anteproyectos listada
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.mostrarAnteproyectos = function(anteproyectos) {
 				angular.forEach(anteproyectos, function(anteproyecto) {
-					anteproyecto.autores = ctrl.obtenerCodigosEstudiantiles(anteproyecto.EstudiantesTrabajoGrado);
+					anteproyecto.autores = anteproyecto.EstudiantesTrabajoGrado.map(function(estudianteTrabajoGrado) {
+							return estudianteTrabajoGrado.Estudiante;
+						})
+						.join(", ");
 				});
 				ctrl.cuadriculaAnteproyectos.data = anteproyectos;
 			}
@@ -322,7 +363,6 @@ angular.module('poluxClienteApp')
 			 * @description
 			 * Función que actualiza el contenido de la cuadrícula según la consulta de los anteproyectos existentes.
 			 * Llama a las funciones: consultarAnteproyectos y mostrarAnteproyectos.
-			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
 			 * @param {undefined} undefined No requiere parámetros
 			 * @returns {undefined} No hace retorno de resultados
 			 */
@@ -349,30 +389,12 @@ angular.module('poluxClienteApp')
 
 			/**
 			 * @ngdoc method
-			 * @name verDocumentoAnteproyecto
-			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-			 * @description
-			 * Función que se dispara al momento de seleccionar la opción de visualización del documento del anteproyecto, y permite desplegar el contenido del mismo.
-			 * Llama a las funciones: 
-			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
-			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
-			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
-			 */
-			ctrl.verDocumentoAnteproyecto = function(filaAsociada) {
-				console.log("ver documento");
-				console.log(filaAsociada.entity);
-			}
-
-			/**
-			 * @ngdoc method
 			 * @name revisarAnteproyectoSeleccionado
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
 			 * Función que despliega la ventana emergente que describe el anteproyecto seleccionado y le permite al docente brindar la respuesta asociada a su revisión.
-			 * Llama a las funciones: .
-			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
 			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
-			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
 				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
@@ -403,6 +425,9 @@ angular.module('poluxClienteApp')
 				ctrl.cuadriculaEstudiantesDelAnteproyecto.data = [];
 				ctrl.cargandoDatosEstudiantiles = true;
 				ctrl.errorCargandoDatosEstudiantiles = false;
+				ctrl.respuestaSeleccionada = null;
+				ctrl.respuestaExplicada = null;
+				ctrl.respuestaHabilitada = false;
 				$('#modalRevisarAnteproyecto').modal('show');
 				var conjuntoProcesamientoDatosEstudiantiles = [];
 				angular.forEach(ctrl.anteproyectoSeleccionado.EstudiantesTrabajoGrado, function(estudianteTrabajoGrado) {
@@ -431,48 +456,163 @@ angular.module('poluxClienteApp')
 
 			/**
 			 * @ngdoc method
-			 * @name confirmarRevision
+			 * @name registrarRevision
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
-			 * Función que maneja la confirmación del usuario al haber revisado el proyecto de grado.
-			 * Llama a las funciones: .
-			 * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
-			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
-			 * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+			 * Función que maneja la confirmación del usuario al haber revisado el anteproyecto de grado.
+			 * Llama a las funciones: actualizarEstadoAnteproyecto y actualizarCuadriculaDeAnteproyectos.
+			 * @param {undefined} undefined No requiere parámetros
+			 * @returns {undefined} No hace retorno resultados
 			 */
-			ctrl.confirmarRevision = function() {
-				
+			ctrl.registrarRevision = function() {
+				swal({
+						title: $translate.instant("REVISAR_ANTEPROYECTO.CONFIRMACION"),
+						text: $translate.instant("REVISAR_ANTEPROYECTO.MENSAJE_CONFIRMACION", {
+							autores: ctrl.anteproyectoSeleccionado.EstudiantesTrabajoGrado.map(function(estudianteTrabajoGrado) {
+									return estudianteTrabajoGrado.informacionAcademica.nombre + " (" + estudianteTrabajoGrado.codigo + ")";
+								})
+								.join(", ")
+						}),
+						type: "info",
+						confirmButtonText: $translate.instant("ACEPTAR"),
+						cancelButtonText: $translate.instant("CANCELAR"),
+						showCancelButton: true
+					})
+					.then(function(confirmacionDelUsuario) {
+						if (confirmacionDelUsuario.value) {
+							ctrl.cargandoAnteproyectos = true;
+							ctrl.cargandoDatosEstudiantiles = true;
+							ctrl.actualizarEstadoAnteproyecto()
+								.then(function(respuestaActualizarAnteproyecto) {
+									if (respuestaActualizarAnteproyecto.data[0] === "Success") {
+										ctrl.cargandoAnteproyectos = false;
+										ctrl.cargandoDatosEstudiantiles = false;
+										swal(
+											$translate.instant("REVISAR_ANTEPROYECTO.CONFIRMACION"),
+											$translate.instant("REVISAR_ANTEPROYECTO.REVISION_REGISTRADA"),
+											'success'
+										);
+										ctrl.actualizarCuadriculaDeAnteproyectos();
+										$('#modalRevisarAnteproyecto').modal('hide');
+									} else {
+										ctrl.cargandoAnteproyectos = false;
+										ctrl.cargandoDatosEstudiantiles = false;
+										swal(
+											$translate.instant("REVISAR_ANTEPROYECTO.CONFIRMACION"),
+											$translate.instant(respuestaActualizarAnteproyecto.data[1]),
+											'warning'
+										);
+									}
+								})
+								.catch(function(excepcionActualizarAnteproyecto) {
+									ctrl.cargandoAnteproyectos = false;
+									ctrl.cargandoDatosEstudiantiles = false;
+									swal(
+										$translate.instant("REVISAR_ANTEPROYECTO.CONFIRMACION"),
+										$translate.instant("ERROR.REGISTRANDO_REVISION"),
+										'warning'
+									);
+								});
+						}
+					});
+			}
+
+      /**
+       * @ngdoc method
+       * @name registrarSolicitudAprobada
+       * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+       * @description
+       * Función que prepara el contenido de la información para actualizar.
+       * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados de la revisión en la base de datos.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Promise} La respuesta de operar el registro en la base de datos
+       */
+			ctrl.actualizarEstadoAnteproyecto = function() {
+				var deferred = $q.defer();
+				var fechaParaRegistrar = new Date();
+				ctrl.anteproyectoSeleccionado.TrabajoGrado.EstadoTrabajoGrado = {
+					Id: ctrl.respuestaSeleccionada.idEstadoTrabajoGrado
+				};
+				var revisionTrabajoGrado = {
+					NumeroRevision: 1,
+					FechaRecepcion: fechaParaRegistrar,
+					FechaRevision: fechaParaRegistrar,
+					EstadoRevisionTrabajoGrado: {
+						Id: 3
+					},
+					DocumentoTrabajoGrado: {
+						Id: ctrl.anteproyectoSeleccionado.documentoTrabajoGrado
+					},
+					VinculacionTrabajoGrado: {
+						Id: ctrl.anteproyectoSeleccionado.Id
+					}
+				};
+				var correccion = {
+					Observacion: ctrl.respuestaExplicada,
+					Pagina: 1,
+					RevisionTrabajoGrado: {
+						Id: 0
+					}
+				};
+				var informacionParaActualizar = {
+					"TrabajoGrado": ctrl.anteproyectoSeleccionado.TrabajoGrado,
+					"RevisionTrabajoGrado": revisionTrabajoGrado,
+					"Correccion": correccion
+				};
+				poluxRequest
+					.post("tr_revisar_anteproyecto", informacionParaActualizar)
+					.then(function(respuestaRevisarAnteproyecto) {
+						deferred.resolve(respuestaRevisarAnteproyecto);
+					})
+					.catch(function(excepcionRevisarAnteproyecto) {
+						deferred.reject(excepcionRevisarAnteproyecto);
+					});
+				return deferred.promise;
 			}
 
 			/**
 			 * @ngdoc method
-			 * @name getDocumento
-			 * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
-			 * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-			 * @returns {undefined} No retorna ningún valor
-			 * @description 
-			 * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
+			 * @name verDocumentoAnteproyecto
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que se dispara al momento de seleccionar la opción de visualización del documento del anteproyecto, y permite desplegar el contenido del mismo.
+			 * Llama a la función: abrirDocumento
+			 * @param {Object} filaAsociada El anteproyecto de grado que el docente seleccionó
+			 * @returns {undefined} No hace retorno de resultados
 			 */
-			ctrl.getDocumento = function(docid) {
+			ctrl.verDocumentoAnteproyecto = function(filaAsociada) {
+				ctrl.abrirDocumento(filaAsociada.entity.documentoEscrito.Enlace);
+			}
+
+			/**
+			 * @ngdoc method
+			 * @name abrirDocumento
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que abre el documento asociado en una ventana emergente.
+			 * Llama a las funciones: obtenerDoc y obtenerFetch
+			 * Consulta el servicio de {@link services/poluxClienteApp.service:nuxeoService nuxeo} para usar la gestión documental.
+			 * @param {String} docid Identificador del documento en del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+			 * @returns {undefined} No hace retorno de resultados
+			 */
+			ctrl.abrirDocumento = function(docid) {
 				nuxeo.header('X-NXDocumentProperties', '*');
 
 				/**
 				 * @ngdoc method
 				 * @name obtenerDoc
-				 * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
-				 * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-				 * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 				 * @description 
-				 * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
+				 * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
+				 * @param {undefined} undefined No requiere parámetros
+				 * @returns {Promise} La respuesta de la petición hacia la gestión documental
 				 */
 				ctrl.obtenerDoc = function() {
 					var defer = $q.defer();
-
 					nuxeo.request('/id/' + docid)
 						.get()
 						.then(function(response) {
 							ctrl.doc = response;
-							//var aux = response.get('file:content');
 							ctrl.document = response;
 							defer.resolve(response);
 						})
@@ -485,19 +625,17 @@ angular.module('poluxClienteApp')
 				/**
 				 * @ngdoc method
 				 * @name obtenerFetch
-				 * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
-				 * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
-				 * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 				 * @description 
-				 * Obtiene el blob de un documento
+				 * Obtiene el blob de un documento.
+				 * @param {Object} doc Documento de nuxeo al cual se le obtendrá el Blob
+				 * @returns {Promise} La respuesta de obtener el blob del documento asociado
 				 */
 				ctrl.obtenerFetch = function(doc) {
 					var defer = $q.defer();
-
 					doc.fetchBlob()
 						.then(function(res) {
 							defer.resolve(res.blob());
-
 						})
 						.catch(function(error) {
 							defer.reject(error)
@@ -505,9 +643,10 @@ angular.module('poluxClienteApp')
 					return defer.promise;
 				};
 
-				ctrl.obtenerDoc().then(function() {
-
-						ctrl.obtenerFetch(ctrl.document).then(function(r) {
+				ctrl.obtenerDoc()
+					.then(function() {
+						ctrl.obtenerFetch(ctrl.document)
+							.then(function(r) {
 								ctrl.blob = r;
 								var fileURL = URL.createObjectURL(ctrl.blob);
 								console.log(fileURL);
@@ -522,7 +661,6 @@ angular.module('poluxClienteApp')
 									'warning'
 								);
 							});
-
 					})
 					.catch(function(error) {
 						console.log("error", error);
@@ -532,7 +670,6 @@ angular.module('poluxClienteApp')
 							'warning'
 						);
 					});
-
 			}
 
 		});

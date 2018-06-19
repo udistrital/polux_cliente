@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="panel-body alert alert-danger" ng-if="revisarAnteproyecto.errorCargandoDatosEstudiantiles">
-          <span ng-bind="registrarNota.mensajeErrorCargandoDatosEstudiantiles"></span>
+          <span ng-bind="revisarAnteproyecto.mensajeErrorCargandoDatosEstudiantiles"></span>
         </div>
         <div class="panel panel-default" ng-if="!revisarAnteproyecto.cargandoDatosEstudiantiles">
           <div class="panel-heading">
@@ -64,27 +64,29 @@
             {{'REVISAR_ANTEPROYECTO.OBSERVACIONES' | translate}}
           </div>
           <div class="panel-body">
-            <div class="row">
-              <label class="col-sm-4 control-label"> {{'REVISAR_ANTEPROYECTO.SELECCIONAR_RESPUESTA' | translate}} </label>
-              <div class="col-sm-8">
-                <select class="form-control" ng-model="revisarAnteproyecto.respuestaSeleccionada" ng-change="revisarAnteproyecto.respuestaHabilitada = true">
-                  <option ng-repeat="respuesta in revisarAnteproyecto.coleccionRespuestasAnteproyecto" ng-value="respuesta"> {{respuesta.nombreEstadoTrabajoGrado}} </option>
-                </select>
+            <form method="post" name="formularioRevisionAnteproyecto" ng-submit="revisarAnteproyecto.registrarRevision()">
+              <div class="row">
+                <label class="col-sm-4 control-label"> {{'REVISAR_ANTEPROYECTO.SELECCIONAR_RESPUESTA' | translate}} </label>
+                <div class="col-sm-8">
+                  <select class="form-control" ng-model="revisarAnteproyecto.respuestaSeleccionada" ng-change="revisarAnteproyecto.respuestaHabilitada = true" required>
+                    <option ng-repeat="respuesta in revisarAnteproyecto.coleccionRespuestasAnteproyecto" ng-value="respuesta"> {{respuesta.nombreEstadoTrabajoGrado}} </option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <br>
-            <div class="row" ng-if="revisarAnteproyecto.respuestaHabilitada">
-              <label class="col-sm-4 control-label">{{'REVISAR_ANTEPROYECTO.EXPLICAR_RESPUESTA' | translate}}</label>
-              <div class="col-sm-8">
-                <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="revisarAnteproyecto.respuestaExplicada" required></textarea>
+              <br>
+              <div class="row" ng-if="revisarAnteproyecto.respuestaHabilitada">
+                <label class="col-sm-4 control-label">{{'REVISAR_ANTEPROYECTO.EXPLICAR_RESPUESTA' | translate}}</label>
+                <div class="col-sm-8">
+                  <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="revisarAnteproyecto.respuestaExplicada" required></textarea>
+                </div>
               </div>
-            </div>
-            <br>
-            <div class="row row-centered">
-              <div class="col-sm-2 col-centered">
-                <input type="submit" class="btn btn-success" value="{{'BTN.REVISAR_ANTEPROYECTO'|translate}}" ng-click="revisarAnteproyecto.confirmarRevision()">
+              <br>
+              <div class="row row-centered" ng-if="formularioRevisionAnteproyecto.$valid">
+                <div class="col-sm-2 col-centered">
+                  <input type="submit" class="btn btn-success" value="{{'BTN.REVISAR_ANTEPROYECTO'|translate}}">
+                </div>
               </div>
-            </div>
+            </form>  
           </div>
         </div>
       </div>
