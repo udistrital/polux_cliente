@@ -1157,11 +1157,15 @@ angular.module('poluxClienteApp')
                       var getDocente = function(evaluador, detalle){
                         var defer = $q.defer();
                         academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
-                          var nombre = "";
-                          if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                            nombre = docente.data.docenteTg.docente[0].nombre;
+                          var evaluador = {
+                            nombre : "",
+                            id : "",
                           }
-                          defer.resolve(nombre);
+                          if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                            evaluador.nombre = docente.data.docenteTg.docente[0].nombre; 
+                            evaluador.id = docente.data.docenteTg.docente[0].id;
+                          }
+                          defer.resolve(evaluador);
                         })
                         .catch(function(error){
                           defer.reject(error);
@@ -1171,10 +1175,10 @@ angular.module('poluxClienteApp')
                       angular.forEach(responseOpciones.data, function(evaluador) {
                         promisesDocente.push(getDocente(evaluador,detalle));
                       });
-                      $q.all(promisesDocente).then(function(nombresDocentes){
+                      $q.all(promisesDocente).then(function(evaluadores){
                         detalle.opciones.push({
-                          "NOMBRE": nombresDocentes.join(", "),
-                          "bd": nombresDocentes.join(", ")
+                          "NOMBRE": evaluadores.map(function(evaluador) {return evaluador.nombre }).join(", "),
+                          "bd": evaluadores.map(function(evaluador){ return evaluador.id }).join(",")
                         });
                         defer.resolve();
                       })

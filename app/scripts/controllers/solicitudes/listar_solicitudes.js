@@ -781,6 +781,28 @@ angular.module('poluxClienteApp')
                 return defer.promise;
               }
 
+              var getDocentes = function(detalle){
+                var defer = $q.defer();
+                var promesasDocentes = [];
+                var detallesTemporales = [];
+                angular.forEach(detalle.Descripcion.split(","), function(docDocente){
+                  var detalleTemp  = {
+                    Descripcion : docDocente,
+                  }
+                  detallesTemporales.push(detalleTemp);
+                  promesasDocentes.push(getDocente(detalleTemp));
+                })
+                $q.all(promesasDocentes)
+                .then(function(){
+                  detalle.Descripcion = detallesTemporales.map(function(detalleTemp) {return detalleTemp.Descripcion}).join(", ");
+                  defer.resolve();
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
               var getExterno = function(detalle){
                 var defer = $q.defer();
                 var parametrosVinculado = $.param({
@@ -813,7 +835,9 @@ angular.module('poluxClienteApp')
                       if(detalle.Descripcion != "No solicita"){
                         promises.push(getDocente(detalle));
                       }
-                    }else if(id == 39) {
+                    } else if (id == 61){
+                      promises.push(getDocentes(detalle));
+                    } else if(id == 39) {
                       //detalle de director externo anterior
                       promises.push(getExterno(detalle));
                     } else if(detalle.Descripcion.includes("JSON-")){
