@@ -169,8 +169,8 @@ angular.module('poluxClienteApp')
                 $scope.loadEstudiante = false;
               }
             }else{
-              console.log(error);
-              ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_ENCONTRADO");
+              console.log("Estudiante no enccontrado");
+              ctrl.mensajeError = $translate.instant("ERROR.ESTUDIANTE_NO_ENCONTRADO");
               ctrl.errorCargar = true;
               $scope.loadEstudiante = false;
             }
