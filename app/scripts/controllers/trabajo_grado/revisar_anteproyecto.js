@@ -16,7 +16,7 @@
  * @requires $window
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService nuxeo
+ * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
@@ -29,12 +29,19 @@
  * @property {Array} botonRevisarAnteproyecto Establece las propiedades del botón que se muestra para dar respuesta a la revisión del anteproyecto asignado
  * @property {Object} cuadriculaAnteproyectos Almacena y adapta la información de los anteproyectos para visualizar el contenido y poder hacer la revisión del mismo
  * @property {Object} cuadriculaEstudiantesDelAnteproyecto Almacena y adapta la información de los datos estudiantiles sobre los autores del anteproyecto
+ * @property {Array} coleccionAnteproyectos Almacena los anteproyectos a medida que se consultan y se cargan con la información correspondiente
  * @property {Boolean} errorCargandoAnteproyectos Indicador que maneja la aparición de un error durante la carga de los anteproyectos pendientes
  * @property {String} mensajeErrorCargandoAnteproyectos Mensaje que aparece en caso de error durante la carga de los anteproyectos pendientes
+ * @property {Object} anteproyectoSeleccionado Objeto que carga el anteproyecto que el usuario selecciona desde la vista
+ * @property {Array} coleccionRespuestasAnteproyecto Almacena las posibles respuestas para el cambio de estado del trabajo de grado de acuerdo a la revisión del anteproyecto
  * @property {Boolean} cargandoDatosEstudiantiles Indicador que maneja carga de los datos de los estudiantes asociados al anteproyecto seleccionado
  * @property {Boolean} errorCargandoDatosEstudiantiles Indicador que maneja la aparición de un error durante la carga de los datos de los estudiantes
  * @property {String} mensajeErrorCargandoDatosEstudiantiles Mensaje que aparece en caso de error durante la carga de los datos de los estudiantes
- * @property {Object} anteproyectoSeleccionado Objeto que carga el anteproyecto que el usuario selecciona desde la vista
+ * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el anteproyecto (viable, modificable, no viable)
+ * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del anteproyecto
+ * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el anteproyecto
+ * @property {Object} document Almacena la respuesta del documento desde la petición a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+ * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
@@ -520,16 +527,16 @@ angular.module('poluxClienteApp')
 					});
 			}
 
-      /**
-       * @ngdoc method
-       * @name registrarSolicitudAprobada
-       * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-       * @description
-       * Función que prepara el contenido de la información para actualizar.
-       * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados de la revisión en la base de datos.
-       * @param {undefined} undefined No requiere parámetros
-       * @returns {Promise} La respuesta de operar el registro en la base de datos
-       */
+			/**
+			 * @ngdoc method
+			 * @name registrarSolicitudAprobada
+			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+			 * @description
+			 * Función que prepara el contenido de la información para actualizar.
+			 * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados de la revisión en la base de datos.
+			 * @param {undefined} undefined No requiere parámetros
+			 * @returns {Promise} La respuesta de operar el registro en la base de datos
+			 */
 			ctrl.actualizarEstadoAnteproyecto = function() {
 				var deferred = $q.defer();
 				var fechaParaRegistrar = new Date();
@@ -615,7 +622,6 @@ angular.module('poluxClienteApp')
 					nuxeo.request('/id/' + docid)
 						.get()
 						.then(function(response) {
-							ctrl.doc = response;
 							ctrl.document = response;
 							defer.resolve(response);
 						})
