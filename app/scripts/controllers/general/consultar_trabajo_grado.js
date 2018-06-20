@@ -21,15 +21,15 @@
  * @property {object} gridOptionsAsignatura Grid options para las asignatruas de TG
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q) {
+  .controller('GeneralConsultarTrabajoGradoCtrl', function(token_service, $translate, poluxRequest, academicaRequest, $q, nuxeo) {
     var ctrl = this;
 
-    token_service.token.documento = "79647592";
-    token_service.token.role.push("COORDINADOR_PREGRADO");
-    //token_service.token.documento = "20141020036";
-    //token_service.token.role.push("ESTUDIANTE");
+    //token_service.token.documento = "79647592";
+    //token_service.token.role.push("COORDINADOR_PREGRADO");
+    token_service.token.documento = "20141020036";
+    token_service.token.role.push("ESTUDIANTE");
     ctrl.userRole = token_service.token.role;
-    ctrl.userId  = token_service.token.documento;
+    ctrl.userId = token_service.token.documento;
 
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
     ctrl.trabajoCargado = false;
@@ -38,48 +38,42 @@ angular.module('poluxClienteApp')
     ctrl.gridOptionsAsignaturas.columnDefs = [{
       name: 'CodigoAsignatura',
       displayName: $translate.instant('ASIGNATURA'),
-      width:'20%',
-    },
-    {name: 'Anio',
+      width: '20%',
+    }, {
+      name: 'Anio',
       displayName: $translate.instant('ANIO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'Periodo',
       displayName: $translate.instant('PERIODO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'Calificacion',
       displayName: $translate.instant('NOTA'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'EstadoAsignaturaTrabajoGrado.Nombre',
       displayName: $translate.instant('ESTADO'),
-      width:'20%',
+      width: '20%',
     }];
 
     ctrl.gridOptionsEspacios = [];
     ctrl.gridOptionsEspacios.columnDefs = [{
       name: 'EspaciosAcademicosElegibles.CodigoAsignatura',
       displayName: $translate.instant('CODIGO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'NombreEspacio',
       displayName: $translate.instant('NOMBRE'),
-      width:'40%',
-    },
-    {
+      width: '40%',
+    }, {
       name: 'EstadoEspacioAcademicoInscrito.Nombre',
       displayName: $translate.instant('ESTADO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'Nota',
       displayName: $translate.instant('NOTA'),
-      width:'20%',
+      width: '20%',
     }];
 
     /**
@@ -91,32 +85,32 @@ angular.module('poluxClienteApp')
      * @param {object} estudiante Estudiante que se va a consultar
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
      */
-    ctrl.cargarEstudiante = function(estudiante){
+    ctrl.cargarEstudiante = function(estudiante) {
       var defer = $q.defer();
       //consultar datos básicos del estudiante
-      academicaRequest.get("datos_basicos_estudiante",[estudiante.codigo])
-      .then(function(responseDatosBasicos){
-        if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
-          estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
-          //consultar nombre carrera
-          academicaRequest.get("carrera",[estudiante.datos.carrera])
-          .then(function(responseCarrera){
-            estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
-            defer.resolve();
-          })
-          .catch(function(error){
-            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_CARRERA_ESTUDIANTE');
+      academicaRequest.get("datos_basicos_estudiante", [estudiante.codigo])
+        .then(function(responseDatosBasicos) {
+          if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+            estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
+            //consultar nombre carrera
+            academicaRequest.get("carrera", [estudiante.datos.carrera])
+              .then(function(responseCarrera) {
+                estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
+                defer.resolve();
+              })
+              .catch(function(error) {
+                ctrl.mensajeError = $translate.instant('ERROR.CARGAR_CARRERA_ESTUDIANTE');
+                defer.reject(error);
+              });
+          } else {
+            ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_NO_ENCONTRADO');
             defer.reject(error);
-          });
-        }else{
-          ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_NO_ENCONTRADO');
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTE');
           defer.reject(error);
-        }
-      })
-      .catch(function(error){
-        ctrl.mensajeError = $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTE');
-        defer.reject(error);
-      });
+        });
       return defer.promise;
     }
 
@@ -129,29 +123,29 @@ angular.module('poluxClienteApp')
      * @param {undefined} undefined no requiere parametros
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
      */
-    ctrl.cargarAsignaturasTrabajoGrado = function(){
+    ctrl.cargarAsignaturasTrabajoGrado = function() {
       var defer = $q.defer();
       var parametrosAsignaturasTrabajoGrado = $.param({
-        query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
-        limit:2,
+        query: "TrabajoGrado:" + ctrl.trabajoGrado.Id,
+        limit: 2,
       });
-      poluxRequest.get("asignatura_trabajo_grado",parametrosAsignaturasTrabajoGrado)
-      .then(function(responseAsignaturaTrabajoGrado){
-        if(responseAsignaturaTrabajoGrado.data != null){
-          ctrl.trabajoGrado.asignaturas = responseAsignaturaTrabajoGrado.data;
-          angular.forEach(ctrl.trabajoGrado.asignaturas,function(asignatura){
-            asignatura.Estado = asignatura.EstadoAsignaturaTrabajoGrado.Nombre;
-          });
-          defer.resolve();
-        }else{
-          ctrl.mensajeError = $translate.instant("ERROR.SIN_ASIGNATURAS_TRABAJO_GRADO");
+      poluxRequest.get("asignatura_trabajo_grado", parametrosAsignaturasTrabajoGrado)
+        .then(function(responseAsignaturaTrabajoGrado) {
+          if (responseAsignaturaTrabajoGrado.data != null) {
+            ctrl.trabajoGrado.asignaturas = responseAsignaturaTrabajoGrado.data;
+            angular.forEach(ctrl.trabajoGrado.asignaturas, function(asignatura) {
+              asignatura.Estado = asignatura.EstadoAsignaturaTrabajoGrado.Nombre;
+            });
+            defer.resolve();
+          } else {
+            ctrl.mensajeError = $translate.instant("ERROR.SIN_ASIGNATURAS_TRABAJO_GRADO");
+            defer.reject(error);
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ASIGNATURAS_TRABAJO_GRADO");
           defer.reject(error);
-        }
-      })
-      .catch(function(error){
-        ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ASIGNATURAS_TRABAJO_GRADO");
-        defer.reject(error);
-      });
+        });
       return defer.promise;
     }
 
@@ -165,56 +159,56 @@ angular.module('poluxClienteApp')
      * @param {undefined} undefined no requiere parametros
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
      */
-    ctrl.getEspaciosAcademicosInscritos = function(){
+    ctrl.getEspaciosAcademicosInscritos = function() {
       var defer = $q.defer();
       var parametrosEspaciosAcademicosInscritos = $.param({
-        query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
-        limit:0,
+        query: "TrabajoGrado:" + ctrl.trabajoGrado.Id,
+        limit: 0,
       });
 
-      var getDataEspacio = function(espacio){
+      var getDataEspacio = function(espacio) {
         var defer = $q.defer();
         academicaRequest.get("asignatura_pensum", [espacio.EspaciosAcademicosElegibles.CodigoAsignatura, espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
-        .then(function(responseEspacio) {
-          if (responseEspacio.data.asignatura.datosAsignatura) {
-            espacio.NombreEspacio = responseEspacio.data.asignatura.datosAsignatura[0].nombre;
-            defer.resolve();
-          } else {
-            // Se rechaza la petición en caso de no encontrar datos
-            defer.reject("No se encuentran datos de la materia");
-          }
-        }).catch(function(error){
-          defer.reject(error);
-        });
+          .then(function(responseEspacio) {
+            if (responseEspacio.data.asignatura.datosAsignatura) {
+              espacio.NombreEspacio = responseEspacio.data.asignatura.datosAsignatura[0].nombre;
+              defer.resolve();
+            } else {
+              // Se rechaza la petición en caso de no encontrar datos
+              defer.reject("No se encuentran datos de la materia");
+            }
+          }).catch(function(error) {
+            defer.reject(error);
+          });
         return defer.promise;
       }
 
-      poluxRequest.get("espacio_academico_inscrito",parametrosEspaciosAcademicosInscritos)
-      .then(function(responseEspacios){
-        if(responseEspacios.data != null){
-          ctrl.trabajoGrado.espacios = responseEspacios.data;
-          var promises = [];
-          //Consultar nombres de los espacios
-          angular.forEach(ctrl.trabajoGrado.espacios,function(espacio){
-            promises.push(getDataEspacio(espacio));
-          });
-          $q.all(promises)
-          .then(function(){
-            defer.resolve();
-          })
-          .catch(function(error){
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ASIGNATURAS");
-            defer.reject(error);
-          });
-        }else{
-          ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
-          defer.reject("sin espacios académicos inscritos");
-        }
-      })
-      .catch(function(error){
-        ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-        defer.reject(error);
-      });
+      poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos)
+        .then(function(responseEspacios) {
+          if (responseEspacios.data != null) {
+            ctrl.trabajoGrado.espacios = responseEspacios.data;
+            var promises = [];
+            //Consultar nombres de los espacios
+            angular.forEach(ctrl.trabajoGrado.espacios, function(espacio) {
+              promises.push(getDataEspacio(espacio));
+            });
+            $q.all(promises)
+              .then(function() {
+                defer.resolve();
+              })
+              .catch(function(error) {
+                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ASIGNATURAS");
+                defer.reject(error);
+              });
+          } else {
+            ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
+            defer.reject("sin espacios académicos inscritos");
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+          defer.reject(error);
+        });
       return defer.promise;
     }
 
@@ -229,67 +223,149 @@ angular.module('poluxClienteApp')
      * @param {undefined} undefined no requiere parametros
      * @returns {undefined} No retorna ningún parametro
      */
-    ctrl.consultarTrabajoGrado = function(){
+    ctrl.consultarTrabajoGrado = function() {
       ctrl.errorCargandoTrabajoGrado = false;
       //Verifica que lo ingresado sea un codigo
-      if(/^\d+$/.test(ctrl.codigoEstudiante)){
+      if (/^\d+$/.test(ctrl.codigoEstudiante)) {
         //consultar trabajo de grado del estudiante
         ctrl.loadTrabajoGrado = true;
         var parametrosTrabajoGrago = $.param({
-          query:"EstadoEstudianteTrabajoGrado.Id:1,Estudiante:"+ctrl.codigoEstudiante,
-          limit:1,
+          query: "EstadoEstudianteTrabajoGrado.Id:1,Estudiante:" + ctrl.codigoEstudiante,
+          limit: 1,
         });
-        poluxRequest.get('estudiante_trabajo_grado',parametrosTrabajoGrago)
-        .then(function(response_trabajoGrado){
-          if(response_trabajoGrado.data != null){
-            ctrl.trabajoGrado = response_trabajoGrado.data[0].TrabajoGrado;
-            var promises = [];
-            ctrl.trabajoGrado.estudiante = {
-              "codigo": ctrl.codigoEstudiante
-            }
-            promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
-            promises.push(ctrl.cargarAsignaturasTrabajoGrado());
+        poluxRequest.get('estudiante_trabajo_grado', parametrosTrabajoGrago)
+          .then(function(response_trabajoGrado) {
+            if (response_trabajoGrado.data != null) {
+              ctrl.trabajoGrado = response_trabajoGrado.data[0].TrabajoGrado;
+              if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
+                  ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) &&
+                ctrl.userRole.includes('ESTUDIANTE')) {
+                ctrl.esAnteproyectoModificable = true;
+              }
+              var promises = [];
+              ctrl.trabajoGrado.estudiante = {
+                "codigo": ctrl.codigoEstudiante
+              }
+              promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
+              promises.push(ctrl.cargarAsignaturasTrabajoGrado());
 
-            //si la modalidad es 2 trae los espacios academicos
-            if(ctrl.trabajoGrado.Modalidad.Id === 2){
-              promises.push(ctrl.getEspaciosAcademicosInscritos());
-            }
+              //si la modalidad es 2 trae los espacios academicos
+              if (ctrl.trabajoGrado.Modalidad.Id === 2) {
+                promises.push(ctrl.getEspaciosAcademicosInscritos());
+              }
 
-            $q.all(promises)
-            .then(function(){
-              console.log(ctrl.trabajoGrado);
-              console.log(ctrl.trabajoGrado.estudiante);
-              ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
-              ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
-              ctrl.trabajoCargado = true;
-              ctrl.loadTrabajoGrado = false;
-            })
-            .catch(function(error){
-              console.log(error);
+              $q.all(promises)
+                .then(function() {
+                  console.log(ctrl.trabajoGrado);
+                  console.log(ctrl.trabajoGrado.estudiante);
+                  ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
+                  ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
+                  ctrl.trabajoCargado = true;
+                  ctrl.loadTrabajoGrado = false;
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  ctrl.errorCargandoTrabajoGrado = true;
+                  ctrl.loadTrabajoGrado = false;
+                });
+            } else {
+              ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_SIN_TRABAJO');
               ctrl.errorCargandoTrabajoGrado = true;
               ctrl.loadTrabajoGrado = false;
-            });
-          }else{
-            ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_SIN_TRABAJO');
+            }
+          })
+          .catch(function(error) {
+            console.log(error);
+            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
             ctrl.errorCargandoTrabajoGrado = true;
             ctrl.loadTrabajoGrado = false;
-          }
-        })
-        .catch(function(error){
-          console.log(error);
-          ctrl.mensajeError = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
-          ctrl.errorCargandoTrabajoGrado = true;
-          ctrl.loadTrabajoGrado = false;
-        });
-      }else{
+          });
+      } else {
         ctrl.mensajeError = $translate.instant('ERROR.CODIGO_NO_VALIDO');
         ctrl.errorCargandoTrabajoGrado = true;
       }
     }
 
-    if(ctrl.userRole.includes("ESTUDIANTE")){
+    if (ctrl.userRole.includes("ESTUDIANTE")) {
       ctrl.codigoEstudiante = ctrl.userId;
       ctrl.consultarTrabajoGrado();
+    }
+
+    ctrl.subirCorreccionesAnteproyecto = function() {
+      $('#modalRevisarAnteproyecto').modal('show');
+    }
+
+    ctrl.subirDocumento = function() {
+      ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del anteproyecto", ctrl.AnteproyectoCorregido)
+        .then(function(docid) {
+          console.log(docid);
+        })
+        .catch(function(error) {
+          console.log(error);
+          swal(
+            $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+            $translate.instant("VERIFICAR_DOCUMENTO"),
+            'warning'
+          );
+        });
+    }
+
+    /**
+     * @ngdoc method
+     * @name cargarDocumento
+     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+     * @param {string} nombre Nombre del documento que se cargara
+     * @param {string} descripcion Descripcion del documento que se cargara
+     * @param {blob} documento Blob del documento que se cargara
+     * @param {function} callback funcion que se ejecuta al cumplirse la promesa
+     * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado. 
+     * @description 
+     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     */
+    ctrl.cargarDocumento = function(nombre, descripcion, documento) {
+      var defer = $q.defer();
+      var promise = defer.promise;
+      nuxeo.operation('Document.Create')
+        .params({
+          type: 'File',
+          name: nombre,
+          properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
+        })
+        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Anteproyectos')
+        .execute()
+        .then(function(doc) {
+          var nuxeoBlob = new Nuxeo.Blob({
+            content: documento
+          });
+          nuxeo.batchUpload()
+            .upload(nuxeoBlob)
+            .then(function(res) {
+              return nuxeo.operation('Blob.AttachOnDocument')
+                .param('document', doc.uid)
+                .input(res.blob)
+                .execute();
+            })
+            .then(function() {
+              return nuxeo.repository().fetch(doc.uid, {
+                schemas: ['dublincore', 'file']
+              });
+            })
+            .then(function(doc) {
+              var url = doc.uid;
+              //callback(url);
+              defer.resolve(url);
+            })
+            .catch(function(error) {
+              throw error;
+              defer.reject(error)
+            });
+        })
+        .catch(function(error) {
+          throw error;
+          defer.reject(error)
+        });
+
+      return promise;
     }
 
   });
