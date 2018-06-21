@@ -72,15 +72,18 @@
                             <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
                         </div>
                         <div class="row" ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
-                            <div class="col-sm-9">
+                            <div class="control-label col-sm-12">
                                 <div class="alert alert-warning">
-                                    {{'ERROR' | translate}}: {{consultarTrabajoGrado.mensajeError}} 
+                                    {{'ANTEPROYECTO_MODIFICABLE' | translate}}
                                 </div>
                             </div>
-                            <div>
-                                <input class="btn btn-success col-sm-3" type="submit" value="ASÑLKFJKLÑADSJFÑASDF" ng-click="consultarTrabajoGrado.subirCorreccionesAnteproyecto()">
+                        </div>
+                        <div class="row row-centered" ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
+                            <div class="col-sm-3 col-centered">
+                                <input class="btn btn-success" type="submit" value="{{'SUBIR_CORRECCIONES_ANTEPROYECTO' | translate}}" ng-click="consultarTrabajoGrado.subirCorreccionesAnteproyecto()">
                             </div>
                         </div>
+                        <br ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
                         <div class="row">
                             <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
                             <div class="panel col-md-12">
@@ -106,20 +109,6 @@
       {{'REVISAR_ANTEPROYECTO.DESCRIPCION' | translate}}
       <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
       <br>
-    </div>
-    <loading tam="4" load="revisarAnteproyecto.cargandoDatosEstudiantiles" message="revisarAnteproyecto.mensajeCargandoDatosEstudiantiles"></loading>
-    <div class="panel panel-default" ng-if="revisarAnteproyecto.cuadriculaEstudiantesDelAnteproyecto.data.length > 0 && !revisarAnteproyecto.cargandoDatosEstudiantiles">
-      <div class="panel-heading">
-        {{'ESTUDIANTE_ESTUDIANTES' | translate}}
-      </div>
-      <div class="panel-body">
-        <div class="panel col-md-12">
-          <div class="mi-grid" id="mi-grid" ui-grid-edit ui-grid-cellNav ui-grid="revisarAnteproyecto.cuadriculaEstudiantesDelAnteproyecto" style="height: {{(revisarAnteproyecto.cuadriculaEstudiantesDelAnteproyecto.data.length * 35) + 40}}px"></div>
-        </div>
-      </div>
-    </div>
-    <div class="panel-body alert alert-danger" ng-if="revisarAnteproyecto.errorCargandoDatosEstudiantiles">
-      <span ng-bind="revisarAnteproyecto.mensajeErrorCargandoDatosEstudiantiles"></span>
     </div>
     <div class="panel panel-default" ng-if="!revisarAnteproyecto.cargandoDatosEstudiantiles">
       <div class="panel-heading">

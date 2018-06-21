@@ -32,6 +32,7 @@ angular.module('poluxClienteApp')
     ctrl.userId = token_service.token.documento;
 
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
+    ctrl.mensajeSubirCorreccionesAnteproyecto = $translate.instant('SUBIR_CORRECCIONES_ANTEPROYECTO');
     ctrl.trabajoCargado = false;
 
     ctrl.gridOptionsAsignaturas = [];

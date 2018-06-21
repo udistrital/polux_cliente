@@ -543,6 +543,8 @@ var text_es = {
     },
     ANTEPROYECTO: "Anteproyecto",
     ROL: "Papel",
+    ANTEPROYECTO_MODIFICABLE: "Su anteproyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas.",
+    SUBIR_CORRECCIONES_ANTEPROYECTO: "Subir anteproyecto corregido",
 };
 
 /**
@@ -1074,6 +1076,8 @@ var text_en = {
     },
     ANTEPROYECTO: "Degree work proposal",
     ROL: "Role",
+    ANTEPROYECTO_MODIFICABLE: "Your degree work proposal became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received.",
+    SUBIR_CORRECCIONES_ANTEPROYECTO: "Upload corrected degree work proposal",
 };
 
 /**
