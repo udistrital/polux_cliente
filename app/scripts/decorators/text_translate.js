@@ -545,6 +545,10 @@ var text_es = {
     ROL: "Papel",
     ANTEPROYECTO_MODIFICABLE: "Su anteproyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas.",
     SUBIR_CORRECCIONES_ANTEPROYECTO: "Subir anteproyecto corregido",
+    CORREGIR_ANTEPROYECTO: {
+        DESCRIPCION: "Subir versión corregida del anteproyecto",
+        INSTRUCCIONES: "A continuación puede subir una nueva versión de su anteproyecto para atender a las observaciones de su revisor. El estado de su trabajo de grado cambiará para obtener una nueva revisión.",
+    },
 };
 
 /**
@@ -1078,6 +1082,10 @@ var text_en = {
     ROL: "Role",
     ANTEPROYECTO_MODIFICABLE: "Your degree work proposal became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received.",
     SUBIR_CORRECCIONES_ANTEPROYECTO: "Upload corrected degree work proposal",
+    CORREGIR_ANTEPROYECTO: {
+        DESCRIPCION: "Upload new corrected degree work proposal version",
+        INSTRUCCIONES: "Next you can upload a new version of your degree work proposal to meet the comments of your reviewer. The status of your degree work will change to obtain a new revision.",
+    },
 };
 
 /**

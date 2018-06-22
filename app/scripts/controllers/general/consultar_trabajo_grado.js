@@ -292,10 +292,81 @@ angular.module('poluxClienteApp')
       ctrl.consultarTrabajoGrado();
     }
 
-    ctrl.subirCorreccionesAnteproyecto = function() {
-      $('#modalRevisarAnteproyecto').modal('show');
+    /**
+     * @ngdoc method
+     * @name obtenerParametrosDocumentoTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description
+     * Función que define los parámetros para consultar en la tabla documento_trabajo_grado.
+     * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+     * @returns {String} La sentencia para la consulta correspondiente
+     */
+    ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+      return $.param({
+        query: "TrabajoGrado.Id:" +
+          idTrabajoGrado,
+        limit: 1
+      });
     }
 
+
+    /**
+     * @ngdoc method
+     * @name consultarDocumentoTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description
+     * Función que recorre la base de datos de acuerdo al trabajo de grado vinculado y trae el documento asociado.
+     * Llama a la función: obtenerParametrosDocumentoTrabajoGrado.
+     * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+     * @param {Object} trabajoGrado El trabajo de grado para cargar la información del documento
+     * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+     */
+    ctrl.consultarDocumentoTrabajoGrado = function(trabajoGrado) {
+      var deferred = $q.defer();
+      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado.Id))
+        .then(function(documentoAsociado) {
+          if (documentoAsociado.data) {
+            trabajoGrado.documentoTrabajoGrado = documentoAsociado.data[0].Id;
+            trabajoGrado.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
+          }
+          deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
+        })
+        .catch(function(excepcionVinculacionTrabajoGrado) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name subirCorreccionesAnteproyecto
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Permite mostrar el contenido del modal que habilita subir el documento del anteproyecto corregido
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.subirCorreccionesAnteproyecto = function() {
+      ctrl.consultarDocumentoTrabajoGrado()
+        .then(function(respuestaDocumentoTrabajoGrado) {
+
+        })
+        .catch(function() {
+
+        });
+      $('#modalRevisarAnteproyecto').modal('show');
+      console.log(ctrl.trabajoGrado);
+    }
+
+    /**
+     * @ngdoc method
+     * @name subirDocumento
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
     ctrl.subirDocumento = function() {
       ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del anteproyecto", ctrl.AnteproyectoCorregido)
         .then(function(docid) {
@@ -314,12 +385,11 @@ angular.module('poluxClienteApp')
     /**
      * @ngdoc method
      * @name cargarDocumento
-     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @param {string} nombre Nombre del documento que se cargara
      * @param {string} descripcion Descripcion del documento que se cargara
      * @param {blob} documento Blob del documento que se cargara
-     * @param {function} callback funcion que se ejecuta al cumplirse la promesa
-     * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado. 
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado. 
      * @description 
      * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
      */

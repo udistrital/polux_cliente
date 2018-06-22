@@ -106,50 +106,35 @@
 <div id="modalRevisarAnteproyecto" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
   <div class="modal-content col-md-offset-2 col-md-8">
     <div class="modal-header">
-      {{'REVISAR_ANTEPROYECTO.DESCRIPCION' | translate}}
       <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
       <br>
-    </div>
-    <div class="panel panel-default" ng-if="!revisarAnteproyecto.cargandoDatosEstudiantiles">
-      <div class="panel-heading">
-        {{'DATOS_TRABAJO_GRADO' | translate}}
-      </div>
-      <div class="panel-body">
-        <div class="row">
-          <label class="col-sm-4 control-label"> {{'TITULO_PROPUESTA' | translate}}: </label>
-          <label class="col-sm-8 control-label"> {{revisarAnteproyecto.anteproyectoSeleccionado.TrabajoGrado.Titulo}} </label>
-        </div>
-        <div class="row">
-          <label class="col-sm-4 control-label"> {{'MODALIDAD' | translate}}: </label>
-          <label class="col-sm-8 control-label"> {{revisarAnteproyecto.anteproyectoSeleccionado.TrabajoGrado.Modalidad.Nombre}} </label>
-        </div>
-        <div class="row">
-          <label class="col-sm-4 control-label"> {{'ESTADO_SIN_DOSPUNTOS' | translate}}: </label>
-          <label class="col-sm-8 control-label"> {{revisarAnteproyecto.anteproyectoSeleccionado.TrabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
-        </div>
-        <div class="row">
-          <label class="col-sm-4 control-label"> {{'PERIODO' | translate}}: </label>
-          <label class="col-sm-8 control-label"> {{revisarAnteproyecto.anteproyectoSeleccionado.TrabajoGrado.PeriodoAcademico}} </label>
-        </div>
-      </div>
     </div>
     <div class="panel panel-default" ng-if="!revisarAnteproyecto.cargandoDatosEstudiantiles">
       <div class="panel-heading">
         {{'REVISAR_ANTEPROYECTO.OBSERVACIONES' | translate}}
       </div>
       <div class="panel-body">
-        <form method="post" name="formularioRevisionAnteproyecto" ng-submit="consultarTrabajoGrado.subirDocumento()">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES' | translate}} </label>
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="!revisarAnteproyecto.cargandoDatosEstudiantiles">
+      <div class="panel-heading">
+        {{'CORREGIR_ANTEPROYECTO.DESCRIPCION' | translate}}
+      </div>
+      <div class="panel-body">
+        <form method="post" name="formularioSubirAnteproyectoCorregido" ng-submit="consultarTrabajoGrado.subirDocumento()">
           <div class="row">
-            <label class="col-sm-3 control-label"> ssufsadhf </label>
+            <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
                 <div class="col-sm-9 ">
                     <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="consultarTrabajoGrado.AnteproyectoCorregido" required></input>
                 </div>
            <br>
           </div>
           <br>
-          <div class="row row-centered" ng-if="formularioRevisionAnteproyecto.$valid">
-            <div class="col-sm-2 col-centered">
-              <input type="submit" class="btn btn-success" value="{{'BTN.REVISAR_ANTEPROYECTO'|translate}}">
+          <div class="row row-centered" ng-if="formularioSubirAnteproyectoCorregido.$valid">
+            <div class="col-sm-3 col-centered">
+              <input type="submit" class="btn btn-success" value="{{'SUBIR_DOCUMENTO'|translate}}">
             </div>
           </div>
         </form>  
