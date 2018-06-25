@@ -255,6 +255,11 @@ angular
               controller: 'PasantiaActasSeguimientoCtrl',
               controllerAs: 'actasSeguimiento'
             })
+            .when('/general/registrar_nota', {
+              templateUrl: 'views/general/registrar_nota.html',
+              controller: 'GeneralRegistrarNotaCtrl',
+              controllerAs: 'registrarNotaVinculado'
+            })
             .otherwise({
                 redirectTo: '/'
             });
