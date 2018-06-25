@@ -285,6 +285,7 @@ var text_es = {
         CARGAR_DATOS_ESTUDIANTE:"Ocurrió un error al cargar los datos básicos del estudiante, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_CARRERA_ESTUDIANTE:"Ocurrió un error al cargar la carrera del estudiante, por favor verifique su conexión, e intente de nuevo.",
         REGISTRANDO_REVISION: "Ocurrió un error al registrar la revisión del anteproyecto seleccionado",
+        MODIFICANDO_ANTEPROYECTO: "Ocurrió un error al intentar actualizar el anteproyecto",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -548,7 +549,11 @@ var text_es = {
     CORREGIR_ANTEPROYECTO: {
         DESCRIPCION: "Subir versión corregida del anteproyecto",
         INSTRUCCIONES: "A continuación puede subir una nueva versión de su anteproyecto para atender a las observaciones de su revisor. El estado de su trabajo de grado cambiará para obtener una nueva revisión.",
+        CONFIRMACION: "Actualizar documento de trabajo de grado",
+        MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como nuevo documento de su trabajo de grado?",
+        ANTEPROYECTO_ACTUALIZADO: "El documento ha sido actualizado satisfactoriamente",
     },
+    MODIFICAR_ANTEPROYECTO: "Modificar anteproyecto",
 };
 
 /**
@@ -822,6 +827,7 @@ var text_en = {
         CARGAR_DATOS_ESTUDIANTE:"There was an error occurred loading the basic student data, please check your connection and try again.",
         CARGAR_CARRERA_ESTUDIANTE:"There was an error occurred loading the student's career, please check your connection and try again.",
         REGISTRANDO_REVISION: "An error ocurred when registering the review of the degree work proposal selected",
+        MODIFICANDO_ANTEPROYECTO: "An error occurred while trying to update the degree work proposal",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1050,7 +1056,7 @@ var text_en = {
         OPCIONADOS:"The following students will be eligible for the second call:",
         NO_ADMITIDOS:"The following students will not be admitted due to lack of quotas:",
         PROCESO_ADMISION_COMPLETO:"Admission process completed",
-        RESPUESTAS_SOLICITUD:"The data of the admission process has been registered successfully",
+        RESPUESTAS_SOLICITUD:"The data of the admission process has been successfully registered",
     },
     NO_OPCIONES_DISPONIBLES:"No options available",
     ACCESO_NEGADO:"Access denied",
@@ -1085,7 +1091,11 @@ var text_en = {
     CORREGIR_ANTEPROYECTO: {
         DESCRIPCION: "Upload new corrected degree work proposal version",
         INSTRUCCIONES: "Next you can upload a new version of your degree work proposal to meet the comments of your reviewer. The status of your degree work will change to obtain a new revision.",
+        CONFIRMACION: "Update degree work document",
+        MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as new document of your degree work?",
+        ANTEPROYECTO_ACTUALIZADO: "The document has been successfully updated",
     },
+    MODIFICAR_ANTEPROYECTO: "Modify degree work proposal",
 };
 
 /**

@@ -122,7 +122,8 @@
       <div class="panel-heading">
         {{'CORREGIR_ANTEPROYECTO.DESCRIPCION' | translate}}
       </div>
-      <div class="panel-body">
+      <loading tam="4" load="consultarTrabajoGrado.cargandoActualizarAnteproyecto" message="consultarTrabajoGrado.mensajeCargandoActualizarAnteproyecto"></loading>
+      <div class="panel-body" ng-if="!consultarTrabajoGrado.cargandoActualizarAnteproyecto">
         <form method="post" name="formularioSubirAnteproyectoCorregido" ng-submit="consultarTrabajoGrado.subirDocumento()">
           <div class="row">
             <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
