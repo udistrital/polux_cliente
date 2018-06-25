@@ -204,7 +204,7 @@ angular.module('poluxClienteApp')
        */
     ctrl.getEstudiantes = function(trabajoGrado){
       var defer = $q.defer();
-      //SE consultan los estudiantes activos en el trabajo de grado y sus datos
+      //Se consultan los estudiantes activos en el trabajo de grado y sus datos
       var parametrosEstudiantes = $.param({
         limit:0,
         query:"EstadoEstudianteTrabajoGrado.Id:1,TrabajoGrado.Id:"+trabajoGrado.Id,
@@ -246,6 +246,10 @@ angular.module('poluxClienteApp')
     ctrl.cargarTrabajo = function(fila){
       ctrl.cargandoTrabajo = true;
       ctrl.trabajoSeleccionado = fila.entity.TrabajoGrado;
+      //Se verifica que el estado del trabajo de grado sea listo para sustentar 17
+      if(ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 17){
+        ctrl.trabajoSeleccionado.estadoValido = true;
+      }
       //console.log(ctrl.registrarNota);
       //console.log(ctrl.trabajoSeleccionado);
       //Promesas del tg

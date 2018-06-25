@@ -72,8 +72,15 @@
             </div>
             <div class="panel-body">
                 <div ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
-                    <div class="row">
-                        
+                    <div ng-if="!registrarNotaVinculado.trabajoSeleccionado.estadoValido">
+                        <div class="panel-body">
+                            <div class="alert alert-danger">
+                                {{'ERROR' | translate}}: {{'ERROR.ESTADO_TRABAJO_GRADO_NO_PERMITE_REGISTRAR_NOTA'|translate}}
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="!registrarNotaVinculado.trabajoSeleccionado.estadoValido">
+
                     </div>
                 </div>
             </div>
