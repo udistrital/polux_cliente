@@ -1,14 +1,20 @@
-<br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        general/registrar_nota.
+        {{'REGISTRAR_NOTA.PANEL' | translate}}
     </div>
     <div class="panel-body">
-        <p>
-          Ahora puede empezar a construir la vista de general/registrar_nota.
-        </p>
-    </div>
-    <div class="panel-footer">
-        Panel Footer
+        <loading tam="4" load="registrarNotaVinculado.cargandoTrabajos" message="registrarNotaVinculado.mensajeTrabajos"> </loading>
+        <div ng-if="registrarNotaVinculado.errorCargando && !registrarNotaVinculado.cargandoTrabajos">
+            <div class="panel-body">
+                <div class="alert alert-danger">
+                    {{'ERROR' | translate}}: {{registrarNotaVinculado.mensajeError}}
+                </div>
+            </div>
+        </div>
+        <div ng-if="!registrarNotaVinculado.errorCargando && !registrarNotaVinculado.cargandoTrabajos">
+            <div class="panel col-md-12">
+                <div ui-grid="registrarNotaVinculado.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(registrarNotaVinculado.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+            </div>
+        </div>
     </div>
 </div>
