@@ -18,3 +18,65 @@
         </div>
     </div>
 </div>
+
+<div id="modalRegistrarNota" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            {{'REGISTRAR_NOTA.PANEL' | translate}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'DATOS_TRABAJO_GRADO' | translate}}
+            </div>
+            <div class="panel-body">
+                <loading tam="4" load="registrarNotaVinculado.cargandoTrabajo" message="registrarNotaVinculado.mensajeTrabajo"> </loading>
+                <div ng-if="registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
+                    <div class="panel-body">
+                        <div class="alert alert-danger">
+                            {{'ERROR' | translate}}: {{registrarNotaVinculado.mensajeErrorTrabajo}}
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'Nombre' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{registrarNotaVinculado.trabajoSeleccionado.Titulo}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'MODALIDAD' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{registrarNotaVinculado.trabajoSeleccionado.Modalidad.Nombre}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'PERIODO' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{registrarNotaVinculado.trabajoSeleccionado.PeriodoAcademico}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{registrarNotaVinculado.trabajoSeleccionado.EstadoTrabajoGrado.Nombre}} </label>
+                    </div>
+                    <div ng-repeat="estudiante in registrarNotaVinculado.trabajoSeleccionado.estudiantes">
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{'CODIGO' | translate}}: </label>
+                            <label class="control-label col-sm-4"> {{estudiante.datos.codigo}} </label>
+                            <label class="control-label col-sm-1"> {{'NOMBRE' | translate}}: </label>
+                            <label class="control-label col-sm-5"> {{estudiante.datos.nombre}} </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo && registrarNotaVinculado.registrarNota">
+            <div class="panel-heading">
+                {{'REGISTRAR_NOTA.PANEL' | translate}}
+            </div>
+            <div class="panel-body">
+                <div ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
+                    <div class="row">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

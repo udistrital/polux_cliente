@@ -11,20 +11,25 @@
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxService.service:poluxRequest
+ * @requires services/academicaService.service:academicaRequest
  * @requires $q
  * @requires $scope
  * @property {String} documento Documento del docente que entra al modulo y que va a registrar las notas
  * @property {Boolean} cargandoTrabajos Bandera que muestra el loading y permite identificar cuando se cargaron todos los trabajos
  * @property {String} mensajeTrabajos Mensaje que se muestra mientras se cargan lso trabajos
+ * @property {Boolean} cargandoTrabajo Bandera que muestra el loading y permite identificar cuando se cargo el trabajo en especifigo
+ * @property {String} mensajeTrabajo Mensaje que se muestra mientras se carga un trabajo de grado
  * @property {Boolean} errorCargando Bandera que indica que ocurrió un error y permite mostrarlo
+ * @property {Boolean} errorCargandoTrabajo Bandera que indica que ocurrió un error cargando un trabajo de grado especifico y permite mostrarlo
  * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error
+ * @property {String} mensajeErrorTrabajo Mensaje que se muestra cuando ocurre un error cargando un trabajo especifico
  * @property {Object} gridOptions Opciones del ui-grid que muestra los trabajos de grado a los cuales se vincula el usuario
  * @property {Boolean} registrarNota Bandera que permite identificar la acción que se quiere realizar
  * @property {Object} trabajoSeleccionado Trabajo seleccionado en un ui-grid
  * 
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest) {
+  .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest) {
     var ctrl = this;
 
     token_service.token.documento = "79647592";
@@ -32,6 +37,7 @@ angular.module('poluxClienteApp')
     ctrl.documento = token_service.token.documento;
 
     ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
+    ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
     ctrl.cargandoTrabajos = true;
 
     $scope.botonesNota = [
@@ -153,6 +159,83 @@ angular.module('poluxClienteApp')
 
     /**
        * @ngdoc method
+       * @name getEstudiante
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @description
+       * Función que permite cargar los datos básicos de un estudiante
+       * @param {object} estudiante Estudiante que se consulta
+       * @returns {Promise} Retorna una promesa que se soluciona sin regresar ningún parametro.
+       */
+    ctrl.getEstudiante = function(estudiante){
+      var defer = $q.defer();
+      //consultar datos básicos del estudiante
+      academicaRequest.get("datos_basicos_estudiante",[estudiante.Estudiante])
+      .then(function(responseDatosBasicos){
+        if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+          estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
+          defer.resolve();
+          //consultar nombre carrera
+          /*academicaRequest.get("carrera",[estudiante.datos.carrera])
+          .then(function(responseCarrera){
+            estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
+            defer.resolve();
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });*/
+        }else{
+          defer.reject(error);
+        }
+      })
+      .catch(function(error){
+        defer.reject(error);
+      });
+      return defer.promise;
+    }
+
+    /**
+       * @ngdoc method
+       * @name getEstudiantes
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @description
+       * Función que permite cargar los estudiantes que realizan un trabajo de grado
+       * @param {object} trabajoGrado Trabajo de grado que se consulta
+       * @returns {Promise} Retorna una promesa que se soluciona sin regresar ningún parametro.
+       */
+    ctrl.getEstudiantes = function(trabajoGrado){
+      var defer = $q.defer();
+      //SE consultan los estudiantes activos en el trabajo de grado y sus datos
+      var parametrosEstudiantes = $.param({
+        limit:0,
+        query:"EstadoEstudianteTrabajoGrado.Id:1,TrabajoGrado.Id:"+trabajoGrado.Id,
+      });
+      poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
+      .then(function(responseEstudiantes){
+        if(responseEstudiantes.data != null){
+          trabajoGrado.estudiantes = responseEstudiantes.data;
+          var promesasEstudiante = [];
+          angular.forEach(trabajoGrado.estudiantes, function(estudiante){
+            promesasEstudiante.push(ctrl.getEstudiante(estudiante));
+          });
+          $q.all(promesasEstudiante)
+          .then(function(){
+            defer.resolve();
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });
+        }else{
+          defer.reject("Sin estudiantes");
+        }
+      })
+      .catch(function(error){
+        defer.reject(error);
+      });
+      return defer.promise;
+    }
+
+    /**
+       * @ngdoc method
        * @name cargarTrabajo
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
@@ -161,9 +244,26 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún parametro
        */
     ctrl.cargarTrabajo = function(fila){
-      ctrl.trabajoSeleccionado = fila.entity;
+      ctrl.cargandoTrabajo = true;
+      ctrl.trabajoSeleccionado = fila.entity.TrabajoGrado;
       //console.log(ctrl.registrarNota);
       //console.log(ctrl.trabajoSeleccionado);
+      //Promesas del tg
+      var promesasTrabajo = [];
+      promesasTrabajo.push(ctrl.getEstudiantes(ctrl.trabajoSeleccionado));
+      //Se muestra el modal
+      $('#modalRegistrarNota').modal('show');
+      $q.all(promesasTrabajo)
+      .then(function(){
+        ctrl.cargandoTrabajo = false;
+        console.log(ctrl.trabajoSeleccionado);
+      })
+      .catch(function(error){
+        console.log(error);
+        ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
+        ctrl.errorCargandoTrabajo = true;
+        ctrl.cargandoTrabajo = false;
+      });
     }
     
 
