@@ -337,8 +337,9 @@ angular.module('poluxClienteApp')
 
               var getExterno = function(detalle){
                 var defer = $q.defer();
+                console.log(detalle);
                 var parametrosVinculado = $.param({
-                  query:"TrabajoGrado:"+detalle.Descripcion,
+                  query:"TrabajoGrado:"+detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
                   limit:0
                 });
                 poluxRequest.get("detalle_pasantia",parametrosVinculado)
@@ -424,6 +425,7 @@ angular.module('poluxClienteApp')
                 defered.resolve(ctrl.detallesSolicitud);
               })
               .catch(function(error){
+                ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUD");
                 defered.reject(error);
               });
           })

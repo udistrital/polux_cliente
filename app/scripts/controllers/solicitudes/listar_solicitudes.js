@@ -832,7 +832,7 @@ angular.module('poluxClienteApp')
               var getExterno = function(detalle){
                 var defer = $q.defer();
                 var parametrosVinculado = $.param({
-                  query:"TrabajoGrado:"+detalle.Descripcion,
+                  query:"TrabajoGrado:"+detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
                   limit:0
                 });
                 poluxRequest.get("detalle_pasantia",parametrosVinculado)
