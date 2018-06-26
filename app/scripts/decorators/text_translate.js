@@ -387,6 +387,7 @@ var text_es = {
       CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS:"Cargando los trabajos de grado asociados",
       REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
       CARGANDO_DATOS_TRABAJO_GRADO:"Cargando datos del trabajo de grado",
+      REGISTRANDO_NOTA:"Registrando nota",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -405,6 +406,7 @@ var text_es = {
       NUCLEO_SNIES:"Seleccione el núcleo básico",
       INCLUIR_CODIRECTOR:"¿Desea incluir codirector en el proyecto?",
       DESEA_CAMBIAR_VINCULADO:"¿Desea cambiar alguno de los docentes vinculados al proyecto?",
+      ACTA_SUSTENTACION:"Seleccione el acta de sustentación del trabajo de grado",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Cargar documento",
@@ -962,6 +964,7 @@ var text_en = {
       CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS:"Loading associated degree works",
       REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
       CARGANDO_DATOS_TRABAJO_GRADO:"Loading degree work data",
+      REGISTRANDO_NOTA:"Registering grade",
     },
     SELECT:{
       SELECCIONE:"Select an option",
@@ -980,6 +983,7 @@ var text_en = {
       NUCLEO_SNIES:"Select the basic core",
       INCLUIR_CODIRECTOR:"Do you want to include a co-director in the project?",
       DESEA_CAMBIAR_VINCULADO:"¿Do you want to change any of the teachers linked to the project?",
+      ACTA_SUSTENTACION:"Select the degree work support certificate",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Load document",

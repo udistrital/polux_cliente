@@ -12,6 +12,7 @@
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxService.service:poluxRequest
  * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxClienteApp.service:nuxeoService
  * @requires $q
  * @requires $scope
  * @property {String} documento Documento del docente que entra al modulo y que va a registrar las notas
@@ -23,13 +24,14 @@
  * @property {Boolean} errorCargandoTrabajo Bandera que indica que ocurrió un error cargando un trabajo de grado especifico y permite mostrarlo
  * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error
  * @property {String} mensajeErrorTrabajo Mensaje que se muestra cuando ocurre un error cargando un trabajo especifico
+ * @property {String} mensajeRegistrandoNota Mensaje que se muestra mientras se registra una nota
  * @property {Object} gridOptions Opciones del ui-grid que muestra los trabajos de grado a los cuales se vincula el usuario
  * @property {Boolean} registrarNota Bandera que permite identificar la acción que se quiere realizar
  * @property {Object} trabajoSeleccionado Trabajo seleccionado en un ui-grid
  * 
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest) {
+  .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest,nuxeo) {
     var ctrl = this;
 
     token_service.token.documento = "79647592";
@@ -38,6 +40,7 @@ angular.module('poluxClienteApp')
 
     ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
     ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
+    ctrl.mensajeRegistrandoNota = $translate.instant('LOADING.REGISTRANDO_NOTA');
     ctrl.cargandoTrabajos = true;
 
     $scope.botonesNota = [
@@ -270,6 +273,93 @@ angular.module('poluxClienteApp')
       });
     }
     
+    /**
+     * @ngdoc method
+     * @name registrarNota
+     * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+     * @description
+     * Función que permite guardar la nota que se registra en un trabajo de grado, guarda el acta de sustentación y la asocia
+     * a un documento escrito.
+     * @param {undefined}  undefined No recibe ningún parametro
+     * @returns {undefined} No retorna ningún parametro
+     */
+    ctrl.registrarNotaTG = function(){
+      ctrl.registrandoNotaTG = true;
+      var nombreDocumento = "Acta de sustentación de trabajo id: "+ctrl.trabajoSeleccionado.Id;
+      var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
+      //Se carga el documento
+      ctrl.cargarDocumento(nombreDocumento,descripcionDocumento,ctrl.trabajoSeleccionado.actaSustentacion)
+      .then(function(urlActa){
+        console.log("acta", urlActa);
+        console.log("nota", ctrl.trabajoSeleccionado.nota);
+        ctrl.registrandoNotaTG = false;
+      })
+      .catch(function(error){
+        console.log(error);
+        ctrl.registrandoNotaTG = false;
+        swal(
+          $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+          $translate.instant("VERIFICAR_DOCUMENTO"),
+          'warning'
+        );
+      });
+    }
+
+    /**
+     * @ngdoc method
+     * @name cargarDocumento
+     * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+     * @param {string} nombre Nombre del documento que se cargara
+     * @param {string} descripcion Descripcion del documento que se cargara
+     * @param {blob} documento Blob del documento que se cargara
+     * @returns {undefined} No retorna ningun valor
+     * @description 
+     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     */
+    ctrl.cargarDocumento = function(nombre, descripcion, documento){
+      var defer = $q.defer();
+      /*nuxeo.connect()
+      .then(function(client) {*/
+      nuxeo.operation('Document.Create')
+        .params({
+          type: 'File',
+          name: nombre,
+          properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
+        })
+        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas de sustentacion')
+        .execute()
+        .then(function(doc) {
+            var nuxeoBlob = new Nuxeo.Blob({ content: documento });
+            nuxeo.batchUpload()
+            .upload(nuxeoBlob)
+            .then(function(res) {
+              return nuxeo.operation('Blob.AttachOnDocument')
+                  .param('document', doc.uid)
+                  .input(res.blob)
+                  .execute();
+            })
+            .then(function() {
+              return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
+            })
+            .then(function(doc) {
+              var url = doc.uid;
+              defer.resolve(url);
+            })
+            .catch(function(error) {
+              defer.reject(error);
+            });
+        })
+        .catch(function(error) {
+            defer.reject(error);
+        });
+      /*})
+      .catch(function(error){
+        // cannot connect
+        defer.reject(error);
+      });*/
+      return defer.promise;
+    };
+
 
     /**
      * @ngdoc method
