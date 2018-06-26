@@ -337,7 +337,6 @@ angular.module('poluxClienteApp')
 
               var getExterno = function(detalle){
                 var defer = $q.defer();
-                console.log(detalle);
                 var parametrosVinculado = $.param({
                   query:"TrabajoGrado:"+detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
                   limit:0
