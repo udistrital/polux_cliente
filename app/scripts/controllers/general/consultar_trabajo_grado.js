@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
     ctrl.userId = token_service.token.documento;
 
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
-    ctrl.mensajeCargandoActualizarAnteproyecto = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
+    ctrl.mensajeCargandoActualizarTg = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
     ctrl.trabajoCargado = false;
 
     ctrl.gridOptionsAsignaturas = [];
@@ -243,6 +243,12 @@ angular.module('poluxClienteApp')
                 ctrl.userRole.includes('ESTUDIANTE')) {
                 ctrl.esAnteproyectoModificable = true;
               }
+              //Si el anteproyecto es viable se puede subir la primera versión del proyecto
+              if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
+                  ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10) &&
+                ctrl.userRole.includes('ESTUDIANTE')) {
+                ctrl.esPrimeraVersion = true;
+              }
               var promises = [];
               ctrl.trabajoGrado.estudiante = {
                 "codigo": ctrl.codigoEstudiante
@@ -339,25 +345,25 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
-     * @name subirCorreccionesAnteproyecto
+     * @name actualizarTg
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description 
-     * Permite mostrar el contenido del modal que habilita subir el documento del anteproyecto corregido
+     * Permite mostrar el contenido del modal que habilita subir el documento nuevo y actualizar el tg
      * @param {undefined} undefined No requiere parámetros
      * @returns {undefined} No hace retorno de resultados
      */
-    ctrl.subirCorreccionesAnteproyecto = function() {
-      ctrl.cargandoActualizarAnteproyecto = true;
-      $('#modalRevisarAnteproyecto').modal('show');
+    ctrl.actualizarTg = function() {
+      ctrl.cargandoActualizarTg = true;
+      $('#modalActualizarTg').modal('show');
       ctrl.consultarDocumentoTrabajoGrado(ctrl.trabajoGrado)
         .then(function(respuestaDocumentoTrabajoGrado) {
-          ctrl.cargandoActualizarAnteproyecto = false;
+          ctrl.cargandoActualizarTg = false;
         })
         .catch(function(excepcionDocumentoTrabajoGrado) {
-          ctrl.cargandoActualizarAnteproyecto = false;
+          ctrl.cargandoActualizarTg = false;
           swal(
-            $translate.instant("MODIFICAR_ANTEPROYECTO"),
-            $translate.instant("ERROR.MODIFICANDO_ANTEPROYECTO"),
+            $translate.instant("MODIFICAR_TG"),
+            $translate.instant("ERROR.MODIFICANDO_TG"),
             'warning'
           );
         });
@@ -431,12 +437,20 @@ angular.module('poluxClienteApp')
      */
     ctrl.actualizarDocumentoTrabajoGrado = function(respuestaCargarDocumento) {
       var deferred = $q.defer();
-      ctrl.trabajoGrado.EstadoTrabajoGrado = {
-        Id: 4
-      };
+      if (ctrl.esAnteproyectoModificable) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 4
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
+      }
+      if (ctrl.esPrimeraVersion) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 13
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
+      }
       delete ctrl.trabajoGrado.documentoEscrito.Id
       ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
-      ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
       var documentoTrabajoGrado = {
         Id: ctrl.trabajoGrado.documentoTrabajoGrado,
         TrabajoGrado: {
@@ -472,39 +486,61 @@ angular.module('poluxClienteApp')
      * @returns {undefined} No hace retorno de resultados
      */
     ctrl.subirDocumento = function() {
-      ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del anteproyecto", ctrl.AnteproyectoCorregido)
-        .then(function(respuestaCargarDocumento) {
-          swal({
-              title: $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-              text: $translate.instant("CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION"),
-              type: "info",
-              confirmButtonText: $translate.instant("ACEPTAR"),
-              cancelButtonText: $translate.instant("CANCELAR"),
-              showCancelButton: true
-            })
-            .then(function(confirmacionDelUsuario) {
-              if (confirmacionDelUsuario.value) {
-                ctrl.loadTrabajoGrado = true;
-                ctrl.cargandoActualizarAnteproyecto = true;
+      var descripcionDocumento;
+      var titleConfirmacion;
+      var mensajeConfirmacion;
+      var mensajeSuccess;
+      var mensajeError;
+      if (ctrl.esAnteproyectoModificable) {
+        descripcionDocumento = "Versión nueva del anteproyecto";
+        titleConfirmacion = "CORREGIR_ANTEPROYECTO.CONFIRMACION";
+        mensajeConfirmacion = "CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO";
+      }
+      if (ctrl.esPrimeraVersion) {
+        descripcionDocumento = "Primera versión del trabajo de grado";
+        titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
+        mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
+      }
+      swal({
+          title: $translate.instant(titleConfirmacion),
+          text: $translate.instant(mensajeConfirmacion),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          if (confirmacionDelUsuario.value) {
+            ctrl.loadTrabajoGrado = true;
+            ctrl.cargandoActualizarTg = true;
+            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion)
+              .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
-                  .then(function(respuestaActualizarAnteproyecto) {
-                    if (respuestaActualizarAnteproyecto.data[0] === "Success") {
+                  .then(function(respuestaActualizarTG) {
+                    if (respuestaActualizarTG.data[0] === "Success") {
                       ctrl.loadTrabajoGrado = false;
-                      ctrl.cargandoActualizarAnteproyecto = false;
+                      ctrl.cargandoActualizarTg = false;
                       swal(
-                        $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                        $translate.instant("CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO"),
+                        $translate.instant(titleConfirmacion),
+                        $translate.instant(mensajeSuccess),
                         'success'
                       );
                       ctrl.consultarTrabajoGrado();
-                      ctrl.esAnteproyectoModificable = false;
-                      $('#modalRevisarAnteproyecto').modal('hide');
+                      if (ctrl.esAnteproyectoModificable) {
+                        ctrl.esAnteproyectoModificable = false
+                      }
+                      if (ctrl.esPrimeraVersion) {
+                        ctrl.esPrimeraVersion = false
+                      }
+                      $('#modalActualizarTg').modal('hide');
                     } else {
                       ctrl.loadTrabajoGrado = false;
-                      ctrl.cargandoActualizarAnteproyecto = false;
+                      ctrl.cargandoActualizarTg = false;
                       swal(
-                        $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                        $translate.instant(respuestaActualizarAnteproyecto.data[1]),
+                        $translate.instant(titleConfirmacion),
+                        $translate.instant(respuestaActualizarTG.data[1]),
                         'warning'
                       );
                     }
@@ -512,23 +548,26 @@ angular.module('poluxClienteApp')
                   .catch(function(excepcionActualizarAnteproyecto) {
                     console.log(excepcionActualizarAnteproyecto);
                     ctrl.loadTrabajoGrado = false;
-                    ctrl.cargandoActualizarAnteproyecto = false;
+                    ctrl.cargandoActualizarTg = false;
                     swal(
-                      $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                      $translate.instant("ERROR.MODIFICANDO_ANTEPROYECTO"),
+                      $translate.instant(titleConfirmacion),
+                      $translate.instant("ERROR.MODIFICANDO_TG"),
                       'warning'
                     );
                   });
-              }
-            });
-        })
-        .catch(function(excepcionCargarDocumento) {
-          swal(
-            $translate.instant("ERROR.SUBIR_DOCUMENTO"),
-            $translate.instant("VERIFICAR_DOCUMENTO"),
-            'warning'
-          );
+              })
+              .catch(function(excepcionCargarDocumento) {
+                swal(
+                  $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                  $translate.instant("VERIFICAR_DOCUMENTO"),
+                  'warning'
+                );
+                ctrl.loadTrabajoGrado = false;
+                ctrl.cargandoActualizarAnteproyecto = false;
+              });
+          }
         });
+
     }
 
   });

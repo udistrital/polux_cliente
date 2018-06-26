@@ -285,7 +285,7 @@ var text_es = {
         CARGAR_DATOS_ESTUDIANTE:"Ocurrió un error al cargar los datos básicos del estudiante, por favor verifique su conexión, e intente de nuevo.",
         CARGAR_CARRERA_ESTUDIANTE:"Ocurrió un error al cargar la carrera del estudiante, por favor verifique su conexión, e intente de nuevo.",
         REGISTRANDO_REVISION: "Ocurrió un error al registrar la revisión del anteproyecto seleccionado",
-        MODIFICANDO_ANTEPROYECTO: "Ocurrió un error al intentar actualizar el anteproyecto",
+        MODIFICANDO_TG:"Ocurrió un error al intentar actualizar el trabajo de grado",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -545,6 +545,7 @@ var text_es = {
     ANTEPROYECTO: "Anteproyecto",
     ROL: "Papel",
     ANTEPROYECTO_MODIFICABLE: "Su anteproyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas.",
+    PROYECTO_VIABLE_WARNING: "Su trabajo de grado pasó a viable luego de la revisión de su evaluador. Por favor suba la primera versión de su trabajo de grado para comenzar las revisiones.",
     SUBIR_CORRECCIONES_ANTEPROYECTO: "Subir anteproyecto corregido",
     CORREGIR_ANTEPROYECTO: {
         DESCRIPCION: "Subir versión corregida del anteproyecto",
@@ -553,7 +554,18 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como nuevo documento de su trabajo de grado?",
         ANTEPROYECTO_ACTUALIZADO: "El documento ha sido actualizado satisfactoriamente",
     },
-    MODIFICAR_ANTEPROYECTO: "Modificar anteproyecto",
+    MODIFICAR_TG: "Modificar trabajo de grado",
+    ACTUALIZAR_TG:{
+        DESCRIPCION:"Subir versión nueva del documento",
+    },
+    PRIMERA_VERSION:{
+        OBSERVACIONES:"Observaciones sobre la primera versión",
+        INSTRUCCIONES:"A continuación puede subir la primera versión de su trabajo de grado. El estado de su trabajo de grado cambiará para empezar las revisión.",
+        CONFIRMACION: "Actualizar documento de trabajo de grado",
+        MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como la primera versión de su trabajo de grado?",
+        TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
+        SUBIR:"Subir primera versión",
+    },
 };
 
 /**
@@ -827,7 +839,7 @@ var text_en = {
         CARGAR_DATOS_ESTUDIANTE:"There was an error occurred loading the basic student data, please check your connection and try again.",
         CARGAR_CARRERA_ESTUDIANTE:"There was an error occurred loading the student's career, please check your connection and try again.",
         REGISTRANDO_REVISION: "An error ocurred when registering the review of the degree work proposal selected",
-        MODIFICANDO_ANTEPROYECTO: "An error occurred while trying to update the degree work proposal",
+        MODIFICANDO_TG: "An error occurred while trying to update the degree work",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1087,15 +1099,27 @@ var text_en = {
     ANTEPROYECTO: "Degree work proposal",
     ROL: "Role",
     ANTEPROYECTO_MODIFICABLE: "Your degree work proposal became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received.",
+    PROYECTO_VIABLE_WARNING: "Your degree work became viable after the review of your evaluator. Please upload your degree work's first version in order to start the reviews.",
     SUBIR_CORRECCIONES_ANTEPROYECTO: "Upload corrected degree work proposal",
     CORREGIR_ANTEPROYECTO: {
         DESCRIPCION: "Upload new corrected degree work proposal version",
-        INSTRUCCIONES: "Next you can upload a new version of your degree work proposal to meet the comments of your reviewer. The status of your degree work will change to obtain a new revision.",
+        INSTRUCCIONES: "Next you can upload a new version of your degree work proposal to meet the comments of your reviewer. The status of your degree work will change to obtain a new review.",
         CONFIRMACION: "Update degree work document",
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as new document of your degree work?",
         ANTEPROYECTO_ACTUALIZADO: "The document has been successfully updated",
     },
-    MODIFICAR_ANTEPROYECTO: "Modify degree work proposal",
+    MODIFICAR_TG: "Modify degree work",
+    ACTUALIZAR_TG:{
+        DESCRIPCION:"Upload new document version",
+    },
+    PRIMERA_VERSION:{
+        OBSERVACIONES:"Degree work first version comments",
+        INSTRUCCIONES:"Next you can upload the first version of your degree work. The status of your degree work will change to obtain a first review.",
+        CONFIRMACION: "Update degree work document",
+        MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the first version of your degree work?",
+        TG_ACTUALIZADO: "The degree work has been successfully updated",
+        SUBIR:"Upload first version",
+    },
 };
 
 /**
