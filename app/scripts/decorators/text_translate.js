@@ -286,6 +286,8 @@ var text_es = {
         CARGAR_CARRERA_ESTUDIANTE:"Ocurrió un error al cargar la carrera del estudiante, por favor verifique su conexión, e intente de nuevo.",
         REGISTRANDO_REVISION: "Ocurrió un error al registrar la revisión del anteproyecto seleccionado",
         MODIFICANDO_TG:"Ocurrió un error al intentar actualizar el trabajo de grado",
+        SIN_DOCENTE: "No existe información relacionada con los docentes asociados al trabajo de grado.",
+        CARGANDO_DOCENTE: "Ocurrió un error al intentar consultar los docentes de los trabajos de grado consultados. Comuníquese con el administrador.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -840,6 +842,8 @@ var text_en = {
         CARGAR_CARRERA_ESTUDIANTE:"There was an error occurred loading the student's career, please check your connection and try again.",
         REGISTRANDO_REVISION: "An error ocurred when registering the review of the degree work proposal selected",
         MODIFICANDO_TG: "An error occurred while trying to update the degree work",
+        SIN_DOCENTE: "There is no information related to the teachers associated with the degree work.",
+        CARGANDO_DOCENTE: "An error occurred when trying to query the teachers of the degree works consulted. Contact the administrator.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
