@@ -1,47 +1,56 @@
 <div class="panel panel-primary panel-body">
-    <center>
-        <h3 class="page-header">
-            {{'REVISION_DOCUMENTOS' | translate}}
-        </h3>
-    </center>
-    <div class="row">
-        <div class="col-md-2">
-            <label>
-                 <label>{{'SELECCION_PROYECTO' | translate}}:</label>
-            </label>
-        </div>
+  <center>
+    <h3 class="page-header">
+      {{'REVISION_DOCUMENTOS' | translate}}
+    </h3>
+  </center>
 
-        <div class="col-md-7">
-            <ui-select ng-model="docenterevision.trabajo_grado.selected" theme="select2" on-select="docenterevision.ver_seleccion($item, $model)" style="width:100%;">
-                <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.TrabajoGrado.Titulo}}</ui-select-match>
-                <ui-select-choices repeat="trabajo in docenterevision.vinculacion_docente | filter: $select.search">
-                    <span ng-bind-html="trabajo.TrabajoGrado.Titulo | highlight: $select.search"></span>
-                    <small ng-bind-html="trabajo.Docente.NOMBRE | highlight: $select.search"></small>
-                </ui-select-choices>
-            </ui-select>
+  <loading tam="4" load="docenterevision.cargandoProyectos" message="docenterevision.mensajeCargandoProyectos"></loading>
+  <div ng-if="!docenterevision.cargandoTrabajoGrado && docenterevision.vinculaciones" class="panel panel-default">
+    <div class="panel-heading">
+      <center>
+        <h3 class="panel-title">{{'VINCULACIONES_TRABAJO_GRADO' | translate}}</h3>
+      </center>
+    </div>
+    <div class="panel-body">
+      <div class="row" ng-if="docenterevision.vinculaciones">
+        <label class="col-sm-2">{{'SELECCION_PROYECTO' | translate}}:</label>
+        <div class="col-md-10">
+          <ui-select name="proyecto" ng-model="docenterevision.proyectoSeleccionado" required on-select="docenterevision.seleccionarProyecto()" style="width:97%;" theme="bootstrap">
+            <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.TrabajoGrado.Titulo}}</ui-select-match>
+            <ui-select-choices repeat="proyecto in docenterevision.vinculaciones | filter: $select.search">
+              <span ng-bind-html="proyecto.TrabajoGrado.Titulo | highlight: $select.search"></span>
+              (<span ng-bind-html="proyecto.TrabajoGrado.Modalidad.Nombre | highlight: $select.search"></span>)
+               - {{'ROL' | translate}}:
+              <span ng-bind-html="proyecto.RolTrabajoGrado.Nombre | highlight: $select.search"></span>
+            </ui-select-choices>
+          </ui-select>
         </div>
+        <br>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" ng-show="docenterevision.documento">
+    <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+        <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}} </label>
+        <ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc" />
+        <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
     </div>
 
-    <div class="row" ng-show="docenterevision.documento">
-        <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-            <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}} </label>
-            <ver-documento documentoid="docenterevision.doc" loadpag="docenterevision.pagina" selectpag="docenterevision.pagina2" minified="mindoc" />
-            <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
+    <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
         </div>
-
-        <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
-                </div>
-                <div class="panel-body">
-                    <div ng-repeat="revision in docenterevision.revisionesd">
-                        <ver-revision revisionid="revision.Id" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'" />
-                        <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" ng-if="revision.EstadoRevisionTrabajoGrado.Id != 3" />
-                    </div>
-                </div>
-            </div>
+        <div class="panel-body">
+          <div ng-repeat="revision in docenterevision.revisionesd">
+            <ver-revision revisionid="revision.Id" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'" />
+            <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" ng-if="revision.EstadoRevisionTrabajoGrado.Id != 3" />
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
 </div>

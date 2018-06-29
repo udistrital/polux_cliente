@@ -110,7 +110,7 @@ angular.module('poluxClienteApp')
     /**
      * @ngdoc method
      * @name consultarVinculacionTrabajoGrado
-     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
      * @description
      * Función que recorre la base de datos de acuerdo al trabajo de grado y trae sus vinculaciones asociadas.
      * Llama a la función: obtenerParametrosVinculacionTrabajoGrado.
@@ -325,6 +325,8 @@ angular.module('poluxClienteApp')
      */
     ctrl.actualizarContenidoRevisiones = function() {
       ctrl.cargandoTrabajoGrado = true;
+      ctrl.errorCargandoTrabajoGrado = false;
+      ctrl.errorRevisionesTrabajoGrado = false;
       ctrl.consultarEstudianteTrabajoGrado()
         .then(function(trabajoDeGradoConsultado) {
           if (trabajoDeGradoConsultado.documentoEscrito &&

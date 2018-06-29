@@ -34,7 +34,7 @@ var text_es = {
     BUSCAR_FORMATOS: "Buscar Formatos",
     FECHA: "Fecha",
     HORA: "Hora",
-    SELECCION_PROYECTO: "Seleccione el Proyecto",
+    SELECCION_PROYECTO: "Seleccione el proyecto",
     LUGAR: "Lugar",
     SELECCIONE_FORMATO: "Seleccione el formato",
     AREAS_CONOCIMIENTO: "Áreas de Conocimiento",
@@ -378,6 +378,7 @@ var text_es = {
       REGISTRANDO_RESPUESTAS:"Registrando respuestas de las solicitudes del proceso de admisión",
       CARGANDO_DATOS_TRABAJO_GRADO:"Cargando datos del trabajo de grado",
       CARGANDO_ANTEPROYECTOS: "Cargando anteproyectos",
+      CARGANDO_PROYECTOS: "Cargando proyectos asociados",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -600,6 +601,7 @@ var text_en = {
     ASIGNAR_DOCENTE: "Assign Teacher",
     FECHA: "Date",
     HORA: "Time",
+    SELECCION_PROYECTO: "Select the project",
     SELECCIONE_FORMATO: "Select the format",
     AREAS_CONOCIMIENTO: "Knowledge Area",
     LISTAR_SOLICITUDES: "List of request",
@@ -943,6 +945,7 @@ var text_en = {
       REGISTRANDO_RESPUESTAS:"Registering responses to applications for the admission process",
       CARGANDO_DATOS_TRABAJO_GRADO:"Loading degree work data",
       CARGANDO_ANTEPROYECTOS: "Loading degree work proposals",
+      CARGANDO_PROYECTOS: "Loading associated projects",
     },
     SELECT:{
       SELECCIONE:"Select an option",
