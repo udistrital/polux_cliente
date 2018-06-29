@@ -101,6 +101,7 @@ var text_es = {
     LA_REVISION: "La revisión ",
     LA_REVISION_SE_ENCUENTRA: " se encuentra solicitada ",
     SUBIR_DOCUMENTO: "Subir Documento",
+    SUBIR_NUEVA_VERSION: "Subir nueva versión del documento",
     PUBLICAR_ASIGNATURA: "Publicar asignatura",
     SOLICITUDES_DEL_ESTUDIANTE: "Solicitudes del estudiante",
     NINGUNA_SOLICITUD_REALIZADA: "Ninguna solicitud realizada",
@@ -249,7 +250,7 @@ var text_es = {
         INDEFINIDA_INFO_ACADEMICA: "No hay información académica definida para esta operación.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "No hay información asociada a los espacios académicos inscritos de los trabajos de grado consultados.",
         CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS: "Ocurrió un error al intentar consultar los espacios académicos inscritos de los trabajos de grado consultados. Comuníquese con el administrador.",
-        SIN_ESTUDIANTE_TRABAJO_GRADO: "No hay información asociada a los estudiantes de los trabajos de grado consultados.",
+        SIN_ESTUDIANTE_TRABAJO_GRADO: "No hay información estudiantil asociada a los trabajos de grado consultados.",
         CARGANDO_ESTUDIANTE_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los estudiantes de los trabajos de grado consultados. Comuníquese con el administrador.",
         SIN_TRABAJO_GRADO: "No hay información asociada a los trabajos de grado consultados.",
         CARGANDO_TRABAJO_GRADO: "Ocurrió un error al intentar consultar los trabajos de grado consultados. Comuníquese con el administrador.",
@@ -288,6 +289,8 @@ var text_es = {
         MODIFICANDO_TG:"Ocurrió un error al intentar actualizar el trabajo de grado",
         SIN_DOCENTE: "No existe información relacionada con los docentes asociados al trabajo de grado.",
         CARGANDO_DOCENTE: "Ocurrió un error al intentar consultar los docentes de los trabajos de grado consultados. Comuníquese con el administrador.",
+        SIN_REVISIONES: "No existen registros de revisiones asociadas al documento en presentación.",
+        CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al documento en presentación. Comuníquese con el administrador.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -568,6 +571,10 @@ var text_es = {
         TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
         SUBIR:"Subir primera versión",
     },
+    NUEVA_VERSION: {
+        MENSAJE: "Actualización del documento",
+        INSTRUCCIONES: "A continuación puede subir una nueva versión del documento del trabajo de grado."
+    }
 };
 
 /**
@@ -659,6 +666,7 @@ var text_en = {
     LA_REVISION: "The review ",
     LA_REVISION_SE_ENCUENTRA: " is in process",
     SUBIR_DOCUMENTO: "Upload document",
+    SUBIR_NUEVA_VERSION: "Upload new document version",
     PUBLICAR_ASIGNATURA: "Announce subject",
     SOLICITUDES_DEL_ESTUDIANTE: "Student solicitudes",
     NINGUNA_SOLICITUD_REALIZADA: "You have not done any request",
@@ -805,7 +813,7 @@ var text_en = {
         INDEFINIDA_INFO_ACADEMICA: "There is no academic information defined for this operation.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "There is no information associated to the academic spaces enrolled of the degree works consulted.",
         CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS: "An error occurred when trying to query the academic spaces enrolled for the degree works consulted. Contact the administrator.",
-        SIN_ESTUDIANTE_TRABAJO_GRADO: "There is no information associated to the students of the degree works consulted.",
+        SIN_ESTUDIANTE_TRABAJO_GRADO: "There is no student information associated to the degree works consulted.",
         CARGANDO_ESTUDIANTE_TRABAJO_GRADO: "An error occurred when trying to query the students for the degree works consulted. Contact the administrator.",
         SIN_TRABAJO_GRADO: "There is no information associated to the degree works consulted.",
         CARGANDO_TRABAJO_GRADO: "An error occurred when trying to query the degree works consulted. Contact the administrator.",
@@ -844,6 +852,8 @@ var text_en = {
         MODIFICANDO_TG: "An error occurred while trying to update the degree work",
         SIN_DOCENTE: "There is no information related to the teachers associated with the degree work.",
         CARGANDO_DOCENTE: "An error occurred when trying to query the teachers of the degree works consulted. Contact the administrator.",
+        SIN_REVISIONES: "There are no reviews records associated with the document in presentation.",
+        CARGANDO_REVISIONES: "An error occurred when trying to check the revisions associated with the document in presentation. Contact the administrator.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1123,7 +1133,10 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the first version of your degree work?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
         SUBIR:"Upload first version",
-    },
+    },NUEVA_VERSION: {
+        MENSAJE: "Document update",
+        INSTRUCCIONES: "Next you can upload a new version of the degree work document."
+    }
 };
 
 /**

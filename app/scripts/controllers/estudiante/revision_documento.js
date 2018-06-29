@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('EstudianteRevisionDocumentoCtrl', function($scope, poluxRequest, token_service, $q, $http, $translate, academicaRequest) {
+  .controller('EstudianteRevisionDocumentoCtrl', function($scope, nuxeo, poluxRequest, token_service, $q, $http, $translate, academicaRequest) {
     var ctrl = this;
 
     //ctrl.estudiante = $routeParams.idEstudiante;
@@ -20,16 +20,6 @@ angular.module('poluxClienteApp')
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
 
     $scope.mindoc = false;
-
-    ctrl.ver_seleccion = function(item, model) {
-      console.log(item);
-      ctrl.tgId = item.TrabajoGrado.Id;
-      ctrl.doctgId = item.DocumentoTrabajoGrado[0].Id;
-      ctrl.doc = item.DocumentoTrabajoGrado[0].Id;
-      ctrl.documento = true;
-      ctrl.vncdocId = item.Id;
-      ctrl.refrescar();
-    };
 
     /**
      * @ngdoc method
@@ -226,10 +216,10 @@ angular.module('poluxClienteApp')
     /**
      * @ngdoc method
      * @name consultarTrabajosDeGradoCursados
-     * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
      * @description
      * Función que consulta el registro del trabajo de grado asociado al estudiante en sesión.
-     * Llama a las funciones: obtenerParametrosEstudianteTrabajoGrado, consultarInformacionAcademicaDelEstudiante y consultarEspaciosAcademicosInscritos.
+     * Llama a las funciones: obtenerParametrosEstudianteTrabajoGrado, consultarDocumentoTrabajoGrado y consultarVinculacionTrabajoGrado.
      * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los registros de trabajos de grado según el estudiante en sesión.
      * @param {undefined} undefined No requiere parámetros
      * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
@@ -237,7 +227,7 @@ angular.module('poluxClienteApp')
     ctrl.consultarEstudianteTrabajoGrado = function() {
       var deferred = $q.defer();
       var conjuntoProcesamientoEstudianteTrabajoGrado = [];
-      poluxRequest.get("|estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
+      poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
         .then(function(estudianteConTrabajoDeGrado) {
           if (estudianteConTrabajoDeGrado.data) {
             conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
@@ -259,105 +249,241 @@ angular.module('poluxClienteApp')
       return deferred.promise;
     }
 
-    ctrl.consultarEstudianteTrabajoGrado()
-      .then(function(trabajoDeGradoConsultado) {
-        ctrl.cargandoTrabajoGrado = false;
-        console.log("ETG", trabajoDeGradoConsultado);
-        ctrl.trabajoGrado = trabajoDeGradoConsultado;
-      })
-      .catch(function(excepcionEstudianteTrabajoGrado) {
-        ctrl.cargandoTrabajoGrado = false;
-        ctrl.errorCargandoTrabajoGrado = true;
-        ctrl.mensajeErrorCargandoTrabajoGrado = excepcionEstudianteTrabajoGrado;
-      });
-
-    ctrl.refrescar = function() {
-      poluxRequest.get("revision_trabajo_grado", $.param({
-        query: "documento_trabajo_grado:" + ctrl.doctgId + ",vinculacion_trabajo_grado:" + ctrl.vncdocId,
-        sortby: "Id",
-        order: "asc",
-        limit: 0
-      })).then(function(response) {
-        ctrl.revisionesd = response.data;
-        if (ctrl.revisionesd != null) {
-          ctrl.numRevisiones = ctrl.revisionesd.length;
-        }
-
-      });
-
-      poluxRequest.get("vinculacion_trabajo_grado", $.param({
-        query: "Id:" + ctrl.vncdocId
-      })).then(function(response) {
-        console.log(ctrl.vncdocId);
-        console.log(response.data[0]);
-        ctrl.vinculacion_info = response.data[0];
-      });
-    };
-
-    /*ctrl.solicitar_revision = function() {
-      var docente = {};
-      $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + ctrl.vinculacion_info.Usuario)
-        .then(function(response) {
-          docente = response.data[0];
-          swal({
-            title: 'Solicitud de Revisión?',
-            html: "Desea realizar la solicitud de revisión para <b>" + ctrl.vinculacion_info.TrabajoGrado.Titulo + "</b> al docente " + response.data[0].NOMBRE,
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Confirmar'
-          }).then(function() {
-            var numero_revision = 0;
-            if (ctrl.revisionesd == null) {
-              numero_revision = 1;
-            } else {
-              numero_revision = ctrl.revisionesd[ctrl.numRevisiones - 1].NumeroRevision + 1;
-            }
-            var revision = {
-              DocumentoTrabajoGrado: {
-                Id: ctrl.doctgId
-              },
-              VinculacionTrabajoGrado: {
-                Id: ctrl.vncdocId
-              },
-              NumeroRevision: numero_revision,
-              EstadoRevisionTrabajoGrado: {
-                Id: 1
-              },
-              FechaRecepcion: new Date()
-            };
-
-            ctrl.solicitarev = true;
-            if (ctrl.revisionesd != null) {
-              for (var i = 0; i < ctrl.revisionesd.length; i++) {
-                if (ctrl.revisionesd[i].EstadoRevisionTrabajoGrado.Nombre === "pendiente" || ctrl.revisionesd[i].EstadoRevisionTrabajoGrado.Nombre === "borrador") {
-                  ctrl.solicitarev = false;
-                  break;
-                }
-              }
-            }
-            if (ctrl.solicitarev) {
-              console.log(revision);
-              poluxRequest.post("revision_trabajo_grado", revision).then(function(response) {
-                console.log(response.data);
-                swal(
-                  'Revisión Solicitada',
-                  'La revisión No ' + response.data.NumeroRevision + " fue solicitada exitosamente",
-                  'success'
-                );
-                $route.reload();
-              });
-            } else {
-              swal(
-                'Revisión No Solicitada',
-                'La revisión ya se encuentra solicitada',
-                'warning'
-              );
-            }
-
-          });
+    /**
+     * @ngdoc method
+     * @name actualizarContenidoRevisiones
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description
+     * Función que efectúa las consultas iniciales del módulo para cargar el contenido.
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.actualizarContenidoRevisiones = function() {
+      ctrl.consultarEstudianteTrabajoGrado()
+        .then(function(trabajoDeGradoConsultado) {
+          ctrl.cargandoTrabajoGrado = false;
+          ctrl.trabajoGrado = trabajoDeGradoConsultado;
+          console.log("ETG", trabajoDeGradoConsultado);
+          ctrl.consultarRevisionesTrabajoGrado()
+            .then(function(respuestaRevisionesTrabajoGrado) {
+              ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
+              ctrl.vinculacion_info = ctrl.trabajoGrado.vinculaciones[0];
+            })
+            .catch(function(excepcionRevisionesTrabajoGrado) {
+              ctrl.errorRevisionesTrabajoGrado = true;
+              ctrl.mensajeErrorRevisionesTrabajoGrado = excepcionRevisionesTrabajoGrado;
+            });
+        })
+        .catch(function(excepcionEstudianteTrabajoGrado) {
+          ctrl.cargandoTrabajoGrado = false;
+          ctrl.errorCargandoTrabajoGrado = true;
+          ctrl.mensajeErrorCargandoTrabajoGrado = excepcionEstudianteTrabajoGrado;
         });
-    };*/
+    }
+
+    /**
+     * @ngdoc method
+     * @name obtenerParametrosRevisionTrabajoGrado
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description
+     * Función que define los parámetros para consultar en la tabla revision_trabajo_grado.
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {String} La sentencia para la consulta correspondiente
+     */
+    ctrl.obtenerParametrosRevisionTrabajoGrado = function() {
+      return $.param({
+        query: "DocumentoTrabajoGrado.Id:" +
+          ctrl.trabajoGrado.documentoTrabajoGrado,
+        limit: 0
+      });
+    }
+
+    /**
+     * @ngdoc method
+     * @name consultarRevisionesTrabajoGrado
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description
+     * Función que consulta el registro del trabajo de grado asociado al estudiante en sesión.
+     * Llama a la función: obtenerParametrosRevisionTrabajoGrado.
+     * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los registros de revisiones al trabajo de grado.
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+     */
+    ctrl.consultarRevisionesTrabajoGrado = function() {
+      var deferred = $q.defer();
+      poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
+        .then(function(respuestaRevisionesTrabajoGrado) {
+          if (respuestaRevisionesTrabajoGrado.data) {
+            deferred.resolve(respuestaRevisionesTrabajoGrado.data);
+          } else {
+            deferred.reject($translate.instant("ERROR.SIN_REVISIONES"));
+          }
+        })
+        .catch(function(excepcionRevisionesTrabajoGrado) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_REVISIONES"));
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name subirNuevaVersionDocumento
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description
+     * Función que consulta el registro del trabajo de grado asociado al estudiante en sesión.
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+     */
+    ctrl.subirNuevaVersionDocumento = function() {
+      $('#modalSubirNuevaVersion').modal('show');
+    }
+
+    /**
+     * @ngdoc method
+     * @name actualizarTrabajoGrado
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description
+     * Función que prepara el contenido de la información para actualizar.
+     * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar la actualización del anteproyecto.
+     * @param {String} respuestaCargarDocumento El enlace generado luego de subir el documento
+     * @returns {Promise} La respuesta de operar el registro en la base de datos
+     */
+    ctrl.actualizarTrabajoGrado = function(respuestaCargarDocumento) {
+      var deferred = $q.defer();
+      console.log("RCG", respuestaCargarDocumento);
+      poluxRequest
+        .post("1tr_actualizar_documento_tg", informacionParaActualizar)
+        .then(function(respuestaActualizarAnteproyecto) {
+          deferred.resolve(respuestaActualizarAnteproyecto);
+        })
+        .catch(function(excepcionActualizarAnteproyecto) {
+          deferred.reject(excepcionActualizarAnteproyecto);
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name cargarDocumento
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description 
+     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @param {string} nombre Nombre del documento que se cargará
+     * @param {string} descripcion Descripcion del documento que se cargará
+     * @param {blob} documento Blob del documento que se cargará
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con la url del objeto cargado.
+     */
+    ctrl.cargarDocumento = function(nombre, descripcion, documento) {
+      var defer = $q.defer();
+      var promise = defer.promise;
+      nuxeo.operation('Document.Create')
+        .params({
+          type: 'File',
+          name: nombre,
+          properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
+        })
+        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Versiones del trabajo de grado')
+        .execute()
+        .then(function(doc) {
+          var nuxeoBlob = new Nuxeo.Blob({
+            content: documento
+          });
+          nuxeo.batchUpload()
+            .upload(nuxeoBlob)
+            .then(function(res) {
+              return nuxeo.operation('Blob.AttachOnDocument')
+                .param('document', doc.uid)
+                .input(res.blob)
+                .execute();
+            })
+            .then(function() {
+              return nuxeo.repository().fetch(doc.uid, {
+                schemas: ['dublincore', 'file']
+              });
+            })
+            .then(function(doc) {
+              var url = doc.uid;
+              //callback(url);
+              defer.resolve(url);
+            })
+            .catch(function(error) {
+              throw error;
+              defer.reject(error)
+            });
+        })
+        .catch(function(error) {
+          throw error;
+          defer.reject(error)
+        });
+      return promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name subirDocumento
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description 
+     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.subirDocumento = function() {
+      swal({
+          title: $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
+          text: $translate.instant("CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION"),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          if (confirmacionDelUsuario.value) {
+            ctrl.cargandoTrabajoGrado = true;
+            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
+              .then(function(respuestaCargarDocumento) {
+                ctrl.actualizarTrabajoGrado(respuestaCargarDocumento)
+                  .then(function(respuestaActualizarTg) {
+                    if (respuestaActualizarTg.data[0] === "Success") {
+                      ctrl.cargandoTrabajoGrado = false;
+                      swal(
+                        $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
+                        $translate.instant("CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO"),
+                        'success'
+                      );
+                      ctrl.actualizarContenidoRevisiones();
+                      $('#modalSubirNuevaVersion').modal('hide');
+                    } else {
+                      ctrl.cargandoTrabajoGrado = false;
+                      swal(
+                        $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
+                        $translate.instant(respuestaActualizarTG.data[1]),
+                        'warning'
+                      );
+                    }
+                  })
+                  .catch(function(excepcionActualizarTg) {
+                    ctrl.loadTrabajoGrado = false;
+                    ctrl.cargandoActualizarTg = false;
+                    swal(
+                      $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
+                      $translate.instant("ERROR.MODIFICANDO_TG"),
+                      'warning'
+                    );
+                  });
+              })
+              .catch(function(excepcionCargarDocumento) {
+                swal(
+                  $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                  $translate.instant("VERIFICAR_DOCUMENTO"),
+                  'warning'
+                );
+                ctrl.loadTrabajoGrado = false;
+                ctrl.cargandoActualizarAnteproyecto = false;
+              });
+          }
+        });
+    }
+
+    ctrl.actualizarContenidoRevisiones();
 
   });

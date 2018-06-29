@@ -134,7 +134,7 @@
         <div class="row">
           <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES' | translate}} </label>
         </div>
-        </div>
+      </div>
     </div>
     <div class="panel panel-default" ng-if="consultarTrabajoGrado.esPrimeraVersion">
       <div class="panel-heading">
@@ -144,7 +144,7 @@
         <div class="row">
           <label class="col-sm-12 control-label"> {{'PRIMERA_VERSION.INSTRUCCIONES' | translate}} </label>
         </div>
-        </div>
+      </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -155,10 +155,10 @@
         <form method="post" name="formularioSubirDocumento" ng-submit="consultarTrabajoGrado.subirDocumento()">
           <div class="row">
             <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
-                <div class="col-sm-9 ">
-                    <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="consultarTrabajoGrado.nuevaVersion" required></input>
-                </div>
-           <br>
+            <div class="col-sm-9 ">
+                <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="consultarTrabajoGrado.nuevaVersion" required></input>
+            </div>
+            <br>
           </div>
           <br>
           <div class="row row-centered" ng-if="formularioSubirDocumento.$valid">

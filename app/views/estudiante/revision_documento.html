@@ -5,9 +5,11 @@
     </h3>
   </center>
   <loading tam="4" load="estudianteRevisionDoc.cargandoTrabajoGrado" message="estudianteRevisionDoc.mensajeCargandoTrabajoGrado"></loading>
-  <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones">
-    <label>{{docente.RolTrabajoGrado.Nombre}}: {{docente.Nombre}}</label>
-    <br>
+  <div ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones">
+    <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones">
+      <label>{{docente.RolTrabajoGrado.Nombre}}: {{docente.Nombre}}</label>
+      <br>
+    </div>
   </div>
   <div class="panel-body alert alert-danger" ng-if="estudianteRevisionDoc.errorCargandoTrabajoGrado">
     <span ng-bind="estudianteRevisionDoc.mensajeErrorCargandoTrabajoGrado"></span>
@@ -16,7 +18,7 @@
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
       <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}}</label>
       <ver-documento documento="estudianteRevisionDoc.trabajoGrado.documentoEscrito" minified="mindoc"/>
-        <!--  <pre>{{estudianteRevisionDoc.revisionesd | json}}</pre>-->
+        <!--  <pre>{{estudianteRevisionDoc.revisionesTrabajoGrado | json}}</pre>-->
     </div>
 
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
@@ -24,8 +26,9 @@
         <div class="panel-heading">
           <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
         </div>
+
         <div class="panel-body">
-          <div ng-repeat="revision in estudianteRevisionDoc.revisionesd">
+          <div ng-repeat="revision in estudianteRevisionDoc.revisionesTrabajoGrado">
             <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
             <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador' || revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente'">
               <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
@@ -35,8 +38,49 @@
       </div>
 
       <div class="form-group">
-        <button type="button" class="btn btn-info pull-left">{{'SUBIR_DOCUMENTO' | translate}}</button>
-        <button type="button" class="btn btn-success pull-right" ng-click="estudianteRevisionDoc.solicitar_revision()">{{'SOLICITAR_REVISION' | translate}}</button>
+        <button type="button" class="btn btn-info" ng-click="estudianteRevisionDoc.subirNuevaVersionDocumento()">{{'SUBIR_NUEVA_VERSION' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalSubirNuevaVersion" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+    <div class="modal-header">
+      <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+      <br>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {{'NUEVA_VERSION.MENSAJE' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {{'ACTUALIZAR_TG.DESCRIPCION' | translate}}
+      </div>
+      <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
+      <div class="panel-body" ng-if="!estudianteRevisionDoc.cargandoActualizarTg">
+        <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumento()">
+          <div class="row">
+            <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
+            <div class="col-sm-9 ">
+                <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="estudianteRevisionDoc.nuevaVersionTrabajoGrado" required></input>
+            </div>
+            <br>
+          </div>
+          <br>
+          <div class="row row-centered" ng-if="formularioSubirDocumento.$valid">
+            <div class="col-sm-3 col-centered">
+              <input type="submit" class="btn btn-success" value="{{'SUBIR_DOCUMENTO'|translate}}">
+            </div>
+          </div>
+        </form>  
       </div>
     </div>
   </div>

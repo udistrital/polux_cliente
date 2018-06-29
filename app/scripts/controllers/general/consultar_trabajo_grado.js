@@ -375,10 +375,10 @@ angular.module('poluxClienteApp')
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description 
      * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     * @param {string} nombre Nombre del documento que se cargara
-     * @param {string} descripcion Descripcion del documento que se cargara
-     * @param {blob} documento Blob del documento que se cargara
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado.
+     * @param {string} nombre Nombre del documento que se cargará
+     * @param {string} descripcion Descripcion del documento que se cargará
+     * @param {blob} documento Blob del documento que se cargará
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con la url del objeto cargado.
      */
     ctrl.cargarDocumento = function(nombre, descripcion, documento) {
       var defer = $q.defer();
@@ -427,7 +427,7 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
-     * @name registrarSolicitudAprobada
+     * @name actualizarDocumentoTrabajoGrado
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description
      * Función que prepara el contenido de la información para actualizar.
