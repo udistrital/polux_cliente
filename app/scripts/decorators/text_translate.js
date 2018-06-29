@@ -574,7 +574,8 @@ var text_es = {
     NUEVA_VERSION: {
         MENSAJE: "Actualización del documento",
         INSTRUCCIONES: "A continuación puede subir una nueva versión del documento del trabajo de grado."
-    }
+    },
+    CORRECCION_REALIZADA: "Corrección realizada",
 };
 
 /**
@@ -1133,10 +1134,12 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the first version of your degree work?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
         SUBIR:"Upload first version",
-    },NUEVA_VERSION: {
+    },
+    NUEVA_VERSION: {
         MENSAJE: "Document update",
         INSTRUCCIONES: "Next you can upload a new version of the degree work document."
-    }
+    },
+    CORRECCION_REALIZADA: "Correction made",
 };
 
 /**

@@ -30,7 +30,7 @@
     </div>
 
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-      <div class="panel panel-default">
+      <div class="panel panel-default" ng-if="estudianteRevisionDoc.revisionesTrabajoGrado">
         <div class="panel-heading">
           <center>
             <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
@@ -39,12 +39,16 @@
 
         <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
           <div ng-repeat="revision in estudianteRevisionDoc.revisionesTrabajoGrado">
-            <ver-revision revisionid="revision.Id" autor="revision.FechaRecepcion" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
+            <ver-revision revisionid="revision.Id" autor="estudianteRevisionDoc.informacionAcademica.nombre" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
             <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador' || revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente'">
               <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="panel- alert alert-danger" ng-if="estudianteRevisionDoc.errorRevisionesTrabajoGrado">
+        <span ng-bind="estudianteRevisionDoc.mensajeErrorRevisionesTrabajoGrado"></span>
       </div>
 
       <div class="form-group">
