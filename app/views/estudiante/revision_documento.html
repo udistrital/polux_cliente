@@ -5,10 +5,18 @@
     </h3>
   </center>
   <loading tam="4" load="estudianteRevisionDoc.cargandoTrabajoGrado" message="estudianteRevisionDoc.mensajeCargandoTrabajoGrado"></loading>
-  <div ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones">
-    <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones">
-      <label>{{docente.RolTrabajoGrado.Nombre}}: {{docente.Nombre}}</label>
-      <br>
+  <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones" class="panel panel-default">
+    <div class="panel-heading">
+      <center>
+        <h3 class="panel-title">{{'VINCULACIONES_TRABAJO_GRADO' | translate}}</h3>
+      </center>
+    </div>
+    <div class="panel-body">
+      <div class="row" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones">
+        <label class="col-sm-3">{{docente.RolTrabajoGrado.Nombre}}</label>
+        <label class="col-sm-9">{{docente.Nombre}}</label>
+        <br>
+      </div>
     </div>
   </div>
   <div class="panel-body alert alert-danger" ng-if="estudianteRevisionDoc.errorCargandoTrabajoGrado">
@@ -24,12 +32,14 @@
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
+          <center>
+            <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
+          </center>
         </div>
 
-        <div class="panel-body">
+        <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
           <div ng-repeat="revision in estudianteRevisionDoc.revisionesTrabajoGrado">
-            <ver-revision revisionid="revision.Id" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
+            <ver-revision revisionid="revision.Id" autor="revision.FechaRecepcion" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
             <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador' || revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente'">
               <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
             </div>

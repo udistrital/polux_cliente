@@ -16,7 +16,6 @@ angular.module('poluxClienteApp')
     token_service.token.role.push("ESTUDIANTE");
     ctrl.codigoEstudiante = token_service.token.documento;
 
-    ctrl.cargandoTrabajoGrado = true;
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
 
     $scope.mindoc = false;
@@ -195,6 +194,64 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
+     * @name consultarPeriodoAcademicoPrevio
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description
+     * Función que obtiene el periodo académico previo dado el parámetro "P" de consulta.
+     * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer el periodo académico previo al actual.
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {Promise} El periodo académico previo, o la excepción generada
+     */
+    ctrl.consultarPeriodoAcademicoPrevio = function() {
+      var deferred = $q.defer();
+      academicaRequest.get("periodo_academico", "P")
+        .then(function(periodoAcademicoPrevio) {
+          if (!angular.isUndefined(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico)) {
+            deferred.resolve(periodoAcademicoPrevio.data.periodoAcademicoCollection.periodoAcademico[0]);
+          } else {
+            deferred.reject($translate.instant("ERROR.SIN_PERIODO"));
+          }
+        })
+        .catch(function(excepcionPeriodoAcademico) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_PERIODO"));
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name consultarInformacionAcademicaDelEstudiante
+     * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
+     * @description
+     * Función que según el estudiante asociado, carga la información académica correspondiente.
+     * Llama a la función: consultarPeriodoAcademicoPrevio.
+     * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica registrada.
+     * @param {Object} estudianteAsociado El estudiante al que se le cargará la información académica
+     * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+     */
+    ctrl.consultarInformacionAcademicaDelEstudiante = function(codigoEstudiante) {
+      var deferred = $q.defer();
+      ctrl.consultarPeriodoAcademicoPrevio()
+        .then(function(periodoAcademicoPrevio) {
+          academicaRequest.get("datos_estudiante", [codigoEstudiante, periodoAcademicoPrevio.anio, periodoAcademicoPrevio.periodo])
+            .then(function(estudianteConsultado) {
+              if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
+                ctrl.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
+              }
+              deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
+            })
+            .catch(function(excepcionEstudianteConsultado) {
+              deferred.reject($translate.instant("ERROR.CARGANDO_INFO_ESTUDIANTE"));
+            });
+        })
+        .catch(function(excepcionPeriodoAcademico) {
+          deferred.reject(excepcionPeriodoAcademico);
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
      * @name obtenerParametrosEstudianteTrabajoGrado
      * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
      * @description
@@ -232,9 +289,17 @@ angular.module('poluxClienteApp')
           if (estudianteConTrabajoDeGrado.data) {
             conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
             conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
+            conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(ctrl.codigoEstudiante));
             $q.all(conjuntoProcesamientoEstudianteTrabajoGrado)
               .then(function(resultadoDelProcesamiento) {
-                deferred.resolve(estudianteConTrabajoDeGrado.data[0].TrabajoGrado);
+                if (estudianteConTrabajoDeGrado.data[0].TrabajoGrado.documentoEscrito &&
+                  estudianteConTrabajoDeGrado.data[0].TrabajoGrado.documentoTrabajoGrado &&
+                  estudianteConTrabajoDeGrado.data[0].TrabajoGrado.vinculaciones &&
+                  ctrl.informacionAcademica) {
+                  deferred.resolve(estudianteConTrabajoDeGrado.data[0].TrabajoGrado);
+                } else {
+                  deferred.resolve(resultadoDelProcesamiento);
+                }
               })
               .catch(function(excepcionDelProcesamiento) {
                 deferred.reject(excepcionDelProcesamiento);
@@ -259,20 +324,30 @@ angular.module('poluxClienteApp')
      * @returns {undefined} No hace retorno de resultados
      */
     ctrl.actualizarContenidoRevisiones = function() {
+      ctrl.cargandoTrabajoGrado = true;
       ctrl.consultarEstudianteTrabajoGrado()
         .then(function(trabajoDeGradoConsultado) {
-          ctrl.cargandoTrabajoGrado = false;
-          ctrl.trabajoGrado = trabajoDeGradoConsultado;
-          console.log("ETG", trabajoDeGradoConsultado);
-          ctrl.consultarRevisionesTrabajoGrado()
-            .then(function(respuestaRevisionesTrabajoGrado) {
-              ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
-              ctrl.vinculacion_info = ctrl.trabajoGrado.vinculaciones[0];
-            })
-            .catch(function(excepcionRevisionesTrabajoGrado) {
-              ctrl.errorRevisionesTrabajoGrado = true;
-              ctrl.mensajeErrorRevisionesTrabajoGrado = excepcionRevisionesTrabajoGrado;
-            });
+          if (trabajoDeGradoConsultado.documentoEscrito &&
+            trabajoDeGradoConsultado.documentoTrabajoGrado &&
+            trabajoDeGradoConsultado.vinculaciones &&
+            ctrl.informacionAcademica) {
+            ctrl.cargandoTrabajoGrado = false;
+            ctrl.trabajoGrado = trabajoDeGradoConsultado;
+            console.log("ETG", trabajoDeGradoConsultado);
+            console.log("Estudiante ->", ctrl.informacionAcademica);
+            ctrl.consultarRevisionesTrabajoGrado()
+              .then(function(respuestaRevisionesTrabajoGrado) {
+                ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
+              })
+              .catch(function(excepcionRevisionesTrabajoGrado) {
+                ctrl.errorRevisionesTrabajoGrado = true;
+                ctrl.mensajeErrorRevisionesTrabajoGrado = excepcionRevisionesTrabajoGrado;
+              });
+          } else {
+            ctrl.cargandoTrabajoGrado = false;
+            ctrl.errorCargandoTrabajoGrado = true;
+            ctrl.mensajeErrorCargandoTrabajoGrado = trabajoDeGradoConsultado[0];
+          }
         })
         .catch(function(excepcionEstudianteTrabajoGrado) {
           ctrl.cargandoTrabajoGrado = false;
@@ -350,9 +425,9 @@ angular.module('poluxClienteApp')
      */
     ctrl.actualizarTrabajoGrado = function(respuestaCargarDocumento) {
       var deferred = $q.defer();
-      console.log("RCG", respuestaCargarDocumento);
+      ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
       poluxRequest
-        .post("1tr_actualizar_documento_tg", informacionParaActualizar)
+        .put("documento_escrito", ctrl.trabajoGrado.documentoEscrito.Id, ctrl.trabajoGrado.documentoEscrito)
         .then(function(respuestaActualizarAnteproyecto) {
           deferred.resolve(respuestaActualizarAnteproyecto);
         })
@@ -382,7 +457,7 @@ angular.module('poluxClienteApp')
           name: nombre,
           properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
         })
-        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Versiones del trabajo de grado')
+        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Versiones TG')
         .execute()
         .then(function(doc) {
           var nuxeoBlob = new Nuxeo.Blob({
@@ -443,7 +518,7 @@ angular.module('poluxClienteApp')
               .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarTrabajoGrado(respuestaCargarDocumento)
                   .then(function(respuestaActualizarTg) {
-                    if (respuestaActualizarTg.data[0] === "Success") {
+                    if (respuestaActualizarTg.statusText === "OK") {
                       ctrl.cargandoTrabajoGrado = false;
                       swal(
                         $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
@@ -456,14 +531,13 @@ angular.module('poluxClienteApp')
                       ctrl.cargandoTrabajoGrado = false;
                       swal(
                         $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                        $translate.instant(respuestaActualizarTG.data[1]),
+                        $translate.instant(respuestaActualizarTg.data[1]),
                         'warning'
                       );
                     }
                   })
                   .catch(function(excepcionActualizarTg) {
-                    ctrl.loadTrabajoGrado = false;
-                    ctrl.cargandoActualizarTg = false;
+                    ctrl.cargandoTrabajoGrado = false;
                     swal(
                       $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
                       $translate.instant("ERROR.MODIFICANDO_TG"),
@@ -472,13 +546,12 @@ angular.module('poluxClienteApp')
                   });
               })
               .catch(function(excepcionCargarDocumento) {
+                ctrl.cargandoTrabajoGrado = false;
                 swal(
                   $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                   $translate.instant("VERIFICAR_DOCUMENTO"),
                   'warning'
                 );
-                ctrl.loadTrabajoGrado = false;
-                ctrl.cargandoActualizarAnteproyecto = false;
               });
           }
         });

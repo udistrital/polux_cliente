@@ -46,7 +46,7 @@ angular.module('poluxClienteApp')
                     mycomentario.Correccion = myidcorreccion;
                     mycomentario.Comentario = comentario;
                     mycomentario.Fecha = new Date();
-                    mycomentario.Autor = "pepito";
+                    mycomentario.Autor = $scope.autor;
                     ctrl.pruebac = mycomentario;
                     var comentarios = [];
                     console.log(mycomentario);
