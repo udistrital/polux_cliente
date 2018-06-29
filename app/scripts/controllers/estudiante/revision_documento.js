@@ -333,8 +333,6 @@ angular.module('poluxClienteApp')
             ctrl.informacionAcademica) {
             ctrl.cargandoTrabajoGrado = false;
             ctrl.trabajoGrado = trabajoDeGradoConsultado;
-            console.log("ETG", trabajoDeGradoConsultado);
-            console.log("Estudiante ->", ctrl.informacionAcademica);
             ctrl.consultarRevisionesTrabajoGrado()
               .then(function(respuestaRevisionesTrabajoGrado) {
                 ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
