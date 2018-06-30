@@ -292,6 +292,7 @@ var text_es = {
         ESTADO_TRABAJO_GRADO_NO_PERMITE:"El estado '{{estado_tg}}' del trabajo de grado no permite realizar la {{tipoSolicitud}}",
         ESTADO_TRABAJO_GRADO_NO_PERMITE_REGISTRAR_NOTA:"El estado del trabajo de grado no permite registrar la nota.",
         CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS:"Ocurrió un error al cargar los trabajos de grado asociados, por favor verifique su conexión e intente de nuevo.",
+        SIN_TRABAJOS_ASOCIADOS:"Señor docente, actualmente no tiene registrado ningún trabajo al cual se encuentra vinculado y con estado activo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -553,7 +554,13 @@ var text_es = {
         AVISO: "Registro de calificaciones",
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
         DESCRIPCION: "Descripción del trabajo de grado seleccionado",
-        INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro."
+        INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro.",
+        ERROR:{
+            REGISTRANDO_NOTA:"Ocurrio un error registrando la nota, por favor intente de nuevo.",
+            REGISTRANDO_ACTA_SUSTENTACION:"Ocurrio un error registrando el acta de sustentación por favor intente de nuevo.",
+            CONSULTANDO_VINCULACIONES:"Ocurrio un error consultando otras vinculaciones, por favor intente de nuevo.",
+        },
+        NOTA_REGISTRADA_DOCENTE:"Nota registrada por el docente",
     },
     PERIODO_ACADEMICO:"Período académico",
     SOLICITUD_NO_PUEDE_APROBARSE:"La solicitud no puede ser aprobada",
@@ -869,6 +876,7 @@ var text_en = {
         ESTADO_TRABAJO_GRADO_NO_PERMITE:"The state '{{estado_tg}}' of the degree work does not allow to perform {{tipoSolicitud}}",
         ESTADO_TRABAJO_GRADO_NO_PERMITE_REGISTRAR_NOTA:"The state of the degree work does not allow to record the grade.",
         CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS:"There was an error occurred loading the associated degree works, please check your connection and try again.",
+        SIN_TRABAJOS_ASOCIADOS:"Dear teacher, currently you are not linked to any work degree or with an active state",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1131,6 +1139,12 @@ var text_en = {
         NOTA_REGISTRADA: "The entered grades have been registered successfully.",
         DESCRIPCION: "Select degree work description",
         INSTRUCCIONES: "Input the grades obtained by the student by clicking on the corresponding cell. Keep in mind that valid grades range from 0.0 to 5.0, and two (2) decimals of accuracy will be taken for the record.",
+        ERROR:{
+            REGISTRANDO_NOTA:"An error ocurred registering the grade, please try again.",
+            REGISTRANDO_ACTA_SUSTENTACION:"An error ocurred registering the record of support, please try again.",
+            CONSULTANDO_VINCULACIONES:"An error ocurred consulting other links, please try again.",
+        },
+        NOTA_REGISTRADA_DOCENTE:"Grade registered by the teacher",
     },
     PERIODO_ACADEMICO:"Academic period",
     SOLICITUD_NO_PUEDE_APROBARSE:"The request can not be approved",

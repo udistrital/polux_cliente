@@ -34,7 +34,7 @@ angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest,nuxeo) {
     var ctrl = this;
 
-    token_service.token.documento = "79647592";
+    token_service.token.documento = "79777053";
     //token_service.token.documento = "12237136";
     ctrl.documento = token_service.token.documento;
 
@@ -139,7 +139,7 @@ angular.module('poluxClienteApp')
           ctrl.gridOptions.data = ctrl.trabajosGrado;
           defer.resolve();
         } else {
-          ctrl.mensajeError = $translate.instant('ERROR.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
+          ctrl.mensajeError = $translate.instant('ERROR.SIN_TRABAJOS_ASOCIADOS');
           defer.reject("no hay trabajos de grado asociados");
         }
       })
@@ -237,6 +237,40 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+     /**
+       * @ngdoc method
+       * @name getEvaluacionesRegistradas
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @description
+       * Función que permite evaluar si el docente ya registro una nota para el trabajo seleccionado
+       * @param {object} trabajoGrado Trabajo de grado que se consulta
+       * @returns {Promise} Retorna una promesa que se soluciona sin regresar ningún parametro.
+       */
+    ctrl.getEvaluacionesRegistradas = function(trabajoGrado){
+      var defer = $q.defer();
+      //Se consulatan las evaluaciones
+      var parametrosEvaluaciones = $.param({
+        limit:1,
+        query:"VinculacionTrabajoGrado:"+trabajoGrado.vinculacion.Id,
+      });
+      poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
+      .then(function(responseEvaluacion){
+        if(responseEvaluacion.data != null){
+          //Si no ha registrado ninguna nota
+          trabajoGrado.notaRegistrada = true;
+          trabajoGrado.evaluacion = responseEvaluacion.data[0];
+        }else{
+          //Si ya registro la nota
+          trabajoGrado.notaRegistrada = false;
+        }
+        defer.resolve();
+      })
+      .catch(function(error){
+        defer.reject(error);
+      });
+      return defer.promise;
+    }
+
     /**
        * @ngdoc method
        * @name cargarTrabajo
@@ -249,8 +283,17 @@ angular.module('poluxClienteApp')
     ctrl.cargarTrabajo = function(fila){
       ctrl.cargandoTrabajo = true;
       ctrl.trabajoSeleccionado = fila.entity.TrabajoGrado;
-      //Se verifica que el estado del trabajo de grado sea listo para sustentar 17
-      if(ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 17){
+      //Se guarda la vinculación al tg
+      ctrl.trabajoSeleccionado.vinculacion = {
+        Id: fila.entity.Id,
+        Usuario: fila.entity.Usuario,
+        TrabajoGrado:{
+          Id: fila.entity.TrabajoGrado.Id,
+        },
+        RolTrabajoGrado: fila.entity.RolTrabajoGrado,
+      };
+      //Se verifica que el estado del trabajo de grado sea listo para sustentar 17 o sustentado 18
+      if(ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 17 || ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 18){
         ctrl.trabajoSeleccionado.estadoValido = true;
       }
       //console.log(ctrl.registrarNota);
@@ -258,6 +301,7 @@ angular.module('poluxClienteApp')
       //Promesas del tg
       var promesasTrabajo = [];
       promesasTrabajo.push(ctrl.getEstudiantes(ctrl.trabajoSeleccionado));
+      promesasTrabajo.push(ctrl.getEvaluacionesRegistradas(ctrl.trabajoSeleccionado));
       //Se muestra el modal
       $('#modalRegistrarNota').modal('show');
       $q.all(promesasTrabajo)
@@ -292,7 +336,61 @@ angular.module('poluxClienteApp')
       .then(function(urlActa){
         console.log("acta", urlActa);
         console.log("nota", ctrl.trabajoSeleccionado.nota);
-        ctrl.registrandoNotaTG = false;
+        console.log("trabajo", ctrl.trabajoSeleccionado);
+        //Se crea la data para la transacción
+        ctrl.dataRegistrarNota = {
+          TrabajoGrado: ctrl.trabajoSeleccionado,
+          DocumentoEscrito: {
+            Id: 0,
+            Titulo: nombreDocumento,
+            Resumen: descripcionDocumento,
+            Enlace: urlActa,
+            TipoDocumentoEscrito: 6, //Para acta de sustentación
+          },
+          VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
+          EvaluacionTrabajoGrado:{
+            Id: 0,
+            Nota: ctrl.trabajoSeleccionado.nota,
+            VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
+          }
+        }
+        //Se ejecuta la transacción
+        poluxRequest.post("tr_vinculado_registrar_nota", ctrl.dataRegistrarNota).then(function(response) {
+          console.log(response);
+          if (response.data[0] === "Success") {
+            swal(
+              $translate.instant("REGISTRAR_NOTA.AVISO"),
+              $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
+              'success'
+            );
+            $('#modalRegistrarNota').modal('hide');
+            ctrl.cargarTrabajos()
+              .then(function(){
+                ctrl.cargandoTrabajos = false;
+              })
+              .catch(function(error){
+                console.log(error);
+                ctrl.errorCargando = true;
+                ctrl.cargandoTrabajos = false;
+              })
+          } else {
+            swal(
+              $translate.instant("REGISTRAR_NOTA.AVISO"),
+              $translate.instant(response.data[1]),
+              'warning'
+            );
+          }
+          ctrl.registrandoNotaTG = false;
+        })
+        .catch(function(error){
+          console.log(error);
+          swal(
+            $translate.instant("REGISTRAR_NOTA.AVISO"),
+            $translate.instant("REGISTRAR_NOTA.ERROR.REGISTRANDO_NOTA"),
+            'warning'
+          );
+          ctrl.registrandoNotaTG = false;
+        });
       })
       .catch(function(error){
         console.log(error);
