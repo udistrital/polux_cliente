@@ -364,6 +364,7 @@ angular.module('poluxClienteApp')
               'success'
             );
             $('#modalRegistrarNota').modal('hide');
+            ctrl.registrandoNotaTG = false;
             ctrl.cargarTrabajos()
               .then(function(){
                 ctrl.cargandoTrabajos = false;
