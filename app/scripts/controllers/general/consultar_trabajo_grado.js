@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
     ctrl.userId = token_service.token.documento;
 
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
-    ctrl.mensajeSubirCorreccionesAnteproyecto = $translate.instant('SUBIR_CORRECCIONES_ANTEPROYECTO');
+    ctrl.mensajeCargandoActualizarTg = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
     ctrl.trabajoCargado = false;
 
     ctrl.gridOptionsAsignaturas = [];
@@ -218,7 +218,7 @@ angular.module('poluxClienteApp')
      * @name consultarTrabajoGrado
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description 
-     * Consulta el trabajo de graod de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
+     * Consulta el trabajo de grado de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
      * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón 
      * getEspaciosAcademicosInscritos.
      * @param {undefined} undefined no requiere parametros
@@ -242,6 +242,12 @@ angular.module('poluxClienteApp')
                   ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) &&
                 ctrl.userRole.includes('ESTUDIANTE')) {
                 ctrl.esAnteproyectoModificable = true;
+              }
+              //Si el anteproyecto es viable se puede subir la primera versión del proyecto
+              if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
+                  ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10) &&
+                ctrl.userRole.includes('ESTUDIANTE')) {
+                ctrl.esPrimeraVersion = true;
               }
               var promises = [];
               ctrl.trabajoGrado.estudiante = {
@@ -339,44 +345,25 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
-     * @name subirCorreccionesAnteproyecto
+     * @name actualizarTg
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description 
-     * Permite mostrar el contenido del modal que habilita subir el documento del anteproyecto corregido
+     * Permite mostrar el contenido del modal que habilita subir el documento nuevo y actualizar el tg
      * @param {undefined} undefined No requiere parámetros
      * @returns {undefined} No hace retorno de resultados
      */
-    ctrl.subirCorreccionesAnteproyecto = function() {
-      ctrl.consultarDocumentoTrabajoGrado()
+    ctrl.actualizarTg = function() {
+      ctrl.cargandoActualizarTg = true;
+      $('#modalActualizarTg').modal('show');
+      ctrl.consultarDocumentoTrabajoGrado(ctrl.trabajoGrado)
         .then(function(respuestaDocumentoTrabajoGrado) {
-
+          ctrl.cargandoActualizarTg = false;
         })
-        .catch(function() {
-
-        });
-      $('#modalRevisarAnteproyecto').modal('show');
-      console.log(ctrl.trabajoGrado);
-    }
-
-    /**
-     * @ngdoc method
-     * @name subirDocumento
-     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-     * @description 
-     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
-     * @param {undefined} undefined No requiere parámetros
-     * @returns {undefined} No hace retorno de resultados
-     */
-    ctrl.subirDocumento = function() {
-      ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del anteproyecto", ctrl.AnteproyectoCorregido)
-        .then(function(docid) {
-          console.log(docid);
-        })
-        .catch(function(error) {
-          console.log(error);
+        .catch(function(excepcionDocumentoTrabajoGrado) {
+          ctrl.cargandoActualizarTg = false;
           swal(
-            $translate.instant("ERROR.SUBIR_DOCUMENTO"),
-            $translate.instant("VERIFICAR_DOCUMENTO"),
+            $translate.instant("MODIFICAR_TG"),
+            $translate.instant("ERROR.MODIFICANDO_TG"),
             'warning'
           );
         });
@@ -386,12 +373,12 @@ angular.module('poluxClienteApp')
      * @ngdoc method
      * @name cargarDocumento
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-     * @param {string} nombre Nombre del documento que se cargara
-     * @param {string} descripcion Descripcion del documento que se cargara
-     * @param {blob} documento Blob del documento que se cargara
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado. 
      * @description 
      * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @param {string} nombre Nombre del documento que se cargará
+     * @param {string} descripcion Descripcion del documento que se cargará
+     * @param {blob} documento Blob del documento que se cargará
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con la url del objeto cargado.
      */
     ctrl.cargarDocumento = function(nombre, descripcion, documento) {
       var defer = $q.defer();
@@ -435,8 +422,152 @@ angular.module('poluxClienteApp')
           throw error;
           defer.reject(error)
         });
-
       return promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name actualizarDocumentoTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description
+     * Función que prepara el contenido de la información para actualizar.
+     * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar la actualización del anteproyecto.
+     * @param {String} respuestaCargarDocumento El enlace generado luego de subir el documento
+     * @returns {Promise} La respuesta de operar el registro en la base de datos
+     */
+    ctrl.actualizarDocumentoTrabajoGrado = function(respuestaCargarDocumento) {
+      var deferred = $q.defer();
+      if (ctrl.esAnteproyectoModificable) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 4
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
+      }
+      if (ctrl.esPrimeraVersion) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 13
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
+      }
+      delete ctrl.trabajoGrado.documentoEscrito.Id
+      ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
+      var documentoTrabajoGrado = {
+        Id: ctrl.trabajoGrado.documentoTrabajoGrado,
+        TrabajoGrado: {
+          Id: ctrl.trabajoGrado.Id
+        },
+        DocumentoEscrito: {
+          Id: 0,
+        }
+      }
+      var informacionParaActualizar = {
+        "DocumentoEscrito": ctrl.trabajoGrado.documentoEscrito,
+        "DocumentoTrabajoGrado": documentoTrabajoGrado,
+        "TrabajoGrado": ctrl.trabajoGrado
+      };
+      poluxRequest
+        .post("tr_actualizar_documento_tg", informacionParaActualizar)
+        .then(function(respuestaActualizarAnteproyecto) {
+          deferred.resolve(respuestaActualizarAnteproyecto);
+        })
+        .catch(function(excepcionActualizarAnteproyecto) {
+          deferred.reject(excepcionActualizarAnteproyecto);
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name subirDocumento
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.subirDocumento = function() {
+      var descripcionDocumento;
+      var titleConfirmacion;
+      var mensajeConfirmacion;
+      var mensajeSuccess;
+      var mensajeError;
+      if (ctrl.esAnteproyectoModificable) {
+        descripcionDocumento = "Versión nueva del anteproyecto";
+        titleConfirmacion = "CORREGIR_ANTEPROYECTO.CONFIRMACION";
+        mensajeConfirmacion = "CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO";
+      }
+      if (ctrl.esPrimeraVersion) {
+        descripcionDocumento = "Primera versión del trabajo de grado";
+        titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
+        mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
+      }
+      swal({
+          title: $translate.instant(titleConfirmacion),
+          text: $translate.instant(mensajeConfirmacion),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          if (confirmacionDelUsuario.value) {
+            ctrl.loadTrabajoGrado = true;
+            ctrl.cargandoActualizarTg = true;
+            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion)
+              .then(function(respuestaCargarDocumento) {
+                ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
+                  .then(function(respuestaActualizarTG) {
+                    if (respuestaActualizarTG.data[0] === "Success") {
+                      ctrl.loadTrabajoGrado = false;
+                      ctrl.cargandoActualizarTg = false;
+                      swal(
+                        $translate.instant(titleConfirmacion),
+                        $translate.instant(mensajeSuccess),
+                        'success'
+                      );
+                      ctrl.consultarTrabajoGrado();
+                      if (ctrl.esAnteproyectoModificable) {
+                        ctrl.esAnteproyectoModificable = false
+                      }
+                      if (ctrl.esPrimeraVersion) {
+                        ctrl.esPrimeraVersion = false
+                      }
+                      $('#modalActualizarTg').modal('hide');
+                    } else {
+                      ctrl.loadTrabajoGrado = false;
+                      ctrl.cargandoActualizarTg = false;
+                      swal(
+                        $translate.instant(titleConfirmacion),
+                        $translate.instant(respuestaActualizarTG.data[1]),
+                        'warning'
+                      );
+                    }
+                  })
+                  .catch(function(excepcionActualizarAnteproyecto) {
+                    console.log(excepcionActualizarAnteproyecto);
+                    ctrl.loadTrabajoGrado = false;
+                    ctrl.cargandoActualizarTg = false;
+                    swal(
+                      $translate.instant(titleConfirmacion),
+                      $translate.instant("ERROR.MODIFICANDO_TG"),
+                      'warning'
+                    );
+                  });
+              })
+              .catch(function(excepcionCargarDocumento) {
+                swal(
+                  $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                  $translate.instant("VERIFICAR_DOCUMENTO"),
+                  'warning'
+                );
+                ctrl.loadTrabajoGrado = false;
+                ctrl.cargandoActualizarAnteproyecto = false;
+              });
+          }
+        });
+
     }
 
   });
