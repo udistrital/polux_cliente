@@ -11,10 +11,8 @@ angular.module('poluxClienteApp')
         return {
             restrict: "E",
             scope: {
-                documentoid: '=?',
-                selectpag: '=?',
-                loadpag: '=?',
-                minified: '=?'
+                documento: '=?',
+                minified: '=?',
             },
             templateUrl: "views/directives/documento/ver_documento.html",
             controller: function($scope) {
@@ -22,43 +20,14 @@ angular.module('poluxClienteApp')
                 $scope.msgCargandoDocumento=$translate.instant('LOADING.CARGANDO_DOCUMENTO');
                 $scope.load=true;
 
-                $scope.$watch('selectpag', function() {
-                    if($scope.selectpag){
-                      $scope.pageNum = $scope.selectpag;
+                $scope.$watch('documento', function() {
+                    if($scope.documento != undefined){
+                      console.log("documento", $scope.documento);
+                      self.getDocumento($scope.documento.Enlace);
+                      self.documento = $scope.documento;
                     }
                 });
 
-                $scope.$watch('pageNum', function() {
-                    $scope.loadpag = $scope.pageNum;
-                });
-
-                $scope.$watch('documentoid', function() {
-                  console.log($scope.documentoid);
-                  if($scope.documentoid){
-                    poluxRequest.get("documento_trabajo_grado", $.param({
-                        limit: -1,
-                        sortby: "Id",
-                        order: "asc",
-                        query: "Id:"+$scope.documentoid
-                    })).then(function(response) {
-                      console.log(response);
-                      console.log(response.data[0].DocumentoEscrito.Enlace);
-                        self.documento = response.data[0];
-                        self.documento.Enlace = constantes.DOWNLOAD_FILE + self.documento.Enlace;
-                      //  self.documento.Enlace='blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
-                      //  console.log(self.documento.Enlace);
-                        $scope.selectpag = $scope.pageNum;
-                      //  $scope.pdfUrl = self.documento.Enlace;
-                      //  $scope.pdfUrl = 'blob:http://localhost:9008/0e974a19-639b-494a-8759-470704ce0076';
-
-                      //cargar documento obteniendolo de NUXEO
-                      var docid=response.data[0].DocumentoEscrito.Enlace;
-                      self.getDocumento(docid);
-                      //$scope.pdfUrl="documentos/dibujo.pdf";
-
-                    });
-                  }
-                });
 
                 self.getDocumento = function(docid){
                   console.log(docid);

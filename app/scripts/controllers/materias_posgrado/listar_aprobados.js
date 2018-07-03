@@ -752,7 +752,7 @@ angular.module('poluxClienteApp')
        * Función que prepara el contenido de la información para actualizar.
        * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados del registro del trabajo de grado en la base de datos.
        * @param {undefined} undefined No requiere parámetros
-       * @returns {undefined} No hace retorno de resultados
+       * @returns {Promise} La respuesta de operar el registro en la base de datos
        */
       ctrl.registrarSolicitudAprobada = function() {
         // Se trae el diferido desde el servicio para manejar las promesas

@@ -31,57 +31,52 @@ angular.module('poluxClienteApp')
     token_service.token.documento = "20141020036";
     token_service.token.role.push("ESTUDIANTE");
     ctrl.userRole = token_service.token.role;
-    ctrl.userId  = token_service.token.documento;
+    ctrl.userId = token_service.token.documento;
 
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
+    ctrl.mensajeCargandoActualizarTg = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
     ctrl.trabajoCargado = false;
 
     ctrl.gridOptionsAsignaturas = [];
     ctrl.gridOptionsAsignaturas.columnDefs = [{
       name: 'CodigoAsignatura',
       displayName: $translate.instant('ASIGNATURA'),
-      width:'20%',
-    },
-    {name: 'Anio',
+      width: '20%',
+    }, {
+      name: 'Anio',
       displayName: $translate.instant('ANIO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'Periodo',
       displayName: $translate.instant('PERIODO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'Calificacion',
       displayName: $translate.instant('NOTA'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'EstadoAsignaturaTrabajoGrado.Nombre',
       displayName: $translate.instant('ESTADO'),
-      width:'20%',
+      width: '20%',
     }];
 
     ctrl.gridOptionsEspacios = [];
     ctrl.gridOptionsEspacios.columnDefs = [{
       name: 'EspaciosAcademicosElegibles.CodigoAsignatura',
       displayName: $translate.instant('CODIGO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'NombreEspacio',
       displayName: $translate.instant('NOMBRE'),
-      width:'40%',
-    },
-    {
+      width: '40%',
+    }, {
       name: 'EstadoEspacioAcademicoInscrito.Nombre',
       displayName: $translate.instant('ESTADO'),
-      width:'20%',
-    },
-    {
+      width: '20%',
+    }, {
       name: 'Nota',
       displayName: $translate.instant('NOTA'),
-      width:'20%',
+      width: '20%',
     }];
 
     /**
@@ -93,32 +88,32 @@ angular.module('poluxClienteApp')
      * @param {object} estudiante Estudiante que se va a consultar
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
      */
-    ctrl.cargarEstudiante = function(estudiante){
+    ctrl.cargarEstudiante = function(estudiante) {
       var defer = $q.defer();
       //consultar datos básicos del estudiante
-      academicaRequest.get("datos_basicos_estudiante",[estudiante.codigo])
-      .then(function(responseDatosBasicos){
-        if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
-          estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
-          //consultar nombre carrera
-          academicaRequest.get("carrera",[estudiante.datos.carrera])
-          .then(function(responseCarrera){
-            estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
-            defer.resolve();
-          })
-          .catch(function(error){
-            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_CARRERA_ESTUDIANTE');
+      academicaRequest.get("datos_basicos_estudiante", [estudiante.codigo])
+        .then(function(responseDatosBasicos) {
+          if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+            estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
+            //consultar nombre carrera
+            academicaRequest.get("carrera", [estudiante.datos.carrera])
+              .then(function(responseCarrera) {
+                estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
+                defer.resolve();
+              })
+              .catch(function(error) {
+                ctrl.mensajeError = $translate.instant('ERROR.CARGAR_CARRERA_ESTUDIANTE');
+                defer.reject(error);
+              });
+          } else {
+            ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_NO_ENCONTRADO');
             defer.reject(error);
-          });
-        }else{
-          ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_NO_ENCONTRADO');
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTE');
           defer.reject(error);
-        }
-      })
-      .catch(function(error){
-        ctrl.mensajeError = $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTE');
-        defer.reject(error);
-      });
+        });
       return defer.promise;
     }
 
@@ -131,29 +126,29 @@ angular.module('poluxClienteApp')
      * @param {undefined} undefined no requiere parametros
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
      */
-    ctrl.cargarAsignaturasTrabajoGrado = function(){
+    ctrl.cargarAsignaturasTrabajoGrado = function() {
       var defer = $q.defer();
       var parametrosAsignaturasTrabajoGrado = $.param({
-        query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
-        limit:2,
+        query: "TrabajoGrado:" + ctrl.trabajoGrado.Id,
+        limit: 2,
       });
-      poluxRequest.get("asignatura_trabajo_grado",parametrosAsignaturasTrabajoGrado)
-      .then(function(responseAsignaturaTrabajoGrado){
-        if(responseAsignaturaTrabajoGrado.data != null){
-          ctrl.trabajoGrado.asignaturas = responseAsignaturaTrabajoGrado.data;
-          angular.forEach(ctrl.trabajoGrado.asignaturas,function(asignatura){
-            asignatura.Estado = asignatura.EstadoAsignaturaTrabajoGrado.Nombre;
-          });
-          defer.resolve();
-        }else{
-          ctrl.mensajeError = $translate.instant("ERROR.SIN_ASIGNATURAS_TRABAJO_GRADO");
+      poluxRequest.get("asignatura_trabajo_grado", parametrosAsignaturasTrabajoGrado)
+        .then(function(responseAsignaturaTrabajoGrado) {
+          if (responseAsignaturaTrabajoGrado.data != null) {
+            ctrl.trabajoGrado.asignaturas = responseAsignaturaTrabajoGrado.data;
+            angular.forEach(ctrl.trabajoGrado.asignaturas, function(asignatura) {
+              asignatura.Estado = asignatura.EstadoAsignaturaTrabajoGrado.Nombre;
+            });
+            defer.resolve();
+          } else {
+            ctrl.mensajeError = $translate.instant("ERROR.SIN_ASIGNATURAS_TRABAJO_GRADO");
+            defer.reject(error);
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ASIGNATURAS_TRABAJO_GRADO");
           defer.reject(error);
-        }
-      })
-      .catch(function(error){
-        ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ASIGNATURAS_TRABAJO_GRADO");
-        defer.reject(error);
-      });
+        });
       return defer.promise;
     }
 
@@ -167,56 +162,56 @@ angular.module('poluxClienteApp')
      * @param {undefined} undefined no requiere parametros
      * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
      */
-    ctrl.getEspaciosAcademicosInscritos = function(){
+    ctrl.getEspaciosAcademicosInscritos = function() {
       var defer = $q.defer();
       var parametrosEspaciosAcademicosInscritos = $.param({
-        query:"TrabajoGrado:"+ctrl.trabajoGrado.Id,
-        limit:0,
+        query: "TrabajoGrado:" + ctrl.trabajoGrado.Id,
+        limit: 0,
       });
 
-      var getDataEspacio = function(espacio){
+      var getDataEspacio = function(espacio) {
         var defer = $q.defer();
         academicaRequest.get("asignatura_pensum", [espacio.EspaciosAcademicosElegibles.CodigoAsignatura, espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
-        .then(function(responseEspacio) {
-          if (responseEspacio.data.asignatura.datosAsignatura) {
-            espacio.NombreEspacio = responseEspacio.data.asignatura.datosAsignatura[0].nombre;
-            defer.resolve();
-          } else {
-            // Se rechaza la petición en caso de no encontrar datos
-            defer.reject("No se encuentran datos de la materia");
-          }
-        }).catch(function(error){
-          defer.reject(error);
-        });
+          .then(function(responseEspacio) {
+            if (responseEspacio.data.asignatura.datosAsignatura) {
+              espacio.NombreEspacio = responseEspacio.data.asignatura.datosAsignatura[0].nombre;
+              defer.resolve();
+            } else {
+              // Se rechaza la petición en caso de no encontrar datos
+              defer.reject("No se encuentran datos de la materia");
+            }
+          }).catch(function(error) {
+            defer.reject(error);
+          });
         return defer.promise;
       }
 
-      poluxRequest.get("espacio_academico_inscrito",parametrosEspaciosAcademicosInscritos)
-      .then(function(responseEspacios){
-        if(responseEspacios.data != null){
-          ctrl.trabajoGrado.espacios = responseEspacios.data;
-          var promises = [];
-          //Consultar nombres de los espacios
-          angular.forEach(ctrl.trabajoGrado.espacios,function(espacio){
-            promises.push(getDataEspacio(espacio));
-          });
-          $q.all(promises)
-          .then(function(){
-            defer.resolve();
-          })
-          .catch(function(error){
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ASIGNATURAS");
-            defer.reject(error);
-          });
-        }else{
-          ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
-          defer.reject("sin espacios académicos inscritos");
-        }
-      })
-      .catch(function(error){
-        ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
-        defer.reject(error);
-      });
+      poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos)
+        .then(function(responseEspacios) {
+          if (responseEspacios.data != null) {
+            ctrl.trabajoGrado.espacios = responseEspacios.data;
+            var promises = [];
+            //Consultar nombres de los espacios
+            angular.forEach(ctrl.trabajoGrado.espacios, function(espacio) {
+              promises.push(getDataEspacio(espacio));
+            });
+            $q.all(promises)
+              .then(function() {
+                defer.resolve();
+              })
+              .catch(function(error) {
+                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ASIGNATURAS");
+                defer.reject(error);
+              });
+          } else {
+            ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
+            defer.reject("sin espacios académicos inscritos");
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
+          defer.reject(error);
+        });
       return defer.promise;
     }
 
@@ -470,32 +465,43 @@ angular.module('poluxClienteApp')
      * @name consultarTrabajoGrado
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
      * @description 
-     * Consulta el trabajo de graod de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
+     * Consulta el trabajo de grado de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
      * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón 
      * getEspaciosAcademicosInscritos.
      * @param {undefined} undefined no requiere parametros
      * @returns {undefined} No retorna ningún parametro
      */
-    ctrl.consultarTrabajoGrado = function(){
+    ctrl.consultarTrabajoGrado = function() {
       ctrl.errorCargandoTrabajoGrado = false;
       //Verifica que lo ingresado sea un codigo
-      if(/^\d+$/.test(ctrl.codigoEstudiante)){
+      if (/^\d+$/.test(ctrl.codigoEstudiante)) {
         //consultar trabajo de grado del estudiante
         ctrl.loadTrabajoGrado = true;
         var parametrosTrabajoGrago = $.param({
-          query:"EstadoEstudianteTrabajoGrado.Id:1,Estudiante:"+ctrl.codigoEstudiante,
-          limit:1,
+          query: "EstadoEstudianteTrabajoGrado.Id:1,Estudiante:" + ctrl.codigoEstudiante,
+          limit: 1,
         });
-        poluxRequest.get('estudiante_trabajo_grado',parametrosTrabajoGrago)
-        .then(function(response_trabajoGrado){
-          if(response_trabajoGrado.data != null){
-            ctrl.trabajoGrado = response_trabajoGrado.data[0].TrabajoGrado;
-            var promises = [];
-            ctrl.trabajoGrado.estudiante = {
-              "codigo": ctrl.codigoEstudiante
-            }
-            promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
-            promises.push(ctrl.cargarAsignaturasTrabajoGrado());
+        poluxRequest.get('estudiante_trabajo_grado', parametrosTrabajoGrago)
+          .then(function(response_trabajoGrado) {
+            if (response_trabajoGrado.data != null) {
+              ctrl.trabajoGrado = response_trabajoGrado.data[0].TrabajoGrado;
+              if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
+                  ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) &&
+                ctrl.userRole.includes('ESTUDIANTE')) {
+                ctrl.esAnteproyectoModificable = true;
+              }
+              //Si el anteproyecto es viable se puede subir la primera versión del proyecto
+              if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
+                  ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10) &&
+                ctrl.userRole.includes('ESTUDIANTE')) {
+                ctrl.esPrimeraVersion = true;
+              }
+              var promises = [];
+              ctrl.trabajoGrado.estudiante = {
+                "codigo": ctrl.codigoEstudiante
+              }
+              promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
+              promises.push(ctrl.cargarAsignaturasTrabajoGrado());
 
             //Consulta las vinculaciones 
             if(ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3){
@@ -513,41 +519,313 @@ angular.module('poluxClienteApp')
               promises.push(ctrl.getDetallePasantia());
             }
 
-            $q.all(promises)
-            .then(function(){
-              console.log(ctrl.trabajoGrado);
-              console.log(ctrl.trabajoGrado.estudiante);
-              ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
-              ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
-              ctrl.trabajoCargado = true;
-              ctrl.loadTrabajoGrado = false;
-            })
-            .catch(function(error){
-              console.log(error);
+              $q.all(promises)
+                .then(function() {
+                  console.log(ctrl.trabajoGrado);
+                  console.log(ctrl.trabajoGrado.estudiante);
+                  ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
+                  ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
+                  ctrl.trabajoCargado = true;
+                  ctrl.loadTrabajoGrado = false;
+                })
+                .catch(function(error) {
+                  console.log(error);
+                  ctrl.errorCargandoTrabajoGrado = true;
+                  ctrl.loadTrabajoGrado = false;
+                });
+            } else {
+              ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_SIN_TRABAJO');
               ctrl.errorCargandoTrabajoGrado = true;
               ctrl.loadTrabajoGrado = false;
-            });
-          }else{
-            ctrl.mensajeError = $translate.instant('ERROR.ESTUDIANTE_SIN_TRABAJO');
+            }
+          })
+          .catch(function(error) {
+            console.log(error);
+            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
             ctrl.errorCargandoTrabajoGrado = true;
             ctrl.loadTrabajoGrado = false;
-          }
-        })
-        .catch(function(error){
-          console.log(error);
-          ctrl.mensajeError = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
-          ctrl.errorCargandoTrabajoGrado = true;
-          ctrl.loadTrabajoGrado = false;
-        });
-      }else{
+          });
+      } else {
         ctrl.mensajeError = $translate.instant('ERROR.CODIGO_NO_VALIDO');
         ctrl.errorCargandoTrabajoGrado = true;
       }
     }
 
-    if(ctrl.userRole.includes("ESTUDIANTE")){
+    if (ctrl.userRole.includes("ESTUDIANTE")) {
       ctrl.codigoEstudiante = ctrl.userId;
       ctrl.consultarTrabajoGrado();
+    }
+
+    /**
+     * @ngdoc method
+     * @name obtenerParametrosDocumentoTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description
+     * Función que define los parámetros para consultar en la tabla documento_trabajo_grado.
+     * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+     * @returns {String} La sentencia para la consulta correspondiente
+     */
+    ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+      return $.param({
+        query: "TrabajoGrado.Id:" +
+          idTrabajoGrado,
+        limit: 1
+      });
+    }
+
+
+    /**
+     * @ngdoc method
+     * @name consultarDocumentoTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description
+     * Función que recorre la base de datos de acuerdo al trabajo de grado vinculado y trae el documento asociado.
+     * Llama a la función: obtenerParametrosDocumentoTrabajoGrado.
+     * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
+     * @param {Object} trabajoGrado El trabajo de grado para cargar la información del documento
+     * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
+     */
+    ctrl.consultarDocumentoTrabajoGrado = function(trabajoGrado) {
+      var deferred = $q.defer();
+      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado.Id))
+        .then(function(documentoAsociado) {
+          if (documentoAsociado.data) {
+            trabajoGrado.documentoTrabajoGrado = documentoAsociado.data[0].Id;
+            trabajoGrado.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
+          }
+          deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
+        })
+        .catch(function(excepcionVinculacionTrabajoGrado) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name actualizarTg
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Permite mostrar el contenido del modal que habilita subir el documento nuevo y actualizar el tg
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.actualizarTg = function() {
+      ctrl.cargandoActualizarTg = true;
+      $('#modalActualizarTg').modal('show');
+      ctrl.consultarDocumentoTrabajoGrado(ctrl.trabajoGrado)
+        .then(function(respuestaDocumentoTrabajoGrado) {
+          ctrl.cargandoActualizarTg = false;
+        })
+        .catch(function(excepcionDocumentoTrabajoGrado) {
+          ctrl.cargandoActualizarTg = false;
+          swal(
+            $translate.instant("MODIFICAR_TG"),
+            $translate.instant("ERROR.MODIFICANDO_TG"),
+            'warning'
+          );
+        });
+    }
+
+    /**
+     * @ngdoc method
+     * @name cargarDocumento
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+     * @param {string} nombre Nombre del documento que se cargará
+     * @param {string} descripcion Descripcion del documento que se cargará
+     * @param {blob} documento Blob del documento que se cargará
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con la url del objeto cargado.
+     */
+    ctrl.cargarDocumento = function(nombre, descripcion, documento) {
+      var defer = $q.defer();
+      var promise = defer.promise;
+      nuxeo.operation('Document.Create')
+        .params({
+          type: 'File',
+          name: nombre,
+          properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
+        })
+        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Anteproyectos')
+        .execute()
+        .then(function(doc) {
+          var nuxeoBlob = new Nuxeo.Blob({
+            content: documento
+          });
+          nuxeo.batchUpload()
+            .upload(nuxeoBlob)
+            .then(function(res) {
+              return nuxeo.operation('Blob.AttachOnDocument')
+                .param('document', doc.uid)
+                .input(res.blob)
+                .execute();
+            })
+            .then(function() {
+              return nuxeo.repository().fetch(doc.uid, {
+                schemas: ['dublincore', 'file']
+              });
+            })
+            .then(function(doc) {
+              var url = doc.uid;
+              //callback(url);
+              defer.resolve(url);
+            })
+            .catch(function(error) {
+              throw error;
+              defer.reject(error)
+            });
+        })
+        .catch(function(error) {
+          throw error;
+          defer.reject(error)
+        });
+      return promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name actualizarDocumentoTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description
+     * Función que prepara el contenido de la información para actualizar.
+     * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar la actualización del anteproyecto.
+     * @param {String} respuestaCargarDocumento El enlace generado luego de subir el documento
+     * @returns {Promise} La respuesta de operar el registro en la base de datos
+     */
+    ctrl.actualizarDocumentoTrabajoGrado = function(respuestaCargarDocumento) {
+      var deferred = $q.defer();
+      if (ctrl.esAnteproyectoModificable) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 4
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
+      }
+      if (ctrl.esPrimeraVersion) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 13
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
+      }
+      delete ctrl.trabajoGrado.documentoEscrito.Id
+      ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
+      var documentoTrabajoGrado = {
+        Id: ctrl.trabajoGrado.documentoTrabajoGrado,
+        TrabajoGrado: {
+          Id: ctrl.trabajoGrado.Id
+        },
+        DocumentoEscrito: {
+          Id: 0,
+        }
+      }
+      var informacionParaActualizar = {
+        "DocumentoEscrito": ctrl.trabajoGrado.documentoEscrito,
+        "DocumentoTrabajoGrado": documentoTrabajoGrado,
+        "TrabajoGrado": ctrl.trabajoGrado
+      };
+      poluxRequest
+        .post("tr_actualizar_documento_tg", informacionParaActualizar)
+        .then(function(respuestaActualizarAnteproyecto) {
+          deferred.resolve(respuestaActualizarAnteproyecto);
+        })
+        .catch(function(excepcionActualizarAnteproyecto) {
+          deferred.reject(excepcionActualizarAnteproyecto);
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name subirDocumento
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.subirDocumento = function() {
+      var descripcionDocumento;
+      var titleConfirmacion;
+      var mensajeConfirmacion;
+      var mensajeSuccess;
+      var mensajeError;
+      if (ctrl.esAnteproyectoModificable) {
+        descripcionDocumento = "Versión nueva del anteproyecto";
+        titleConfirmacion = "CORREGIR_ANTEPROYECTO.CONFIRMACION";
+        mensajeConfirmacion = "CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO";
+      }
+      if (ctrl.esPrimeraVersion) {
+        descripcionDocumento = "Primera versión del trabajo de grado";
+        titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
+        mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
+      }
+      swal({
+          title: $translate.instant(titleConfirmacion),
+          text: $translate.instant(mensajeConfirmacion),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          if (confirmacionDelUsuario.value) {
+            ctrl.loadTrabajoGrado = true;
+            ctrl.cargandoActualizarTg = true;
+            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion)
+              .then(function(respuestaCargarDocumento) {
+                ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
+                  .then(function(respuestaActualizarTG) {
+                    if (respuestaActualizarTG.data[0] === "Success") {
+                      ctrl.loadTrabajoGrado = false;
+                      ctrl.cargandoActualizarTg = false;
+                      swal(
+                        $translate.instant(titleConfirmacion),
+                        $translate.instant(mensajeSuccess),
+                        'success'
+                      );
+                      ctrl.consultarTrabajoGrado();
+                      if (ctrl.esAnteproyectoModificable) {
+                        ctrl.esAnteproyectoModificable = false
+                      }
+                      if (ctrl.esPrimeraVersion) {
+                        ctrl.esPrimeraVersion = false
+                      }
+                      $('#modalActualizarTg').modal('hide');
+                    } else {
+                      ctrl.loadTrabajoGrado = false;
+                      ctrl.cargandoActualizarTg = false;
+                      swal(
+                        $translate.instant(titleConfirmacion),
+                        $translate.instant(respuestaActualizarTG.data[1]),
+                        'warning'
+                      );
+                    }
+                  })
+                  .catch(function(excepcionActualizarAnteproyecto) {
+                    console.log(excepcionActualizarAnteproyecto);
+                    ctrl.loadTrabajoGrado = false;
+                    ctrl.cargandoActualizarTg = false;
+                    swal(
+                      $translate.instant(titleConfirmacion),
+                      $translate.instant("ERROR.MODIFICANDO_TG"),
+                      'warning'
+                    );
+                  });
+              })
+              .catch(function(excepcionCargarDocumento) {
+                swal(
+                  $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                  $translate.instant("VERIFICAR_DOCUMENTO"),
+                  'warning'
+                );
+                ctrl.loadTrabajoGrado = false;
+                ctrl.cargandoActualizarAnteproyecto = false;
+              });
+          }
+        });
+
     }
 
   });

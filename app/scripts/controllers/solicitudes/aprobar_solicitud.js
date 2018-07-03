@@ -811,7 +811,6 @@ angular.module('poluxClienteApp')
                         console.log(estudiante);
                         data_estudiantes.push(estudiante);
                         console.log(data_estudiantes);
-
                         ctrl.trabajo_grado = {
                             TrabajoGrado: data_trabajo_grado,
                             EstudianteTrabajoGrado: data_estudiantes,
@@ -821,7 +820,6 @@ angular.module('poluxClienteApp')
                             VinculacionTrabajoGrado: null
                         }
                         console.log(ctrl.trabajo_grado);
-
                         ctrl.rtaSol = {
                             RespuestaAnterior: objRtaAnterior,
                             RespuestaNueva: objRtaNueva,
@@ -1064,6 +1062,8 @@ angular.module('poluxClienteApp')
                     } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
                       vinculacionActual = docenteVinculado;
                     } else if(docenteVinculado.Usuario === Number(ctrl.codirector)){
+                      vinculacionActual = docenteVinculado;
+                    } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
                       vinculacionActual = docenteVinculado;
                     }
                   });
