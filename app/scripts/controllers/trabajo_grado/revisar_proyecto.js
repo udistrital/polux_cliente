@@ -245,7 +245,8 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
 				return $.param({
-					query: "TrabajoGrado.Id:" +
+          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+            "TrabajoGrado.Id:" +
 						idTrabajoGrado,
 					limit: 1
 				});
@@ -423,7 +424,9 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.actualizarCuadriculaDeProyectos = function() {
 				ctrl.cargandoProyectos = false;
-				ctrl.errorCargandoProyectos = false;
+        ctrl.errorCargandoProyectos = false;
+        ctrl.coleccionProyectos = [];
+        ctrl.cuadriculaProyectos.data = [];
 				ctrl.consultarProyectos()
 					.then(function(respuestaConsultandoProyectos) {
 						if (ctrl.coleccionProyectos.length > 0) {
