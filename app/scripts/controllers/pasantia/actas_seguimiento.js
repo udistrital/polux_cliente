@@ -34,7 +34,7 @@ angular.module('poluxClienteApp')
   ctrl.mensajeCargandoTrabajos = $translate.instant("LOADING.CARGANDO_TRABAJOS_DE_GRADO_PASANTIA");
   ctrl.mensajeCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
 
-  token_service.token.documento = "79647592";
+  token_service.token.documento = "80093200";
   ctrl.userDocument = token_service.token.documento;
 
   $scope.botones = [

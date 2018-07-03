@@ -34,7 +34,7 @@ angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest,nuxeo) {
     var ctrl = this;
 
-    token_service.token.documento = "79777053";
+    token_service.token.documento = "80093200";
     //token_service.token.documento = "12237136";
     ctrl.documento = token_service.token.documento;
 

@@ -376,6 +376,7 @@ angular.module('poluxClienteApp')
     });
     poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
       ctrl.areas = responseAreas.data;
+      if(ctrl.areas != null){
       coreService.get("snies_area").then(function(responseAreas) {
         var areasSnies = responseAreas.data;
         if(areasSnies != null){
@@ -397,6 +398,10 @@ angular.module('poluxClienteApp')
         ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
         defer.reject(error);
       });
+      } else {
+        ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
+        defer.reject("no hay areas");
+      }
     })
     .catch(function(error) {
       ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
@@ -780,6 +785,7 @@ angular.module('poluxClienteApp')
 
     var verificarTipoSolicitud = function(tipoSolicitud){
       var defer = $q.defer();
+      console.log(tipoSolicitud);
       if(tipoSolicitud.TipoSolicitud.Id === 6){
         // solicitud de socialización
         // el estado del trabajo de grado debe ser Listo para sustentar Id 17
@@ -809,8 +815,13 @@ angular.module('poluxClienteApp')
       }
       return defer.promise;
     }
-
-    $q.all([verificarTipoSolicitud(tipoSolicitud),verificarRequisitosModalidad(), verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente)])
+    var promesas = [];
+    promesas.push(verificarRequisitosModalidad());
+    promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
+    if(!angular.isUndefined(tipoSolicitud.TipoSolicitud)){
+      promesas.push(verificarTipoSolicitud(tipoSolicitud));
+    }
+    $q.all(promesas)
       .then(function() {
         //var puede = responseRequisitos[0] && responseRequisitos[1];
         defer.resolve(true)

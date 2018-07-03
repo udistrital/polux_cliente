@@ -55,7 +55,7 @@ angular.module('poluxClienteApp')
      */
     ctrl.obtenerParametrosVinculacionTrabajoGrado = function() {
       return $.param({
-        query: "Activo:True,Usuario:" +
+        query: "TrabajoGrado.EstadoTrabajoGrado.Id:13,Activo:True,Usuario:" +
           ctrl.documentoDocente,
         limit: 0
       });
