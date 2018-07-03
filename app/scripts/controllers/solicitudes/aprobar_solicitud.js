@@ -254,19 +254,40 @@ angular.module('poluxClienteApp')
                     if(id === 9 || id === 37){
                       ctrl.docenteDirector = {
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
-                        "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                        "id":docente.data.docenteTg.docente[0].id,
                       };
                       //console.log(ctrl.docenteDirector);
                     }
 
+                    //docente codirector solicitado
+                    if(id === 56){
+                      ctrl.docenteCoDirector = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "id":docente.data.docenteTg.docente[0].id,
+                      };
+                    }
+
                     //docente solicitado para el cambio
-                    if(id === 15 || id===17){
+                    if(id === 15 || id===17 || id===58){
                       ctrl.docenteCambio = {
                         "NOMBRE":docente.data.docenteTg.docente[0].nombre,
-                        "DIR_NRO_IDEN":docente.data.docenteTg.docente[0].id,
+                        "id":docente.data.docenteTg.docente[0].id,
                       };
                     //  console.log("docente cambio", ctrl.docenteCambio);
                     }
+
+                    //docente en solicitud de socialización o de director
+                    if(id === 14){
+                      ctrl.directorActualTg = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "id":docente.data.docenteTg.docente[0].id,
+                      };
+                      ctrl.directorOpcionTg = {
+                        "NOMBRE":docente.data.docenteTg.docente[0].nombre,
+                        "id":docente.data.docenteTg.docente[0].id,
+                      };
+                    }
+
                     defer.resolve();
                   }else{
                     ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
@@ -280,13 +301,47 @@ angular.module('poluxClienteApp')
                 return defer.promise;
               }
 
+              var getDocentes = function(detalle){
+                var defer = $q.defer();
+                var promesasDocentes = [];
+                var detallesTemporales = [];
+                angular.forEach(detalle.Descripcion.split(","), function(docDocente){
+                  var detalleTemp  = {
+                    Descripcion : docDocente,
+                    id : docDocente,
+                  }
+                  detallesTemporales.push(detalleTemp);
+                  promesasDocentes.push(getDocente(0,detalleTemp));
+                })
+                $q.all(promesasDocentes)
+                .then(function(){
+                  detalle.Descripcion = detallesTemporales.map(function(detalleTemp) {return detalleTemp.Descripcion}).join(", ");
+                  if(detalle.DetalleTipoSolicitud.Detalle.Id == 61){
+                    for(var j = 0; j < detallesTemporales.length ; j++){
+                      detallesTemporales[j].label = (detallesTemporales.length>1)?$translate.instant('SELECT.EVALUADOR_NUMERO',{numero:(j+1)}):$translate.instant('SELECT.DOCENTE_REVISOR');                 
+                      detallesTemporales[j].docente = {
+                        NOMBRE: detallesTemporales[j].Descripcion.substring(detallesTemporales[j].Descripcion.indexOf(" ")+1), 
+                        id: detallesTemporales[j].id,
+                      }
+                    }
+                    ctrl.evaluadoresActualesTg = angular.copy(detallesTemporales);
+                    ctrl.evaluadoresOpcionesTg = angular.copy(detallesTemporales);
+                  }
+                  defer.resolve();
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
               var getExterno = function(detalle){
                 var defer = $q.defer();
                 var parametrosVinculado = $.param({
-                  query:"TrabajoGrado:"+detalle.Descripcion,
+                  query:"TrabajoGrado:"+detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
                   limit:0
                 });
-                poluxRequest.get("detalle_pasantia")
+                poluxRequest.get("detalle_pasantia",parametrosVinculado)
                 .then(function(dataExterno){
                   if(dataExterno.data != null){
                     var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
@@ -306,14 +361,17 @@ angular.module('poluxClienteApp')
               
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     ctrl.todoDetalles.push(detalle);
-                    console.log("detalle",detalle);
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id
                     if(id===49){
                        detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48 || id === 37){
-                      promises.push(getDocente(id,detalle));
-                    }else if(id == 39) {
+                    } else if(id === 9 || id===14 || id===15 || id === 16 || id === 17 || id===48 || id === 37 || id === 56 || id === 57 || id === 58){
+                      if(detalle.Descripcion != "No solicita"){
+                        promises.push(getDocente(id,detalle));
+                      }
+                    } else if (id == 61){
+                      promises.push(getDocentes(detalle));
+                    } else if(id == 39) {
                       //detalle de director externo anterior
                       promises.push(getExterno(detalle));
                     } else if(detalle.Descripcion.includes("JSON-")){
@@ -355,6 +413,10 @@ angular.module('poluxClienteApp')
                           detalle.gridOptions.data = detalle.filas;
                         }
                     }
+                    // Si la solicitud tiene un detalle con id 56 es por que tiene codirector
+                    if(id === 56){
+                      ctrl.tieneCoDirector = true;
+                    }
               });
               $q.all(promises).then(function(){
                 console.log(ctrl.todoDetalles);
@@ -362,6 +424,7 @@ angular.module('poluxClienteApp')
                 defered.resolve(ctrl.detallesSolicitud);
               })
               .catch(function(error){
+                ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUD");
                 defered.reject(error);
               });
           })
@@ -388,8 +451,8 @@ angular.module('poluxClienteApp')
      * para dirigir trabajos de grado del servicio docentes_tg de {@link services/academicaService.service:academicaRequest academicaRequest}.
      */
     ctrl.evaluarSolicitud = function(){
-      var defered = $q.defer();
-      var promise = defered.promise;
+      var defer = $q.defer();
+      var promise = defer.promise;
       ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
       ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Nombre;
       ctrl.dataSolicitud.NombreModalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Nombre;
@@ -402,7 +465,7 @@ angular.module('poluxClienteApp')
                 academicaRequest.get("docentes_tg").then(function(docentes){
                   if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
                       ctrl.docentes=docentes.data.docentesTg.docente;
-                      defered.resolve(ctrl.docentes);
+                      defer.resolve(ctrl.docentes);
                   }
                 })
                 .catch(function(error){
@@ -413,22 +476,34 @@ angular.module('poluxClienteApp')
                   ctrl.isPasantia = true;
                 }
             }else{
-              defered.resolve(ctrl.dataSolicitud.modalidad);
+              defer.resolve(ctrl.dataSolicitud.modalidad);
             }
-      }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 ){
+      }else if(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  10 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  12 ){
         ctrl.isCambio = true;
         academicaRequest.get("docentes_tg").then(function(docentes){
           if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
             ctrl.docentes=docentes.data.docentesTg.docente;
-            defered.resolve(ctrl.docentes);
+            defer.resolve(ctrl.docentes);
           }
         })
         .catch(function(error){
           ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
           defer.reject(error);
         });
-      }else{
-        defered.resolve(ctrl.dataSolicitud.modalidad);
+      }else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id ===  6) {
+        ctrl.isRevision  = true;
+        academicaRequest.get("docentes_tg").then(function(docentes){
+          if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
+              ctrl.docentes=docentes.data.docentesTg.docente;
+              defer.resolve(ctrl.docentes);
+          }
+        })
+        .catch(function(error){
+          ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
+          defer.reject(error);
+        });
+      } else{
+        defer.resolve(ctrl.dataSolicitud.modalidad);
       }
       return promise;
     };
@@ -529,7 +604,7 @@ angular.module('poluxClienteApp')
                   var vinculados = [];
                   ctrl.docentesVinculadosTg = docentesVinculados.data;
                   angular.forEach(ctrl.docentes, function(docente){
-                      if(ctrl.docenteVinculado(docentesVinculados.data, docente.DIR_NRO_IDEN)){
+                      if(ctrl.docenteVinculado(docentesVinculados.data, docente.id)){
                         console.log("vinculado", docente);
                         vinculados.push(docente);
                       }
@@ -630,6 +705,7 @@ angular.module('poluxClienteApp')
                 SolicitudTrabajoGrado: null,
                 EspaciosAcademicos: null,
                 DetallesPasantia: null,
+                TrRevision: null,
             };
             //solicitud aprobada
             if(ctrl.respuestaSolicitud == 3){
@@ -665,10 +741,38 @@ angular.module('poluxClienteApp')
                     } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 55){
                       //Documento del nuevo director Externo
                       ctrl.docenteCambio = {
-                        DIR_NRO_IDEN: detalle.Descripcion,
+                        id: detalle.Descripcion,
                       }
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 57){
+                      //Documento del codirector
+                      var aux = detalle.Descripcion.split(" ");
+                      ctrl.codirector = Number(aux[0]);
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59){
+                      //Documento del codirector
+                      ctrl.docPropuestaFinal = detalle.Descripcion;
                     }
                 });
+
+                //funcion para cambiar vinculaciones
+                var addVinculacion = function(vinculaciones, documentoActual, documentoNuevo){
+                  var vinculacionActual =  [];
+                  angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
+                    if(docenteVinculado.Usuario === Number(documentoActual)){
+                      vinculacionActual = docenteVinculado;
+                    } 
+                  });
+                  var nuevaVinculacion = angular.copy(vinculacionActual);
+                  //actualizar vinculacion actual
+                  vinculacionActual.Activo=false;
+                  vinculacionActual.FechaFin=fechaRespuesta;
+                  //nueva vinculacion
+                  nuevaVinculacion.Id=null;
+                  nuevaVinculacion.Usuario=Number(documentoNuevo);
+                  nuevaVinculacion.FechaInicio=fechaRespuesta;
+                  //nuevaVinculacion.FechaFin=null;
+                  vinculaciones.push(vinculacionActual);
+                  vinculaciones.push(nuevaVinculacion);
+                }
                 //Se verifica por tipo de solicitud
                 if (ctrl.dataSolicitud.TipoSolicitud == 2) {
                    //solicitud inicial
@@ -752,8 +856,8 @@ angular.module('poluxClienteApp')
                         });
                         // por defecto el estado es En evaluación por revisor
                         var estadoTrabajoGrado = 4;
-                        // si  la modalidad es de producción academica de una se vez se crea en curso
-                        if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+                        // si  la modalidad es de producción academica de una se vez se crea en estado listo para sustentar
+                        if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 17) {
                           estadoTrabajoGrado = 13;
                         }
                         //data para crear el trabajo de grado
@@ -799,10 +903,9 @@ angular.module('poluxClienteApp')
                             }
                         }
                         //se agregan las areaSnies
-                        var area = {};
                         var data_areas = [];
                         angular.forEach(ctrl.areas, function(area) {
-                            area = {
+                          data_areas.push({
                                 "AreaConocimiento": {
                                     "Id": Number(area)
                                 },
@@ -811,14 +914,14 @@ angular.module('poluxClienteApp')
                                 },
                                 "Activo": true,
                             }
-                            data_areas.push(area);
+                          );
                         });
                         // se agregan las vinculaciones del tg
                         var vinculacion = {};
                         var data_vinculacion = [];
                         // docente director
                         vinculacion = {
-                            "Usuario": Number(ctrl.docenteDirector.DIR_NRO_IDEN),
+                            "Usuario": Number(ctrl.docenteDirector.id),
                             "Activo": true,
                             "FechaInicio": fechaRespuesta,
                             //"FechaFin": null,
@@ -832,7 +935,29 @@ angular.module('poluxClienteApp')
                         data_vinculacion.push(vinculacion);
                         //verificar que el docente no este repetido
                         var vinculados = [];
-                        vinculados.push(ctrl.docenteDirector.DIR_NRO_IDEN);
+                        vinculados.push(ctrl.docenteDirector.id);
+                        // docente codirector
+                        // Si la opción del docente codirector esta activada se agrega la vinculacion
+                        if(ctrl.switchCodirector){
+                          if(ctrl.docenteCoDirector.id != ctrl.docenteDirector.id ){
+                            data_vinculacion.push({
+                              "Usuario": Number(ctrl.docenteCoDirector.id),
+                              "Activo": true,
+                              "FechaInicio": fechaRespuesta,
+                              //"FechaFin": null,
+                              // Rol de codirector
+                              "RolTrabajoGrado": {
+                                  "Id": 4
+                              },
+                              "TrabajoGrado": {
+                                  "Id": 0
+                              }
+                            });
+                            vinculados.push(ctrl.docenteCoDirector.id)
+                          } else {
+                            errorDocente = true;
+                          }
+                        }
                         // evaluadores
                         angular.forEach(ctrl.evaluadoresInicial, function(docente) {
                             vinculacion = {
@@ -924,15 +1049,19 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.TrTrabajoGrado = ctrl.trabajo_grado;
                         ctrl.dataRespuesta.SolicitudTrabajoGrado = solicitudInicial;
                     }
-                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5){
-                  //cambio de director interno o evaluadores
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5 || ctrl.dataSolicitud.TipoSolicitud == 12){
+                  //cambio de director interno, codirector o evaluadores
                   // 5 cambio de director externo
                   var vinculaciones = [];
                   var vinculacionActual =  [];
                   angular.forEach(ctrl.docentesVinculadosTg, function(docenteVinculado){
                     if(docenteVinculado.Usuario === ctrl.directorActual){
                       vinculacionActual = docenteVinculado;
-                    }else if(docenteVinculado.Usuario === ctrl.evaluadorActual){
+                    } else if(docenteVinculado.Usuario === ctrl.evaluadorActual){
+                      vinculacionActual = docenteVinculado;
+                    } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
+                      vinculacionActual = docenteVinculado;
+                    } else if(docenteVinculado.Usuario === Number(ctrl.codirector)){
                       vinculacionActual = docenteVinculado;
                     } else if(docenteVinculado.Usuario === Number(ctrl.directorExternoActual)){
                       vinculacionActual = docenteVinculado;
@@ -944,7 +1073,7 @@ angular.module('poluxClienteApp')
                   vinculacionActual.FechaFin=fechaRespuesta;
                   //nueva vinculacion
                   nuevaVinculacion.Id=null;
-                  nuevaVinculacion.Usuario=Number(ctrl.docenteCambio.DIR_NRO_IDEN);
+                  nuevaVinculacion.Usuario=Number(ctrl.docenteCambio.id);
                   nuevaVinculacion.FechaInicio=fechaRespuesta;
                   //nuevaVinculacion.FechaFin=null;
                   vinculaciones.push(vinculacionActual);
@@ -959,7 +1088,7 @@ angular.module('poluxClienteApp')
                       Empresa: 0,
                       Horas: 0,
                       ObjetoContrato:"Contrato de aprendizaje",
-                      Observaciones:" y dirigida por " + ctrl.nombreDirectorExternoNuevo + " con número de identificacion " + ctrl.docenteCambio.DIR_NRO_IDEN,
+                      Observaciones:" y dirigida por " + ctrl.nombreDirectorExternoNuevo + " con número de identificacion " + ctrl.docenteCambio.id,
                       TrabajoGrado:{
                         Id: nuevaVinculacion.TrabajoGrado.Id,
                       }
@@ -1017,21 +1146,108 @@ angular.module('poluxClienteApp')
                   });
                   ctrl.dataRespuesta.EspaciosAcademicos = espacios;
                   console.log("Espacios", ctrl.dataRespuesta.EspaciosAcademicos);
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 13 ){
+                  //Solicitud de revisión de tg
+                  var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
+                  //trabajo de grado en revisión id 15
+                  data_tg.EstadoTrabajoGrado = {
+                    Id: 15 
+                  };
+                  //Vinculaciones del tg
+                  var data_vinculaciones = [];
+                  //Si se escogio cambiar la vinculación
+                  if(ctrl.switchRevision){
+                    //Si se cambio el  director original
+                    if(ctrl.directorOpcionTg.id != ctrl.directorActualTg.id){
+                      //Cambiar vinculaciones
+                     // console.log("Cambia director");
+                      addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
+                    }
+                    //Si se cambiaron los evaluadores actuales
+                    if(ctrl.evaluadoresActualesTg != undefined){
+                      for(var e = 0; e < ctrl.evaluadoresActualesTg.length; e++){
+                        if(ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id){
+                          //Cambiar vinculaciones                  
+                          //console.log(ctrl.evaluadoresOpcionesTg[e].docente.id, ctrl.evaluadoresActualesTg[e].docente.id);
+                          //console.log("Cambia evaluador"+(e+1));
+                          addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
+                        }
+                      }
+                      //console.log("Vinculaciones revisión", data_vinculaciones);
+                      //buscar si hay algun valor repetido
+                      angular.forEach(data_vinculaciones, function(vinculacion){
+                          if (data_vinculaciones.filter(function(value){ return value.Usuario === vinculacion.Usuario }).length > 1) {
+                            errorDocente = true;
+                          }
+                      });
+                    }
+                  }
+                  //Documento escrito
+                  var data_documentoEscrito = {
+                    Id: 0,
+                    Titulo: data_tg.Titulo,
+                    Enlace: ctrl.docPropuestaFinal,
+                    Resumen: "Documento para revisión final del trabajo de grado",
+                    //Tipo documento 5 para revisión final
+                    TipoDocumentoEscrito: 5
+                  };
+                  var data_revision = {
+                    TrabajoGrado: data_tg,
+                    Vinculaciones: data_vinculaciones,
+                    DocumentoEscrito: data_documentoEscrito,
+                    DocumentoTrabajoGrado: {
+                      Id:0,
+                      DocumentoEscrito:{
+                        Id: 0,
+                      },
+                      TrabajoGrado:data_tg,
+                    }
+                  }
+                  ctrl.dataRespuesta.TrRevision = data_revision;
+                } else if(ctrl.dataSolicitud.TipoSolicitud == 6 ){
+                  //Solicitud de socialización
+                  //Vinculaciones del tg
+                  var data_vinculaciones = [];
+                  //Si se escogio cambiar las vinculaciones se cambian, el resto de la justificación va en la data
+                  if(ctrl.switchRevision){
+                    //Si se cambio el  director original
+                    if(ctrl.directorOpcionTg.id != ctrl.directorActualTg.id){
+                      //Cambiar vinculaciones
+                      addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
+                    }
+                    //Si se cambiaron los evaluadores actuales
+                    if (ctrl.evaluadoresActualesTg != undefined) {
+                      for(var e = 0; e < ctrl.evaluadoresActualesTg.length; e++){
+                        if(ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id){
+                          //Cambiar vinculaciones                  
+                          addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
+                        }
+                      }
+                      //buscar si hay algun valor repetido
+                      angular.forEach(data_vinculaciones, function(vinculacion){
+                          if (data_vinculaciones.filter(function(value){ return value.Usuario === vinculacion.Usuario }).length > 1) {
+                            errorDocente = true;
+                          }
+                      });
+                    }
+                  }
+                  ctrl.dataRespuesta.Vinculaciones = data_vinculaciones;
                 }
             }
-
+            
             if (!errorDocente) {
-                poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function(response) {
-                    ctrl.mostrarRespuesta(response);
-                })
-                .catch(function(error){
-                  console.log(error);
-                  swal(
-                      $translate.instant("ERROR"),
-                      $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                      'warning'
-                  );
-                });
+              //console.log("envia", ctrl.dataRespuesta);
+              poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function(response) {
+                  ctrl.mostrarRespuesta(response);
+              })
+              .catch(function(error){
+                console.log(error);
+                swal(
+                    $translate.instant("ERROR"),
+                    $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                    'warning'
+                );
+              });
             } else {
                 swal(
                     $translate.instant("ERROR"),
@@ -1128,15 +1344,13 @@ angular.module('poluxClienteApp')
                     defered.resolve(url);
                   })
                   .catch(function(error) {
-                    throw error;
-                    ctrl.swalError();
+                    console.log(error);
                     $scope.loadFormulario = false;
                     defered.reject(error);
                   });
               })
               .catch(function(error) {
-                  throw error;
-                  ctrl.swalError();
+                  console.log(error);
                   $scope.loadFormulario = false;
                   defered.reject(error);
               });
@@ -1223,7 +1437,7 @@ angular.module('poluxClienteApp')
           .get()
           .then(function(response) {
             ctrl.doc=response;
-            var aux=response.get('file:content');
+            //var aux=response.get('file:content');
             ctrl.document=response;
             defered.resolve(response);
           })

@@ -43,7 +43,7 @@ angular.module('poluxClienteApp')
                             .then(function(response) {
                               console.log(response);
                               self.doc=response;
-                              var aux=response.get('file:content');
+                              //var aux=response.get('file:content');
                               self.document=response;
                               defered.resolve(response);
                             })

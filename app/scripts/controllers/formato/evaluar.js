@@ -156,7 +156,7 @@ angular.module('poluxClienteApp')
                           return defered.promise;
                       }
 
-                      var getUsuarios = function(){
+                      /*var getUsuarios = function(){
                            var defered = $q.defer();
                            var parametrosEstudiantes = $.param({
                                query:"trabajoGrado:"+ctrl.solicitudDistincion.trabajoGrado.Id,
@@ -175,7 +175,7 @@ angular.module('poluxClienteApp')
                                 defered.resolve(data_usuarios);
                            });
                            return defered.promise;
-                      }
+                      }*/
 
                       getModalidadTipoSolicitud().then(function(modalidadTipoSolicitud){
                           getDetalles(modalidadTipoSolicitud).then(function(){

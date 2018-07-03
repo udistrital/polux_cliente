@@ -60,7 +60,7 @@ angular.module('poluxClienteApp')
                         codigo = parseInt(codigo);
                         console.log("Modalidad seleccionada: " + codigo);
                         if (isNaN(codigo)) {
-
+                            console.log("error");
                         } else {
                             self.verificarRequisitos(parseInt(self.estudianteSeleccionado), codigo);
                         }
@@ -111,7 +111,7 @@ angular.module('poluxClienteApp')
                                         self.validar = response.data;
                                     });
                                 });
-                            };
+                            }
                         });
                     });
                 };
@@ -144,7 +144,7 @@ angular.module('poluxClienteApp')
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Confirmar'
                         }).then(function() {
-                            var codEstudiante, idTrabajoGrado;
+                            var idTrabajoGrado;
                             // codEstudiante = parseInt(estudiante);
                             console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
                             self.registro_TG = [];

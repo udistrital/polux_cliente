@@ -30,10 +30,10 @@ angular.module('poluxClienteApp')
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
   ctrl.carrerasCoordinador = [];
-  token_service.token.documento = "79647592";
-  token_service.token.role.push("COORDINADOR_PREGRADO");
-  //token_service.token.documento = "20131020039";
-  //token_service.token.role.push("ESTUDIANTE");
+  //token_service.token.documento = "79647592";
+  //token_service.token.role.push("COORDINADOR_PREGRADO");
+  token_service.token.documento = "20141020036";
+  token_service.token.role.push("ESTUDIANTE");
   ctrl.userRole = token_service.token.role;
   $scope.userId = token_service.token.documento;
   ctrl.userId = $scope.userId;
@@ -62,7 +62,7 @@ angular.module('poluxClienteApp')
     var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
     var nuevo = "";
     var anterior = "";
-
+    /*
     var getVinculadosIniciales = function(solicitud){
       var defer = $q.defer();
       var docentes = "";
@@ -158,7 +158,7 @@ angular.module('poluxClienteApp')
       });
       return promise;
     }
-
+    */
     if(solicitud.EstadoSolicitud.Id === 2){
       resultado = $translate.instant('SOLICITUD_RECHAZADA');
       detalles.resultado = resultado;
@@ -168,7 +168,11 @@ angular.module('poluxClienteApp')
       switch(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id){
         //solicitud inicial
         case 2:
-          getVinculadosIniciales(solicitud)
+          resultado += ". " + $translate.instant('APROBADO.CURSAR_MODALIDAD') + ctrl.detallesSolicitud.modalidad;
+          //resultado += response;
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          /*getVinculadosIniciales(solicitud)
           .then(function(response){
             resultado += ". " + $translate.instant('APROBADO.CURSAR_MODALIDAD') + ctrl.detallesSolicitud.modalidad;
             resultado += response;
@@ -177,7 +181,7 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error){
             defer.reject(error);
-          });
+          });*/
           break;
         //solicitud de cancelación de modalidad
         case 3:
@@ -187,7 +191,7 @@ angular.module('poluxClienteApp')
           break;
         //solicitud de cambio de director interno
         case 4:
-          $q.all([getVinculado(solicitud,1,"Fin"),getVinculado(solicitud,1,"Inicio")]).then(function(response){
+          /*$q.all([getVinculado(solicitud,1,"Fin"),getVinculado(solicitud,1,"Inicio")]).then(function(response){
             nuevo = response[1];
             anterior = response[0];
             resultado += ". " + $translate.instant('APROBADO.DIRECTOR_INTERNO',{nuevo:nuevo,anterior:anterior});
@@ -196,20 +200,22 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error){
             defer.reject(error);
-          });
+          });*/
+          resultado += ". " + $translate.instant('APROBADO.DIRECTOR_INTERNO');
+          detalles.resultado = resultado;
+          defer.resolve(resultado)
           break;
-        //solicitud de cambio de director interno
-        case 10:
-          $q.all([getVinculado(solicitud,3,"Fin"),getVinculado(solicitud,3,"Inicio")]).then(function(response){
-            nuevo = response[1];
-            anterior = response[0];
-            resultado += ". " + $translate.instant('APROBADO.EVALUADOR',{nuevo:nuevo,anterior:anterior});
-            detalles.resultado = resultado;
-            defer.resolve(resultado);
-          })
-          .catch(function(error){
-            defer.reject(error);
-          });
+        //solicitud de cambio de director externo
+        case 5:
+          resultado += ". " + $translate.instant('APROBADO.DIRECTOR_EXTERNO');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          break;
+        // solicitud de socialización
+        case 6:
+          resultado += ". " + $translate.instant('APROBADO.SOCIALIZACION');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
           break;
         //solicitud de prorroga
         case 7:
@@ -247,6 +253,44 @@ angular.module('poluxClienteApp')
           detalles.resultado = resultado;
           defer.resolve(resultado);
           break;
+        //solicitud de cambio de director interno
+        case 10:
+          /*$q.all([getVinculado(solicitud,3,"Fin"),getVinculado(solicitud,3,"Inicio")]).then(function(response){
+            nuevo = response[1];
+            anterior = response[0];
+            resultado += ". " + $translate.instant('APROBADO.EVALUADOR',{nuevo:nuevo,anterior:anterior});
+            detalles.resultado = resultado;
+            defer.resolve(resultado);
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });*/
+          resultado += ". " + $translate.instant('APROBADO.EVALUADOR');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          break;
+        //Solicitud de cambio de codirector
+        case 12:
+          /*$q.all([getVinculado(solicitud,4,"Fin"),getVinculado(solicitud,4,"Inicio")]).then(function(response){
+            nuevo = response[1];
+            anterior = response[0];
+            resultado += ". " + $translate.instant('APROBADO.CODIRECTOR',{nuevo:nuevo,anterior:anterior});
+            detalles.resultado = resultado;
+            defer.resolve(resultado);
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });*/
+          resultado += ". " + $translate.instant('APROBADO.CODIRECTOR');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          break;
+        // solicitud de revisión
+        case 13:
+          resultado += ". " + $translate.instant('APROBADO.REVISION');
+          detalles.resultado = resultado;
+          defer.resolve(resultado);
+          break;
         //default
         default:
           detalles.resultado = resultado;
@@ -265,35 +309,43 @@ angular.module('poluxClienteApp')
     } else if(solicitud.EstadoSolicitud.Id === 7) {
       resultado = $translate.instant("SOLICITUD_APROBADA_EXENTA");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 8) {
       resultado = $translate.instant("SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 9) {
       resultado = $translate.instant("SOLICITUD_FORMALIZADA_EXENTA_PAGO");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 10) {
       resultado = $translate.instant("SOLICITUD_FORMALIZADA_NO_EXENTA_PAGO");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 11) {
       resultado = $translate.instant("SOLICITUD_NO_FORMALIZADA");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 12) {
       resultado = $translate.instant("SOLICITUD_OFICIALIZADA");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 13) {
       resultado = $translate.instant("SOLICITUD_NO_OFICIALIZADA");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
     } else if (solicitud.EstadoSolicitud.Id === 14) {
       resultado = $translate.instant("SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO");
       detalles.resultado = resultado;
-      defered.resolve(resultado);
+      defer.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 15) {
+      resultado = $translate.instant("SOLICITUD_CARTA_APROBADA_PASANTIA");
+      detalles.resultado = resultado;
+      defer.resolve(resultado);
+    } else if (solicitud.EstadoSolicitud.Id === 16) {
+      resultado = $translate.instant("SOLICITUD_CARTA_RECHAZADA_PASANTIA");
+      detalles.resultado = resultado;
+      defer.resolve(resultado);
     } else {
       detalles.resultado = resultado;
       defer.resolve(resultado);
@@ -418,11 +470,6 @@ angular.module('poluxClienteApp')
       } else if(lista_roles.includes("COORDINADOR_PREGRADO")){
         $scope.botones.push({ clase_color: "ver", clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover", titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'), operacion: 'responder', estado: true });
 
-        var parametrosCoordinador = {
-          "identificacion":$scope.userId,
-          "tipo": "PREGRADO"
-        };
-
         parametrosSolicitudes = $.param({
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
             query:"ESTADOSOLICITUD.ID:1,Activo:true",
@@ -446,7 +493,6 @@ angular.module('poluxClienteApp')
                   }
                   var verificarSolicitud = function(solicitud){
                     var defer = $q.defer();
-                    var promise = defer.promise;
                     solicitud.data = {
                       'Id':solicitud.SolicitudTrabajoGrado.Id,
                       'Modalidad':solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Nombre,
@@ -559,7 +605,7 @@ angular.module('poluxClienteApp')
             .get()
             .then(function(response) {
               ctrl.doc=response;
-              var aux=response.get('file:content');
+              //var aux=response.get('file:content');
               ctrl.document=response;
               defer.resolve(response);
             })
@@ -746,28 +792,81 @@ angular.module('poluxClienteApp')
               angular.forEach(responseEstudiantes.data,function(estudiante){
                   solicitantes += (", "+estudiante.Usuario) ;
               });
+
+              var getDocente = function(detalle){
+                var defer = $q.defer();
+                academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
+                  if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                    detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
+                    defer.resolve();
+                  }
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
+              var getDocentes = function(detalle){
+                var defer = $q.defer();
+                var promesasDocentes = [];
+                var detallesTemporales = [];
+                angular.forEach(detalle.Descripcion.split(","), function(docDocente){
+                  var detalleTemp  = {
+                    Descripcion : docDocente,
+                  }
+                  detallesTemporales.push(detalleTemp);
+                  promesasDocentes.push(getDocente(detalleTemp));
+                })
+                $q.all(promesasDocentes)
+                .then(function(){
+                  detalle.Descripcion = detallesTemporales.map(function(detalleTemp) {return detalleTemp.Descripcion}).join(", ");
+                  defer.resolve();
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
+              var getExterno = function(detalle){
+                var defer = $q.defer();
+                var parametrosVinculado = $.param({
+                  query:"TrabajoGrado:"+detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
+                  limit:0
+                });
+                poluxRequest.get("detalle_pasantia",parametrosVinculado)
+                .then(function(dataExterno){
+                  if(dataExterno.data != null){
+                    var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+                    temp = temp[1].split(" con número de identificacion ");
+                    detalle.Descripcion = temp[0];
+                    defer.resolve();
+                  }else{
+                    defer.reject("No hay datos relacionados al director externo");
+                  }
+                })
+                .catch(function(error){
+                  defer.reject(error);
+                });
+                return defer.promise;
+              }
+
               angular.forEach(ctrl.detallesSolicitud,function(detalle){
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id;
-
-                    var getDocente = function(detalle){
-                      var defer = $q.defer();
-                      academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente){
-                        if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                          detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
-                          defer.resolve();
-                        }
-                      })
-                      .catch(function(error){
-                        defer.reject(error);
-                      });
-                      return defer.promise;
-                    }
                     if(id===49){
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48){
-                      promises.push(getDocente(detalle));
-                    }else if(detalle.Descripcion.includes("JSON-")){
+                    } else if( id === 9 || id === 14 || id===15 || id === 16 || id === 17 || id===48 || id === 37 || id === 56 || id === 57 || id === 58) {
+                      if(detalle.Descripcion != "No solicita"){
+                        promises.push(getDocente(detalle));
+                      }
+                    } else if (id == 61){
+                      promises.push(getDocentes(detalle));
+                    } else if(id == 39) {
+                      //detalle de director externo anterior
+                      promises.push(getExterno(detalle));
+                    } else if(detalle.Descripcion.includes("JSON-")){
                         if(detalle.DetalleTipoSolicitud.Detalle.Id===8){
                           //areas de conocimiento
                           var datosAreas = detalle.Descripcion.split("-");

@@ -111,7 +111,7 @@
                       academicaRequest.get("carrera_codigo_nivel", [value.CodigoCarrera, ctrl.tipo]).then(function(response2) {
                           var resultado = null;
                           if (!angular.isUndefined(response2.data.carrerasCollection.carrera)) {
-                              var resultado = response2.data.carrerasCollection.carrera[0];
+                              resultado = response2.data.carrerasCollection.carrera[0];
                           }
                           if (resultado !== null) {
                               var carrera = {
@@ -254,14 +254,14 @@
                       console.log(error);
                       ctrl.errorCargandoAsignaturas = true;
                       ctrl.loadingAsignaturas = false;
-                    });;
+                    });
 
                 })
                 .catch(function(error){
                   console.log(error);
                   ctrl.errorCargandoAsignaturas = true;
                   ctrl.loadingAsignaturas = false;
-                });;
+                });
             };
 
             ctrl.selected = [];

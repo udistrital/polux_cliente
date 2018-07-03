@@ -51,27 +51,27 @@
                 </div>
             </div>
             <div class="panel panel-default">
-                    <div class="panel-heading">
-                        {{'DATOS_TRABAJO_GRADO' | translate}}
+                <div class="panel-heading">
+                    {{'DATOS_TRABAJO_GRADO' | translate}}
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'Nombre' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Titulo}} </label>
                     </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <label class="control-label col-sm-2"> {{'Nombre' | translate}}: </label>
-                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Titulo}} </label>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-sm-2"> {{'MODALIDAD' | translate}}: </label>
-                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Modalidad.Nombre}} </label>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-sm-2"> {{'PERIODO' | translate}}: </label>
-                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.PeriodoAcademico}} </label>
-                        </div>
-                        <div class="row">
-                            <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
-                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
-                        </div>
-                        <div ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'MODALIDAD' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Modalidad.Nombre}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'PERIODO' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.PeriodoAcademico}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
+                    </div>
+                    <div ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
                             <div class="row">
                                 <div class="control-label col-sm-12">
                                     <div class="alert alert-warning">
@@ -101,20 +101,56 @@
                             </div>
                             <br>
                         </div>
+                    <div class="row">
+                        <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
+                        <div class="panel col-md-12">
+                            <div ui-grid="consultarTrabajoGrado.gridOptionsAsignaturas" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsAsignaturas.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.espacios.length > 0">
+                        <label class="control-label col-sm-12"> {{'ESPACIOS_ACADEMICOS_INSCRITOS' | translate}}: </label>
+                        <div class="panel col-md-12">
+                            <div ui-grid="consultarTrabajoGrado.gridOptionsEspacios" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsEspacios.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                        </div>
+                    </div>
+                    <!-- Modalidad de pasantia -->
+                    <div ng-if="consultarTrabajoGrado.trabajoGrado.Modalidad.Id === 1">
                         <div class="row">
-                            <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
-                            <div class="panel col-md-12">
-                                <div ui-grid="consultarTrabajoGrado.gridOptionsAsignaturas" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsAsignaturas.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                            <label class="control-label col-sm-2"> {{'PASANTIA.DETALLE_PASANTIA' | translate}}:  </label>
+                            <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.DetallePasantia}} </label>
+                        </div>
+                        <div ng-repeat="acta in consultarTrabajoGrado.trabajoGrado.Actas">
+                            <div class="row">
+                                <label class="col-sm-3 control-label"> {{acta.DocumentoEscrito.Titulo}}:  </label>
+                                <label ng-click="consultarTrabajoGrado.getDocumento(acta.DocumentoEscrito.Enlace)" class="col-sm-9" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
                             </div>
                         </div>
-                        <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.espacios.length > 0">
-                            <label class="control-label col-sm-12"> {{'ESPACIOS_ACADEMICOS_INSCRITOS' | translate}}: </label>
-                            <div class="panel col-md-12">
-                                <div ui-grid="consultarTrabajoGrado.gridOptionsEspacios" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsEspacios.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                        <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.Actas.length===0">
+                            <br>
+                            <div class="col-sm-12">
+                                <div class="alert alert-danger">
+                                    {{'PASANTIA.NO_ACTAS_REGISTRADAS_ACTUALMENTE' | translate}} 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado && consultarTrabajoGrado.trabajoGrado.Vinculados.length != 0">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{'VINCULACIONES_TRABAJO_GRADO' | translate}}
+                </div>
+                <div class="panel-body">
+                    <div ng-repeat="vinculado in consultarTrabajoGrado.trabajoGrado.Vinculados">
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{vinculado.RolTrabajoGrado.Nombre}}: </label>
+                            <label class="control-label col-sm-10"> {{vinculado.Nombre}} </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

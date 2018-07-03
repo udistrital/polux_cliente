@@ -245,6 +245,21 @@ angular
               controller: 'GeneralConsultarTrabajoGradoCtrl',
               controllerAs: 'consultarTrabajoGrado'
             })
+            .when('/pasantia/aprobar_carta', {
+              templateUrl: 'views/pasantia/aprobar_carta.html',
+              controller: 'PasantiaAprobarCartaCtrl',
+              controllerAs: 'aprobarCarta'
+            })
+            .when('/pasantia/actas_seguimiento', {
+              templateUrl: 'views/pasantia/actas_seguimiento.html',
+              controller: 'PasantiaActasSeguimientoCtrl',
+              controllerAs: 'actasSeguimiento'
+            })
+            .when('/general/registrar_nota', {
+              templateUrl: 'views/general/registrar_nota.html',
+              controller: 'GeneralRegistrarNotaCtrl',
+              controllerAs: 'registrarNotaVinculado'
+            })
             .when('/trabajo_grado/revisar_anteproyecto', {
               templateUrl: 'views/trabajo_grado/revisar_anteproyecto.html',
               controller: 'TrabajoGradoRevisarAnteproyectoCtrl',

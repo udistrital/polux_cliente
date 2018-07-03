@@ -121,13 +121,34 @@
         <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3">
           <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
           <div class="col-sm-8">
-            <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;">
+            <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;" required>
              <ui-select-match  placeholder="{{'SELECT.DOCENTE_DIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
              <ui-select-choices  infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
                <span  ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
              </ui-select-choices>
            </ui-select>
          </div>
+       </div>
+       <!--Docente co-director-->
+       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3 && aprobarSolicitud.tieneCoDirector">
+          <br>
+          <div class="row">
+              <label class="col-sm-4 control-label">{{'SELECT.INCLUIR_CODIRECTOR' | translate}} </label>
+            <div class="col-sm-8">
+              <switch id="enabled" name="enabled" ng-model="aprobarSolicitud.switchCodirector" class="green" on="{{'SWITCH.SI' | translate}}" off="{{'SWITCH.NO' | translate}}"></switch>
+            </div>
+          </div>  
+          <div class="row" ng-if="aprobarSolicitud.switchCodirector">
+              <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CODIRECTOR' | translate}} </label>
+              <div class="col-sm-8">
+                <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCoDirector" theme="bootstrap" reset-search-input="false" style="width:100%;" required>
+                <ui-select-match  placeholder="{{'SELECT.DOCENTE_CODIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                <ui-select-choices  infinite-scroll-container="'#demoScrollCoDocente'" id="demoScrollCoDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+                  <span  ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+          </div>      
        </div>
        <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3">
        <!--Docente que evalua la propuesta -->
@@ -136,7 +157,7 @@
           <div class="row">
             <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
             <div class="col-sm-8">
-              <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="evaluador.docente"  theme="bootstrap" reset-search-input="false" style="width:100%;">
+              <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="evaluador.docente"  theme="bootstrap" reset-search-input="false" style="width:100%;" required>
                 <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                 <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
                   <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
@@ -147,17 +168,57 @@
           <br>
         </div>
       </div>
+
+      <!-- para seleccionar a los jurados y si se desea cmabiar director y codirector-->
+      <div ng-if="aprobarSolicitud.respuestaSolicitud == 3 && aprobarSolicitud.isRevision">
+        <div class="row">
+            <label class="col-sm-4 control-label">{{'SELECT.DESEA_CAMBIAR_VINCULADO' | translate}} </label>
+          <div class="col-sm-8">
+            <switch id="enabled" name="enabled" ng-model="aprobarSolicitud.switchRevision" class="green" on="{{'SWITCH.SI' | translate}}" off="{{'SWITCH.NO' | translate}}"></switch>
+          </div>
+        </div>  
+        <div ng-if="aprobarSolicitud.switchRevision">
+            <div class="row" ng-if="aprobarSolicitud.directorOpcionTg != undefined">
+              <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
+              <div class="col-sm-8">
+                <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.directorOpcionTg" theme="bootstrap" reset-search-input="false" style="width:100%;" required>
+                  <ui-select-match  placeholder="{{'SELECT.DOCENTE_DIRECTOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                  <ui-select-choices  infinite-scroll-container="'#demoScrollDocente'" id="demoScrollDocente" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+                    <span  ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+                  </ui-select-choices>
+                </ui-select>
+              </div>
+            </div>
+            <div ng-if="aprobarSolicitud.evaluadoresOpcionesTg != undefined">
+                <div ng-repeat="evaluador in aprobarSolicitud.evaluadoresOpcionesTg">
+                  <br>
+                  <div class="row">
+                    <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
+                    <div class="col-sm-8">
+                      <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="evaluador.docente"  theme="bootstrap" reset-search-input="false" style="width:100%;" required>
+                        <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                        <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
+                          <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
+                        </ui-select-choices>
+                      </ui-select>
+                    </div>
+                  </div>
+                  <br>
+                </div>
+            </div>
+        </div>      
+     </div>
                   <!--<div class="row">
                       <label class="col-sm-5 control-label"> </label>
                       <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
                       <label class="col-sm-5 control-label"> </label>
                     </div>-->
 
-                    <!--para el cambio de docente evaluador o director-->
+                    <!--para el cambio de docente evaluador, codirector o director-->
                     <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==3">
                       <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
                       <div class="col-sm-8">
-                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;">
+                        <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;" required>
                          <ui-select-match  placeholder="{{'SELECT.DOCENTE_REVISOR_FILTRO' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                          <ui-select-choices infinite-scroll-container="'#demoScrollRevisor'" id="demoScrollRevisor" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="docente in aprobarSolicitud.docentes | filter: $select.search | limitTo:infiniteScroll.currentItems | limitTo:($select.search.length <= 1) ? 0 : undefined">
                            <span ng-bind-html="docente.NOMBRE | highlight: $select.search"></span>
@@ -168,7 +229,7 @@
                    <br ng-if="aprobarSolicitud.isCambio">
 
                    <br>
-                   <div class="row">
+                   <div class="row" ng-if="formularioAprobacion.$valid">
                     <label class="col-sm-5 control-label"> </label>
                     <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
                     <label class="col-sm-5 control-label"> </label>

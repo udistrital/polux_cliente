@@ -113,11 +113,7 @@ angular.module('poluxClienteApp')
 
         self.gridOptions.isRowSelectable = function(row) {
             console.log(row);
-            if (row.treeLevel === 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return row.treeLevel === 0;
         };
 
         self.actualizar_formato = function() {

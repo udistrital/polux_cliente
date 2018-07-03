@@ -1,0 +1,70 @@
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'PASANTIA.REGISTRAR_ACTAS_SEGUIMIENTO' | translate}}
+    </div>
+    <div class="panel-body">
+        <loading tam="4" load="actasSeguimiento.loadingTrabajos" message="actasSeguimiento.mensajeCargandoTrabajos"></loading>
+        <div class="row" ng-if="!actasSeguimiento.loadingTrabajos && actasSeguimiento.errorCargando">
+            <br>
+            <div class="col-sm-12">
+                <div class="alert alert-danger">
+                    {{'ERROR' | translate}}: {{actasSeguimiento.mensajeErrorCargando}} 
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-if="!actasSeguimiento.loadingTrabajos && !actasSeguimiento.errorCargando">
+            <div class="panel col-md-12">
+                <div ui-grid="actasSeguimiento.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(actasSeguimiento.gridOptionsEspacios.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalVerPasantia" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            {{'PASANTIA.REGISTRAR_ACTAS_SEGUIMIENTO' | translate}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'PASANTIA.INFORMACION_PASANTIA' | translate}}
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <label class="col-sm-3 control-label"> {{'NOMBRE'|translate}}:  </label>
+                    <label class="col-sm-9 control-label"> {{actasSeguimiento.pasantiaSeleccionada.Titulo}}  </label>
+                </div>
+                <div class="row">
+                        <label class="col-sm-3 control-label"> {{'ESTUDIANTES'|translate}}:  </label>
+                        <label class="col-sm-9 control-label"> {{actasSeguimiento.pasantiaSeleccionada.NombresEstudiantes}}  </label>
+                    </div>
+                <div ng-repeat="acta in actasSeguimiento.pasantiaSeleccionada.Actas">
+                    <div class="row">
+                        <label class="col-sm-3 control-label"> {{acta.DocumentoEscrito.Titulo}}:  </label>
+                        <label ng-click="actasSeguimiento.getDocumento(acta.DocumentoEscrito.Enlace)" class="col-sm-9" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                    </div>
+                </div>
+                <loading tam="4" load="actasSeguimiento.loadingDocumento" message="actasSeguimiento.mensajeCargandoDocumento"></loading>
+                <form ng-if="actasSeguimiento.pasantiaSeleccionada.Actas.length<3 && !actasSeguimiento.loadingDocumento" method="post" name="formRegistrarActa" ng-submit="actasSeguimiento.cargarActa()">
+                    <div class="row">
+                        <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' |translate}}:</label>
+                        <div class="col-sm-9 ">
+                            <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize:1000}" file-model="actasSeguimiento.actaModel" required> </input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <center>
+                                <input type="submit" value="{{'PASANTIA.REGISTRAR_ACTAS_SEGUIMIENTO' | translate}}"  class="btn btn-success" type="submit"></input>
+                            </center>
+                        </div> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    
