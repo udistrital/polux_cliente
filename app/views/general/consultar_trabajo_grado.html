@@ -71,6 +71,36 @@
                             <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
                             <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
                         </div>
+                        <div ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
+                            <div class="row">
+                                <div class="control-label col-sm-12">
+                                    <div class="alert alert-warning">
+                                        {{'ANTEPROYECTO_MODIFICABLE' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-centered">
+                                <div class="col-sm-3 col-centered">
+                                    <input class="btn btn-success" type="submit" value="{{'SUBIR_CORRECCIONES_ANTEPROYECTO' | translate}}" ng-click="consultarTrabajoGrado.actualizarTg()">
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                        <div ng-if="consultarTrabajoGrado.esPrimeraVersion">
+                            <div class="row" >
+                                <div class="control-label col-sm-12">
+                                    <div class="alert alert-warning">
+                                        {{'PROYECTO_VIABLE_WARNING' | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row row-centered">
+                                <div class="col-sm-3 col-centered">
+                                    <input class="btn btn-success" type="submit" value="{{'PRIMERA_VERSION.SUBIR' | translate}}" ng-click="consultarTrabajoGrado.actualizarTg()">
+                                </div>
+                            </div>
+                            <br>
+                        </div>
                         <div class="row">
                             <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
                             <div class="panel col-md-12">
@@ -86,5 +116,58 @@
                     </div>
                 </div>
         </div>
-    </div> 
+    </div>
+
+</div>
+
+<div id="modalActualizarTg" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+    <div class="modal-header">
+      <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+      <br>
+    </div>
+    <div class="panel panel-default" ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
+      <div class="panel-heading">
+        {{'REVISAR_ANTEPROYECTO.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default" ng-if="consultarTrabajoGrado.esPrimeraVersion">
+      <div class="panel-heading">
+        {{'PRIMERA_VERSION.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'PRIMERA_VERSION.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {{'ACTUALIZAR_TG.DESCRIPCION' | translate}}
+      </div>
+      <loading tam="4" load="consultarTrabajoGrado.cargandoActualizarTg" message="consultarTrabajoGrado.mensajeCargandoActualizarTg"></loading>
+      <div class="panel-body" ng-if="!consultarTrabajoGrado.cargandoActualizarTg">
+        <form method="post" name="formularioSubirDocumento" ng-submit="consultarTrabajoGrado.subirDocumento()">
+          <div class="row">
+            <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
+            <div class="col-sm-9 ">
+                <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="consultarTrabajoGrado.nuevaVersion" required></input>
+            </div>
+            <br>
+          </div>
+          <br>
+          <div class="row row-centered" ng-if="formularioSubirDocumento.$valid">
+            <div class="col-sm-3 col-centered">
+              <input type="submit" class="btn btn-success" value="{{'SUBIR_DOCUMENTO'|translate}}">
+            </div>
+          </div>
+        </form>  
+      </div>
+    </div>
+  </div>
 </div>
