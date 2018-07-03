@@ -18,17 +18,6 @@ angular.module('poluxClienteApp')
 
     ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
 
-    ctrl.ver_seleccion = function(item, model) {
-      console.log(item);
-      console.log("MODEL:", model);
-      ctrl.tgId = item.TrabajoGrado.Id;
-      ctrl.doctgId = item.DocumentoTrabajoGrado[0].Id;
-      ctrl.doc = item.DocumentoTrabajoGrado[0].Id;
-      ctrl.documento = true;
-      ctrl.vncdocId = item.Id;
-      ctrl.refrescar();
-    };
-
     /**
      * @ngdoc method
      * @name consultarDocenteTrabajoGrado
@@ -53,39 +42,6 @@ angular.module('poluxClienteApp')
           deferred.reject($translate.instant("ERROR.CARGANDO_DOCENTE"));
         })
       return deferred.promise;
-    }
-
-    /**
-     * @ngdoc method
-     * @name efectuarConsultasIniciales
-     * @methodOf poluxClienteApp.controller:DocenteTgsRevisionDocumentoCtrl
-     * @description
-     * Función que efectúa la consulta del nombre del docente en sesión, al igual que sus proyectos relacionados
-     * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
-     * @returns {String} La sentencia para la consulta correspondiente
-     */
-    ctrl.efectuarConsultasIniciales = function() {
-      ctrl.cargandoProyectos = true;
-      ctrl.errorCargandoProyectos = false;
-      ctrl.consultarDocenteTrabajoGrado()
-        .then(function(nombreDelDocente) {
-          ctrl.nombreDelDocente = nombreDelDocente;
-          ctrl.consultarVinculacionTrabajoGrado()
-            .then(function(respuestaVinculaciones) {
-              ctrl.cargandoProyectos = false;
-              ctrl.vinculaciones = respuestaVinculaciones;
-            })
-            .catch(function(excepcionVinculaciones) {
-              ctrl.cargandoProyectos = false;
-              ctrl.errorCargandoProyectos = true;
-              ctrl.mensajeErrorCargandoProyectos = excepcionVinculaciones;
-            });
-        })
-        .catch(function(excepcionNombreDelDocente) {
-          ctrl.cargandoProyectos = false;
-          ctrl.errorCargandoProyectos = true;
-          ctrl.mensajeErrorCargandoProyectos = excepcionNombreDelDocente;
-        });
     }
 
     /**
@@ -131,6 +87,39 @@ angular.module('poluxClienteApp')
           deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
         });
       return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
+     * @name efectuarConsultasIniciales
+     * @methodOf poluxClienteApp.controller:DocenteTgsRevisionDocumentoCtrl
+     * @description
+     * Función que efectúa la consulta del nombre del docente en sesión, al igual que sus proyectos relacionados
+     * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+     * @returns {String} La sentencia para la consulta correspondiente
+     */
+    ctrl.efectuarConsultasIniciales = function() {
+      ctrl.cargandoProyectos = true;
+      ctrl.errorCargandoProyectos = false;
+      ctrl.consultarDocenteTrabajoGrado()
+        .then(function(nombreDelDocente) {
+          ctrl.nombreDelDocente = nombreDelDocente;
+          ctrl.consultarVinculacionTrabajoGrado()
+            .then(function(respuestaVinculaciones) {
+              ctrl.cargandoProyectos = false;
+              ctrl.vinculaciones = respuestaVinculaciones;
+            })
+            .catch(function(excepcionVinculaciones) {
+              ctrl.cargandoProyectos = false;
+              ctrl.errorCargandoProyectos = true;
+              ctrl.mensajeErrorCargandoProyectos = excepcionVinculaciones;
+            });
+        })
+        .catch(function(excepcionNombreDelDocente) {
+          ctrl.cargandoProyectos = false;
+          ctrl.errorCargandoProyectos = true;
+          ctrl.mensajeErrorCargandoProyectos = excepcionNombreDelDocente;
+        });
     }
 
     /**
@@ -230,21 +219,15 @@ angular.module('poluxClienteApp')
      * @returns {undefined} No hace retorno de resultados
      */
     ctrl.seleccionarProyecto = function() {
-      console.log(ctrl.proyectoSeleccionado);
-      console.log(ctrl.nombreDelDocente);
       ctrl.errorCargandoDocumento = false;
       ctrl.errorCargandoRevisiones = false;
       ctrl.consultarDocumentoTrabajoGrado(ctrl.proyectoSeleccionado)
         .then(function(resultadoDocumentoTrabajoGrado) {
-          ctrl.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
-          ctrl.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
+          ctrl.documentoTrabajoGrado = resultadoDocumentoTrabajoGrado.Id;
+          ctrl.documentoEscrito = resultadoDocumentoTrabajoGrado.DocumentoEscrito;
           ctrl.consultarRevisionesTrabajoGrado(ctrl.documentoTrabajoGrado)
             .then(function(resultadoRevisiones) {
-              if (ctrl.revisionesTrabajoGrado) {
-                console.log("DTG", ctrl.documentoTrabajoGrado);
-                console.log("DE", ctrl.documentoEscrito);
-                console.log("R", ctrl.revisionesTrabajoGrado);
-              } else {
+              if (!ctrl.revisionesTrabajoGrado) {
                 ctrl.errorCargandoRevisiones = true;
                 ctrl.mensajeErrorCargandoRevisiones = resultadoRevisiones;
               }
@@ -256,53 +239,9 @@ angular.module('poluxClienteApp')
         })
         .catch(function(excepcionDocumentoTrabajoGrado) {
           ctrl.errorCargandoDocumento = true;
-          ctrl.mensajeErrorCargandoDocumento = resultadoDocumentoTrabajoGrado;
+          ctrl.mensajeErrorCargandoDocumento = excepcionDocumentoTrabajoGrado;
         });
     }
-
-    poluxRequest.get("vinculacion_trabajo_grado", $.param({
-      query: "Usuario:" + ctrl.documentoDocente,
-      limit: -1,
-      sortby: "Id",
-      order: "asc"
-    })).then(function(response) {
-      ctrl.vinculacion_docente = response.data;
-      angular.forEach(ctrl.vinculacion_docente, function(vd) {
-        poluxRequest.get("documento_trabajo_grado", $.param({
-          query: "TrabajoGrado:" + vd.TrabajoGrado.Id,
-          limit: -1,
-          sortby: "Id",
-          order: "asc"
-        })).then(function(response) {
-          vd.DocumentoTrabajoGrado = response.data;
-        });
-        // $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.Usuario)
-        //   .then(function(response) {
-        //     vd.Docente = response.data[0];
-        //   });
-      });
-    });
-    ctrl.refrescar = function() {
-      poluxRequest.get("revision_trabajo_grado", $.param({
-        query: "DocumentoTrabajoGrado:" + ctrl.doctgId + ",VinculacionTrabajoGrado:" + ctrl.vncdocId,
-        sortby: "Id",
-        order: "asc",
-        limit: 0
-      })).then(function(response) {
-        console.log(response);
-        ctrl.revisionesd = response.data;
-        if (ctrl.revisionesd != null) {
-          ctrl.numRevisiones = ctrl.revisionesd.length;
-        }
-        poluxRequest.get("vinculacion_trabajo_grado", $.param({
-          query: "Id:" + ctrl.vncdocId
-        })).then(function(response) {
-          console.log(ctrl.vncdocId);
-          console.log(response.data[0]);
-          ctrl.vinculacion_info = response.data[0];
-        });
-      });
-    };
 
     ctrl.efectuarConsultasIniciales();
 
