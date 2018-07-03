@@ -71,6 +71,21 @@
                         <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
                     </div>
+                    <div ng-if="consultarTrabajoGrado.esProyectoModificable">
+                        <div class="row">
+                            <div class="control-label col-sm-12">
+                                <div class="alert alert-warning">
+                                    {{'PROYECTO_MODIFICABLE' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-centered">
+                            <div class="col-sm-3 col-centered">
+                                <input class="btn btn-success" type="submit" value="{{'SUBIR_CORRECCIONES_PROYECTO' | translate}}" ng-click="consultarTrabajoGrado.actualizarTg()">
+                            </div>
+                        </div>
+                        <br>
+                    </div>
                     <div ng-if="consultarTrabajoGrado.esAnteproyectoModificable">
                             <div class="row">
                                 <div class="control-label col-sm-12">
@@ -171,6 +186,16 @@
           <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES' | translate}} </label>
         </div>
       </div>
+    </div>
+    <div class="panel panel-default" ng-if="consultarTrabajoGrado.esProyectoModificable">
+        <div class="panel-heading">
+            {{'NUEVA_VERSION.OBSERVACIONES' | translate}}
+        </div>
+        <div class="panel-body">
+            <div class="row">
+            <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES' | translate}} </label>
+            </div>
+        </div>
     </div>
     <div class="panel panel-default" ng-if="consultarTrabajoGrado.esPrimeraVersion">
       <div class="panel-heading">

@@ -496,6 +496,11 @@ angular.module('poluxClienteApp')
                 ctrl.userRole.includes('ESTUDIANTE')) {
                 ctrl.esPrimeraVersion = true;
               }
+              //Si el proyecto es modificable
+              if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16 &&
+                ctrl.userRole.includes('ESTUDIANTE')) {
+                ctrl.esProyectoModificable = true;
+              }
               var promises = [];
               ctrl.trabajoGrado.estudiante = {
                 "codigo": ctrl.codigoEstudiante
@@ -707,6 +712,12 @@ angular.module('poluxClienteApp')
         };
         ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
       }
+      if (ctrl.esProyectoModificable) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 13
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
+      }
       delete ctrl.trabajoGrado.documentoEscrito.Id
       ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
       var documentoTrabajoGrado = {
@@ -760,6 +771,12 @@ angular.module('poluxClienteApp')
         titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
         mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
         mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
+      }
+      if (ctrl.esProyectoModificable) {
+        descripcionDocumento = "Versión del trabajo de grado";
+        titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
+        mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
       }
       swal({
           title: $translate.instant(titleConfirmacion),

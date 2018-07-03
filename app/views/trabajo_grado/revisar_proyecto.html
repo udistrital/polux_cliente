@@ -1,0 +1,98 @@
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+      {{'REVISAR_PROYECTO.TITULO' | translate}}
+    </div>
+  
+    <div class="panel-body">
+  
+      <loading tam="4" load="revisarProyecto.cargandoProyectos" message="revisarProyecto.mensajeCargandoProyectos"></loading>
+      <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="revisarProyecto.cuadriculaProyectos.data.length > 0 && !revisarProyecto.cargandoProyectos">
+        <div class="mi-grid" id="mi-grid" ui-grid="revisarProyecto.cuadriculaProyectos"></div>
+      </div>
+      
+      <div class="panel-body alert alert-danger" ng-if="revisarProyecto.errorCargandoProyectos">
+        <span ng-bind="revisarProyecto.mensajeErrorCargandoProyectos"></span>
+      </div>
+  
+      <div id="modalRevisarProyecto" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+        <div class="modal-content col-md-offset-2 col-md-8">
+          <div class="modal-header">
+            {{'REVISAR_PROYECTO.DESCRIPCION' | translate}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+            <br>
+          </div>
+          <loading tam="4" load="revisarProyecto.cargandoDatosEstudiantiles" message="revisarProyecto.mensajeCargandoDatosEstudiantiles"></loading>
+          <div class="panel panel-default" ng-if="revisarProyecto.cuadriculaEstudiantesDelProyecto.data.length > 0 && !revisarProyecto.cargandoDatosEstudiantiles">
+            <div class="panel-heading">
+              {{'ESTUDIANTE_ESTUDIANTES' | translate}}
+            </div>
+            <div class="panel-body">
+              <div class="panel col-md-12">
+                <div class="mi-grid" id="mi-grid" ui-grid-edit ui-grid-cellNav ui-grid="revisarProyecto.cuadriculaEstudiantesDelProyecto" style="height: {{(revisarProyecto.cuadriculaEstudiantesDelProyecto.data.length * 35) + 40}}px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body alert alert-danger" ng-if="revisarProyecto.errorCargandoDatosEstudiantiles">
+            <span ng-bind="revisarProyecto.mensajeErrorCargandoDatosEstudiantiles"></span>
+          </div>
+          <div class="panel panel-default" ng-if="!revisarProyecto.cargandoDatosEstudiantiles">
+            <div class="panel-heading">
+              {{'DATOS_TRABAJO_GRADO' | translate}}
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <label class="col-sm-4 control-label"> {{'TITULO_PROPUESTA' | translate}}: </label>
+                <label class="col-sm-8 control-label"> {{revisarProyecto.ProyectoSeleccionado.TrabajoGrado.Titulo}} </label>
+              </div>
+              <div class="row">
+                <label class="col-sm-4 control-label"> {{'MODALIDAD' | translate}}: </label>
+                <label class="col-sm-8 control-label"> {{revisarProyecto.ProyectoSeleccionado.TrabajoGrado.Modalidad.Nombre}} </label>
+              </div>
+              <div class="row">
+                <label class="col-sm-4 control-label"> {{'ESTADO_SIN_DOSPUNTOS' | translate}}: </label>
+                <label class="col-sm-8 control-label"> {{revisarProyecto.ProyectoSeleccionado.TrabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
+              </div>
+              <div class="row">
+                <label class="col-sm-4 control-label"> {{'PERIODO' | translate}}: </label>
+                <label class="col-sm-8 control-label"> {{revisarProyecto.ProyectoSeleccionado.TrabajoGrado.PeriodoAcademico}} </label>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default" ng-if="!revisarProyecto.cargandoDatosEstudiantiles && !revisarProyecto.errorCargandoDatosEstudiantiles">
+            <div class="panel-heading">
+              {{'REVISAR_PROYECTO.OBSERVACIONES' | translate}}
+            </div>
+            <div class="panel-body">
+              <form method="post" name="formularioRevisionProyecto" ng-submit="revisarProyecto.registrarRevision()">
+                <div class="row">
+                  <label class="col-sm-4 control-label"> {{'REVISAR_PROYECTO.SELECCIONAR_RESPUESTA' | translate}} </label>
+                  <div class="col-sm-8">
+                    <select class="form-control" ng-model="revisarProyecto.respuestaSeleccionada" ng-change="revisarProyecto.respuestaHabilitada = true" required>
+                      <option ng-repeat="respuesta in revisarProyecto.coleccionRespuestasProyecto" ng-value="respuesta"> {{respuesta.nombreEstadoTrabajoGrado}} </option>
+                    </select>
+                  </div>
+                </div>
+                <br>
+                <div class="row" ng-if="revisarProyecto.respuestaHabilitada">
+                  <label class="col-sm-4 control-label">{{'REVISAR_PROYECTO.EXPLICAR_RESPUESTA' | translate}}</label>
+                  <div class="col-sm-8">
+                    <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="revisarProyecto.respuestaExplicada" required></textarea>
+                  </div>
+                </div>
+                <br>
+                <div class="row row-centered" ng-if="formularioRevisionProyecto.$valid">
+                  <div class="col-sm-2 col-centered">
+                    <input type="submit" class="btn btn-success" value="{{'BTN.REVISAR_PROYECTO'|translate}}">
+                  </div>
+                </div>
+              </form>  
+            </div>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  
+  </div>
+  

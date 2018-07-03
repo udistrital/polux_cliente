@@ -265,6 +265,11 @@ angular
               controller: 'TrabajoGradoRevisarAnteproyectoCtrl',
               controllerAs: 'revisarAnteproyecto'
             })
+            .when('/trabajo_grado/revisar_proyecto', {
+              templateUrl: 'views/trabajo_grado/revisar_proyecto.html',
+              controller: 'TrabajoGradoRevisarProyectoCtrl',
+              controllerAs: 'revisarProyecto'
+            })
             .otherwise({
                 redirectTo: '/'
             });
