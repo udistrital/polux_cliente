@@ -896,7 +896,7 @@ angular.module('poluxClienteApp')
                             "Titulo": tempTrabajo.Titulo,
                             "Enlace": tempTrabajo.Enlace,
                             "Resumen": tempTrabajo.Resumen,
-                            "TipoDocumentoEscrito": 1
+                            "TipoDocumentoEscrito": 3
                         }
                         var data_documento_tg = {
                             "TrabajoGrado": {
