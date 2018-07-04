@@ -898,6 +898,10 @@ angular.module('poluxClienteApp')
                             "Resumen": tempTrabajo.Resumen,
                             "TipoDocumentoEscrito": 3
                         }
+                        //SI la modalidad es la de producción academica se sube de una vez como propuesta el documento
+                        if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8){
+                          data_propuesta.TipoDocumentoEscrito = 4;
+                        }
                         var data_documento_tg = {
                             "TrabajoGrado": {
                                 "Id": 0
