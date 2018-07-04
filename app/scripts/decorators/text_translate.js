@@ -8,8 +8,8 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
-    TITULO: "GENERATOR-OAS",
-    MENSAJE_INICIAL: "Ahora puede comenzar con el desarrollo ...",
+    TITULO: "Sistema de gestión de trabajos de grado Polux",
+    MENSAJE_INICIAL: "Sistema de gestión de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     EVALUAR_PROYECTO: "Evaluación de Proyecto de Grado",
     LISTADO_SOLICITUD: "Listado de Solicitudes",
     MODALIDAD: "Modalidad",
@@ -146,7 +146,7 @@ var text_es = {
     ASIGNAR_BOTON: " Asignar",
     SEL_FECHA: "Seleccione una fecha",
     ENVIAR_EVALUACION_BOTON: "Enviar calificación",
-    SOLICITAR_REVISION: "Solicitar Revision",
+    SOLICITAR_REVISION: "Solicitar revisión",
     SELECCIONAR: "Seleccionar",
     NUEVA_SOLICITUD: "Crear nueva solicitud",
     GESTION_SOLICITUD: "Módulo de gestión de solicitudes. ",
@@ -303,6 +303,9 @@ var text_es = {
         CARGANDO_DOCENTE: "Ocurrió un error al intentar consultar los docentes de los trabajos de grado consultados. Comuníquese con el administrador.",
         SIN_REVISIONES: "No existen registros de revisiones asociadas al documento en presentación.",
         CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al documento en presentación. Comuníquese con el administrador.",
+        SOLICITANDO_REVISION: "Ocurrió un error al intentar solicitar la revisión",
+        REGISTRANDO_REVISION: "Ocurrió un error al intentar registrar la revisión",
+        REGISTRANDO_COMENTARIOS: "Ocurrió un error al intentar registrar los comentarios",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -505,7 +508,7 @@ var text_es = {
     CREDITOS_ESPACIOS_ACADEMICOS_INSUFICIENTES:"La cantidad de créditos de los espacios académicos seleccionados debe ser igual o superior a {{creditos}} créditos",
     ADMINISTRAR_AREAS:"Administrar áreas de conocimiento",
     SIN_AREAS:"Actualmente no hay áreas de conocimiento registradas para esta área del SNIES",
-    DESCRIPCION:"Descripción",
+    DESCRIPCION: "Descripción",
     NO_SOLICITUDES_POSGRADO:"No existen solicitudes en la modalidad de espacios académicos de posgrado para la carrera seleccionada",
     SELECCIONAR_PERIODO: "Seleccione el periodo académico",
     PASANTIA:{
@@ -671,6 +674,26 @@ var text_es = {
         SUBIR:"Subir nueva versión",
     },
     CORRECCION_REALIZADA: "Corrección realizada",
+    FORMULARIO_SOLICITAR_REVISION: {
+        TITULO: "Solicitar revisión",
+        ETIQUETA: "Selección del docente a quien solicita la revisión",
+        SELECCIONAR_VINCULADO: "Seleccione el docente",
+        CONFIRMACION: "Solicitar revisión",
+        MENSAJE_CONFIRMACION: "¿Está seguro de solicitar una revisión al {{rol}} {{nombre}}?",
+        REVISION_SOLICITADA: "Revisión solicitada exitosamente",
+    },
+    REGISTRAR_REVISION: {
+        CONFIRMACION: "Registrar la revisión",
+        REGISTRADA: "La revisión ha sido registrada exitosamente",
+        ERROR: "Ocurrió un error al intentar registrar la revisión",
+        AGREGAR_COMENTARIO: "Debe agregar al menos un comentario sobre la revisión",
+    },
+    REVISION_SOLICITADA_OTRO: "está solicitada a otro docente",
+    AGREGAR_COMENTARIO: "Agregar comentario",
+    GUARDAR_REVISION: "Guardar revisión",
+    EDITAR: "Editar",
+    VER: "Ver",
+    AGREGAR: "Agregar",
 };
 
 /**
@@ -681,8 +704,8 @@ var text_es = {
  * Contiene las variables del servicio de internacionalización en ingles
  */
 var text_en = {
-    TITULO: "GENERATOR-OAS",
-    MENSAJE_INICIAL: "Now get to start to develop",
+    TITULO: "Sistema de gestión de trabajos de grado Polux",
+    MENSAJE_INICIAL: "Sistema de gestión de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     LISTADO_SOLICITUD: "List of Requests",
     MODALIDAD: "Modality",
     TITULO_PROPUESTA: "Title of proposal",
@@ -965,6 +988,9 @@ var text_en = {
         CARGANDO_DOCENTE: "An error occurred when trying to query the teachers of the degree works consulted. Contact the administrator.",
         SIN_REVISIONES: "There are no reviews records associated with the document in presentation.",
         CARGANDO_REVISIONES: "An error occurred when trying to check the revisions associated with the document in presentation. Contact the administrator.",
+        SOLICITANDO_REVISION: "An error ocurred when trying to request the review",
+        REGISTRANDO_REVISION: "An error ocurred when trying to insert the review",
+        REGISTRANDO_COMENTARIOS: "An error ocurred when trying to insert the comments",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1332,6 +1358,26 @@ var text_en = {
         SUBIR:"Upload new version",
     },
     CORRECCION_REALIZADA: "Correction made",
+    FORMULARIO_SOLICITAR_REVISION: {
+        TITULO: "Request review",
+        ETIQUETA: "Selection of the teacher to whom the review is requested",
+        SELECCIONAR_VINCULADO: "Select the teacher",
+        CONFIRMACION: "Request review",
+        MENSAJE_CONFIRMACION: "Are you sure to request a review to {{rol}} {{nombre}}?",
+        REVISION_SOLICITADA: "Review successfully requested",
+    },
+    REGISTRAR_REVISION: {
+        CONFIRMACION: "Register the review",
+        REGISTRADA: "The review has been successfully registered",
+        ERROR: "An error ocurred when trying to register the review",
+        AGREGAR_COMENTARIO: "You must add at least a comment about the review",
+    },
+    REVISION_SOLICITADA_OTRO: "is requested to another teacher",
+    AGREGAR_COMENTARIO: "Add comment",
+    GUARDAR_REVISION: "Save review",
+    EDITAR: "Edit",
+    VER: "View",
+    AGREGAR: "Add",
 };
 
 /**

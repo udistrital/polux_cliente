@@ -1,13 +1,13 @@
 <div class="panel panel-success" ng-if="d_verRevision.revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'">
   <div class="panel-heading" ng-click="showrev=!showrev">
-    <h3 class="panel-title">{{'REVISION' | translate}} - {{d_verRevision.revision.EstadoRevisionTrabajoGrado.Nombre}}
+    <h3 class="panel-title">{{'REVISION' | translate}}: {{d_verRevision.revision.FechaRevision | date:'dd-MMM-yyyy'}}
       </h3>
   </div>
   <div class="panel-body" ng-show="showrev">
 
       <p class="text-muted">
         <cite>
-          {{'FECHA_REVISION' | translate}}: {{d_verRevision.revision.FechaRecepcion | date:'dd-MMM-yyyy'}} | {{'FECHA_RECEPCION' | translate}}: {{d_verRevision.revision.FechaRevision | date:'dd-MMM-yyyy'}}<cite>
+          {{'FECHA_REVISION' | translate}}: {{d_verRevision.revision.FechaRevision | date:'dd-MMM-yyyy'}} | {{'FECHA_RECEPCION' | translate}}: {{d_verRevision.revision.FechaRecepcion | date:'dd-MMM-yyyy'}}<cite>
       </p>
 
     <div ng-repeat="correccion in d_verRevision.correcciones">
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <!--<pre>{{d_verRevision.revision | json}}</pre>-->
+    <!--<pre>{{d_verRevision.revision EstadoRevision| json}}</pre>-->
 
     <!--<button type="button" name="button" ng-click="d_verRevision.postrev()">postera</button>-->
   </div>

@@ -11,8 +11,10 @@ angular.module('poluxClienteApp')
   .controller('DocenteTgsRevisionDocumentoCtrl', function($scope, nuxeo, poluxRequest, token_service, $q, $http, $translate, academicaRequest) {
     var ctrl = this;
 
-    //ctrl.docente = $routeParams.idDocente;
-    token_service.token.documento = "80093200";
+    //ctrl.docente = $routeParams.idDocente;79777053
+    token_service.token.documento = "51551021";
+    //token_service.token.documento = "79777053";
+
     token_service.token.role.push("DOCENTE");
     ctrl.documentoDocente = token_service.token.documento;
 

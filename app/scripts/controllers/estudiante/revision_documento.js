@@ -390,6 +390,11 @@ angular.module('poluxClienteApp')
       poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
         .then(function(respuestaRevisionesTrabajoGrado) {
           if (respuestaRevisionesTrabajoGrado.data) {
+            angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
+              if (revision.EstadoRevisionTrabajoGrado.Id == 1) {
+                ctrl.revisionSolicitada = true;
+              }
+            });
             deferred.resolve(respuestaRevisionesTrabajoGrado.data);
           } else {
             deferred.reject($translate.instant("ERROR.SIN_REVISIONES"));
@@ -551,6 +556,84 @@ angular.module('poluxClienteApp')
                 swal(
                   $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                   $translate.instant("VERIFICAR_DOCUMENTO"),
+                  'warning'
+                );
+              });
+          }
+        });
+    }
+
+    /**
+     * @ngdoc method
+     * @name solicitarRevision
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description 
+     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.solicitarRevision = function() {
+      $('#modalSolicitarRevision').modal('show');
+    }
+
+    /**
+     * @ngdoc method
+     * @name registrarRevision
+     * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+     * @description 
+     * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {undefined} No hace retorno de resultados
+     */
+    ctrl.registrarRevision = function() {
+      console.log(ctrl.docenteRevision);
+      swal({
+          title: $translate.instant("FORMULARIO_SOLICITAR_REVISION.CONFIRMACION"),
+          text: $translate.instant("FORMULARIO_SOLICITAR_REVISION.MENSAJE_CONFIRMACION", {
+            nombre: ctrl.docenteRevision.Nombre,
+            rol: ctrl.docenteRevision.RolTrabajoGrado.Nombre
+          }),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          if (confirmacionDelUsuario.value) {
+            var nuevaRevision = {
+              NumeroRevision: (angular.isUndefined(ctrl.revisionesTrabajoGrado)) ? 1 : ctrl.revisionesTrabajoGrado.length + 1,
+              FechaRecepcion: new Date(),
+              EstadoRevisionTrabajoGrado: {
+                Id: 1
+              },
+              DocumentoTrabajoGrado: {
+                Id: ctrl.trabajoGrado.documentoTrabajoGrado
+              },
+              VinculacionTrabajoGrado: {
+                Id: ctrl.docenteRevision.Id
+              }
+            };
+            poluxRequest.post("revision_trabajo_grado", nuevaRevision)
+              .then(function(respuestaSolicitarRevision) {
+                swal(
+                  $translate.instant("FORMULARIO_SOLICITAR_REVISION.CONFIRMACION"),
+                  $translate.instant("FORMULARIO_SOLICITAR_REVISION.REVISION_SOLICITADA"),
+                  'success'
+                );
+                ctrl.consultarRevisionesTrabajoGrado()
+                  .then(function(respuestaRevisionesTrabajoGrado) {
+                    ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
+                  })
+                  .catch(function(excepcionRevisionesTrabajoGrado) {
+                    ctrl.errorRevisionesTrabajoGrado = true;
+                    ctrl.mensajeErrorRevisionesTrabajoGrado = excepcionRevisionesTrabajoGrado;
+                  });
+                $('#modalSolicitarRevision').modal('hide');
+              })
+              .catch(function(excepcionSolicitarRevision) {
+                swal(
+                  $translate.instant("FORMULARIO_SOLICITAR_REVISION.CONFIRMACION"),
+                  $translate.instant("ERROR.SOLICITANDO_REVISION"),
                   'warning'
                 );
               });

@@ -56,8 +56,15 @@
 
         <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
           <div ng-repeat="revision in docenterevision.revisionesTrabajoGrado">
-            <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"/>
-            <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina"/>
+            <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
+            <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
+              <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
+                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina"/>
+              </div>
+              <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
+                <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
