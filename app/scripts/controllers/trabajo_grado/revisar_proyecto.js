@@ -317,7 +317,7 @@ angular.module('poluxClienteApp')
 				return $.param({
 					query: "Activo:True," +
             "RolTrabajoGrado.Id:1," +
-            "TrabajoGrado.Modalidad.Id:1,"+
+            "TrabajoGrado.Modalidad.Id.in:1|8,"+
 						"TrabajoGrado.EstadoTrabajoGrado.Id.in:15," +
 						"Usuario:" +
 						ctrl.usuarioSesion,
