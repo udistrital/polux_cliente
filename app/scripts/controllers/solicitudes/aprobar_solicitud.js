@@ -1238,6 +1238,8 @@ angular.module('poluxClienteApp')
                           }
                       });
                     }
+                  } else {
+                    data_vinculaciones = null;
                   }
                   ctrl.dataRespuesta.Vinculaciones = data_vinculaciones;
                 }
