@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "51551021";
+			token_service.token.documento = "80093200";
 			ctrl.usuarioSesion = token_service.token.documento;
 
 			ctrl.cargandoAnteproyectos = true;
@@ -378,6 +378,7 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.actualizarCuadriculaDeAnteproyectos = function() {
+				ctrl.cuadriculaAnteproyectos.data = [];
 				ctrl.cargandoAnteproyectos = false;
 				ctrl.errorCargandoAnteproyectos = false;
 				ctrl.consultarAnteproyectos()
@@ -418,7 +419,8 @@ angular.module('poluxClienteApp')
 						idEstadoTrabajoGrado: 6,
 						nombreEstadoTrabajoGrado: "Modificable",
 					}, {
-						idEstadoTrabajoGrado: 7,
+						//idEstadoTrabajoGrado: 7, porque si le llega a dar no viable, el trabajo de grado se cancela
+						idEstadoTrabajoGrado: 2,
 						nombreEstadoTrabajoGrado: "No viable",
 					}];
 				} else {
@@ -429,7 +431,8 @@ angular.module('poluxClienteApp')
 						idEstadoTrabajoGrado: 11,
 						nombreEstadoTrabajoGrado: "Modificable",
 					}, {
-						idEstadoTrabajoGrado: 12,
+						//idEstadoTrabajoGrado: 12, porque si le llega a dar no viable, el trabajo de grado se cancela
+						idEstadoTrabajoGrado: 2,
 						nombreEstadoTrabajoGrado: "No viable",
 					}];
 				}

@@ -306,6 +306,7 @@ var text_es = {
         SOLICITANDO_REVISION: "Ocurrió un error al intentar solicitar la revisión",
         REGISTRANDO_REVISION: "Ocurrió un error al intentar registrar la revisión",
         REGISTRANDO_COMENTARIOS: "Ocurrió un error al intentar registrar los comentarios",
+        CANCELANDO_TRABAJO_GRADO: "Ocurrió un error al intentar cancelar el trabajo de grado desde la base de datos",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -991,6 +992,7 @@ var text_en = {
         SOLICITANDO_REVISION: "An error ocurred when trying to request the review",
         REGISTRANDO_REVISION: "An error ocurred when trying to insert the review",
         REGISTRANDO_COMENTARIOS: "An error ocurred when trying to insert the comments",
+        CANCELANDO_TRABAJO_GRADO: "An error ocurred when trying to cancel the degree work from the database",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
