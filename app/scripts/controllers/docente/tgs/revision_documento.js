@@ -11,9 +11,9 @@ angular.module('poluxClienteApp')
   .controller('DocenteTgsRevisionDocumentoCtrl', function($scope, nuxeo, poluxRequest, token_service, $q, $http, $translate, academicaRequest) {
     var ctrl = this;
 
-    //ctrl.docente = $routeParams.idDocente;79777053
-    token_service.token.documento = "51551021";
-    //token_service.token.documento = "79777053";
+    //token_service.token.documento = "51551021";
+    token_service.token.documento = "79777053";
+    //token_service.token.documento = "80093200";
 
     token_service.token.role.push("DOCENTE");
     ctrl.documentoDocente = token_service.token.documento;
@@ -52,12 +52,16 @@ angular.module('poluxClienteApp')
      * @methodOf poluxClienteApp.controller:DocenteTgsRevisionDocumentoCtrl
      * @description
      * Función que define los parámetros para consultar en la tabla vinculacion_trabajo_grado.
+     * El estado del trabajo de grado 13 pide los trabajos de grado que se encuentren en curso.
+     * El rol del trabajo de grado 1 pide los docentes cuya vinculación sea como directores del trabajo de grado.
      * @param {undefined} undefined No requiere parámetros
      * @returns {String} La sentencia para la consulta correspondiente
      */
     ctrl.obtenerParametrosVinculacionTrabajoGrado = function() {
       return $.param({
-        query: "TrabajoGrado.EstadoTrabajoGrado.Id:13,Activo:True,Usuario:" +
+        query: "TrabajoGrado.EstadoTrabajoGrado.Id:13," +
+          "RolTrabajoGrado.Id:1," +
+          "Activo:True,Usuario:" +
           ctrl.documentoDocente,
         limit: 0
       });

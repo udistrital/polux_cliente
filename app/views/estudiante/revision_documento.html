@@ -118,7 +118,7 @@
             <label class="col-sm-4 control-label"> {{'FORMULARIO_SOLICITAR_REVISION.SELECCIONAR_VINCULADO' | translate}} </label>
             <div class="col-sm-8">
               <select class="form-control" ng-model="estudianteRevisionDoc.docenteRevision" required>
-                <option ng-if="docente.RolTrabajoGrado.Id != 2" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-value="docente"> {{docente.Nombre}} </option>
+                <option ng-if="docente.RolTrabajoGrado.Id != 2 && docente.RolTrabajoGrado.Id != 3" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-value="docente"> {{docente.Nombre}} </option>
               </select>
             </div>
           </div>
