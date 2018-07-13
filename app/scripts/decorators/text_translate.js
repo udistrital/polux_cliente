@@ -426,7 +426,7 @@ var text_es = {
       NUCLEO_SNIES:"Seleccione el núcleo básico",
       INCLUIR_CODIRECTOR:"¿Desea incluir codirector en el proyecto?",
       DESEA_CAMBIAR_VINCULADO:"¿Desea cambiar alguno de los docentes vinculados al proyecto?",
-      ACTA_SUSTENTACION:"Seleccione el acta de sustentación del trabajo de grado",
+      ACTA_SOCIALIZACION:"Seleccione el acta de socialización del trabajo de grado",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Cargar documento",
@@ -576,7 +576,7 @@ var text_es = {
         INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro.",
         ERROR:{
             REGISTRANDO_NOTA:"Ocurrio un error registrando la nota, por favor intente de nuevo.",
-            REGISTRANDO_ACTA_SUSTENTACION:"Ocurrio un error registrando el acta de sustentación por favor intente de nuevo.",
+            REGISTRANDO_ACTA_SOCIALIZACION: "Ocurrió un error registrando el acta de socialización, por favor intente de nuevo.",
             CONSULTANDO_VINCULACIONES:"Ocurrio un error consultando otras vinculaciones, por favor intente de nuevo.",
         },
         NOTA_REGISTRADA_DOCENTE:"Nota registrada por el docente",
@@ -1112,7 +1112,7 @@ var text_en = {
       NUCLEO_SNIES:"Select the basic core",
       INCLUIR_CODIRECTOR:"Do you want to include a co-director in the project?",
       DESEA_CAMBIAR_VINCULADO:"¿Do you want to change any of the teachers linked to the project?",
-      ACTA_SUSTENTACION:"Select the degree work support certificate",
+      ACTA_SOCIALIZACION:"Select the degree work socialization certificate",
     },
     DOCUMENTO:{
         CARGAR_DOCUMENTO:"Load document",
@@ -1262,7 +1262,7 @@ var text_en = {
         INSTRUCCIONES: "Input the grades obtained by the student by clicking on the corresponding cell. Keep in mind that valid grades range from 0.0 to 5.0, and two (2) decimals of accuracy will be taken for the record.",
         ERROR:{
             REGISTRANDO_NOTA:"An error ocurred registering the grade, please try again.",
-            REGISTRANDO_ACTA_SUSTENTACION:"An error ocurred registering the record of support, please try again.",
+            REGISTRANDO_ACTA_SOCIALIZACION: "An error occurred registering the socialization certificate, please try again.",
             CONSULTANDO_VINCULACIONES:"An error ocurred consulting other links, please try again.",
         },
         NOTA_REGISTRADA_DOCENTE:"Grade registered by the teacher",
