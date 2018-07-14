@@ -695,6 +695,7 @@ var text_es = {
     EDITAR: "Editar",
     VER: "Ver",
     AGREGAR: "Agregar",
+    ADMITIR: "Admitir",
 };
 
 /**
@@ -1380,6 +1381,7 @@ var text_en = {
     EDITAR: "Edit",
     VER: "View",
     AGREGAR: "Add",
+    ADMITIR: "Admit",
 };
 
 /**

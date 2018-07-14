@@ -59,17 +59,17 @@
     ctrl.gridOptionsAdmitidos.columnDefs = [
     {
       name: 'estudiante',
-      displayName: 'Código',
+      displayName: $translate.instant('CODIGO'),
       width: "20%"
     },
     {
       name: 'nombre',
-      displayName: 'Nombre',
+      displayName: $translate.instant('NOMBRE'),
       width: "40%"
     },
     {
       name: 'promedio',
-      displayName: 'Promedio',
+      displayName: $translate.instant('PROMEDIO'),
       width: "15%",
       sort: {
         direction: uiGridConstants.DESC,
@@ -78,7 +78,7 @@
     },
     {
       name: 'rendimiento',
-      displayName: 'Rendimiento Académico',
+      displayName: $translate.instant('RENDIMIENTO'),
       width: "25%",
       sort: {
         direction: uiGridConstants.DESC,
