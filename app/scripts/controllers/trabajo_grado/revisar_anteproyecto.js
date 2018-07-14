@@ -45,7 +45,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+		function($q, $sce, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -610,79 +610,18 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.abrirDocumento = function(docid) {
-				nuxeo.header('X-NXDocumentProperties', '*');
-
-				/**
-				 * @ngdoc method
-				 * @name obtenerDoc
-				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-				 * @description 
-				 * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
-				 * @param {undefined} undefined No requiere parámetros
-				 * @returns {Promise} La respuesta de la petición hacia la gestión documental
-				 */
-				ctrl.obtenerDoc = function() {
-					var defer = $q.defer();
-					nuxeo.request('/id/' + docid)
-						.get()
-						.then(function(response) {
-							ctrl.document = response;
-							defer.resolve(response);
-						})
-						.catch(function(error) {
-							defer.reject(error)
-						});
-					return defer.promise;
-				};
-
-				/**
-				 * @ngdoc method
-				 * @name obtenerFetch
-				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-				 * @description 
-				 * Obtiene el blob de un documento.
-				 * @param {Object} doc Documento de nuxeo al cual se le obtendrá el Blob
-				 * @returns {Promise} La respuesta de obtener el blob del documento asociado
-				 */
-				ctrl.obtenerFetch = function(doc) {
-					var defer = $q.defer();
-					doc.fetchBlob()
-						.then(function(res) {
-							defer.resolve(res.blob());
-						})
-						.catch(function(error) {
-							defer.reject(error)
-						});
-					return defer.promise;
-				};
-
-				ctrl.obtenerDoc()
-					.then(function() {
-						ctrl.obtenerFetch(ctrl.document)
-							.then(function(r) {
-								ctrl.blob = r;
-								var fileURL = URL.createObjectURL(ctrl.blob);
-								console.log(fileURL);
-								ctrl.content = $sce.trustAsResourceUrl(fileURL);
-								$window.open(fileURL);
-							})
-							.catch(function(error) {
-								console.log("error", error);
-								swal(
-									$translate.instant("ERROR"),
-									$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-									'warning'
-								);
-							});
-					})
-					.catch(function(error) {
-						console.log("error", error);
-						swal(
-							$translate.instant("ERROR"),
-							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-							'warning'
-						);
-					});
+				nuxeoClient.getDocument(docid)
+				.then(function(document){
+					$window.open(document.url);
+				})
+				.catch(function(error) {
+					console.log("error", error);
+					swal(
+						$translate.instant("ERROR"),
+						$translate.instant("ERROR.CARGAR_DOCUMENTO"),
+						'warning'
+					);
+				});
 			}
 
 		});

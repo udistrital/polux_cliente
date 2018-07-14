@@ -25,7 +25,7 @@
  * @property {object} detallesSolicitud  Detalles especificos de una solicitud seleccionada en el ui-grid.
  */
 angular.module('poluxClienteApp')
-.controller('SolicitudesListarSolicitudesCtrl', function ($filter,$location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope,token_service) {
+.controller('SolicitudesListarSolicitudesCtrl', function ($filter,$location, $q, $sce,$window,nuxeo,$translate, academicaRequest,poluxRequest,$scope,token_service,nuxeoClient) {
   var ctrl = this;
   $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
   ctrl.solicitudes = [];
@@ -587,84 +587,18 @@ angular.module('poluxClienteApp')
      * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
      */
   ctrl.getDocumento = function(docid){
-      nuxeo.header('X-NXDocumentProperties', '*');
-
-      /**
-     * @ngdoc method
-     * @name obtenerDoc
-     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
-     * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
-     * @description 
-     * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
-     */
-      ctrl.obtenerDoc = function () {
-        var defer = $q.defer();
-
-        nuxeo.request('/id/'+docid)
-            .get()
-            .then(function(response) {
-              ctrl.doc=response;
-              //var aux=response.get('file:content');
-              ctrl.document=response;
-              defer.resolve(response);
-            })
-            .catch(function(error){
-                defer.reject(error)
-            });
-        return defer.promise;
-      };
-
-      /**
-     * @ngdoc method
-     * @name obtenerFetch
-     * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
-     * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
-     * @description 
-     * Obtiene el blob de un documento
-     */
-      ctrl.obtenerFetch = function (doc) {
-        var defer = $q.defer();
-
-        doc.fetchBlob()
-          .then(function(res) {
-            defer.resolve(res.blob());
-
-          })
-          .catch(function(error){
-                defer.reject(error)
-            });
-        return defer.promise;
-      };
-
-        ctrl.obtenerDoc().then(function(){
-
-           ctrl.obtenerFetch(ctrl.document).then(function(r){
-               ctrl.blob=r;
-               var fileURL = URL.createObjectURL(ctrl.blob);
-               console.log(fileURL);
-               ctrl.content = $sce.trustAsResourceUrl(fileURL);
-               $window.open(fileURL);
-            })
-            .catch(function(error){
-              console.log("error",error);
-              swal(
-                $translate.instant("ERROR"),
-                $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-                'warning'
-              );
-            });
-
-        })
-        .catch(function(error){
-          console.log("error",error);
-          swal(
-            $translate.instant("ERROR"),
-            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-            'warning'
-          );
-        });
+    nuxeoClient.getDocument(docid)
+    .then(function(document){
+      $window.open(document.url);
+    })
+    .catch(function(error){
+      console.log("error",error);
+      swal(
+        $translate.instant("ERROR"),
+        $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+        'warning'
+      );
+    });
 
   }
 
