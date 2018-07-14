@@ -23,7 +23,7 @@
  * @property {object} gridOptionsAsignatura Grid options para las asignatruas de TG
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q,nuxeo,$window) {
+  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q,nuxeo,$window,nuxeoClient) {
     var ctrl = this;
 
     //token_service.token.documento = "79647592";
@@ -760,23 +760,27 @@ angular.module('poluxClienteApp')
       var mensajeConfirmacion;
       var mensajeSuccess;
       var mensajeError;
+      var workspace;
       if (ctrl.esAnteproyectoModificable) {
         descripcionDocumento = "Versión nueva del anteproyecto";
         titleConfirmacion = "CORREGIR_ANTEPROYECTO.CONFIRMACION";
         mensajeConfirmacion = "CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION";
         mensajeSuccess = "CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO";
+        workspace = 'Anteproyectos';
       }
       if (ctrl.esPrimeraVersion) {
         descripcionDocumento = "Primera versión del trabajo de grado";
         titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
         mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
         mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
+        workspace = 'Versiones TG';
       }
       if (ctrl.esProyectoModificable) {
         descripcionDocumento = "Versión del trabajo de grado";
         titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
         mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
         mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
+        workspace = 'Versiones TG';
       }
       swal({
           title: $translate.instant(titleConfirmacion),
@@ -790,7 +794,7 @@ angular.module('poluxClienteApp')
           if (confirmacionDelUsuario.value) {
             ctrl.loadTrabajoGrado = true;
             ctrl.cargandoActualizarTg = true;
-            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion)
+            nuxeoClient.createDocument(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion,workspace,undefined)
               .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
                   .then(function(respuestaActualizarTG) {
