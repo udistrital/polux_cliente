@@ -96,53 +96,67 @@
 
     ctrl.gridOptions.columnDefs = [{
       name: 'solicitud',
-      displayName: 'Solicitud',
-      width: "8%"
+      displayName: $translate.instant('SOLICITUD'),
+      width: "7%"
     },
     {
       name: 'fecha',
-      displayName: 'Fecha',
+      displayName: $translate.instant('FECHA'),
       type: 'date',
       cellFilter: 'date:\'yyyy-MM-dd\'',
-      width: "8%"
+      width: "7%"
     },
     {
       name: 'estudiante',
-      displayName: 'Código',
+      displayName: $translate.instant('CODIGO'),
+      width: "8%"
+    },
+    {
+      name: 'nombreCarrera',
+      displayName: $translate.instant('CARRERA'),
       width: "10%"
     },
     {
       name: 'nombre',
-      displayName: 'Nombre',
-      width: "23%"
+      displayName: $translate.instant('NOMBRE'),
+      width: "15%"
     },
     {
       name: 'promedio',
-      displayName: 'Promedio',
-      width: "10%",
+      displayName: $translate.instant('PROMEDIO'),
+      width: "9%",
       sort: {
         direction: uiGridConstants.DESC,
         priority: 0
       }
     },
     {
-      name: 'rendimiento',
-      displayName: 'Rendimiento Académico',
-      width: "15%",
+      name: 'porcentajeCursado',
+      displayName: $translate.instant('PORCENTAJE_CURSADO'),
+      width: "13%",
       sort: {
         direction: uiGridConstants.DESC,
         priority: 1
       }
     },
     {
+      name: 'rendimiento',
+      displayName: $translate.instant('RENDIMIENTO'),
+      width: "15%",
+      sort: {
+        direction: uiGridConstants.DESC,
+        priority: 2
+      }
+    },
+    {
       name: 'estado.Nombre',
-      displayName: 'Estado',
-      width: "16%"
+      displayName: $translate.instant('ESTADO_SIN_DOSPUNTOS'),
+      width: "8%"
     },
     {
       name: 'aprobar',
-      displayName: 'Admitir',
-      width: "10%",
+      displayName: $translate.instant('ADMITIR'),
+      width: "8%",
       cellTemplate: '<center><div ng-if="grid.appScope.listarSolicitudes.permitirPrimeraFecha || grid.appScope.listarSolicitudes.permitirSegundaFecha"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.listarSolicitudes.permitirPrimeraFecha && !grid.appScope.listarSolicitudes.permitirSegundaFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
     }
     ];
@@ -366,6 +380,27 @@
 
     /**
      * @ngdoc method
+     * @name consultarNombreCarrera
+     * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+     * @description 
+     * Consula el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para obtener la información sobre la carrera de acuerdo al código ingresado
+     * @param {Integer} codigoCarrera Identificador de la carrera del estudiante 
+     * @returns {Promise} Objeto de tipo promesa que arroja el resultado de consultar el nombre de la carrera del estudiante
+     */
+    ctrl.consultarNombreCarrera = function(codigoCarrera) {
+      var deferred = $q.defer();
+      academicaRequest.get("carrera", [codigoCarrera])
+        .then(function(respuestaCarrera) {
+          deferred.resolve(respuestaCarrera.data.carrerasCollection.carrera[0].nombre);
+        })
+        .catch(function(excepcionCarrera) {
+          deferred.reject("ERROR.CARGAR_CARRERA_ESTUDIANTE");
+        });
+      return deferred.promise;
+    }
+
+    /**
+     * @ngdoc method
      * @name cargandoParametrosSolicitud
      * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
      * @description 
@@ -390,30 +425,39 @@
               academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function (response2) {
               //academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
                 if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-                  var solicitud = {
-                    "solicitud": value.SolicitudTrabajoGrado.Id,
-                    "fecha": value.Fecha,
-                    "estudiante": usuarioSolicitud.data[0].Usuario,
-                    "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                    "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                    "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                    "estado": value.EstadoSolicitud,
-                    //"respuesta": ""+value.Id,
-                    "respuestaSolicitud": value
-                  };
-                  if(solicitud.estado.Id==7 || solicitud.estado.Id==8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10){
-                    solicitud.aprobado = true;
-                    ctrl.numeroAdmitidos += 1;
-                  }else{
-                    solicitud.aprobado = false;
-                  }
-                  if(solicitud.estado.Id==3 || solicitud.estado.Id==5){
-                    solicitud.permitirAprobar = true;
-                  }else{
-                    solicitud.permitirAprobar = false;
-                  }
-                  $scope.sols.push(solicitud);
-                  defer.resolve();
+                  ctrl.consultarNombreCarrera(response2.data.estudianteCollection.datosEstudiante[0].carrera)
+                    .then(function(nombreCarrera) {
+                      var solicitud = {
+                        "solicitud": value.SolicitudTrabajoGrado.Id,
+                        "fecha": value.Fecha,
+                        "estudiante": usuarioSolicitud.data[0].Usuario,
+                        "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                        "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                        "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                        "estado": value.EstadoSolicitud,
+                        "porcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado + "%",
+                        "nombreCarrera": nombreCarrera,
+                        //"respuesta": ""+value.Id,
+                        "respuestaSolicitud": value
+                      };
+                      console.log("datos estudiante", response2.data.estudianteCollection.datosEstudiante[0]);
+                      if(solicitud.estado.Id==7 || solicitud.estado.Id==8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10){
+                        solicitud.aprobado = true;
+                        ctrl.numeroAdmitidos += 1;
+                      }else{
+                        solicitud.aprobado = false;
+                      }
+                      if(solicitud.estado.Id==3 || solicitud.estado.Id==5){
+                        solicitud.permitirAprobar = true;
+                      }else{
+                        solicitud.permitirAprobar = false;
+                      }
+                      $scope.sols.push(solicitud);
+                      defer.resolve();
+                    })
+                    .catch(function(excepcionCarrera) {
+                      defer.reject(excepcionCarrera);
+                    });
                 }else{
                   defer.reject("ERROR.CARGAR_DATOS_SOLICITUDES");
                 }
