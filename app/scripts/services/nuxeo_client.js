@@ -92,12 +92,9 @@ angular.module('nuxeoService',[])
        */
       getDocument : function(uid){
         var defer = $q.defer();
-        nuxeo.header('X-NXDocumentProperties', '*');
-        nuxeo.request('/id/'+uid)
-          .get()
-          .then(function(document) {
-            return document.fetchBlob()
-          })
+        nuxeo.operation('Document.GetBlob')
+          .input(uid)
+          .execute()
           .then(function(responseBlob){
             return responseBlob.blob()
           })
@@ -187,6 +184,14 @@ angular.module('nuxeoService',[])
             .save({
               headers: {'X-Versioning-Option': 'major'}
             })
+          })
+          .then(function() {
+            return nuxeo.repository().fetch(uid, {
+              schemas: ['dublincore', 'file']
+            });
+          })
+          .then(function(doc) {
+            defer.resolve(doc.uid);
           })
           .catch(function(error){
             defer.reject(error);

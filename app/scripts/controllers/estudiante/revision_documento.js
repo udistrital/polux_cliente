@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-  .controller('EstudianteRevisionDocumentoCtrl', function($scope, nuxeo, poluxRequest, token_service, $q, $http, $translate, academicaRequest) {
+  .controller('EstudianteRevisionDocumentoCtrl', function($scope, nuxeo, poluxRequest, token_service, $q, $http, $translate, academicaRequest,nuxeoClient,$window) {
     var ctrl = this;
 
     //ctrl.estudiante = $routeParams.idEstudiante;
@@ -17,10 +17,9 @@ angular.module('poluxClienteApp')
     ctrl.codigoEstudiante = token_service.token.documento;
 
     ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
-
+    
     $scope.mindoc = false;
-
-    /**
+     /**
      * @ngdoc method
      * @name obtenerParametrosDirectorExterno
      * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
@@ -184,8 +183,19 @@ angular.module('poluxClienteApp')
           if (respuestaDocumentoTrabajoGrado.data) {
             trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
             trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
+            //Cargar las versiones previas del documento
+            nuxeoClient.getVersions(trabajoGrado.documentoEscrito.Enlace)
+              .then(function(responseVersiones){
+                trabajoGrado.versiones = responseVersiones;
+                deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
+              })
+              .catch(function(excepcionDocumentoTrabajoGrado){
+                console.log(excepcionDocumentoTrabajoGrado);
+                deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
+              });
+          } else {
+            deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           }
-          deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
         })
         .catch(function(excepcionDocumentoTrabajoGrado) {
           deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
@@ -443,60 +453,29 @@ angular.module('poluxClienteApp')
       return deferred.promise;
     }
 
+
     /**
      * @ngdoc method
-     * @name cargarDocumento
+     * @name verDocumento
      * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
      * @description 
-     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     * @param {string} nombre Nombre del documento que se cargará
-     * @param {string} descripcion Descripcion del documento que se cargará
-     * @param {blob} documento Blob del documento que se cargará
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con la url del objeto cargado.
+     * Permite ver un documento que sea versión de un trabajo de grado
+     * @param {Object} doc Documento que se va a descargar
+     * @returns {undefined} No hace retorno de resultados
      */
-    ctrl.cargarDocumento = function(nombre, descripcion, documento) {
-      var defer = $q.defer();
-      var promise = defer.promise;
-      nuxeo.operation('Document.Create')
-        .params({
-          type: 'File',
-          name: nombre,
-          properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
-        })
-        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Versiones TG')
-        .execute()
-        .then(function(doc) {
-          var nuxeoBlob = new Nuxeo.Blob({
-            content: documento
-          });
-          nuxeo.batchUpload()
-            .upload(nuxeoBlob)
-            .then(function(res) {
-              return nuxeo.operation('Blob.AttachOnDocument')
-                .param('document', doc.uid)
-                .input(res.blob)
-                .execute();
-            })
-            .then(function() {
-              return nuxeo.repository().fetch(doc.uid, {
-                schemas: ['dublincore', 'file']
-              });
-            })
-            .then(function(doc) {
-              var url = doc.uid;
-              //callback(url);
-              defer.resolve(url);
-            })
-            .catch(function(error) {
-              throw error;
-              defer.reject(error)
-            });
-        })
-        .catch(function(error) {
-          throw error;
-          defer.reject(error)
-        });
-      return promise;
+    ctrl.verDocumento = function(doc){
+      nuxeoClient.getDocument(doc.uid)
+      .then(function(documento){
+        window.open(documento.url);
+      })
+      .catch(function(error){
+        console.log("error",error);
+        swal(
+          $translate.instant("ERROR"),
+          $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+          'warning'
+        );
+      });
     }
 
     /**
@@ -520,7 +499,9 @@ angular.module('poluxClienteApp')
         .then(function(confirmacionDelUsuario) {
           if (confirmacionDelUsuario.value) {
             ctrl.cargandoTrabajoGrado = true;
-            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
+            $('#modalSubirNuevaVersion').modal('hide');
+            //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
+            nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, ctrl.nuevaVersionTrabajoGrado)
               .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarTrabajoGrado(respuestaCargarDocumento)
                   .then(function(respuestaActualizarTg) {
@@ -532,7 +513,7 @@ angular.module('poluxClienteApp')
                         'success'
                       );
                       ctrl.actualizarContenidoRevisiones();
-                      $('#modalSubirNuevaVersion').modal('hide');
+                      //$('#modalSubirNuevaVersion').modal('hide');
                     } else {
                       ctrl.cargandoTrabajoGrado = false;
                       swal(

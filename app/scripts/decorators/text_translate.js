@@ -696,6 +696,12 @@ var text_es = {
     VER: "Ver",
     AGREGAR: "Agregar",
     ADMITIR: "Admitir",
+    VERSIONES:{
+        TITULO:"Otras versiones del documento",
+        HAGA_CLIC_MOSTRAR:"Haga clic para poder ver otras versiones del documento",
+        ESCOJA_VERSION:"Escoja la versión que desea descargar",
+        TRABAJO_GRADO_NUMERO:"Versión del trabajo de grado número ",
+    },
 };
 
 /**
@@ -1382,6 +1388,12 @@ var text_en = {
     VER: "View",
     AGREGAR: "Add",
     ADMITIR: "Admit",
+    VERSIONES:{
+        TITULO:"Other document's versions",
+        HAGA_CLIC_MOSTRAR:"Click to see other document's versions",
+        ESCOJA_VERSION:"Choose the version you want to download",
+        TRABAJO_GRADO_NUMERO:"Degree work version number ",
+    }
 };
 
 /**
