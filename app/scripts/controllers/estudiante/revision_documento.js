@@ -183,16 +183,7 @@ angular.module('poluxClienteApp')
           if (respuestaDocumentoTrabajoGrado.data) {
             trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
             trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
-            //Cargar las versiones previas del documento
-            nuxeoClient.getVersions(trabajoGrado.documentoEscrito.Enlace)
-              .then(function(responseVersiones){
-                trabajoGrado.versiones = responseVersiones;
-                deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
-              })
-              .catch(function(excepcionDocumentoTrabajoGrado){
-                console.log(excepcionDocumentoTrabajoGrado);
-                deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
-              });
+            deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           } else {
             deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           }
@@ -464,18 +455,23 @@ angular.module('poluxClienteApp')
      * @returns {undefined} No hace retorno de resultados
      */
     ctrl.verDocumento = function(doc){
-      nuxeoClient.getDocument(doc.uid)
-      .then(function(documento){
-        window.open(documento.url);
-      })
-      .catch(function(error){
-        console.log("error",error);
-        swal(
-          $translate.instant("ERROR"),
-          $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-          'warning'
-        );
-      });
+      if(doc.uid){
+        ctrl.loadingVersion = true;
+        nuxeoClient.getDocument(doc.uid)
+          .then(function(documento){
+            ctrl.loadingVersion = false;
+            window.open(documento.url);
+          })
+          .catch(function(error){
+            console.log("error",error);
+            ctrl.loadingVersion = false;
+            swal(
+              $translate.instant("ERROR"),
+              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+              'warning'
+            );
+          });
+      }
     }
 
     /**

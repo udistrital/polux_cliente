@@ -1,0 +1,24 @@
+<div class="panel panel-default">
+    <div class="panel-heading" ng-click="showVersiones=!showVersiones">
+        <center>
+            <h3 class="panel-title" ng-if="showVersiones">{{'DOCUMENTOS_ASOCIADOS.TITULO' | translate}}</h3>
+            <h3 class="panel-title" ng-if="!showVersiones">{{'DOCUMENTOS_ASOCIADOS.HAGA_CLIC_MOSTRAR' | translate}}</h3>
+        </center>
+        </div>
+        <div class="panel-body" ng-if="showVersiones">
+        <loading tam="4" load="d_versionesDocumentosTg.loadingVersion" message="d_versionesDocumentosTg.mensajeCargandoDocumentos"></loading> 
+        <div ng-if="!d_versionesDocumentosTg.loadingVersion">
+            <div class="row">
+            <label class="col-sm-12">{{'DOCUMENTOS_ASOCIADOS.ESCOJA_VERSION' | translate}}</label>
+            </div>
+            <div class="row">
+                <treecontrol class="tree-classic"
+                tree-model="dataForTree"
+                options="treeOptions"
+                on-selection="estudianteRevisionDoc.d_versionesDocumentosTg(node)">
+                {{node.name}} 
+                </treecontrol>
+            </div>
+        </div>
+    </div>
+</div>
