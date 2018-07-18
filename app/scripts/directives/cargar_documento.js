@@ -119,8 +119,7 @@ angular.module('poluxClienteApp')
             //var date = $filter('date')(new Date(), 'dd-MM-yyyy');
             //Ahora la fecha se ingresa desde la vista
             var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
-            console.log(date);
-            ctrl.documento.nombre = $scope.name+" "+ctrl.consecutivo+" Codigo de carrera:"+ctrl.carrera+" Fecha:"+date;
+            ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera + " Fecha: " + date;
             //Se deja de utilizar la función de cargar el documento
             //ctrl.cargarDocumento().then(function(){
               var documento = {
@@ -143,6 +142,8 @@ angular.module('poluxClienteApp')
                     $translate.instant("CONSEJO_CARRERA.ACTA_CARGADA"),
                     'success'
                   );
+                  ctrl.fechaReunion = null;
+                  ctrl.consecutivo = null;
                 })
                 .catch(function(error){
                   console.log("error",error);
@@ -179,5 +180,15 @@ angular.module('poluxClienteApp')
 
       },
       controllerAs:'d_cargarDocumento'
+    };
+  })
+  .config(function($mdDateLocaleProvider) {
+    $mdDateLocaleProvider.formatDate = function(date) {
+      return date ? moment(date).format('DD-MM-YYYY') : '';
+    };
+    
+    $mdDateLocaleProvider.parseDate = function(dateString) {
+      var m = moment(dateString, 'DD-MM-YYYY', true);
+      return m.isValid() ? m.toDate() : new Date(NaN);
     };
   });

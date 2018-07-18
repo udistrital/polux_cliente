@@ -1485,7 +1485,7 @@ angular.module('poluxClienteApp')
         */
         var sql = "";
         angular.forEach(ctrl.carrerasCoordinador, function(carrera){
-            sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.codigo_proyecto_curricular;
+            sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
 
             var parametrosDocumentos = $.param({
               query:"TipoDocumentoEscrito:1"+sql,
