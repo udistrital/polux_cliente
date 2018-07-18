@@ -708,6 +708,10 @@ var text_es = {
     },
     NO_HAY_DOCUMENTOS: "No hay documentos para mostrar, por favor cargue uno",
     INDIQUE_FECHA_REUNION: "Indique la fecha de reunión correspondiente",
+    CONSEJO_CARRERA: {
+        ACTA: "Acta de consejo de carrera",
+        ACTA_CARGADA: "Acta de consejo de carrera cargada satisfactoriamente",
+    },
 };
 
 /**
@@ -1406,6 +1410,10 @@ var text_en = {
     },
     NO_HAY_DOCUMENTOS: "There are no documents to display, please load a new one",
     INDIQUE_FECHA_REUNION: "Indicate the associated meeting date",
+    CONSEJO_CARRERA: {
+        ACTA: "Career council certificate",
+        ACTA_CARGADA: "Career council certificate loaded successfully",
+    },
 };
 
 /**

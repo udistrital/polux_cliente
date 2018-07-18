@@ -93,7 +93,7 @@
         <div class="row">
           <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
           <div class="col-sm-8">
-            <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required >
+            <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
               <option></option>
               <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
               <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
@@ -111,7 +111,11 @@
         <div class="row">
           <label class="col-sm-4 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
           <div class="col-sm-8">
-            <!--<input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>-->
+            <!--
+            Se evita la solicitud del archivo que se sube como acta de consejo de carrera
+
+            <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>
+            -->
             <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
             <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
           </div>
@@ -248,6 +252,15 @@
 
 
     <div id="modalSeleccionarDocumento" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+      <style> 
+      .md-datepicker-calendar-pane {
+        z-index: 1200;
+        !important;
+      }
+      .md-datepicker-input-container {
+        width: 30%;
+      }
+      </style>
       <div class="modal-content col-md-offset-2 col-md-8">
         <div class="modal-header">
           {{'ACTA_RESPUESTA_SOLICITUD' |translate}}
@@ -288,10 +301,10 @@
                 -->
               </div>
               <br>
-              <div class="row">
-                <label class="col-sm-4"></label>
-                <button class="col-sm-4 btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'DOCUMENTO.SELECCIONAR_DOCUMENTO' | translate}}</button>
-                <label class="col-sm-4"></label>
+              <div class="row row-centered">
+                <div class="col-sm-4 col-centered">
+                  <button class="btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'DOCUMENTO.SELECCIONAR_DOCUMENTO' | translate}}</button>
+                </div>
               </div>
             </div>
           </div>
