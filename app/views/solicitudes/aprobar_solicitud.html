@@ -266,11 +266,12 @@
                 </div>
               </div>
               <div class="panel-body" ng-if="!loadDocumento && !aprobarSolicitud.errorCargarDocumento && aprobarSolicitud.documentos.length===0" >
-                <label clase="control-label">No hay documentos que mostrar, por favor cargue uno</label>
+                <label clase="control-label">{{'NO_HAY_DOCUMENTOS' | translate}}</label>
               </div>
               <div class="panel-body" ng-if="!loadDocumento && !aprobarSolicitud.errorCargarDocumento && aprobarSolicitud.documentos.length>0">
                 <div class="row">
-                  <div class="col-sm-9">
+                  <!-- pasa de col-sm-9 a col-sm-12 ya que no existe el botón-->
+                  <div class="col-sm-12">
                     <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta" theme="select2" reset-search-input="false" style="width:100%;">
                      <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
                      <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
@@ -278,9 +279,13 @@
                      </ui-select-choices>
                    </ui-select>
                  </div>
+                 <!--
+                  Dada la ateneción al requerimiento sobre no cargar las actas de respuesta a las solicitudes, se inhabilita la visualización del acta ya cargada que se selecciona desde el modal, y se muestra el título que contiene consecutivo y fecha del acta
+
                  <div class="col-sm-3">
                   <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
                 </div>
+                -->
               </div>
               <br>
               <div class="row">

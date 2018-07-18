@@ -112,7 +112,10 @@ angular.module('poluxClienteApp')
           }
           if(ctrl.carrera!==undefined){
             $scope.loadDocumento = true;
-            var date = $filter('date')(new Date(), 'dd-MM-yyyy');
+            //var date = $filter('date')(new Date(), 'dd-MM-yyyy');
+            //Ahora la fecha se ingresa desde la vista
+            var date = ctrl.fechaReunion;
+            console.log(date);
             ctrl.documento.nombre = $scope.name+" "+ctrl.consecutivo+" Codigo de carrera:"+ctrl.carrera+" Fecha:"+date;
             ctrl.cargarDocumento().then(function(){
               var documento = {
@@ -125,7 +128,7 @@ angular.module('poluxClienteApp')
               $scope.acta.nombre = ctrl.documento.nombre;
               $scope.acta.url = ctrl.documento.url;
 
-              poluxRequest.post("documento_escrito",documento).then(function(resultado){
+              poluxRequest.post("documento_escrito|",documento).then(function(resultado){
                 $scope.acta.id=resultado.data.Id;
                 $('#modalSeleccionarDocumento').modal('hide');
                 swal(

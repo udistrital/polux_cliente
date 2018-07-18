@@ -702,6 +702,8 @@ var text_es = {
         ESCOJA_VERSION:"Escoja la versión que desea descargar",
         TRABAJO_GRADO_NUMERO:"Versión del trabajo de grado número ",
     },
+    NO_HAY_DOCUMENTOS: "No hay documentos para mostrar, por favor cargue uno",
+    INDIQUE_FECHA_REUNION: "Indique la fecha de reunión correspondiente",
 };
 
 /**
@@ -1393,7 +1395,9 @@ var text_en = {
         HAGA_CLIC_MOSTRAR:"Click to see other document's versions",
         ESCOJA_VERSION:"Choose the version you want to download",
         TRABAJO_GRADO_NUMERO:"Degree work version number ",
-    }
+    },
+    NO_HAY_DOCUMENTOS: "There are no documents to display, please load a new one",
+    INDIQUE_FECHA_REUNION: "Indicate the associated meeting date",
 };
 
 /**
