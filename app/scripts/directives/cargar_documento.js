@@ -47,6 +47,7 @@ angular.module('poluxClienteApp')
                 $scope.carrera = $scope.carreras[0];
             }
         }
+
         /**
          * @ngdoc method
          * @name cargarDocumento
@@ -55,7 +56,9 @@ angular.module('poluxClienteApp')
          * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el documento.
          * @description 
          * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-         */  
+         */
+        /*
+        Se deja de utilizar la función que carga el documento a nuxeo, pues se atiende a que ahora no se suben las actas
         ctrl.cargarDocumento = function(){
           var defered = $q.defer();
           var promise = defered.promise;
@@ -94,6 +97,7 @@ angular.module('poluxClienteApp')
             });
             return promise;
         }
+        */
 
         /**
          * @ngdoc method
@@ -114,42 +118,45 @@ angular.module('poluxClienteApp')
             $scope.loadDocumento = true;
             //var date = $filter('date')(new Date(), 'dd-MM-yyyy');
             //Ahora la fecha se ingresa desde la vista
-            var date = ctrl.fechaReunion;
+            var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
             console.log(date);
             ctrl.documento.nombre = $scope.name+" "+ctrl.consecutivo+" Codigo de carrera:"+ctrl.carrera+" Fecha:"+date;
-            ctrl.cargarDocumento().then(function(){
+            //Se deja de utilizar la función de cargar el documento
+            //ctrl.cargarDocumento().then(function(){
               var documento = {
                 "Titulo":ctrl.documento.nombre,
-                "Enlace":ctrl.documento.url,
-                "Resumen":ctrl.documento.resumen,
+                //"Enlace":ctrl.documento.url,
+                //"Resumen":ctrl.documento.resumen,
+                "Resumen": "Acta de consejo de carrera del proyecto curricular",
                 "TipoDocumentoEscrito":1,
               }
               $scope.acta = [];
               $scope.acta.nombre = ctrl.documento.nombre;
-              $scope.acta.url = ctrl.documento.url;
+              //$scope.acta.url = ctrl.documento.url;
 
-              poluxRequest.post("documento_escrito|",documento).then(function(resultado){
-                $scope.acta.id=resultado.data.Id;
-                $('#modalSeleccionarDocumento').modal('hide');
-                swal(
-                  $translate.instant("DOCUMENTO.CARGADO"),
-                  '',
-                  'success'
-                );
-              })
-              .catch(function(error){
-                console.log("error",error);
-                $scope.loadDocumento = false;
-                swal(
-                  $translate.instant("ERROR"),
-                  $translate.instant("ERROR.SUBIR_DOCUMENTO"),
-                  'warning'
-                );
-              });
+              poluxRequest.post("documento_escrito",documento)
+                .then(function(resultado) {
+                  $scope.acta.id = resultado.data.Id;
+                  $('#modalSeleccionarDocumento').modal('hide');
+                  swal(
+                    $translate.instant("CONSEJO_CARRERA.ACTA"),
+                    $translate.instant("CONSEJO_CARRERA.ACTA_CARGADA"),
+                    'success'
+                  );
+                })
+                .catch(function(error){
+                  console.log("error",error);
+                  $scope.loadDocumento = false;
+                  swal(
+                    $translate.instant("ERROR"),
+                    $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+                    'warning'
+                  );
+                });
 
               ctrl.documento = [];
               $scope.loadDocumento = false;
-            })
+            /*})
             .catch(function(error){
               console.log("error",error);
               $scope.loadDocumento = false;
@@ -158,7 +165,7 @@ angular.module('poluxClienteApp')
                 $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                 'warning'
               );
-            });
+            });*/
           }else{
             swal(
               $translate.instant("ERROR"),
