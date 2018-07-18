@@ -7,15 +7,18 @@
         </div>
         <div class="panel-body" ng-if="showVersiones">
         <loading tam="4" load="d_versionesDocumentosTg.loadingVersion" message="d_versionesDocumentosTg.mensajeCargandoDocumentos"></loading> 
-        <div ng-if="!d_versionesDocumentosTg.loadingVersion">
+        <div class="panel-body alert alert-danger" ng-if="!d_versionesDocumentosTg.loadingVersion && d_versionesDocumentosTg.errorCargando">
+            <span ng-bind="d_versionesDocumentosTg.mensajeError"></span>
+        </div>
+        <div ng-if="!d_versionesDocumentosTg.loadingVersion && !d_versionesDocumentosTg.errorCargando">
             <div class="row">
             <label class="col-sm-12">{{'DOCUMENTOS_ASOCIADOS.ESCOJA_VERSION' | translate}}</label>
             </div>
             <div class="row">
                 <treecontrol class="tree-classic"
-                tree-model="dataForTree"
+                tree-model="d_versionesDocumentosTg.dataForTree"
                 options="treeOptions"
-                on-selection="estudianteRevisionDoc.d_versionesDocumentosTg(node)">
+                on-selection="d_versionesDocumentosTg.verDocumento(node)">
                 {{node.name}} 
                 </treecontrol>
             </div>

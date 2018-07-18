@@ -265,7 +265,7 @@ angular.module('poluxClienteApp')
      */
     ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
       return $.param({
-        query: "TrabajoGrado.EstadoTrabajoGrado.Id:13," +
+        query: "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|4|5|6|8|9|10|11|12|13|14|15|16|17," +
           "EstadoEstudianteTrabajoGrado.Id:1," +
           "Estudiante:" + ctrl.codigoEstudiante,
         limit: 1

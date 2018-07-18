@@ -42,7 +42,7 @@ angular.module('poluxClienteApp')
        * @property {Boolean} errorCargando Booleano para indicar que hubo un error cargando los parametros
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        */
-      controller:function($scope,nuxeoClient,$q){
+      controller:function($scope,nuxeoClient,$q,poluxRequest,$translate){
         var ctrl = this;
         
         $scope.showVersiones = true;
@@ -68,6 +68,56 @@ angular.module('poluxClienteApp')
           }
         }
 
+        ctrl.getDocumentos = function(trabajoGrado,tipoDocumento){
+          var defer = $q.defer();
+          var parametrosDocumento = $.param({
+            query:"TrabajoGrado.Id:"+trabajoGrado.Id
+              +",DocumentoEscrito.TipoDocumentoEscrito:"+tipoDocumento,
+            limi:1
+          });
+          poluxRequest.get("documento_trabajo_grado",parametrosDocumento)
+            .then(function(responseDocumento){
+              if(responseDocumento.data != null){
+                ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
+                 .then(function(versiones){
+                    var nombreNodo = "";
+                    var nombreHijo = "";
+                    switch(tipoDocumento){
+                      case 3:
+                        nombreNodo = $translate.instant('ANTEPROYECTO');
+                        nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO');
+                        break;
+                      case 4:
+                        nombreNodo = $translate.instant('TRABAJO_GRADO');
+                        nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
+                        break;
+                      case 5:
+                        nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
+                        nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
+                        break;
+                    }
+                    angular.forEach(versiones, function(version){
+                      version.name = nombreHijo + version.get('uid:major_version')
+                    });
+                    ctrl.dataForTree.push({
+                      name:nombreNodo,
+                      children:versiones,
+                    });
+                    defer.resolve();
+                 })
+                 .catch(function(error){
+                  defer.reject(error); 
+                 });             
+              } else {
+                defer.resolve();
+              }
+            })
+            .catch(function(error){
+              defer.reject(error); 
+            });
+          return defer.promise;
+        }
+
         /**
          * @ngdoc method
          * @name consultarTg
@@ -82,21 +132,29 @@ angular.module('poluxClienteApp')
           ctrl.loadingVersion = true;
           var promesasDocumentos = [];
           if($scope.veranteproyecto){
-
+            //Tipo de documento 3
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado,3));
           }
           if($scope.verproyecto){
-
+            //Tipo de documento 4
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado,4));
           }
           if($scope.verproyectorevision){
-
+            //Tipo de documento 5
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado,5));
           }
-          $q.all()
+          $q.all(promesasDocumentos)
             .then(function(){
+              console.log("tree", ctrl.dataForTree);
+              if(ctrl.dataForTree.length==0){
+                ctrl.mensajeError = $translate.instant("NO_HAY_DOCUMENTOS");
+                ctrl.errorCargando = true;
+              }
               ctrl.loadingVersion = false;
             })
             .catch(function(error){
               console.log(error);
-              ctrl.mensajeError = $translate.instant("ERROR.");
+              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO");
               ctrl.errorCargando = true;
               ctrl.loadingVersion = false;
             });
@@ -116,14 +174,6 @@ angular.module('poluxClienteApp')
           //Cargar las versiones previas del documento
           nuxeoClient.getVersions(uid)
           .then(function(responseVersiones){
-            trabajoGrado.versiones = responseVersiones;
-            angular.forEach(trabajoGrado.versiones, function(version){
-              version.name = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO') + version.get('uid:major_version')
-            });
-            $scope.dataForTree.push({
-              name:$translate.instant('TRABAJO_GRADO'),
-              children:trabajoGrado.versiones,
-            });
             defer.resolve(responseVersiones);
           })
           .catch(function(error){
