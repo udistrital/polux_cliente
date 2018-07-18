@@ -19,28 +19,8 @@
       </div>
     </div>
   </div>
-  <div ng-if="estudianteRevisionDoc.trabajoGrado.versiones.length > 1">
-    <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones" class="panel panel-default">
-      <div class="panel-heading" ng-click="showVersiones=!showVersiones">
-        <center>
-          <h3 class="panel-title" ng-if="showVersiones">{{'VERSIONES.TITULO' | translate}}</h3>
-          <h3 class="panel-title" ng-if="!showVersiones">{{'VERSIONES.HAGA_CLIC_MOSTRAR' | translate}}</h3>
-        </center>
-      </div>
-      <div class="panel-body" ng-if="showVersiones"> 
-        <div class="row">
-          <label class="col-sm-3">{{'VERSIONES.ESCOJA_VERSION' | translate}}</label>
-          <div class="col-sm-9">
-            <select  class="form-control" ng-model="versionSeleccionada" ng-change="estudianteRevisionDoc.verDocumento(versionSeleccionada)">
-              <option ng-repeat="version in estudianteRevisionDoc.trabajoGrado.versiones" ng-value="version">
-                {{'VERSIONES.TRABAJO_GRADO_NUMERO' | translate}} {{version.get('uid:major_version')}}
-              </option>
-            </select>
-          </div>
-          <br>
-        </div>
-      </div>
-    </div>
+  <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones">
+    <versiones-documentos-tg tg="estudianteRevisionDoc.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
   </div>
   <div class="panel-body alert alert-danger" ng-if="estudianteRevisionDoc.errorCargandoTrabajoGrado">
     <span ng-bind="estudianteRevisionDoc.mensajeErrorCargandoTrabajoGrado"></span>
