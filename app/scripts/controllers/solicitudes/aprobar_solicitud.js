@@ -1196,8 +1196,8 @@ angular.module('poluxClienteApp')
                     Titulo: data_tg.Titulo,
                     Enlace: ctrl.docPropuestaFinal,
                     Resumen: "Documento para revisión final del trabajo de grado",
-                    //Tipo documento 4 para revisión final
-                    TipoDocumentoEscrito: 4
+                    //Tipo documento 5 para revisión final
+                    TipoDocumentoEscrito: 5
                   };
                   var data_revision = {
                     TrabajoGrado: data_tg,
