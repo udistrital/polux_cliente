@@ -153,14 +153,28 @@ angular.module('poluxClienteApp')
      * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
      * @description
      * Función que define los parámetros para consultar en la tabla documento_trabajo_grado.
-     * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+     * @param {Number} TrabajoGrado Trabajo de grado que se va a consultar
      * @returns {String} La sentencia para la consulta correspondiente
      */
-    ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+    ctrl.obtenerParametrosDocumentoTrabajoGrado = function(trabajoGrado) {
+      //El tipo de documento que se busca 
+      var tipoDocumento = 0;
+      //Si el estado del trabajo de 
+      if(trabajoGrado.EstadoTrabajoGrado.Id == 1 
+        || trabajoGrado.EstadoTrabajoGrado.Id == 4
+        || trabajoGrado.EstadoTrabajoGrado.Id == 5
+        || trabajoGrado.EstadoTrabajoGrado.Id == 6
+        || trabajoGrado.EstadoTrabajoGrado.Id == 8
+        || trabajoGrado.EstadoTrabajoGrado.Id == 9
+        || trabajoGrado.EstadoTrabajoGrado.Id == 10
+        || trabajoGrado.EstadoTrabajoGrado.Id == 11
+         ){
+          tipoDocumento = 3;
+      }
       return $.param({
-        query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+        query: "DocumentoEscrito.TipoDocumentoEscrito:"+tipoDocumento+"," +
           "TrabajoGrado.Id:" +
-          idTrabajoGrado,
+          trabajoGrado.Id,
         limit: 1
       });
     }
@@ -178,7 +192,7 @@ angular.module('poluxClienteApp')
      */
     ctrl.consultarDocumentoTrabajoGrado = function(trabajoGrado) {
       var deferred = $q.defer();
-      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado.Id))
+      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado))
         .then(function(respuestaDocumentoTrabajoGrado) {
           if (respuestaDocumentoTrabajoGrado.data) {
             trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
@@ -311,6 +325,7 @@ angular.module('poluxClienteApp')
           }
         })
         .catch(function(excepcionTrabajosDeGrado) {
+          console.log(excepcionTrabajosDeGrado);
           deferred.reject($translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO"));
         });
       return deferred.promise;

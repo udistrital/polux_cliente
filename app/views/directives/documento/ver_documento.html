@@ -10,8 +10,13 @@
             </center>
         </div>
         <div class="panel-body">
-            <div>
+            <div ng-if="!errorDocumento"> 
                 <ng-pdf class="scrollit" template-url="views/directives/documento/viewer.html" scale="page-fit"></ng-pdf>
+            </div>
+            <div ng-if="errorDocumento && !loadDocumento">
+                <div class="panel-body alert alert-danger">
+                    <span ng-bind="mensajeError"></span>
+                </div>
             </div>
         </div>
         <div class="panel-heading">
