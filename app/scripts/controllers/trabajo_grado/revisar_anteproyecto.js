@@ -14,6 +14,7 @@
  * @requires $q
  * @requires $sce
  * @requires $window
+ * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxClienteApp.service:nuxeoService
@@ -45,7 +46,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+		function($q, $sce, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -409,6 +410,10 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
+				//se  redireccióna a la página para dar el concepto
+				//console.log(filaAsociada.entity.Id);
+				$location.path("general/concepto_tg/"+filaAsociada.entity.Id);
+				/*
 				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
 				ctrl.coleccionRespuestasAnteproyecto = [];
 				if (ctrl.anteproyectoSeleccionado.TrabajoGrado.EstadoTrabajoGrado.Id == 4) {
@@ -465,7 +470,7 @@ angular.module('poluxClienteApp')
 						ctrl.cargandoDatosEstudiantiles = false;
 						ctrl.errorCargandoDatosEstudiantiles = true;
 						ctrl.mensajeErrorCargandoDatosEstudiantiles = excepcionDuranteProcesamiento;
-					});
+					});*/
 			}
 
 			/**

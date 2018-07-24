@@ -1,0 +1,55 @@
+<div class="panel panel-primary panel-body">
+    <center>
+      <h3 class="page-header">
+        {{'REVISION_DOCUMENTOS' | translate}}
+      </h3>
+    </center>
+  
+    <loading tam="4" load="conceptoTg.cargando" message="conceptoTg.mensajeCargando"></loading>
+  
+    <div class="panel-body alert alert-danger" ng-if="!conceptoTg.cargando && conceptoTg.errorCargando">
+      <span ng-bind="conceptoTg.mensajeError"></span>
+    </div>
+
+    <div ng-if="!conceptoTg.cargando && !conceptoTg.errorCargando">
+        <versiones-documentos-tg tg="conceptoTg.vinculacion.TrabajoGrado" veranteproyecto="conceptoTg.verAnteproyecto" verproyecto="false" verproyectorevision="conceptoTg.verProyectoRevision"></versiones-documentos-tg>
+    </div>
+  
+    <div class="row" ng-if="!conceptoTg.cargando && !conceptoTg.errorCargando">
+      <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+        <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}}</label>
+        <ver-documento documento="conceptoTg.vinculacion.TrabajoGrado.documentoTg.DocumentoEscrito" minified="mindoc"/>
+        <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
+      </div>
+  
+      <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
+        <div class="panel panel-default" ng-if="!docenterevision.errorCargandoRevisiones && docenterevision.revisionesTrabajoGrado">
+          <div class="panel-heading">
+            <center>
+              <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
+            </center>
+          </div>
+  
+          <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
+            <div ng-repeat="revision in docenterevision.revisionesTrabajoGrado">
+              <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
+              <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
+                <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
+                  <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina"/>
+                </div>
+                <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
+                  <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="panel- alert alert-danger" ng-if="docenterevision.errorCargandoRevisiones">
+          <span ng-bind="docenterevision.mensajeErrorCargandoRevisiones"></span>
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  

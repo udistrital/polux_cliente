@@ -271,6 +271,16 @@ angular
               controller: 'TrabajoGradoRevisarProyectoCtrl',
               controllerAs: 'revisarProyecto'
             })
+            .when('/general/concepto_tg', {
+              templateUrl: 'views/general/concepto_tg.html',
+              controller: 'GeneralConceptoTgCtrl',
+              controllerAs: 'conceptoTg'
+            })
+            .when('/general/concepto_tg/:idVinculacion', {
+              templateUrl: 'views/general/concepto_tg.html',
+              controller: 'GeneralConceptoTgCtrl',
+              controllerAs: 'conceptoTg'
+            })
             .otherwise({
                 redirectTo: '/'
             });

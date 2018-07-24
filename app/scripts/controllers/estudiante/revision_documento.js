@@ -158,7 +158,7 @@ angular.module('poluxClienteApp')
      */
     ctrl.obtenerParametrosDocumentoTrabajoGrado = function(trabajoGrado) {
       //El tipo de documento que se busca 
-      var tipoDocumento = 0;
+      ctrl.tipoDocumento = 0;
       //Si el estado del trabajo de 
       if(trabajoGrado.EstadoTrabajoGrado.Id == 1 
         || trabajoGrado.EstadoTrabajoGrado.Id == 4
@@ -169,10 +169,10 @@ angular.module('poluxClienteApp')
         || trabajoGrado.EstadoTrabajoGrado.Id == 10
         || trabajoGrado.EstadoTrabajoGrado.Id == 11
          ){
-          tipoDocumento = 3;
-      }
+          ctrl.tipoDocumento = 3;
+       }
       return $.param({
-        query: "DocumentoEscrito.TipoDocumentoEscrito:"+tipoDocumento+"," +
+        query: "DocumentoEscrito.TipoDocumentoEscrito:"+ctrl.tipoDocumento+"," +
           "TrabajoGrado.Id:" +
           trabajoGrado.Id,
         limit: 1
