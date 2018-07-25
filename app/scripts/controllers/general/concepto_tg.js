@@ -15,6 +15,7 @@
  * @requires $routeParams
  * @requires $q
  * @requires $location
+ * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @property {number} idVinculacion Id de la vinculación del docente con el trabajo de grado
  * @property {Object} vinculacion Data del trabajo de grado que se evalua
@@ -24,13 +25,40 @@
  * @property {boolean} cargando Bandera que indica que el trabajo de grado está cargando
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConceptoTgCtrl', function(nuxeoClient, $routeParams, token_service, poluxRequest, $q, $translate,$location,$scope) {
+  .controller('GeneralConceptoTgCtrl', function(nuxeoClient, $routeParams, token_service, academicaRequest, poluxRequest, $q, $translate, $location, $scope) {
     var ctrl = this;
     ctrl.idVinculacion = $routeParams.idVinculacion;
 
     token_service.token.documento = "80093200";
     ctrl.userId = token_service.token.documento;
     $scope.showc = true;
+
+    /**
+     * @ngdoc method
+     * @name consultarDocenteTrabajoGrado
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description
+     * Función que recorre la base de datos de acuerdo a la vinculación del trabajo de grado y trae los datos del docente asociado.
+     * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica
+     * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+     * @returns {String} La sentencia para la consulta correspondiente
+     */
+    ctrl.consultarDocenteTrabajoGrado = function() {
+      var deferred = $q.defer();
+      academicaRequest.get("docente_tg", [ctrl.userId])
+        .then(function(informacionDocente) {
+          if (!angular.isUndefined(informacionDocente.data.docenteTg.docente)) {
+            deferred.resolve(informacionDocente.data.docenteTg.docente[0].nombre);
+          } else {
+            deferred.reject($translate.instant("ERROR.SIN_DOCENTE"));
+          }
+        })
+        .catch(function(excepcionInformacionDocente) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_DOCENTE"));
+        })
+      return deferred.promise;
+    }
+
     /**
      * @ngdoc method
      * @name getDocumentoEscrito
@@ -272,7 +300,15 @@ angular.module('poluxClienteApp')
       }
     }
 
-    ctrl.getDataTg(ctrl.idVinculacion);
+    ctrl.consultarDocenteTrabajoGrado()
+      .then(function(informacionDocente) {
+        ctrl.informacionDocente = informacionDocente;
+        ctrl.getDataTg(ctrl.idVinculacion);
+      })
+      .catch(function(excepcionInformacionDocente) {
+        ctrl.errorCargando = true;
+        ctrl.mensajeError = excepcionInformacionDocente;
+      });
 
     /**
      * @ngdoc method
@@ -296,7 +332,7 @@ angular.module('poluxClienteApp')
         comentarios.push({
           Comentario: correccion.Justificacion,
           Fecha: fecha,
-          Autor: "pepeit",
+          Autor: ctrl.informacionDocente,
           Correccion: correccion,
         });
       });

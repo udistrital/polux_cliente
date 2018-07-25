@@ -184,8 +184,10 @@ angular.module('poluxClienteApp')
      */
     ctrl.obtenerParametrosRevisionTrabajoGrado = function() {
       return $.param({
-        query: "DocumentoTrabajoGrado.Id:" +
-          ctrl.documentoTrabajoGrado,
+        query: "DocumentoTrabajoGrado.TrabajoGrado.Id:" +
+          ctrl.proyectoSeleccionado.Id,
+        //query: "DocumentoTrabajoGrado.Id:" +
+          //ctrl.documentoTrabajoGrado,
         limit: 0
       });
     }
