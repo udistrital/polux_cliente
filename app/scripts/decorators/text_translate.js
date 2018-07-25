@@ -308,6 +308,11 @@ var text_es = {
         REGISTRANDO_REVISION: "Ocurrió un error al intentar registrar la revisión",
         REGISTRANDO_COMENTARIOS: "Ocurrió un error al intentar registrar los comentarios",
         CANCELANDO_TRABAJO_GRADO: "Ocurrió un error al intentar cancelar el trabajo de grado desde la base de datos",
+        SIN_VINCULACIONES: "Su usuario registrado no posee vinculaciones a trabajos de grado actualmente",
+        CARGANDO_VINCULACIONES: "Ocurrió un error al intentar consultar sus trabajos de grado asociados. Comuníquese con el administrador.",
+        IDENTIFICADOR_INDEFINIDO: "Se ha recibido un identificador no válido para la consulta, por favor revise el procedimiento para llegar a esta página",
+        SIN_REVISIONES: "No se han podido encontrar revisiones asociadas al trabajo de grado, verifique que se haya realizado alguna anteriormente",
+        CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al trabajo de grado. Comuníquese con el administrador."
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -439,6 +444,7 @@ var text_es = {
         VER_DOCUMENTO:"Ver documento",
         CARGADO:"Documento Cargado",
         INGRESE_CONSECUTIVO: "Ingrese el consecutivo del documento",
+        NO_EXISTE_DOCUMENTO: "No existe documento alguno con relación a sus vinculaciones de trabajo de grado",
     },
     SWITCH:{
         SI:"SI",
@@ -1011,6 +1017,11 @@ var text_en = {
         REGISTRANDO_REVISION: "An error ocurred when trying to insert the review",
         REGISTRANDO_COMENTARIOS: "An error ocurred when trying to insert the comments",
         CANCELANDO_TRABAJO_GRADO: "An error ocurred when trying to cancel the degree work from the database",
+        SIN_VINCULACIONES: "Your registered user does not currently have links to degree works",
+        CARGANDO_VINCULACIONES: "An error occurred when trying to query your associate degree works. Contact the administrator.",
+        IDENTIFICADOR_INDEFINIDO: "An invalid identifier has been received for the query, please check the procedure to get to this page",
+        SIN_REVISIONES: "It has not been possible to find revisions associated to the work of degree, verify that it has been done previously",
+        CARGANDO_REVISIONES: "An error occurred when trying to query the revisions associated with the degree work. Contact the administrator."
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1142,6 +1153,7 @@ var text_en = {
         VER_DOCUMENTO:"View document",
         CARGADO:"Document loaded",
         INGRESE_CONSECUTIVO: "Enter the consecutive document",
+        NO_EXISTE_DOCUMENTO: "There is no document related to your links of degree work",
     },
     SWITCH:{
         SI:"YES",
