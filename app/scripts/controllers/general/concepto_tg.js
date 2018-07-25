@@ -14,6 +14,7 @@
  * @requires services/nuxeoService.service:nuxeoClient
  * @requires $routeParams
  * @requires $q
+ * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @property {number} idVinculacion Id de la vinculación del docente con el trabajo de grado
  * @property {Object} vinculacion Data del trabajo de grado que se evalua
@@ -23,13 +24,13 @@
  * @property {boolean} cargando Bandera que indica que el trabajo de grado está cargando
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConceptoTgCtrl', function(nuxeoClient,$routeParams, token_service, poluxRequest, $q, $translate) {
+  .controller('GeneralConceptoTgCtrl', function(nuxeoClient, $routeParams, token_service, poluxRequest, $q, $translate,$location,$scope) {
     var ctrl = this;
     ctrl.idVinculacion = $routeParams.idVinculacion;
 
     token_service.token.documento = "80093200";
     ctrl.userId = token_service.token.documento;
-
+    $scope.showc = true;
     /**
      * @ngdoc method
      * @name getDocumentoEscrito
@@ -105,6 +106,7 @@ angular.module('poluxClienteApp')
           Id: ctrl.revisionActual.Id,
       };
       ctrl.correccion.Pagina = 1;
+      ctrl.correccion.Documento = false;
       ctrl.revisionActual.Correcciones.push(ctrl.correccion);
       ctrl.correccion = {};
     }
@@ -135,13 +137,20 @@ angular.module('poluxClienteApp')
     ctrl.editarCorreccion = function(correcion,correcion_temp) {
       correcion.Observacion = correcion_temp.Observacion;
       correcion.Justificacion = correcion_temp.Justificacion;
-    };
+    }
 
+    /**
+     * @ngdoc method
+     * @name copyObject
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description 
+     * Consulta los datos basicos del trabajo de grado, llama a las funciones para cargar el documento y cargar las revisiones previas
+     * @param {Object} object El objeto al que se le efectuará la clonación
+     * @returns {Object} El objeto clonado
+     */
     ctrl.copyObject = function(object){
       return angular.copy(object);
     }
-
-    
 
     /**
      * @ngdoc method
@@ -201,10 +210,10 @@ angular.module('poluxClienteApp')
                       //Se habilita la directiva para solicitar la revisión
                       if(trabajoGrado.EstadoTrabajoGrado.Id == 4 || trabajoGrado.EstadoTrabajoGrado.Id == 15){
                         ctrl.mostrarPanelRevision = true;
-                        ctrl.revisionActual ={
-                          Id: 0,
+                        ctrl.revisionActual = {
                           NumeroRevision: trabajoGrado.revisiones.length + 1,
                           FechaRecepcion: new Date(),
+                          FechaRevision: new Date(),
                           Correcciones: [],
                           EstadoRevisionTrabajoGrado: {
                             Id: 3,
@@ -218,7 +227,6 @@ angular.module('poluxClienteApp')
                         }
                         ctrl.correccion = {};
                       }
-                      console.log(revisiones);
                     })
                     .catch(function(excecpionRevisiones) {
                       console.log(excecpionRevisiones);
@@ -268,6 +276,50 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
+     * @name registrarRevisionTg
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description
+     * Función que prepara el contenido de la información para actualizar.
+     * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados de la revisión en la base de datos.
+     * @param {undefined} undefined No requiere parámetros
+     * @returns {Promise} La respuesta de operar el registro en la base de datos
+     */
+    ctrl.registrarRevisionTg = function() {
+      var deferred = $q.defer();
+      var fechaParaRegistrar = new Date();
+      ctrl.vinculacion.TrabajoGrado.EstadoTrabajoGrado = {
+        Id: ctrl.revisionActual.respuestaSeleccionada.idEstadoTrabajoGrado
+      };
+      var fecha = new Date();
+      var comentarios = [];
+      angular.forEach(ctrl.revisionActual.Correcciones, function(correccion){
+        comentarios.push({
+          Comentario: correccion.Justificacion,
+          Fecha: fecha,
+          Autor: "pepeit",
+          Correccion: correccion,
+        });
+      });
+      var informacionParaActualizar = {
+        "TrabajoGrado": ctrl.vinculacion.TrabajoGrado,
+        "RevisionTrabajoGrado": ctrl.revisionActual,
+        "Comentarios": comentarios,
+      };
+      console.log(informacionParaActualizar);
+      poluxRequest
+        .post("tr_revisar_tg", informacionParaActualizar)
+        .then(function(respuestaRevisarTg) {
+          deferred.resolve(respuestaRevisarTg);
+        })
+        .catch(function(excepcionRevisarTg) {
+          console.log("Recuerde el campo de corrección que identifica si es documento");
+          deferred.reject(excepcionRevisarTg);
+        });
+      return deferred.promise;     
+    }
+
+    /**
+     * @ngdoc method
      * @name guardarRevision
      * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
      * @description 
@@ -277,6 +329,101 @@ angular.module('poluxClienteApp')
      */
     ctrl.guardarRevision = function() {
       console.log(ctrl.revisionActual);
+      ctrl.cargando = true;
+      swal({
+          title: $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+          text: $translate.instant("REVISAR_PROYECTO.MENSAJE_CONFIRMACION_PLANO"),
+          type: "info",
+          confirmButtonText: $translate.instant("ACEPTAR"),
+          cancelButtonText: $translate.instant("CANCELAR"),
+          showCancelButton: true
+        })
+        .then(function(confirmacionDelUsuario) {
+          if (confirmacionDelUsuario.value) {
+            if (ctrl.revisionActual.documentModel) {
+              nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "Correcciones", undefined)
+              .then(function(respuestaCrearDocumento) {
+                console.log(respuestaCrearDocumento);
+                ctrl.revisionActual.Correcciones.push({
+                  Observacion: respuestaCrearDocumento,
+                  Justificacion: "Por favor descargue el documento de observaciones",
+                  Pagina: 1,
+                  RevisionTrabajoGrado: {
+                    Id: 0
+                  },
+                  Documento: true
+                });
+                ctrl.registrarRevisionTg()
+                  .then(function(respuestaRevisarTg) {
+                    ctrl.cargando = false;
+                    if (respuestaRevisarTg.data[0] === "Success") {
+                      swal(
+                        $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+                        $translate.instant("REVISAR_PROYECTO.REVISION_REGISTRADA"),
+                        'success'
+                      );
+                      //Aquí hago la redirección
+                      $location.path("/trabajo_grado/revisar_anteproyecto");
+                    } else {
+                      swal(
+                        $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+                        $translate.instant(respuestaRevisarTg.data[1]),
+                        'warning'
+                      );
+                    }
+                  })
+                  .catch(function(excepcionRevisarTg) {
+                    console.log(excepcionRevisarTg);
+                    ctrl.cargando = false;
+                    swal(
+                      $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+                      $translate.instant("ERROR.REGISTRANDO_REVISION"),
+                      'warning'
+                    );
+                  });
+              })
+              .catch(function(excepcionCrearDocumento) {
+                console.log(excepcionCrearDocumento);
+                ctrl.cargando = false;
+                swal(
+                  $translate.instant("ERROR.SUBIR_DOCUMENTO"),
+                  $translate.instant("VERIFICAR_DOCUMENTO"),
+                  'warning'
+                );
+              });
+            } else {
+              ctrl.registrarRevisionTg()
+                .then(function(respuestaRevisarTg) {
+                  ctrl.cargando = false;
+                  if (respuestaRevisarTg.data[0] === "Success") {
+                    swal(
+                      $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+                      $translate.instant("REVISAR_PROYECTO.REVISION_REGISTRADA"),
+                      'success'
+                    );
+                    //Aquí hago la redirección
+                    //
+                  } else {
+                    swal(
+                      $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+                      $translate.instant(respuestaRevisarTg.data[1]),
+                      'warning'
+                    );
+                  }
+                })
+                .catch(function(excepcionRevisarTg) {
+                  ctrl.cargando = false;
+                  swal(
+                    $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
+                    $translate.instant("ERROR.REGISTRANDO_REVISION"),
+                    'warning'
+                  );
+                });
+            }
+          } else {
+            ctrl.cargando = false;
+          }
+        });
     }
 
   });

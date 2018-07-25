@@ -8,10 +8,14 @@
   <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones" class="panel panel-default">
     <div class="panel-heading">
       <center>
-        <h3 class="panel-title">{{'VINCULACIONES_TRABAJO_GRADO' | translate}}</h3>
+        <h3 class="panel-title">{{'DATOS_TRABAJO_GRADO' | translate}}</h3>
       </center>
     </div>
     <div class="panel-body">
+      <div class="row">
+        <label class="col-sm-3">{{'ESTADO' | translate}}</label>
+        <label class="col-sm-9">{{estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Nombre}}</label>
+      </div>
       <div class="row" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones">
         <label class="col-sm-3">{{docente.RolTrabajoGrado.Nombre}}</label>
         <label class="col-sm-9">{{docente.Nombre}}</label>

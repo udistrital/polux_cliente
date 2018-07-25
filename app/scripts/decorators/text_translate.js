@@ -84,6 +84,7 @@ var text_es = {
     INTRODUCCION: "Introducción:",
     EDICION_PREGUNTAS: "Edición Preguntas",
     ENUNCIADO: "Enunciado:",
+    ENUNCIADO_SIN_DOSPUNTOS: "Enunciado",
     PESO: "Peso:",
     TIPO: "Tipo:",
     NOMBRE_FORMATO: "Nombre del formato",
@@ -303,7 +304,6 @@ var text_es = {
         SIN_DOCENTE: "No existe información relacionada con los docentes asociados al trabajo de grado.",
         CARGANDO_DOCENTE: "Ocurrió un error al intentar consultar los docentes de los trabajos de grado consultados. Comuníquese con el administrador.",
         SIN_REVISIONES: "No existen registros de revisiones asociadas al documento en presentación.",
-        CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al documento en presentación. Comuníquese con el administrador.",
         SOLICITANDO_REVISION: "Ocurrió un error al intentar solicitar la revisión",
         REGISTRANDO_REVISION: "Ocurrió un error al intentar registrar la revisión",
         REGISTRANDO_COMENTARIOS: "Ocurrió un error al intentar registrar los comentarios",
@@ -312,7 +312,8 @@ var text_es = {
         CARGANDO_VINCULACIONES: "Ocurrió un error al intentar consultar sus trabajos de grado asociados. Comuníquese con el administrador.",
         IDENTIFICADOR_INDEFINIDO: "Se ha recibido un identificador no válido para la consulta, por favor revise el procedimiento para llegar a esta página",
         SIN_REVISIONES: "No se han podido encontrar revisiones asociadas al trabajo de grado, verifique que se haya realizado alguna anteriormente",
-        CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al trabajo de grado. Comuníquese con el administrador."
+        CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al trabajo de grado. Comuníquese con el administrador.",
+        INSERTANDO_REVISIONES: "Ocurrió un error al registrar las revisiones del trabajo de grado",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -643,6 +644,7 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de registrar la revisión del proyecto realizado por {{autores}}?",
         REVISION_REGISTRADA: "El registro de la revisión se realizó exitosamente",
         REGISTRO_NO_HABILITADO: "El proyecto ya ha sido revisado",
+        MENSAJE_CONFIRMACION_PLANO: "¿Está seguro de registrar la revisión diligenciada sobre el trabajo de grado en curso?",
     },
     ANTEPROYECTO: "Anteproyecto",
     PROYECTO:"Proyecto",
@@ -712,12 +714,13 @@ var text_es = {
         ANTEPROYECTO:"Versión del anteproyecto número ",
         VERSION_REVISION:"Versión del trabajo de grado para revisión número ",
     },
-    NO_HAY_DOCUMENTOS: "No hay documentos para mostrar, por favor cargue uno",
+    NO_HAY_DOCUMENTOS: "No hay documentos para mostrar.",
     INDIQUE_FECHA_REUNION: "Indique la fecha de reunión correspondiente",
     CONSEJO_CARRERA: {
         ACTA: "Acta de consejo de carrera",
         ACTA_CARGADA: "Acta de consejo de carrera cargada satisfactoriamente",
     },
+    DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
 };
 
 /**
@@ -792,6 +795,7 @@ var text_en = {
     INTRODUCCION: "Introduction:",
     EDICION_PREGUNTAS: "Edition of questions",
     ENUNCIADO: "Statement:",
+    ENUNCIADO_SIN_DOSPUNTOS: "Statement",
     PESO: "Value:",
     TIPO: "Type:",
     NUEVA_EVALUACION: "New test",
@@ -1012,7 +1016,6 @@ var text_en = {
         SIN_DOCENTE: "There is no information related to the teachers associated with the degree work.",
         CARGANDO_DOCENTE: "An error occurred when trying to query the teachers of the degree works consulted. Contact the administrator.",
         SIN_REVISIONES: "There are no reviews records associated with the document in presentation.",
-        CARGANDO_REVISIONES: "An error occurred when trying to check the revisions associated with the document in presentation. Contact the administrator.",
         SOLICITANDO_REVISION: "An error ocurred when trying to request the review",
         REGISTRANDO_REVISION: "An error ocurred when trying to insert the review",
         REGISTRANDO_COMENTARIOS: "An error ocurred when trying to insert the comments",
@@ -1021,7 +1024,8 @@ var text_en = {
         CARGANDO_VINCULACIONES: "An error occurred when trying to query your associate degree works. Contact the administrator.",
         IDENTIFICADOR_INDEFINIDO: "An invalid identifier has been received for the query, please check the procedure to get to this page",
         SIN_REVISIONES: "It has not been possible to find revisions associated to the work of degree, verify that it has been done previously",
-        CARGANDO_REVISIONES: "An error occurred when trying to query the revisions associated with the degree work. Contact the administrator."
+        CARGANDO_REVISIONES: "An error occurred when trying to query the revisions associated with the degree work. Contact the administrator.",
+        INSERTANDO_REVISIONES: "An error ocurred when trying to register the degree work corrections",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1352,6 +1356,7 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure to record the review of the degree work by {{autores}}?",
         REVISION_REGISTRADA: "The review registration was successfully done",
         REGISTRO_NO_HABILITADO: "This degree work has already been reviewed",
+        MENSAJE_CONFIRMACION_PLANO: "Are you sure to record the completed review of the current grade work?",
     },
     ANTEPROYECTO: "Degree work proposal",
     ROL: "Role",
@@ -1420,12 +1425,13 @@ var text_en = {
         ANTEPROYECTO:"Degree work proposal version number ",
         VERSION_REVISION:"Degree work for revision version number ",
     },
-    NO_HAY_DOCUMENTOS: "There are no documents to display, please load a new one",
+    NO_HAY_DOCUMENTOS: "There are no documents to display.",
     INDIQUE_FECHA_REUNION: "Indicate the associated meeting date",
     CONSEJO_CARRERA: {
         ACTA: "Career council certificate",
         ACTA_CARGADA: "Career council certificate loaded successfully",
     },
+    DESEA_INCLUIR_DOCUMENTO: "Do you want to include the revision document?",
 };
 
 /**

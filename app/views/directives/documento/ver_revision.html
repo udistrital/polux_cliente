@@ -13,7 +13,13 @@
     <div ng-repeat="correccion in d_verRevision.correcciones">
       <div class="panel panel-info">
         <div class="panel-heading">
-          {{'CORRECCION_REALIZADA' | translate}}: {{correccion.Observacion}}
+          {{'CORRECCION_REALIZADA' | translate}}: 
+          <a ng-if="!correccion.Documento">
+            {{correccion.Observacion}}
+          </a>
+          <a ng-if="correccion.Documento">
+            <label ng-click="d_verRevision.getDocument(correccion.Observacion)" style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+          </a>
             <a href="" class="ver pull-right" ng-click="show =!show; correccion.coments=d_verRevision.cargarComentarios(correccion.Id)" ><i class="fa fa-eye fa-lg" aria-hidden="true" data-toggle="tooltip" title="Ver !"></i></a>
 
         </div>
