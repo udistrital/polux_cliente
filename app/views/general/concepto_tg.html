@@ -23,7 +23,7 @@
       </div>
   
       <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-        <div class="panel panel-default" ng-if="!docenterevision.errorCargandoRevisiones && docenterevision.revisionesTrabajoGrado">
+        <div class="panel panel-default" ng-if="conceptoTg.vinculacion.TrabajoGrado.revisiones.length > 0">
           <div class="panel-heading">
             <center>
               <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
@@ -31,7 +31,7 @@
           </div>
   
           <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
-            <div ng-repeat="revision in docenterevision.revisionesTrabajoGrado">
+            <div ng-repeat="revision in conceptoTg.vinculacion.TrabajoGrado.revisiones">
               <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
               <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
                 <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
@@ -45,8 +45,104 @@
           </div>
         </div>
   
-        <div class="panel- alert alert-danger" ng-if="docenterevision.errorCargandoRevisiones">
-          <span ng-bind="docenterevision.mensajeErrorCargandoRevisiones"></span>
+        <div class="panel- alert alert-danger" ng-if="conceptoTg.vinculacion.TrabajoGrado.revisiones.length == 0">
+          <span>{{'ERROR.SIN_REVISIONES' | translate}}</span>
+        </div>
+
+        <!-- para la nueva revisión-->
+        <div ng-if="conceptoTg.mostrarPanelRevision">
+          <div class="panel panel-warning">
+            <div class="panel-heading" ng-click="showc=!showc">
+              <h3 class="panel-title">{{'REVISION' | translate}} {{conceptoTg.revisionActual.NumeroRevision}} {{conceptoTg.vinculacion.TrabajoGrado.Titulo}}</h3>
+            </div>
+            <div class="panel-body" ng-show="showc">
+              <p class="text-muted"><cite><span>{{'FECHA_REVISION' | translate}}: {{conceptoTg.revisionActual.FechaRecepcion | date:'dd-MMM-yyyy'}}</span></cite><br/><p>
+              <!--Para el concepto que va a dar-->
+              <div class="panel">
+                <div class="row">
+                  <p class="col-sm-4 control-label"> {{'REVISAR_ANTEPROYECTO.SELECCIONAR_RESPUESTA' | translate}} </p>
+                  <div class="col-sm-8">
+                      <select class="form-control" ng-model="conceptoTg.revisionActual.respuestaSeleccionada" ng-change="conceptoTg.respuestaHabilitada = true" required>
+                        <option ng-repeat="respuesta in conceptoTg.coleccionRespuesta" ng-value="respuesta"> {{respuesta.nombreEstadoTrabajoGrado}} </option>
+                      </select>
+                  </div>
+                </div>
+              </div>
+              <div ng-repeat="correccion in conceptoTg.revisionActual.Correcciones">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                      {{correccion.Observacion}}
+                      <span class="pull-right">
+                        <a href="" class="ver" ng-click="show =!show" ><i class="fa fa-eye fa-lg" aria-hidden="true" data-toggle="tooltip" title="{{'VER' | translate}}"></i></a>
+                        <a href="" class="editar" ng-click="showedit =!showedit; correccion_temp=conceptoTg.copyObject(correccion)" ><i data-toggle="tooltip" title="{{'EDITAR' | translate}}" class="fa fa-cog fa-lg" aria-hidden="true"></i></a>
+                        <a href="" class="borrar" ng-click="conceptoTg.eliminarCorreccion(correccion)"><i data-toggle="tooltip" title="{{'BORRAR' | translate}}" class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+                      </span>
+                    </div>
+                    <div class="panel panel-body" ng-show="showedit" >
+                        <form name="editForm"  ng-submit="editForm.$valid && conceptoTg.editarCorreccion(correccion,correccion_temp)" novalidate>
+                          <fieldset class="form-group">
+                            <input  class="form-control" type="text" placeholder="{{'ENUNCIADO' | translate}}" ng-model="correccion_temp.Observacion" required/>
+                          </fieldset>
+                          <fieldset class="form-group">
+                            <textarea class="form-control col-md-8 offset-2" placeholder="{{'DESCRIPCION' | translate}}" ng-model="correccion_temp.Justificacion"></textarea>
+                          </fieldset>
+                          <div class=" pull-right">
+                            <button class="btn btn-default" ng-click="showedit =!showedit" type="button">{{'CANCELAR' | translate}}</button>
+                            <input class="btn-primary btn" type="submit" value="{{'EDITAR' | translate}}" ng-click="showedit =!showedit"></input>
+                          </div>
+                        </form>
+                    </div>
+                    <div class="panel-body" ng-show="show || showedit">
+                      {{correccion.Justificacion}}
+                    </div>
+                  </div>
+                </div>      
+          
+                <button class="btn btn-success pull-right" type="button" ng-show="!showfm" ng-click="showfm =!showfm">{{'AGREGAR_COMENTARIO' | translate}}</button>
+                <div class="panel panel-success" ng-show="showfm">
+                  <div class="panel-body">
+                        <form name="modiForm3" ng-submit="conceptoTg.agregarCorreccion()" novalidate>
+                      <fieldset class="form-group">
+                        <input  class="form-control" type="text" placeholder="Enunciado" ng-model="conceptoTg.correccion.Observacion" required/>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="conceptoTg.correccion.Justificacion"></textarea>
+                      </fieldset>
+                      <!--
+                      <fieldset class="form-group">
+                        <input type="checkbox" class="checkbox checkbox-inline" ng-model="d_revisionDocumento.agregarpag"> Agregar pagina de corrección: {{paginadoc}}</input>
+                      </fieldset>
+                      -->
+                      <div class=" pull-right">
+                        <button class="btn btn-default" ng-click="showfm =!showfm; conceptoTg.correccion={}" type="button">{{'CANCELAR' | translate}}</button>
+                        <input class="btn-primary btn" type="submit" value="{{'AGREGAR' | translate}}"></input>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="panel">
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-2">
+                        <switch  ng-model="showDocumento" class="blue" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
+                    </div>
+                    <p class="col-sm-10 control-label"> {{'DESEA_INCLUIR_DOCUMENTO' | translate}} </p>
+                  </div>
+                  <div ng-if="showDocumento">
+                    <br>
+                    <div class="row">
+                        <p class="col-sm-3 control-label"> {{'SELECT.DOCUMENTO' | translate}}</p>
+                        <div class="col-sm-9 ">
+                            <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="conceptoTg.revisionActual.documentModel" required> </input>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <span class="pull-right">
+                  <button class="btn btn-primary" type="button" ng-click="conceptoTg.guardarRevision()">{{'GUARDAR_REVISION' | translate}}</button>
+                </span>
+            </div>
+          </div>          
         </div>
       </div>
     </div>

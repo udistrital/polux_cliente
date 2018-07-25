@@ -23,7 +23,7 @@
  * @property {boolean} cargando Bandera que indica que el trabajo de grado está cargando
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConceptoTgCtrl', function($routeParams, token_service, poluxRequest, $q, $translate) {
+  .controller('GeneralConceptoTgCtrl', function(nuxeoClient,$routeParams, token_service, poluxRequest, $q, $translate) {
     var ctrl = this;
     ctrl.idVinculacion = $routeParams.idVinculacion;
 
@@ -81,8 +81,7 @@ angular.module('poluxClienteApp')
           if (responseRevisiones.data) {
             defer.resolve(responseRevisiones.data);
           } else {
-            ctrl.mensajeError = $translate.instant("ERROR.SIN_REVISIONES");
-            defer.reject(ctrl.mensajeError);
+            defer.resolve([]);
           }
         })
         .catch(function(error) {
@@ -91,6 +90,58 @@ angular.module('poluxClienteApp')
         });
       return defer.promise;
     }
+
+    /**
+     * @ngdoc method
+     * @name agregarCorrecion
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description 
+     * Permite agregar una correción a la revisión que se esta realizando
+     * @param {Object}  Undefined No recibe parametros
+     * @returns {Undefined} No retorna ningún valor
+     */
+    ctrl.agregarCorreccion = function() {
+      ctrl.correccion.RevisionTrabajoGrado = {
+          Id: ctrl.revisionActual.Id,
+      };
+      ctrl.correccion.Pagina = 1;
+      ctrl.revisionActual.Correcciones.push(ctrl.correccion);
+      ctrl.correccion = {};
+    }
+
+    /**
+     * @ngdoc method
+     * @name eliminarCorreccion
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description 
+     * Permite eliminar una correción a la revisión que se esta realizando
+     * @param {Object}  correcion Correcion que se eliminará
+     * @returns {Undefined} No retorna ningún valor
+     */
+    ctrl.eliminarCorreccion = function(correcion) {
+      ctrl.revisionActual.Correcciones.splice(ctrl.revisionActual.Correcciones.indexOf(correcion), 1);
+    };
+
+    /**
+     * @ngdoc method
+     * @name editarCorreccion
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description 
+     * Permite editar una correción a la revisión que se esta realizando
+     * @param {Object}  correcion Correcion que se edita
+     * @param {Object}  correcion_temp Correcion editada
+     * @returns {Undefined} No retorna ningún valor
+     */
+    ctrl.editarCorreccion = function(correcion,correcion_temp) {
+      correcion.Observacion = correcion_temp.Observacion;
+      correcion.Justificacion = correcion_temp.Justificacion;
+    };
+
+    ctrl.copyObject = function(object){
+      return angular.copy(object);
+    }
+
+    
 
     /**
      * @ngdoc method
@@ -121,7 +172,7 @@ angular.module('poluxClienteApp')
               if (trabajoGrado.EstadoTrabajoGrado.Id == 4) {
                 ctrl.tipoDocumento = 3;
                 ctrl.verAnteproyecto = true;
-                ctrl.coleccionRespuestasAnteproyecto = [{
+                ctrl.coleccionRespuesta = [{
                   idEstadoTrabajoGrado: 5,
                   nombreEstadoTrabajoGrado: "Viable",
                 }, {
@@ -137,6 +188,7 @@ angular.module('poluxClienteApp')
                 ctrl.tipoDocumento = 5;
                 ctrl.verProyectoRevision = true;
               }
+
               //Se obtiene el documento escrito para traer las revisiones
               ctrl.getDocumentoEscrito(trabajoGrado)
                 .then(function(documentoTg) {
@@ -145,10 +197,33 @@ angular.module('poluxClienteApp')
                   ctrl.cargando = false;
                   ctrl.getRevisiones(documentoTg.Id)
                     .then(function(revisiones) {
+                      trabajoGrado.revisiones = revisiones;
+                      //Se habilita la directiva para solicitar la revisión
+                      if(trabajoGrado.EstadoTrabajoGrado.Id == 4 || trabajoGrado.EstadoTrabajoGrado.Id == 15){
+                        ctrl.mostrarPanelRevision = true;
+                        ctrl.revisionActual ={
+                          Id: 0,
+                          NumeroRevision: trabajoGrado.revisiones.length + 1,
+                          FechaRecepcion: new Date(),
+                          Correcciones: [],
+                          EstadoRevisionTrabajoGrado: {
+                            Id: 3,
+                          },
+                          DocumentoTrabajoGrado:{
+                            Id: documentoTg.Id,
+                          },
+                          VinculacionTrabajoGrado:{
+                            Id: ctrl.vinculacion.Id,
+                          }
+                        }
+                        ctrl.correccion = {};
+                      }
                       console.log(revisiones);
                     })
                     .catch(function(excecpionRevisiones) {
                       console.log(excecpionRevisiones);
+                      ctrl.errorCargando = true;
+                      ctrl.cargando = false;
                     });
                 })
                 .catch(function(error) {
@@ -190,5 +265,18 @@ angular.module('poluxClienteApp')
     }
 
     ctrl.getDataTg(ctrl.idVinculacion);
+
+    /**
+     * @ngdoc method
+     * @name guardarRevision
+     * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
+     * @description 
+     * Permite guardar la revision realizada
+     * @param {Object}  Undefined No recibe parametros
+     * @returns {Undefined} No retorna ningún valor
+     */
+    ctrl.guardarRevision = function() {
+      console.log(ctrl.revisionActual);
+    }
 
   });
