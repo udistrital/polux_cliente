@@ -776,7 +776,18 @@ angular.module('poluxClienteApp')
           if (confirmacionDelUsuario.value) {
             ctrl.loadTrabajoGrado = true;
             ctrl.cargandoActualizarTg = true;
-            nuxeoClient.createDocument(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace, undefined)
+            var functionDocument = function(estadoTg,titulo,descripcion,fileModel,workspace){
+              //Actualiza el documento
+              if(estadoTg == 6 || estadoTg == 11 || estadoTg == 13 || estadoTg == 16){
+                return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)
+              }
+              //Si es primera versión crea el documento
+              if(estadoTg == 5 || estadoTg == 10){
+                return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
+              }
+            }
+            functionDocument(ctrl.trabajoGrado.EstadoTrabajoGrado.Id,ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace)
+            //nuxeoClient.createDocument(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace, undefined)
               .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
                   .then(function(respuestaActualizarTG) {
