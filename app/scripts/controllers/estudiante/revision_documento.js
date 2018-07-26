@@ -173,6 +173,14 @@ angular.module('poluxClienteApp')
       if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
         ctrl.tipoDocumento = 4;
       }
+      if (trabajoGrado.EstadoTrabajoGrado.Id == 14 ||
+        trabajoGrado.EstadoTrabajoGrado.Id == 15 ||
+        trabajoGrado.EstadoTrabajoGrado.Id == 16 ||
+        trabajoGrado.EstadoTrabajoGrado.Id == 17 ||
+        trabajoGrado.EstadoTrabajoGrado.Id == 18 ||
+        trabajoGrado.EstadoTrabajoGrado.Id == 19) {
+        ctrl.tipoDocumento = 5;
+      }
       return $.param({
         query: "DocumentoEscrito.TipoDocumentoEscrito:" + ctrl.tipoDocumento + "," +
           "TrabajoGrado.Id:" +
@@ -689,9 +697,10 @@ angular.module('poluxClienteApp')
         ctrl.trabajoGrado.EstadoTrabajoGrado = {
           Id: 15
         };
-        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 5;
       }
-      delete ctrl.trabajoGrado.documentoEscrito.Id
+      //delete ctrl.trabajoGrado.documentoEscrito.Id
+      console.log(respuestaCargarDocumento);
       ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
       var documentoTrabajoGrado = {
         Id: ctrl.trabajoGrado.documentoTrabajoGrado,

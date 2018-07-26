@@ -74,7 +74,7 @@ angular.module('poluxClienteApp')
         query: "DocumentoEscrito.TipoDocumentoEscrito:" + ctrl.tipoDocumento + ",TrabajoGrado:" + trabajoGrado.Id,
         limit: 1,
       });
-      poluxRequest.get("documento_trabajo_grado")
+      poluxRequest.get("documento_trabajo_grado",parametrosDocumentoEscrito)
         .then(function(responseDocumento) {
           if (responseDocumento.data) {
             defer.resolve(responseDocumento.data[0]);
