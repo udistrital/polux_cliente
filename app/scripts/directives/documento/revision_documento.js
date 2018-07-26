@@ -59,6 +59,7 @@ angular.module('poluxClienteApp')
                 };
 
                 ctrl.editar = function(correc, temp) {
+                    console.log("edit");
                     for (var key in correc) {
                         correc[key] = temp[key];
                     }
@@ -80,27 +81,21 @@ angular.module('poluxClienteApp')
                     $scope.paginaset = pag;
                 };
 
-                ctrl.agregar_correccion = function(correcion) {
-                    /*if (ctrl.agregarpag) {
-                        //correcion.Pagina = $scope.paginadoc;
-                        correcion.Pagina = 1;
-                    }*/
-                    var idrev = {};
-                    idrev = $scope.revisionid;
-                    correcion.RevisionTrabajoGrado = {
-                        Id: idrev
+                ctrl.agregar_correccion = function() {
+                    ctrl.correccion.RevisionTrabajoGrado = {
+                        Id: $scope.revisionid
                     };
-                    correcion.Pagina = 1;
-                    correcion.Cambio = "nuevo";
-                    ctrl.correcciones.push(correcion);
+                    ctrl.correccion.Pagina = 1;
+                    ctrl.correccion.Cambio = "nuevo";
+                    ctrl.correcciones.push(ctrl.correccion);
                     ctrl.correccion = {};
                 };
 
-                ctrl.eliminar_correccion = function(correcion) {
-                    if (correcion.Id != null) {
-                        ctrl.correcciones_eliminadas.push(correcion);
+                ctrl.eliminar_correccion = function(correccion) {
+                    if (correccion.Id != null) {
+                        ctrl.correcciones_eliminadas.push(correccion);
                     }
-                    ctrl.correcciones.splice(ctrl.correcciones.indexOf(correcion), 1);
+                    ctrl.correcciones.splice(ctrl.correcciones.indexOf(correccion), 1);
                 };
 
                 ctrl.cancelar_revisado = function() {

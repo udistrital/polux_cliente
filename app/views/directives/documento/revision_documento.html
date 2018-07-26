@@ -14,66 +14,56 @@
           <div class="panel-heading">
           {{correccion.Observacion}} <span style="color: blue" ng-click="d_revisionDocumento.verpag(correccion.Pagina)" ng-if="correccion.Pagina != 0">pag {{correccion.Pagina}}</span>
         -->
-          <div class="panel-heading">
+        <div class="panel-heading">
           {{correccion.Observacion}}
           <span class="pull-right">
-
-
             <a href="" class="ver" ng-click="show =!show" ><i class="fa fa-eye fa-lg" aria-hidden="true" data-toggle="tooltip" title="{{'VER' | translate}}"></i></a>
             <a href="" class="editar" ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" ><i data-toggle="tooltip" title="{{'EDITAR' | translate}}" class="fa fa-cog fa-lg" aria-hidden="true"></i></a>
             <a href="" class="borrar" ng-click="d_revisionDocumento.eliminar_correccion(correccion)"><i data-toggle="tooltip" title="{{'BORRAR' | translate}}" class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
-
-
           <!--  <button class="btn btn-xs btn-warning " ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" type="button">editar</button>
             <button class="btn btn-xs btn-success " ng-click="show =!show" type="button">ver</button>
             <button class="btn btn-xs btn-danger " ng-click="d_revisionDocumento.eliminar_correccion(correccion)" type="button">eliminar</button>-->
-
           </span>
-
-</div>
-          <div class="panel panel-body" ng-show="showedit" >
-              <form name="editForm"  ng-submit="editForm.$valid && d_revisionDocumento.editar(correccion,correccion_temp)" novalidate>
-                <fieldset class="form-group">
-                  <input  class="form-control" type="text" placeholder="{{'ENUNCIADO' | translate}}" ng-model="correccion_temp.Observacion" required/>
-                </fieldset>
-                <fieldset class="form-group">
-                  <textarea class="form-control col-md-8 offset-2" placeholder="{{'DESCRIPCION' | translate}}" ng-model="correccion_temp.Justificacion"></textarea>
-                </fieldset>
-                <!--
-                <fieldset class="form-group">
-                  <input type="checkbox" class="checkbox checkbox-inline" ng-model="correccion_temp.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>
-                </fieldset>
-                -->
-                <div class=" pull-right">
-                  <button class="btn btn-default" ng-click="showedit =!showedit" type="button">{{'CANCELAR' | translate}}</button>
-                  <input class="btn-primary btn" type="submit" value="{{'EDITAR' | translate}}" ng-click="showedit =!showedit"></input>
-                </div>
-              </form>
-            <!--<pre>{{correccion_temp}}</pre>!-->
+        </div>
+        <div class="panel panel-body" ng-show="showedit" >
+          <div class="panel-body">
+            <form name="editForm" ng-submit="d_revisionDocumento.editar(correccion,correccion_temp)" novalidate>
+              <fieldset class="form-group">
+                <input class="form-control" type="text" placeholder="{{'ENUNCIADO_SIN_DOSPUNTOS' | translate}}" ng-model="correccion_temp.Observacion" required>
+              </fieldset>
+              <fieldset class="form-group">
+                <textarea class="form-control col-md-8 offset-2" placeholder="{{'DESCRIPCION' | translate}}" ng-model="correccion_temp.Justificacion" required></textarea>
+              </fieldset>
+              <!--
+              <fieldset class="form-group">
+                <input type="checkbox" class="checkbox checkbox-inline" ng-model="correccion_temp.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>
+              </fieldset>
+              -->
+              <div class=" pull-right">
+                <button class="btn btn-default" ng-click="showedit =!showedit" type="button">{{'CANCELAR' | translate}}</button>
+                <input class="btn-primary btn" ng-click="showedit =!showedit;" type="submit" value="{{'EDITAR' | translate}}" ng-click="showedit =!showedit">
+              </div>
+            </form>
           </div>
-
+          <!--<pre>{{correccion_temp}}</pre>!-->
+        </div>
         <div class="panel-body" ng-show="show">
           {{correccion.Justificacion}}
         </div>
       </div>
     </div>
-
-<!--<pre>{{d_revisionDocumento.revision | json}}
-
-<button type="button" name="button" ng-click="d_revisionDocumento.postrev()">postera</button>
-</pre>-->
-
-
-
-<button class="btn btn-success" type="button" ng-show="!showfm" ng-click="showfm =!showfm">{{'AGREGAR_COMENTARIO' | translate}}</button>
+    <!--<pre>{{d_revisionDocumento.revision | json}}
+    <button type="button" name="button" ng-click="d_revisionDocumento.postrev()">postera</button>
+    </pre>-->
+    <button class="btn btn-success pull-right" type="button" ng-show="!showfm" ng-click="showfm =!showfm">{{'AGREGAR_COMENTARIO' | translate}}</button>
     <div class="panel panel-success" ng-show="showfm">
       <div class="panel-body">
-        <form name="modiForm3" ng-submit="modiForm3.$valid && d_revisionDocumento.agregar_correccion(d_revisionDocumento.correccion)" novalidate>
+        <form name="modiForm3" ng-submit="modiForm3.$valid; d_revisionDocumento.agregar_correccion()">
           <fieldset class="form-group">
-            <input  class="form-control" type="text" placeholder="Enunciado" ng-model="d_revisionDocumento.correccion.Observacion" required/>
+            <input class="form-control" type="text" placeholder="{{'ENUNCIADO_SIN_DOSPUNTOS' | translate}}" ng-model="d_revisionDocumento.correccion.Observacion" required>
           </fieldset>
           <fieldset class="form-group">
-            <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="Descripcion" ng-model="d_revisionDocumento.correccion.Justificacion"></textarea>
+            <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="{{'DESCRIPCION' | translate}}" ng-model="d_revisionDocumento.correccion.Justificacion" required></textarea>
           </fieldset>
           <!--
           <fieldset class="form-group">
@@ -82,7 +72,7 @@
           -->
           <div class=" pull-right">
             <button class="btn btn-default" ng-click="showfm =!showfm; d_revisionDocumento.correccion={}" type="button">{{'CANCELAR' | translate}}</button>
-            <input class="btn-primary btn" type="submit" value="{{'AGREGAR' | translate}}"></input>
+            <input class="btn-primary btn" ng-click="showfm = !showfm" type="submit" value="{{'AGREGAR' | translate}}">
           </div>
         </form>
       </div>
