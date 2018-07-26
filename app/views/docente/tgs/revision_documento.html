@@ -63,7 +63,7 @@
             <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
             <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
-                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina"/>
+                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" docdocente="docenterevision.documentoDocente"/>
               </div>
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
                 <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>

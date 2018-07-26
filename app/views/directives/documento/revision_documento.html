@@ -1,91 +1,113 @@
 <div class="panel panel-warning" ng-if="d_revisionDocumento.revision.EstadoRevisionTrabajoGrado.Nombre != 'finalizada'">
-
   <div class="panel-heading" ng-click="showc=!showc">
-    <h3 class="panel-title">{{'REVISION' | translate}} {{d_revisionDocumento.revision.NumeroRevision}} {{d_revisionDocumento.revision.EstadoRevisionTrabajoGrado.Nombre}}
-    </h3>
+    <h3 class="panel-title">{{'REVISION' | translate}} {{d_revisionDocumento.revision.NumeroRevision}} {{d_revisionDocumento.revision.EstadoRevisionTrabajoGrado.Nombre}}</h3>
   </div>
   <div class="panel-body" ng-show="showc">
-    <p class="text-muted"><cite><span>{{'FECHA_RECEPCION' | translate}}: {{d_revisionDocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}}</span></cite><br /><p>
-
-
-    <div ng-repeat="correccion in d_revisionDocumento.correcciones">
-      <div class="panel panel-info">
-        <!--
-          <div class="panel-heading">
-          {{correccion.Observacion}} <span style="color: blue" ng-click="d_revisionDocumento.verpag(correccion.Pagina)" ng-if="correccion.Pagina != 0">pag {{correccion.Pagina}}</span>
-        -->
-        <div class="panel-heading">
-          {{correccion.Observacion}}
-          <span class="pull-right">
-            <a href="" class="ver" ng-click="show =!show" ><i class="fa fa-eye fa-lg" aria-hidden="true" data-toggle="tooltip" title="{{'VER' | translate}}"></i></a>
-            <a href="" class="editar" ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" ><i data-toggle="tooltip" title="{{'EDITAR' | translate}}" class="fa fa-cog fa-lg" aria-hidden="true"></i></a>
-            <a href="" class="borrar" ng-click="d_revisionDocumento.eliminar_correccion(correccion)"><i data-toggle="tooltip" title="{{'BORRAR' | translate}}" class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
-          <!--  <button class="btn btn-xs btn-warning " ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" type="button">editar</button>
-            <button class="btn btn-xs btn-success " ng-click="show =!show" type="button">ver</button>
-            <button class="btn btn-xs btn-danger " ng-click="d_revisionDocumento.eliminar_correccion(correccion)" type="button">eliminar</button>-->
-          </span>
-        </div>
-        <div class="panel panel-body" ng-show="showedit" >
-          <div class="panel-body">
-            <form name="editForm" ng-submit="d_revisionDocumento.editar(correccion,correccion_temp)" novalidate>
-              <fieldset class="form-group">
-                <input class="form-control" type="text" placeholder="{{'ENUNCIADO_SIN_DOSPUNTOS' | translate}}" ng-model="correccion_temp.Observacion" required>
-              </fieldset>
-              <fieldset class="form-group">
-                <textarea class="form-control col-md-8 offset-2" placeholder="{{'DESCRIPCION' | translate}}" ng-model="correccion_temp.Justificacion" required></textarea>
-              </fieldset>
-              <!--
-              <fieldset class="form-group">
-                <input type="checkbox" class="checkbox checkbox-inline" ng-model="correccion_temp.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>
-              </fieldset>
-              -->
-              <div class=" pull-right">
-                <button class="btn btn-default" ng-click="showedit =!showedit" type="button">{{'CANCELAR' | translate}}</button>
-                <input class="btn-primary btn" ng-click="showedit =!showedit;" type="submit" value="{{'EDITAR' | translate}}" ng-click="showedit =!showedit">
-              </div>
-            </form>
-          </div>
-          <!--<pre>{{correccion_temp}}</pre>!-->
-        </div>
-        <div class="panel-body" ng-show="show">
-          {{correccion.Justificacion}}
-        </div>
-      </div>
-    </div>
-    <!--<pre>{{d_revisionDocumento.revision | json}}
-    <button type="button" name="button" ng-click="d_revisionDocumento.postrev()">postera</button>
-    </pre>-->
-    <button class="btn btn-success pull-right" type="button" ng-show="!showfm" ng-click="showfm =!showfm">{{'AGREGAR_COMENTARIO' | translate}}</button>
-    <div class="panel panel-success" ng-show="showfm">
-      <div class="panel-body">
-        <form name="modiForm3" ng-submit="modiForm3.$valid; d_revisionDocumento.agregar_correccion()">
-          <fieldset class="form-group">
-            <input class="form-control" type="text" placeholder="{{'ENUNCIADO_SIN_DOSPUNTOS' | translate}}" ng-model="d_revisionDocumento.correccion.Observacion" required>
-          </fieldset>
-          <fieldset class="form-group">
-            <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="{{'DESCRIPCION' | translate}}" ng-model="d_revisionDocumento.correccion.Justificacion" required></textarea>
-          </fieldset>
+    <loading tam="4" load="d_revisionDocumento.cargandoRevision" message="d_revisionDocumento.mensajeCargando"> </loading>
+    <div ng-if="!d_revisionDocumento.cargandoRevision">
+      <p class="text-muted"><cite><span>{{'FECHA_RECEPCION' | translate}}: {{d_revisionDocumento.revision.FechaRecepcion | date:'dd-MMM-yyyy'}}</span></cite><br /><p>
+      <div ng-repeat="correccion in d_revisionDocumento.correcciones">
+        <div class="panel panel-info">
           <!--
-          <fieldset class="form-group">
-            <input type="checkbox" class="checkbox checkbox-inline" ng-model="d_revisionDocumento.agregarpag"> Agregar pagina de corrección: {{paginadoc}}</input>
-          </fieldset>
+            <div class="panel-heading">
+            {{correccion.Observacion}} <span style="color: blue" ng-click="d_revisionDocumento.verpag(correccion.Pagina)" ng-if="correccion.Pagina != 0">pag {{correccion.Pagina}}</span>
           -->
-          <div class=" pull-right">
-            <button class="btn btn-default" ng-click="showfm =!showfm; d_revisionDocumento.correccion={}" type="button">{{'CANCELAR' | translate}}</button>
-            <input class="btn-primary btn" ng-click="showfm = !showfm" type="submit" value="{{'AGREGAR' | translate}}">
+          <div class="panel-heading">
+            {{correccion.Observacion}}
+            <span class="pull-right">
+              <a href="" class="ver" ng-click="show =!show" ><i class="fa fa-eye fa-lg" aria-hidden="true" data-toggle="tooltip" title="{{'VER' | translate}}"></i></a>
+              <a href="" class="editar" ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" ><i data-toggle="tooltip" title="{{'EDITAR' | translate}}" class="fa fa-cog fa-lg" aria-hidden="true"></i></a>
+              <a href="" class="borrar" ng-click="d_revisionDocumento.eliminar_correccion(correccion)"><i data-toggle="tooltip" title="{{'BORRAR' | translate}}" class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+              <!--  <button class="btn btn-xs btn-warning " ng-click="showedit =!showedit; correccion_temp=d_revisionDocumento.copyObject(correccion)" type="button">editar</button>
+              <button class="btn btn-xs btn-success " ng-click="show =!show" type="button">ver</button>
+              <button class="btn btn-xs btn-danger " ng-click="d_revisionDocumento.eliminar_correccion(correccion)" type="button">eliminar</button>-->
+            </span>
           </div>
-        </form>
+          <div class="panel panel-body" ng-show="showedit" >
+            <div class="panel-body">
+              <form name="editForm" ng-submit="d_revisionDocumento.editar(correccion,correccion_temp)" novalidate>
+                <fieldset class="form-group">
+                  <input class="form-control" type="text" placeholder="{{'ENUNCIADO_SIN_DOSPUNTOS' | translate}}" ng-model="correccion_temp.Observacion" required>
+                </fieldset>
+                <fieldset class="form-group">
+                  <textarea class="form-control col-md-8 offset-2" placeholder="{{'DESCRIPCION' | translate}}" ng-model="correccion_temp.Justificacion" required></textarea>
+                </fieldset>
+                <!--
+                <fieldset class="form-group">
+                  <input type="checkbox" class="checkbox checkbox-inline" ng-model="correccion_temp.agregarpag"> Editar pagina de corrección: {{paginadoc}}</input>
+                </fieldset>
+                -->
+                <div class=" pull-right">
+                  <button class="btn btn-default" ng-click="showedit =!showedit" type="button">{{'CANCELAR' | translate}}</button>
+                  <input class="btn-primary btn" ng-click="showedit =!showedit;" type="submit" value="{{'EDITAR' | translate}}" ng-click="showedit =!showedit">
+                </div>
+              </form>
+            </div>
+            <!--<pre>{{correccion_temp}}</pre>!-->
+          </div>
+          <div class="panel-body" ng-show="show">
+            {{correccion.Justificacion}}
+          </div>
+        </div>
       </div>
-
+      <!--<pre>{{d_revisionDocumento.revision | json}}
+      <button type="button" name="button" ng-click="d_revisionDocumento.postrev()">postera</button>
+      </pre>-->
+      <button class="btn btn-success pull-right" type="button" ng-show="!showfm" ng-click="showfm =!showfm">{{'AGREGAR_COMENTARIO' | translate}}</button>
+      <div class="panel panel-success" ng-show="showfm">
+        <div class="panel-body">
+          <form name="modiForm3" ng-submit="modiForm3.$valid; d_revisionDocumento.agregar_correccion()">
+            <fieldset class="form-group">
+              <input class="form-control" type="text" placeholder="{{'ENUNCIADO_SIN_DOSPUNTOS' | translate}}" ng-model="d_revisionDocumento.correccion.Observacion" required>
+            </fieldset>
+            <fieldset class="form-group">
+              <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="{{'DESCRIPCION' | translate}}" ng-model="d_revisionDocumento.correccion.Justificacion" required></textarea>
+            </fieldset>
+            <!--
+            <fieldset class="form-group">
+              <input type="checkbox" class="checkbox checkbox-inline" ng-model="d_revisionDocumento.agregarpag"> Agregar pagina de corrección: {{paginadoc}}</input>
+            </fieldset>
+            -->
+            <div class="pull-right">
+              <button class="btn btn-default" ng-click="showfm =!showfm; d_revisionDocumento.correccion={}" type="button">{{'CANCELAR' | translate}}</button>
+              <input class="btn-primary btn" ng-click="showfm = !showfm" type="submit" value="{{'AGREGAR' | translate}}">
+            </div>
+          </form>
+        </div>
+      </div>
+      <!--Aquí se opera la inclusión del documento-->
+      <div class="panel">
+        <br>
+        <div class="row">
+          <div class="col-sm-2">
+            <switch  ng-model="showDocumento" class="blue" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
+          </div>
+          <p class="col-sm-10 control-label"> {{'DESEA_INCLUIR_DOCUMENTO' | translate}} </p>
+        </div>
+        <div ng-if="showDocumento">
+          <br>
+          <div class="row">
+            <p class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}}</p>
+            <div class="col-sm-9 ">
+              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="d_revisionDocumento.documentModel" required>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Aquí se maneja el guardado de la revisión-->
+      <!--
+      <span class="pull-right">
+      <button class="btn btn-danger" type="button" ng-click="d_revisionDocumento.cancelar_revisado()">Cancelar edicion</button>
+      <button class="btn btn-default" type="button" ng-click="d_revisionDocumento.guardar_revision('borrador')">Guardar Borrador</button>
+        <button class="btn btn-primary" type="button" ng-click="d_revisionDocumento.guardar_revision('finalizar')">{{'GUARDAR_REVISION' | translate}}</button>
+      </span>
+      -->
+      <span class="pull-right" ng-if="d_revisionDocumento.correcciones.length > 0 || d_revisionDocumento.documentModel">
+        <button class="btn btn-primary" ng-click="d_revisionDocumento.guardar_revision('finalizar')">
+          {{'GUARDAR_REVISION' | translate}}
+        </button>
+      </span>
+          
     </div>
-
-    <span class="pull-right">
-    <!--
-    <button class="btn btn-danger" type="button" ng-click="d_revisionDocumento.cancelar_revisado()">Cancelar edicion</button>
-    <button class="btn btn-default" type="button" ng-click="d_revisionDocumento.guardar_revision('borrador')">Guardar Borrador</button>
-    -->
-    <button class="btn btn-primary" type="button" ng-click="d_revisionDocumento.guardar_revision('finalizar')">{{'GUARDAR_REVISION' | translate}}</button>
-  </span>
-
   </div>
 </div>

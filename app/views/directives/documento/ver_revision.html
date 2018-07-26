@@ -14,9 +14,9 @@
       <div class="panel panel-info">
         <div class="panel-heading">
           {{'CORRECCION_REALIZADA' | translate}}: 
-          <a ng-if="!correccion.Documento">
+          <span ng-if="!correccion.Documento">
             {{correccion.Observacion}}
-          </a>
+          </span>
           <a ng-if="correccion.Documento">
             <label ng-click="d_verRevision.getDocument(correccion.Observacion)" style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
           </a>

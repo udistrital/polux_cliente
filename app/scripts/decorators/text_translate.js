@@ -415,6 +415,7 @@ var text_es = {
       REGISTRANDO_NOTA:"Registrando nota",
       CARGANDO_ANTEPROYECTOS: "Cargando anteproyectos",
       CARGANDO_PROYECTOS: "Cargando proyectos asociados",
+      REGISTRANDO_REVISION:"Registrando revisión",
     },
     SELECT:{
       SELECCIONE:"Seleccione una opción",
@@ -1127,6 +1128,7 @@ var text_en = {
       REGISTRANDO_NOTA:"Registering grade",
       CARGANDO_ANTEPROYECTOS: "Loading degree work proposals",
       CARGANDO_PROYECTOS: "Loading associated projects",
+      REGISTRANDO_REVISION:"Registering revision",
     },
     SELECT:{
       SELECCIONE:"Select an option",

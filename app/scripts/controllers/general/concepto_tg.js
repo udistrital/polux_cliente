@@ -322,7 +322,6 @@ angular.module('poluxClienteApp')
      */
     ctrl.registrarRevisionTg = function() {
       var deferred = $q.defer();
-      var fechaParaRegistrar = new Date();
       ctrl.vinculacion.TrabajoGrado.EstadoTrabajoGrado = {
         Id: ctrl.revisionActual.respuestaSeleccionada.idEstadoTrabajoGrado
       };
