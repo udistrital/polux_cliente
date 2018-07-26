@@ -209,6 +209,7 @@ angular.module('poluxClienteApp')
               if (trabajoGrado.EstadoTrabajoGrado.Id == 4) {
                 ctrl.tipoDocumento = 3;
                 ctrl.verAnteproyecto = true;
+                ctrl.paginaRedireccion = "/trabajo_grado/revisar_anteproyecto";
                 ctrl.coleccionRespuesta = [{
                   idEstadoTrabajoGrado: 5,
                   nombreEstadoTrabajoGrado: "Viable",
@@ -223,7 +224,16 @@ angular.module('poluxClienteApp')
               } else if (trabajoGrado.EstadoTrabajoGrado.Id == 15) {
                 // si el trabajo de grado esta en revisión para versión final
                 ctrl.tipoDocumento = 5;
+                ctrl.verAnteproyecto = true;
                 ctrl.verProyectoRevision = true;
+                ctrl.paginaRedireccion = "/trabajo_grado/revisar_proyecto";
+                ctrl.coleccionRespuesta = [{
+                  idEstadoTrabajoGrado: 16,
+                  nombreEstadoTrabajoGrado: "Modificable",
+                  }, {
+                  idEstadoTrabajoGrado: 17,
+                  nombreEstadoTrabajoGrado: "Listo para sustentar",
+                }];
               }
 
               //Se obtiene el documento escrito para traer las revisiones
@@ -398,7 +408,7 @@ angular.module('poluxClienteApp')
                         'success'
                       );
                       //Aquí hago la redirección
-                      $location.path("/trabajo_grado/revisar_anteproyecto");
+                      $location.path(ctrl.paginaRedireccion);
                     } else {
                       swal(
                         $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
