@@ -183,9 +183,10 @@ angular.module('poluxClienteApp')
      * @returns {String} La sentencia para la consulta correspondiente
      */
     ctrl.obtenerParametrosRevisionTrabajoGrado = function() {
+      console.log("PS", ctrl.proyectoSeleccionado);
       return $.param({
         query: "DocumentoTrabajoGrado.TrabajoGrado.Id:" +
-          ctrl.proyectoSeleccionado.Id,
+          ctrl.proyectoSeleccionado.TrabajoGrado.Id,
         //query: "DocumentoTrabajoGrado.Id:" +
           //ctrl.documentoTrabajoGrado,
         limit: 0
@@ -205,6 +206,7 @@ angular.module('poluxClienteApp')
      */
     ctrl.consultarRevisionesTrabajoGrado = function(documentoTrabajoGrado) {
       var deferred = $q.defer();
+      console.log(ctrl.obtenerParametrosRevisionTrabajoGrado());
       poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
         .then(function(respuestaRevisionesTrabajoGrado) {
           if (respuestaRevisionesTrabajoGrado.data) {

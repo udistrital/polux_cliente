@@ -535,6 +535,7 @@ angular.module('poluxClienteApp')
               .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarTrabajoGrado(respuestaCargarDocumento)
                   .then(function(respuestaActualizarTg) {
+                    console.log("STAT", respuestaActualizarTg);
                     if (respuestaActualizarTg.statusText === "OK") {
                       ctrl.cargandoTrabajoGrado = false;
                       swal(
@@ -716,6 +717,7 @@ angular.module('poluxClienteApp')
         "DocumentoTrabajoGrado": documentoTrabajoGrado,
         "TrabajoGrado": ctrl.trabajoGrado
       };
+      console.log("IA", informacionParaActualizar);
       poluxRequest
         .post("tr_actualizar_documento_tg", informacionParaActualizar)
         .then(function(respuestaActualizarAnteproyecto) {
@@ -811,8 +813,10 @@ angular.module('poluxClienteApp')
                       $('#modalActualizarTg').modal('hide');
                       ctrl.actualizarContenidoRevisiones();
                     } else {
+                      console.log(respuestaActualizarTG.data);
                       ctrl.loadTrabajoGrado = false;
                       ctrl.cargandoActualizarTg = false;
+                      $('#modalActualizarTg').modal('hide');
                       swal(
                         $translate.instant(titleConfirmacion),
                         $translate.instant(respuestaActualizarTG.data[1]),
@@ -821,7 +825,6 @@ angular.module('poluxClienteApp')
                     }
                   })
                   .catch(function(excepcionActualizarAnteproyecto) {
-                    console.log(excepcionActualizarAnteproyecto);
                     ctrl.loadTrabajoGrado = false;
                     ctrl.cargandoActualizarTg = false;
                     swal(

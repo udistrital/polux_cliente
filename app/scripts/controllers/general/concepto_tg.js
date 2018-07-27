@@ -74,7 +74,7 @@ angular.module('poluxClienteApp')
         query: "DocumentoEscrito.TipoDocumentoEscrito:" + ctrl.tipoDocumento + ",TrabajoGrado:" + trabajoGrado.Id,
         limit: 1,
       });
-      poluxRequest.get("documento_trabajo_grado",parametrosDocumentoEscrito)
+      poluxRequest.get("documento_trabajo_grado", parametrosDocumentoEscrito)
         .then(function(responseDocumento) {
           if (responseDocumento.data) {
             defer.resolve(responseDocumento.data[0]);
@@ -96,16 +96,16 @@ angular.module('poluxClienteApp')
      * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
      * @description 
      * Consula las revisiones asociadas a un trabajo de grado
-     * @param {Integer} idDocumentoTrabajoGrado El documento al que se le realizan las revisiones a consultar
+     * @param {Integer} idTrabajoGrado El trabajo de grado al que se le realizan las revisiones a consultar
      * @returns {Promise} Objeto de tipo promesa que resuelve la consulta o rechaza la excepción generada
      */
-    ctrl.getRevisiones = function(idDocumentoTrabajoGrado) {
+    ctrl.getRevisiones = function(idTrabajoGrado) {
       var defer = $q.defer();
-      var parametrosDocumentoEscrito = $.param({
-        query: "DocumentoTrabajoGrado:" + idDocumentoTrabajoGrado,
+      var parametrosRevisionesTrabajoGrado = $.param({
+        query: "DocumentoTrabajoGrado.TrabajoGrado.Id:" + idTrabajoGrado,
         limit: 0,
       });
-      poluxRequest.get("revision_trabajo_grado")
+      poluxRequest.get("revision_trabajo_grado", parametrosRevisionesTrabajoGrado)
         .then(function(responseRevisiones) {
           if (responseRevisiones.data) {
             defer.resolve(responseRevisiones.data);
@@ -242,7 +242,7 @@ angular.module('poluxClienteApp')
                   trabajoGrado.documentoTg = documentoTg;
                   //ctrl.getRevisiones(documentoTg);
                   ctrl.cargando = false;
-                  ctrl.getRevisiones(documentoTg.Id)
+                  ctrl.getRevisiones(documentoTg.TrabajoGrado.Id)
                     .then(function(revisiones) {
                       trabajoGrado.revisiones = revisiones;
                       //Se habilita la directiva para solicitar la revisión
@@ -407,7 +407,6 @@ angular.module('poluxClienteApp')
                         $translate.instant("REVISAR_PROYECTO.REVISION_REGISTRADA"),
                         'success'
                       );
-                      //Aquí hago la redirección
                       $location.path(ctrl.paginaRedireccion);
                     } else {
                       swal(
@@ -446,8 +445,7 @@ angular.module('poluxClienteApp')
                       $translate.instant("REVISAR_PROYECTO.REVISION_REGISTRADA"),
                       'success'
                     );
-                    //Aquí hago la redirección
-                    //
+                    $location.path(ctrl.paginaRedireccion);
                   } else {
                     swal(
                       $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),

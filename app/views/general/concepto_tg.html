@@ -23,32 +23,6 @@
       </div>
   
       <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
-        <div class="panel panel-default" ng-if="conceptoTg.vinculacion.TrabajoGrado.revisiones.length > 0">
-          <div class="panel-heading">
-            <center>
-              <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
-            </center>
-          </div>
-  
-          <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
-            <div ng-repeat="revision in conceptoTg.vinculacion.TrabajoGrado.revisiones">
-              <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
-              <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
-                <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
-                  <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina"/>
-                </div>
-                <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
-                  <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        <div class="panel- alert alert-danger" ng-if="conceptoTg.vinculacion.TrabajoGrado.revisiones.length == 0">
-          <span>{{'ERROR.SIN_REVISIONES' | translate}}</span>
-        </div>
-
         <!-- para la nueva revisión-->
         <div ng-if="conceptoTg.mostrarPanelRevision">
           <div class="panel panel-warning">
@@ -56,7 +30,7 @@
               <h3 class="panel-title">{{'REVISION' | translate}} {{conceptoTg.revisionActual.NumeroRevision}} {{conceptoTg.vinculacion.TrabajoGrado.Titulo}}
               </h3>
             </div>
-            <div class="panel-body" ng-show="showc">
+            <div class="panel-body" ng-show="showc" style="max-height: 320px; overflow-y: scroll;">
               <p class="text-muted">
                 <cite>
                   <span>{{'FECHA_REVISION' | translate}}: {{conceptoTg.revisionActual.FechaRecepcion | date:'dd-MMM-yyyy'}}
@@ -157,6 +131,32 @@
               </span>
             </div>
           </div>          
+        </div>
+
+        <div class="panel panel-default" ng-if="conceptoTg.vinculacion.TrabajoGrado.revisiones.length > 0">
+          <div class="panel-heading">
+            <center>
+              <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
+            </center>
+          </div>
+  
+          <div class="panel-body" style="max-height: 450px; overflow-y:scroll;">
+            <div ng-repeat="revision in conceptoTg.vinculacion.TrabajoGrado.revisiones">
+              <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
+              <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
+                <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
+                  <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina"/>
+                </div>
+                <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
+                  <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="panel- alert alert-danger" ng-if="conceptoTg.vinculacion.TrabajoGrado.revisiones.length == 0">
+          <span>{{'ERROR.SIN_REVISIONES' | translate}}</span>
         </div>
       </div>
     </div>

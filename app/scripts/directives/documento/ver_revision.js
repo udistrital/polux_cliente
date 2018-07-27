@@ -59,7 +59,8 @@ angular.module('poluxClienteApp')
                             comentarios.push(response.data);
                         });
                     }); //.then(function(data){console.log(data);});
-                    ctrl.coment = null;
+                    //ctrl.coment = null;
+                    comentario = null;
                     return comentarios;
                 };
 
