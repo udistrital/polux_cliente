@@ -167,6 +167,9 @@
                 </div>
             </div>
         </div>
+        <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado">
+            <versiones-documentos-tg tg="consultarTrabajoGrado.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
+        </div>
     </div>
 
 </div>
