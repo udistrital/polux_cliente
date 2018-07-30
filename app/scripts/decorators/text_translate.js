@@ -314,6 +314,8 @@ var text_es = {
         SIN_REVISIONES: "No se han podido encontrar revisiones asociadas al trabajo de grado, verifique que se haya realizado alguna anteriormente",
         CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al trabajo de grado. Comuníquese con el administrador.",
         INSERTANDO_REVISIONES: "Ocurrió un error al registrar las revisiones del trabajo de grado",
+        VINCULADO_NO_NOTA:"No ha registrado nota en el sistema",
+        VINCULADO_NO_PUEDE_NOTA:"No puede registrar nota en el sistema",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -1027,6 +1029,8 @@ var text_en = {
         SIN_REVISIONES: "It has not been possible to find revisions associated to the work of degree, verify that it has been done previously",
         CARGANDO_REVISIONES: "An error occurred when trying to query the revisions associated with the degree work. Contact the administrator.",
         INSERTANDO_REVISIONES: "An error ocurred when trying to register the degree work corrections",
+        VINCULADO_NO_NOTA:"The teacher have not registered a grade in the system",
+        VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {

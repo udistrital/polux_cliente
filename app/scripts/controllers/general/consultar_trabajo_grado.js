@@ -79,6 +79,17 @@ angular.module('poluxClienteApp')
       width: '20%',
     }];
 
+    ctrl.gridOptionsVinculaciones = [];
+    ctrl.gridOptionsVinculaciones.columnDefs = [{
+      name: 'Nombre',
+      displayName: $translate.instant('NOMBRE'),
+      width: '70%',
+    }, {
+      name: 'notaRegistrada',
+      displayName: $translate.instant('NOTA'),
+      width: '30%',
+    }];
+
     /**
      * @ngdoc method
      * @name cargarEstudiante
@@ -330,6 +341,36 @@ angular.module('poluxClienteApp')
         });
         return defer.promise;
       }
+      var getNota = function(vinculado){
+        var defer = $q.defer();
+        //SI es director externo o codirector
+        if(vinculado.RolTrabajoGrado.Id == 2 || vinculado.RolTrabajoGrado.Id == 4) {
+          vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");;
+          defer.resolve();
+        }
+        //Si es director interno o evaluador
+        if(vinculado.RolTrabajoGrado.Id == 1 || vinculado.RolTrabajoGrado.Id == 3) {
+          var parametrosEvaluaciones = $.param({
+            limit:1,
+            query:"VinculacionTrabajoGrado:"+vinculado.Id,
+          });
+          poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
+          .then(function(responseEvaluacion){
+            if(responseEvaluacion.data != null){
+              //Si no ha registrado ninguna nota
+              vinculado.notaRegistrada = responseEvaluacion.data[0].Nota;
+            }else{
+              //Si ya registro la nota
+              vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_NOTA");
+            }
+            defer.resolve();
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });
+        }
+        return defer.promise;
+      }
       //Se buscan los vinculados 
       var defer = $q.defer();
       var parametrosVinculados = $.param({
@@ -349,9 +390,11 @@ angular.module('poluxClienteApp')
               //Director interno y evaluadores
               promises.push(getInterno(vinculado));
             }
+            promises.push(getNota(vinculado));
           });
           $q.all(promises)
           .then(function(){
+            ctrl.gridOptionsVinculaciones.data = ctrl.trabajoGrado.Vinculados;
             defer.resolve();
           })
           .catch(function(error){
