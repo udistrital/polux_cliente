@@ -678,6 +678,14 @@ var text_es = {
         TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
         SUBIR:"Subir primera versión",
     },
+    ARL:{
+        OBSERVACIONES:"Observaciones sobre el certificado de la ARL",
+        INSTRUCCIONES:"A continuación puede subir el certificado de la ARL. El estado de su pasantia cambiara a En curso pero sin documento inicial.",
+        CONFIRMACION: "Subir certificado de ARL",
+        MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
+        TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
+        SUBIR:"Subir certificado de ARL",
+    },
     NUEVA_VERSION: {
         MENSAJE: "Actualización del documento",
         INSTRUCCIONES: "A continuación puede subir una nueva versión del documento del trabajo de grado.",
@@ -1393,6 +1401,14 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the first version of your degree work?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
         SUBIR:"Upload first version",
+    },
+    ARL:{
+        OBSERVACIONES:"ARL certificate comments",
+        INSTRUCCIONES:"Nexts you can upload the ARL's certificate. The status of your degree work will change to In progress but without initial document.",
+        CONFIRMACION: "Upload ARL certificate",
+        MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the ARL certificate?",
+        TG_ACTUALIZADO: "The degree work has been successfully updated",
+        SUBIR:"Upload ARL certificate",
     },
     NUEVA_VERSION: {
         MENSAJE: "Document update",

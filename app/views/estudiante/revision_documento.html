@@ -70,6 +70,10 @@
         <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'PRIMERA_VERSION.SUBIR' | translate}}</button>
       </div>
 
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'ARL.SUBIR' | translate}}</button>
+      </div>
+
       <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 13">
         <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.subirNuevaVersionDocumento()">{{'SUBIR_NUEVA_VERSION' | translate}}</button>
         <button type="button" class="btn btn-success pull-right" ng-if="!estudianteRevisionDoc.revisionSolicitada" ng-click="estudianteRevisionDoc.solicitarRevision()">{{'SOLICITAR_REVISION' | translate}}</button>
@@ -181,6 +185,17 @@
         </div>
       </div>
     </div>
+    <!--Para certificado de ARL-->
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+      <div class="panel-heading">
+        {{'ARL.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'ARL.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
     <!--Para primera versión del documento-->
     <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10">
       <div class="panel-heading">
@@ -217,6 +232,10 @@
               <!--Para proyecto modificable-->
               <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
                 <input type="submit" class="btn btn-success" value="{{'SUBIR_CORRECCIONES_PROYECTO'|translate}}">
+              </div>
+              <!--Para certificado ARL-->
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+                <input type="submit" class="btn btn-success" value="{{'ARL.SUBIR'|translate}}">
               </div>
               <!--Para primera versión del documento-->
               <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10">

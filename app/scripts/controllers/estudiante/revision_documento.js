@@ -703,6 +703,12 @@ angular.module('poluxClienteApp')
         };
         ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 5;
       }
+      if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado = {
+          Id: 22
+        };
+        ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 7;
+      }
       //delete ctrl.trabajoGrado.documentoEscrito.Id
       console.log(respuestaCargarDocumento);
       ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
@@ -778,6 +784,14 @@ angular.module('poluxClienteApp')
         mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
         workspace = 'Versiones TG';
       }
+      // Para certificado de ARL
+      if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
+        descripcionDocumento = "Certifiado de ARL de la pasantia";
+        titleConfirmacion = "ARL.CONFIRMACION";
+        mensajeConfirmacion = "ARL.MENSAJE_CONFIRMACION";
+        mensajeSuccess = "ARL.TG_ACTUALIZADO";
+        workspace = 'ARL';
+      }
       swal({
           title: $translate.instant(titleConfirmacion),
           text: $translate.instant(mensajeConfirmacion),
@@ -796,7 +810,7 @@ angular.module('poluxClienteApp')
                 return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)
               }
               //Si es primera versión crea el documento
-              if(estadoTg == 5 || estadoTg == 10){
+              if(estadoTg == 5 || estadoTg == 10 || estadoTg == 21) {
                 return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
               }
             }
