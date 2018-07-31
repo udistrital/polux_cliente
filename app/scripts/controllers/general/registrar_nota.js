@@ -302,7 +302,7 @@ angular.module('poluxClienteApp')
         ctrl.trabajoSeleccionado.estadoValido = true;
       }
       //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
-      ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.Id === 1);
+      ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1);
       //console.log(ctrl.registrarNota);
       //console.log(ctrl.trabajoSeleccionado);
       //Promesas del tg
@@ -350,7 +350,7 @@ angular.module('poluxClienteApp')
           }
         }
         //Si es director se debe subir el acta
-        if(ctrl.trabajoSeleccionado.vinculacion.Id === 1) {
+        if(ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1) {
           var nombreDocumento = "Acta de sustentación de trabajo id: "+ctrl.trabajoSeleccionado.Id;
           var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
           //Se carga el documento
@@ -372,7 +372,7 @@ angular.module('poluxClienteApp')
             defer.reject(error);
           });
 
-        } else if (ctrl.trabajoSeleccionado.vinculacion.Id === 3){
+        } else if (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 3){
         //Si no es director se registra la nota
           defer.resolve(dataRegistrarNota);
         }
