@@ -860,9 +860,10 @@ angular.module('poluxClienteApp')
                         if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                           estadoTrabajoGrado = 13;
                         }
-                        // si la modalidad es de pasantia se va anteproyecto viable estado 5
+                        // si la modalidad es de pasantia se crea en estado de espera de ARL id 21
                         if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1) {
-                          estadoTrabajoGrado = 5;
+                          //estadoTrabajoGrado = 5;
+                          estadoTrabajoGrado = 21;
                         }
                         //data para crear el trabajo de grado
                         var data_trabajo_grado = {
