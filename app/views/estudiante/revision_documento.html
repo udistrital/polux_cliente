@@ -66,7 +66,7 @@
         <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_PROYECTO' | translate}}</button>
       </div>
 
-      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10">
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
         <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'PRIMERA_VERSION.SUBIR' | translate}}</button>
       </div>
 
@@ -197,7 +197,7 @@
       </div>
     </div>
     <!--Para primera versión del documento-->
-    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10">
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
       <div class="panel-heading">
         {{'PRIMERA_VERSION.OBSERVACIONES' | translate}}
       </div>
@@ -238,7 +238,7 @@
                 <input type="submit" class="btn btn-success" value="{{'ARL.SUBIR'|translate}}">
               </div>
               <!--Para primera versión del documento-->
-              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10">
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
                 <input type="submit" class="btn btn-success" value="{{'PRIMERA_VERSION.SUBIR'|translate}}">
               </div>
             </div>

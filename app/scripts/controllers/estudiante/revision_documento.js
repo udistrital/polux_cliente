@@ -691,7 +691,8 @@ angular.module('poluxClienteApp')
         ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
       }
       if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 || 
-        ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
+        ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 22) {
         ctrl.trabajoGrado.EstadoTrabajoGrado = {
           Id: 13
         };
@@ -763,7 +764,8 @@ angular.module('poluxClienteApp')
         workspace = 'Anteproyectos';
       }
       if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 || 
-        ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10) {
+        ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10 || 
+        ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 22) {
         descripcionDocumento = "Primera versión del trabajo de grado";
         titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
         mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
@@ -810,7 +812,7 @@ angular.module('poluxClienteApp')
                 return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)
               }
               //Si es primera versión crea el documento
-              if(estadoTg == 5 || estadoTg == 10 || estadoTg == 21) {
+              if(estadoTg == 5 || estadoTg == 10 || estadoTg == 21 || estadoTg == 22) {
                 return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
               }
             }
