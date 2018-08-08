@@ -1323,7 +1323,7 @@ angular.module('poluxClienteApp')
 
     angular.forEach(ctrl.detalles, function(detalle) {
       if (detalle.Detalle.TipoDetalle.Nombre === 'Numerico') {
-        detalle.respuesta = detalle.respuesta+"";
+        detalle.respuesta = detalle.respuestaNumerica + "";
       }
       if (detalle.Detalle.TipoDetalle.Nombre === 'Label') {
         detalle.respuesta = detalle.opciones[0].bd;
