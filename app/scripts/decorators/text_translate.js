@@ -734,6 +734,7 @@ var text_es = {
         ACTA_CARGADA: "Acta de consejo de carrera cargada satisfactoriamente",
     },
     DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
+    QUITAR_DOCUMENTO: "Quitar",
 };
 
 /**
@@ -1458,6 +1459,7 @@ var text_en = {
         ACTA_CARGADA: "Career council certificate loaded successfully",
     },
     DESEA_INCLUIR_DOCUMENTO: "Do you want to include the revision document?",
+    QUITAR_DOCUMENTO: "Remove",
 };
 
 /**
