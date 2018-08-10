@@ -163,6 +163,40 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+     /**
+     * @ngdoc method
+     * @name cargarAreasConocimiento
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Consulta las asingaturas áreas de conocimiento de un trabajo de grado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
+    ctrl.cargarAreasConocimiento = function() {
+      var defer = $q.defer();
+      var parametrosAreasConocimiento = $.param({
+        query: "TrabajoGrado:" + ctrl.trabajoGrado.Id,
+        limit: 0,
+      });
+      poluxRequest.get("areas_trabajo_grado", parametrosAreasConocimiento)
+        .then(function(responseAreasConocimiento) {
+          if (responseAreasConocimiento.data != null) {
+            ctrl.trabajoGrado.areas = responseAreasConocimiento.data.map(function(area) {
+              return area.AreaConocimiento.Nombre;
+            }).join(', ');
+            defer.resolve();
+          } else {
+            ctrl.mensajeError = $translate.instant("SIN_AREAS");
+            defer.reject(error);
+          }
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant("ERROR.CARGAR_AREAS");
+          defer.reject(error);
+        });
+      return defer.promise;
+    }
+
     /**
      * @ngdoc method
      * @name getEspaciosAcademicosInscritos
@@ -423,84 +457,18 @@ angular.module('poluxClienteApp')
      * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
      */
     ctrl.getDocumento = function(docid){
-      nuxeo.header('X-NXDocumentProperties', '*');
-
-      /**
-     * @ngdoc method
-     * @name obtenerDoc
-     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-     * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
-     * @description 
-     * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
-     */
-      ctrl.obtenerDoc = function () {
-        var defer = $q.defer();
-
-        nuxeo.request('/id/'+docid)
-            .get()
-            .then(function(response) {
-              ctrl.doc=response;
-              //var aux=response.get('file:content');
-              ctrl.document=response;
-              defer.resolve(response);
-            })
-            .catch(function(error){
-                defer.reject(error)
-            });
-        return defer.promise;
-      };
-
-      /**
-     * @ngdoc method
-     * @name obtenerFetch
-     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-     * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
-     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
-     * @description 
-     * Obtiene el blob de un documento
-     */
-      ctrl.obtenerFetch = function (doc) {
-        var defer = $q.defer();
-
-        doc.fetchBlob()
-          .then(function(res) {
-            defer.resolve(res.blob());
-
-          })
-          .catch(function(error){
-                defer.reject(error)
-            });
-        return defer.promise;
-      };
-
-        ctrl.obtenerDoc().then(function(){
-
-           ctrl.obtenerFetch(ctrl.document).then(function(r){
-               ctrl.blob=r;
-               var fileURL = URL.createObjectURL(ctrl.blob);
-               console.log(fileURL);
-               $window.open(fileURL);
-            })
-            .catch(function(error){
-              console.log("error",error);
-              swal(
-                $translate.instant("ERROR"),
-                $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-                'warning'
-              );
-            });
-
-        })
-        .catch(function(error){
-          console.log("error",error);
-          swal(
-            $translate.instant("ERROR"),
-            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-            'warning'
-          );
-        });
-
+      nuxeoClient.getDocument(docid)
+      .then(function(document){
+        $window.open(document.url);
+      })
+      .catch(function(error){
+        console.log("error",error);
+        swal(
+          $translate.instant("ERROR"),
+          $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+          'warning'
+        );
+      });
     }
     
     /**
@@ -550,6 +518,7 @@ angular.module('poluxClienteApp')
               }
               promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
               promises.push(ctrl.cargarAsignaturasTrabajoGrado());
+              promises.push(ctrl.cargarAreasConocimiento());
 
             //Consulta las vinculaciones 
             if(ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3){
