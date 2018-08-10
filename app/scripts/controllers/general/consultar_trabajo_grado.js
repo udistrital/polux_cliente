@@ -23,7 +23,7 @@
  * @property {object} gridOptionsAsignatura Grid options para las asignatruas de TG
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q,nuxeo,$window) {
+  .controller('GeneralConsultarTrabajoGradoCtrl', function (token_service,$translate,poluxRequest,academicaRequest,$q,nuxeo,$window,nuxeoClient) {
     var ctrl = this;
 
     //token_service.token.documento = "79647592";
@@ -77,6 +77,17 @@ angular.module('poluxClienteApp')
       name: 'Nota',
       displayName: $translate.instant('NOTA'),
       width: '20%',
+    }];
+
+    ctrl.gridOptionsVinculaciones = [];
+    ctrl.gridOptionsVinculaciones.columnDefs = [{
+      name: 'Nombre',
+      displayName: $translate.instant('NOMBRE'),
+      width: '70%',
+    }, {
+      name: 'notaRegistrada',
+      displayName: $translate.instant('NOTA'),
+      width: '30%',
     }];
 
     /**
@@ -330,6 +341,36 @@ angular.module('poluxClienteApp')
         });
         return defer.promise;
       }
+      var getNota = function(vinculado){
+        var defer = $q.defer();
+        //SI es director externo o codirector
+        if(vinculado.RolTrabajoGrado.Id == 2 || vinculado.RolTrabajoGrado.Id == 4) {
+          vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");;
+          defer.resolve();
+        }
+        //Si es director interno o evaluador
+        if(vinculado.RolTrabajoGrado.Id == 1 || vinculado.RolTrabajoGrado.Id == 3) {
+          var parametrosEvaluaciones = $.param({
+            limit:1,
+            query:"VinculacionTrabajoGrado:"+vinculado.Id,
+          });
+          poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
+          .then(function(responseEvaluacion){
+            if(responseEvaluacion.data != null){
+              //Si no ha registrado ninguna nota
+              vinculado.notaRegistrada = responseEvaluacion.data[0].Nota;
+            }else{
+              //Si ya registro la nota
+              vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_NOTA");
+            }
+            defer.resolve();
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });
+        }
+        return defer.promise;
+      }
       //Se buscan los vinculados 
       var defer = $q.defer();
       var parametrosVinculados = $.param({
@@ -349,9 +390,11 @@ angular.module('poluxClienteApp')
               //Director interno y evaluadores
               promises.push(getInterno(vinculado));
             }
+            promises.push(getNota(vinculado));
           });
           $q.all(promises)
           .then(function(){
+            ctrl.gridOptionsVinculaciones.data = ctrl.trabajoGrado.Vinculados;
             defer.resolve();
           })
           .catch(function(error){
@@ -760,23 +803,27 @@ angular.module('poluxClienteApp')
       var mensajeConfirmacion;
       var mensajeSuccess;
       var mensajeError;
+      var workspace;
       if (ctrl.esAnteproyectoModificable) {
         descripcionDocumento = "Versión nueva del anteproyecto";
         titleConfirmacion = "CORREGIR_ANTEPROYECTO.CONFIRMACION";
         mensajeConfirmacion = "CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION";
         mensajeSuccess = "CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO";
+        workspace = 'Anteproyectos';
       }
       if (ctrl.esPrimeraVersion) {
         descripcionDocumento = "Primera versión del trabajo de grado";
         titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
         mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
         mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
+        workspace = 'Versiones TG';
       }
       if (ctrl.esProyectoModificable) {
         descripcionDocumento = "Versión del trabajo de grado";
         titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
         mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
         mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
+        workspace = 'Versiones TG';
       }
       swal({
           title: $translate.instant(titleConfirmacion),
@@ -790,7 +837,7 @@ angular.module('poluxClienteApp')
           if (confirmacionDelUsuario.value) {
             ctrl.loadTrabajoGrado = true;
             ctrl.cargandoActualizarTg = true;
-            ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion)
+            nuxeoClient.createDocument(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.nuevaVersion,workspace,undefined)
               .then(function(respuestaCargarDocumento) {
                 ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
                   .then(function(respuestaActualizarTG) {

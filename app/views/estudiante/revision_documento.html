@@ -8,16 +8,23 @@
   <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones" class="panel panel-default">
     <div class="panel-heading">
       <center>
-        <h3 class="panel-title">{{'VINCULACIONES_TRABAJO_GRADO' | translate}}</h3>
+        <h3 class="panel-title">{{'DATOS_TRABAJO_GRADO' | translate}}</h3>
       </center>
     </div>
     <div class="panel-body">
+      <div class="row">
+        <label class="col-sm-3">{{'ESTADO' | translate}}</label>
+        <label class="col-sm-9">{{estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Nombre}}</label>
+      </div>
       <div class="row" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones">
         <label class="col-sm-3">{{docente.RolTrabajoGrado.Nombre}}</label>
         <label class="col-sm-9">{{docente.Nombre}}</label>
         <br>
       </div>
     </div>
+  </div>
+  <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones">
+    <versiones-documentos-tg tg="estudianteRevisionDoc.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
   </div>
   <div class="panel-body alert alert-danger" ng-if="estudianteRevisionDoc.errorCargandoTrabajoGrado">
     <span ng-bind="estudianteRevisionDoc.mensajeErrorCargandoTrabajoGrado"></span>
@@ -51,7 +58,23 @@
         <span ng-bind="estudianteRevisionDoc.mensajeErrorRevisionesTrabajoGrado"></span>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_ANTEPROYECTO' | translate}}</button>
+      </div>
+
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_PROYECTO' | translate}}</button>
+      </div>
+
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'PRIMERA_VERSION.SUBIR' | translate}}</button>
+      </div>
+
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'ARL.SUBIR' | translate}}</button>
+      </div>
+
+      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 13">
         <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.subirNuevaVersionDocumento()">{{'SUBIR_NUEVA_VERSION' | translate}}</button>
         <button type="button" class="btn btn-success pull-right" ng-if="!estudianteRevisionDoc.revisionSolicitada" ng-click="estudianteRevisionDoc.solicitarRevision()">{{'SOLICITAR_REVISION' | translate}}</button>
       </div>
@@ -81,7 +104,7 @@
       </div>
       <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
       <div class="panel-body" ng-if="!estudianteRevisionDoc.cargandoActualizarTg">
-        <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumento()">
+        <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumentoTg()">
           <div class="row">
             <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
             <div class="col-sm-9 ">
@@ -118,7 +141,7 @@
             <label class="col-sm-4 control-label"> {{'FORMULARIO_SOLICITAR_REVISION.SELECCIONAR_VINCULADO' | translate}} </label>
             <div class="col-sm-8">
               <select class="form-control" ng-model="estudianteRevisionDoc.docenteRevision" required>
-                <option ng-if="docente.RolTrabajoGrado.Id != 2" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-value="docente"> {{docente.Nombre}} </option>
+                <option ng-if="docente.RolTrabajoGrado.Id != 2 && docente.RolTrabajoGrado.Id != 3" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-value="docente"> {{docente.Nombre}} </option>
               </select>
             </div>
           </div>
@@ -126,6 +149,98 @@
           <div class="row row-centered" ng-if="formularioSolicitarRevision.$valid">
             <div class="col-sm-2 col-centered">
               <input type="submit" class="btn btn-success" value="{{'FORMULARIO_SOLICITAR_REVISION.TITULO'|translate}}">
+            </div>
+          </div>
+        </form>  
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalActualizarTg" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+    <div class="modal-header">
+      <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+      <br>
+    </div>
+    <!--Para anteproyecto modificable-->
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+      <div class="panel-heading">
+        {{'REVISAR_ANTEPROYECTO.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <!--Para proyecto modificable-->
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+      <div class="panel-heading">
+        {{'NUEVA_VERSION.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <!--Para certificado de ARL-->
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+      <div class="panel-heading">
+        {{'ARL.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'ARL.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <!--Para primera versión del documento-->
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+      <div class="panel-heading">
+        {{'PRIMERA_VERSION.OBSERVACIONES' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <label class="col-sm-12 control-label"> {{'PRIMERA_VERSION.INSTRUCCIONES' | translate}} </label>
+        </div>
+      </div>
+    </div>
+    <!--Espacio para ingresar el documento-->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        {{'ACTUALIZAR_TG.DESCRIPCION' | translate}}
+      </div>
+      <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
+      <div class="panel-body" ng-if="!estudianteRevisionDoc.cargandoActualizarTg">
+        <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumento()">
+          <div class="row">
+            <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
+            <div class="col-sm-9 ">
+              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="estudianteRevisionDoc.documentoActualizado" required>
+            </div>
+            <br>
+          </div>
+          <br>
+          <div class="row row-centered" ng-if="formularioSubirDocumento.$valid">
+            <div class="col-sm-3 col-centered">
+              <!--Para anteproyecto modificable-->
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+                <input type="submit" class="btn btn-success" value="{{'SUBIR_CORRECCIONES_ANTEPROYECTO'|translate}}">
+              </div>
+              <!--Para proyecto modificable-->
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+                <input type="submit" class="btn btn-success" value="{{'SUBIR_CORRECCIONES_PROYECTO'|translate}}">
+              </div>
+              <!--Para certificado ARL-->
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+                <input type="submit" class="btn btn-success" value="{{'ARL.SUBIR'|translate}}">
+              </div>
+              <!--Para primera versión del documento-->
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+                <input type="submit" class="btn btn-success" value="{{'PRIMERA_VERSION.SUBIR'|translate}}">
+              </div>
             </div>
           </div>
         </form>  

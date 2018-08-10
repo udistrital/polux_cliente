@@ -31,10 +31,11 @@
  * 
  */
 angular.module('poluxClienteApp')
-  .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest,nuxeo) {
+  .controller('GeneralRegistrarNotaCtrl', function (token_service, $translate, $q,$scope, poluxRequest,academicaRequest,nuxeoClient) {
     var ctrl = this;
 
     token_service.token.documento = "80093200";
+    //token_service.token.documento = "79777053";
     //token_service.token.documento = "12237136";
     ctrl.documento = token_service.token.documento;
 
@@ -119,7 +120,7 @@ angular.module('poluxClienteApp')
             //Si el rol es director
             var rol = trabajo.RolTrabajoGrado.Id;
             var modalidad = trabajo.TrabajoGrado.Modalidad.Id;
-            if( rol === 1 ){
+            /*if( rol === 1 ){
               //Si la modalidad es pasantia o articulo se permite sino no
               if( modalidad === 1 || modalidad === 8){
                 trabajo.permitirRegistrar = true;
@@ -127,6 +128,10 @@ angular.module('poluxClienteApp')
             }
             //Si el rol es evaluador puede registrar la nota sin importar la modalidad
             if( rol === 3 ){
+              trabajo.permitirRegistrar = true;
+            }*/
+            //Si el rol es evaluador o director puede registrar la nota sin importar la modalidad
+            if (rol == 1 || rol == 3) {
               trabajo.permitirRegistrar = true;
             }
             //Si es otro rol
@@ -296,6 +301,8 @@ angular.module('poluxClienteApp')
       if(ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 17 || ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 18){
         ctrl.trabajoSeleccionado.estadoValido = true;
       }
+      //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
+      ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1);
       //console.log(ctrl.registrarNota);
       //console.log(ctrl.trabajoSeleccionado);
       //Promesas del tg
@@ -328,25 +335,13 @@ angular.module('poluxClienteApp')
      * @returns {undefined} No retorna ningún parametro
      */
     ctrl.registrarNotaTG = function(){
-      ctrl.registrandoNotaTG = true;
-      var nombreDocumento = "Acta de sustentación de trabajo id: "+ctrl.trabajoSeleccionado.Id;
-      var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
-      //Se carga el documento
-      ctrl.cargarDocumento(nombreDocumento,descripcionDocumento,ctrl.trabajoSeleccionado.actaSustentacion)
-      .then(function(urlActa){
-        console.log("acta", urlActa);
-        console.log("nota", ctrl.trabajoSeleccionado.nota);
-        console.log("trabajo", ctrl.trabajoSeleccionado);
+
+      var crearData = function(){
+        var defer = $q.defer()
         //Se crea la data para la transacción
-        ctrl.dataRegistrarNota = {
+         var dataRegistrarNota = {
           TrabajoGrado: ctrl.trabajoSeleccionado,
-          DocumentoEscrito: {
-            Id: 0,
-            Titulo: nombreDocumento,
-            Resumen: descripcionDocumento,
-            Enlace: urlActa,
-            TipoDocumentoEscrito: 6, //Para acta de sustentación
-          },
+          DocumentoEscrito: null,
           VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
           EvaluacionTrabajoGrado:{
             Id: 0,
@@ -354,8 +349,40 @@ angular.module('poluxClienteApp')
             VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
           }
         }
+        //Si es director se debe subir el acta
+        if(ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1) {
+          var nombreDocumento = "Acta de sustentación de trabajo id: "+ctrl.trabajoSeleccionado.Id;
+          var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
+          //Se carga el documento
+          nuxeoClient.createDocument(nombreDocumento,descripcionDocumento,ctrl.trabajoSeleccionado.actaSustentacion,'Actas de sustentacion', undefined)
+          .then(function(urlActa){
+            console.log("acta", urlActa);
+            console.log("nota", ctrl.trabajoSeleccionado.nota);
+            console.log("trabajo", ctrl.trabajoSeleccionado);
+            dataRegistrarNota.DocumentoEscrito = {
+              Id: 0,
+              Titulo: nombreDocumento,
+              Resumen: descripcionDocumento,
+              Enlace: urlActa,
+              TipoDocumentoEscrito: 6, //Para acta de sustentación
+            };
+            defer.resolve(dataRegistrarNota);
+          })
+          .catch(function(error){
+            defer.reject(error);
+          });
+
+        } else if (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 3){
+        //Si no es director se registra la nota
+          defer.resolve(dataRegistrarNota);
+        }
+        return defer.promise;
+      }
+      ctrl.registrandoNotaTG = true;
+      crearData()
+      .then(function(dataRegistrarNota){     
         //Se ejecuta la transacción
-        poluxRequest.post("tr_vinculado_registrar_nota", ctrl.dataRegistrarNota).then(function(response) {
+        poluxRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function(response) {
           console.log(response);
           if (response.data[0] === "Success") {
             swal(
@@ -403,62 +430,6 @@ angular.module('poluxClienteApp')
         );
       });
     }
-
-    /**
-     * @ngdoc method
-     * @name cargarDocumento
-     * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
-     * @param {string} nombre Nombre del documento que se cargara
-     * @param {string} descripcion Descripcion del documento que se cargara
-     * @param {blob} documento Blob del documento que se cargara
-     * @returns {undefined} No retorna ningun valor
-     * @description 
-     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     */
-    ctrl.cargarDocumento = function(nombre, descripcion, documento){
-      var defer = $q.defer();
-      /*nuxeo.connect()
-      .then(function(client) {*/
-      nuxeo.operation('Document.Create')
-        .params({
-          type: 'File',
-          name: nombre,
-          properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
-        })
-        .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas de sustentacion')
-        .execute()
-        .then(function(doc) {
-            var nuxeoBlob = new Nuxeo.Blob({ content: documento });
-            nuxeo.batchUpload()
-            .upload(nuxeoBlob)
-            .then(function(res) {
-              return nuxeo.operation('Blob.AttachOnDocument')
-                  .param('document', doc.uid)
-                  .input(res.blob)
-                  .execute();
-            })
-            .then(function() {
-              return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
-            })
-            .then(function(doc) {
-              var url = doc.uid;
-              defer.resolve(url);
-            })
-            .catch(function(error) {
-              defer.reject(error);
-            });
-        })
-        .catch(function(error) {
-            defer.reject(error);
-        });
-      /*})
-      .catch(function(error){
-        // cannot connect
-        defer.reject(error);
-      });*/
-      return defer.promise;
-    };
-
 
     /**
      * @ngdoc method

@@ -13,7 +13,13 @@
     <div ng-repeat="correccion in d_verRevision.correcciones">
       <div class="panel panel-info">
         <div class="panel-heading">
-          {{'CORRECCION_REALIZADA' | translate}}: {{correccion.Observacion}}
+          {{'CORRECCION_REALIZADA' | translate}}: 
+          <span ng-if="!correccion.Documento">
+            {{correccion.Observacion}}
+          </span>
+          <a ng-if="correccion.Documento">
+            <label ng-click="d_verRevision.getDocument(correccion.Observacion)" style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+          </a>
             <a href="" class="ver pull-right" ng-click="show =!show; correccion.coments=d_verRevision.cargarComentarios(correccion.Id)" ><i class="fa fa-eye fa-lg" aria-hidden="true" data-toggle="tooltip" title="Ver !"></i></a>
 
         </div>
@@ -30,8 +36,8 @@
             <!--{{d_verRevision.pruebac}}-->
 
             <div class="panel-body">
-              <form name="comentForm" ng-submit="correccion.coments=d_verRevision.comentarCorreccion(d_verRevision.coment,correccion.Id)">
-                <textarea class="form-control col-md-8 offset-2" title="respuesta" placeholder="Escribe un comentario..." ng-click="showf =true" ng-model="d_verRevision.coment"></textarea>
+              <form name="comentForm" ng-submit="correccion.coments=d_verRevision.comentarCorreccion(correccion.coment,correccion.Id); correccion.coment = ''">
+                <textarea class="form-control col-md-8 offset-2" title="respuesta" placeholder="Escribe un comentario..." ng-click="showf =true" ng-model="correccion.coment"></textarea>
 
                 <div class="btn-group pull-right" ng-show="showf">
                   <button class="btn btn-default" ng-click="showf =!showf; d_verRevision.coment=null" type="button">Cancelar</button>

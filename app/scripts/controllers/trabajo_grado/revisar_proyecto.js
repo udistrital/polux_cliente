@@ -45,11 +45,11 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarProyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "80093200";
+			token_service.token.documento = "79777053";
 			ctrl.usuarioSesion = token_service.token.documento;
 
 			ctrl.cargandoProyectos = true;
@@ -245,7 +245,7 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
 				return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+          query: "DocumentoEscrito.TipoDocumentoEscrito:5," +
             "TrabajoGrado.Id:" +
 						idTrabajoGrado,
 					limit: 1
@@ -455,15 +455,16 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.revisarProyectoSeleccionado = function(filaAsociada) {
-        ctrl.ProyectoSeleccionado = filaAsociada.entity;
-				ctrl.coleccionRespuestasProyecto = [];
-        ctrl.coleccionRespuestasProyecto = [{
-          idEstadoTrabajoGrado: 16,
-          nombreEstadoTrabajoGrado: "Modificable",
-        }, {
-          idEstadoTrabajoGrado: 17,
-          nombreEstadoTrabajoGrado: "Listo para sustentar",
-        }];
+				//ctrl.ProyectoSeleccionado = filaAsociada.entity;
+				$location.path("general/concepto_tg/"+filaAsociada.entity.Id);
+				/*ctrl.coleccionRespuestasProyecto = [];
+				ctrl.coleccionRespuestasProyecto = [{
+				idEstadoTrabajoGrado: 16,
+				nombreEstadoTrabajoGrado: "Modificable",
+				}, {
+				idEstadoTrabajoGrado: 17,
+				nombreEstadoTrabajoGrado: "Listo para sustentar",
+				}];
 				ctrl.cuadriculaEstudiantesDelProyecto.data = [];
 				ctrl.cargandoDatosEstudiantiles = true;
 				ctrl.errorCargandoDatosEstudiantiles = false;
@@ -494,6 +495,7 @@ angular.module('poluxClienteApp')
 						ctrl.errorCargandoDatosEstudiantiles = true;
 						ctrl.mensajeErrorCargandoDatosEstudiantiles = excepcionDuranteProcesamiento;
 					});
+				*/
 			}
 
 			/**

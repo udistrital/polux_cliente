@@ -13,7 +13,7 @@
  * @requires $window
  * @requires $sce
  * @requires $q
- * @requires nuxeo
+ * @requires nuxeoClient
  * @requires poluxRequest
  * @requires $routeParams
  * @requires $translate
@@ -34,7 +34,7 @@
  * @property {object} documentos Contiene las actas subidas a las carreras asocuadas al coordinador
  */
 angular.module('poluxClienteApp')
-  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location,token_service,sesionesRequest) {
+  .controller('SolicitudesAprobarSolicitudCtrl', function (poluxMidRequest,academicaRequest,$window,$sce,$q,nuxeoClient,nuxeo,poluxRequest,$routeParams,$translate,$scope,$location,token_service,sesionesRequest) {
     var ctrl = this;
 
     ctrl.respuestaSolicitud="";
@@ -860,9 +860,10 @@ angular.module('poluxClienteApp')
                         if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                           estadoTrabajoGrado = 13;
                         }
-                        // si la modalidad es de pasantia se va anteproyecto viable estado 5
+                        // si la modalidad es de pasantia se crea en estado de espera de ARL id 21
                         if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1) {
-                          estadoTrabajoGrado = 5;
+                          //estadoTrabajoGrado = 5;
+                          estadoTrabajoGrado = 21;
                         }
                         //data para crear el trabajo de grado
                         var data_trabajo_grado = {
@@ -1196,8 +1197,8 @@ angular.module('poluxClienteApp')
                     Titulo: data_tg.Titulo,
                     Enlace: ctrl.docPropuestaFinal,
                     Resumen: "Documento para revisión final del trabajo de grado",
-                    //Tipo documento 4 para revisión final
-                    TipoDocumentoEscrito: 4
+                    //Tipo documento 5 para revisión final
+                    TipoDocumentoEscrito: 5
                   };
                   var data_revision = {
                     TrabajoGrado: data_tg,
@@ -1315,61 +1316,6 @@ angular.module('poluxClienteApp')
 
     /**
      * @ngdoc method
-     * @name cargarDocumento
-     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-     * @param {string} nombre Nombre del documento que se cargara
-     * @param {string} descripcion Descripcion del documento que se cargara
-     * @param {blob} documento Blob del documento que se cargara
-     * @returns {undefined} No retorna ningun valor
-     * @description 
-     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     */
-    ctrl.cargarDocumento = function(nombre, descripcion, documento ,callback){
-            var defered = $q.defer();
-            var promise = defered.promise;
-            nuxeo.operation('Document.Create')
-              .params({
-                type: 'File',
-                name: nombre,
-                properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
-              })
-              .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas')
-              .execute()
-              .then(function(doc) {
-                  var nuxeoBlob = new Nuxeo.Blob({ content: documento });
-                  nuxeo.batchUpload()
-                  .upload(nuxeoBlob)
-                  .then(function(res) {
-                    return nuxeo.operation('Blob.AttachOnDocument')
-                        .param('document', doc.uid)
-                        .input(res.blob)
-                        .execute();
-                  })
-                  .then(function() {
-                    return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
-                  })
-                  .then(function(doc) {
-                    var url = doc.uid;
-                    callback(url);
-                    defered.resolve(url);
-                  })
-                  .catch(function(error) {
-                    console.log(error);
-                    $scope.loadFormulario = false;
-                    defered.reject(error);
-                  });
-              })
-              .catch(function(error) {
-                  console.log(error);
-                  $scope.loadFormulario = false;
-                  defered.reject(error);
-              });
-
-              return promise;
-    };
-
-    /**
-     * @ngdoc method
      * @name cargarJustificacion
      * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
      * @param {function} callFunction Funcion que se ejecuta una vez se termina de cargar el documento
@@ -1385,7 +1331,7 @@ angular.module('poluxClienteApp')
               $scope.loadFormulario = true;
               var documento = ctrl.acta;
               if(documento.type !== "application/pdf" || documento.size>tam){
-                ctrl.cargarDocumento("ActaSolicitud"+ctrl.solicitud, "Acta de evaluación de la solicitud "+ctrl.solicitud,documento, function(url){
+                nuxeoClient.createDocument("ActaSolicitud"+ctrl.solicitud, "Acta de evaluación de la solicitud "+ctrl.solicitud,documento, 'Actas', function(url){
                   ctrl.urlActa = url;
                 })
                 .then(function(){
@@ -1490,44 +1436,19 @@ angular.module('poluxClienteApp')
      * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
      */
     ctrl.getDocumento = function(docid){
-        if(docid!== undefined && docid!==""){
-          $scope.loadDocumento = true;
-        nuxeo.header('X-NXDocumentProperties', '*');
-          ctrl.obtenerDoc(docid).then(function(){
-             ctrl.obtenerFetch(ctrl.document).then(function(r){
-                 ctrl.blob=r;
-                 var fileURL = URL.createObjectURL(ctrl.blob);
-                 console.log(fileURL);
-                 ctrl.content = $sce.trustAsResourceUrl(fileURL);
-                 $window.open(fileURL);
-                 $scope.loadDocumento = false;
-              })
-              .catch(function(error){
-                console.log("error",error);
-                $scope.loadDocumento = false;
-                swal(
-                  $translate.instant("ERROR"),
-                  $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-                  'warning'
-                );
-              });
-          })
-          .catch(function(error){
-            console.log("error",error);
-            $scope.loadDocumento = false;
-            swal(
-              $translate.instant("ERROR"),
-              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-              'warning'
-            );
-          });
-        }else{
-          swal(
-            $translate.instant("ERROR"),
-            $translate.instant("DOCUMENTO.SIN_DOCUMENTO"),
-            'warning'
-          );
-        }
+      nuxeoClient.getDocument(docid)
+      .then(function(document){
+        $window.open(document.url);
+      })
+      .catch(function(error){
+        console.log("error",error);
+        swal(
+          $translate.instant("ERROR"),
+          $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+          'warning'
+        );
+      });
+  
     }
 
     /**
@@ -1565,7 +1486,7 @@ angular.module('poluxClienteApp')
         */
         var sql = "";
         angular.forEach(ctrl.carrerasCoordinador, function(carrera){
-            sql = sql+",Titulo.contains:Codigo de carrera:"+carrera.codigo_proyecto_curricular;
+            sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
 
             var parametrosDocumentos = $.param({
               query:"TipoDocumentoEscrito:1"+sql,

@@ -14,6 +14,7 @@
  * @requires $q
  * @requires $sce
  * @requires $window
+ * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxClienteApp.service:nuxeoService
@@ -45,11 +46,11 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+		function($q, $sce, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "51551021";
+			token_service.token.documento = "80093200";
 			ctrl.usuarioSesion = token_service.token.documento;
 
 			ctrl.cargandoAnteproyectos = true;
@@ -378,6 +379,7 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.actualizarCuadriculaDeAnteproyectos = function() {
+				ctrl.cuadriculaAnteproyectos.data = [];
 				ctrl.cargandoAnteproyectos = false;
 				ctrl.errorCargandoAnteproyectos = false;
 				ctrl.consultarAnteproyectos()
@@ -408,6 +410,10 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
+				//se  redireccióna a la página para dar el concepto
+				//console.log(filaAsociada.entity.Id);
+				$location.path("general/concepto_tg/"+filaAsociada.entity.Id);
+				/*
 				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
 				ctrl.coleccionRespuestasAnteproyecto = [];
 				if (ctrl.anteproyectoSeleccionado.TrabajoGrado.EstadoTrabajoGrado.Id == 4) {
@@ -418,7 +424,8 @@ angular.module('poluxClienteApp')
 						idEstadoTrabajoGrado: 6,
 						nombreEstadoTrabajoGrado: "Modificable",
 					}, {
-						idEstadoTrabajoGrado: 7,
+						//idEstadoTrabajoGrado: 7, porque si le llega a dar no viable, el trabajo de grado se cancela
+						idEstadoTrabajoGrado: 2,
 						nombreEstadoTrabajoGrado: "No viable",
 					}];
 				} else {
@@ -429,7 +436,8 @@ angular.module('poluxClienteApp')
 						idEstadoTrabajoGrado: 11,
 						nombreEstadoTrabajoGrado: "Modificable",
 					}, {
-						idEstadoTrabajoGrado: 12,
+						//idEstadoTrabajoGrado: 12, porque si le llega a dar no viable, el trabajo de grado se cancela
+						idEstadoTrabajoGrado: 2,
 						nombreEstadoTrabajoGrado: "No viable",
 					}];
 				}
@@ -462,7 +470,7 @@ angular.module('poluxClienteApp')
 						ctrl.cargandoDatosEstudiantiles = false;
 						ctrl.errorCargandoDatosEstudiantiles = true;
 						ctrl.mensajeErrorCargandoDatosEstudiantiles = excepcionDuranteProcesamiento;
-					});
+					});*/
 			}
 
 			/**
@@ -607,79 +615,18 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.abrirDocumento = function(docid) {
-				nuxeo.header('X-NXDocumentProperties', '*');
-
-				/**
-				 * @ngdoc method
-				 * @name obtenerDoc
-				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-				 * @description 
-				 * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
-				 * @param {undefined} undefined No requiere parámetros
-				 * @returns {Promise} La respuesta de la petición hacia la gestión documental
-				 */
-				ctrl.obtenerDoc = function() {
-					var defer = $q.defer();
-					nuxeo.request('/id/' + docid)
-						.get()
-						.then(function(response) {
-							ctrl.document = response;
-							defer.resolve(response);
-						})
-						.catch(function(error) {
-							defer.reject(error)
-						});
-					return defer.promise;
-				};
-
-				/**
-				 * @ngdoc method
-				 * @name obtenerFetch
-				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
-				 * @description 
-				 * Obtiene el blob de un documento.
-				 * @param {Object} doc Documento de nuxeo al cual se le obtendrá el Blob
-				 * @returns {Promise} La respuesta de obtener el blob del documento asociado
-				 */
-				ctrl.obtenerFetch = function(doc) {
-					var defer = $q.defer();
-					doc.fetchBlob()
-						.then(function(res) {
-							defer.resolve(res.blob());
-						})
-						.catch(function(error) {
-							defer.reject(error)
-						});
-					return defer.promise;
-				};
-
-				ctrl.obtenerDoc()
-					.then(function() {
-						ctrl.obtenerFetch(ctrl.document)
-							.then(function(r) {
-								ctrl.blob = r;
-								var fileURL = URL.createObjectURL(ctrl.blob);
-								console.log(fileURL);
-								ctrl.content = $sce.trustAsResourceUrl(fileURL);
-								$window.open(fileURL);
-							})
-							.catch(function(error) {
-								console.log("error", error);
-								swal(
-									$translate.instant("ERROR"),
-									$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-									'warning'
-								);
-							});
-					})
-					.catch(function(error) {
-						console.log("error", error);
-						swal(
-							$translate.instant("ERROR"),
-							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-							'warning'
-						);
-					});
+				nuxeoClient.getDocument(docid)
+				.then(function(document){
+					$window.open(document.url);
+				})
+				.catch(function(error) {
+					console.log("error", error);
+					swal(
+						$translate.instant("ERROR"),
+						$translate.instant("ERROR.CARGAR_DOCUMENTO"),
+						'warning'
+					);
+				});
 			}
 
 		});

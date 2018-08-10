@@ -16,7 +16,7 @@ angular.module('poluxClienteApp')
                 autor: '=?'
             },
             templateUrl: "views/directives/documento/ver_revision.html",
-            controller: function($scope) {
+            controller: function($scope,nuxeoClient) {
                 var ctrl = this;
 
                 $scope.$watch('paginaset', function() {
@@ -59,7 +59,8 @@ angular.module('poluxClienteApp')
                             comentarios.push(response.data);
                         });
                     }); //.then(function(data){console.log(data);});
-                    ctrl.coment = null;
+                    //ctrl.coment = null;
+                    comentario = null;
                     return comentarios;
                 };
 
@@ -75,6 +76,24 @@ angular.module('poluxClienteApp')
                     return comentarios;
                 };
 
+
+                ctrl.getDocument = function(uid){
+                      if(uid){
+                        nuxeoClient.getDocument(uid)
+                          .then(function(documento){
+                            ctrl.loadingVersion = false;
+                            window.open(documento.url);
+                          })
+                          .catch(function(error){
+                            console.log("error",error);
+                            swal(
+                              $translate.instant("ERROR"),
+                              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+                              'warning'
+                            );
+                          });
+                      }
+                    }
 
 
                 /*ctrl.postrev=function(){

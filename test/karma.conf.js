@@ -35,7 +35,6 @@ module.exports = function(config) {
       'bower_components/AngularJS-OAuth2/dist/angularJsOAuth2.js',
       'bower_components/angular-aria/angular-aria.js',
       'bower_components/angular-material/angular-material.js',
-      'bower_components/angular-tree-control/angular-tree-control.js',
       'bower_components/pdfmake/build/pdfmake.js',
       'bower_components/pdfmake/build/vfs_fonts.js',
       'bower_components/ngstorage/ngStorage.js',
@@ -60,6 +59,7 @@ module.exports = function(config) {
       'bower_components/angular-pdf/dist/angular-pdf.js',
       'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
       'bower_components/angular-ui-switch/angular-ui-switch.js',
+      'bower_components/angular-tree-control/angular-tree-control.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

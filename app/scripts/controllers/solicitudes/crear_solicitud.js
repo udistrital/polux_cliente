@@ -41,7 +41,7 @@
  * @property {object} Trabajo Datos del trabajo de grado que cursa el estudiante que esta realizando la solicitud.
  */
 angular.module('poluxClienteApp')
-.controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeo, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location,token_service) {
+.controller('SolicitudesCrearSolicitudCtrl', function(sesionesRequest, coreService, $window, $sce, $scope, nuxeoClient, $q, $translate, poluxMidRequest, poluxRequest, $routeParams, academicaRequest, cidcRequest, $location,token_service) {
   $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
   $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
   $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -1323,7 +1323,7 @@ angular.module('poluxClienteApp')
 
     angular.forEach(ctrl.detalles, function(detalle) {
       if (detalle.Detalle.TipoDetalle.Nombre === 'Numerico') {
-        detalle.respuesta = detalle.respuesta+"";
+        detalle.respuesta = detalle.respuestaNumerica + "";
       }
       if (detalle.Detalle.TipoDetalle.Nombre === 'Label') {
         detalle.respuesta = detalle.opciones[0].bd;
@@ -1447,76 +1447,19 @@ angular.module('poluxClienteApp')
     }
   }
 
- /**
-     * @ngdoc method
-     * @name cargarDocumento
-     * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-     * @param {string} nombre Nombre del documento que se cargara
-     * @param {string} descripcion Descripcion del documento que se cargara
-     * @param {blob} documento Blob del documento que se cargara
-     * @param {function} callback funcion que se ejecuta al cumplirse la promesa
-     * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con la url del objeto cargado. 
-     * @description 
-     * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-     */
-  ctrl.cargarDocumento = function(nombre, descripcion, documento, callback) {
-    var defer = $q.defer();
-    var promise = defer.promise;
-    nuxeo.operation('Document.Create')
-      .params({
-        type: 'File',
-        name: nombre,
-        properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
-      })
-      .input('/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes')
-      .execute()
-      .then(function(doc) {
-        var nuxeoBlob = new Nuxeo.Blob({
-          content: documento
-        });
-        nuxeo.batchUpload()
-          .upload(nuxeoBlob)
-          .then(function(res) {
-            return nuxeo.operation('Blob.AttachOnDocument')
-              .param('document', doc.uid)
-              .input(res.blob)
-              .execute();
-          })
-          .then(function() {
-            return nuxeo.repository().fetch(doc.uid, {
-              schemas: ['dublincore', 'file']
-            });
-          })
-          .then(function(doc) {
-            var url = doc.uid;
-            callback(url);
-            defer.resolve(url);
-          })
-          .catch(function(error) {
-            defer.reject(error)
-          });
-      })
-      .catch(function(error) {
-        defer.reject(error)
-      });
-
-    return promise;
-  }
-
   /**
      * @ngdoc method
      * @name cargarDocumentos
      * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
      * @description 
-     * Si los detalles de la solicitud tienen asociados documentos conecta el cliente de nuxeo y llama a la función cargarDocumento para cargar todos 
-     * los documentos a nuxeo, en caso de que no los tenga o que haya terminado de cargarlos llama a la función cargarSolicitudes.
+     * Si los detalles de la solicitud tienen asociados documentos conecta el cliente de nuxeoClient y llama a la función cargarDocumento para cargar todos 
+     * los documentos a nuxeoClient, en caso de que no los tenga o que haya terminado de cargarlos llama a la función cargarSolicitudes.
      * {@link services/}
      * @param {undefined} undefined No requiere parametros
      * @returns {undefined} No retorna nigún valor
      */
   ctrl.cargarDocumentos = function(callFunction) {
     if (ctrl.detallesConDocumento.length > 0) {
-      nuxeo.connect().then(function(client) {
         // OK, the returned client is connected
         var fileTypeError = false;
         angular.forEach(ctrl.detallesConDocumento, function(detalle) {
@@ -1530,7 +1473,7 @@ angular.module('poluxClienteApp')
         if (!fileTypeError) {
           var promiseArr = [];
           angular.forEach(ctrl.detallesConDocumento, function(detalle) {
-            var anHttpPromise = ctrl.cargarDocumento(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, function(url) {
+            var anHttpPromise = nuxeoClient.createDocument(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, 'Solicitudes', function(url) {
               detalle.respuesta = url;
             });
             promiseArr.push(anHttpPromise);
@@ -1553,15 +1496,6 @@ angular.module('poluxClienteApp')
           );
           $scope.loadFormulario = false;
         }
-      }, function(err) {
-        // cannot connect
-        swal(
-          $translate.instant("ERROR.SUBIR_DOCUMENTO"),
-          $translate.instant("VERIFICAR_DOCUMENTO"),
-          'warning'
-        );
-        $scope.loadFormulario = false;
-      });
     } else {
       //agregar validación de error
       $scope.loadFormulario = true;

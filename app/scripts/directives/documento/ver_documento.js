@@ -7,7 +7,7 @@
  * # verDocumento
  */
 angular.module('poluxClienteApp')
-    .directive('verDocumento', function(poluxRequest, constantes, nuxeo, $q, $sce, $translate) {
+    .directive('verDocumento', function(poluxRequest, constantes, nuxeoClient, $q, $sce, $translate) {
         return {
             restrict: "E",
             scope: {
@@ -18,7 +18,6 @@ angular.module('poluxClienteApp')
             controller: function($scope) {
                 var self = this;
                 $scope.msgCargandoDocumento=$translate.instant('LOADING.CARGANDO_DOCUMENTO');
-                $scope.load=true;
 
                 $scope.$watch('documento', function() {
                     if($scope.documento != undefined){
@@ -30,57 +29,20 @@ angular.module('poluxClienteApp')
 
 
                 self.getDocumento = function(docid){
-                  console.log(docid);
+                    $scope.loadDocumento=true;
+                    console.log(docid);
                     if(docid!=null){
-
-                      nuxeo.header('X-NXDocumentProperties', '*');
-
-                      self.obtenerDoc = function () {
-                        var defered = $q.defer();
-
-                        nuxeo.request('/id/'+docid)
-                            .get()
-                            .then(function(response) {
-                              console.log(response);
-                              self.doc=response;
-                              //var aux=response.get('file:content');
-                              self.document=response;
-                              defered.resolve(response);
+                        nuxeoClient.getDocument(docid)
+                            .then(function(documento){
+                               //$window.open(fileURL);
+                               $scope.pdfUrl=documento.url;
+                               $scope.loadDocumento=false;
                             })
                             .catch(function(error){
-                                defered.reject(error)
-                            });
-                        return defered.promise;
-                      };
-
-                      self.obtenerFetch = function (doc) {
-                        var defered = $q.defer();
-
-                        doc.fetchBlob()
-                          .then(function(res) {
-                            console.log(res);
-                            defered.resolve(res.blob());
-
-                          })
-                          .catch(function(error){
-                                defered.reject(error)
-                            });
-                        return defered.promise;
-                      };
-
-                        self.obtenerDoc().then(function(){
-
-                           self.obtenerFetch(self.document).then(function(r){
-                               self.blob=r;
-                               var fileURL = URL.createObjectURL(self.blob);
-                               console.log(fileURL);
-                               self.content = $sce.trustAsResourceUrl(fileURL);
-                               //$window.open(fileURL);
-                               $scope.pdfUrl=fileURL;
-                               $scope.load=false;
-                            });
-                        });
-
+                                $scope.errorDocumento = true;
+                                $scope.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO"); 
+                                $scope.loadDocumento = false;
+                            })
                     }
 
                 }
