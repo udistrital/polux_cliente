@@ -747,8 +747,8 @@ angular.module('poluxClienteApp')
                       //Documento del codirector
                       var aux = detalle.Descripcion.split(" ");
                       ctrl.codirector = Number(aux[0]);
-                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59){
-                      //Documento del codirector
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59 || detalle.DetalleTipoSolicitud.Detalle.Id == 60){
+                      //Documento de propuesta final si el detalle es documennto fila o evidencias de publicación
                       ctrl.docPropuestaFinal = detalle.Descripcion;
                     }
                 });
@@ -1162,6 +1162,10 @@ angular.module('poluxClienteApp')
                   data_tg.EstadoTrabajoGrado = {
                     Id: 15 
                   };
+                  if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8 ){
+                    // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
+                    data_tg.EstadoTrabajoGrado.Id = 17;
+                  }
                   //Vinculaciones del tg
                   var data_vinculaciones = [];
                   //Si se escogio cambiar la vinculación
