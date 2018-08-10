@@ -75,6 +75,13 @@
                         <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.Nombre}} </label>
                     </div>
+                    <!-- Si el estado del trabajo de grado ya esta sustentado-->
+                    <div ng-if="consultarTrabajoGrado.trabajoGrado.actaSocializacion">
+                        <div class="row">
+                            <label class="control-label col-sm-2"> {{'ACTA_SOCIALIZACION' | translate}}:  </label>
+                            <label ng-click="consultarTrabajoGrado.getDocumento(consultarTrabajoGrado.trabajoGrado.actaSocializacion.DocumentoEscrito.Enlace)" class="col-sm-10" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                        </div>
+                    </div>
                     <div ng-if="consultarTrabajoGrado.esProyectoModificable">
                         <div class="row">
                             <div class="control-label col-sm-12">

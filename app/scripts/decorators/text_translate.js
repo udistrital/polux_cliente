@@ -316,6 +316,7 @@ var text_es = {
         INSERTANDO_REVISIONES: "Ocurrió un error al registrar las revisiones del trabajo de grado",
         VINCULADO_NO_NOTA:"No ha registrado nota en el sistema",
         VINCULADO_NO_PUEDE_NOTA:"No puede registrar nota en el sistema",
+        CARGAR_ACTA_SOCIALIZACION:"Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -735,6 +736,7 @@ var text_es = {
     },
     DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
     QUITAR_DOCUMENTO: "Quitar",
+    ACTA_SOCIALIZACION: "Acta de socialización",
 };
 
 /**
@@ -1042,6 +1044,7 @@ var text_en = {
         INSERTANDO_REVISIONES: "An error ocurred when trying to register the degree work corrections",
         VINCULADO_NO_NOTA:"The teacher have not registered a grade in the system",
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
+        CARGAR_ACTA_SOCIALIZACION:"There was an error occurred loading the socialization certificate, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1460,6 +1463,7 @@ var text_en = {
     },
     DESEA_INCLUIR_DOCUMENTO: "Do you want to include the revision document?",
     QUITAR_DOCUMENTO: "Remove",
+    ACTA_SOCIALIZACION: "Socialization certificate",
 };
 
 /**

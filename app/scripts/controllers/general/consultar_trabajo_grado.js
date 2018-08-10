@@ -197,6 +197,36 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
+     /**
+     * @ngdoc method
+     * @name cargarActaSocializacion
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @description 
+     * Consulta el acta de socialización de un trabajo de grado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+     * @param {undefined} undefined no requiere parametros
+     * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+     */
+    ctrl.cargarActaSocializacion = function() {
+      var defer = $q.defer();
+      //Se consulta el tipo de documento 6 que es acta de socialización
+      var parametrosActaSocializacion = $.param({
+        query: "DocumentoEscrito.TipoDocumentoEscrito:6,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+        limit: 1,
+      });
+      poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
+        .then(function(responseActaSocializacion) {
+          if (responseActaSocializacion.data != null) {
+            ctrl.trabajoGrado.actaSocializacion = responseActaSocializacion.data[0];
+          } 
+          defer.resolve();
+        })
+        .catch(function(error) {
+          ctrl.mensajeError = $translate.instant("ERROR.CARGAR_ACTA_SOCIALIZACION");
+          defer.reject(error);
+        });
+      return defer.promise;
+    }
+
     /**
      * @ngdoc method
      * @name getEspaciosAcademicosInscritos
@@ -519,6 +549,7 @@ angular.module('poluxClienteApp')
               promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
               promises.push(ctrl.cargarAsignaturasTrabajoGrado());
               promises.push(ctrl.cargarAreasConocimiento());
+              promises.push(ctrl.cargarActaSocializacion());
 
             //Consulta las vinculaciones 
             if(ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3){
