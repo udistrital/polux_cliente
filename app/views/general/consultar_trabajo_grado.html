@@ -34,7 +34,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <label class="control-label col-sm-2"> {{'CODIGO' | translate}}: </label>
-                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiante.codigo}} </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiante.datos.codigo}} </label>
                     </div>
                     <div class="row">
                         <label class="control-label col-sm-2"> {{'NOMBRE' | translate}}: </label>
@@ -70,6 +70,10 @@
                     <div class="row">
                         <label class="control-label col-sm-2"> {{'PERIODO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.PeriodoAcademico}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'ESTUDIANTES' | translate}}: </label>
+                        <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.estudiantes}} </label>
                     </div>
                     <div class="row">
                         <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>

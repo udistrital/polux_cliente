@@ -102,7 +102,7 @@ angular.module('poluxClienteApp')
     ctrl.cargarEstudiante = function(estudiante) {
       var defer = $q.defer();
       //consultar datos básicos del estudiante
-      academicaRequest.get("datos_basicos_estudiante", [estudiante.codigo])
+      academicaRequest.get("datos_basicos_estudiante", [estudiante.Estudiante])
         .then(function(responseDatosBasicos) {
           if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
             estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
@@ -477,7 +477,7 @@ angular.module('poluxClienteApp')
       return defer.promise;
     }
 
-      /**
+    /**
      * @ngdoc method
      * @name getDocumento
      * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
@@ -499,6 +499,51 @@ angular.module('poluxClienteApp')
           'warning'
         );
       });
+    }
+
+    /**
+     * @ngdoc method
+     * @name getEstudiantesTg
+     * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+     * @param {undefined} undefined No recibe ningún parametro
+     * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+     * @description 
+     * Consulta de {@link services/poluxService.service:poluxRequest Polux} los estudiantes asociados a un trabajo de grado y sus datos
+     */
+    ctrl.getEstudiantesTg = function(){
+      var defer = $q.defer();
+      //Se buscan los estuidiantes activos
+      var parametrosEstudiantes = $.param({
+        query:"EstadoEstudianteTrabajoGrado:1,TrabajoGrado:"+ctrl.trabajoGrado.Id,
+        limit:0
+      });
+      poluxRequest.get("estudiante_trabajo_grado",parametrosEstudiantes)
+      .then(function(responseEstudiantes){
+        if(responseEstudiantes.data != null){
+          var promesasEstudiantes = [];
+          angular.forEach(responseEstudiantes.data, function(estudiante){
+            promesasEstudiantes.push(ctrl.cargarEstudiante(estudiante));
+          });
+          $q.all(promesasEstudiantes)
+            .then(function(){
+              ctrl.trabajoGrado.estudiantes = responseEstudiantes.data.map(function(estudiante) {
+                return estudiante.datos.codigo+" - "+estudiante.datos.nombre;
+              }).join(', ');
+              defer.resolve();
+            })
+            .catch(function(error){
+              defer.reject(error);
+            });
+        }else{
+           ctrl.mensajeError = $translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO");
+           defer.reject("sin estudiantes");
+        }
+      })
+      .catch(function(error){
+        ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ESTUDIANTE_TRABAJO_GRADO");
+        defer.reject(error);
+      });
+      return defer.promise;
     }
     
     /**
@@ -544,12 +589,13 @@ angular.module('poluxClienteApp')
               }
               var promises = [];
               ctrl.trabajoGrado.estudiante = {
-                "codigo": ctrl.codigoEstudiante
+                "Estudiante": ctrl.codigoEstudiante
               }
               promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
               promises.push(ctrl.cargarAsignaturasTrabajoGrado());
               promises.push(ctrl.cargarAreasConocimiento());
               promises.push(ctrl.cargarActaSocializacion());
+              promises.push(ctrl.getEstudiantesTg());
 
             //Consulta las vinculaciones 
             if(ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3){
