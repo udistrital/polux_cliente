@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "79777053";
+			token_service.token.documento = "80093200";
 			ctrl.usuarioSesion = token_service.token.documento;
 
 			ctrl.cargandoProyectos = true;
