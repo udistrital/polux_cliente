@@ -2,7 +2,7 @@
 
 /**
   * @ngdoc overview
-  * @name nuxeoClient
+  * @name nuxeoService
   * @description Modulo para servicio de nuxeoClient, provee los servicios descritos en {@link poluxService.service:nuxeoClient nuxeoClient}
   */
 angular.module('nuxeoService',[])

@@ -5,13 +5,11 @@
  * @name poluxClienteApp.cadenaService
  * @description
  * # cadenaService
+ * Actualmente no se utiliza.
  * Factory in the poluxClienteApp.
  */
 angular.module('cadenaService', [])
   .factory('cadenaRequest', function() {
-    // AngularJS will instantiate a singleton by calling "new" on this function
-
-
     /*
     Permite transformar los strings a formatos de tipo titulo o Capitalize
     */

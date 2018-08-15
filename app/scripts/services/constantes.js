@@ -5,6 +5,7 @@
  * @name poluxClienteApp.constantes
  * @description
  * # constantes
+ * Actualmente no se utiliza.
  * Constant in the poluxClienteApp.
  */
 var HOST_NUXEO = "https://athento.udistritaloas.edu.co/nuxeo/";
