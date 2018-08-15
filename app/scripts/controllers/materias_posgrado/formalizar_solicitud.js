@@ -104,7 +104,7 @@ angular.module('poluxClienteApp')
 			 * @description
 			 * Función que obtiene el periodo académico según los parámetros de consulta.
 			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer los periodos académicos registrados.
-			 * @param {undefined} undefined no requiere parametros
+			 * @param {undefined} undefined No requiere parámetros
 			 * @returns {Promise} El periodo académico, o la excepción generada
 			 */
 			ctrl.obtenerPeriodoCorrespondiente = function() {
