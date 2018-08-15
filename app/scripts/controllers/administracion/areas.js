@@ -19,7 +19,7 @@
  * @property {Boolean} areasConocimientoError Indicador que maneja la aparición de error durante la consulta de las áreas de conocimiento
  * @property {String} nombreArea Texto que manipula el área de conocimiento para el registro
  * @property {String} descripcionArea Texto que manipula la descripción del área de conocimiento para el registro
- * @property {Integer} areaSnies Valor que carga el identificador del área de SNIES consultada
+ * @property {Number} areaSnies Valor que carga el identificador del área de SNIES consultada
  * @property {String} msgCargandoAreas Mensaje que aparece durante la carga de áreas consultadas
  * @property {String} msgRegistrandoArea Mensaje que aparece durante el registro del área ingresada
  * @property {Boolean} loadAreas Indicador que maneja la carga de las áreas de SNIES

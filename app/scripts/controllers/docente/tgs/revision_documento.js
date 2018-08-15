@@ -6,8 +6,8 @@
  * @description
  * # DocenteTgsRevisionDocumentoCtrl
  * Controller of the poluxClienteApp.
- * Controlador que regula las operaciones de administración sobre las áreas de conocimiento para los trabajos de grado.
- * Se realiza una consulta de área de SNIES registrada para consultar y editar el contenido registrado.
+ * Controlador que regula las operaciones de revisión sobre los proyectos de grado del estudiante.
+ * Reconoce las vinculaciones del docente en sesión y permite crear revisiones sobre el documento que está dirigiendo.
  * @requires $q
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
@@ -24,7 +24,7 @@
  * @property {Object} revisionesTrabajoGrado Objeto que carga las revisiones asociadas al proyecto de grado
  * @property {Boolean} errorCargandoDocumento Indicador que maneja la aparición de un error durante la carga del documento de trabajo de grado
  * @property {Boolean} errorCargandoRevisiones Indicador que maneja la aparición de un error durante la carga de las revisiones del trabajo de grado
- * @property {Integer} documentoTrabajoGrado Valor que carga el identificador del documento seleccionado
+ * @property {Number} documentoTrabajoGrado Valor que carga el identificador del documento seleccionado
  * @property {Object} documentoEscrito Objeto que carga la información del documento escrito seleccionado
  * @property {String} mensajeErrorCargandoRevisiones Mensaje que aparece en caso de haber ocurrido un error durante la carga de las revisiones asociadas al proyecto
  * @property {String} mensajeErrorCargandoDocumento Mensaje que aparece en caso de haber ocurrido un error durante la carga del documento asociado al proyecto
