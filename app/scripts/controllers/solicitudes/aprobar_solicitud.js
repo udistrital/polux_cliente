@@ -840,7 +840,9 @@ angular.module('poluxClienteApp')
                                 tempTrabajo.Titulo = detalle.Descripcion;
                             } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Estudiantes") {
                                 tempTrabajo.Estudiantes = detalle.Descripcion.split(',');
-                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Propuesta") {
+                            } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Propuesta" || 
+                              detalle.DetalleTipoSolicitud.Detalle.Nombre == "Plan de actividades de investigación" ||
+                              detalle.DetalleTipoSolicitud.Detalle.Nombre == "Plan o modelo de negocios") {
                                 tempTrabajo.Enlace = detalle.Descripcion;
                             } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Resumen propuesta") {
                                 tempTrabajo.Resumen = detalle.Descripcion;
