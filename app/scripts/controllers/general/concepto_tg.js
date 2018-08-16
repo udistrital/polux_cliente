@@ -50,7 +50,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description
        * Función que recorre la base de datos de acuerdo a la vinculación del trabajo de grado y trae los datos del docente asociado.
-       * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica
+       * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica.
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} La información del docente asociado o la excepción generada
        */
@@ -75,9 +75,10 @@ angular.module('poluxClienteApp')
        * @name getDocumentoEscrito
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
-       * Consula el documento escrito asociado a un trabajo de grado
+       * Consula el documento escrito asociado a un trabajo de grado.
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
        * @param {Object} trabajoGrado Trabajo de grado del que se consulta el documento
-       * @returns {Promise} Objeto de tipo promesa que se resuelve sin ningún valor
+       * @returns {Promise} Objeto de tipo promesa que se resuelve con la información consultada o la excepción generada
        */
       ctrl.getDocumentoEscrito = function(trabajoGrado) {
         var defer = $q.defer();
@@ -107,6 +108,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
        * Consula las revisiones asociadas a un trabajo de grado
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los datos de la base del aplicativo.
        * @param {Integer} idTrabajoGrado El trabajo de grado al que se le realizan las revisiones a consultar
        * @returns {Promise} Objeto de tipo promesa que resuelve la consulta o rechaza la excepción generada
        */
@@ -137,7 +139,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
        * Permite agregar una correción a la revisión que se esta realizando
-       * @param {Object}  Undefined No recibe parametros
+       * @param {undefined} undefined No recibe parametros
        * @returns {Undefined} No retorna ningún valor
        */
       ctrl.agregarCorreccion = function() {
@@ -156,8 +158,8 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
        * Permite eliminar una correción a la revisión que se esta realizando
-       * @param {Object}  correcion Correcion que se eliminará
-       * @returns {Undefined} No retorna ningún valor
+       * @param {Object} correcion Correción que se eliminará
+       * @returns {undefined} No retorna ningún valor
        */
       ctrl.eliminarCorreccion = function(correcion) {
         ctrl.revisionActual.Correcciones.splice(ctrl.revisionActual.Correcciones.indexOf(correcion), 1);
@@ -168,10 +170,10 @@ angular.module('poluxClienteApp')
        * @name editarCorreccion
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
-       * Permite editar una correción a la revisión que se esta realizando
-       * @param {Object}  correcion Correcion que se edita
-       * @param {Object}  correcion_temp Correcion editada
-       * @returns {Undefined} No retorna ningún valor
+       * Permite editar una correción a la revisión que se está realizando.
+       * @param {Object} correcion Correción que se edita
+       * @param {Object} correcion_temp Correción editada
+       * @returns {undefined} No retorna ningún valor
        */
       ctrl.editarCorreccion = function(correcion, correcion_temp) {
         correcion.Observacion = correcion_temp.Observacion;
@@ -183,7 +185,7 @@ angular.module('poluxClienteApp')
        * @name copyObject
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
-       * Consulta los datos basicos del trabajo de grado, llama a las funciones para cargar el documento y cargar las revisiones previas
+       * Realiza una clonación del objeto que se recibe.
        * @param {Object} object El objeto al que se le efectuará la clonación
        * @returns {Object} El objeto clonado
        */
@@ -196,9 +198,9 @@ angular.module('poluxClienteApp')
        * @name getDataTg
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
-       * Consulta los datos basicos del trabajo de grado, llama a las funciones para cargar el documento y cargar las revisiones previas
-       * @param {number}  idVinculacion id de la vincualación con la que se traen los datos del trabajo de grado, entre otros
-       * @returns {Undefined} No retorna ningún valor
+       * Consulta los datos básicos del trabajo de grado, llama a las funciones para cargar el documento y cargar las revisiones previas.
+       * @param {Number} idVinculacion Identificador de la vincualación con la que se traen los datos relacionados con el trabajo de grado.
+       * @returns {undefined} No retorna ningún valor
        */
       ctrl.getDataTg = function(idVinculacion) {
         ctrl.cargando = true;
@@ -380,8 +382,8 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
        * Permite guardar la revision realizada
-       * @param {Object}  Undefined No recibe parametros
-       * @returns {Undefined} No retorna ningún valor
+       * @param {undefined} undefined No recibe parámetros
+       * @returns {undefined} No retorna ningún valor
        */
       ctrl.guardarRevision = function() {
         console.log(ctrl.revisionActual);
