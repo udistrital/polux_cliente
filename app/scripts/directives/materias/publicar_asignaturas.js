@@ -31,7 +31,7 @@ angular.module('poluxClienteApp')
        * @description
        * # PublicarAsignatirasCtrl
        * Controller of the poluxClienteApp.directive:publicarAsignaturas
-       * Controlador de la directiva publicar asignaturas
+       * Controlador de la directiva {@link poluxClienteApp.directive:publicarAsignaturas publicarAsignaturas}
        * @requires $route
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires $scope
