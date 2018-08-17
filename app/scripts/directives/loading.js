@@ -33,7 +33,7 @@ angular.module('poluxClienteApp')
        * @name poluxClienteApp.directive:loading.controller:loadingCtl
        * @description
        * # MateriasPosgradoFormalizarSolicitudCtrl
-       * Controller of the poluxClienteApp.directive:loading
+       * # Controller of the poluxClienteApp.directive:loading
        * Controlador de la directiva loading
        * @requires $scope
        */
