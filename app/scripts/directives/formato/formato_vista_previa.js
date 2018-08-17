@@ -2,29 +2,63 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:formato/vistaPreviaFormato
+ * @name poluxClienteApp.directive:vistaPreviaFormato
  * @description
- * # formato/vistaPreviaFormato
+ * # vistaPreviaFormato
+ * Directiva que muestra la vista previa de un formato de evaluación de un proyecto.
+ * Controlador: {@link poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl vistaPreviaFormatoCtrl}
+ * @param {object} formato Formato del que se muestra la vista previa.
  */
 angular.module('poluxClienteApp')
-    .directive('vistaPreviaFormato', function() {
+    .directive('vistaPreviaFormato', function () {
         return {
             restrict: 'E',
             scope: {
                 formato: '='
             },
-            link: function(scope, elm, attr) {
-                scope.$watch('formato', function(newValue, oldValue) {
+            link: function (scope, elm, attr) {
+                /**
+                 * @ngdoc method
+                 * @name watchFormato
+                 * @methodOf poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl
+                 * @param {undefined} undefined No recibe parametros.
+                 * @returns {undefined} no retorna ningún valor.
+                 * @description 
+                 * Observa los cambios en el formato seleccionado y llama a la función que refresca la vista.
+                 */
+                scope.$watch('formato', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         scope.refresh_format_view(newValue);
                     }
                 }, true);
             },
             templateUrl: 'views/directives/formato/vista_previa_formato.html',
-            controller: function(poluxRequest, $scope, $http) {
+            /**
+             * @ngdoc controller
+             * @name poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl
+             * @description
+             * # vistaPreviaFormatoCtrl
+             * # Controller of the poluxClienteApp.directive:vistaPreviaFormato
+             * Controlador de la directiva {@link poluxClienteApp.directive:vistaPreviaFormato vistaPreviaFormato}.
+             * @requires services/poluxService.service:poluxRequest
+             * @requires $scope
+             * @requires $http
+             * @property {object} imagen_ud Logo de la universidad para generación del pdf.
+             * @property {object} pdfgen_all Propiedades de configuación para generación de pdf.
+             */
+            controller: function (poluxRequest, $scope, $http) {
 
+                /**
+                 * @ngdoc method
+                 * @name obtenerLogo
+                 * @methodOf poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl
+                 * @param {undefined} undefined No recibe parametros
+                 * @returns {undefined} no retorna ningún valor.
+                 * @description 
+                 * Obtiene el logo de la universidad para incluir lo en el pdf.
+                 */
                 $http.get("scripts/models/imagen_ud.json")
-                    .then(function(response) {
+                    .then(function (response) {
                         $scope.imagen_ud = response.data;
                     });
 
@@ -52,7 +86,16 @@ angular.module('poluxClienteApp')
                     }
                 };
                 $scope.formato_vista = {};
-                $scope.generar_pdf = function(formato) {
+                /**
+                 * @ngdoc method
+                 * @name generar_pdf
+                 * @methodOf poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl
+                 * @param {undefined} undefined No recibe parametros
+                 * @returns {undefined} no retorna ningún valor.
+                 * @description 
+                 * Permite generar el pdf que se muestra en la vista.
+                 */
+                $scope.generar_pdf = function (formato) {
                     $scope.pdfgen_all.name = formato.Formato.Nombre;
                     $scope.pdfgen_all.pdfgen.content = [];
 
@@ -74,7 +117,7 @@ angular.module('poluxClienteApp')
                         style: 'subheader',
                         alignment: 'center'
                     });
-                    angular.forEach(formato.TrPreguntas, function(d) {
+                    angular.forEach(formato.TrPreguntas, function (d) {
                         switch (d.Pregunta.Tipo) {
                             case "cerrado_unico":
 
@@ -86,7 +129,7 @@ angular.module('poluxClienteApp')
 
                                 var ul = [];
                                 console.log(d.Respuestas);
-                                angular.forEach(d.Respuestas, function(r) {
+                                angular.forEach(d.Respuestas, function (r) {
                                     console.log(r.IdRespuesta.Descripcion);
                                     ul.push(r.IdRespuesta.Descripcion);
                                 });
@@ -106,7 +149,7 @@ angular.module('poluxClienteApp')
 
                                 var ul = [];
                                 console.log(d.Respuestas);
-                                angular.forEach(d.Respuestas, function(r) {
+                                angular.forEach(d.Respuestas, function (r) {
                                     console.log(r.IdRespuesta.Descripcion);
                                     ul.push(r.IdRespuesta.Descripcion);
                                 });
@@ -146,10 +189,20 @@ angular.module('poluxClienteApp')
                     });
 
                 };
-                $scope.refresh_format_view = function(id) {
+
+                /**
+                 * @ngdoc method
+                 * @name refresh_format_view
+                 * @methodOf poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl
+                 * @param {number} id Id del formato que se cargará en la vista.
+                 * @returns {undefined} no retorna ningún valor.
+                 * @description 
+                 * Permite cargar la data del formato de {@link services/poluxClienteApp.service:poluxService poluxService}
+                 */
+                $scope.refresh_format_view = function (id) {
                     $scope.respuestas_vista = [];
                     poluxRequest.get("tr_formato/" + id, '')
-                        .then(function(response) {
+                        .then(function (response) {
                             $scope.formato_vista = response.data;
                             $scope.generar_pdf($scope.formato_vista);
                         });
