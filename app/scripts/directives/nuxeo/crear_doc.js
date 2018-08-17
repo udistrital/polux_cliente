@@ -15,7 +15,7 @@
  * @param {string} path Path del documento cuando se cargo.
  */
 angular.module('poluxClienteApp')
-    .directive('nuxeo/crearDoc', function() {
+    .directive('nuxeo/crearDoc', function () {
         return {
             restrict: 'E',
             scope: {
@@ -41,7 +41,7 @@ angular.module('poluxClienteApp')
              * @property {string} ubicacion Nombre del workspace donde se guardará el documento.
              * @property {string} path Path del documento cuando se cargo.
              */
-            controller: function($scope, nuxeo, $q) {
+            controller: function ($scope, nuxeo, $q) {
                 var ctrl = this;
                 /**
                  * @ngdoc method
@@ -52,14 +52,14 @@ angular.module('poluxClienteApp')
                  * @description 
                  * Vigila los cambios del objeto sol y los carga en el controlador.
                  */
-                $scope.$watch('sol', function() {
+                $scope.$watch('sol', function () {
                     ctrl.path = $scope.path;
                     ctrl.titulo = $scope.titulo;
                     ctrl.resumen = $scope.resumen;
                     ctrl.tipo = $scope.tipo;
                     ctrl.ubicacion = $scope.ubicacion;
                 });
-                $q.when(nuxeo.request('/path/').get()).then(function(res) {
+                $q.when(nuxeo.request('/path/').get()).then(function (res) {
                     $scope.res = res;
                 });
 
