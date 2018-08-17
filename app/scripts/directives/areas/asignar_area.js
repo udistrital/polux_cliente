@@ -27,7 +27,7 @@ angular.module('poluxClienteApp')
        * @description
        * # AsignarAreaCtrl
        * # Controller of the poluxClienteApp.directive:asignarArea
-       * Controlador de la directiva asignar_area.
+       * Controlador de la directiva {@link poluxClienteApp.directive:asignarArea asignarArea}.
        * @requires $scope
        * @property {object} nuevaArea Área que se va a agregar
        * @property {String} Nombre Nombre del área que se agrega
