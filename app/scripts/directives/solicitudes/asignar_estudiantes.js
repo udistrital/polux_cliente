@@ -12,13 +12,13 @@
  * @param {number} modalidad Identificador de la modalidad a la que pertenece la solicitud
  */
 angular.module('poluxClienteApp')
-  .directive('asignarEstudiantes', function ($translate, poluxRequest,academicaRequest,poluxMidRequest) {
+  .directive('asignarEstudiantes', function ($translate, poluxRequest, academicaRequest, poluxMidRequest) {
     return {
       scope: {
         estudiante: '=',
         estudiantes: '=',
         modalidad: '=',
-        },
+      },
       templateUrl: 'views/directives/solicitudes/asignar_estudiantes.html',
       /**
        * @ngdoc controller
@@ -26,13 +26,26 @@ angular.module('poluxClienteApp')
        * @description
        * # poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl
        * Controller of the poluxClienteApp.directive:asignarEstudiante
-       * Controlador de la directiva asignarEstudiante que permite agregar estudiantes a la solicitud inical de una modalidad de trabajo de grado
+       * Controlador de la directiva {@link poluxClienteApp.directive:asignarEstudiante asignarEstudiante} que permite agregar estudiantes a la solicitud inical de una modalidad de trabajo de grado
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires services/academicaService.service:academicaRequest
        * @requires services/poluxMidService.service:poluxMidRequest
+       * @requires $scope
+       * @property {object} estudiante Datos del estudiante que se va a almacenar.
+       * @property {boolean} estudianteRegistrado Booleano que permite identificar si un estudiante esta registrado o no.
+       * @property {boolean} estudianteExiste Booleano que permite identificar si el estudiante existe o no.
+       * @property {boolean} estudianteValido Booleano que permite identificar si el estudiante es valido para ser solicitado o no.
+       * @property {boolean} estudianteConTrabajo Booleano que permite identificar si el estudiante tiene un trabajo de grado o no.
+       * @property {boolean} cantidadExcedida Booleano que permite identificar si se excede la cantidad de estudiantes que se pueden agregar.
+       * @property {boolean} estudianteNoEncontrado Booleano que permite identificar si el estudiante es encontrado o no.
+       * @property {boolean} estudianteConSolicitud Booleano que permite identificar si el estudiante solicitado tiene una solicitud pendiente o no.
+       * @property {boolean} loading Booleano que permite identificar si se esta cargando o no.
+       * @property {boolean} error Booleano que permite identificar si ocurrio un error ejecutando el proceso.
+       * @property {array} nuevosEstudiantes Estudiantes que se agregarán al trabajo de grado.
+       * @property {object} datosModalidad Datos de la modalidad a la que se trata de agregar el estudiante.
        */
-      controller:function($scope){
+      controller: function ($scope) {
         var ctrl = this;
         ctrl.cargando = $translate.instant("LOADING.CARGANDO_ESTUDIANTE");
         ctrl.estudianteRegistrado = false;
@@ -42,7 +55,7 @@ angular.module('poluxClienteApp')
         ctrl.cantidadExcedida = false;
         ctrl.estudianteNoEncontrado = false;
         ctrl.estudianteConSolicitud = false;
-        ctrl.removable=false;
+        ctrl.removable = false;
         ctrl.nuevosEstudiantes = [];
 
         /**
@@ -53,22 +66,22 @@ angular.module('poluxClienteApp')
          * @returns {undefined} No retorna ningún valor
          * @description 
          * Verifica que el estudiante no este agregado en el arreglo de estudiantes y llama la función verificar estudiante.
-         */  
-        ctrl.agregarEstudiante = function(){
-            ctrl.estudianteRegistrado = false;
-            ctrl.estudianteExiste = false;
-            ctrl.estudianteValido = false;
-            ctrl.estudianteConTrabajo = false;
-            ctrl.cantidadExcedida = false;
-            ctrl.estudianteNoEncontrado = false;
-            ctrl.estudianteConSolicitud = false;
+         */
+        ctrl.agregarEstudiante = function () {
+          ctrl.estudianteRegistrado = false;
+          ctrl.estudianteExiste = false;
+          ctrl.estudianteValido = false;
+          ctrl.estudianteConTrabajo = false;
+          ctrl.cantidadExcedida = false;
+          ctrl.estudianteNoEncontrado = false;
+          ctrl.estudianteConSolicitud = false;
 
-            console.log("estudiante",$scope.estudiante);
-            if(!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && $scope.estudiante!==""+ctrl.codigoEstudiante){
-                ctrl.verificarEstudiante();
-            }else{
-              ctrl.estudianteRegistrado = true;
-            }
+          console.log("estudiante", $scope.estudiante);
+          if (!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && $scope.estudiante !== "" + ctrl.codigoEstudiante) {
+            ctrl.verificarEstudiante();
+          } else {
+            ctrl.estudianteRegistrado = true;
+          }
         };
 
         /**
@@ -85,134 +98,134 @@ angular.module('poluxClienteApp')
          * en {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} y por ultimo se te verifica que no tenga solicitudes activas 
          * en {@link services/poluxService.service:poluxRequest poluxRequest}.
          */
-        ctrl.verificarEstudiante = function(){
+        ctrl.verificarEstudiante = function () {
           ctrl.loading = true;
-          academicaRequest.get("periodo_academico","P").then(function(periodoAnterior){
-              academicaRequest.get("datos_estudiante",[ctrl.codigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio,periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo ]).then(function(response2){
-                if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
-                  ctrl.estudiante = {
-                    "Codigo": ctrl.codigoEstudiante,
-                    "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
-                    "Modalidad": $scope.modalidad,
-                    "Tipo": "POSGRADO",
-                    "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
-                    "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
-                    "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
-                    "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
-                    "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
-                    "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
-                    "Carrera": response2.data.estudianteCollection.datosEstudiante[0].carrera
-                  };
+          academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
+            academicaRequest.get("datos_estudiante", [ctrl.codigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
+              if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
+                ctrl.estudiante = {
+                  "Codigo": ctrl.codigoEstudiante,
+                  "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
+                  "Modalidad": $scope.modalidad,
+                  "Tipo": "POSGRADO",
+                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
+                  "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
+                  "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
+                  "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
+                  "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
+                  "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
+                  "Carrera": response2.data.estudianteCollection.datosEstudiante[0].carrera
+                };
 
-                    poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response){
+                poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function (response) {
 
-                      console.log(response);
-                      if(response.data.includes("true")){
-                      var parametrosTrabajoEstudiante = $.param({
-                          query:"EstadoEstudianteTrabajoGrado:1,Estudiante:"+ctrl.codigoEstudiante,
-                      });
-                      poluxRequest.get("estudiante_trabajo_grado",parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante){
-                          if(responseTrabajoEstudiante.data===null){
-                            var cantidad;
-                            cantidad =  2+ctrl.nuevosEstudiantes.length;
-                            ctrl.datosModalidad = {
-                              "Modalidad": $scope.modalidad+"",
-                              "Cantidad": cantidad+""
-                            };
-                            console.log("cantidad");
-                            console.log(ctrl.datosModalidad);
-                            poluxMidRequest.post("verificarRequisitos/CantidadModalidades",ctrl.datosModalidad).then(function(validado){
-                                  console.log(validado)
-                                  if(validado.data === "true"){
-                                    var parametrosEstudiante = $.param({
-                                      query:"SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:2,Usuario:"+ctrl.codigoEstudiante,
-                                      sortby:"SolicitudTrabajoGrado",
-                                      order:"desc",
-                                      limit:1
-                                    });
-                                    poluxRequest.get("usuario_solicitud",parametrosEstudiante).then(function(responseSolicitud){
-                                      if(responseSolicitud.data!==null){
-                                        var idSolicitud = responseSolicitud.data[0].SolicitudTrabajoGrado.Id;
-                                        var parametrosSolicitudEstudiante = $.param({
-                                          query:"Activo:true,EstadoSolicitud.Id:1,SolicitudTrabajoGrado.Id:"+idSolicitud,
-                                        });
-                                        poluxRequest.get("respuesta_solicitud",parametrosSolicitudEstudiante).then(function(resultadoSolicitudes){
-                                          if(resultadoSolicitudes.data===null){
-                                            ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
-                                            $scope.estudiantes = ctrl.nuevosEstudiantes;
-                                            ctrl.loading = false;
-                                          }else{
-                                            ctrl.estudianteConSolicitud = true;
-                                            ctrl.loading = false;
-                                          }
-                                        })
-                                        .catch(function(error){
-                                          console.log(error);
-                                          ctrl.error = true;
-                                          ctrl.loading = false;
-                                        });
-                                      }else{
-                                        ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
-                                        $scope.estudiantes = ctrl.nuevosEstudiantes;
-                                        ctrl.loading = false;
-                                      }
-                                    })
-                                    .catch(function(error){
-                                      console.log(error);
-                                      ctrl.error = true;
-                                      ctrl.loading = false;
-                                    });
-                                  }else{
-                                    ctrl.cantidadExcedida = true;
+                  console.log(response);
+                  if (response.data.includes("true")) {
+                    var parametrosTrabajoEstudiante = $.param({
+                      query: "EstadoEstudianteTrabajoGrado:1,Estudiante:" + ctrl.codigoEstudiante,
+                    });
+                    poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajoEstudiante).then(function (responseTrabajoEstudiante) {
+                      if (responseTrabajoEstudiante.data === null) {
+                        var cantidad;
+                        cantidad = 2 + ctrl.nuevosEstudiantes.length;
+                        ctrl.datosModalidad = {
+                          "Modalidad": $scope.modalidad + "",
+                          "Cantidad": cantidad + ""
+                        };
+                        console.log("cantidad");
+                        console.log(ctrl.datosModalidad);
+                        poluxMidRequest.post("verificarRequisitos/CantidadModalidades", ctrl.datosModalidad).then(function (validado) {
+                          console.log(validado)
+                          if (validado.data === "true") {
+                            var parametrosEstudiante = $.param({
+                              query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:2,Usuario:" + ctrl.codigoEstudiante,
+                              sortby: "SolicitudTrabajoGrado",
+                              order: "desc",
+                              limit: 1
+                            });
+                            poluxRequest.get("usuario_solicitud", parametrosEstudiante).then(function (responseSolicitud) {
+                              if (responseSolicitud.data !== null) {
+                                var idSolicitud = responseSolicitud.data[0].SolicitudTrabajoGrado.Id;
+                                var parametrosSolicitudEstudiante = $.param({
+                                  query: "Activo:true,EstadoSolicitud.Id:1,SolicitudTrabajoGrado.Id:" + idSolicitud,
+                                });
+                                poluxRequest.get("respuesta_solicitud", parametrosSolicitudEstudiante).then(function (resultadoSolicitudes) {
+                                  if (resultadoSolicitudes.data === null) {
+                                    ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
+                                    $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                    ctrl.loading = false;
+                                  } else {
+                                    ctrl.estudianteConSolicitud = true;
                                     ctrl.loading = false;
                                   }
+                                })
+                                  .catch(function (error) {
+                                    console.log(error);
+                                    ctrl.error = true;
+                                    ctrl.loading = false;
+                                  });
+                              } else {
+                                ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
+                                $scope.estudiantes = ctrl.nuevosEstudiantes;
+                                ctrl.loading = false;
+                              }
                             })
-                            .catch(function(error){
-                              console.log(error);
-                              ctrl.error = true;
-                              ctrl.loading = false;
-                            });
-                          }else{
-                              ctrl.estudianteConTrabajo = true;
-                              ctrl.loading = false;
+                              .catch(function (error) {
+                                console.log(error);
+                                ctrl.error = true;
+                                ctrl.loading = false;
+                              });
+                          } else {
+                            ctrl.cantidadExcedida = true;
+                            ctrl.loading = false;
                           }
-                      })
-                      .catch(function(error){
+                        })
+                          .catch(function (error) {
+                            console.log(error);
+                            ctrl.error = true;
+                            ctrl.loading = false;
+                          });
+                      } else {
+                        ctrl.estudianteConTrabajo = true;
+                        ctrl.loading = false;
+                      }
+                    })
+                      .catch(function (error) {
                         console.log(error);
                         ctrl.error = true;
                         ctrl.loading = false;
                       });
 
-                    }else{
-                          ctrl.estudianteValido = true;
-                          ctrl.loading = false;
-                      }
+                  } else {
+                    ctrl.estudianteValido = true;
+                    ctrl.loading = false;
+                  }
 
-                    })
-                    .catch(function(error){
-                      console.log(error);
-                      ctrl.error = true;
-                      ctrl.loading = false;
-                    });
+                })
+                  .catch(function (error) {
+                    console.log(error);
+                    ctrl.error = true;
+                    ctrl.loading = false;
+                  });
               } else {
                 ctrl.estudianteNoEncontrado = true;
                 ctrl.loading = false;
               }
             })
-            .catch(function(error){
+              .catch(function (error) {
+                console.log(error);
+                ctrl.error = true;
+                ctrl.loading = false;
+              });
+          })
+            .catch(function (error) {
               console.log(error);
               ctrl.error = true;
               ctrl.loading = false;
             });
-          })
-          .catch(function(error){
-            console.log(error);
-            ctrl.error = true;
-            ctrl.loading = false;
-          });
         }
 
       },
-      controllerAs:'d_asignarEstudiante'
+      controllerAs: 'd_asignarEstudiante'
     };
   });
