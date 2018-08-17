@@ -381,7 +381,8 @@ angular.module('poluxClienteApp')
        * @name guardarRevision
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
-       * Permite guardar la revision realizada
+       * Permite guardar la revision realizada.
+       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
        * @param {undefined} undefined No recibe parámetros
        * @returns {undefined} No retorna ningún valor
        */
