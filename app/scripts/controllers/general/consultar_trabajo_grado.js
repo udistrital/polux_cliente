@@ -11,8 +11,9 @@
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires $window
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
+ * @requires services/poluxClienteApp.service:tokenService
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
  * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
