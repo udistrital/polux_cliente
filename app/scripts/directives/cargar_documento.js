@@ -53,7 +53,7 @@ angular.module('poluxClienteApp')
          * @name cargarDocumento
          * @methodOf poluxClienteApp.directive:cargarDocumento.controller:cargarDocumentoCtrl
          * @param {undefined} undefined No recibe parametros
-         * @returns {Promise} bjeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el documento.
+         * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el documento.
          * @description 
          * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
          */
