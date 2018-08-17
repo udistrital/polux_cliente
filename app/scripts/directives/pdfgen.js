@@ -6,6 +6,7 @@
  * @description
  * # pdfGen
  * Directiva que permite manipular pdfMake.
+ * No se esta utilizando actualmente.
  * Controlador: {@link poluxClienteApp.directive:pdfGen.controller:pdfGenCtrl pdfGenCtrl}
  * @param {Object} pdfjson Json de las propiedades del pdf que se va a generar, también tiene el contenido del pdf.
  */
