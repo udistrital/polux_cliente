@@ -7,24 +7,33 @@
  * # GeneralConsultarTrabajoGradoCtrl
  * Controller of the poluxClienteApp
  * Controlador para consultar un trabajo de grado
- * @requires services/poluxClienteApp.service:tokenService
- * @requires decorators/poluxClienteApp.decorator:TextTranslate
- * @requires services/poluxService.service:poluxRequest
- * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService
- * @requires $window
  * @requires $q
- * @property {number} userId Documento del usuario que ingresa al módulo.
- * @property {number} codigoEstudiante Documento del estudiante que se va a consultar
- * @property {object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
- * @property {object} trabajoGrado Contiene toda la información del trabajo de grado
- * @property {object} estudiante Contiene la información del estudiante
- * @property {object} gridOptionsEspacios Grid options para los espacios academicos
- * @property {object} gridOptionsAsignatura Grid options para las asignatruas de TG
+ * @requires decorators/poluxClienteApp.decorator:TextTranslate
+ * @requires $window
+ * @requires services/academicaService.service:academicaRequest
+ * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxService.service:poluxRequest
+ * @property {Number} userId Documento del usuario que ingresa al módulo
+ * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
+ * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
+ * @property {String} mensajeCargandoActualizarTg Mensaje que aparece durante la carga de la actualización del trabajo de grado
+ * @property {Boolean} trabajoCargado Indicador que opera durante la carga del trabajo de grado
+ * @property {String} mensajeError Mensaje que aparece en caso de ocurrir un error durante la carga de información
+ * @property {Object} trabajoGrado Contiene toda la información del trabajo de grado
+ * @property {Object} estudiante Contiene la información del estudiante
+ * @property {Object} gridOptionsEspacios Grid options para los espacios academicos
+ * @property {Object} gridOptionsAsignaturas Grid options para las asignatruas de trabajo de grado
+ * @property {Object} gridOptionsVinculaciones Grid options para las vinculaciones del trabajo de grado
+ * @property {Boolean} errorCargandoTrabajoGrado Indicador que opera sobre la aparición de un error durante la carga del trabajo de grado
+ * @property {Boolean} loadTrabajoGrado Indicador que opera durante la carga del trabajo de grado
+ * @property {String} codigoEstudiante Texto que carga el código del estudiante del trabajo de grado
+ * @property {Boolean} esAnteproyectoModificable Indicador que define si el proyecto de grado se trata de un anteproyecto modificable
+ * @property {Boolean} esPrimeraVersioj Indicador que define si el proyecto de grado se trata de una primera versión
+ * @property {Boolean} esProyectoModificable Indicador que define si el proyecto de grado se trata de un proyecto modificable
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConsultarTrabajoGradoCtrl',
-    function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest) {
+    function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "79647592";
@@ -96,9 +105,9 @@ angular.module('poluxClienteApp')
        * @name cargarEstudiante
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
-       * Consulta los datos basicos de un estudiante {@link services/academicaService.service:academicaRequest academicaRequest}
-       * @param {object} estudiante Estudiante que se va a consultar
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+       * Consulta los datos basicos de un estudiante desde {@link services/academicaService.service:academicaRequest academicaRequest}.
+       * @param {Object} estudiante Estudiante que se va a consultar
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición o la excepción generada
        */
       ctrl.cargarEstudiante = function(estudiante) {
         var defer = $q.defer();
@@ -133,10 +142,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name cargarAsignaturasTrabajoGrado
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @description 
-       * Consulta las asingaturas TGI y TGII de un trabajo de grado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * @description
+       * Consulta las asingaturas 'Trabajo de grado 1' y 'Trabajo de grado 2' de un trabajo de grado usando el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
        * @param {undefined} undefined no requiere parametros
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición o la excepción generada
        */
       ctrl.cargarAsignaturasTrabajoGrado = function() {
         var defer = $q.defer();
@@ -168,10 +177,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name cargarAreasConocimiento
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @description 
-       * Consulta las asingaturas áreas de conocimiento de un trabajo de grado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * @description
+       * Consulta las asingaturas áreas de conocimiento de un trabajo de grado usando el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
        * @param {undefined} undefined no requiere parametros
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición o la excepción generada
        */
       ctrl.cargarAreasConocimiento = function() {
         var defer = $q.defer();
@@ -234,9 +243,9 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
        * Consulta los espacios academicos inscritos en modalidad de materias de posgrado del servicio de {@link services/poluxService.service:poluxRequest poluxRequest},
-       * consulta el nombre de {@link services/academicaService.service:academicaRequest academicaRequest}.
-       * @param {undefined} undefined no requiere parametros
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+       * Consulta el nombre desde el servicio de {@link services/academicaService.service:academicaRequest academicaRequest}.
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición o la excepción generada
        */
       ctrl.getEspaciosAcademicosInscritos = function() {
         var defer = $q.defer();
@@ -295,10 +304,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDetallePasantia
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @param {undefined} undefined No recibe ningún parametro
-       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición o la excepción generada
        * @description 
-       * Consulta de {@link services/poluxService.service:poluxRequest Polux} los detalles de la pasantia
+       * Consulta desde {@link services/poluxService.service:poluxRequest poluxRequest} los detalles de la pasantía.
        */
       ctrl.getDetallePasantia = function() {
         var defer = $q.defer();
@@ -323,16 +332,15 @@ angular.module('poluxClienteApp')
         return defer.promise;
       }
 
-
       /**
        * @ngdoc method
        * @name getActas
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @param {undefined} undefined No recibe ningún parametro
-       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición o la excepción generada
        * @description 
        * Consulta de {@link services/poluxService.service:poluxRequest Polux} las actas de seguimiento registradas
-       * previamente y las guarda en el mismo objeto qeu recibe como parámetro.
+       * previamente y las guarda en el mismo objeto que recibe como parámetro.
        */
       ctrl.getActas = function() {
         //Se buscan los documentos de tipo acta de seguimiento
@@ -361,11 +369,11 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getvinculaciones
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @param {undefined} undefined No recibe ningún parametro
-       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición o la excepción generada
        * @description 
-       * Consulta de {@link services/poluxService.service:poluxRequest Polux} las personas vinculadas al trabajo
-       * que se esta consultando
+       * Consulta desde {@link services/poluxService.service:poluxRequest poluxRequest} las personas vinculadas al trabajo
+       * que se está consultando
        */
       ctrl.getVinculaciones = function() {
         var getExterno = function(vinculado) {
@@ -482,10 +490,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+       * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
+       * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
        */
       ctrl.getDocumento = function(docid) {
         nuxeoClient.getDocument(docid)
@@ -506,10 +514,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getEstudiantesTg
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @param {undefined} undefined No recibe ningún parametro
-       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición, se resuelve sin ningún valor.
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que indica cuando se cumple la petición o la excepción generada
        * @description 
-       * Consulta de {@link services/poluxService.service:poluxRequest Polux} los estudiantes asociados a un trabajo de grado y sus datos
+       * Consulta desde {@link services/poluxService.service:poluxRequest poluxRequest} los estudiantes asociados a un trabajo de grado y sus datos
        */
       ctrl.getEstudiantesTg = function() {
         var defer = $q.defer();
@@ -553,10 +561,9 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
        * Consulta el trabajo de grado de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
-       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón 
-       * getEspaciosAcademicosInscritos.
+       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón getEspaciosAcademicosInscritos.
        * @param {undefined} undefined no requiere parametros
-       * @returns {undefined} No retorna ningún parametro
+       * @returns {undefined} No retorna ningún parámetro
        */
       ctrl.consultarTrabajoGrado = function() {
         ctrl.errorCargandoTrabajoGrado = false;
