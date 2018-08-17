@@ -27,7 +27,7 @@ angular.module('poluxClienteApp')
        * @description
        * # cargarDocumentoCtrl
        * # Controller of the poluxClienteApp.directive:cargarDocumento
-       * Controlador de la directiva cargar documento.
+       * Controlador de la directiva {@link poluxClienteApp.directive:cargarDocumento cargarDocumento}.
        * @requires services/poluxService.service:poluxRequest
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires $filter
