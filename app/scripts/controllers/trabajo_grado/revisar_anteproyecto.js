@@ -41,7 +41,7 @@
  * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el anteproyecto (viable, modificable, no viable)
  * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del anteproyecto
  * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el anteproyecto
- * @property {Object} document Almacena la respuesta del documento desde la petición a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+ * @property {Object} document Almacena la respuesta del documento desde la petición a nuxeo.
  * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
