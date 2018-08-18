@@ -27,7 +27,7 @@ angular.module('poluxClienteApp')
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/nuxeoService.service:nuxeoClient
+       * @requires services/poluxService.service:nuxeoClient
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Object} gridOptions Grid Options de la grilla de solicitudes
        * @property {Boolean} loadingSolicitudes Booleano para indicar que se estan consultando las versiones de los documentos

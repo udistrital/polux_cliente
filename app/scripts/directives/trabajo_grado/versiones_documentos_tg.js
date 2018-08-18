@@ -33,7 +33,7 @@ angular.module('poluxClienteApp')
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/nuxeoService.service:nuxeoClient
+       * @requires services/poluxService.service:nuxeoClient
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Boolean} showVersiones Booleano para mostrar la directiva
        * @property {object} treeOptions Opciones para el arbol
