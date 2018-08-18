@@ -6,6 +6,7 @@
  * @description
  * # llenarEvaluacion
  * Directiva que permite llenar una evaluación de un trabajo de grado.
+ * Actualmente no se utiliza.
  * Controlador: {@link poluxClienteApp.directive:llenarEvaluacion.controller:llenarEvaluacionCtrl llenarEvaluacionCtrl}
  * @param {object} formato Formato que se va a llenar para evaluar el trabajo de grado.
  */

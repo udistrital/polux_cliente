@@ -6,6 +6,7 @@
  * @description
  * # vistaPreviaFormato
  * Directiva que muestra la vista previa de un formato de evaluación de un proyecto.
+ * Actualmente no se utiliza.
  * Controlador: {@link poluxClienteApp.directive:vistaPreviaFormato.controller:vistaPreviaFormatoCtrl vistaPreviaFormatoCtrl}
  * @param {object} formato Formato del que se muestra la vista previa.
  */

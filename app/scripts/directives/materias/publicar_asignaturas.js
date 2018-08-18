@@ -14,7 +14,7 @@
  * @param {number} modalidad Identificador de la modalidad
  */
 angular.module('poluxClienteApp')
-  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q,sesionesRequest) {
+  .directive('publicarAsignaturas', function (poluxMidRequest, poluxRequest, academicaRequest, $q, sesionesRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -31,7 +31,7 @@ angular.module('poluxClienteApp')
        * @description
        * # PublicarAsignatirasCtrl
        * Controller of the poluxClienteApp.directive:publicarAsignaturas
-       * Controlador de la directiva publicar asignaturas
+       * Controlador de la directiva {@link poluxClienteApp.directive:publicarAsignaturas publicarAsignaturas}
        * @requires $route
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires $scope
@@ -62,7 +62,7 @@ angular.module('poluxClienteApp')
 
         ctrl.gridOptions = {
           //showGridFooter: true
-        }; 
+        };
 
         /**
          * @ngdoc method
@@ -73,7 +73,7 @@ angular.module('poluxClienteApp')
          * @description 
          * Cada vez que el valor de pensum cambia se consultan las asignaturas elegibles
          * llamando la función buscarAsignaturasElegibles, los nombres de las materias se consultan de {@link services/academicaService.service:academicaRequest academicaRequest}.
-         */ 
+         */
         $scope.$watch("pensum", function () {
           $scope.load = true;
           var promiseArr = [];
@@ -83,10 +83,10 @@ angular.module('poluxClienteApp')
           ctrl.gridOptions.data = [];
 
           if ($scope.carrera && $scope.pensum) {
-           
-            academicaRequest.get("asignaturas_carrera_pensum",[$scope.carrera, $scope.pensum]).then(function(response){
+
+            academicaRequest.get("asignaturas_carrera_pensum", [$scope.carrera, $scope.pensum]).then(function (response) {
               if (!angular.isUndefined(response.data.asignaturaCollection.asignatura)) {
-                  ctrl.asignaturas=response.data.asignaturaCollection.asignatura;
+                ctrl.asignaturas = response.data.asignaturaCollection.asignatura;
               }
               ctrl.habilitar = false;
               ctrl.habilitar2 = true;
@@ -96,49 +96,49 @@ angular.module('poluxClienteApp')
               });
 
               //traer fechas para habilitar botones
-              promiseArr.push(ctrl.verificarFechas($scope.periodo,$scope.anio));
+              promiseArr.push(ctrl.verificarFechas($scope.periodo, $scope.anio));
 
-              $q.all(promiseArr).then(function(){
-                  ctrl.gridOptions.data = ctrl.mostrar;
-                  $scope.load = false;
-                  ctrl.gridOptions.columnDefs = [
-                    { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "10%" },
-                    { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
-                    { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "10%" },
-                    { name: 'semestre', displayName: $translate.instant('SEMESTRE'), width: "10%" },
-                    {
-                      name: 'check',
-                      displayName: $translate.instant('SELECCIONAR'),
-                      type: 'boolean',
-                      width: "15%",
-                      //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
-                      cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
-                    }
-                  ];
-              }).catch(function(error){
-                  console.log(error);
-                  ctrl.errorCargar = true;
-                  $scope.load = false; 
+              $q.all(promiseArr).then(function () {
+                ctrl.gridOptions.data = ctrl.mostrar;
+                $scope.load = false;
+                ctrl.gridOptions.columnDefs = [
+                  { name: 'asignatura', displayName: $translate.instant('CODIGO'), width: "10%" },
+                  { name: 'nombre', displayName: $translate.instant('NOMBRE'), width: "55%" },
+                  { name: 'creditos', displayName: $translate.instant('CREDITOS'), width: "10%" },
+                  { name: 'semestre', displayName: $translate.instant('SEMESTRE'), width: "10%" },
+                  {
+                    name: 'check',
+                    displayName: $translate.instant('SELECCIONAR'),
+                    type: 'boolean',
+                    width: "15%",
+                    //cellTemplate: '<center><input type="checkbox" ng-model="row.entity.check" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></center>'
+                    cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
+                  }
+                ];
+              }).catch(function (error) {
+                console.log(error);
+                ctrl.errorCargar = true;
+                $scope.load = false;
               });
             })
-            .catch(function(error){
-              console.log(error);
-              ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
-              ctrl.errorCargar = true;
-              $scope.load = false; 
-            });
+              .catch(function (error) {
+                console.log(error);
+                ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+                ctrl.errorCargar = true;
+                $scope.load = false;
+              });
           }
         });
 
-         /**
-         * @ngdoc method
-         * @name cambiar
-         * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
-         * @param {undefined} undefined No recibe parametros
-         * @returns {undefined} No retorna ningún valor
-         * @description 
-         * Permite habilitar los botones de configuracion y guardar configuración.
-         */ 
+        /**
+        * @ngdoc method
+        * @name cambiar
+        * @methodOf poluxClienteApp.directive:publicarAsignaturas.controller:publicarAsignaturasCtrl
+        * @param {undefined} undefined No recibe parametros
+        * @returns {undefined} No retorna ningún valor
+        * @description 
+        * Permite habilitar los botones de configuracion y guardar configuración.
+        */
         ctrl.cambiar = function () {
           if (ctrl.habilitar == true) {
             ctrl.habilitar = false;
@@ -159,8 +159,8 @@ angular.module('poluxClienteApp')
          * @description 
          * Permite consultar las fechas del proceso de publicación de asignaturas y validar si las fechas estan dentro del rango permitido
          * se consultan las fechas del servicio {@link @requires services/poluxClienteApp.service:sesionesService sesionesService}.
-         */ 
-        ctrl.verificarFechas = function(periodo,anio) {
+         */
+        ctrl.verificarFechas = function (periodo, anio) {
           var deferFechas = $q.defer();
           ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
           //traer fechas
@@ -168,33 +168,33 @@ angular.module('poluxClienteApp')
             query: "SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
             limit: 1
           });
-          sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
-              if (responseFechas.data !== null) {
-                console.log(responseFechas.data[0]);
-                var sesion = responseFechas.data[0];
-                var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
-                fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
-                ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
-                var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
-                fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
-                ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
-                ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
-                console.log("fechas",ctrl.fechaInicio, ctrl.fechaFin);
-                //console.log("fechas", ctrl.fechaInicio);
-                //console.log("fechas", ctrl.fechaFin);
-                if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
-                  ctrl.mostrarBotones = true;
-                  deferFechas.resolve();
-                } else {
-                  ctrl.mostrarBotones = false;
-                  deferFechas.resolve();
-                }
+          sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function (responseFechas) {
+            if (responseFechas.data !== null) {
+              console.log(responseFechas.data[0]);
+              var sesion = responseFechas.data[0];
+              var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
+              fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
+              ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+              var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
+              fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
+              ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+              ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
+              console.log("fechas", ctrl.fechaInicio, ctrl.fechaFin);
+              //console.log("fechas", ctrl.fechaInicio);
+              //console.log("fechas", ctrl.fechaFin);
+              if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
+                ctrl.mostrarBotones = true;
+                deferFechas.resolve();
               } else {
-                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
-                deferFechas.reject(false);
+                ctrl.mostrarBotones = false;
+                deferFechas.resolve();
               }
-            })
-            .catch(function(error) {
+            } else {
+              ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+              deferFechas.reject(false);
+            }
+          })
+            .catch(function (error) {
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
               deferFechas.reject(error);
             });
@@ -213,7 +213,7 @@ angular.module('poluxClienteApp')
          * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto
          * @description 
          * Consulta al servicio {@link services/poluxService.service:poluxRequest poluxRequest} para consultar si ya se seleccionaron alguans asignaturas como elegibles y mostrarlas para permitir hacer cambios.
-         */ 
+         */
         ctrl.buscarAsignaturasElegibles = function (anio, periodo, carrera, pensum, asignatura) {
           var defer = $q.defer();
           ctrl.anio = anio;
@@ -238,7 +238,7 @@ angular.module('poluxClienteApp')
                   ctrl.habilitar2 = false;
                   asignaturaActiva = response.data[0].Activo
                   //si la materia esta activa se suman los creditos
-                  if(response.data[0].Activo){
+                  if (response.data[0].Activo) {
                     var c = parseInt(asignatura.creditos, 10);
                     ctrl.totalCreditos = ctrl.totalCreditos + c;
                   }
@@ -257,10 +257,10 @@ angular.module('poluxClienteApp')
                 ctrl.mostrar.push(nuevo);
                 defer.resolve();
               })
-              .catch(function(error){
-                ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
-                defer.reject(error);
-              });
+                .catch(function (error) {
+                  ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+                  defer.reject(error);
+                });
             }
             //si la carrera no está en la tabla: carrera_elegible
             else {
@@ -280,10 +280,10 @@ angular.module('poluxClienteApp')
               defer.resolve();
             }
           })
-          .catch(function(error){
-            ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
-            defer.reject(error);
-          });
+            .catch(function (error) {
+              ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
+              defer.reject(error);
+            });
           return defer.promise;
         };
 
@@ -297,22 +297,22 @@ angular.module('poluxClienteApp')
          * @description 
          * Agrega y elimina de la lista las materias seleccionadas por el cooridnador, también se encarga de controlar el número de creditos
          * seleccionados.
-         */ 
+         */
         ctrl.toggle = function (item, list) {
           var idx = list.indexOf(item);
           if (idx > -1) {
             list.splice(idx, 1);
-            if(item.creditos){
+            if (item.creditos) {
               var c = parseInt(item.creditos, 10);
-            }else{
+            } else {
               var c = 0;
             }
           }
           else {
             list.push(item);
-            if(item.creditos){
+            if (item.creditos) {
               var c = parseInt(item.creditos, 10);
-            }else{
+            } else {
               var c = 0;
             }
           }
@@ -335,7 +335,7 @@ angular.module('poluxClienteApp')
          * Esta función consulta el número minimo de creditos a {@link ervices/poluxMidService.service:poluxMidRequest poluxMidRequest}
          * y valida que el número de creditos elegidos no sea menor, si estos e cumple
          * se crea la data para enviar y registrar las aginaturas elegibles en {@link services/poluxService.service:poluxRequest poluxRequest}.
-         */ 
+         */
         ctrl.add = function () {
           poluxMidRequest.get('creditos/ObtenerMinimo').then(function (response) {
             console.log(response.data);
@@ -350,68 +350,68 @@ angular.module('poluxClienteApp')
               ctrl.creditosMinimos = parseInt($scope.creditosMinimosProfundizacion);
               console.log("Creditos minimos profundizacion" + ctrl.creditosMinimos);
             }
-          console.log("Creditos minimos obtenidos de la vista "+ $scope.modalidad + " : "+ ctrl.creditosMinimos);
+            console.log("Creditos minimos obtenidos de la vista " + $scope.modalidad + " : " + ctrl.creditosMinimos);
 
-          console.log(ctrl.totalCreditos);
+            console.log(ctrl.totalCreditos);
 
-          if (ctrl.totalCreditos >= ctrl.creditosMinimos) {
-            ctrl.cambiar();
+            if (ctrl.totalCreditos >= ctrl.creditosMinimos) {
+              ctrl.cambiar();
 
-            //Crear data para la transacción
-            var dataCarreraElegible = {
-              "CodigoCarrera": parseInt(ctrl.carrera, 10),
-              "Periodo": parseInt(ctrl.periodo, 10),
-              "Anio": parseInt(ctrl.anio, 10),
-              "CodigoPensum": parseInt(ctrl.pensum, 10),
-            };
-            var dataEspacios = [];
-            angular.forEach(ctrl.selected,function(espacio){
-              dataEspacios.push({
-                "CodigoAsignatura": parseInt(espacio.asignatura,10),
-                "Activo": true,
-                "CarreraElegible": dataCarreraElegible,
+              //Crear data para la transacción
+              var dataCarreraElegible = {
+                "CodigoCarrera": parseInt(ctrl.carrera, 10),
+                "Periodo": parseInt(ctrl.periodo, 10),
+                "Anio": parseInt(ctrl.anio, 10),
+                "CodigoPensum": parseInt(ctrl.pensum, 10),
+              };
+              var dataEspacios = [];
+              angular.forEach(ctrl.selected, function (espacio) {
+                dataEspacios.push({
+                  "CodigoAsignatura": parseInt(espacio.asignatura, 10),
+                  "Activo": true,
+                  "CarreraElegible": dataCarreraElegible,
+                });
               });
-            });
-            var dataPublicarAsignaturas = {
-              "CarreraElegible": dataCarreraElegible,
-              "EspaciosAcademicosElegibles": dataEspacios,
-            }
-            poluxRequest.post("tr_publicar_asignaturas",dataPublicarAsignaturas)
-            .then(function(){
+              var dataPublicarAsignaturas = {
+                "CarreraElegible": dataCarreraElegible,
+                "EspaciosAcademicosElegibles": dataEspacios,
+              }
+              poluxRequest.post("tr_publicar_asignaturas", dataPublicarAsignaturas)
+                .then(function () {
+                  swal(
+                    $translate.instant('ESPACIOS_ACADEMICOS_GUARDADOS'),
+                    $translate.instant('MENSAJE_ESPACIOS_ACADEMICOS_GUARDADOS'),
+                    'success'
+                  );
+                  $route.reload();
+                })
+                .catch(function (error) {
+                  console.log(error);
+                  swal(
+                    $translate.instant('ERROR'),
+                    $translate.instant('ERROR.GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES'),
+                    'warning'
+                  );
+                });
+            } else {
               swal(
-                $translate.instant('ESPACIOS_ACADEMICOS_GUARDADOS'),
-                $translate.instant('MENSAJE_ESPACIOS_ACADEMICOS_GUARDADOS'),
-                'success'
+                $translate.instant('MAS_ESPACIOS_ACADEMICOS'),
+                $translate.instant('CREDITOS_ESPACIOS_ACADEMICOS_INSUFICIENTES', { creditos: ctrl.creditosMinimos }),
+                'warning'
               );
-              $route.reload();  
-            })
-            .catch(function(error){
+              ctrl.habilitar = false;
+              ctrl.habilitar2 = true;
+            }
+
+          })
+            .catch(function (error) {
               console.log(error);
               swal(
                 $translate.instant('ERROR'),
-                $translate.instant('ERROR.GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES'),
+                $translate.instant('ERROR.CARGAR_MINIMO_CREDITOS'),
                 'warning'
               );
-            });            
-          } else {
-            swal(
-              $translate.instant('MAS_ESPACIOS_ACADEMICOS'),
-              $translate.instant('CREDITOS_ESPACIOS_ACADEMICOS_INSUFICIENTES', {creditos:ctrl.creditosMinimos}),
-              'warning'
-            );
-            ctrl.habilitar = false;
-            ctrl.habilitar2 = true;
-          }
-
-          })
-          .catch(function (error) {
-            console.log(error);
-            swal(
-              $translate.instant('ERROR'),
-              $translate.instant('ERROR.CARGAR_MINIMO_CREDITOS'),
-              'warning'
-            );
-          });
+            });
 
 
         };
