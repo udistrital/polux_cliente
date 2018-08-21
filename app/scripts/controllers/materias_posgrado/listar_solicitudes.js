@@ -47,7 +47,10 @@
  * @property {String} cargandoRespuestas Mensaje que aparece durante la carga de las respuestas a las solicitudes
  * @property {String} userId Valor que carga el documento del usuario en sesión
  * @property {String} fechaActual Valor que carga la fecha en el momento de ejecución
- * @property {Boolean} loadSolicitudes Indicador que maneja 
+ * @property {Boolean} loadSolicitudes Indicador que maneja la carga de las solicitudes en la vista
+ * @property {String} mensajeErrorSolicitudes Texto que aparece en caso de haber un error en la carga de solicitudes
+ * @property {Boolean} errorCargarSolicitudes Indicador que maneja la aparición de un error durante la carga de las solicitudes
+ * @property {Boolean} loadRespuestas Indicador que maneja la carga de las respuestas a las solicitudes
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoListarSolicitudesCtrl',
@@ -167,8 +170,8 @@ angular.module('poluxClienteApp')
        * @name getPeriodoAnterior
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consulta el periodo anterior al actual consultado periodo_academico de {@link services/academicaService.service:academicaRequest academicaRequest}
-       * @param {undefined} undefined no requiere parametros
+       * Consulta el periodo anterior al actual consultando periodo_academico de {@link services/academicaService.service:academicaRequest academicaRequest}.
+       * @param {undefined} undefined No requiere parametros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
        */
       ctrl.getPeriodoAnterior = function() {
@@ -196,8 +199,8 @@ angular.module('poluxClienteApp')
        * @name getPeriodoActual
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consulta el periodo academico actual del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
-       * @param {undefined} undefined no requiere parametros
+       * Consulta el periodo academico actual del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}.
+       * @param {undefined} undefined No requiere parametros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo actual
        */
       ctrl.getPeriodoActual = function() {
@@ -224,8 +227,8 @@ angular.module('poluxClienteApp')
        * @name getCarrerasCoordinador
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consulta las carreras asociadas al coordinador del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
-       * @param {undefined} undefined no requiere parámetros
+       * Consulta las carreras asociadas al coordinador del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}.
+       * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto carreras
        */
       ctrl.getCarrerasCoordinador = function() {
@@ -253,7 +256,7 @@ angular.module('poluxClienteApp')
        * @name getFechas
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consulta las fechas para el proceso de selección de admitidos en {@link services/poluxClienteApp.service:sesionesService sesionesService}
+       * Consulta las fechas para el proceso de selección de admitidos en {@link services/poluxClienteApp.service:sesionesService sesionesService}.
        * @param {Object} periodo Periodo en el cual se buscan las fechas vigentes
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto fechas
        */
@@ -312,8 +315,8 @@ angular.module('poluxClienteApp')
        * @name getCupos
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consulta el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para traer el número de cupos disponibles
-       * @param {undefined} undefined no requiere parámetros
+       * Consulta el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para traer el número de cupos disponibles.
+       * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
        */
       ctrl.getCupos = function() {
@@ -334,12 +337,12 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
-       * @name cargandoParametros
+       * @name cargarParametros
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * llama a las funciones de getPeriodoActual, getPeriodoAnterior, getFechas, getCarrerasCoordinador, getCupos y los une en promesas, los rechaza en caso de que alguan sea rechazada.
-       * @param {undefined} undefined no requiere parametros
-       * @returns {undefined} sin retorno
+       * Llama a las funciones de getPeriodoActual, getPeriodoAnterior, getFechas, getCarrerasCoordinador, getCupos y los une en promesas, los rechaza en caso de que alguna sea rechazada.
+       * @param {undefined} undefined No requiere parametros
+       * @returns {undefined} No hace retorno de resultados
        */
       ctrl.cargarParametros = function() {
         ctrl.getPeriodoActual()
@@ -384,7 +387,7 @@ angular.module('poluxClienteApp')
        * @name consultarNombreCarrera
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consula el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para obtener la información sobre la carrera de acuerdo al código ingresado
+       * Consula el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para obtener la información sobre la carrera de acuerdo al código ingresado.
        * @param {Integer} codigoCarrera Identificador de la carrera del estudiante 
        * @returns {Promise} Objeto de tipo promesa que arroja el resultado de consultar el nombre de la carrera del estudiante
        */
@@ -402,12 +405,12 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
-       * @name cargandoParametrosSolicitud
+       * @name cargarParametrosSolicitud
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener los datos detalles de la solicitud, el usuario y consulta los datos del estudiante del servicio de {@link services/academicaService.service:academicaRequest academicaService}
-       * @param {Object} solicitud objeto de tipo solicitud para los parametros de busqueda
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
+       * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener los datos detalles de la solicitud, el usuario y consulta los datos del estudiante del servicio de {@link services/academicaService.service:academicaRequest academicaService}.
+       * @param {Object} solicitud Objeto de tipo solicitud para los parámetros de búsqueda
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con el objeto cuposDisponibles
        */
       ctrl.cargarParametrosSolicitud = function(value) {
         var defer = $q.defer();
@@ -491,11 +494,10 @@ angular.module('poluxClienteApp')
        * @name buscarSolicitudes
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener las solicitudes iniciales de la modalidad de materias de posgrado y sus respuestas y llama a la función CargarParametrosSolicitud para cargar los parametros asociados a esta.
-       * @param {Object} carrera carrera de la cual se van a consultar las solicitudes
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
+       * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener las solicitudes iniciales de la modalidad de materias de posgrado y sus respuestas y llama a la función CargarParametrosSolicitud para cargar los parámetros asociados a esta.
+       * @param {Object} carrera Carrera de la cual se van a consultar las solicitudes
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con el objeto cuposDisponibles
        */
-      //
       ctrl.buscarSolicitudes = function(carrera) {
         ctrl.errorCargarSolicitudes = undefined;
         $scope.loadSolicitudes = true;
@@ -540,7 +542,7 @@ angular.module('poluxClienteApp')
        * @name admitirPrimeraFecha
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * muestra el modal para admitir en primera fecha si no se encuentra ningún error
+       * Muestra el modal para admitir en primera fecha si no se encuentra ningún error.
        * @param {undefined} undefined No recibe ningún parámetro
        * @returns {undefined} No retorna nada
        */
@@ -582,8 +584,8 @@ angular.module('poluxClienteApp')
        * @name admitirSegundaFecha
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * muestra el modal para admitir en segunda fecha si no se encuentra ningún error
-       * @param {undefined} undefined No recibe ningun parametro
+       * Muestra el modal para admitir en segunda fecha si no se encuentra ningún error
+       * @param {undefined} undefined No recibe ningún parámetro
        * @returns {undefined} No retorna nada
        */
       ctrl.admitirSegundaFecha = function() {
@@ -624,8 +626,7 @@ angular.module('poluxClienteApp')
        * @name admitir
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * funcion que hace la petición post a {@link services/poluxService.service:poluxRequest poluxRequest} para
-       * empezar a ejecutar el proceso de selección de admitidos
+       * Funcion que hace la petición post a {@link services/poluxService.service:poluxRequest poluxRequest} para empezar a ejecutar el proceso de selección de admitidos.
        * @param {undefined} undefined No recibe ningún parámetro
        * @returns {undefined} No retorna nada
        */
@@ -702,8 +703,8 @@ angular.module('poluxClienteApp')
        * @name verificarDisponibilidad
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
        * @description 
-       * aumenta o disminuye el número de admitidos
-       * @param {Object} solicitud Solicitud que se selecciona en el grid
+       * Aumenta o disminuye el número de admitidos.
+       * @param {Object} solicitud Solicitud que se selecciona en la cuadrícula
        * @returns {undefined} No retorna nada
        */
       ctrl.verificarDisponibilidad = function(solicitud) {
