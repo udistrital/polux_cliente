@@ -34,7 +34,7 @@ angular.module('poluxClienteApp')
       $scope.load = false;
     });
 
-    ctrl.myFunc = function(carreraSeleccionada) {
+    ctrl.getPensums = function(carreraSeleccionada) {
       ctrl.pensums=[];
       $scope.msgCargandoPensums = $translate.instant('LOADING.CARGANDO_PENSUMS');
       $scope.load = true;
