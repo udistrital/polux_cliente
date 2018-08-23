@@ -6,12 +6,12 @@
  * @description
  * # GeneralRegistrarNotaCtrl
  * Controller of the poluxClienteApp
- * Actualmente no se utiliza este controlador
+ * Actualmente no se utiliza este controlador.
  * @requires services/academicaService.service:academicaRequest
  */
 angular.module('poluxClienteApp')
 	.controller('RegistrarTgCtrl',
-		function(academicaRequest) {
+		function (academicaRequest) {
 
 			var self = this;
 

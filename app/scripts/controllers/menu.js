@@ -16,7 +16,6 @@
  * @requires $route
  * @property {Object} language Clase de los botones.
  * @property {array} menu_app Menú de las aplicaciones asociadas a la universidad que se muestra en la parte lateral.
- * 
  */
 angular.module('poluxClienteApp')
     .controller('menuCtrl', function (configuracionRequest, $location, $http, $scope, token_service, notificacion, $translate, $route, $mdSidenav) {
@@ -197,7 +196,7 @@ angular.module('poluxClienteApp')
          * @description 
          * Escucha los cambios de la ruta y verifica si el usuario tiene permisos para acceder
          * o no  a la ruta.
-         * @param {object} next Objeto que se captura del evento e identifica la página donde el usuario trata de acceder.
+         * @param {object} next Objeto que se captura del evento e identifica la página donde el usuario trata de acceder.  
          * @returns {undefined} No retorna ningún valor.
          */
         $scope.$on('$routeChangeStart', function (scope, next, current) {
