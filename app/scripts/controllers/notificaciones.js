@@ -5,7 +5,8 @@
  * @name poluxClienteApp.controller:NotificacionesCtrl
  * @description
  * # NotificacionesCtrl
- * Controller of the poluxClienteApp
+ * Controller of the poluxClienteApp.
+ * Controlador de la opción de notificaciones. Actualmente no se utiliza.
  */
 angular.module('poluxClienteApp')
   .controller('NotificacionesCtrl', function($scope, notificacion) {
