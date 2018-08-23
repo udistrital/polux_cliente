@@ -161,7 +161,7 @@ angular.module('poluxClienteApp')
               });
               $q.all(conjuntoProcesamientoDocentes)
                 .then(function(resultadoDelProcesamiento) {
-                  trabajoGrado.vinculaciones = respuestaVinculaciones.data.filter(vinculacion => vinculacion.Nombre);
+                  trabajoGrado.vinculaciones = respuestaVinculaciones.data.filter(function(vinculacion) { return vinculacion.Nombre });
                   deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDelProcesamiento) {
