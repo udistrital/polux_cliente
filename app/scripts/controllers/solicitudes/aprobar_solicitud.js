@@ -54,7 +54,32 @@
  * @property {Array} evaluadoresActualesTg Colección que respalda la información de los evaluadores actuales del trabajo de grado
  * @property {Array} evaluadoresOpcionesTg Colección que respalda la información de los evaluadores opcionados para el trabajo de grado
  * @property {Array} areas Colección que maneja las áreas de conocimiento para el trabajo de grado
- * @property {[type]} [propName] [description]
+ * @property {Boolean} tieneCoDirector Indicador que maneja si en la solicitud aparece co-director del proyecto
+ * @property {Array} evaluadoresInicial Colección que maneja el contenido de los evaluadores para inicio de solicitud
+ * @property {Number} directorActual Valor que carga el identificador del director actual sobre la solicitud
+ * @property {Number} directorNuevo Valor que carga el identificador del nuevo director sobre la solicitud
+ * @property {Number} evaluadorActual Valor que carga el identificador del director actual sobre la solicitud
+ * @property {Number} evaluadorNuevo Valor que carga el identificador del nuevo evaluador sobre la solicitud
+ * @property {String} tituloNuevo Texto que carga el contenido del nuevo título para el trabajo de grado
+ * @property {Number} asignaturaActual Valor que carga el identificador de la asignatura en curso
+ * @property {Number} asignaturaNueva Valor que carga el identificador de la nueva asignatura a cursar
+ * @property {Number} directorExternoActual Valor que carga el identificador del director externo que está vinculado al trabajo de grado
+ * @property {String} nombreDirectorExternoNUevo Texto que carga el nombre del nuevo director externo a vincular al trabajo de grado
+ * @property {Object} docenteCambio Objeto que carga la información del cambio de docente
+ * @property {Number} codirector Valor que carga el identificador para el nuevo codirector del trabajo de grado
+ * @property {String} docPropuestaFinal Texto que carga la información sobre el documeto para la propuesta final
+ * @property {Boolean} switchCodirector Indicador que decide si se habilita la inscripción de co-director en la solicitud
+ * @property {Object} trabajo_grado Objeto que carga la información sobre el trabajo de grado a registrarse con la solicitud
+ * @property {Boolean} switchRevision Indicador que decide si se habilita el contenido para cambiar la vinculación
+ * @property {Object} doc Objeto que carga la información sobre el documento que se obtiene
+ * @property {Object} document Objeto que carga la información sobre el documento que se obtiene
+ * @property {String} msgCargandoSolicitud Texto que aparece durante la carga de los detalles de la solicitud
+ * @property {String} msgEnviandFormulario Texto que aparece durante el envío del formulario
+ * @property {Boolean} loadSolicitud Indicador que maneja la carga de la solicitud
+ * @property {Boolean} loadFormulario Indicador que maneja la carga del formulario
+ * @property {Object} infiniteScroll Objeto que configura las propiedades para la barra de desplazamiento en la visualización
+ * @property {Number} userId Valor que carga el código de identificación para el usuario
+ * @property {Boolean} loadDocumento Indicador que maneja la carga del documento para la solicitud
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
@@ -103,12 +128,13 @@ angular.module('poluxClienteApp')
       $scope.userId = parseInt(token_service.token.documento);
 
       ctrl.carrerasCoordinador = [];
+
       /**
        * @ngdoc method
        * @name getCarrerasCoordinador
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined no recibe ningún parametro
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que resuelve las carreras del coordinador o la excepción gnerada
        * @description 
        * Consulta las carreras asociadas al coordinador
        * se consueme el servicio {@link academicaService.service:academicaRequest academicaRequest}
@@ -136,12 +162,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getRespuestaSolicitud
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined no recibe ningún parametro
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que se resuelve con la respuesta de la solicitud o la excepción generada
        * @description 
-       * Consulta si la respuesta tiene una respuesta asociada ya
-       * en el servicio {@link services/poluxService.service:poluxRequest poluxRequest} y bloquea 
-       * el formulario que permite aprobar la solicitud
+       * Consulta si la respuesta tiene una respuesta asociada actualmente en el servicio {@link services/poluxService.service:poluxRequest poluxRequest} y bloquea el formulario que permite aprobar la solicitud.
        */
       ctrl.getRespuestaSolicitud = function() {
         var defer = $q.defer();
@@ -172,12 +196,12 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getFechasAprobacion
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {number} idModalidadTipoSolicitud Id de modalidad_tipo_solicitud que permite saber el tipo de solicitud y la modaliad a la que pertenece
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {Number} idModalidadTipoSolicitud Identificador de modalidad_tipo_solicitud que permite saber el tipo de solicitud y la modaliad a la que pertenece
+       * @returns {Promise} Objeto de tipo promesa que indica si se cumplen las fechas de aprobación o se rechaza con la excepción generada
        * @description 
        * Si el idModalidadTipoSolicitud es igual a 13 (solicitud inicial de materias de posgrado) consulta las fechas asociadas al proceso de solicitudes en el servicio
        * {@link services/poluxClienteApp.service:sesionesService sesionesService}, con el periodo que consulta de 
-       * {@link services/academicaService.service:academicaRequest academicaRequest}
+       * {@link services/academicaService.service:academicaRequest academicaRequest}.
        */
       ctrl.getFechasAprobacion = function(idModalidadTipoSolicitud) {
         var defer = $q.defer();
@@ -243,12 +267,12 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDetallesSolicitud
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {object} parametrosDetalleSolicitud Parametros necesarios para hacer las consultas
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {Object} parametrosDetalleSolicitud Parámetros necesarios para hacer las consultas
+       * @returns {Promise} Objeto de tipo promesa que indica si se cumple la consulta de las solicitudes o se rechaza con la excepción generada
        * @description 
        * Consulta los detalles y usuarios asociados a la solicitud del servicio 
        * {@link services/poluxService.service:poluxRequest poluxRequest} para poder mostrarlos en el formulario.
-       * En caso de que la descripcion del dellate tenga el documento de un docente se usa el servicio {@link services/academicaService.service:academicaRequest academicaRequest}
+       * En caso de que la descripción del dellate tenga el documento de un docente se usa el servicio {@link services/academicaService.service:academicaRequest academicaRequest}
        * para consultar los datos del docente, por último si el detalle es un JSON lo divide y formatea como correspoda.
        */
       ctrl.getDetallesSolicitud = function(parametrosDetallesSolicitud) {
@@ -475,10 +499,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name evaluarSolicitud
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined No requere parametros
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {Promise} Objeto de tipo promesa que indica si se cumple la consulta para evaluar la solicitud
        * @description 
-       * Verifia el tipo de solicitud y guarda sus datos, si la solicitud no es de tipo de materias de posgrado consulta los docentes disponibles 
+       * Verifica el tipo de solicitud y guarda sus datos, si la solicitud no es de tipo de materias de posgrado consulta los docentes disponibles 
        * para dirigir trabajos de grado del servicio docentes_tg de {@link services/academicaService.service:academicaRequest academicaRequest}.
        */
       ctrl.evaluarSolicitud = function() {
@@ -543,10 +567,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getEvaluadores
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {object} solicitud Objeto de tipo Solicitud
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {Object} solicitud Objeto de tipo solicitud
+       * @returns {Promise} Objeto de tipo promesa que indica si se cumple la consulta para traer los evaluadores vinculados
        * @description 
-       * Funcion que llama al servicio {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para
+       * Función que llama al servicio {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para
        * consultar el número de evaluadores máximo que puede tener la modalidad.
        */
       ctrl.getEvaluadores = function(solicitud) {
@@ -576,9 +600,9 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name docenteVinculado
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {object} vinculados Docentes vinculados al trabajo de grado
-       * @param {object} docente documento del docente que se confronta para ver  si se encuentra vinculado
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {Object} vinculados Docentes vinculados al trabajo de grado
+       * @param {Object} docente Documento del docente que se confronta para ver si se encuentra vinculado
+       * @returns {Boolean} Indicador que define si el docente tiene vinculación a la solicitud de trabajo de grado
        * @description 
        * Verifica si un docente se encuentra vinculado al trabajo de grado de un estudiante
        */
@@ -592,19 +616,6 @@ angular.module('poluxClienteApp')
         return esta;
       };
 
-
-      /**
-       * @ngdoc method
-       * @name getSolicitudTrabajoGrado
-       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined No requere parametros
-       * @returns {undefined} No retorna ningun valor
-       * @description 
-       * Consume el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para 
-       * consultar los datos de la solicitud, ccon esto llama la función getDetalles, evaluarSolicitud, getEvaluadores, getCarrerasCoordinador,
-       *  getRespuestaSolicitud y getFechasAprobacion  para cargar la información completa de la solicitud y mostrarla al usuario, si la solicitud tiene asociado un trabajo de grado
-       * que no es de materias de posgrado llama al servicio de obtener vinculados de {@link services/poluxService.service:poluxRequest poluxRequest}.
-       */
       var parametrosSolicitud = $.param({
         query: "Id:" + ctrl.solicitud,
         limit: 1
@@ -683,10 +694,10 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name responder
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined No requere parametros
-       * @returns {undefined} No retorna ningun valor
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No retorna ningún valor
        * @description 
-       * Crea la data necesaria para responder la solicitud y la envia al servicio post de 
+       * Crea la data necesaria para responder la solicitud y la envía al servicio post de 
        * {@link services/poluxMidService.service/poluxMidRequest poluxMidRequest} para realizar la transacción correspondiente.
        */
       ctrl.responder = function() {
@@ -1318,7 +1329,7 @@ angular.module('poluxClienteApp')
        * @name mostrarRespuesta
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {object} response Respuesta que se mostrará
-       * @returns {undefined} No retorna ningun valor
+       * @returns {undefined} No retorna ningún valor
        * @description 
        * Función que se encarga de mostrar el resultado de la transacción de responder solicitud.
        */
@@ -1360,7 +1371,7 @@ angular.module('poluxClienteApp')
        * @name cargarJustificacion
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {function} callFunction Funcion que se ejecuta una vez se termina de cargar el documento
-       * @returns {undefined} No retorna ningun valor
+       * @returns {undefined} No retorna ningún valor
        * @description 
        * Conecta el cliente de {@link services/poluxClienteApp.service:nuxeoService nuxeo} y crea la data del documento que se va a cargar y llama a la función cargar documento.
        */
@@ -1392,6 +1403,15 @@ angular.module('poluxClienteApp')
 
       };
 
+      /**
+       * @ngdoc method
+       * @name swalError
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Enseña un mensaje de error al usuario de forma emergente
+       */
       ctrl.swalError = function() {
         swal(
           $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -1401,8 +1421,16 @@ angular.module('poluxClienteApp')
         $scope.loadFormulario = false;
       };
 
+      /**
+       * @ngdoc method
+       * @name cargarRespuesta
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Enseña un mensaje de notificación al usuario de forma emergente
+       */
       ctrl.cargarRespuesta = function() {
-
         swal(
           $translate.instant("ERROR.SUBIR_DOCUMENTO"),
           $translate.instant("VERIFICAR_DOCUMENTO"),
@@ -1411,11 +1439,19 @@ angular.module('poluxClienteApp')
         $scope.loadFormulario = false;
       };
 
+      /**
+       * @ngdoc method
+       * @name validarFormularioAprobacion
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Valida si el formulario de aprobación necesita cargar la justificación asociada a la solicitud
+       */
       ctrl.validarFormularioAprobacion = function() {
         if (!ctrl.isInicial) {
           ctrl.cargarJustificacion();
         }
-
       };
 
       /**
@@ -1423,9 +1459,9 @@ angular.module('poluxClienteApp')
        * @name obtenerDoc
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @returns {Promise} Objeto de tipo promesa que se resuelve con el documento o se rechaza con la excepción generada
        * @description 
-       * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido
+       * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
        */
       ctrl.obtenerDoc = function(docid) {
         var defered = $q.defer();
@@ -1448,8 +1484,8 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name obtenerFetch
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {object} doc Documento de nuxeo al cual se le obtendra el Blob
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
+       * @param {object} doc Documento de nuxeo al cual se le obtendrá el Blob
+       * @returns {Promise} Objeto de tipo promesa que se resuelve con el Blob del documento o la excepción generada
        * @description 
        * Obtiene el blob de un documento
        */
@@ -1474,7 +1510,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y mostrarlo en una nueva ventana.
        */
       ctrl.getDocumento = function(docid) {
         nuxeoClient.getDocument(docid)
@@ -1489,17 +1525,16 @@ angular.module('poluxClienteApp')
               'warning'
             );
           });
-
       }
 
       /**
        * @ngdoc method
        * @name getDocumentos
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined no requiere parametros
+       * @param {undefined} undefined no requiere parámetros
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Funcion que consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para consultar las 
+       * Función que consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para consultar las 
        * actas subidas en las carreras del coordinador.
        */
       ctrl.getDocumentos = function() {
@@ -1556,18 +1591,16 @@ angular.module('poluxClienteApp')
               $scope.loadDocumento = false;
             });
         });
-
       }
-
 
       /**
        * @ngdoc method
        * @name seleccionarDocumento
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined no requiere parametros
+       * @param {undefined} undefined no requiere parámetros
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Funcion que guarda el documento seleccionado por el usuario en el modalDocumento y lo cierra
+       * Función que guarda el documento seleccionado por el usuario en el modalDocumento y lo cierra
        */
       ctrl.seleccionarDocumento = function() {
         if (ctrl.acta.url !== undefined) {
@@ -1585,16 +1618,15 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name modalDocumento
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {undefined} undefined no requiere parametros
+       * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Funcion que muestra el modal que permite seleccionar un documento 
+       * Función que muestra el modal que permite seleccionar un documento 
        */
       ctrl.modalDocumento = function() {
         ctrl.documentos = [];
         ctrl.getDocumentos();
         $('#modalSeleccionarDocumento').modal('show');
       }
-
 
     });
