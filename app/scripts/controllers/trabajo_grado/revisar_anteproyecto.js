@@ -12,7 +12,6 @@
  * El trabajo de grado cambia de estado según corresponda (viable, modificable o no viable).
  * Este procedimiento puede aplicarse a docentes que son primer o segundo revisor.
  * @requires $q
- * @requires $sce
  * @requires $window
  * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
@@ -46,7 +45,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
+		function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -538,7 +537,7 @@ angular.module('poluxClienteApp')
 
 			/**
 			 * @ngdoc method
-			 * @name registrarSolicitudAprobada
+			 * @name actualizarEstadoAnteproyecto
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
 			 * Función que prepara el contenido de la información para actualizar.
