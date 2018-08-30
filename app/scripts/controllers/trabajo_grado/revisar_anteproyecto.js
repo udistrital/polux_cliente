@@ -45,7 +45,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
+		function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -245,7 +245,7 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
 				return $.param({
-					query: "DocumentoEscrito.TipoDocumentoEscrito:3," + 
+					query: "DocumentoEscrito.TipoDocumentoEscrito:3," +
 						"TrabajoGrado.Id:" +
 						idTrabajoGrado,
 					limit: 1
@@ -411,7 +411,7 @@ angular.module('poluxClienteApp')
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
 				//se  redireccióna a la página para dar el concepto
 				//console.log(filaAsociada.entity.Id);
-				$location.path("general/concepto_tg/"+filaAsociada.entity.Id);
+				$location.path("general/concepto_tg/" + filaAsociada.entity.Id);
 				/*
 				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
 				ctrl.coleccionRespuestasAnteproyecto = [];
@@ -615,17 +615,17 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.abrirDocumento = function(docid) {
 				nuxeoClient.getDocument(docid)
-				.then(function(document){
-					$window.open(document.url);
-				})
-				.catch(function(error) {
-					console.log("error", error);
-					swal(
-						$translate.instant("ERROR"),
-						$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-						'warning'
-					);
-				});
+					.then(function(document) {
+						$window.open(document.url);
+					})
+					.catch(function(error) {
+						console.log("error", error);
+						swal(
+							$translate.instant("ERROR"),
+							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
+							'warning'
+						);
+					});
 			}
 
 		});
