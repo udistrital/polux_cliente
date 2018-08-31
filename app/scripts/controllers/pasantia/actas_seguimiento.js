@@ -30,7 +30,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('PasantiaActasSeguimientoCtrl',
-    function($q, $scope, $translate, $window, academicaRequest, nuxeo, poluxRequest, token_service) {
+    function ($q, $scope, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       ctrl.mensajeCargandoTrabajos = $translate.instant("LOADING.CARGANDO_TRABAJOS_DE_GRADO_PASANTIA");
@@ -45,7 +45,7 @@ angular.module('poluxClienteApp')
         titulo: $translate.instant('PASANTIA.REGISTRAR_ACTAS_SEGUIMIENTO'),
         operacion: 'ver',
         estado: true
-      }, ];
+      },];
 
       ctrl.gridOptions = {
         paginationPageSizes: [5, 10, 15, 20, 25],
@@ -87,19 +87,19 @@ angular.module('poluxClienteApp')
        * que se recibe y para cada estudiante consulta sus datos básicos en {@link services/academicaService.service:academicaRequest academicaRequest}
        * para mostrarlos al docente, permitiendo la visualización del modulo.
        */
-      ctrl.getEstudiantesPasantia = function(trabajoGrado) {
+      ctrl.getEstudiantesPasantia = function (trabajoGrado) {
         var defer = $q.defer()
-        var getDatosEstudiante = function(codigoEstudiante) {
+        var getDatosEstudiante = function (codigoEstudiante) {
           var defer = $q.defer();
           academicaRequest.get("datos_basicos_estudiante", [codigoEstudiante])
-            .then(function(responseDatosBasicos) {
+            .then(function (responseDatosBasicos) {
               if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                 defer.resolve(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0]);
               } else {
                 defer.reject("No hay datos del estudiante");
               }
             })
-            .catch(function(error) {
+            .catch(function (error) {
               defer.reject(error);
             });
           return defer.promise;
@@ -111,23 +111,23 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
-          .then(function(responseEstudiantes) {
+          .then(function (responseEstudiantes) {
             if (responseEstudiantes.data != null) {
               var promises = [];
-              angular.forEach(responseEstudiantes.data, function(estudiante) {
+              angular.forEach(responseEstudiantes.data, function (estudiante) {
                 promises.push(getDatosEstudiante(estudiante.Estudiante));
               });
               $q.all(promises)
-                .then(function(estudiantes) {
+                .then(function (estudiantes) {
                   trabajoGrado.Estudiantes = estudiantes;
                   trabajoGrado.NombresEstudiantes = "";
-                  angular.forEach(trabajoGrado.Estudiantes, function(estudiante) {
+                  angular.forEach(trabajoGrado.Estudiantes, function (estudiante) {
                     trabajoGrado.NombresEstudiantes += " - " + "(" + estudiante.codigo + ") " + estudiante.nombre
                   });
                   trabajoGrado.NombresEstudiantes = trabajoGrado.NombresEstudiantes.substring(2)
                   defer.resolve();
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                   ctrl.mensajeErrorCargando = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTES");
                   defer.reject(error);
                 });
@@ -136,7 +136,7 @@ angular.module('poluxClienteApp')
               defer.reject("No se encuentran estudiantes en el trabajo");
             }
           })
-          .catch(function(error) {
+          .catch(function (error) {
             ctrl.mensajeErrorCargando = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTES");
             defer.reject(error);
           });
@@ -153,7 +153,7 @@ angular.module('poluxClienteApp')
        * Consulta de {@link services/poluxService.service:poluxRequest Polux} las actas de seguimiento registradas
        * previamente y las guarda en el mismo objeto que recibe como parámetro.
        */
-      ctrl.getActas = function(trabajoGrado) {
+      ctrl.getActas = function (trabajoGrado) {
         //Se buscan los documentos de tipo acta de seguimiento
         var defer = $q.defer();
         var parametrosActas = $.param({
@@ -161,7 +161,7 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
-          .then(function(responseActas) {
+          .then(function (responseActas) {
             if (responseActas.data != null) {
               trabajoGrado.Actas = responseActas.data;
             } else {
@@ -169,7 +169,7 @@ angular.module('poluxClienteApp')
             }
             defer.resolve();
           })
-          .catch(function(error) {
+          .catch(function (error) {
             ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.CARGANDO_ACTAS_SEGUIMIENTO");
             defer.reject(error);
           });
@@ -187,7 +187,7 @@ angular.module('poluxClienteApp')
        * de director, luego, para cada uno de los trabajos obtenidos consulta los estudiantes asociados y sus actas llamando a las 
        * funciones getEstudiantesPasantia y getActas respectivamente.
        */
-      ctrl.getTrabajosGradoPasantia = function(userDocument) {
+      ctrl.getTrabajosGradoPasantia = function (userDocument) {
         //Se consultan los trabajos de grado de la modalidad de pasantia de los que el docente es director
         // y que se encuentren en el estado de cursado
         ctrl.loadingTrabajos = true;
@@ -196,21 +196,21 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosDirector)
-          .then(function(responsePasantias) {
+          .then(function (responsePasantias) {
             if (responsePasantias.data != null) {
               ctrl.trabajosPasantia = responsePasantias.data;
               var promises = [];
-              angular.forEach(ctrl.trabajosPasantia, function(pasantia) {
+              angular.forEach(ctrl.trabajosPasantia, function (pasantia) {
                 promises.push(ctrl.getEstudiantesPasantia(pasantia.TrabajoGrado));
                 promises.push(ctrl.getActas(pasantia.TrabajoGrado));
               });
               $q.all(promises)
-                .then(function() {
+                .then(function () {
                   console.log("trabajos", ctrl.trabajosPasantia);
                   ctrl.gridOptions.data = ctrl.trabajosPasantia;
                   ctrl.loadingTrabajos = false;
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                   console.log(error);
                   ctrl.errorCargando = true;
                   ctrl.loadingTrabajos = false;
@@ -222,7 +222,7 @@ angular.module('poluxClienteApp')
               ctrl.loadingTrabajos = false;
             }
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
             ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.CARGANDO_TRABAJOS_PASANTIA");
             ctrl.errorCargando = true;
@@ -243,12 +243,13 @@ angular.module('poluxClienteApp')
        * y si este se carga exitosamente entonces lo registra en el servicio de {@link services/poluxService.service:poluxRequest Polux} usando la transacción
        * 'tr_registrar_acta_seguimiento'.
        */
-      ctrl.cargarActa = function() {
+      ctrl.cargarActa = function () {
         ctrl.loadingDocumento = true;
         var nombreDoc = "Acta de seguimiento " + (ctrl.pasantiaSeleccionada.Actas.length + 1);
         //SE carga el documento a nuxeo
-        ctrl.cargarDocumento(nombreDoc, nombreDoc, ctrl.actaModel)
-          .then(function(urlDocumento) {
+        //ctrl.cargarDocumento(nombreDoc, nombreDoc, ctrl.actaModel)
+        nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'Actas de seguimiento', undefined)
+          .then(function (urlDocumento) {
             var dataDocumentoTrabajoGrado = {
               TrabajoGrado: {
                 Id: ctrl.pasantiaSeleccionada.Id
@@ -262,9 +263,9 @@ angular.module('poluxClienteApp')
               }
             }
             poluxRequest.post("tr_registrar_acta_seguimiento", {
-                Acta: dataDocumentoTrabajoGrado
-              })
-              .then(function(response) {
+              Acta: dataDocumentoTrabajoGrado
+            })
+              .then(function (response) {
                 if (response.data[0] === "Success") {
                   swal(
                     $translate.instant("PASANTIA.ACTA_REGISTRADA"),
@@ -281,7 +282,7 @@ angular.module('poluxClienteApp')
                 }
                 ctrl.loadingDocumento = false;
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.log(error);
                 swal(
                   $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -291,7 +292,7 @@ angular.module('poluxClienteApp')
                 ctrl.loadingDocumento = false;
               });
           })
-          .catch(function(error) {
+          .catch(function (error) {
             swal(
               $translate.instant("ERROR.SUBIR_DOCUMENTO"),
               $translate.instant("VERIFICAR_DOCUMENTO"),
@@ -303,65 +304,6 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
-       * @name cargarDocumento
-       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {string} nombre Nombre del documento que se cargará
-       * @param {string} descripcion Descripcion del documento que se cargará
-       * @param {blob} documento Blob del documento que se cargará
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con la url del objeto cargado. 
-       * @description 
-       * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}.
-       */
-      ctrl.cargarDocumento = function(nombre, descripcion, documento) {
-        var defer = $q.defer();
-        var promise = defer.promise;
-        nuxeo.connect().then(function(client) {
-            nuxeo.operation('Document.Create')
-              .params({
-                type: 'File',
-                name: nombre,
-                properties: 'dc:title=' + nombre + ' \ndc:description=' + descripcion
-              })
-              .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas de seguimiento')
-              .execute()
-              .then(function(doc) {
-                var nuxeoBlob = new Nuxeo.Blob({
-                  content: documento
-                });
-                nuxeo.batchUpload()
-                  .upload(nuxeoBlob)
-                  .then(function(res) {
-                    return nuxeo.operation('Blob.AttachOnDocument')
-                      .param('document', doc.uid)
-                      .input(res.blob)
-                      .execute();
-                  })
-                  .then(function() {
-                    return nuxeo.repository().fetch(doc.uid, {
-                      schemas: ['dublincore', 'file']
-                    });
-                  })
-                  .then(function(doc) {
-                    var url = doc.uid;
-                    defer.resolve(url);
-                  })
-                  .catch(function(error) {
-                    defer.reject(error)
-                  });
-              })
-              .catch(function(error) {
-                defer.reject(error)
-              });
-          })
-          .catch(function(error) {
-            // cannot connect
-            defer.reject(error);
-          });
-        return promise;
-      }
-
-      /**
-       * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
        * @param {Number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
@@ -369,77 +311,12 @@ angular.module('poluxClienteApp')
        * @description 
        * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
        */
-      ctrl.getDocumento = function(docid) {
-        nuxeo.header('X-NXDocumentProperties', '*');
-
-        /**
-         * @ngdoc method
-         * @name obtenerDoc
-         * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
-         * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-         * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto Periodo anterior
-         * @description 
-         * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
-         */
-        ctrl.obtenerDoc = function() {
-          var defer = $q.defer();
-
-          nuxeo.request('/id/' + docid)
-            .get()
-            .then(function(response) {
-              ctrl.doc = response;
-              //var aux=response.get('file:content');
-              ctrl.document = response;
-              defer.resolve(response);
-            })
-            .catch(function(error) {
-              defer.reject(error)
-            });
-          return defer.promise;
-        };
-
-        /**
-         * @ngdoc method
-         * @name obtenerFetch
-         * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
-         * @param {object} doc Documento de nuxeo al cual se le obtendrá el Blob
-         * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con el Blob del documento solicitado
-         * @description 
-         * Obtiene el blob de un documento.
-         */
-        ctrl.obtenerFetch = function(doc) {
-          var defer = $q.defer();
-
-          doc.fetchBlob()
-            .then(function(res) {
-              defer.resolve(res.blob());
-
-            })
-            .catch(function(error) {
-              defer.reject(error)
-            });
-          return defer.promise;
-        };
-
-        ctrl.obtenerDoc().then(function() {
-
-            ctrl.obtenerFetch(ctrl.document).then(function(r) {
-                ctrl.blob = r;
-                var fileURL = URL.createObjectURL(ctrl.blob);
-                console.log(fileURL);
-                $window.open(fileURL);
-              })
-              .catch(function(error) {
-                console.log("error", error);
-                swal(
-                  $translate.instant("ERROR"),
-                  $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-                  'warning'
-                );
-              });
-
+      ctrl.getDocumento = function (docid) {
+        nuxeoClient.getDocument(docid)
+          .then(function (document) {
+            $window.open(document.url);
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log("error", error);
             swal(
               $translate.instant("ERROR"),
@@ -447,7 +324,6 @@ angular.module('poluxClienteApp')
               'warning'
             );
           });
-
       }
 
       /**
@@ -460,7 +336,7 @@ angular.module('poluxClienteApp')
        * @param {string} operacion Operación que se debe ejecutar cuando se selecciona el botón
        * @returns {undefined} No retorna ningún valor
        */
-      $scope.loadrow = function(row, operacion) {
+      $scope.loadrow = function (row, operacion) {
         switch (operacion) {
           case "ver":
             ctrl.pasantiaSeleccionada = row.entity.TrabajoGrado;
