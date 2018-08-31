@@ -13,7 +13,8 @@
         </div>
         <div ng-if="!registrarNotaVinculado.errorCargando && !registrarNotaVinculado.cargandoTrabajos">
             <div class="panel col-md-12">
-                <div ui-grid="registrarNotaVinculado.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(registrarNotaVinculado.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                <div ui-grid="registrarNotaVinculado.gridOptions"  ui-grid-cellNav  ui-grid-pagination class="mi-grid" id="mi-grid" ui-grid-auto-resize></div>
+                <!--<div ui-grid="registrarNotaVinculado.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(registrarNotaVinculado.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>-->
             </div>
         </div>
     </div>
