@@ -137,7 +137,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error) {
-            ctrl.mensajeErrorCargando = $translate.instant("");
+            ctrl.mensajeErrorCargando = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTES");
             defer.reject(error);
           });
         return defer.promise;
