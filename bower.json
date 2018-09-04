@@ -41,10 +41,7 @@
     "angular": "1.7.0"
   },
   "devDependencies": {
-    "angular-mocks": "^1.4.0",
-    "grunt-karma": "^2.0.0",
-    "karma-junit-reporter": "^1.2.0",
-    "angular-translate": "^2.15.1"
+    "angular-mocks": "^1.6.8"
   },
   "appPath": "app",
   "moduleName": "poluxClienteApp",
