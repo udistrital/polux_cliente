@@ -40,7 +40,7 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //ctrl.estudiante = $routeParams.idEstudiante;
-      token_service.token.documento = "20141020036";
+      token_service.token.documento = "20131020039";
       token_service.token.role.push("ESTUDIANTE");
       ctrl.codigoEstudiante = token_service.token.documento;
 

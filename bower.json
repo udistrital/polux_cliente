@@ -11,7 +11,7 @@
     "angular-route": "^1.6.8",
     "angular-sanitize": "^1.6.8",
     "angular-touch": "^1.6.8",
-    "angular-ui-grid": "^*",
+    "angular-ui-grid": "4.6.0",
     "AngularJS-OAuth2": "angularjs-oauth2#^1.2.1",
     "angular-material": "*",
     "pdfmake": "*",
