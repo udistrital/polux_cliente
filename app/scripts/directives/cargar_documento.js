@@ -111,15 +111,15 @@ angular.module('poluxClienteApp')
          */
         ctrl.enviarDocumento = function () {
           console.log("consecutivo", ctrl.consecutivo);
-          if ($scope.carreras.length === 1) {
+          /*if ($scope.carreras.length === 1) {
             ctrl.carrera = $scope.carreras[0].CODIGO_CARRERA;
-          }
+          }*/
           if (ctrl.carrera !== undefined) {
             $scope.loadDocumento = true;
             //var date = $filter('date')(new Date(), 'dd-MM-yyyy');
             //Ahora la fecha se ingresa desde la vista
             var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
-            ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera + " Fecha: " + date;
+            ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.codigo_proyecto_curricular + " Fecha: " + date;
             //Se deja de utilizar la función de cargar el documento
             //ctrl.cargarDocumento().then(function(){
             var documento = {
