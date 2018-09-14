@@ -75,14 +75,14 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:DocenteTgsRevisionDocumentoCtrl
        * @description
        * Función que define los parámetros para consultar en la tabla vinculacion_trabajo_grado.
-       * El estado del trabajo de grado 13 pide los trabajos de grado que se encuentren en curso.
+       * Recibe diferentes estados de trabajo de grado.
        * El rol del trabajo de grado 1 pide los docentes cuya vinculación sea como directores del trabajo de grado.
        * @param {undefined} undefined No requiere parámetros
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosVinculacionTrabajoGrado = function() {
         return $.param({
-          query: "TrabajoGrado.EstadoTrabajoGrado.Id:13," +
+          query: "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|4|5|6|8|9|10|11|12|13|14|15|16|17|18|19|21|22," +
             "RolTrabajoGrado.Id:1," +
             "Activo:True,Usuario:" +
             ctrl.documentoDocente,
