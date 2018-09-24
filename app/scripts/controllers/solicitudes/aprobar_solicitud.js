@@ -124,7 +124,8 @@ angular.module('poluxClienteApp')
           "tipo":"PREGRADO",
         };*/
       //$scope.userId=19451396;
-      token_service.token.documento = "79647592" //Se sobreescribe el token
+      //token_service.token.documento = "79537917"; //Coordinador de artes
+      token_service.token.documento = "79647592" //Coordinador de sistemas
       $scope.userId = parseInt(token_service.token.documento);
 
       ctrl.carrerasCoordinador = [];
@@ -911,6 +912,11 @@ angular.module('poluxClienteApp')
                   //estadoTrabajoGrado = 5;
                   estadoTrabajoGrado = 21;
                 }
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
+                  // Si la modalidad es creación o interpretación el trabajo de grado  se crea en estado en curso
+                  //KB 26100
+                  estadoTrabajoGrado = 13;
+                }
                 //data para crear el trabajo de grado
                 var data_trabajo_grado = {
                   "Titulo": tempTrabajo.Titulo,
@@ -947,6 +953,10 @@ angular.module('poluxClienteApp')
                 }
                 //SI la modalidad es la de producción academica se sube de una vez como propuesta el documento
                 if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+                  data_propuesta.TipoDocumentoEscrito = 4;
+                }
+                //SI la modalidad es la de creación sube de una vez como propuesta el documento
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
                   data_propuesta.TipoDocumentoEscrito = 4;
                 }
                 var data_documento_tg = {
@@ -1209,6 +1219,11 @@ angular.module('poluxClienteApp')
               };
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                 // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
+                data_tg.EstadoTrabajoGrado.Id = 17;
+              }
+              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
+                // Si la modalidad es creación o interpretación el trabajo de grado de una vez pasa a listo para sustentar
+                //KB 26100
                 data_tg.EstadoTrabajoGrado.Id = 17;
               }
               //Vinculaciones del tg
