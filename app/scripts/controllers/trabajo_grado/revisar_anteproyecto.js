@@ -12,7 +12,6 @@
  * El trabajo de grado cambia de estado según corresponda (viable, modificable o no viable).
  * Este procedimiento puede aplicarse a docentes que son primer o segundo revisor.
  * @requires $q
- * @requires $sce
  * @requires $window
  * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
@@ -41,12 +40,12 @@
  * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el anteproyecto (viable, modificable, no viable)
  * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del anteproyecto
  * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el anteproyecto
- * @property {Object} document Almacena la respuesta del documento desde la petición a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+ * @property {Object} document Almacena la respuesta del documento desde la petición a nuxeo.
  * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
+		function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -246,7 +245,7 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
 				return $.param({
-					query: "DocumentoEscrito.TipoDocumentoEscrito:3," + 
+					query: "DocumentoEscrito.TipoDocumentoEscrito:3," +
 						"TrabajoGrado.Id:" +
 						idTrabajoGrado,
 					limit: 1
@@ -412,7 +411,7 @@ angular.module('poluxClienteApp')
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
 				//se  redireccióna a la página para dar el concepto
 				//console.log(filaAsociada.entity.Id);
-				$location.path("general/concepto_tg/"+filaAsociada.entity.Id);
+				$location.path("general/concepto_tg/" + filaAsociada.entity.Id);
 				/*
 				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
 				ctrl.coleccionRespuestasAnteproyecto = [];
@@ -538,7 +537,7 @@ angular.module('poluxClienteApp')
 
 			/**
 			 * @ngdoc method
-			 * @name registrarSolicitudAprobada
+			 * @name actualizarEstadoAnteproyecto
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarAnteproyectoCtrl
 			 * @description
 			 * Función que prepara el contenido de la información para actualizar.
@@ -616,17 +615,17 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.abrirDocumento = function(docid) {
 				nuxeoClient.getDocument(docid)
-				.then(function(document){
-					$window.open(document.url);
-				})
-				.catch(function(error) {
-					console.log("error", error);
-					swal(
-						$translate.instant("ERROR"),
-						$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-						'warning'
-					);
-				});
+					.then(function(document) {
+						$window.open(document.url);
+					})
+					.catch(function(error) {
+						console.log("error", error);
+						swal(
+							$translate.instant("ERROR"),
+							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
+							'warning'
+						);
+					});
 			}
 
 		});

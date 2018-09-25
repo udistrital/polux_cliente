@@ -6,9 +6,15 @@
  * @description
  * # FormatoNuevoCtrl
  * Controller of the poluxClienteApp
+ * Controlador que permite crear un nuevo formato de evaluación de una carrera. Como la dinámica de formatos
+ * de evaluación no se utiliza en el sistema este controlador tampoco es utilizado.
+ * @requires services/poluxService.service:poluxRequest
+ * @requires $scope
+ * @requires $location
+ * @requires $route
  */
 angular.module('poluxClienteApp')
-    .controller('FormatoNuevoCtrl', function(poluxRequest, $scope, $location, $route) {
+    .controller('FormatoNuevoCtrl', function (poluxRequest, $scope, $location, $route) {
 
         $scope.formatos = [];
         //Preguntas existentes en la base de datos
@@ -21,11 +27,11 @@ angular.module('poluxClienteApp')
         //cargar todos los formatos de la base de datos
         poluxRequest.get("pregunta", $.param({
             limit: "0"
-        })).then(function(response) {
+        })).then(function (response) {
             $scope.preguntas = response.data;
         });
 
-        poluxRequest.get("respuesta", "").then(function(response) {
+        poluxRequest.get("respuesta", "").then(function (response) {
             $scope.respuestas = response.data;
         });
 
@@ -86,17 +92,17 @@ angular.module('poluxClienteApp')
                     tipo: 'Numérica'
                 }]
             }],
-            isRowSelectable: function(row) {
+            isRowSelectable: function (row) {
                 return row.treeLevel === 0;
             },
 
-            onRegisterApi: function(gridApi) {
+            onRegisterApi: function (gridApi) {
                 $scope.gridApi = gridApi;
             }
         };
         $scope.gridOptions.multiSelect = false;
 
-        $scope.ajustar_id = function() {
+        $scope.ajustar_id = function () {
             var p = 0;
             var h = 0;
             for (var j = 0; j < $scope.gridOptions.data.length; j++) {
@@ -111,7 +117,7 @@ angular.module('poluxClienteApp')
         }
 
 
-        $scope.anadir_opcion = function() {
+        $scope.anadir_opcion = function () {
             if ($scope.rSeleccion !== '') {
                 var seleccion = $scope.gridApi.selection.getSelectedRows();
                 var pos = 0;
@@ -151,7 +157,7 @@ angular.module('poluxClienteApp')
                 $scope.rSeleccion = '';
             }
         }
-        $scope.anadir_pregunta = function() {
+        $scope.anadir_pregunta = function () {
             if ($scope.pSeleccion !== '') {
                 var pos = 0;
                 var pregunta = null;
@@ -199,7 +205,7 @@ angular.module('poluxClienteApp')
             }
         };
 
-        $scope.borrar = function() {
+        $scope.borrar = function () {
             var pos = 0;
             var seleccion = $scope.gridApi.selection.getSelectedRows();
             if (seleccion.length > 0) {
@@ -221,7 +227,7 @@ angular.module('poluxClienteApp')
             $scope.ajustar_id();
         };
 
-        $scope.guardar = function() {
+        $scope.guardar = function () {
             var formato_post = {
                 formato: {
                     Nombre: $scope.nombre_formato,
@@ -232,7 +238,7 @@ angular.module('poluxClienteApp')
                 TrPreguntas: []
             };
             var i = -1;
-            angular.forEach($scope.gridOptions.data, function(data) {
+            angular.forEach($scope.gridOptions.data, function (data) {
                 console.log(data);
                 if (data.$$treeLevel === 0 && (data.Tipo === 'cerrado_unico' || data.Tipo === 'cerrado_multiple')) {
                     formato_post.TrPreguntas.push({
@@ -294,7 +300,7 @@ angular.module('poluxClienteApp')
             });
             i += 1;
             console.log(formato_post);
-            poluxRequest.post("tr_formato", formato_post).then(function(response) {
+            poluxRequest.post("tr_formato", formato_post).then(function (response) {
                 console.log(response.data);
                 swal({
                     title: 'Ok',
@@ -303,7 +309,7 @@ angular.module('poluxClienteApp')
                     type: 'success',
                     showCancelButton: false,
                     confirmButtonText: 'Aceptar'
-                }).then(function() {
+                }).then(function () {
                     $location.path('/formato_ver');
                 });
                 $route.reload();

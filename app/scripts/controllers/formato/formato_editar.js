@@ -9,9 +9,13 @@ function fnClone(obj) {
  * @description
  * # FormatoEditarCtrl
  * Controller of the poluxClienteApp
+ * Controlador que permite editar un formato de evaluación de una carrera. Como la dinámica de formatos
+ * de evaluación no se utiliza en el sistema este controlador tampoco es utilizado.
+ * @requires services/poluxService.service:poluxRequest
+ * @requires $scope
  */
 angular.module('poluxClienteApp')
-  .controller('FormatoEditarCtrl', function(poluxRequest, $scope, uiGridTreeViewConstants) {
+  .controller('FormatoEditarCtrl', function (poluxRequest, $scope, uiGridTreeViewConstants) {
 
     var ctrl = this;
     ctrl.request = poluxRequest;
@@ -22,34 +26,34 @@ angular.module('poluxClienteApp')
     $scope.preguntas = null;
     $scope.respuestas = null;
 
-    ctrl.get_all_format = function() {
+    ctrl.get_all_format = function () {
       //cargar todos los formatos
       poluxRequest.get("formato", $.param({
         limit: "0"
-      })).then(function(response) {
+      })).then(function (response) {
         ctrl.formatos = response.data;
       });
 
       //cargar todas las preguntas
       poluxRequest.get("pregunta", $.param({
         limit: "0"
-      })).then(function(response) {
+      })).then(function (response) {
         $scope.preguntas = response.data;
       });
 
       //cargar todas las respuesta
       poluxRequest.get("respuesta", $.param({
         limit: "0"
-      })).then(function(response) {
+      })).then(function (response) {
         $scope.respuestas = response.data;
       });
     };
 
     ctrl.get_all_format();
 
-    ctrl.cargar_en_uigrid = function(data) {
+    ctrl.cargar_en_uigrid = function (data) {
       console.log(data);
-      angular.forEach(data.TrPreguntas, function(fila) {
+      angular.forEach(data.TrPreguntas, function (fila) {
         console.log(fila);
         $scope.gridOptions.data.push({
           Orden: fila.Pregunta.Orden,
@@ -61,7 +65,7 @@ angular.module('poluxClienteApp')
           opciones: []
         });
         if (fila.Respuestas.length !== 0) {
-          angular.forEach(fila.Respuestas, function(respuesta) {
+          angular.forEach(fila.Respuestas, function (respuesta) {
             $scope.gridOptions.data.push({
               Orden: respuesta.Orden,
               IdPregunta: {
@@ -79,11 +83,11 @@ angular.module('poluxClienteApp')
       });
     };
 
-    ctrl.refresh_format_view = function() {
+    ctrl.refresh_format_view = function () {
       $scope.gridOptions.data = [];
       console.log($scope.SelectedFormat);
       poluxRequest.get("tr_formato/" + $scope.SelectedFormat, '')
-        .then(function(response) {
+        .then(function (response) {
           ctrl.formato_vista = response.data;
           $scope.copy_format = fnClone(response.data);
           ctrl.cargar_en_uigrid(ctrl.formato_vista);
@@ -151,18 +155,18 @@ angular.module('poluxClienteApp')
         }]
       }],
 
-      isRowSelectable: function(row) {
+      isRowSelectable: function (row) {
         return row.treeLevel === 0;
       },
 
-      onRegisterApi: function(gridApi) {
+      onRegisterApi: function (gridApi) {
         $scope.gridApi = gridApi;
       }
     };
 
     $scope.gridOptions.multiSelect = false;
 
-    $scope.ajustar_id = function() {
+    $scope.ajustar_id = function () {
       var p = 0;
       var h = 0;
       for (var j = 0; j < $scope.gridOptions.data.length; j++) {
@@ -176,7 +180,7 @@ angular.module('poluxClienteApp')
       }
     }
 
-    $scope.anadir_opcion = function() {
+    $scope.anadir_opcion = function () {
       if ($scope.rSeleccion !== '') {
         var seleccion = $scope.gridApi.selection.getSelectedRows();
         var pos = 0;
@@ -216,7 +220,7 @@ angular.module('poluxClienteApp')
         $scope.rSeleccion = '';
       }
     }
-    $scope.anadir_pregunta = function() {
+    $scope.anadir_pregunta = function () {
       if ($scope.pSeleccion !== '') {
         var pos = 0;
         var pregunta = null;
@@ -264,7 +268,7 @@ angular.module('poluxClienteApp')
       }
     };
 
-    $scope.borrar = function() {
+    $scope.borrar = function () {
       var pos = 0;
       var seleccion = $scope.gridApi.selection.getSelectedRows();
       if (seleccion.length > 0) {
@@ -286,7 +290,7 @@ angular.module('poluxClienteApp')
       $scope.ajustar_id();
     };
 
-    $scope.guardar = function() {
+    $scope.guardar = function () {
       var formato_post = {
         formato: {
           Nombre: $scope.nombre_formato,
@@ -297,7 +301,7 @@ angular.module('poluxClienteApp')
         TrPreguntas: []
       };
       var i = -1;
-      angular.forEach($scope.gridOptions.data, function(data) {
+      angular.forEach($scope.gridOptions.data, function (data) {
         console.log(data);
         if (data.$$treeLevel === 0) {
           formato_post.TrPreguntas.push({
@@ -334,7 +338,7 @@ angular.module('poluxClienteApp')
       i += 1;
       console.log(formato_post);
       $scope.sumadre = formato_post;
-      poluxRequest.post("tr_formato", formato_post).then(function(response) {
+      poluxRequest.post("tr_formato", formato_post).then(function (response) {
         console.log(response.data);
       });
     };

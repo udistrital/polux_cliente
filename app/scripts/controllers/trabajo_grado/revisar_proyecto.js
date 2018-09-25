@@ -40,16 +40,16 @@
  * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el Proyecto (viable, modificable, no viable)
  * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del Proyecto
  * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el Proyecto
- * @property {Object} document Almacena la respuesta del documento desde la petición a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+ * @property {Object} document Almacena la respuesta del documento desde la petición a nuxeo. 
  * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarProyectoCtrl',
-		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants,$location) {
+		function($q, $sce, $translate, $window, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "79777053";
+			token_service.token.documento = "80093200";
 			ctrl.usuarioSesion = token_service.token.documento;
 
 			ctrl.cargandoProyectos = true;
@@ -113,11 +113,11 @@ angular.module('poluxClienteApp')
 					//'ng-if=""' +
 					'funcion="grid.appScope.revisarProyecto.revisarProyectoSeleccionado(row)"' +
 					'grupobotones="grid.appScope.revisarProyecto.botonRevisarProyecto">' +
-          '</btn-registro>' 
-					//+ '<div class="ui-grid-cell-contents" ' +
-					//'ng-if="row.entity.TrabajoGrado.EstadoTrabajoGrado.Id != 4 && row.entity.TrabajoGrado.EstadoTrabajoGrado.Id != 9">' +
-					//'{{"REVISAR_Proyecto.REGISTRO_NO_HABILITADO" | translate}}' +
-					//'</div>'
+					'</btn-registro>'
+				//+ '<div class="ui-grid-cell-contents" ' +
+				//'ng-if="row.entity.TrabajoGrado.EstadoTrabajoGrado.Id != 4 && row.entity.TrabajoGrado.EstadoTrabajoGrado.Id != 9">' +
+				//'{{"REVISAR_Proyecto.REGISTRO_NO_HABILITADO" | translate}}' +
+				//'</div>'
 			}];
 
 			ctrl.cuadriculaEstudiantesDelProyecto = {};
@@ -245,8 +245,8 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
 				return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:5," +
-            "TrabajoGrado.Id:" +
+					query: "DocumentoEscrito.TipoDocumentoEscrito:5," +
+						"TrabajoGrado.Id:" +
 						idTrabajoGrado,
 					limit: 1
 				});
@@ -300,9 +300,9 @@ angular.module('poluxClienteApp')
 						ctrl.usuarioSesion,
 					limit: 0
 				});
-      }
-      
-      /**
+			}
+
+			/**
 			 * @ngdoc method
 			 * @name obtenerParametrosVinculacionTrabajoGradoDirector
 			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarProyectoCtrl
@@ -316,8 +316,8 @@ angular.module('poluxClienteApp')
 			ctrl.obtenerParametrosVinculacionTrabajoGradoDirector = function() {
 				return $.param({
 					query: "Activo:True," +
-            "RolTrabajoGrado.Id:1," +
-            "TrabajoGrado.Modalidad.Id.in:1|8,"+
+						"RolTrabajoGrado.Id:1," +
+						"TrabajoGrado.Modalidad.Id.in:1|8," +
 						"TrabajoGrado.EstadoTrabajoGrado.Id.in:15," +
 						"Usuario:" +
 						ctrl.usuarioSesion,
@@ -339,32 +339,32 @@ angular.module('poluxClienteApp')
 			ctrl.consultarProyectos = function() {
 				var deferred = $q.defer();
 				var conjuntoProcesamientoDeProyectos = [];
-        ctrl.coleccionProyectos = [];
-        
-        var getProyectosPendientes = function(parametros){
-          var deferred = $q.defer();
-          poluxRequest.get("vinculacion_trabajo_grado", parametros)
-          .then(function(responseProyectosPendientes){
-            deferred.resolve(responseProyectosPendientes.data);
-          })
-          .catch(function(error){
-            deferred.reject(error);
-          });
-          return deferred.promise;
-        }
+				ctrl.coleccionProyectos = [];
 
-        $q.all([getProyectosPendientes(ctrl.obtenerParametrosVinculacionTrabajoGradoEvaluador()),getProyectosPendientes(ctrl.obtenerParametrosVinculacionTrabajoGradoDirector())])
+				var getProyectosPendientes = function(parametros) {
+					var deferred = $q.defer();
+					poluxRequest.get("vinculacion_trabajo_grado", parametros)
+						.then(function(responseProyectosPendientes) {
+							deferred.resolve(responseProyectosPendientes.data);
+						})
+						.catch(function(error) {
+							deferred.reject(error);
+						});
+					return deferred.promise;
+				}
+
+				$q.all([getProyectosPendientes(ctrl.obtenerParametrosVinculacionTrabajoGradoEvaluador()), getProyectosPendientes(ctrl.obtenerParametrosVinculacionTrabajoGradoDirector())])
 					.then(function(ProyectosPendientes) {
-            var proyectosPendientes = [];
-            
-            if(ProyectosPendientes[0]!=null){
-              Array.prototype.push.apply(proyectosPendientes,ProyectosPendientes[0]);
-            }
-            if(ProyectosPendientes[1]!=null){
-              Array.prototype.push.apply(proyectosPendientes,ProyectosPendientes[1]);
-            }
+						var proyectosPendientes = [];
+
+						if (ProyectosPendientes[0] != null) {
+							Array.prototype.push.apply(proyectosPendientes, ProyectosPendientes[0]);
+						}
+						if (ProyectosPendientes[1] != null) {
+							Array.prototype.push.apply(proyectosPendientes, ProyectosPendientes[1]);
+						}
 						//if (ProyectosPendientes.data) {
-            if (proyectosPendientes.length > 0) {
+						if (proyectosPendientes.length > 0) {
 							angular.forEach(proyectosPendientes, function(Proyecto) {
 								conjuntoProcesamientoDeProyectos.push(ctrl.consultarEstudiantesAsociados(Proyecto));
 								conjuntoProcesamientoDeProyectos.push(ctrl.consultarDocumentoTrabajoGrado(Proyecto));
@@ -424,9 +424,9 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.actualizarCuadriculaDeProyectos = function() {
 				ctrl.cargandoProyectos = false;
-        ctrl.errorCargandoProyectos = false;
-        ctrl.coleccionProyectos = [];
-        ctrl.cuadriculaProyectos.data = [];
+				ctrl.errorCargandoProyectos = false;
+				ctrl.coleccionProyectos = [];
+				ctrl.cuadriculaProyectos.data = [];
 				ctrl.consultarProyectos()
 					.then(function(respuestaConsultandoProyectos) {
 						if (ctrl.coleccionProyectos.length > 0) {
@@ -456,7 +456,7 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.revisarProyectoSeleccionado = function(filaAsociada) {
 				//ctrl.ProyectoSeleccionado = filaAsociada.entity;
-				$location.path("general/concepto_tg/"+filaAsociada.entity.Id);
+				$location.path("general/concepto_tg/" + filaAsociada.entity.Id);
 				/*ctrl.coleccionRespuestasProyecto = [];
 				ctrl.coleccionRespuestasProyecto = [{
 				idEstadoTrabajoGrado: 16,
@@ -604,9 +604,9 @@ angular.module('poluxClienteApp')
 					"Correccion": correccion
 				};
 				poluxRequest
-          //.post("tr_revisar_Proyecto", informacionParaActualizar)
-          // Se reutiliza transacción de revisar anteproyecto
-          .post("tr_revisar_anteproyecto", informacionParaActualizar)
+					//.post("tr_revisar_Proyecto", informacionParaActualizar)
+					// Se reutiliza transacción de revisar anteproyecto
+					.post("tr_revisar_anteproyecto", informacionParaActualizar)
 					.then(function(respuestaRevisarProyecto) {
 						deferred.resolve(respuestaRevisarProyecto);
 					})

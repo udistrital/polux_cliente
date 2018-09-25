@@ -5,7 +5,8 @@
  * @name poluxClienteApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the poluxClienteApp
+ * Controller of the poluxClienteApp.
+ * Controlador Main de Polúx. Actualmente no se utiliza.
  */
 angular.module('poluxClienteApp')
   .controller('MainCtrl', function () {

@@ -1,7 +1,18 @@
 'use strict';
 
+/**
+ * @ngdoc function
+ * @name poluxClienteApp.controller:footerCtrl
+ * @description
+ * # AboutCtrl
+ * Controller of the poluxClienteApp.
+ * Controlador del footer del proyecto.
+ * @property {array} enlaces_universitarios Enlaces que pueden ser de interes y se muestran en el footer.
+ * @property {string} copyright Derechos de la aplicación.
+ * @property {array} map Otros enlaces que también pueden ser de interes.
+ */
 angular.module('poluxClienteApp')
-.controller("footerCtrl", function($scope) {
+  .controller("footerCtrl", function ($scope) {
     //var ctrl = this;
     $scope.enlaces_universitarios = [{
       nombre: "Transparencia",

@@ -16,11 +16,11 @@ angular.module('poluxClienteApp')
   .directive('versionesDocumentosTg', function () {
     return {
       restrict: 'E',
-      scope:{
-          tg:'=',
-          veranteproyecto: '=',
-          verproyecto: '=',
-          verproyectorevision: '='
+      scope: {
+        tg: '=',
+        veranteproyecto: '=',
+        verproyecto: '=',
+        verproyectorevision: '='
       },
       templateUrl: 'views/directives/trabajo_grado/versiones_documentos_tg.html',
       /**
@@ -33,7 +33,7 @@ angular.module('poluxClienteApp')
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/nuxeoService.service:nuxeoClient
+       * @requires services/poluxService.service:nuxeoClient
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Boolean} showVersiones Booleano para mostrar la directiva
        * @property {object} treeOptions Opciones para el arbol
@@ -42,13 +42,13 @@ angular.module('poluxClienteApp')
        * @property {Boolean} errorCargando Booleano para indicar que hubo un error cargando los parametros
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        */
-      controller:function($scope,nuxeoClient,$q,poluxRequest,$translate){
+      controller: function ($scope, nuxeoClient, $q, poluxRequest, $translate) {
         var ctrl = this;
-        
+
         $scope.showVersiones = true;
-        
-        $scope.$watch('trabajoGradoVersiones',function(){
-          if($scope.tg){
+
+        $scope.$watch('trabajoGradoVersiones', function () {
+          if ($scope.tg) {
             ctrl.consultarDocumentos($scope.tg);
           }
         });
@@ -57,32 +57,32 @@ angular.module('poluxClienteApp')
           nodeChildren: "children",
           dirSelectable: true,
           injectClasses: {
-              ul: "a1",
-              li: "a2",
-              liSelected: "a7",
-              iExpanded: "a3",
-              iCollapsed: "a4",
-              iLeaf: "a5",
-              label: "a6",
-              labelSelected: "a8"
+            ul: "a1",
+            li: "a2",
+            liSelected: "a7",
+            iExpanded: "a3",
+            iCollapsed: "a4",
+            iLeaf: "a5",
+            label: "a6",
+            labelSelected: "a8"
           }
         }
 
-        ctrl.getDocumentos = function(trabajoGrado,tipoDocumento){
+        ctrl.getDocumentos = function (trabajoGrado, tipoDocumento) {
           var defer = $q.defer();
           var parametrosDocumento = $.param({
-            query:"TrabajoGrado.Id:"+trabajoGrado.Id
-              +",DocumentoEscrito.TipoDocumentoEscrito:"+tipoDocumento,
-            limi:1
+            query: "TrabajoGrado.Id:" + trabajoGrado.Id
+              + ",DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumento,
+            limi: 1
           });
-          poluxRequest.get("documento_trabajo_grado",parametrosDocumento)
-            .then(function(responseDocumento){
-              if(responseDocumento.data != null){
+          poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
+            .then(function (responseDocumento) {
+              if (responseDocumento.data != null) {
                 ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
-                 .then(function(versiones){
+                  .then(function (versiones) {
                     var nombreNodo = "";
                     var nombreHijo = "";
-                    switch(tipoDocumento){
+                    switch (tipoDocumento) {
                       case 3:
                         nombreNodo = $translate.instant('ANTEPROYECTO');
                         nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO');
@@ -96,24 +96,24 @@ angular.module('poluxClienteApp')
                         nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                         break;
                     }
-                    angular.forEach(versiones, function(version){
+                    angular.forEach(versiones, function (version) {
                       version.name = nombreHijo + version.get('uid:major_version')
                     });
                     ctrl.dataForTree.push({
-                      name:nombreNodo,
-                      children:versiones,
+                      name: nombreNodo,
+                      children: versiones,
                     });
                     defer.resolve();
-                 })
-                 .catch(function(error){
-                  defer.reject(error); 
-                 });             
+                  })
+                  .catch(function (error) {
+                    defer.reject(error);
+                  });
               } else {
                 defer.resolve();
               }
             })
-            .catch(function(error){
-              defer.reject(error); 
+            .catch(function (error) {
+              defer.reject(error);
             });
           return defer.promise;
         }
@@ -127,32 +127,32 @@ angular.module('poluxClienteApp')
          * @param {Object} trabajoGrado trabajo de grado del que se consultan los documentos
          * @returns {undefined} no retorna ningún valor
          */
-        ctrl.consultarDocumentos = function(trabajoGrado){
+        ctrl.consultarDocumentos = function (trabajoGrado) {
           ctrl.dataForTree = [];
           ctrl.loadingVersion = true;
           var promesasDocumentos = [];
-          if($scope.veranteproyecto){
+          if ($scope.veranteproyecto) {
             //Tipo de documento 3
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado,3));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 3));
           }
-          if($scope.verproyecto){
+          if ($scope.verproyecto) {
             //Tipo de documento 4
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado,4));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 4));
           }
-          if($scope.verproyectorevision){
+          if ($scope.verproyectorevision) {
             //Tipo de documento 5
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado,5));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 5));
           }
           $q.all(promesasDocumentos)
-            .then(function(){
+            .then(function () {
               console.log("tree", ctrl.dataForTree);
-              if(ctrl.dataForTree.length==0){
+              if (ctrl.dataForTree.length == 0) {
                 ctrl.mensajeError = $translate.instant("NO_HAY_DOCUMENTOS");
                 ctrl.errorCargando = true;
               }
               ctrl.loadingVersion = false;
             })
-            .catch(function(error){
+            .catch(function (error) {
               console.log(error);
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO");
               ctrl.errorCargando = true;
@@ -169,19 +169,19 @@ angular.module('poluxClienteApp')
          * @param {Object} uid Uid del documento que se consultara
          * @returns {Promise} Objeto de tipo Promise que se resuelve con las versioens del documento
          */
-        ctrl.getVersiones = function(uid){
+        ctrl.getVersiones = function (uid) {
           var defer = $q.defer();
           //Cargar las versiones previas del documento
           nuxeoClient.getVersions(uid)
-          .then(function(responseVersiones){
-            defer.resolve(responseVersiones);
-          })
-          .catch(function(error){
-            defer.reject(error);
-          });
+            .then(function (responseVersiones) {
+              defer.resolve(responseVersiones);
+            })
+            .catch(function (error) {
+              defer.reject(error);
+            });
           return defer.promise;
         }
-        
+
         /**
          * @ngdoc method
          * @name verDocumento
@@ -191,16 +191,16 @@ angular.module('poluxClienteApp')
          * @param {Object} doc Documento que se va a descargar
          * @returns {undefined} No hace retorno de resultados
          */
-        ctrl.verDocumento = function(doc){
-          if(doc.uid){
+        ctrl.verDocumento = function (doc) {
+          if (doc.uid) {
             ctrl.loadingVersion = true;
             nuxeoClient.getDocument(doc.uid)
-              .then(function(documento){
+              .then(function (documento) {
                 ctrl.loadingVersion = false;
                 window.open(documento.url);
               })
-              .catch(function(error){
-                console.log("error",error);
+              .catch(function (error) {
+                console.log("error", error);
                 ctrl.loadingVersion = false;
                 swal(
                   $translate.instant("ERROR"),
@@ -212,6 +212,6 @@ angular.module('poluxClienteApp')
         }
 
       },
-      controllerAs:'d_versionesDocumentosTg'
+      controllerAs: 'd_versionesDocumentosTg'
     };
   });

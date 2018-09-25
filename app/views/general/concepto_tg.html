@@ -109,18 +109,25 @@
                 <br>
                 <div class="row">
                   <div class="col-sm-2">
-                    <switch  ng-model="showDocumento" class="blue" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
+                    <switch ng-click="conceptoTg.revisionActual.documentModel = undefined;" ng-model="showDocumento" class="blue" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
                   </div>
                   <p class="col-sm-10 control-label"> {{'DESEA_INCLUIR_DOCUMENTO' | translate}} </p>
                 </div>
                 <div ng-if="showDocumento">
                   <br>
-                  <div class="row">
-                    <p class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}}</p>
-                    <div class="col-sm-9 ">
-                      <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="conceptoTg.revisionActual.documentModel" required>
+                  <form name="formularioDocumento">
+                    <div class="row">
+                      <p class="col-sm-3 control-label">{{'SELECCIONE_EL_DOCUMENTO' | translate}}</p>
+                      <div class="col-sm-6">
+                        <input id="inputdocumento" type="file" angular-bfi="{'showUpload':false, 'showRemove': false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="conceptoTg.revisionActual.documentModel" required>
+                      </div>
+                      <div class="col-sm-3">
+                        <button class="btn btn-primary" ng-click="conceptoTg.revisionActual.documentModel = undefined; showDocumento = !showDocumento;" type="reset">
+                          {{'QUITAR_DOCUMENTO' | translate}}
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  </form>
                 </div>
               </div>
               <!--Aquí se maneja el guardado de la revisión-->

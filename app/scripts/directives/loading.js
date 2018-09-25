@@ -12,44 +12,44 @@
  * @param {string} message Mensaje que se muestra bajo la animación
  */
 angular.module('poluxClienteApp')
-.directive('loading', function () {
+  .directive('loading', function () {
     return {
       restrict: 'E',
-      scope:{
-          load:'=',
-          tam:'=?',
-          message:'=?'
-        },
+      scope: {
+        load: '=',
+        tam: '=?',
+        message: '=?'
+      },
       template: '<div class="loading" ng-show="load">' +
-                   '<i class="fa fa-clock-o fa-spin fa-{{tam}}x faa-burst animated  text-info" aria-hidden="true" ></i>' +
-                   //'<br> </br>'+
-                '</div>'+
-                '<div ng-show="load">' +
-                    '<label class="col-sm-12 control-label" style="text-align: center;"> {{loadMessage}}</label>'+
-                '</div>'
-                ,
+        '<i class="fa fa-clock-o fa-spin fa-{{tam}}x faa-burst animated  text-info" aria-hidden="true" ></i>' +
+        //'<br> </br>'+
+        '</div>' +
+        '<div ng-show="load">' +
+        '<label class="col-sm-12 control-label" style="text-align: center;"> {{loadMessage}}</label>' +
+        '</div>'
+      ,
       /**
        * @ngdoc controller
        * @name poluxClienteApp.directive:loading.controller:loadingCtl
        * @description
        * # MateriasPosgradoFormalizarSolicitudCtrl
-       * Controller of the poluxClienteApp.directive:loading
+       * # Controller of the poluxClienteApp.directive:loading
        * Controlador de la directiva loading
        * @requires $scope
        */
-      controller:function($scope){
+      controller: function ($scope) {
         /**
          * @ngdoc method
          * @name mostrar
          * @methodOf poluxClienteApp.directive:loading.controller:loadingCtl
          * @description 
          * Muestra o oculta la animación con la bandera load
-         */  
+         */
         $scope.loadMessage = "";
-        if ($scope.tam===undefined) {
-          $scope.tam=5;
+        if ($scope.tam === undefined) {
+          $scope.tam = 5;
         }
-        if ($scope.message!==undefined) {
+        if ($scope.message !== undefined) {
           $scope.loadMessage = $scope.message;
         }
       }

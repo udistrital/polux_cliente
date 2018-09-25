@@ -32,7 +32,7 @@
             <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
             <div class="col-sm-10">
                 <form name="myForm">
-                  <ui-select name="carrera" ng-model="publicarAsignaturas.carreraSeleccionada" required on-select="publicarAsignaturas.myFunc(publicarAsignaturas.carreraSeleccionada)" style="width:95%;" theme="bootstrap" >
+                  <ui-select name="carrera" ng-model="publicarAsignaturas.carreraSeleccionada" required on-select="publicarAsignaturas.getPensums(publicarAsignaturas.carreraSeleccionada)" style="width:95%;" theme="bootstrap" >
                       <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
                       </ui-select-match>
                       <ui-select-choices repeat="item.codigo_proyecto_curricular as item in publicarAsignaturas.carreras| filter: $select.search">

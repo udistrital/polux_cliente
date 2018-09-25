@@ -2,9 +2,12 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:general/propuesta/consultarPropuesta
+ * @name poluxClienteApp.directive:consultarPropuesta
  * @description
- * # general/propuesta/consultarPropuesta
+ * # consultarPropuesta
+ * Directiva que permite consultar la propuesta de trabajo de grado de un estudiante.
+ * Actualmente no se utiliza.
+ * Controlador: {@link poluxClienteApp.directive:consultarPropuesta.controller:consultarPropuestaCtrl consultarPropuestaCtrl}
  */
 angular.module('poluxClienteApp')
   .directive('consultarPropuesta', function () {
@@ -15,8 +18,17 @@ angular.module('poluxClienteApp')
         },
       */
       templateUrl: 'views/directives/general/propuesta/consultar-propuesta.html',
-      controller:function(){
+      /**
+       * @ngdoc controller
+       * @name poluxClienteApp.directive:consultarPropuesta.controller:consultarPropuestaCtrl
+       * @description
+       * # consultarPropuestaCtrl
+       * # Controller of the poluxClienteApp.directive:consultarPropuesta
+       * Controlador de la directiva {@link poluxClienteApp.directive:consultarPropuesta consultarPropuesta}.
+       * Actualmente no se utiliza.
+       */
+      controller: function () {
       },
-      controllerAs:'d_conProp'
+      controllerAs: 'd_conProp'
     };
   });

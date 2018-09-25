@@ -5,7 +5,13 @@
  * @name poluxClienteApp.controller:SocializacionCtrl
  * @description
  * # SocializacionCtrl
- * Controller of the poluxClienteApp
+ * Controller of the poluxClienteApp.
+ * Controlador que permite registrar, ver y editar la socialización de un trabajo de grado.
+ * Actualmente no se utiliza este controlador debido a que todo se maneja por las solicitudes.
+ * @requires decorators/poluxClienteApp.decorator:TextTranslate
+ * @requires $scope
+ * @requires services/poluxService.service:poluxRequest
+ * @requires services/oikosService.service:oikosRequest
  */
 angular.module('poluxClienteApp')
     .controller('SocializacionCtrl', function(poluxRequest, oikosRequest, $translate, $scope) {

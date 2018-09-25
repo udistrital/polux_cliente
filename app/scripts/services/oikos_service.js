@@ -3,7 +3,8 @@
 /**
   * @ngdoc overview
   * @name oikosService
-  * @description Modulo para servicio de oikos provee los servicios descritos en {@link oikosService.service:oikosRequest oikosRequest}
+  * @description Modulo para servicio de oikos provee los servicios descritos en {@link oikosService.service:oikosRequest oikosRequest}.
+  * Actualmente no se utiliza.
   */
 angular.module('oikosService', [])
     /**
@@ -15,7 +16,8 @@ angular.module('oikosService', [])
      * @param {injector} CONF compenente de configuración
      * @description
      * # oikosService
-     * Fabrica sobre la cual se consumen los servicios proveidos por el API de oikos sobre los metodos GET, POST, PUT y DELETE
+     * Fabrica sobre la cual se consumen los servicios proveidos por el API de oikos sobre los metodos GET, POST, PUT y DELETE.
+     * Actualmente no se utiliza.
      */
     .factory('oikosRequest', function($http,CONF) {
         /**

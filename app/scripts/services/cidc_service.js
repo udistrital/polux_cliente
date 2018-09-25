@@ -3,7 +3,8 @@
 /**
   * @ngdoc overview
   * @name cidcService
-  * @description Modulo para servicio de academica provee los servicios descritos en {@link cidcService.service:cidcRequest cidcService}
+  * @description Modulo para servicio de academica provee los servicios descritos en {@link cidcService.service:cidcRequest cidcService}.
+  * Actualmente no se utiliza debido a que el no existe un API consumible.
   */
 angular.module('cidcService', [])
     /**
@@ -11,7 +12,8 @@ angular.module('cidcService', [])
      * @name cidcService.service:cidcRequest
      * @description
      * # cidcService
-     * Fabrica sobre la cual se consumen los servicios proveidos por el API del cidc sobre los metodos GET, POST, PUT y DELETE
+     * Fabrica sobre la cual se consumen los servicios proveidos por el API del cidc sobre los metodos GET, POST, PUT y DELETE.
+     * Actualmente no se utiliza debido a que el no existe un API consumible.
      */
   .factory('cidcRequest', function () {
 

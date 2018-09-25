@@ -2,11 +2,11 @@
 
 /**
  * @ngdoc directive
- * @name poluxClienteApp.directive:solicitudes/listarSolicitudes
+ * @name poluxClienteApp.directive:listarSolicitudes
  * @description
- * # solicitudes/listarSolicitudes
+ * # listarSolicitudes
  * Directiva que permite ver las solicitudes asociadas a un trabajo de grado
- * Controller: {@link poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl listarSolicitudesCtrl}
+ * Controller: {@link poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl listarSolicitudesCtrl}
  * @param {Object} tg Objeto que contiene el trabajo de grado que se consultará
   */
 angular.module('poluxClienteApp')
@@ -19,15 +19,15 @@ angular.module('poluxClienteApp')
       templateUrl: 'views/directives/solicitudes/listar_solicitudes.html',
       /**
        * @ngdoc controller
-       * @name poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
+       * @name poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
        * @description
-       * # poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
-       * Controller poluxClienteApp.directive:solicitudes
-       * Controlador de la directiva listar solicitudes que permite ver las solicitudes asociadas a un trabajo de grado
+       * # poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
+       * # Controller of poluxClienteApp.directive:listarSolicitudes
+       * Controlador de la directiva {@link poluxClienteApp.directive:listarSolicitudes  listarSolicitudes} que permite ver las solicitudes asociadas a un trabajo de grado
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/nuxeoService.service:nuxeoClient
+       * @requires services/poluxService.service:nuxeoClient
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Object} gridOptions Grid Options de la grilla de solicitudes
        * @property {Boolean} loadingSolicitudes Booleano para indicar que se estan consultando las versiones de los documentos
@@ -79,7 +79,7 @@ angular.module('poluxClienteApp')
         /**
          * @ngdoc method
          * @name consultarSolicitudes
-         * @methodOf poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
+         * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
          * @description 
          * Permite cargar las solicitudes asociadas a un documenti
          * @param {Object} trabajoGrado trabajo de grado del que se consultan los documentos
@@ -158,7 +158,7 @@ angular.module('poluxClienteApp')
         /**
          * @ngdoc method
          * @name mostrarResultado
-         * @methodOf poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
+         * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
          * @description 
          * Función que muestra el resultado de la solicitud, esta función muestra lo sucedido con la solicitud cuando fue aprobada o rechazada, y realiza una pequeña descripción de lo que 
          * sucedio, por ejemplo en el casos de cambio de materias muestra el nombre de la materia que se cancelo y el nombre de la que se registro, en el caso de las iniciales muestra siel estudiante
@@ -331,7 +331,7 @@ angular.module('poluxClienteApp')
          /**
            * @ngdoc method
            * @name cargarDetalles
-           * @methodOf poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
+           * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
            * @description 
            * Función que se ejecuta cuando un usario desea ver los detalles especificos de una solicitud, se consulta los documentos con los que se aprobó o rechazó la solicitud,
            * y los detalles asociados a la solicitud del servicio {@link services/poluxService.service:poluxRequest poluxRequest}
@@ -530,7 +530,7 @@ angular.module('poluxClienteApp')
         /**
          * @ngdoc method
          * @name getDocumento
-         * @methodOf poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
+         * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
          * @description 
          * Permite ver un documento que sea versión de un trabajo de grado
          * @param {String} uid Uid del documento que se va a descargar
@@ -559,7 +559,7 @@ angular.module('poluxClienteApp')
         /**
          * @ngdoc method
          * @name loadrow
-         * @methodOf poluxClienteApp.directive:solicitudes/listarSolicitudes.controller:listarSolicitudesCtrl
+         * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
          * @description 
          * Ejecuta las funciones especificas de los botones seleccionados en el ui-grid
          * @param {object} row Fila seleccionada en el uigrid que contiene los detalles de la solicitud que se quiere consultar

@@ -15,6 +15,7 @@ var text_es = {
     MODALIDAD: "Modalidad",
     TITULO_PROPUESTA: "Título de la propuesta",
     VER_DOCUMENTO: "Ver documento",
+    DOCUMENTO_TG:"Documento del trabajo de grado",
     ESTADO_DOCUMENTO: "Estado Documento",
     RESUMEN: "Resumen",
     OPCIONES: "Opciones",
@@ -316,6 +317,7 @@ var text_es = {
         INSERTANDO_REVISIONES: "Ocurrió un error al registrar las revisiones del trabajo de grado",
         VINCULADO_NO_NOTA:"No ha registrado nota en el sistema",
         VINCULADO_NO_PUEDE_NOTA:"No puede registrar nota en el sistema",
+        CARGAR_ACTA_SOCIALIZACION:"Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
     },
     VERIFICAR_DOCUMENTO:"Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -366,7 +368,7 @@ var text_es = {
     CARGUE_NUEVA_PROPUESTA:"Cargue la nueva propuesta",
     ANTERIORES_AREAS_CONOCIMIENTO:"Areas de conocimiento actuales",
     SELECCIONE_NUEVAS_AREAS_CONOCIMIENTO:"Seleccione las nuevas áreas de conocimiento que abarca su proyecto",
-    CARGUE_PLAN_INVESTIGACION:"Cargue el Plan de actividades de investigación",
+    CARGUE_PLAN_INVESTIGACION:"Cargue el plan de actividades de investigación",
     INGRESE_ESTRUCTURA_INVESTIGACION_AVALA:"Ingrese la Estructura de investigación que avala la propuesta",
     SELECCIONE_DOCENTE_DESIGNADO_INVESTIGACION:"Seleccione el Docente director designado por la estructura de investigación",
     CARGUE_PLAN_NEGOCIOS:"Cargue el plan o el modelo de negocios",
@@ -654,9 +656,9 @@ var text_es = {
     ANTEPROYECTO: "Anteproyecto",
     PROYECTO:"Proyecto",
     ROL: "Papel",
-    ANTEPROYECTO_MODIFICABLE: "Su anteproyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas.",
-    PROYECTO_MODIFICABLE: "Su proyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas.",
-    PROYECTO_VIABLE_WARNING: "Su trabajo de grado pasó a viable luego de la revisión de su evaluador. Por favor suba la primera versión de su trabajo de grado para comenzar las revisiones.",
+    ANTEPROYECTO_MODIFICABLE: "Su anteproyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas en el módulo de revisiones.",
+    PROYECTO_MODIFICABLE: "Su proyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas en el módulo de revisiones.",
+    PROYECTO_VIABLE_WARNING: "Su trabajo de grado pasó a viable luego de la revisión de su evaluador. Por favor suba la primera versión de su trabajo de grado en el módulo de revisiones.",
     SUBIR_CORRECCIONES_ANTEPROYECTO: "Subir anteproyecto corregido",
     SUBIR_CORRECCIONES_PROYECTO: "Subir proyecto corregido",
     CORREGIR_ANTEPROYECTO: {
@@ -735,6 +737,7 @@ var text_es = {
     },
     DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
     QUITAR_DOCUMENTO: "Quitar",
+    ACTA_SOCIALIZACION: "Acta de socialización",
 };
 
 /**
@@ -751,6 +754,7 @@ var text_en = {
     MODALIDAD: "Modality",
     TITULO_PROPUESTA: "Title of proposal",
     VER_DOCUMENTO: "Show document",
+    DOCUMENTO_TG:"Degree Work Document",
     ESTADO_DOCUMENTO: "Document Status",
     RESUMEN: "Abstract",
     OPCIONES: "Options",
@@ -1042,6 +1046,7 @@ var text_en = {
         INSERTANDO_REVISIONES: "An error ocurred when trying to register the degree work corrections",
         VINCULADO_NO_NOTA:"The teacher have not registered a grade in the system",
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
+        CARGAR_ACTA_SOCIALIZACION:"There was an error occurred loading the socialization certificate, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO:"An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1092,7 +1097,7 @@ var text_en = {
     CARGUE_NUEVA_PROPUESTA:"Upload the new proposal",
     ANTERIORES_AREAS_CONOCIMIENTO:"Current areas of knowledge",
     SELECCIONE_NUEVAS_AREAS_CONOCIMIENTO:"Select the new knowledge areas of your projec",
-    CARGUE_PLAN_INVESTIGACION:"Upload the Plan of research activities",
+    CARGUE_PLAN_INVESTIGACION:"Upload the research activities plan",
     INGRESE_ESTRUCTURA_INVESTIGACION_AVALA:"Enter the research structure that supports the proposal",
     SELECCIONE_DOCENTE_DESIGNADO_INVESTIGACION:"Select the director appointed by the research structure",
     CARGUE_PLAN_NEGOCIOS:"Upload plan or business model",
@@ -1379,9 +1384,9 @@ var text_en = {
     },
     ANTEPROYECTO: "Degree work proposal",
     ROL: "Role",
-    ANTEPROYECTO_MODIFICABLE: "Your degree work proposal became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received.",
-    PROYECTO_MODIFICABLE: "Your degree work became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received.",
-    PROYECTO_VIABLE_WARNING: "Your degree work became viable after the review of your evaluator. Please upload your degree work's first version in order to start the reviews.",
+    ANTEPROYECTO_MODIFICABLE: "Your degree work proposal became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received in the revisions module.",
+    PROYECTO_MODIFICABLE: "Your degree work became modifiable after the review of your evaluator. You can upload a new version of the work according to the comments received in the revisions module.",
+    PROYECTO_VIABLE_WARNING: "Your degree work became viable after the review of your evaluator. Please upload your degree work's first version in the revisions module.",
     SUBIR_CORRECCIONES_ANTEPROYECTO: "Upload corrected degree work proposal",
     SUBIR_CORRECCIONES_PROYECTO: "Upload corrected degree work",
     CORREGIR_ANTEPROYECTO: {
@@ -1460,6 +1465,7 @@ var text_en = {
     },
     DESEA_INCLUIR_DOCUMENTO: "Do you want to include the revision document?",
     QUITAR_DOCUMENTO: "Remove",
+    ACTA_SOCIALIZACION: "Socialization certificate",
 };
 
 /**

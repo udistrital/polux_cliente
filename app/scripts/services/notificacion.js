@@ -10,7 +10,7 @@
  */
 angular.module('poluxClienteApp')
   .factory('notificacion', function($websocket) {
-    var dataStream = $websocket("ws://localhost:8080/register?id=2&profile=admin");
+    var dataStream = $websocket(); // $websocket("ws://localhost:8080/register?id=2&profile=admin");
     var log = [];
     dataStream.onMessage(function(message) {
       log.unshift(JSON.parse(message.data));
