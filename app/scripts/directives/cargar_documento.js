@@ -146,10 +146,10 @@ angular.module('poluxClienteApp')
                 ctrl.consecutivo = null;
               })
               .catch(function (error) {
-                console.log("error", error);
+                console.log("Error ->", error);
                 $scope.loadDocumento = false;
                 swal(
-                  $translate.instant("ERROR"),
+                  $translate.instant("MENSAJE_ERROR"),
                   $translate.instant("ERROR.CARGAR_DOCUMENTO"),
                   'warning'
                 );
@@ -159,17 +159,17 @@ angular.module('poluxClienteApp')
             $scope.loadDocumento = false;
             /*})
             .catch(function(error){
-              console.log("error",error);
+              console.log("Error ->",error);
               $scope.loadDocumento = false;
               swal(
-                $translate.instant("ERROR"),
+                $translate.instant("MENSAJE_ERROR"),
                 $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                 'warning'
               );
             });*/
           } else {
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("SELECT.SIN_CARRERA"),
               'warning'
             );

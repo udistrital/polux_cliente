@@ -115,7 +115,7 @@ angular.module('poluxClienteApp')
                         codigo = parseInt(codigo);
                         console.log("Modalidad seleccionada: " + codigo);
                         if (isNaN(codigo)) {
-                            console.log("error");
+                            console.log("Error.");
                         } else {
                             self.verificarRequisitos(parseInt(self.estudianteSeleccionado), codigo);
                         }

@@ -318,7 +318,7 @@ angular.module('poluxClienteApp')
             } else {
               ctrl.cargandoSolicitudes = false;
               swal(
-                $translate.instant("ERROR"),
+                $translate.instant("MENSAJE_ERROR"),
                 $translate.instant(responseRespuesta.data[1]),
                 'warning'
               );
@@ -328,7 +328,7 @@ angular.module('poluxClienteApp')
             ctrl.cargandoSolicitudes = false;
             console.log(error);
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR_SOLICITUDES_3"),
               'warning'
             );

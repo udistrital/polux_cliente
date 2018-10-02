@@ -502,9 +502,9 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("error", error);
+            console.log("Error ->", error);
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
               'warning'
             );

@@ -1127,8 +1127,6 @@ angular.module('poluxClienteApp')
                   vinculacionActual = docenteVinculado;
                 } else if (docenteVinculado.Usuario === Number(ctrl.codirector)) {
                   vinculacionActual = docenteVinculado;
-                } else if (docenteVinculado.Usuario === Number(ctrl.directorExternoActual)) {
-                  vinculacionActual = docenteVinculado;
                 }
               });
               var nuevaVinculacion = angular.copy(vinculacionActual);
@@ -1322,14 +1320,14 @@ angular.module('poluxClienteApp')
               .catch(function(error) {
                 console.log(error);
                 swal(
-                  $translate.instant("ERROR"),
+                  $translate.instant("MENSAJE_ERROR"),
                   $translate.instant("ERROR.ENVIO_SOLICITUD"),
                   'warning'
                 );
               });
           } else {
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.DOCENTE_DUPLICADO"),
               'warning'
             );
@@ -1533,9 +1531,9 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("error", error);
+            console.log("Error ->", error);
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
               'warning'
             );

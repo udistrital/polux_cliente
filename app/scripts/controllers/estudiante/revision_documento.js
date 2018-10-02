@@ -521,7 +521,7 @@ angular.module('poluxClienteApp')
             .catch(function(error) {
               ctrl.loadingVersion = false;
               swal(
-                $translate.instant("ERROR"),
+                $translate.instant("MENSAJE_ERROR"),
                 $translate.instant("ERROR.CARGAR_DOCUMENTO"),
                 'warning'
               );

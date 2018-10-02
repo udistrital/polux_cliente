@@ -64,7 +64,7 @@ angular.module('poluxClienteApp')
             ctrl.enviarDatosDistincion();
           } else {
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.HAY_SOLICITUD_DISTINCION"),
               'warning'
             );

@@ -179,7 +179,7 @@ angular.module('poluxClienteApp')
           ctrl.nombreArea = "";
           ctrl.descripcionArea = "";
           swal(
-            $translate.instant("ERROR"),
+            $translate.instant("MENSAJE_ERROR"),
             $translate.instant("AREAS.AREA_EXISTENTE"),
             'warning'
           );
@@ -206,7 +206,7 @@ angular.module('poluxClienteApp')
             .catch(function() {
               $scope.loadCargandoArea = false;
               swal(
-                $translate.instant("ERROR"),
+                $translate.instant("MENSAJE_ERROR"),
                 $translate.instant("AREAS.ERROR_REGISTRAR_AREA"),
                 'warning'
               );
