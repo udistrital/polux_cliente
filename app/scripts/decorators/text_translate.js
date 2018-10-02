@@ -1002,7 +1002,7 @@ var text_en = {
         CARGAR_DOCENTES:"There was an error occurred loading the avaliable teachers, please check your connection and try again.",
         NO_HAY_PERMISO:"Sorry, you do not have the necessary permissions to access to this page.",
         CODIGO_NO_VALIDO:"The code entered is not valid.",
-        ESTUDIANTE_SIN_TRABAJO:"The student does not currently have any active degree work registered.",        DOCENTE_SIN_TRABAJO_GRADO:"El docente actualmente no tiene registrado ningún trabajo de grado activo,",
+        ESTUDIANTE_SIN_TRABAJO:"The student does not currently have any active degree work registered.",
         DOCENTE_SIN_TRABAJO_GRADO:"The teacher does not currently have any active degree work registered.",
         CARGAR_TRABAJO_GRADO:"There was an error occurred loading the degree work, please check your connection and try again.",
         CARGAR_DATOS_ASIGNATURAS:"There was an error occurred loading the data of a subject, please check your connection and try again.",
