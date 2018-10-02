@@ -98,7 +98,6 @@ var text_es = {
     SELECCIONAR_PC: "Seleccionar proyecto curricular:",
     CREACION_EVALUACION: "Creación de la evaluación",
     REVISION_DOCUMENTOS: "Revisión de Documentos",
-    DOCUMENTO: "Documento",
     REVISIONES: "Revisiones",
     LA_REVISION: "La revisión ",
     LA_REVISION_SE_ENCUENTRA: " se encuentra solicitada ",
@@ -826,7 +825,6 @@ var text_en = {
     SELECCIONAR_PC: "Select a curricular project",
     CREACION_EVALUACION: "Creation of the test",
     REVISION_DOCUMENTOS: "Documents review",
-    DOCUMENTO: "Document",
     REVISIONES: "Reviews",
     LA_REVISION: "The review ",
     LA_REVISION_SE_ENCUENTRA: " is in process",
@@ -931,7 +929,6 @@ var text_en = {
     ERROR_RTA_SOLICITUD_16: "There was an error updating the  internship's details",
     ERROR_RTA_SOLICITUD_17: "There was an error updating the degree work's state",
     ERROR_RTA_SOLICITUD_18: "There was an error inserting the degree wokr's final document",
-
     ERROR: {
         SUBIR_DOCUMENTO:"Error attempting to load a document.",
         CARGAR_DOCUMENTO:"An error occurred loading the documents, please verify your connection and try again.",
