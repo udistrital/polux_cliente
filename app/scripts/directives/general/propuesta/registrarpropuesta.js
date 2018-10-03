@@ -296,7 +296,7 @@ angular.module('poluxClienteApp')
                  * Permite guardar el trabajo de grado en {@link services/poluxClienteApp.service:poluxRequest poluxRequest}.
                  */
                 self.guardarTG = function (data, estudiante, doc) {
-                    var idEstudianteTG;
+                    // var idEstudianteTG; ***Aún no se utiliza esta variable
                     self.TGregistrado = [];
                     poluxRequest.post("trabajo_grado", data[0]).then(function (responseTG) {
                         console.log("respuesta del post del trabajo de grado" + responseTG.data.Id);

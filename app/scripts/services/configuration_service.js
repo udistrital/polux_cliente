@@ -49,8 +49,16 @@ angular.module('configuracionService', [])
                 if (a[i].Url === path) {
                     return a[i];
                 } else if (a[i].Opciones !== null) {
+                    /**
+                     * Este fragmento arroja una sospecha de código bajo mala práctica
                     var y;
                     if ((y = this.get_acciones(path, a[i].Opciones)) && y != null) {
+                        return y;
+                    }
+                     * Debe probarse esta sugerencia:
+                    **/
+                    var y = this.get_acciones(path, a[i].Opciones);
+                    if (y != null) {
                         return y;
                     }
                 }

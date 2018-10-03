@@ -476,7 +476,7 @@ ngtemplates: {
                         host: {
                             url: 'http://localhost:9000'
                         },
-                        projectKey: 'sonar:polux_cliente:20180615',
+                        projectKey: 'sonar:polux_cliente:20181003',
                         projectName: 'polux_cliente',
                         projectVersion: '0.10',
                         sources: ['app','test'].join(','),
