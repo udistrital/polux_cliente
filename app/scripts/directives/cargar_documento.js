@@ -36,7 +36,7 @@ angular.module('poluxClienteApp')
        * @requires services/poluxClienteApp.service:nuxeoService
        * @property {object} documento Documento que se va a cargar
        */
-      controller: function (poluxRequest, $translate, $filter, $scope, $q, nuxeo) {
+      controller: function (poluxRequest, $translate, $filter, $scope) {
         var ctrl = this;
         ctrl.documento = [];
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
@@ -128,7 +128,7 @@ angular.module('poluxClienteApp')
               //"Resumen":ctrl.documento.resumen,
               "Resumen": "Acta de consejo de carrera del proyecto curricular",
               "TipoDocumentoEscrito": 1,
-            }
+            };
             $scope.acta = [];
             $scope.acta.nombre = ctrl.documento.nombre;
             //$scope.acta.url = ctrl.documento.url;
@@ -174,10 +174,7 @@ angular.module('poluxClienteApp')
               'warning'
             );
           }
-
-
         }
-
       },
       controllerAs: 'd_cargarDocumento'
     };

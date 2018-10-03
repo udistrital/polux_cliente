@@ -26,8 +26,7 @@ angular.module('poluxClienteApp')
         '</div>' +
         '<div ng-show="load">' +
         '<label class="col-sm-12 control-label" style="text-align: center;"> {{loadMessage}}</label>' +
-        '</div>'
-      ,
+        '</div>',
       /**
        * @ngdoc controller
        * @name poluxClienteApp.directive:loading.controller:loadingCtl
