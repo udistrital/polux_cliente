@@ -41,7 +41,7 @@ angular.module('poluxClienteApp')
       ctrl.carrerasCoordinador = [];
       token_service.token.documento = "79647592";
       token_service.token.role.push("COORDINADOR_PREGRADO");
-      //token_service.token.documento = "20141020036";
+      //token_service.token.documento = "20131020002";
       //token_service.token.role.push("ESTUDIANTE");
       ctrl.userRole = token_service.token.role;
       $scope.userId = token_service.token.documento;
