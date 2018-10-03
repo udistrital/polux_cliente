@@ -346,45 +346,40 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       $scope.loadrow = function(row, operacion) {
-        switch (operacion) {
-          case "ver":
-            ctrl.solicitud = row.entity;
-            console.log(ctrl.solicitud);
-            $('#modalVerSolicitud').modal('show');
-            break;
-          case "aprobar":
-            swal({
-                title: $translate.instant("PASANTIA.CARTA.CONFIRMACION"),
-                text: $translate.instant("PASANTIA.CARTA.MENSAJE_APROBACION"),
-                type: "info",
-                confirmButtonText: $translate.instant("ACEPTAR"),
-                cancelButtonText: $translate.instant("CANCELAR"),
-                showCancelButton: true
-              })
-              .then(function(response) {
-                // Se valida que el usuario haya confirmado la formalización
-                if (response.value) {
-                  ctrl.postRespuesta(row.entity, true, "La solicitud ha sido aprobada");
-                }
-              });
-            break;
-          case "rechazar":
-            swal({
-                title: $translate.instant("PASANTIA.CARTA.CONFIRMACION"),
-                text: $translate.instant("PASANTIA.CARTA.MENSAJE_RECHAZO"),
-                type: "info",
-                confirmButtonText: $translate.instant("ACEPTAR"),
-                cancelButtonText: $translate.instant("CANCELAR"),
-                showCancelButton: true
-              })
-              .then(function(response) {
-                // Se valida que el usuario haya confirmado la formalización
-                if (response.value) {
-                  ctrl.postRespuesta(row.entity, false, "La solicitud fue rechazada, para cualquier inquietud acerquese a la oficina de pasantias.");
-                }
-              });
-          default:
-            break;
+        if (operacion == "ver") {
+          ctrl.solicitud = row.entity;
+          console.log(ctrl.solicitud);
+          $('#modalVerSolicitud').modal('show');
+        } else if (operacion == "aprobar") {
+          swal({
+              title: $translate.instant("PASANTIA.CARTA.CONFIRMACION"),
+              text: $translate.instant("PASANTIA.CARTA.MENSAJE_APROBACION"),
+              type: "info",
+              confirmButtonText: $translate.instant("ACEPTAR"),
+              cancelButtonText: $translate.instant("CANCELAR"),
+              showCancelButton: true
+            })
+            .then(function(response) {
+              // Se valida que el usuario haya confirmado la formalización
+              if (response.value) {
+                ctrl.postRespuesta(row.entity, true, "La solicitud ha sido aprobada");
+              }
+            });
+        } else if (operacion == "rechazar") {
+          swal({
+              title: $translate.instant("PASANTIA.CARTA.CONFIRMACION"),
+              text: $translate.instant("PASANTIA.CARTA.MENSAJE_RECHAZO"),
+              type: "info",
+              confirmButtonText: $translate.instant("ACEPTAR"),
+              cancelButtonText: $translate.instant("CANCELAR"),
+              showCancelButton: true
+            })
+            .then(function(response) {
+              // Se valida que el usuario haya confirmado la formalización
+              if (response.value) {
+                ctrl.postRespuesta(row.entity, false, "La solicitud fue rechazada, para cualquier inquietud acerquese a la oficina de pasantias.");
+              }
+            });
         }
       };
     });

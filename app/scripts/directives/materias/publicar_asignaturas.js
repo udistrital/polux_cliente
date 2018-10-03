@@ -302,18 +302,19 @@ angular.module('poluxClienteApp')
           var idx = list.indexOf(item);
           if (idx > -1) {
             list.splice(idx, 1);
+            var c;
             if (item.creditos) {
-              var c = parseInt(item.creditos, 10);
+              c = parseInt(item.creditos, 10);
             } else {
-              var c = 0;
+              c = 0;
             }
-          }
-          else {
+          } else {
             list.push(item);
+            var c;
             if (item.creditos) {
-              var c = parseInt(item.creditos, 10);
+              c = parseInt(item.creditos, 10);
             } else {
-              var c = 0;
+              c = 0;
             }
           }
           if (item.check === false) {

@@ -281,14 +281,14 @@ angular.module('poluxClienteApp')
                         ctrl.creditos = 0;
                     }
                     var idx = list.indexOf(item);
+                    var c;
                     if (idx > -1) {
                         list.splice(idx, 1);
-                        var c = parseInt(item.Creditos, 10);
+                        c = parseInt(item.Creditos, 10);
                         ctrl.creditos = ctrl.creditos - c;
                     } else {
-
                         list.push(item);
-                        var c = parseInt(item.Creditos, 10);
+                        c = parseInt(item.Creditos, 10);
                         ctrl.creditos = ctrl.creditos + c;
                     }
 

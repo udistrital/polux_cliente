@@ -134,7 +134,7 @@ angular.module('poluxClienteApp')
                 trabajo.permitirRegistrar = false;
                 //Si el rol es director
                 var rol = trabajo.RolTrabajoGrado.Id;
-                var modalidad = trabajo.TrabajoGrado.Modalidad.Id;
+                // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
                 /*if( rol === 1 ){
                   //Si la modalidad es pasantia o articulo se permite sino no
                   if( modalidad === 1 || modalidad === 8){

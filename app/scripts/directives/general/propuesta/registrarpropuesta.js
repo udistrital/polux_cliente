@@ -301,7 +301,7 @@ angular.module('poluxClienteApp')
                     poluxRequest.post("trabajo_grado", data[0]).then(function (responseTG) {
                         console.log("respuesta del post del trabajo de grado" + responseTG.data.Id);
                         self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Id, estudiante);
-                        idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
+                        // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]); ***Aún no se utiliza esta variable
                         console.log("respuesta del post del trabajo de grado" + responseTG.data);
                         self.areas_TG = self.preguardarAreasTG(responseTG.data.Id);
                         self.asignarAreasTG(self.areas_TG);

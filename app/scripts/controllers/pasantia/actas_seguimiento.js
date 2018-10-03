@@ -337,13 +337,9 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       $scope.loadrow = function (row, operacion) {
-        switch (operacion) {
-          case "ver":
-            ctrl.pasantiaSeleccionada = row.entity.TrabajoGrado;
-            $('#modalVerPasantia').modal('show');
-            break;
-          default:
-            break;
+        if (operacion == "ver") {
+          ctrl.pasantiaSeleccionada = row.entity.TrabajoGrado;
+          $('#modalVerPasantia').modal('show');
         }
       };
 

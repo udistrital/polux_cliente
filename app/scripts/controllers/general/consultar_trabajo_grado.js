@@ -419,7 +419,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
           //SI es director externo o codirector
           if (vinculado.RolTrabajoGrado.Id == 2 || vinculado.RolTrabajoGrado.Id == 4) {
-            vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");;
+            vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");
             defer.resolve();
           }
           //Si es director interno o evaluador

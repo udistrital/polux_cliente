@@ -758,17 +758,17 @@ angular.module('poluxClienteApp')
             //se recorren los detalles y se obtienen los nombres de las nuevas vinculaciones
             angular.forEach(ctrl.todoDetalles, function(detalle) {
               if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Director Actual") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.directorActual = Number(aux[0]);
+                var auxiliarDirectorActual = detalle.Descripcion.split(" ");
+                ctrl.directorActual = Number(auxiliarDirectorActual[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Director Nuevo") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.directorNuevo = Number(aux[0]);
+                var auxiliarDirectorNuevo = detalle.Descripcion.split(" ");
+                ctrl.directorNuevo = Number(auxiliarDirectorNuevo[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Evaluador Actual") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.evaluadorActual = Number(aux[0]);
+                var auxiliarEvaluadorActual = detalle.Descripcion.split(" ");
+                ctrl.evaluadorActual = Number(auxiliarEvaluadorActual[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Evaluador Nuevo") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.evaluadorNuevo = Number(aux[0]);
+                var auxiliarEvaluadorNuevo = detalle.Descripcion.split(" ");
+                ctrl.evaluadorNuevo = Number(auxiliarEvaluadorNuevo[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Enunciado == "ESCRIBA_NOMBRE_NUEVO_PROPUESTA") {
                 ctrl.tituloNuevo = detalle.Descripcion;
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 23) {
@@ -790,8 +790,8 @@ angular.module('poluxClienteApp')
                 }
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 57) {
                 //Documento del codirector
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.codirector = Number(aux[0]);
+                var auxiliarCodirector = detalle.Descripcion.split(" ");
+                ctrl.codirector = Number(auxiliarCodirector[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59 || detalle.DetalleTipoSolicitud.Detalle.Id == 60) {
                 //Documento de propuesta final si el detalle es documennto fila o evidencias de publicación
                 ctrl.docPropuestaFinal = detalle.Descripcion;
@@ -1280,25 +1280,25 @@ angular.module('poluxClienteApp')
             } else if (ctrl.dataSolicitud.TipoSolicitud == 6) {
               //Solicitud de socialización
               //Vinculaciones del tg
-              var data_vinculaciones = [];
+              var dataVinculaciones = [];
               //Si se escogio cambiar las vinculaciones se cambian, el resto de la justificación va en la data
               if (ctrl.switchRevision) {
                 //Si se cambio el  director original
                 if (ctrl.directorOpcionTg.id != ctrl.directorActualTg.id) {
                   //Cambiar vinculaciones
-                  addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
+                  addVinculacion(dataVinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
                 }
                 //Si se cambiaron los evaluadores actuales
                 if (ctrl.evaluadoresActualesTg != undefined) {
-                  for (var e = 0; e < ctrl.evaluadoresActualesTg.length; e++) {
-                    if (ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id) {
+                  for (var item = 0; item < ctrl.evaluadoresActualesTg.length; item++) {
+                    if (ctrl.evaluadoresActualesTg[item].docente.id != ctrl.evaluadoresOpcionesTg[item].docente.id) {
                       //Cambiar vinculaciones                  
-                      addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
+                      addVinculacion(dataVinculaciones, ctrl.evaluadoresActualesTg[item].docente.id, ctrl.evaluadoresOpcionesTg[item].docente.id);
                     }
                   }
                   //buscar si hay algun valor repetido
-                  angular.forEach(data_vinculaciones, function(vinculacion) {
-                    if (data_vinculaciones.filter(function(value) {
+                  angular.forEach(dataVinculaciones, function(vinculacion) {
+                    if (dataVinculaciones.filter(function(value) {
                         return value.Usuario === vinculacion.Usuario
                       }).length > 1) {
                       errorDocente = true;
@@ -1306,9 +1306,9 @@ angular.module('poluxClienteApp')
                   });
                 }
               } else {
-                data_vinculaciones = null;
+                dataVinculaciones = null;
               }
-              ctrl.dataRespuesta.Vinculaciones = data_vinculaciones;
+              ctrl.dataRespuesta.Vinculaciones = dataVinculaciones;
             }
           }
 

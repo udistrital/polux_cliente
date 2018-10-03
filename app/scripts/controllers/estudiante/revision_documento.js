@@ -791,7 +791,6 @@ angular.module('poluxClienteApp')
         var titleConfirmacion;
         var mensajeConfirmacion;
         var mensajeSuccess;
-        var mensajeError;
         var workspace;
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
           ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) {

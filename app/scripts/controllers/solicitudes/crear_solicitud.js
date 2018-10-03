@@ -1190,8 +1190,8 @@ angular.module('poluxClienteApp')
                             });
                             defer.resolve();
                           } else if (detalle.Detalle.Nombre.includes("Nombre de evaluador(es) actuales")) {
-                            var promisesDocente = []
-                            var getDocente = function(evaluador, detalle) {
+                            var promisasDocente = []
+                            var obtenerDocente = function(evaluador, detalle) {
                               var defer = $q.defer();
                               academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
                                   var evaluador = {
@@ -1210,9 +1210,9 @@ angular.module('poluxClienteApp')
                               return defer.promise;
                             }
                             angular.forEach(responseOpciones.data, function(evaluador) {
-                              promisesDocente.push(getDocente(evaluador, detalle));
+                              promisasDocente.push(obtenerDocente(evaluador, detalle));
                             });
-                            $q.all(promisesDocente).then(function(evaluadores) {
+                            $q.all(promisasDocente).then(function(evaluadores) {
                                 detalle.opciones.push({
                                   "NOMBRE": evaluadores.map(function(evaluador) {
                                     return evaluador.nombre

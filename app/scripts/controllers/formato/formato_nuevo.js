@@ -137,10 +137,10 @@ angular.module('poluxClienteApp')
                 }
                 if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
                     var objeto = null;
-                    for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-                        if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey &&
-                            ($scope.gridOptions.data[i].Tipo.substring(0, 7) === 'cerrado')) {
-                            pos = i + 1;
+                    for (var j = 0; j < $scope.gridOptions.data.length; j++) {
+                        if ($scope.gridOptions.data[j].$$hashKey == seleccion[0].$$hashKey &&
+                            ($scope.gridOptions.data[j].Tipo.substring(0, 7) === 'cerrado')) {
+                            pos = j + 1;
                             objeto = {
                                 Orden: pos,
                                 IdPregunta: respuesta,
@@ -148,7 +148,7 @@ angular.module('poluxClienteApp')
                                 $$treeLevel: 1,
                                 padre: seleccion[0].$$hashKey
                             };
-                            $scope.gridOptions.data[i].opciones.unshift(objeto);
+                            $scope.gridOptions.data[j].opciones.unshift(objeto);
                             $scope.gridOptions.data.splice(pos, 0, objeto);
                         }
                     }
@@ -157,6 +157,7 @@ angular.module('poluxClienteApp')
                 $scope.rSeleccion = '';
             }
         }
+
         $scope.anadir_pregunta = function () {
             if ($scope.pSeleccion !== '') {
                 var pos = 0;
@@ -174,11 +175,11 @@ angular.module('poluxClienteApp')
                 var seleccion = $scope.gridApi.selection.getSelectedRows();
                 if ($scope.gridOptions.data.length > 0 && seleccion.length > 0) {
                     var objeto = null;
-                    for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-                        if ($scope.gridOptions.data[i].$$hashKey === seleccion[0].$$hashKey) {
-                            pos = i;
+                    for (var j = 0; j < $scope.gridOptions.data.length; j++) {
+                        if ($scope.gridOptions.data[j].$$hashKey === seleccion[0].$$hashKey) {
+                            pos = j;
                             objeto = {
-                                Orden: i,
+                                Orden: j,
                                 IdPregunta: pregunta,
                                 Peso: "0",
                                 Tipo: "Seleccione ...",
@@ -210,9 +211,8 @@ angular.module('poluxClienteApp')
             var seleccion = $scope.gridApi.selection.getSelectedRows();
             if (seleccion.length > 0) {
                 for (var i = 0; i < $scope.gridOptions.data.length; i++) {
-
                     if ($scope.gridOptions.data[i].$$hashKey == seleccion[0].$$hashKey) {
-                        var pos = i;
+                        pos = i;
                         for (var j = i + 1; j < $scope.gridOptions.data.length; j++) {
                             if ($scope.gridOptions.data[j].padre === seleccion[0].$$hashKey) {
                                 $scope.gridOptions.data.splice(j, 1);
