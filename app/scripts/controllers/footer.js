@@ -62,7 +62,7 @@ angular.module('poluxClienteApp')
       nombre: "Preguntas Frecuentes",
       link: "#/"
     }, {
-      nombre: "Mapa del Porta",
+      nombre: "Mapa del Portal",
       link: "#/"
     }, {
       nombre: "Política de Privacidad",

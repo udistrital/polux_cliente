@@ -167,8 +167,9 @@ angular.module('poluxClienteApp')
                 .catch(function(excepcionDelProcesamiento) {
                   deferred.reject(excepcionDelProcesamiento);
                 });
+            } else {
+              deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
-            deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           })
           .catch(function(excepcionVinculacionTrabajoGrado) {
             deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
@@ -238,13 +239,11 @@ angular.module('poluxClienteApp')
             if (respuestaDocumentoTrabajoGrado.data) {
               trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
               trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
-              deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
-            } else {
-              deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
+            deferred.resolve($translate.instant("ERROR.CARGAR_DOCUMENTO"));
           })
           .catch(function(excepcionDocumentoTrabajoGrado) {
-            deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
+            deferred.reject($translate.instant("ERROR.CARGAR_DOCUMENTO"));
           });
         return deferred.promise;
       }

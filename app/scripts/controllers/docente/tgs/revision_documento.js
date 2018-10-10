@@ -270,6 +270,7 @@ angular.module('poluxClienteApp')
           })
           .catch(function(excepcionDocumentoTrabajoGrado) {
             ctrl.errorCargandoDocumento = true;
+            ctrl.documentoEscrito = null;
             ctrl.mensajeErrorCargandoDocumento = excepcionDocumentoTrabajoGrado;
           });
       }
