@@ -149,7 +149,7 @@
                 </div>
             </div>
         </div>
-        <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado && consultarTrabajoGrado.trabajoGrado.Vinculados.length != 0">
+        <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado && consultarTrabajoGrado.trabajoGrado.Vinculados.length > 0">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     {{'VINCULACIONES_TRABAJO_GRADO' | translate}}

@@ -602,13 +602,13 @@ angular.module('poluxClienteApp')
                 }
                 promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
                 promises.push(ctrl.cargarAsignaturasTrabajoGrado());
-                promises.push(ctrl.cargarAreasConocimiento());
                 promises.push(ctrl.cargarActaSocializacion());
                 promises.push(ctrl.getEstudiantesTg());
 
-                //Consulta las vinculaciones 
+                //Consulta las vinculaciones y las áreas de conocimiento
                 if (ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3) {
                   promises.push(ctrl.getVinculaciones());
+                  promises.push(ctrl.cargarAreasConocimiento());
                 }
 
                 //si la modalidad es 2 trae los espacios academicos
