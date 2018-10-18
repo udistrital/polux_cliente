@@ -15,7 +15,23 @@ if (window.localStorage.getItem('access_token') === null ||
     regex = /([^&=]+)=([^&]*)/g;
   var m;
   while (m = regex.exec(queryString)) {
-    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    if (decodeURIComponent(m[1]) === "id_token") {
+      console.log("m:", m);
+      console.log("decode m[1]:", decodeURIComponent(m[1]));
+      console.log("decode m[2]:", decodeURIComponent(m[2]));
+      var data = JSON.parse(atob(decodeURIComponent(m[2]).split('.')[1]));
+      console.log("data:", data);
+      data.documento = "nuevoDocumento";
+      console.log("new data:", data);
+      var idTokenContent = btoa(JSON.stringify(data));
+      var complement = decodeURIComponent(m[2]);
+      console.log("codified:", idTokenContent);
+      console.log("decoded:", decodeURIComponent(m[2]).split('.'));
+      var result = decodeURIComponent(m[2]).split('.')[0] + idTokenContent + decodeURIComponent(m[2]).split('.')[2];
+      params[decodeURIComponent(m[1])] = result;
+    } else {
+      params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+    }
   }
   // And send the token over to the server
   var req = new XMLHttpRequest();
@@ -28,6 +44,10 @@ if (window.localStorage.getItem('access_token') === null ||
     window.localStorage.setItem('id_token', params['id_token']);
     window.localStorage.setItem('state', params['state']);
     window.localStorage.setItem('expires_in', params['expires_in']);
+    //var id_token = params['id_token'];
+    //var data = JSON.parse(atob(id_token[1]));
+    //data.documento = "nuevoDocumento";
+    //window.localStorage.setItem('id_token', btoa(JSON.stringify(data)));
   } else {
     window.localStorage.clear();
   }
