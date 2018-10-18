@@ -60,18 +60,16 @@ var conf_local = {
     OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
     SESIONES_SERVICE:"http://localhost:8081/v1/",
     TOKEN: {
-        AUTORIZATION_URL: "https://autenticacion.udistrital.edu.co/oauth2/authorize",
-        URL_USER_INFO: "https://autenticacion.udistrital.edu.co/oauth2/userinfo",
+        AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
+        URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
         CLIENTE_ID: "pszmROXqfec4pTShgF_fn2DAAX0a",
         REDIRECT_URL: "http://localhost:9000/",
-        RESPONSE_TYPE: "code",
-        SCOPE: "openid email",
+        RESPONSE_TYPE: "id_token token",
+        SCOPE: "openid email documento",
         BUTTON_CLASS: "btn btn-warning btn-sm",
-        SIGN_OUT_URL: "https://autenticacion.udistrital.edu.co/oidc/logout",
+        SIGN_OUT_URL: "https://autenticacion.portaloas.udistrital.edu.co/oidc/logout",
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
-        REFRESH_TOKEN: "https://autenticacion.udistrital.edu.co/oauth2/token",
-        CLIENT_SECRET: "2crHq2IRkFHEVTBfpznLhKHyKVIa"
     },
 };
 
@@ -92,18 +90,16 @@ var conf_cloud_preproduccion = {
     OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
     SESIONES_SERVICE:"http://localhost:8081/v1/",
     TOKEN: {
-        AUTORIZATION_URL: "https://autenticacion.udistrital.edu.co/oauth2/authorize",
-        URL_USER_INFO: "https://autenticacion.udistrital.edu.co/oauth2/userinfo",
-        CLIENTE_ID: "pszmROXqfec4pTShgF_fn2DAAX0a",
-        REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co",
-        RESPONSE_TYPE: "code",
-        SCOPE: "openid email",
+        AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
+        URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
+        CLIENTE_ID: "S2SWVhfqu8mNPqaIVwhNzwEYV7wa",
+        REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
+        RESPONSE_TYPE: "id_token token",
+        SCOPE: "openid email documento",
         BUTTON_CLASS: "btn btn-warning btn-sm",
-        SIGN_OUT_URL: "https://autenticacion.udistrital.edu.co/oidc/logout",
-        SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co",
+        SIGN_OUT_URL: "https://autenticacion.portaloas.udistrital.edu.co/oidc/logout",
+        SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
         SIGN_OUT_APPEND_TOKEN: "true",
-        REFRESH_TOKEN: "https://autenticacion.udistrital.edu.co/oauth2/token",
-        CLIENT_SECRET: "2crHq2IRkFHEVTBfpznLhKHyKVIa"
     },
 };
 
@@ -115,5 +111,5 @@ var conf_cloud_preproduccion = {
  */
 angular.module('poluxClienteApp')
   .constant('CONF', {
-      GENERAL: conf_cloud_preproduccion
+      GENERAL: conf_local
   });

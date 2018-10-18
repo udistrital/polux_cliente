@@ -48,7 +48,8 @@ angular
         'infinite-scroll',
         'uiSwitch',
         'configuracionService',
-        'nuxeoService'
+        'nuxeoService',
+        'implicitToken'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
