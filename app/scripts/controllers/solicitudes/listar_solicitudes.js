@@ -39,13 +39,14 @@ angular.module('poluxClienteApp')
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
       ctrl.carrerasCoordinador = [];
-      token_service.token.documento = "79647592";
-      token_service.token.role.push("COORDINADOR_PREGRADO");
+      //token_service.token.documento = "79647592";
+      //token_service.token.role.push("COORDINADOR_PREGRADO");
       //token_service.token.documento = "20131020002";
       //token_service.token.role.push("ESTUDIANTE");
-      ctrl.userRole = token_service.token.role;
-      $scope.userId = token_service.token.documento;
+      ctrl.userRole = token_service.getAppPayload().appUserRole;
+      $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
+      console.log(ctrl.userId);
 
       //$scope.$watch("userId",function() {
       //ctrl.conSolicitudes = false;
