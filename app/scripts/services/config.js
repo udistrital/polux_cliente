@@ -62,7 +62,7 @@ var conf_local = {
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
-        CLIENTE_ID: "fftE67YyfTsExQfR86Fp6Y8HGvMa",
+        CLIENTE_ID: "pszmROXqfec4pTShgF_fn2DAAX0a",
         REDIRECT_URL: "http://localhost:9000/",
         RESPONSE_TYPE: "id_token token",
         SCOPE: "openid email documento",
@@ -71,6 +71,7 @@ var conf_local = {
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
+    AUTENTICATION_MID_SERVICE: "http://localhost:8080/v1/"
 };
 
 /**

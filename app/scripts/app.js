@@ -49,7 +49,8 @@ angular
         'uiSwitch',
         'configuracionService',
         'nuxeoService',
-        'implicitToken'
+        'implicitToken',
+        'autenticacionMidService'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');

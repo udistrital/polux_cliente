@@ -8,7 +8,7 @@
  * Service in the implicitToken.
  */
 angular.module('implicitToken', [])
-  .factory('token_service', function($q, CONF, md5, $interval) {
+  .factory('token_service', function($q, CONF, md5, $interval, autenticacionMidRequest) {
 
     // First, parse the query string
     if (window.localStorage.getItem('access_token') === null ||
@@ -33,8 +33,20 @@ angular.module('implicitToken', [])
         window.localStorage.setItem('expires_in', params['expires_in']);
         var appUserInfo = JSON.parse(atob(params['id_token'].split('.')[1]));
         var appUserDocument;
-        var appUserRole; 
+        var appUserRole;
         console.log(appUserInfo);
+        var emailInfo = {
+          email: appUserInfo.sub
+        };
+        console.log(emailInfo);
+        autenticacionMidRequest.post("token/emailToken", emailInfo)
+          .then(function(respuestaAutenticacion) {
+            console.log("Respuesta de la autentiación:", respuestaAutenticacion);
+          })
+          .catch(function(excepcionAutenticacion) {
+            console.log("Excepción durante la autentiación:", excepcionAutenticacion);
+          });
+
         if (appUserInfo.role == undefined) {
           appUserDocument = "20141020036"; // Aquí se llama al servicio para traer el código estudiantil
           appUserRole = ["ESTUDIANTE"]; //Se quema el rol del estudiante
