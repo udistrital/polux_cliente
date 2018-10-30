@@ -12,7 +12,7 @@
    * Fabrica sobre la cual se consumen los servicios proveidos por el API del core sobre los metodos GET
    */
 angular.module('poluxClienteApp')
-  .service('coreService', function ($http, CONF) {
+  .service('coreService', function ($http, CONF,token_service) {
     /**
      * @ngdoc object
      * @name path
@@ -33,7 +33,7 @@ angular.module('poluxClienteApp')
        */
       get: function(tabla, params) {
           var peticion = path + tabla + "?" + params;
-          return $http.get(peticion);
+          return $http.get(peticion,token_service.getHeader());
       }
     };
 

@@ -36,8 +36,8 @@ angular.module('autenticacionMidService', [])
 			 * @return {array|object} objeto u objetos del get
 			 * @description Metodo GET del servicio
 			 */
-			get: function(tabla, params) {
-				return $http.get(path + tabla + "/?" + params);
+			get: function(tabla, params,headers) {
+				return $http.get(path + tabla + "/?" + params,headers);
 			},
 			/**
 			 * @ngdoc function
@@ -48,8 +48,8 @@ angular.module('autenticacionMidService', [])
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo POST del servicio
 			 */
-			post: function(tabla, elemento) {
-				return $http.post(path + tabla, elemento);
+			post: function(tabla, elemento,headers) {
+				return $http.post(path + tabla, elemento,headers);
 			},
 			/**
 			 * @ngdoc function
@@ -61,8 +61,8 @@ angular.module('autenticacionMidService', [])
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo PUT del servicio
 			 */
-			put: function(tabla, id, elemento) {
-				return $http.put(path + tabla + "/" + id, elemento);
+			put: function(tabla, id, elemento,headers) {
+				return $http.put(path + tabla + "/" + id, elemento,headers);
 			},
 			/**
 			 * @ngdoc function
@@ -73,8 +73,8 @@ angular.module('autenticacionMidService', [])
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo DELETE del servicio
 			 */
-			delete: function(tabla, id) {
-				return $http.delete(path + tabla + "/" + id);
+			delete: function(tabla, id,headers) {
+				return $http.delete(path + tabla + "/" + id,headers);
 			}
 		};
 	});

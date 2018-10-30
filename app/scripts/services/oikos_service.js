@@ -19,7 +19,7 @@ angular.module('oikosService', [])
      * Fabrica sobre la cual se consumen los servicios proveidos por el API de oikos sobre los metodos GET, POST, PUT y DELETE.
      * Actualmente no se utiliza.
      */
-    .factory('oikosRequest', function($http,CONF) {
+    .factory('oikosRequest', function($http,CONF,token_service) {
         /**
          * @ngdoc object
          * @name path
@@ -40,7 +40,7 @@ angular.module('oikosService', [])
              */
             get: function(tabla, params) {
                 var peticion = path + tabla + "?" + params;
-                return $http.get(peticion);
+                return $http.get(peticion,token_service.getHeader());
             },
             /**
              * @ngdoc function
@@ -53,11 +53,12 @@ angular.module('oikosService', [])
              */
             post: function(tabla, elemento) {
                 //se realiza definicion de post con formato header, para resolucion del problema post
-                return $http.post(path + tabla, elemento, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    }
-                });
+                return $http.post(path + tabla, elemento, token_service.getHeader());
+                    //{
+                    //headers: {
+                        //'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    //}
+                //});
             },
             /**
              * @ngdoc function
@@ -70,7 +71,7 @@ angular.module('oikosService', [])
              * @description Metodo PUT del servicio
              */
             put: function(tabla, id, elemento) {
-                return $http.put(path + tabla + "/" + id, elemento);
+                return $http.put(path + tabla + "/" + id, elemento,token_service.getHeader());
             },
             /**
              * @ngdoc function
@@ -82,7 +83,7 @@ angular.module('oikosService', [])
              * @description Metodo DELETE del servicio
              */
             delete: function(tabla, id) {
-                return $http.delete(path + tabla + "/" + id);
+                return $http.delete(path + tabla + "/" + id,token_service.getHeader());
             }
         };
     });

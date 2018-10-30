@@ -15,7 +15,7 @@ angular.module('poluxMidService',[])
    * # poluxRequest
    * Fabrica sobre la cual se consumen los servicios proveidos por el API de polux sobre los metodos GET, POST, PUT y DELETE
    */
-  .factory('poluxMidRequest', function ($http, CONF) {
+  .factory('poluxMidRequest', function ($http, CONF,token_service) {
     /**
      * @ngdoc object
      * @name path
@@ -35,7 +35,7 @@ angular.module('poluxMidService',[])
        * @description Metodo GET del servicio
        */
       get: function (tabla,params) {
-        return $http.get(path+tabla+"/?"+params);
+        return $http.get(path+tabla+"/?"+params,token_service.getHeader());
       },
       /**
        * @ngdoc function
@@ -47,7 +47,7 @@ angular.module('poluxMidService',[])
        * @description Metodo POST del servicio
        */
       post: function (tabla,elemento) {
-        return $http.post(path+tabla,elemento);
+        return $http.post(path+tabla,elemento,token_service.getHeader());
       },
       /**
        * @ngdoc function
@@ -60,7 +60,7 @@ angular.module('poluxMidService',[])
        * @description Metodo PUT del servicio
        */
       put: function (tabla,id,elemento) {
-        return $http.put(path+tabla+"/"+id,elemento);
+        return $http.put(path+tabla+"/"+id,elemento,token_service.getHeader());
       },
       /**
        * @ngdoc function
@@ -72,7 +72,7 @@ angular.module('poluxMidService',[])
        * @description Metodo DELETE del servicio
        */
       delete: function (tabla,id) {
-        return $http.delete(path+tabla+"/"+id);
+        return $http.delete(path+tabla+"/"+id,token_service.getHeader());
       }
     };
   });

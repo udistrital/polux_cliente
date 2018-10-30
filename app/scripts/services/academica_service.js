@@ -17,7 +17,7 @@ angular.module('academicaService', [])
      * # academicaService
      * Fabrica sobre la cual se consumen los servicios proveidos por el API de academica sobre los metodos GET, POST, PUT y DELETE
      */
-    .factory('academicaRequest', function($http, CONF) {
+    .factory('academicaRequest', function($http, CONF,token_service) {
         /**
          * @ngdoc object
          * @name path
@@ -41,7 +41,7 @@ angular.module('academicaService', [])
                 angular.forEach(params, function(parametro) {
                     param_string += "/" + parametro;
                 });
-                return $http.get(path + "/" + service + param_string, { headers: { 'Accept': 'application/json' }});
+                return $http.get(path + "/" + service + param_string, token_service.getHeader());
             }
 
         };

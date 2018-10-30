@@ -15,7 +15,7 @@ angular.module('cidcService', [])
      * Fabrica sobre la cual se consumen los servicios proveidos por el API del cidc sobre los metodos GET, POST, PUT y DELETE.
      * Actualmente no se utiliza debido a que el no existe un API consumible.
      */
-  .factory('cidcRequest', function () {
+  .factory('cidcRequest', function (token_service) {
 
     return {
       obtenerEntidades:function(){
