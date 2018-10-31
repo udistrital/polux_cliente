@@ -8,7 +8,7 @@
  * Service in the implicitToken.
  */
 angular.module('implicitToken', [])
-  .factory('token_service', function($q, CONF, md5, $interval, $injector) {
+  .factory('token_service', function($q, CONF, md5, $interval, autenticacionMidRequest) {
 
     // First, parse the query string
     if (window.localStorage.getItem('access_token') === null ||
@@ -39,7 +39,7 @@ angular.module('implicitToken', [])
           email: appUserInfo.sub
         };
         console.log(emailInfo);
-        $injector.get('autenticacionMidRequest').post("token/emailToken", emailInfo,{ headers :{
+        autenticacionMidRequest.post("token/emailToken", emailInfo,{ headers :{
           'Accept': 'application/json',
           "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
         }})
