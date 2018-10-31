@@ -48,7 +48,7 @@ angular.module('autenticacionMidService', [])
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo POST del servicio
 			 */
-			post: function(tabla, elemento,headers) {
+			post: function(tabla, elemento, headers) {
 				return $http.post(path + tabla, elemento,headers);
 			},
 			/**
