@@ -45,48 +45,57 @@ if (window.localStorage.getItem('access_token') === null ||
   };
 }
 
+
 angular.module('implicitToken', [])
   .factory('token_service', function($q, CONF, md5, $interval, autenticacionMidRequest) {
-    //Para  llamar el api de autenticacion
-    if (window.localStorage.getItem('access_code') === null ||
-      window.localStorage.getItem('access_code') === undefined) {
-      var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
-      var appUserDocument;
-      var appUserRole;
-      console.log(appUserInfo);
-      var emailInfo = {
-        email: appUserInfo.email
-      };
-      console.log(emailInfo);
-      if (appUserInfo.role == undefined) {
-        appUserDocument = "20141020036"; // Aquí se llama al servicio para traer el código estudiantil
-        appUserRole = ["ESTUDIANTE"]; //Se quema el rol del estudiante
-      } else {
-        appUserDocument = appUserInfo.documento;
-        appUserRole = appUserInfo.role;
-      }
-      window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
-      window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
-      autenticacionMidRequest.post("token/emailToken", emailInfo, {
-          headers: {
-            'Accept': 'application/json',
-            "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
-          }
-        })
-        .then(function(respuestaAutenticacion) {
-          console.log("Respuesta de la autentiación:", respuestaAutenticacion);
-        })
-        .catch(function(excepcionAutenticacion) {
-          console.log("Excepción durante la autentiación:", excepcionAutenticacion);
-          service.logout();
-        });
-    }
 
     var service = {
       //session: $localStorage.default(params),
       header: null,
       token: null,
       logout_url: null,
+      loaded_data:false,
+      getLoginData: function() {
+        //Para  llamar el api de autenticacion
+        var deferred = $q.defer();
+        if (window.localStorage.getItem('access_token') != null &&
+          window.localStorage.getItem('access_token') != undefined) {
+          if (window.localStorage.getItem('access_code') === null ||
+            window.localStorage.getItem('access_code') === undefined) {
+            var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
+            var appUserDocument;
+            var appUserRole;
+            var emailInfo = {
+              //email: appUserInfo.email
+              email: "karianov@correo.udistrital.edu.co"
+            };
+            autenticacionMidRequest.post("token/emailToken", emailInfo, {
+                headers: {
+                  'Accept': 'application/json',
+                  "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
+                }
+              })
+              .then(function(respuestaAutenticacion) {
+                //console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
+                appUserDocument = respuestaAutenticacion.data.Codigo; // Aquí se llama al servicio para traer el código estudiantil
+                appUserRole = ["ESTUDIANTE"]; //Se quema el rol del estudiante
+                window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
+                window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
+                //console.log("appUserDocument", respuestaAutenticacion.data.Codigo)
+                deferred.resolve(true);
+              })
+              .catch(function(excepcionAutenticacion) {
+                console.log("Excepción durante la autentiación:", excepcionAutenticacion);
+                service.logout();
+              });
+          } else {
+            deferred.resolve(true)
+          }
+        } else {
+          deferred.resolve(true)
+        }
+        return deferred.promise;
+      },
       generateState: function() {
         var text = ((Date.now() + Math.random()) * Math.random()).toString().replace('.', '');
         return md5.createHash(text);
