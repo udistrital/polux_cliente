@@ -32,7 +32,7 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       $scope.msgCargandoAreas = $translate.instant('LOADING.CARGANDO_AREAS');
-      $scope.msgRegistrandoArea = $translate.instant('LOADING.REGISTRANDO_AREA');
+      $scope.msgRegistrandoArea = $translate.instant('LOADING.VINCULANDO_SUBAREA');
       $scope.loadAreas = true;
       $scope.loadCargandoArea = false;
 
