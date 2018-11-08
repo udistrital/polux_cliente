@@ -55,7 +55,7 @@ angular.module('poluxClienteApp')
         width: '20%',
       }, {
         name: 'Anio',
-        displayName: $translate.instant('ANIO'),
+        displayName: $translate.instant('ANO'),
         width: '20%',
       }, {
         name: 'Periodo',
