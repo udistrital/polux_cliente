@@ -114,7 +114,7 @@
             <!--
             Se evita la solicitud del archivo que se sube como acta de consejo de carrera
 
-            <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>
+            <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.acta" required> </input>
             -->
             <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
             <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
