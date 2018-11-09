@@ -78,3 +78,44 @@
         </div>
     </div>
 </div>
+
+<div id="modalEditarArea" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'EDITAR_AREA' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadEditandoArea" message="msgRegistrandoArea"> </loading>
+                <form ng-if="!loadEditandoArea" method="post" name="formularioEditarArea" ng-submit="administrarAreas.editarArea()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'AREAS.INGRESE_NOMBRE_AREA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="administrarAreas.areaSeleccionadaTemp.Nombre" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'AREAS.INGRESE_DESCRIPCION_AREA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="administrarAreas.areaSeleccionadaTemp.Descripcion" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" ng-if="administrarAreas.areaSeleccionadaTemp.Descripcion != administrarAreas.areaSeleccionada.Descripcion || administrarAreas.areaSeleccionadaTemp.Nombre != administrarAreas.areaSeleccionada.Nombre" >
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'AREAS.EDITAR_AREA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
