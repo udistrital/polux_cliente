@@ -26,7 +26,7 @@
 <loading tam="4" load="loadFormulario" message="enviandoFormulario"> </loading>
 <loading tam="4" load="loadDetalles"  message="cargandoDetalles"> </loading>
 <div class="panel-body alert alert-danger" ng-show="crearSolicitud.errorParametros">
-  {{crearSolicitud.mensajeError}}
+  <p class="col-sm-12 control-label" translate="{{crearSolicitud.mensajeError}}"></p>
 </div>
 <div class="panel panel-default" ng-show="crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario">
     <div class="panel-heading">

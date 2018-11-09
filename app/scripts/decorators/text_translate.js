@@ -165,7 +165,13 @@ var text_es = {
     INGRESE_CODIGO:"Digite el código de los otros estudiantes que participan en el proyecto",
     ESTUDIANTE_EN_LISTA:"Error: El estudiante ya se encuentra en la lista de solicitados.",
     ESTUDIANTE_NO_VALIDO:"Error: El codigo digitado no es valido.",
-    ESTUDIANTE_NO_REQUISITOS:"Error: El estudiante solicitado actualmente no cumple con los requisitos para realizar un trabajo de grado.",
+    ESTUDIANTE_NO_REQUISITOS:"Error: El estudiante solicitado actualmente no cumple con los requisitos para solicitar cursar una modalidad de trabajo de grado. "
+        + "Recuerde que según el acuerdo 038 de 2015 los requisitos mínimos para cursar una modalidad de trabajo de grado son:"
+        + "<ul>"
+            + "<li>Ser estudiante con estado Activo.</li>"
+            + "<li>Haber aprobado el 80% de los créditos de su plan de estudios.</li>"
+            + "<li>Para la modalidad de Espacios Académicos de Posgrado debe tener un promedio acumulado igual o superior a tres punto ocho (3.8).</li>"
+        + "</ul",
     ESTUDIANTE_TRABAJO_GRADO:"Error: El estudiante solicitado actualmente esta realizando un trabajo de grado.",
     FALTAN_DATOS_ESTUDIANTE:"Error: No se encontraron datos del estudiante.",
     CANTIDAD_EXCEDIDA:"Error: Se excede la cantidad de estudiantes para la modalidad solicitada.",
@@ -901,7 +907,13 @@ var text_en = {
     INGRESE_CODIGO:"Enter the code of the other students of the project",
     ESTUDIANTE_EN_LISTA:"Error: The student is already in the requested list.",
     ESTUDIANTE_NO_VALIDO:"Error: The code is not valid.",
-    ESTUDIANTE_NO_REQUISITOS:"Error: The currently requested student does not meet the requirements to complete a grade level assignment.",
+    ESTUDIANTE_NO_REQUISITOS:"Error: The currently requested student does not satisfy the requirements to apply for a work degree modality. "
+        + "Remember that according to agreement 038 of 2015 the minimum requirements to apply for a work degree modality are:"
+        + "<ul>"
+            + "<li>Be an active studend.</li>"
+            + "<li>Have approved 80% of the credits of your curriculum.</li>"
+            + "<li>For the modality of Postgraduate Academic Spaces, you must have an accumulated average equal to or greater than three point eight (3.8).</li>"
+        + "</ul",
     ESTUDIANTE_TRABAJO_GRADO:"Error: The currently requested student is performing a degree assignment.",
     FALTAN_DATOS_ESTUDIANTE:"Error: No student data was found.",
     CANTIDAD_EXCEDIDA:"Error: The number of students for the requested modality is exceeded.",
