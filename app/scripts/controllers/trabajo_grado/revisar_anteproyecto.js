@@ -65,7 +65,7 @@ angular.module('poluxClienteApp')
 
 			ctrl.botonRevisarAnteproyecto = [{
 				clase_color: "ver",
-				clase_css: "fa fa-cog fa-lg  faa-shake animated-hover",
+				clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
 				titulo: $translate.instant('BTN.REVISAR_ANTEPROYECTO'),
 				estado: true
 			}];
