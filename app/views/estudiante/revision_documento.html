@@ -58,25 +58,57 @@
         <span ng-bind="estudianteRevisionDoc.mensajeErrorRevisionesTrabajoGrado"></span>
       </div>
 
-      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
-        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_ANTEPROYECTO' | translate}}</button>
-      </div>
+      <div class="panel panel-default">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+          <div class="row row-centered">
+            <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES_PREVIAS' | translate}} </label>
+          </div>
+          <br>
+          <div class="row row-centered">
+            <button type="button" class="btn btn-info" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_ANTEPROYECTO' | translate}}</button>
+          </div>
+        </div>
 
-      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
-        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_PROYECTO' | translate}}</button>
-      </div>
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+          <div class="row row-centered">
+            <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES_PREVIAS' | translate}} </label>
+          </div>
+          <br>
+          <div class="row row-centered">
+            <button type="button" class="btn btn-info" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'SUBIR_CORRECCIONES_PROYECTO' | translate}}</button>
+          </div>
+        </div>
 
-      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
-        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'PRIMERA_VERSION.SUBIR' | translate}}</button>
-      </div>
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+          <div class="row row-centered">
+            <label class="col-sm-12 control-label"> {{'PRIMERA_VERSION.INSTRUCCIONES_PREVIAS' | translate}} </label>
+          </div>
+          <br>
+          <div class="row row-centered">
+            <button type="button" class="btn btn-info" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'PRIMERA_VERSION.SUBIR' | translate}}</button>
+          </div>
+        </div>
 
-      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
-        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'ARL.SUBIR' | translate}}</button>
-      </div>
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+          <div class="row row-centered">
+            <label class="col-sm-12 control-label"> {{'ARL.INSTRUCCIONES_PREVIAS' | translate}} </label>
+          </div>
+          <br>
+          <div class="row row-centered">
+            <button type="button" class="btn btn-info" ng-click="estudianteRevisionDoc.actualizarDocumentoTg()">{{'ARL.SUBIR' | translate}}</button>
+          </div>
+        </div>
 
-      <div class="form-group" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 13">
-        <button type="button" class="btn btn-info pull-left" ng-click="estudianteRevisionDoc.subirNuevaVersionDocumento()">{{'SUBIR_NUEVA_VERSION' | translate}}</button>
-        <button type="button" class="btn btn-success pull-right" ng-if="!estudianteRevisionDoc.revisionSolicitada" ng-click="estudianteRevisionDoc.solicitarRevision()">{{'SOLICITAR_REVISION' | translate}}</button>
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 13">
+          <div class="row row-centered">
+            <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES_PREVIAS' | translate}} </label>
+          </div>
+          <br>
+          <div class="row row-centered">
+            <button type="button" class="btn btn-info" ng-click="estudianteRevisionDoc.subirNuevaVersionDocumento()">{{'SUBIR_NUEVA_VERSION' | translate}}</button>
+            <button type="button" class="btn btn-success" ng-if="!estudianteRevisionDoc.revisionSolicitada" ng-click="estudianteRevisionDoc.solicitarRevision()">{{'SOLICITAR_REVISION' | translate}}</button>            
+          </div>
+        </div>
       </div>
     </div>
   </div>

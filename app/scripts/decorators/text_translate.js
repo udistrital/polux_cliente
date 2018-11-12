@@ -681,6 +681,7 @@ var text_es = {
     CORREGIR_ANTEPROYECTO: {
         DESCRIPCION: "Subir versión corregida del anteproyecto",
         INSTRUCCIONES: "A continuación puede subir una nueva versión de su anteproyecto para atender a las observaciones de su revisor. El estado de su trabajo de grado cambiará para obtener una nueva revisión.",
+        INSTRUCCIONES_PREVIAS:"Presionando el siguiente botón podrá subir una nueva versión de su anteproyecto para atender a las observaciones de su revisor. El estado de su trabajo de grado cambiará para obtener una nueva revisión.",
         CONFIRMACION: "Actualizar documento de trabajo de grado",
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como nuevo documento de su trabajo de grado?",
         ANTEPROYECTO_ACTUALIZADO: "El documento ha sido actualizado satisfactoriamente",
@@ -692,6 +693,7 @@ var text_es = {
     PRIMERA_VERSION:{
         OBSERVACIONES:"Observaciones sobre la primera versión",
         INSTRUCCIONES:"A continuación puede subir la primera versión de su trabajo de grado. El estado de su trabajo de grado cambiará para empezar las revisión.",
+        INSTRUCCIONES_PREVIAS:"Presionando el siguiente botón podrá subir la primera versión de su trabajo de grado. El estado de su trabajo de grado cambiará para empezar las revisión.",
         CONFIRMACION: "Actualizar documento de trabajo de grado",
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como la primera versión de su trabajo de grado?",
         TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
@@ -700,6 +702,7 @@ var text_es = {
     ARL:{
         OBSERVACIONES:"Observaciones sobre el certificado de la ARL",
         INSTRUCCIONES:"A continuación puede subir el certificado de la ARL. El estado de su pasantia cambiara a En curso pero sin documento inicial.",
+        INSTRUCCIONES_PREVIAS:"Presionando el siguiente botón podrá subir el certificado de la ARL. El estado de su pasantia cambiara a En curso pero sin documento inicial.",
         CONFIRMACION: "Subir certificado de ARL",
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
         TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
@@ -708,6 +711,7 @@ var text_es = {
     NUEVA_VERSION: {
         MENSAJE: "Actualización del documento",
         INSTRUCCIONES: "A continuación puede subir una nueva versión del documento del trabajo de grado.",
+        INSTRUCCIONES_PREVIAS: "Presionando el siguiente botón podrá subir una nueva versión del documento del trabajo de grado.",
         OBSERVACIONES:"Observaciones sobre la nueva versión",
         CONFIRMACION: "Actualizar documento de trabajo de grado",
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como la nueva versión de su trabajo de grado?",
@@ -1424,6 +1428,7 @@ var text_en = {
     CORREGIR_ANTEPROYECTO: {
         DESCRIPCION: "Upload new corrected degree work proposal version",
         INSTRUCCIONES: "Next you can upload a new version of your degree work proposal to meet the comments of your reviewer. The status of your degree work will change to obtain a new review.",
+        INSTRUCCIONES_PREVIAS: "By clicking the following button you'll be able to upload a new version of your degree work proposal to meet the comments of your reviewer. The status of your degree work will change to obtain a new review.",
         CONFIRMACION: "Update degree work document",
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as new document of your degree work?",
         ANTEPROYECTO_ACTUALIZADO: "The document has been successfully updated",
@@ -1435,6 +1440,7 @@ var text_en = {
     PRIMERA_VERSION:{
         OBSERVACIONES:"Degree work first version comments",
         INSTRUCCIONES:"Next you can upload the first version of your degree work. The status of your degree work will change to obtain a first review.",
+        INSTRUCCIONES_PREVIAS:"By clicking the following button you'll be able to upload the first version of your degree work. The status of your degree work will change to obtain a first review.",
         CONFIRMACION: "Update degree work document",
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the first version of your degree work?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
@@ -1442,7 +1448,8 @@ var text_en = {
     },
     ARL:{
         OBSERVACIONES:"ARL certificate comments",
-        INSTRUCCIONES:"Nexts you can upload the ARL's certificate. The status of your degree work will change to In progress but without initial document.",
+        INSTRUCCIONES:"Next you can upload the ARL's certificate. The status of your degree work will change to In progress but without initial document.",
+        INSTRUCCIONES_PREVIAS:"By clicking the following button you'll be able to upload the ARL's certificate. The status of your degree work will change to In progress but without initial document.",
         CONFIRMACION: "Upload ARL certificate",
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the ARL certificate?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
@@ -1451,6 +1458,7 @@ var text_en = {
     NUEVA_VERSION: {
         MENSAJE: "Document update",
         INSTRUCCIONES: "Next you can upload a new version of the degree work document.",
+        INSTRUCCIONES_PREVIAS: "By clicking the following button you'll be able to upload a new version of the degree work document.",
         OBSERVACIONES:"Degree work new version comments",
         CONFIRMACION: "Update degree work document",
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the new version of your degree work?",
