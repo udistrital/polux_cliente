@@ -668,7 +668,7 @@ var text_es = {
     },
     ANTEPROYECTO: "Anteproyecto",
     PROYECTO:"Proyecto",
-    ROL: "Papel",
+    ROL: "Rol",
     ANTEPROYECTO_MODIFICABLE: "Su anteproyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas en el módulo de revisiones.",
     PROYECTO_MODIFICABLE: "Su proyecto pasó a modificable luego de la revisión de su evaluador. Puede subir una nueva versión del trabajo atendiendo a las observaciones recibidas en el módulo de revisiones.",
     PROYECTO_VIABLE_WARNING: "Su trabajo de grado pasó a viable luego de la revisión de su evaluador. Por favor suba la primera versión de su trabajo de grado en el módulo de revisiones.",
