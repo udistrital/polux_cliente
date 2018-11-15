@@ -90,7 +90,7 @@
             <div class="row">
               <p class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}}</p>
               <div class="col-sm-6">
-                <input id="inputdocumento" type="file" angular-bfi="{'showUpload':false, 'showRemove': false, 'showClose': false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="d_revisionDocumento.documentModel" required>
+                <input id="inputdocumento" type="file" angular-bfi="{'showUpload':false, 'showRemove': false, 'showClose': false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 20000}" file-model="d_revisionDocumento.documentModel" required>
               </div>
               <div class="col-sm-3">
                 <button class="btn btn-primary" ng-click="d_revisionDocumento.documentModel = undefined; showDocumento = !showDocumento;" type="reset">

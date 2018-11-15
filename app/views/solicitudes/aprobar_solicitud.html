@@ -114,10 +114,10 @@
             <!--
             Se evita la solicitud del archivo que se sube como acta de consejo de carrera
 
-            <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 2000}" file-model="aprobarSolicitud.acta" required> </input>
+            <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.acta" required> </input>
             -->
             <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
-            <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONE_EL_DOCUMENTO' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
+            <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONAR_ACTA' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
           </div>
         </div>
         <br>
@@ -270,44 +270,40 @@
           <div class="panel-body">
             <div class="panel panel-default">
               <div class="panel-heading">
-                {{'SELECCIONE_EL_DOCUMENTO' | translate}}
+                {{'SELECCIONE_ACTA_EXISTENTE' | translate}}
               </div>
-              <loading tam="4" load="loadDocumento"> </loading>
+              <loading tam="4" load="loadDocumento"></loading>
               <div class="panel-body" ng-if="!loadDocumento && aprobarSolicitud.errorCargarDocumento">
                 <div class="alert alert-danger">
-                  {{'ERROR' | translate}}: {{ 'ERROR.CARGAR_DOCUMENTO' | translate}}
+                  {{'ERROR' | translate}}: {{'ERROR.CARGAR_DOCUMENTO' | translate}}
                 </div>
               </div>
               <div class="panel-body" ng-if="!loadDocumento && !aprobarSolicitud.errorCargarDocumento && aprobarSolicitud.documentos.length===0" >
                 <label clase="control-label">{{'NO_HAY_DOCUMENTOS' | translate}}</label>
               </div>
-              <div class="panel-body" ng-if="!loadDocumento && !aprobarSolicitud.errorCargarDocumento && aprobarSolicitud.documentos.length>0">
+              <div class="panel-body" ng-if="!loadDocumento && !aprobarSolicitud.errorCargarDocumento && aprobarSolicitud.documentos.length > 0">
                 <div class="row">
-                  <!-- pasa de col-sm-9 a col-sm-12 ya que no existe el botón-->
-                  <div class="col-sm-12">
+                  <div class="col-sm-10">
                     <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.acta" theme="select2" reset-search-input="false" style="width:100%;">
-                     <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
-                     <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
-                       <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
-                     </ui-select-choices>
-                   </ui-select>
-                 </div>
-                 <!--
+                      <ui-select-match  placeholder="{{'SELECCIONE_EL_DOCUMENTO' | translate}}">{{$select.selected.nombre}} </ui-select-match>
+                      <ui-select-choices infinite-scroll-container="'#scrollDocumentos'" id="scrollDocumentos" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="documento in aprobarSolicitud.documentos | filter: $select.search | limitTo:infiniteScroll.currentItems ">
+                        <span ng-bind-html="documento.nombre | highlight: $select.search"></span>
+                      </ui-select-choices>
+                    </ui-select>
+                  </div>
+                  <!--
                   Dada la ateneción al requerimiento sobre no cargar las actas de respuesta a las solicitudes, se inhabilita la visualización del acta ya cargada que se selecciona desde el modal, y se muestra el título que contiene consecutivo y fecha del acta
 
-                 <div class="col-sm-3">
+                  <div class="col-sm-3">
                   <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
-                </div>
-                -->
-              </div>
-              <br>
-              <div class="row row-centered">
-                <div class="col-sm-4 col-centered">
-                  <button class="btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'DOCUMENTO.SELECCIONAR_DOCUMENTO' | translate}}</button>
+                  </div>
+                  -->
+                  <div class="col-sm-2" ng-if="aprobarSolicitud.acta != null">
+                    <button class="btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'SELECCIONAR' | translate}}</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
         </div>
       </div>
