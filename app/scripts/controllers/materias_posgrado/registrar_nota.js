@@ -48,8 +48,10 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
-      token_service.token.documento = "12237136";
-      ctrl.usuarioSesion = token_service.token.documento;
+      // token_service.token.documento = "12237136";
+      //ctrl.usuarioSesion = token_service.token.documento;
+
+      ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 
       // En el inicio de la página, se están cargando los posgrados
       ctrl.cargandoPosgradosAsociados = true;

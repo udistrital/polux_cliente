@@ -23,8 +23,9 @@ angular.module('poluxClienteApp')
   .controller('MateriasPosgradoPublicarAsignaturasCtrl',
     function($scope, $translate, academicaRequest, token_service) {
       var ctrl = this;
-      token_service.token.documento = "12237136";
-      $scope.userId = token_service.token.documento;
+      //token_service.token.documento = "12237136";
+      //$scope.userId = token_service.token.documento;
+      $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.periodo = [];
       ctrl.modalidad = "POSGRADO";
 

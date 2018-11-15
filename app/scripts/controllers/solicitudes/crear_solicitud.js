@@ -117,8 +117,9 @@ angular.module('poluxClienteApp')
 
 
       //ctrl.codigo = $routeParams.idEstudiante;
-      token_service.token.documento = "20131020002";
-      ctrl.codigo = token_service.token.documento;
+      //token_service.token.documento = "20131020002";
+      //ctrl.codigo = token_service.token.documento;
+      ctrl.codigo = token_service.getAppPayload().appUserDocument;
 
       /**
        * @ngdoc method

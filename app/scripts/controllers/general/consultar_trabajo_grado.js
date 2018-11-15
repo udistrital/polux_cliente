@@ -39,10 +39,13 @@ angular.module('poluxClienteApp')
 
       //token_service.token.documento = "79647592";
       //token_service.token.role.push("COORDINADOR_PREGRADO");
-      token_service.token.documento = "20131020002";
-      token_service.token.role.push("ESTUDIANTE");
-      ctrl.userRole = token_service.token.role;
-      ctrl.userId = token_service.token.documento;
+      //token_service.token.documento = "20131020002";
+      //token_service.token.role.push("ESTUDIANTE");
+      //ctrl.userRole = token_service.token.role;
+      //ctrl.userId = token_service.token.documento;
+
+      ctrl.userRole = token_service.getAppPayload().appUserRole;
+      ctrl.userId = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
       ctrl.mensajeCargandoActualizarTg = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');

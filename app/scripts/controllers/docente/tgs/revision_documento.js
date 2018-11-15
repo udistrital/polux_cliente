@@ -35,11 +35,12 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //token_service.token.documento = "51551021";
-      token_service.token.documento = "79777053";
+      //token_service.token.documento = "79777053";
       //token_service.token.documento = "80093200";
+      //token_service.token.role.push("DOCENTE");
+      //ctrl.documentoDocente = token_service.token.documento;
 
-      token_service.token.role.push("DOCENTE");
-      ctrl.documentoDocente = token_service.token.documento;
+      ctrl.documentoDocente = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
 

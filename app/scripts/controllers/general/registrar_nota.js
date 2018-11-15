@@ -38,9 +38,11 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
-      token_service.token.documento = "79777053";
+      //token_service.token.documento = "79777053";
       //token_service.token.documento = "12237136";
-      ctrl.documento = token_service.token.documento;
+      //ctrl.documento = token_service.token.documento;
+
+      ctrl.documento = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
       ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');

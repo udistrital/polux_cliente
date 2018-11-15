@@ -125,8 +125,9 @@ angular.module('poluxClienteApp')
         };*/
       //$scope.userId=19451396;
       //token_service.token.documento = "79537917"; //Coordinador de artes
-      token_service.token.documento = "79647592" //Coordinador de sistemas
-      $scope.userId = parseInt(token_service.token.documento);
+      //token_service.token.documento = "79647592" //Coordinador de sistemas
+      //$scope.userId = parseInt(token_service.token.documento);
+      $scope.userId = parseInt(token_service.getAppPayload().appUserDocument);
 
       ctrl.carrerasCoordinador = [];
 

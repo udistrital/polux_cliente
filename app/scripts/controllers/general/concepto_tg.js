@@ -40,8 +40,11 @@ angular.module('poluxClienteApp')
       var ctrl = this;
       ctrl.idVinculacion = $routeParams.idVinculacion;
 
-      token_service.token.documento = "80093200";
-      ctrl.userId = token_service.token.documento;
+      //token_service.token.documento = "80093200";
+      //ctrl.userId = token_service.token.documento;
+
+      ctrl.userId = token_service.getAppPayload().appUserDocument;
+
       $scope.showc = true;
 
       /**

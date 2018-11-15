@@ -35,9 +35,9 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "20131020002";
-			ctrl.usuarioSesion = token_service.token.documento;
-
+			//token_service.token.documento = "20131020002";
+			//ctrl.usuarioSesion = token_service.token.documento;
+			ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 			// En el inicio de la página, se están cargando las solicitudes
 			ctrl.cargandoSolicitudesParaFormalizar = true;
 			ctrl.mensajeCargandoSolicitudesParaFormalizar = $translate.instant("LOADING.CARGANDO_SOLICITUDES");

@@ -40,9 +40,11 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //ctrl.estudiante = $routeParams.idEstudiante;
-      token_service.token.documento = "20131020002";
-      token_service.token.role.push("ESTUDIANTE");
-      ctrl.codigoEstudiante = token_service.token.documento;
+      //token_service.token.documento = "20131020002";
+      //token_service.token.role.push("ESTUDIANTE");
+      //ctrl.codigoEstudiante = token_service.token.documento;
+
+      ctrl.codigoEstudiante = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
 

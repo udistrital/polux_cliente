@@ -39,8 +39,9 @@ angular.module('poluxClienteApp')
       $scope.cargandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
 
       //código de la pesona que se loguea
-      token_service.token.documento = "20141020036";
-      ctrl.codigo = token_service.token.documento;
+      //token_service.token.documento = "20141020036";
+      //ctrl.codigo = token_service.token.documento;
+      ctrl.codigo = token_service.getAppPayload().appUserDocument;
 
       /**
        * @ngdoc method

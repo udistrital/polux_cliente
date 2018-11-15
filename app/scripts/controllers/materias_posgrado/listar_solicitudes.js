@@ -68,8 +68,9 @@ angular.module('poluxClienteApp')
       ctrl.carreras = [];
       ctrl.otro = [];
       //cedula coordinador
-      token_service.token.documento = "12237136";
-      $scope.userId = token_service.token.documento;
+      //token_service.token.documento = "12237136";
+      //$scope.userId = token_service.token.documento;
+      $scope.userId = token_service.getAppPayload().appUserDocument;
       //uigrid
       ctrl.gridOptionsAdmitidos = {
         enableSorting: false,
