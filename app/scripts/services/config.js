@@ -104,6 +104,7 @@ var conf_cloud_preproduccion = {
         SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
+    AUTENTICATION_MID_SERVICE: "http://localhost:8080/v1/"
 };
 
 /**
