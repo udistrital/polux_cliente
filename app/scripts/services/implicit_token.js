@@ -66,8 +66,10 @@ angular.module('implicitToken', [])
             var appUserDocument;
             var appUserRole;
             var emailInfo = {
-              //email: appUserInfo.email
-              email: "karianov@correo.udistrital.edu.co"
+              //Email: "karianov@correo.udistrital.edu.co"
+              Email: appUserInfo.sub,
+              Rol: appUserInfo.role,
+              Documento: appUserInfo.documento
             };
             autenticacionMidRequest.post("token/emailToken", emailInfo, {
                 headers: {
@@ -77,8 +79,8 @@ angular.module('implicitToken', [])
               })
               .then(function(respuestaAutenticacion) {
                 //console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
-                appUserDocument = respuestaAutenticacion.data.Codigo; // Aquí se llama al servicio para traer el código estudiantil
-                appUserRole = ["ESTUDIANTE"]; //Se quema el rol del estudiante
+                appUserDocument = respuestaAutenticacion.data.Codigo; 
+                appUserRole = respuestaAutenticacion.data.Rol;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
                 //console.log("appUserDocument", respuestaAutenticacion.data.Codigo)
