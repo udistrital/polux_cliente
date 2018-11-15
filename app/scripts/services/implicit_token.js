@@ -88,7 +88,7 @@ angular.module('implicitToken', [])
               })
               .catch(function(excepcionAutenticacion) {
                 console.log("Excepción durante la autentiación:", excepcionAutenticacion);
-                service.logout();
+                //service.logout();
               });
           } else {
             deferred.resolve(true)
