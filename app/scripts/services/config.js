@@ -95,7 +95,7 @@ var conf_cloud_preproduccion = {
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
-        CLIENTE_ID: "fftE67YyfTsExQfR86Fp6Y8HGvMa",
+        CLIENTE_ID: "S2SWVhfqu8mNPqaIVwhNzwEYV7wa",
         REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
         RESPONSE_TYPE: "id_token token",
         SCOPE: "openid email documento",
