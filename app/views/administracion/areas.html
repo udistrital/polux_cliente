@@ -11,7 +11,7 @@
             <div class="row" ng-if="!administrarAreas.areasError">
                 <label class="col-sm-2 control-label"> {{'SELECT.AREA_SNIES' | translate}} </label>
                 <div class="col-sm-10">
-                    <select class="form-control"  ng-model="area_seleccionada" ng-change="administrarAreas.cargarAreasConocimiento(area_seleccionada);">
+                    <select class="form-control" ng-model="administrarAreas.sniesSeleccionada" ng-change="administrarAreas.cargarAreasConocimiento(administrarAreas.sniesSeleccionada);">
                         <option  ng-repeat="area in administrarAreas.areasSnies" ng-value="area">{{area.Nombre}} </option>
                     </select>
                 </div>

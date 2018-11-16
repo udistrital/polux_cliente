@@ -28,7 +28,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('AdministracionAreasCtrl',
-    function ($scope, $translate, coreService, poluxRequest) {
+    function($scope, $translate, coreService, poluxRequest) {
       var ctrl = this;
 
       $scope.msgCargandoAreas = $translate.instant('LOADING.CARGANDO_AREAS');
@@ -51,7 +51,7 @@ angular.module('poluxClienteApp')
         titulo: $translate.instant('BTN.DESACTIVAR'),
         operacion: 'desactivar',
         estado: true
-      },];
+      }, ];
 
       $scope.botonesNoActivo = [{
         clase_color: "ver",
@@ -103,7 +103,7 @@ angular.module('poluxClienteApp')
         limit: 0,
       });
       coreService.get("snies_area", parametrosAreas)
-        .then(function (responseAreas) {
+        .then(function(responseAreas) {
           ctrl.areasSnies = responseAreas.data;
           if (ctrl.areasSnies !== null && ctrl.areasSnies.length !== 0) {
             $scope.loadAreas = false;
@@ -112,7 +112,7 @@ angular.module('poluxClienteApp')
             $scope.loadAreas = false;
             ctrl.areasError = true;
           }
-        }).catch(function (error) {
+        }).catch(function(error) {
           $scope.loadAreas = false;
           ctrl.areasError = true;
         });
@@ -127,7 +127,7 @@ angular.module('poluxClienteApp')
        * @param {Object} area El área de SNIES registrada y seleccionada desde la vista
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.cargarAreasConocimiento = function (area) {
+      ctrl.cargarAreasConocimiento = function(area) {
         ctrl.areasConocimiento = [];
         ctrl.gridOptions.data = ctrl.areasConocimiento;
         $scope.loadAreasConocimiento = true;
@@ -137,15 +137,15 @@ angular.module('poluxClienteApp')
           limit: 0,
         });
         poluxRequest.get("area_conocimiento", parametrosAreasConocimiento)
-          .then(function (responseAreas) {
-            if (responseAreas.data !== null) {
+          .then(function(responseAreas) {
+            if (Object.keys(responseAreas.data[0]).length > 0) {
               ctrl.areasConocimiento = responseAreas.data;
               ctrl.gridOptions.data = ctrl.areasConocimiento;
             }
             $scope.loadAreasConocimiento = false;
-            console.log(responseAreas.data);
           })
-          .catch(function () {
+          .catch(function(error) {
+            console.log(error);
             ctrl.areasConocimientoError = true;
             $scope.loadAreasConocimiento = false;
           });
@@ -160,7 +160,7 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.mostrarArea = function () {
+      ctrl.mostrarArea = function() {
         $('#modalAgregarArea').modal('show');
       }
 
@@ -173,10 +173,10 @@ angular.module('poluxClienteApp')
        * @param {string} nombreArea Nombre del área que se va a agregar
        * @returns {Boolean} El indicador que carga si hay error en la colección de los datos
        */
-      ctrl.verificarArea = function (nombreArea) {
+      ctrl.verificarArea = function(nombreArea) {
         var error = false;
 
-        var quitarAcentos = function (text) {
+        var quitarAcentos = function(text) {
           var r = text.toLowerCase();
           r = r.replace(new RegExp(/\s/g), "");
           r = r.replace(new RegExp(/[àáâãäå]/g), "a");
@@ -188,12 +188,12 @@ angular.module('poluxClienteApp')
           return r;
         }
 
-        var cambiarFormato = function (texto) {
+        var cambiarFormato = function(texto) {
           return quitarAcentos(texto).toUpperCase().replace(" ", "");
         }
 
         var areaNueva = cambiarFormato(nombreArea);
-        angular.forEach(ctrl.areasConocimiento, function (area) {
+        angular.forEach(ctrl.areasConocimiento, function(area) {
           if (areaNueva === cambiarFormato(area.Nombre)) {
             error = true;
           }
@@ -212,7 +212,7 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.cargarArea = function () {
+      ctrl.cargarArea = function() {
         $scope.loadCargandoArea = true;
         if (ctrl.verificarArea(ctrl.nombreArea)) {
           $scope.loadCargandoArea = false;
@@ -231,7 +231,7 @@ angular.module('poluxClienteApp')
             SniesArea: ctrl.areaSnies,
           }
           poluxRequest.post("area_conocimiento", dataArea)
-            .then(function () {
+            .then(function() {
               $('#modalAgregarArea').modal('hide');
               $scope.loadCargandoArea = false;
               swal(
@@ -239,11 +239,12 @@ angular.module('poluxClienteApp')
                 $translate.instant("AREAS.AREA_REGISTRADA"),
                 'success'
               );
-              ctrl.areasConocimiento.push(dataArea);
+              ctrl.cargarAreasConocimiento(ctrl.sniesSeleccionada);
               ctrl.nombreArea = "";
               ctrl.descripcionArea = "";
             })
-            .catch(function () {
+            .catch(function(error) {
+              console.log(error);
               $scope.loadCargandoArea = false;
               swal(
                 $translate.instant("MENSAJE_ERROR"),
@@ -264,10 +265,10 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.editarArea = function () {
+      ctrl.editarArea = function() {
         $scope.loadEditandoArea = true;
         var errorNombre = false;
-        if(ctrl.areaSeleccionadaTemp.Nombre != ctrl.areaSeleccionada.Nombre){
+        if (ctrl.areaSeleccionadaTemp.Nombre != ctrl.areaSeleccionada.Nombre) {
           errorNombre = ctrl.verificarArea(ctrl.areaSeleccionadaTemp.Nombre)
         }
         if (errorNombre) {
@@ -280,7 +281,7 @@ angular.module('poluxClienteApp')
           );
         } else {
           poluxRequest.put("area_conocimiento", ctrl.areaSeleccionadaTemp.Id, ctrl.areaSeleccionadaTemp)
-            .then(function () {
+            .then(function() {
               $('#modalEditarArea').modal('hide');
               $scope.loadEditandoArea = false;
               swal(
@@ -289,11 +290,11 @@ angular.module('poluxClienteApp')
                 'success'
               );
               ctrl.areasConocimiento.push(ctrl.areaSeleccionadaTemp);
-              ctrl.areasConocimiento.splice(ctrl.areasConocimiento.indexOf(ctrl.areaSeleccionada),1);
+              ctrl.areasConocimiento.splice(ctrl.areasConocimiento.indexOf(ctrl.areaSeleccionada), 1);
               ctrl.areaSeleccionada = undefined;
               ctrl.areaSeleccionadaTemp = undefined;
             })
-            .catch(function (error) {
+            .catch(function(error) {
               $scope.loadEditandoArea = false;
               swal(
                 $translate.instant("MENSAJE_ERROR"),
@@ -314,28 +315,29 @@ angular.module('poluxClienteApp')
        * @param {Object} area Área de conocimiento a la que se le cambia el estado
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.cambiarEstadoArea = function(area){
+      ctrl.cambiarEstadoArea = function(area) {
         //Se cambia el estado del área
         $scope.loadAreas = true;
         area.Activo = !area.Activo;
         poluxRequest.put("area_conocimiento", area.Id, area)
-            .then(function () {
-              $scope.loadAreas = false;
-              swal(
-                $translate.instant("REGISTRO_EXITOSO"),
-                $translate.instant("AREAS.AREA_EDITADA"),
-                'success'
-              );
-            })
-            .catch(function (error) {
-              area.Activo = !area.Activo;
-              $scope.loadAreas = false;
-              swal(
-                $translate.instant("MENSAJE_ERROR"),
-                $translate.instant("AREAS.ERROR_EDITAR_AREA"),
-                'warning'
-              );
-            });
+          .then(function() {
+            $scope.loadAreas = false;
+            swal(
+              $translate.instant("REGISTRO_EXITOSO"),
+              $translate.instant("AREAS.AREA_EDITADA"),
+              'success'
+            );
+          })
+          .catch(function(error) {
+            console.log(error);
+            area.Activo = !area.Activo;
+            $scope.loadAreas = false;
+            swal(
+              $translate.instant("MENSAJE_ERROR"),
+              $translate.instant("AREAS.ERROR_EDITAR_AREA"),
+              'warning'
+            );
+          });
       }
 
 
@@ -350,7 +352,7 @@ angular.module('poluxClienteApp')
        * @param {String} operacion Operación que se debe ejecutar cuando se selecciona el botón
        * @returns {undefined} No retorna ningún valor
        */
-      $scope.loadrow = function (row, operacion) {
+      $scope.loadrow = function(row, operacion) {
         switch (operacion) {
           case "editar":
             ctrl.areaSeleccionada = row.entity;
@@ -369,7 +371,7 @@ angular.module('poluxClienteApp')
             }).then(function(responseSwal) {
               if (responseSwal.value) {
                 ctrl.cambiarEstadoArea(row.entity);
-              } 
+              }
             });
             break;
           case "desactivar":
@@ -383,7 +385,7 @@ angular.module('poluxClienteApp')
             }).then(function(responseSwal) {
               if (responseSwal.value) {
                 ctrl.cambiarEstadoArea(row.entity);
-              } 
+              }
             });
             break;
           default:
