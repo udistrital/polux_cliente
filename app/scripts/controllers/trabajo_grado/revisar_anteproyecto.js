@@ -225,7 +225,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (estudiantesAsociados.data) {
+						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
 							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
@@ -270,7 +270,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (documentoAsociado.data) {
+						if (Object.keys(documentoAsociado.data[0]).length > 0) {
 							anteproyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
 							anteproyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
 						}
@@ -321,7 +321,7 @@ angular.module('poluxClienteApp')
 				ctrl.coleccionAnteproyectos = [];
 				poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
 					.then(function(anteproyectosPendientes) {
-						if (anteproyectosPendientes.data) {
+						if (Object.keys(anteproyectosPendientes.data[0]).length > 0) {
 							angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarEstudiantesAsociados(anteproyecto));
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarDocumentoTrabajoGrado(anteproyecto));

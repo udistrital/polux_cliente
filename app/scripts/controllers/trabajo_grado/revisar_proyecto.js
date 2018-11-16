@@ -225,7 +225,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(Proyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (estudiantesAsociados.data) {
+						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
 							Proyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
@@ -270,7 +270,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(Proyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (documentoAsociado.data) {
+						if (Object.keys(documentoAsociado.data[0]).length > 0) {
 							Proyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
 							Proyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
 						}
@@ -347,7 +347,11 @@ angular.module('poluxClienteApp')
 					var deferred = $q.defer();
 					poluxRequest.get("vinculacion_trabajo_grado", parametros)
 						.then(function(responseProyectosPendientes) {
-							deferred.resolve(responseProyectosPendientes.data);
+							if (Object.keys(responseProyectosPendientes.data[0]).length > 0) {
+								deferred.resolve(responseProyectosPendientes.data);
+							} else {
+								deferred.resolve([]);
+							}
 						})
 						.catch(function(error) {
 							deferred.reject(error);

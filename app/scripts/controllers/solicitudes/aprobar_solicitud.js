@@ -1585,18 +1585,17 @@ angular.module('poluxClienteApp')
           });
           $scope.loadDocumento = true;
           poluxRequest.get("documento_escrito", parametrosDocumentos).then(function(responseDocumentos) {
-
-              console.log(responseDocumentos);
-
-              angular.forEach(responseDocumentos.data, function(documento) {
-                console.log("documentos", documento);
-                var tempDoc = {
-                  "id": documento.Id,
-                  "nombre": documento.Titulo,
-                  "url": documento.Enlace,
-                }
-                ctrl.documentos.push(tempDoc);
-              });
+              if (Object.keys(responseDocumentos.data[0]).length > 0) {
+                angular.forEach(responseDocumentos.data, function(documento) {
+                  console.log("documentos", documento);
+                  var tempDoc = {
+                    "id": documento.Id,
+                    "nombre": documento.Titulo,
+                    "url": documento.Enlace,
+                  }
+                  ctrl.documentos.push(tempDoc);
+                });
+              }
               $scope.loadDocumento = false;
             })
             .catch(function(error) {

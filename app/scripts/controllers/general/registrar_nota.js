@@ -128,7 +128,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosTrabajoGrado)
           .then(function(dataTrabajos) {
-            if (dataTrabajos.data != null) {
+            if (Object.keys(dataTrabajos.data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data;
               //Se decide que trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
@@ -238,7 +238,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function(responseEstudiantes) {
-            if (responseEstudiantes.data != null) {
+            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
               trabajoGrado.estudiantes = responseEstudiantes.data;
               var promesasEstudiante = [];
               angular.forEach(trabajoGrado.estudiantes, function(estudiante) {
@@ -280,7 +280,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
           .then(function(responseEvaluacion) {
-            if (responseEvaluacion.data != null) {
+            if (Object.keys(responseEvaluacion.data[0]).length > 0) {
               //Si no ha registrado ninguna nota
               trabajoGrado.notaRegistrada = true;
               trabajoGrado.evaluacion = responseEvaluacion.data[0];

@@ -434,9 +434,14 @@ angular.module('poluxClienteApp')
             query: "usuario:" + identificador,
             limit: 0
           });
-          poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
-              if (responseSolicitudes.data !== null) {
+          poluxRequest.get("usuario_solicitud", parametrosSolicitudes)
+            .then(function(responseSolicitudes) {
+              console.log(responseSolicitudes.data);
+              if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                 ctrl.conSolicitudes = true;
+              }
+              if (Object.keys(responseSolicitudes.data[0]).length === 0) {
+                responseSolicitudes.data = [];
               }
               var getDataSolicitud = function(solicitud) {
                 var defer = $q.defer();
@@ -514,7 +519,7 @@ angular.module('poluxClienteApp')
                 });
 
                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
-                    if (responseSolicitudes.data !== null) {
+                    if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                       ctrl.conSolicitudes = true;
                     }
                     var verificarSolicitud = function(solicitud) {

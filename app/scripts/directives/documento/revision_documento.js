@@ -84,7 +84,7 @@ angular.module('poluxClienteApp')
                     sortby: "Id",
                     order: "asc"
                 })).then(function (response) {
-                    if (response.data != null) {
+                    if (Object.keys(response.data[0]).length > 0) {
                         ctrl.correcciones = response.data;
                     } else {
                         ctrl.correcciones = [];

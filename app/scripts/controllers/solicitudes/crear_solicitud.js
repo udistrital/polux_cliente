@@ -140,14 +140,14 @@ angular.module('poluxClienteApp')
         });
         //se consulta el trabajo de grado actual
         poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajoGrado).then(function(responseTrabajoGrado) {
-          if (responseTrabajoGrado.data !== null) {
+          if (Object.keys(responseTrabajoGrado.data[0]).length > 0) {
             //se consulta si el trabajo tiene solicitudes de proroga aprobadas
             var parametrosProrroga = $.param({
               query: "EstadoSolicitud:6,activo:TRUE,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:7,SolicitudTrabajoGrado.TrabajoGrado.Id:" + responseTrabajoGrado.data[0].Id,
               limit: 1,
             });
             poluxRequest.get("respuesta_solicitud", parametrosProrroga).then(function(responseProrroga) {
-              if (responseProrroga.data != null) {
+              if (Object.keys(responseProrroga.data[0]).length > 0) {
                 ctrl.tieneProrrogas = true;
               }
               defer.resolve(ctrl.tieneProrrogas);
@@ -187,7 +187,7 @@ angular.module('poluxClienteApp')
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
-              if (responseSolicitudesActuales.data != null) {
+              if (Object.keys(responseSolicitudesActuales.data[0]).length > 0) {
                 solicitudesActuales.push(responseSolicitudesActuales.data[0]);
                 defer.resolve(responseSolicitudesActuales.data);
               } else {
@@ -209,7 +209,7 @@ angular.module('poluxClienteApp')
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
-              if (responseSolicitudesActuales.data != null) {
+              if (Object.keys(responseSolicitudesActuales.data[0]).length > 0) {
                 solicitudesActuales.push(responseSolicitudesActuales.data[0]);
                 defer.resolve(responseSolicitudesActuales.data);
               } else {
@@ -224,13 +224,15 @@ angular.module('poluxClienteApp')
         }
 
         poluxRequest.get("usuario_solicitud", parametrosUser).then(function(responseUser) {
+            if (Object.keys(responseUser.data[0]).length == 0) {
+              responseUser.data = [];
+            }
             var solicitudesUsuario = responseUser.data;
             var promesas = [];
             //solicitud de prorogga
             promesas.push(ctrl.getProrroga());
             //otras solicitudes
             angular.forEach(solicitudesUsuario, function(solicitud) {
-              //console.log(solicitud.SolicitudTrabajoGrado.Id);
               if (solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id != 13) {
                 promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
               } else {
@@ -333,7 +335,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error) {
-            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject(error);
           });
         return defer.promise;
@@ -361,7 +363,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error) {
-            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject(error);
           });
         return defer.promise;
@@ -390,7 +392,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error) {
-            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject(error);
           });
         return defer.promise;
@@ -414,10 +416,10 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
             ctrl.areas = responseAreas.data;
-            if (ctrl.areas != null) {
+            if (Object.keys(ctrl.areas[0]).length > 0) {
               coreService.get("snies_area").then(function(responseAreas) {
                   var areasSnies = responseAreas.data;
-                  if (areasSnies != null) {
+                  if (Object.keys(areasSnies[0]).length > 0) {
                     angular.forEach(ctrl.areas, function(area) {
                       angular.forEach(areasSnies, function(areaSnies) {
                         if (area.SniesArea === areaSnies.Id) {
@@ -566,7 +568,7 @@ angular.module('poluxClienteApp')
             limit: 0
           });
           poluxRequest.get("espacio_academico_inscrito", parametrosEspacios).then(function(responseEspacios) {
-              if (responseEspacios.data != null) {
+              if (Object.keys(responseEspacios.data[0]).length > 0) {
                 angular.forEach(responseEspacios.data, function(espacio) {
                   ctrl.espaciosElegidos.push(espacio.EspaciosAcademicosElegibles);
                 });
@@ -584,18 +586,24 @@ angular.module('poluxClienteApp')
 
         var getModalidades = function() {
           var defer = $q.defer();
-          poluxRequest.get("modalidad").then(function(responseModalidad) {
-              ctrl.modalidades = [];
-              if (ctrl.restringirModalidades) {
-                angular.forEach(responseModalidad.data, function(modalidad) {
-                  if (modalidad.Id == 2) {
-                    ctrl.modalidades.push(modalidad);
-                  }
-                });
+          poluxRequest.get("modalidad")
+            .then(function(responseModalidad) {
+              if (Object.keys(responseModalidad.data[0]).length > 0) {
+                ctrl.modalidades = [];
+                if (ctrl.restringirModalidades) {
+                  angular.forEach(responseModalidad.data, function(modalidad) {
+                    if (modalidad.Id == 2) {
+                      ctrl.modalidades.push(modalidad);
+                    }
+                  });
+                } else {
+                  ctrl.modalidades = responseModalidad.data;
+                }
+                defer.resolve();
               } else {
-                ctrl.modalidades = responseModalidad.data;
+                ctrl.mensajeErrorCarga = $translate.instant("ERROR.SIN_MODALIDADES");
+                defer.reject("No hay modalidades registradas");
               }
-              defer.resolve();
             })
             .catch(function(error) {
               ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_TIPOS_SOLICITUD");
@@ -611,7 +619,7 @@ angular.module('poluxClienteApp')
             limit: 0,
           });
           poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
-              if (responseSolicitudes.data !== null) {
+              if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                 //console.log("solicitudes hechas",responseSolicitudes.data);
                 //si ha hecho una solicitud se obtienen las materias por el detalle
                 var getSolicitud = function(solicitud) {
@@ -662,7 +670,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajoEstudiante).then(function(responseTrabajoEstudiante) {
             var promises = [];
-            if (responseTrabajoEstudiante.data != null) {
+            if (Object.keys(responseTrabajoEstudiante.data[0]).length > 0) {
               ctrl.Trabajo = responseTrabajoEstudiante.data[0];
               ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad.Id;
               ctrl.trabajo_grado_completo = responseTrabajoEstudiante.data[0].TrabajoGrado;
@@ -974,163 +982,148 @@ angular.module('poluxClienteApp')
             }
             promises.push(getModalidadTipoSolicitud(modalidad_seleccionada));
           }
-          poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles).then(function(responseDetalles) {
-              ctrl.detalles = responseDetalles.data;
-              console.log("detalles", ctrl.detalles);
-              //Se cargan opciones de los detalles
-              angular.forEach(ctrl.detalles, function(detalle) {
-                //Se internacionalizan variables y se crean labels de los detalles
-                detalle.label = $translate.instant(detalle.Detalle.Enunciado);
-                detalle.respuesta = "";
-                detalle.fileModel = null;
-                detalle.opciones = [];
-                //Se evalua si el detalle necesita cargar datos
-                if (!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id !== 8) {
-                  //Se separa el strig
-                  var parametrosServicio = detalle.Detalle.Descripcion.split(";");
-                  var sql = "";
-                  var parametrosConsulta = [];
-                  //servicio de academiaca
-                  if (parametrosServicio[0] === "polux") {
-                    var getOpcionesPolux = function(parametrosServicio) {
-                      var defer = $q.defer()
-                      if (parametrosServicio[2] !== undefined) {
-                        parametrosConsulta = parametrosServicio[2].split(",");
-                        angular.forEach(parametrosConsulta, function(parametro) {
-                          if (!parametro.includes(":")) {
-                            if (parametro == "trabajo_grado") {
-                              parametro = parametro + ":" + ctrl.trabajo_grado;
+          poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles)
+            .then(function(responseDetalles) {
+              if (Object.keys(responseDetalles.data[0]).length > 0) {
+                ctrl.detalles = responseDetalles.data;
+                console.log("detalles", ctrl.detalles);
+                //Se cargan opciones de los detalles
+                angular.forEach(ctrl.detalles, function(detalle) {
+                  //Se internacionalizan variables y se crean labels de los detalles
+                  detalle.label = $translate.instant(detalle.Detalle.Enunciado);
+                  detalle.respuesta = "";
+                  detalle.fileModel = null;
+                  detalle.opciones = [];
+                  //Se evalua si el detalle necesita cargar datos
+                  if (!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id !== 8) {
+                    //Se separa el strig
+                    var parametrosServicio = detalle.Detalle.Descripcion.split(";");
+                    var sql = "";
+                    var parametrosConsulta = [];
+                    //servicio de academiaca
+                    if (parametrosServicio[0] === "polux") {
+                      var getOpcionesPolux = function(parametrosServicio) {
+                        var defer = $q.defer()
+                        if (parametrosServicio[2] !== undefined) {
+                          parametrosConsulta = parametrosServicio[2].split(",");
+                          angular.forEach(parametrosConsulta, function(parametro) {
+                            if (!parametro.includes(":")) {
+                              if (parametro == "trabajo_grado") {
+                                parametro = parametro + ":" + ctrl.trabajo_grado;
+                              }
+                              if (parametro == "carrera_elegible") {
+                                parametro = parametro + ":" + ctrl.carreraElegida;
+                              }
+                              /* //Si el parametro es activo se deja tal y como esta en la bd
+                              if (parametro == "activo") {
+                                parametro = parametro;
+                              }*/
+                              if (parametro == "id") {
+                                parametro = parametro + ":" + ctrl.trabajo_grado;
+                              }
                             }
-                            if (parametro == "carrera_elegible") {
-                              parametro = parametro + ":" + ctrl.carreraElegida;
+                            if (sql === "") {
+                              sql = parametro;
+                            } else {
+                              sql = sql + "," + parametro;
                             }
-                            /* //Si el parametro es activo se deja tal y como esta en la bd
-                            if (parametro == "activo") {
-                              parametro = parametro;
-                            }*/
-                            if (parametro == "id") {
-                              parametro = parametro + ":" + ctrl.trabajo_grado;
-                            }
-                          }
-                          if (sql === "") {
-                            sql = parametro;
-                          } else {
-                            sql = sql + "," + parametro;
-                          }
-                        });
-                        detalle.parametros = $.param({
-                          query: sql,
-                          limit: 0
-                        });
-                      }
-                      poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones) {
-                          if (detalle.Detalle.Nombre.includes("Nombre actual de la propuesta")) {
-                            detalle.opciones.push({
-                              "NOMBRE": responseOpciones.data[0].Titulo,
-                              "bd": responseOpciones.data[0].Titulo,
-                            });
-                            defer.resolve();
-                          } else if (detalle.Detalle.Nombre.includes("Actual resumen de la propuesta")) {
-                            detalle.opciones.push({
-                              "NOMBRE": responseOpciones.data[0].DocumentoEscrito.Resumen,
-                              "bd": responseOpciones.data[0].DocumentoEscrito.Resumen
-                            });
-                            defer.resolve();
-                          } else if (detalle.Detalle.Nombre.includes("Propuesta actual")) {
-                            detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
-                            //console.log("Documento", detalle.respuesta);
-                            defer.resolve();
-                          } else if (detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")) {
-                            //console.log("Opciones", responseOpciones);
-                            var areasString = "";
-                            angular.forEach(responseOpciones.data, function(area) {
-                              areasString = areasString + ", " + area.AreaConocimiento.Nombre;
-                            });
-                            detalle.opciones.push({
-                              "NOMBRE": areasString.substring(2),
-                              "bd": areasString.substring(2)
-                            });
-                            defer.resolve();
-                          } else if (detalle.Detalle.Nombre.includes("Nombre Empresa")) {
-                            angular.forEach(responseOpciones.data, function(empresa) {
+                          });
+                          detalle.parametros = $.param({
+                            query: sql,
+                            limit: 0
+                          });
+                        }
+                        poluxRequest.get(parametrosServicio[1], detalle.parametros).then(function(responseOpciones) {
+                            if (detalle.Detalle.Nombre.includes("Nombre actual de la propuesta")) {
                               detalle.opciones.push({
-                                "NOMBRE": empresa.Identificacion + "",
-                                "bd": empresa.Identificacion + "",
+                                "NOMBRE": responseOpciones.data[0].Titulo,
+                                "bd": responseOpciones.data[0].Titulo,
                               });
-                            });
-                            defer.resolve();
-                          } else if (detalle.Detalle.Nombre.includes("Espacio Academico Anterior")) {
-                            var getEspacioAnterior = function(detalle, espacio) {
-                              var defer = $q.defer();
-                              academicaRequest.get("asignatura_pensum", [espacio.EspaciosAcademicosElegibles.CodigoAsignatura, espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum]).then(function(asignatura) {
-                                  detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
-                                  detalle.opciones.push({
-                                    "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre + ", creditos: " + asignatura.data.asignatura.datosAsignatura[0].creditos,
-                                    "bd": espacio.EspaciosAcademicosElegibles.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre,
-                                  });
-                                  defer.resolve();
-                                })
-                                .catch(function(error) {
-                                  defer.reject(error);
+                              defer.resolve();
+                            } else if (detalle.Detalle.Nombre.includes("Actual resumen de la propuesta")) {
+                              detalle.opciones.push({
+                                "NOMBRE": responseOpciones.data[0].DocumentoEscrito.Resumen,
+                                "bd": responseOpciones.data[0].DocumentoEscrito.Resumen
+                              });
+                              defer.resolve();
+                            } else if (detalle.Detalle.Nombre.includes("Propuesta actual")) {
+                              detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
+                              //console.log("Documento", detalle.respuesta);
+                              defer.resolve();
+                            } else if (detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")) {
+                              //console.log("Opciones", responseOpciones);
+                              var areasString = "";
+                              angular.forEach(responseOpciones.data, function(area) {
+                                areasString = areasString + ", " + area.AreaConocimiento.Nombre;
+                              });
+                              detalle.opciones.push({
+                                "NOMBRE": areasString.substring(2),
+                                "bd": areasString.substring(2)
+                              });
+                              defer.resolve();
+                            } else if (detalle.Detalle.Nombre.includes("Nombre Empresa")) {
+                              angular.forEach(responseOpciones.data, function(empresa) {
+                                detalle.opciones.push({
+                                  "NOMBRE": empresa.Identificacion + "",
+                                  "bd": empresa.Identificacion + "",
                                 });
-                              return defer.promise;
-                            }
-                            var promisesEspacio = [];
-                            angular.forEach(responseOpciones.data, function(espacio) {
-                              promisesEspacio.push(getEspacioAnterior(detalle, espacio));
-                            });
-                            $q.all(promisesEspacio).then(function() {
-                                defer.resolve()
-                              })
-                              .catch(function(error) {
-                                defer.reject(error);
                               });
-                          } else if (detalle.Detalle.Nombre.includes("Evaluador Actual")) {
-                            var promisesDocente = []
-                            var getDocente = function(evaluador, detalle) {
-                              var defer = $q.defer();
-                              academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
-                                  if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                              defer.resolve();
+                            } else if (detalle.Detalle.Nombre.includes("Espacio Academico Anterior")) {
+                              var getEspacioAnterior = function(detalle, espacio) {
+                                var defer = $q.defer();
+                                academicaRequest.get("asignatura_pensum", [espacio.EspaciosAcademicosElegibles.CodigoAsignatura, espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum]).then(function(asignatura) {
+                                    detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
                                     detalle.opciones.push({
-                                      "NOMBRE": docente.data.docenteTg.docente[0].nombre,
-                                      "bd": docente.bd = docente.data.docenteTg.docente[0].id
+                                      "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre + ", creditos: " + asignatura.data.asignatura.datosAsignatura[0].creditos,
+                                      "bd": espacio.EspaciosAcademicosElegibles.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre,
                                     });
-                                  }
+                                    defer.resolve();
+                                  })
+                                  .catch(function(error) {
+                                    defer.reject(error);
+                                  });
+                                return defer.promise;
+                              }
+                              var promisesEspacio = [];
+                              angular.forEach(responseOpciones.data, function(espacio) {
+                                promisesEspacio.push(getEspacioAnterior(detalle, espacio));
+                              });
+                              $q.all(promisesEspacio).then(function() {
+                                  defer.resolve()
+                                })
+                                .catch(function(error) {
+                                  defer.reject(error);
+                                });
+                            } else if (detalle.Detalle.Nombre.includes("Evaluador Actual")) {
+                              var promisesDocente = []
+                              var getDocente = function(evaluador, detalle) {
+                                var defer = $q.defer();
+                                academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
+                                    if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                      detalle.opciones.push({
+                                        "NOMBRE": docente.data.docenteTg.docente[0].nombre,
+                                        "bd": docente.bd = docente.data.docenteTg.docente[0].id
+                                      });
+                                    }
+                                    defer.resolve();
+                                  })
+                                  .catch(function(error) {
+                                    defer.reject(error);
+                                  });
+                                return defer.promise;
+                              }
+                              angular.forEach(responseOpciones.data, function(evaluador) {
+                                promisesDocente.push(getDocente(evaluador, detalle));
+                              });
+                              $q.all(promisesDocente).then(function() {
                                   defer.resolve();
                                 })
                                 .catch(function(error) {
                                   defer.reject(error);
                                 });
-                              return defer.promise;
-                            }
-                            angular.forEach(responseOpciones.data, function(evaluador) {
-                              promisesDocente.push(getDocente(evaluador, detalle));
-                            });
-                            $q.all(promisesDocente).then(function() {
-                                defer.resolve();
-                              })
-                              .catch(function(error) {
-                                defer.reject(error);
-                              });
-                          } else if (detalle.Detalle.Nombre.includes("Director Actual")) {
-                            academicaRequest.get("docente_tg", [ctrl.Trabajo.directorInterno.Usuario]).then(function(docente) {
-                                if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                                  //console.log("Respuesta docente", docente.data.docenteTg.docente);
-                                  detalle.opciones.push({
-                                    "NOMBRE": docente.data.docenteTg.docente[0].nombre,
-                                    //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
-                                    "bd": docente.bd = docente.data.docenteTg.docente[0].id
-                                  });
-                                  //console.log(detalle.opciones);
-                                }
-                                defer.resolve();
-                              })
-                              .catch(function(error) {
-                                defer.reject(error);
-                              });
-                          } else if (detalle.Detalle.Nombre.includes("Codirector Actual")) {
-                            if (!angular.isUndefined(ctrl.Trabajo.codirector)) {
-                              academicaRequest.get("docente_tg", [ctrl.Trabajo.codirector.Usuario]).then(function(docente) {
+                            } else if (detalle.Detalle.Nombre.includes("Director Actual")) {
+                              academicaRequest.get("docente_tg", [ctrl.Trabajo.directorInterno.Usuario]).then(function(docente) {
                                   if (!angular.isUndefined(docente.data.docenteTg.docente)) {
                                     //console.log("Respuesta docente", docente.data.docenteTg.docente);
                                     detalle.opciones.push({
@@ -1145,176 +1138,199 @@ angular.module('poluxClienteApp')
                                 .catch(function(error) {
                                   defer.reject(error);
                                 });
-                            } else {
-                              defer.reject("Sin codirector");
-                            }
-                          } else if (detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")) {
-                            var promises = [];
-                            var getEspacio = function(detalle, espacio) {
-                              var defer = $q.defer();
-                              academicaRequest.get("asignatura_pensum", [espacio.CodigoAsignatura, espacio.CarreraElegible.CodigoPensum]).then(function(asignatura) {
-                                  detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
+                            } else if (detalle.Detalle.Nombre.includes("Codirector Actual")) {
+                              if (!angular.isUndefined(ctrl.Trabajo.codirector)) {
+                                academicaRequest.get("docente_tg", [ctrl.Trabajo.codirector.Usuario]).then(function(docente) {
+                                    if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                      //console.log("Respuesta docente", docente.data.docenteTg.docente);
+                                      detalle.opciones.push({
+                                        "NOMBRE": docente.data.docenteTg.docente[0].nombre,
+                                        //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
+                                        "bd": docente.bd = docente.data.docenteTg.docente[0].id
+                                      });
+                                      //console.log(detalle.opciones);
+                                    }
+                                    defer.resolve();
+                                  })
+                                  .catch(function(error) {
+                                    defer.reject(error);
+                                  });
+                              } else {
+                                defer.reject("Sin codirector");
+                              }
+                            } else if (detalle.Detalle.Nombre.includes("Espacio Academico Nuevo")) {
+                              var promises = [];
+                              var getEspacio = function(detalle, espacio) {
+                                var defer = $q.defer();
+                                academicaRequest.get("asignatura_pensum", [espacio.CodigoAsignatura, espacio.CarreraElegible.CodigoPensum]).then(function(asignatura) {
+                                    detalle.asignatura = asignatura.data.asignatura.datosAsignatura[0];
+                                    detalle.opciones.push({
+                                      "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre + ", creditos: " + asignatura.data.asignatura.datosAsignatura[0].creditos,
+                                      "bd": espacio.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre
+                                    });
+                                    defer.resolve();
+                                  })
+                                  .catch(function(error) {
+                                    defer.reject(error);
+                                  });
+                                return defer.promise;
+                              }
+                              angular.forEach(responseOpciones.data, function(espacio) {
+                                var esta = false;
+                                angular.forEach(ctrl.espaciosElegidos, function(asignatura) {
+                                  if (espacio.CodigoAsignatura == asignatura.CodigoAsignatura) {
+                                    esta = true;
+                                  }
+                                });
+                                if (!esta) {
+                                  promises.push(getEspacio(detalle, espacio));
+                                }
+                              });
+                              $q.all(promises).then(function() {
+                                  defer.resolve();
+                                })
+                                .catch(function(error) {
+                                  defer.reject(error);
+                                });
+                            } else if (detalle.Detalle.Nombre.includes("Nombre del anterior director externo")) {
+                              var temp = responseOpciones.data[0].Observaciones.split(" y dirigida por ");
+                              temp = temp[1].split(" con número de identificacion ");
+                              detalle.opciones.push({
+                                "NOMBRE": temp[1] + " - " + temp[0],
+                                "bd": temp[1]
+                              });
+                              defer.resolve();
+                            } else if (detalle.Detalle.Nombre.includes("Nombre de evaluador(es) actuales")) {
+                              var promisasDocente = []
+                              var obtenerDocente = function(evaluador, detalle) {
+                                var defer = $q.defer();
+                                academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
+                                    var evaluador = {
+                                      nombre: "",
+                                      id: "",
+                                    }
+                                    if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                      evaluador.nombre = docente.data.docenteTg.docente[0].nombre;
+                                      evaluador.id = docente.data.docenteTg.docente[0].id;
+                                    }
+                                    defer.resolve(evaluador);
+                                  })
+                                  .catch(function(error) {
+                                    defer.reject(error);
+                                  });
+                                return defer.promise;
+                              }
+                              angular.forEach(responseOpciones.data, function(evaluador) {
+                                promisasDocente.push(obtenerDocente(evaluador, detalle));
+                              });
+                              $q.all(promisasDocente).then(function(evaluadores) {
                                   detalle.opciones.push({
-                                    "NOMBRE": asignatura.data.asignatura.datosAsignatura[0].nombre + ", creditos: " + asignatura.data.asignatura.datosAsignatura[0].creditos,
-                                    "bd": espacio.CodigoAsignatura + '-' + asignatura.data.asignatura.datosAsignatura[0].nombre
+                                    "NOMBRE": evaluadores.map(function(evaluador) {
+                                      return evaluador.nombre
+                                    }).join(", "),
+                                    "bd": evaluadores.map(function(evaluador) {
+                                      return evaluador.id
+                                    }).join(",")
                                   });
                                   defer.resolve();
                                 })
                                 .catch(function(error) {
                                   defer.reject(error);
                                 });
-                              return defer.promise;
-                            }
-                            angular.forEach(responseOpciones.data, function(espacio) {
-                              var esta = false;
-                              angular.forEach(ctrl.espaciosElegidos, function(asignatura) {
-                                if (espacio.CodigoAsignatura == asignatura.CodigoAsignatura) {
-                                  esta = true;
-                                }
-                              });
-                              if (!esta) {
-                                promises.push(getEspacio(detalle, espacio));
-                              }
-                            });
-                            $q.all(promises).then(function() {
-                                defer.resolve();
-                              })
-                              .catch(function(error) {
-                                defer.reject(error);
-                              });
-                          } else if (detalle.Detalle.Nombre.includes("Nombre del anterior director externo")) {
-                            var temp = responseOpciones.data[0].Observaciones.split(" y dirigida por ");
-                            temp = temp[1].split(" con número de identificacion ");
-                            detalle.opciones.push({
-                              "NOMBRE": temp[1] + " - " + temp[0],
-                              "bd": temp[1]
-                            });
-                            defer.resolve();
-                          } else if (detalle.Detalle.Nombre.includes("Nombre de evaluador(es) actuales")) {
-                            var promisasDocente = []
-                            var obtenerDocente = function(evaluador, detalle) {
-                              var defer = $q.defer();
-                              academicaRequest.get("docente_tg", [evaluador.Usuario]).then(function(docente) {
-                                  var evaluador = {
-                                    nombre: "",
-                                    id: "",
-                                  }
-                                  if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                                    evaluador.nombre = docente.data.docenteTg.docente[0].nombre;
-                                    evaluador.id = docente.data.docenteTg.docente[0].id;
-                                  }
-                                  defer.resolve(evaluador);
-                                })
-                                .catch(function(error) {
-                                  defer.reject(error);
-                                });
-                              return defer.promise;
-                            }
-                            angular.forEach(responseOpciones.data, function(evaluador) {
-                              promisasDocente.push(obtenerDocente(evaluador, detalle));
-                            });
-                            $q.all(promisasDocente).then(function(evaluadores) {
-                                detalle.opciones.push({
-                                  "NOMBRE": evaluadores.map(function(evaluador) {
-                                    return evaluador.nombre
-                                  }).join(", "),
-                                  "bd": evaluadores.map(function(evaluador) {
-                                    return evaluador.id
-                                  }).join(",")
-                                });
-                                defer.resolve();
-                              })
-                              .catch(function(error) {
-                                defer.reject(error);
-                              });
-                            //Resolve promesa
-                          } else {
-                            detalle.opciones = responseOpciones.data;
-                            defer.resolve();
-                          }
-                        })
-                        .catch(function(error) {
-                          defer.reject(error);
-                        });
-                      return defer.promise;
-                    }
-                    promises.push(getOpcionesPolux(parametrosServicio));
-                  }
-                  if (parametrosServicio[0] === "academica") {
-                    var getOpcionesAcademica = function(parametrosServicio) {
-                      var defer = $q.defer();
-                      if (parametrosServicio[1] === "docente") {
-                        academicaRequest.get("docentes_tg").then(function(response) {
-                            if (!angular.isUndefined(response.data.docentesTg.docente)) {
-                              var docentes = response.data.docentesTg.docente;
-                              var vinculados = [];
-                              angular.forEach(docentes, function(docente) {
-                                if (ctrl.docenteVinculado(docente.id)) {
-                                  vinculados.push(docente);
-                                } else {
-                                  docente.bd = docente.id;
-                                }
-                              });
-                              angular.forEach(vinculados, function(docente) {
-                                var index = docentes.indexOf(docente);
-                                docentes.splice(index, 1);
-                              });
-                              detalle.opciones = docentes;
+                              //Resolve promesa
+                            } else {
+                              detalle.opciones = responseOpciones.data;
                               defer.resolve();
                             }
                           })
                           .catch(function(error) {
                             defer.reject(error);
                           });
-                      } else {
-                        defer.resolve();
+                        return defer.promise;
                       }
-                      return defer.promise
+                      promises.push(getOpcionesPolux(parametrosServicio));
                     }
-                    promises.push(getOpcionesAcademica(parametrosServicio));
-                  }
-                  if (parametrosServicio[0] === "cidc") {
-                    if (parametrosServicio[1] === "estructura_investigacion") {
-                      detalle.opciones = cidcRequest.obtenerEntidades();
+                    if (parametrosServicio[0] === "academica") {
+                      var getOpcionesAcademica = function(parametrosServicio) {
+                        var defer = $q.defer();
+                        if (parametrosServicio[1] === "docente") {
+                          academicaRequest.get("docentes_tg").then(function(response) {
+                              if (!angular.isUndefined(response.data.docentesTg.docente)) {
+                                var docentes = response.data.docentesTg.docente;
+                                var vinculados = [];
+                                angular.forEach(docentes, function(docente) {
+                                  if (ctrl.docenteVinculado(docente.id)) {
+                                    vinculados.push(docente);
+                                  } else {
+                                    docente.bd = docente.id;
+                                  }
+                                });
+                                angular.forEach(vinculados, function(docente) {
+                                  var index = docentes.indexOf(docente);
+                                  docentes.splice(index, 1);
+                                });
+                                detalle.opciones = docentes;
+                                defer.resolve();
+                              }
+                            })
+                            .catch(function(error) {
+                              defer.reject(error);
+                            });
+                        } else {
+                          defer.resolve();
+                        }
+                        return defer.promise
+                      }
+                      promises.push(getOpcionesAcademica(parametrosServicio));
                     }
-                    if (parametrosServicio[1] === "docentes") {
-                      detalle.opciones = cidcRequest.obtenerDoncentes();
+                    if (parametrosServicio[0] === "cidc") {
+                      if (parametrosServicio[1] === "estructura_investigacion") {
+                        detalle.opciones = cidcRequest.obtenerEntidades();
+                      }
+                      if (parametrosServicio[1] === "docentes") {
+                        detalle.opciones = cidcRequest.obtenerDoncentes();
+                      }
                     }
-                  }
-                  if (parametrosServicio[0] === "estatico") {
-                    parametrosConsulta = parametrosServicio[2].split(",");
-                    angular.forEach(parametrosConsulta, function(opcion) {
-                      detalle.opciones.push({
-                        "NOMBRE": opcion,
-                        "bd": opcion
+                    if (parametrosServicio[0] === "estatico") {
+                      parametrosConsulta = parametrosServicio[2].split(",");
+                      angular.forEach(parametrosConsulta, function(opcion) {
+                        detalle.opciones.push({
+                          "NOMBRE": opcion,
+                          "bd": opcion
+                        });
                       });
-                    });
+                    }
+                    if (parametrosServicio[0] === "mensaje") {
+                      detalle.opciones.push({
+                        "NOMBRE": $translate.instant(parametrosServicio[1]),
+                        "bd": $translate.instant(parametrosServicio[1])
+                      });
+                    }
                   }
-                  if (parametrosServicio[0] === "mensaje") {
-                    detalle.opciones.push({
-                      "NOMBRE": $translate.instant(parametrosServicio[1]),
-                      "bd": $translate.instant(parametrosServicio[1])
-                    });
-                  }
-                }
-              });
-              $q.all(promises).then(function() {
-                  $scope.loadDetalles = false;
-                  ctrl.detallesCargados = true;
-                  if (ctrl.detalles == null) {
-                    ctrl.soliciudConDetalles = false;
-                  }
-                })
-                .catch(function(error) {
-                  ctrl.mensajeError = $translate.instant("ERROR.CARGAR_OPCIONES_DETALLES_SOLICITUD");
-                  if (error === "Sin codirector") {
-                    ctrl.mensajeError = $translate.instant("ERROR.SIN_CODIRECTOR");
-                  }
-                  ctrl.errorParametros = true;
-                  $scope.loadDetalles = false;
-                  ctrl.detalles = [];
-                  console.log(error);
                 });
+                $q.all(promises).then(function() {
+                    $scope.loadDetalles = false;
+                    ctrl.detallesCargados = true;
+                    if (ctrl.detalles == null) {
+                      ctrl.soliciudConDetalles = false;
+                    }
+                  })
+                  .catch(function(error) {
+                    ctrl.mensajeError = $translate.instant("ERROR.CARGAR_OPCIONES_DETALLES_SOLICITUD");
+                    if (error === "Sin codirector") {
+                      ctrl.mensajeError = $translate.instant("ERROR.SIN_CODIRECTOR");
+                    }
+                    ctrl.errorParametros = true;
+                    $scope.loadDetalles = false;
+                    ctrl.detalles = [];
+                    console.log(error);
+                  });
+              } else {
+                ctrl.mensajeError = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
+                ctrl.errorParametros = true;
+                $scope.loadDetalles = false;
+                ctrl.detalles = [];
+              }
             })
             .catch(function(error) {
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DETALLES_SOLICITUD");

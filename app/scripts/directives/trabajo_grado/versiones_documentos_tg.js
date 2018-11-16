@@ -77,7 +77,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
             .then(function (responseDocumento) {
-              if (responseDocumento.data != null) {
+              if (Object.keys(responseDocumento.data[0]).length > 0) {
                 ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
                   .then(function (versiones) {
                     var nombreNodo = "";
