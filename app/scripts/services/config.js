@@ -73,7 +73,7 @@ var conf_local = {
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "http://localhost:8080/v1/"
+    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
 };
 
 /**
@@ -104,7 +104,7 @@ var conf_cloud_preproduccion = {
         SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "http://localhost:8080/v1/"
+    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
 };
 
 /**
@@ -115,5 +115,5 @@ var conf_cloud_preproduccion = {
  */
 angular.module('poluxClienteApp')
   .constant('CONF', {
-      GENERAL: conf_local
+      GENERAL: conf_cloud_preproduccion
   });
