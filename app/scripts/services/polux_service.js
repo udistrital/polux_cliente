@@ -49,7 +49,7 @@ angular.module('poluxService', [])
              */
             post: function(tabla, elemento) {
                 //se realiza definicion de post con formato header, para resolucion del problema post
-                return $http.post(path + tabla, elemento, token_service.getHeader())
+                return $http.post(path + tabla, elemento, token_service.getHeader());
                     /*{
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'

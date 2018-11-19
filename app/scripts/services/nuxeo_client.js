@@ -17,7 +17,7 @@ angular.module('nuxeoService',[])
    * # nuxeoClient
    * Fabrica sobre la cual se consumen los servicios proveidos por el API de nuxeo sobre los metodos GET, POST, PUT y DELETE
    */
-  .factory('nuxeoClient', function ($q,nuxeo) {
+  .factory('nuxeoClient', function ($q, nuxeo) {
     return {
       /**
        * @ngdoc method
@@ -34,7 +34,7 @@ angular.module('nuxeoService',[])
        */
       createDocument : function(nombre, descripcion, documento,dominio, callback) {
         var defer = $q.defer();
-        nuxeo.connect().then(function(client) {
+        nuxeo.connect().then(function() {
           nuxeo.operation('Document.Create')
           .params({
             type: 'File',
@@ -199,7 +199,7 @@ angular.module('nuxeoService',[])
         .then(function(docResponse){
           //console.log(docResponse);
           //ctrl.getVersionesDocumento(uid);
-          defer.resolve();
+          defer.resolve(docResponse);
         })
         .catch(function(error) {
           defer.reject(error);

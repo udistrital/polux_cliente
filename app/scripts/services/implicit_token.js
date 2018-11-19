@@ -14,7 +14,7 @@ if (window.localStorage.getItem('access_token') === null ||
     queryString = location.hash.substring(1),
     regex = /([^&=]+)=([^&]*)/g;
   var m;
-  while (m = regex.exec(queryString)) {
+  while ((m = regex.exec(queryString)) !== null) {
     params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
   }
   // And send the token over to the server
@@ -34,12 +34,11 @@ if (window.localStorage.getItem('access_token') === null ||
   req.onreadystatechange = function(e) {
     if (req.readyState === 4) {
       if (req.status === 200) {
-        // window.location = params.state;
+        //console.log("Status: Ok", e);
       } else if (req.status === 400) {
-        window.alert('There was an error processing the token.');
+        console.log("Status: Bad request", e);
       } else {
-        // alert('something else other than 200 was returned');
-        // console.log(req);
+        console.log("Status: Not recognizable", e);
       }
     }
   };
@@ -58,8 +57,8 @@ angular.module('implicitToken', [])
       getLoginData: function() {
         //Para  llamar el api de autenticacion
         var deferred = $q.defer();
-        if (window.localStorage.getItem('access_token') != null &&
-          window.localStorage.getItem('access_token') != undefined) {
+        if (window.localStorage.getItem('access_token') !== null &&
+          window.localStorage.getItem('access_token') !== undefined) {
           if (window.localStorage.getItem('access_code') === null ||
             window.localStorage.getItem('access_code') === undefined) {
             var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
@@ -91,10 +90,10 @@ angular.module('implicitToken', [])
                 //service.logout();
               });
           } else {
-            deferred.resolve(true)
+            deferred.resolve(true);
           }
         } else {
-          deferred.resolve(true)
+          deferred.resolve(true);
         }
         return deferred.promise;
       },

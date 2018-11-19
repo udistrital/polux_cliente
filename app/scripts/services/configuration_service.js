@@ -58,7 +58,7 @@ angular.module('configuracionService', [])
                      * Debe probarse esta sugerencia:
                     **/
                     var y = this.get_acciones(path, a[i].Opciones);
-                    if (y != null) {
+                    if (y !== null) {
                         return y;
                     }
                 }

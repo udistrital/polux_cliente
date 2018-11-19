@@ -174,7 +174,7 @@ angular.module('poluxClienteApp')
               'warning'
             );
           }
-        }
+        };
       },
       controllerAs: 'd_cargarDocumento'
     };
