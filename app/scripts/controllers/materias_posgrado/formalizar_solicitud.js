@@ -171,7 +171,7 @@ angular.module('poluxClienteApp')
 						sesionesRequest.get("relacion_sesiones", ctrl.obtenerParametrosSesionesDeFormalizacion(periodoAcademicoCorrespondiente))
 							.then(function(sesionesDeFormalizacion) {
 								// Se estudia que las sesiones tengan contenido
-								if (sesionesDeFormalizacion.data) {
+								if (Object.keys(sesionesDeFormalizacion.data[0]).length > 0) {
 									// Se resuelve la información de las sesiones consultadas
 									deferred.resolve(sesionesDeFormalizacion.data);
 								} else {
@@ -204,10 +204,10 @@ angular.module('poluxClienteApp')
 			ctrl.comprobarPeriodoFormalizacion = function() {
 				// Se trae el diferido desde el servicio para manejar las promesas
 				var deferred = $q.defer();
+				// Se define una colección que trabaje las fechas de formalización
+				ctrl.coleccionFechasFormalizacion = [];
 				ctrl.consultarSesiones()
 					.then(function(sesionesDeFormalizacion) {
-						// Se define una colección que trabaje las fechas de formalización
-						ctrl.coleccionFechasFormalizacion = [];
 						// Se define la fecha actual de sesión
 						var fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
 						// Se recorre la colección de sesiones de formalización consultadas

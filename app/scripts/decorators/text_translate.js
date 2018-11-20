@@ -326,7 +326,7 @@ var text_es = {
         VINCULADO_NO_NOTA: "No ha registrado nota en el sistema",
         VINCULADO_NO_PUEDE_NOTA: "No puede registrar nota en el sistema",
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
-        SIN_MODALIDADES: "There are no modalities registered at the moment",
+        SIN_MODALIDADES: "No existen modalidades registradas por el momento",
     },
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -1076,7 +1076,7 @@ var text_en = {
         VINCULADO_NO_NOTA: "The teacher have not registered a grade in the system",
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
         CARGAR_ACTA_SOCIALIZACION: "There was an error occurred loading the socialization certificate, please check your connection and try again.",
-        SIN_MODALIDADES: "No existen modalidades registradas por el momento",
+        SIN_MODALIDADES: "There are no modalities registered at the moment",
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
