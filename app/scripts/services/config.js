@@ -52,13 +52,12 @@
  */
 var conf_local = {
     ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
-    //Variables locales
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
     SESIONES_SERVICE:"http://localhost:8081/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
-    CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
+    CORE_SERVICE:"http://10.20.0.254/core_amazon_crud/v1/",
     OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
@@ -90,8 +89,8 @@ var conf_cloud_preproduccion = {
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
     CONFIGURACION_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/configuracion_crud_api/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
-    CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
-    OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
+    CORE_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/api/core_amazon_crud/v1/",
+    OIKOS_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/api/oikos_api/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
