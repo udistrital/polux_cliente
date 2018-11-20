@@ -10,7 +10,7 @@
  * Se realiza una consulta de área de SNIES registrada para consultar y editar el contenido registrado.
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
- * @requires services/poluxClienteApp.service:coreService
+ * @requires services/poluxClienteApp.service:coreAmazonCrudService
  * @requires services/poluxService.service:poluxRequest
  * @property {Array} areasSnies Colección de áreas de SNIES registradas para seleccionarse desde la vista y añadir áreas de conocimiento asociadas
  * @property {Array} areasConocimiento Colección de áreas de conocimiento asociadas a un área de SNIES registrada
@@ -28,7 +28,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('AdministracionAreasCtrl',
-    function($scope, $translate, coreService, poluxRequest) {
+    function($scope, $translate, coreAmazonCrudService, poluxRequest) {
       var ctrl = this;
 
       $scope.msgCargandoAreas = $translate.instant('LOADING.CARGANDO_AREAS');
@@ -102,7 +102,7 @@ angular.module('poluxClienteApp')
         query: "Estado:ACTIVO",
         limit: 0,
       });
-      coreService.get("snies_area", parametrosAreas)
+      coreAmazonCrudService.get("snies_area", parametrosAreas)
         .then(function(responseAreas) {
           ctrl.areasSnies = responseAreas.data;
           if (Object.keys(ctrl.areasSnies[0]).length > 0) {

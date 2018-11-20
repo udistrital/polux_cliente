@@ -18,7 +18,7 @@
  * @requires $window
  * @requires services/academicaService.service:academicaRequest
  * @requires services/cidcRequest.service:cidcService
- * @requires services/poluxClienteApp.service:coreService
+ * @requires services/poluxClienteApp.service:coreAmazonCrudService
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxService.service:nuxeoClient
@@ -78,7 +78,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
+    function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -404,7 +404,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
        * @description 
        * Consulta las áreas de conocimiento del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y las 
-       * áreas asociadas del snies en el servicio de {@link services/poluxClienteApp.service:coreService coreService}.
+       * áreas asociadas del snies en el servicio de {@link services/poluxClienteApp.service:coreAmazonCrudService coreAmazonCrudService}.
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve sin retornar ningún objeto
        */
@@ -417,7 +417,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
             ctrl.areas = responseAreas.data;
             if (Object.keys(ctrl.areas[0]).length > 0) {
-              coreService.get("snies_area").then(function(responseAreas) {
+              coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
                   var areasSnies = responseAreas.data;
                   if (Object.keys(areasSnies[0]).length > 0) {
                     angular.forEach(ctrl.areas, function(area) {
