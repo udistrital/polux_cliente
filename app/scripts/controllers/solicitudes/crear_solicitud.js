@@ -533,6 +533,9 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("vinculacion_trabajo_grado", parametrosVinculacion).then(function(responseVinculacion) {
               ctrl.Trabajo.evaluadores = [];
+              if (Object.keys(responseVinculacion.data[0]).length === 0) {
+                responseVinculacion.data = [];
+              }
               angular.forEach(responseVinculacion.data, function(vinculado) {
                 if (vinculado.RolTrabajoGrado.Id == 1) {
                   ctrl.Trabajo.directorInterno = vinculado;
