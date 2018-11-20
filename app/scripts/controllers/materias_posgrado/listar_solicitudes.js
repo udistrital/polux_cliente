@@ -420,7 +420,7 @@ angular.module('poluxClienteApp')
           query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
         });
         poluxRequest.get("detalle_solicitud", parametros).then(function(detalleSolicitud) {
-            if (detalleSolicitud.data !== null) {
+            if (Object.keys(detalleSolicitud.data[0]).length > 0) {
               var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
               if (ctrl.carrera == carreraSolicitud.Codigo) {
                 var parametros = $.param({
@@ -514,7 +514,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("respuesta_solicitud", parametros).then(function(respuestaSolicitud) {
               var promises = [];
               angular.forEach(respuestaSolicitud.data, function(value) {
-                if (value != null) {
+                if (Object.keys(value).length > 0) {
                   promises.push(ctrl.cargarParametrosSolicitud(value));
                 }
               });

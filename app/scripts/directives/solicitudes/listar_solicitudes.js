@@ -92,11 +92,9 @@ angular.module('poluxClienteApp')
             limit: 0,
             query:"TrabajoGrado:"+trabajoGrado.Id,
           });
-          poluxRequest
-            .get("solicitud_trabajo_grado",parametrosSolicitudes)
+          poluxRequest.get("solicitud_trabajo_grado",parametrosSolicitudes)
             .then(function(responseSolicitudes){
-             if(responseSolicitudes.data) {
-
+             if(Object.keys(responseSolicitudes.data[0]).length > 0) {
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function(solicitud){
                 var defer = $q.defer();
@@ -109,17 +107,22 @@ angular.module('poluxClienteApp')
                 var parametrosRespuesta=$.param({
                   query:"ACTIVO:TRUE,SolicitudTrabajoGrado:"+solicitud.Id,
                 });
-                poluxRequest.get("respuesta_solicitud",parametrosRespuesta).then(function(responseRespuesta){
-                    solicitud.data.Estado = responseRespuesta.data[0].EstadoSolicitud.Nombre;
-                    solicitud.data.Respuesta = responseRespuesta.data[0];
-                    //solicitud.data.Respuesta.Resultado = ctrl.mostrarResultado(responseRespuesta.data[0]);
-                    ctrl.gridOptions.data = ctrl.solicitudes;
+                poluxRequest.get("respuesta_solicitud",parametrosRespuesta)
+                  .then(function(responseRespuesta){
+                    if (Object.keys(responseRespuesta.data[0]).length > 0) {
+                      solicitud.data.Estado = responseRespuesta.data[0].EstadoSolicitud.Nombre;
+                      solicitud.data.Respuesta = responseRespuesta.data[0];
+                      //solicitud.data.Respuesta.Resultado = ctrl.mostrarResultado(responseRespuesta.data[0]);
+                      ctrl.gridOptions.data = ctrl.solicitudes;
+                    } else {
+                      responseRespuesta.data = [];
+                    }
                     defer.resolve();
-                })
-                .catch(function(error){
-                  console.log(error);
-                  defer.reject(error);
-                })
+                  })
+                  .catch(function(error){
+                    console.log(error);
+                    defer.reject(error);
+                  })
                 return defer.promise;
               }
 
@@ -139,7 +142,6 @@ angular.module('poluxClienteApp')
                   ctrl.errorCargando = true;
                   ctrl.loadingSolicitudes = false;
               });
-
              } else {
               console.log("Sin solicitudes");
               ctrl.mensajeError = $translate.instant("ERROR.SIN_SOLICITUDES");
@@ -354,7 +356,7 @@ angular.module('poluxClienteApp')
                   limit:0
                 });
                 poluxRequest.get("documento_solicitud",parametrosDocumentoSolicitud).then(function(documento){
-                  if(documento.data !== null){
+                  if(Object.keys(documento.data[0]).length > 0){
                     solicitud.documento = documento.data[0].DocumentoEscrito;
                   }
                   defer.resolve();
@@ -370,7 +372,7 @@ angular.module('poluxClienteApp')
 
             poluxRequest.get("detalle_solicitud",parametrosSolicitud).then(function(responseDetalles){
                 poluxRequest.get("usuario_solicitud",parametrosSolicitud).then(function(responseEstudiantes){
-                  if(responseDetalles.data===null){
+                  if(Object.keys(responseDetalles.data[0]).length === 0){
                     ctrl.solicitudSeleccionada.detallesSolicitud = [];
                   }else{
                     ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data;
@@ -426,7 +428,7 @@ angular.module('poluxClienteApp')
                       });
                       poluxRequest.get("detalle_pasantia",parametrosVinculado)
                       .then(function(dataExterno){
-                        if(dataExterno.data != null){
+                        if(Object.keys(dataExterno.data[0]).length > 0){
                           var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
                           temp = temp[1].split(" con número de identificacion ");
                           detalle.Descripcion = temp[0];

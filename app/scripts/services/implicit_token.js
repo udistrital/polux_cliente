@@ -23,11 +23,11 @@ if (window.localStorage.getItem('access_token') === null ||
   var query = 'https://' + window.location.host + '?' + queryString;
   // console.log(query);
   req.open('GET', query, true);
-  if (params['id_token'] !== null && params['id_token'] !== undefined) {
-    window.localStorage.setItem('access_token', params['access_token']);
-    window.localStorage.setItem('id_token', params['id_token']);
-    window.localStorage.setItem('state', params['state']);
-    window.localStorage.setItem('expires_in', params['expires_in']);
+  if (params.id_token !== null && params.id_token !== undefined) {
+    window.localStorage.setItem('access_token', params.access_token);
+    window.localStorage.setItem('id_token', params.id_token);
+    window.localStorage.setItem('state', params.state);
+    window.localStorage.setItem('expires_in', params.expires_in);
   } else {
     window.localStorage.clear();
   }

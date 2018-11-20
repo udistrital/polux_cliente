@@ -129,6 +129,9 @@ angular.module('poluxClienteApp')
                             return defer.promise
                         }
                         promises.push(getCreditos());
+                        if (Object.keys(response.data[0]).length === 0) {
+                            response.data = []
+                        }
                         angular.forEach(response.data, function (value) {
                             //if (value.CodigoCarrera !== $scope.e.Codigo) {
                             if (!$scope.e.includes(value.CodigoCarrera)) {

@@ -401,7 +401,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(usuarioAsociado.SolicitudTrabajoGrado.Id))
 					.then(function(respuestaDeSolicitud) {
 						// Se comprueba que se trajeron datos no vacíos
-						if (respuestaDeSolicitud.data) {
+						if (Object.keys(respuestaDeSolicitud.data[0]).length > 0) {
 							// Se elimina la información redundante
 							delete respuestaDeSolicitud.data[0].SolicitudTrabajoGrado;
 							// Se adquieren los datos de la respuesta de la solicitud dentro de la misma solicitud
@@ -455,7 +455,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleDeSolicitud(usuarioAsociado.SolicitudTrabajoGrado.Id))
 					.then(function(detalleDeSolicitud) {
 						// Se comprueba que se trajeron datos no vacíos
-						if (detalleDeSolicitud.data) {
+						if (Object.keys(detalleDeSolicitud.data[0]).length > 0) {
 							// Se adquieren los datos del detalle de la solicitud dentro de la misma solicitud
 							usuarioAsociado.detalleDeSolicitud = detalleDeSolicitud.data[0].Descripcion;
 						}
@@ -511,7 +511,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuariosConSolicitudes())
 					.then(function(usuariosConSolicitudes) {
 						// Se comprueba que existen registros
-						if (usuariosConSolicitudes.data) {
+						if (Object.keys(usuariosConSolicitudes.data[0]).length > 0) {
 							// Se recorre la colección de usuarios con solicitudes
 							angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
 								// Se agrega el proceso de consulta hacia la respuesta de la solicitud
@@ -752,7 +752,7 @@ angular.module('poluxClienteApp')
 						Usuario: solicitudParaFormalizar.respuestaDeSolicitud.Usuario
 					};
 					// Se verifica si la solicitud es la seleccionada
-					if (solicitudParaFormalizar.Id == solicitudSeleccionada.idSolicitud) {
+					if (solicitudParaFormalizar.idSolicitud == solicitudSeleccionada.idSolicitud) {
 						// Se estudia el estado de la solicitud
 						// Se verifica si la solicitud está aprobada exenta de pago (7)
 						if (solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Id == 7) {

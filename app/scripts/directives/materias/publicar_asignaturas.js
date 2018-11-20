@@ -178,8 +178,9 @@ angular.module('poluxClienteApp')
             query: "SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
             limit: 1
           });
-          sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
-              if (responseFechas.data !== null) {
+          sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+            .then(function(responseFechas) {
+              if (Object.keys(responseFechas.data[0]).length > 0) {
                 console.log(responseFechas.data[0]);
                 var sesion = responseFechas.data[0];
                 var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
@@ -236,14 +237,15 @@ angular.module('poluxClienteApp')
             query: "CodigoCarrera:" + carrera + ",Anio:" + anio + ",Periodo:" + periodo + ",CodigoPensum:" + pensum
           });
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
-              if (response.data != null) {
+              if (Object.keys(response.data[0]).length > 0) {
                 ctrl.id = response.data[0].Id
                 var parametros = $.param({
                   query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura.codigo
                 });
                 var asignaturaActiva = false;
-                poluxRequest.get("espacios_academicos_elegibles", parametros).then(function(response) {
-                    if (response.data != null) {
+                poluxRequest.get("espacios_academicos_elegibles", parametros)
+                  .then(function(response) {
+                    if (Object.keys(response.data[0]).length > 0) {
                       ctrl.habilitar = true;
                       ctrl.habilitar2 = false;
                       asignaturaActiva = response.data[0].Activo

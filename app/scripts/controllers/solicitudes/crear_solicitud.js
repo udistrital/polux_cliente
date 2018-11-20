@@ -783,8 +783,9 @@ angular.module('poluxClienteApp')
               query: "SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
               limit: 1
             });
-            sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
-                if (responseFechas.data !== null) {
+            sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+              .then(function(responseFechas) {
+                if (Object.keys(responseFechas.data[0]).length > 0) {
                   //console.log(responseFechas.data[0]);
                   var sesion = responseFechas.data[0];
                   var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
