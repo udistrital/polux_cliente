@@ -84,14 +84,14 @@ angular.module('poluxClienteApp')
                         limit: 1,
                       });
                       poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajo).then(function(responseTrabajo) {
-                          if (responseTrabajo.data === null) {
+                          if (Object.keys(responseTrabajo.data[0]).length > 0) {
                             // se verifica que no tenga solicitudes pendientes
                             var parametrosUsuario = $.param({
                               query: "usuario:" + ctrl.codigo,
                               limit: 0,
                             });
                             poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(responseSolicitudes) {
-                                if (responseSolicitudes.data === null) {
+                                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
                                   //no ha hecho solicitudes
                                   $scope.loadEstudiante = false;
                                 } else {
@@ -103,7 +103,7 @@ angular.module('poluxClienteApp')
                                       limit: 1,
                                     });
                                     poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
-                                        if (responseSolicitudesActuales.data != null) {
+                                        if (Object.keys(responseSolicitudesActuales.data[0]).length > 0) {
                                           defered.resolve(responseSolicitudesActuales.data);
                                           solicitudesActuales.push(responseSolicitudesActuales.data[0]);
                                         } else {

@@ -128,7 +128,7 @@ angular.module('poluxClienteApp')
             });
           }
           poluxRequest.get("estudiante_trabajo_grado", parametros).then(function (response) {
-            if (response.data) {
+            if (Object.keys(response.data[0]).length > 0) {
               //por cada TG, buscar la solicitud asociada al TG
               angular.forEach(response.data, function (value) {
                 console.log(value.IdTrabajoGrado.IdModalidad.Id);

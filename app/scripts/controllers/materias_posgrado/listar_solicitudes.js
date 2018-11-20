@@ -270,7 +270,7 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
-            if (responseFechas.data !== null) {
+            if (Object.keys(responseFechas.data[0]).length > 0) {
               ctrl.fechas = responseFechas.data;
               angular.forEach(ctrl.fechas, function(fecha) {
                 //console.log(fecha.SesionHijo);

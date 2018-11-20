@@ -123,7 +123,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("usuario_solicitud", parametrosEstudiante)
           .then(function(responseEstudiante) {
-            if (responseEstudiante.data != null) {
+            if (Object.keys(responseEstudiante.data[0]).length > 0) {
               //Consultar datos del estudiante
               academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
                   academicaRequest.get("datos_estudiante", [responseEstudiante.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
@@ -185,7 +185,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("detalle_solicitud", parametrosDetalles)
           .then(function(responseDetalles) {
-            if (responseDetalles.data != null) {
+            if (Object.keys(responseDetalles.data[0]).length > 0) {
               angular.forEach(responseDetalles.data, function(detalle) {
                 if (detalle.DetalleTipoSolicitud.Id === 1) {
                   //Nombre del receptor de la carta
@@ -232,7 +232,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("respuesta_solicitud", parametrosSolicitudesCarta)
           .then(function(responseSolicitudes) {
             ctrl.solicitudes = responseSolicitudes.data;
-            if (ctrl.solicitudes != null) {
+            if (Object.keys(ctrl.solicitudes[0]).length > 0) {
               //Si hay solicitudes
               var promises = [];
               angular.forEach(ctrl.solicitudes, function(solicitud) {

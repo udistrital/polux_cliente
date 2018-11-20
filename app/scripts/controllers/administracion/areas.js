@@ -105,7 +105,7 @@ angular.module('poluxClienteApp')
       coreService.get("snies_area", parametrosAreas)
         .then(function(responseAreas) {
           ctrl.areasSnies = responseAreas.data;
-          if (ctrl.areasSnies !== null && ctrl.areasSnies.length !== 0) {
+          if (Object.keys(ctrl.areasSnies[0]).length > 0) {
             $scope.loadAreas = false;
             ctrl.areasError = false;
           } else {
