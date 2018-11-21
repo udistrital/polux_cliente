@@ -200,7 +200,6 @@ angular.module('implicitToken', [])
         }
         if (window.localStorage.getItem('state') === state) {
           window.localStorage.clear();
-          valid = true;
         } else {
           valid = false;
         }
