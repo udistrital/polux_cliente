@@ -85,7 +85,7 @@ var conf_local = {
  * Variables de configuración de preproducción - pruebas en la nube
  */
 var conf_cloud_preproduccion = {
-    ACADEMICA_SERVICE: "https://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
+    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm_pruebas/v1",
     POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
     POLUX_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_mid/v1/",
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
