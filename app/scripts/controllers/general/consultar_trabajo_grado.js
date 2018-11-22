@@ -97,7 +97,11 @@ angular.module('poluxClienteApp')
       ctrl.gridOptionsVinculaciones.columnDefs = [{
         name: 'Nombre',
         displayName: $translate.instant('NOMBRE'),
-        width: '70%',
+        width: '45%',
+      },{
+        name: 'RolTrabajoGrado.Nombre',
+        displayName: $translate.instant('ROL'),
+        width: '25%',
       }, {
         name: 'notaRegistrada',
         displayName: $translate.instant('NOTA'),
