@@ -738,9 +738,9 @@ angular.module('poluxClienteApp')
         poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseDetalles) {
             poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
                 if (Object.keys(responseDetalles.data[0]).length > 0) {
-                  ctrl.detallesSolicitud = [];
-                } else {
                   ctrl.detallesSolicitud = responseDetalles.data;
+                } else {
+                  ctrl.detallesSolicitud = [];
                 }
                 var promises = [];
                 var solicitantes = "";
