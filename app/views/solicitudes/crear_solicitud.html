@@ -1,4 +1,8 @@
-<loading tam="4" load="loadParametros" message="cargandoParametros"> </loading>
+<div class="panel  panel-default" ng-if="loadParametros">
+  <div class="panel-body">
+    <loading tam="4" load="loadParametros" message="cargandoParametros"> </loading>
+  </div>
+</div>
 <div class="panel panel-default"  ng-if="!crearSolicitud.errorCarga && !loadParametros">
   <div class="panel-heading">
     {{'NUEVA_SOLICITUD' | translate}}
