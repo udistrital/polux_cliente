@@ -522,6 +522,9 @@ angular.module('poluxClienteApp')
                     if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                       ctrl.conSolicitudes = true;
                     }
+                    if (Object.keys(responseSolicitudes.data[0]).length === 0) {
+                      responseSolicitudes.data = [];
+                    }
                     var verificarSolicitud = function(solicitud) {
                       var defer = $q.defer();
                       solicitud.data = {
