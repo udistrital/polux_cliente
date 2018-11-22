@@ -55,7 +55,7 @@ var conf_local = {
     ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
-    SESIONES_SERVICE:"http://localhost:8081/v1/",
+    SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
     CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
