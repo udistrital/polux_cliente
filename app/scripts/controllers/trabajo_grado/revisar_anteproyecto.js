@@ -381,12 +381,12 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.actualizarCuadriculaDeAnteproyectos = function() {
 				ctrl.cuadriculaAnteproyectos.data = [];
-				ctrl.cargandoAnteproyectos = false;
-				ctrl.errorCargandoAnteproyectos = false;
 				ctrl.consultarAnteproyectos()
 					.then(function(respuestaConsultandoAnteproyectos) {
+						ctrl.cargandoAnteproyectos = false;
 						if (ctrl.coleccionAnteproyectos.length > 0) {
 							ctrl.mostrarAnteproyectos(ctrl.coleccionAnteproyectos);
+							ctrl.errorCargandoAnteproyectos = false;
 						} else {
 							ctrl.errorCargandoAnteproyectos = true;
 							ctrl.mensajeErrorCargandoAnteproyectos = respuestaConsultandoAnteproyectos[0];
@@ -394,6 +394,7 @@ angular.module('poluxClienteApp')
 					})
 					.catch(function(excepcionConsultandoAnteproyectos) {
 						ctrl.errorCargandoAnteproyectos = true;
+						ctrl.cargandoAnteproyectos = false;
 						ctrl.mensajeErrorCargandoAnteproyectos = excepcionConsultandoAnteproyectos;
 					});
 			}
