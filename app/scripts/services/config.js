@@ -52,7 +52,8 @@
  * Variables de configuración de entorno local
  */
 var conf_local = {
-    ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
+    //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
+    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm_pruebas/v1",
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
