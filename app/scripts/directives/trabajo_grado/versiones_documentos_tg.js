@@ -44,7 +44,7 @@ angular.module('poluxClienteApp')
        */
       controller: function ($scope, nuxeoClient, $q, poluxRequest, $translate) {
         var ctrl = this;
-
+        ctrl.mensajeCargandoDocumentos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
         $scope.showVersiones = true;
 
         $scope.$watch('trabajoGradoVersiones', function () {
