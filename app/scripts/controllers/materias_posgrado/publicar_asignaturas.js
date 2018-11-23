@@ -28,6 +28,7 @@ angular.module('poluxClienteApp')
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.periodo = [];
       ctrl.modalidad = "POSGRADO";
+      $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
 
       /**
        * @ngdoc method
@@ -39,7 +40,6 @@ angular.module('poluxClienteApp')
        * @returns {undefined} Función sin retorno
        */
       $scope.$watch("userId", function() {
-        $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_ASIGNATURAS');
         $scope.load = true;
         ctrl.carreras = [];
         academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"]).then(function(response) {

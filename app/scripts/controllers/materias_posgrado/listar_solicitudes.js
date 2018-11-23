@@ -557,7 +557,7 @@ angular.module('poluxClienteApp')
           angular.forEach($scope.sols, function(solicitud) {
             if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
               ctrl.admitidos.push(solicitud);
-            } else if (solicitud.estado.Id == 6) {
+            } else if (solicitud.estado.Id == 6 || solicitud.estado.Id == 11) {
               ctrl.noAdmitidos.push(solicitud);
             } else {
               ctrl.opcionados.push(solicitud);
@@ -599,11 +599,9 @@ angular.module('poluxClienteApp')
           angular.forEach($scope.sols, function(solicitud) {
             if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
               ctrl.admitidos.push(solicitud);
-            } else if (solicitud.estado.Id == 6) {
-              ctrl.noAdmitidos.push(solicitud);
             } else {
-              ctrl.opcionados.push(solicitud);
-            }
+              ctrl.noAdmitidos.push(solicitud);
+            } 
           });
           ctrl.fecha = 2;
           ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
