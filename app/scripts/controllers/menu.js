@@ -222,7 +222,7 @@ angular.module('poluxClienteApp')
 
         $scope.redirect_url = function(path) {
             var path_sub = path.substring(0, 4);
-            if (path_sub.toUpperCase() == "HTTP") {
+            if (path_sub.toUpperCase() === "HTTP") {
                 $window.open(path, "_blank");
             } else {
                 $location.path(path);
