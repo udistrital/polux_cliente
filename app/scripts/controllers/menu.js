@@ -195,6 +195,7 @@ angular.module('poluxClienteApp')
                             .catch(
                                 function(response) {
                                     console.log(response);
+                                    self.perfil = $scope.token_service.getAppPayload().appUserRole;
                                     $rootScope.my_menu = response.data;
 
                                 });
@@ -235,10 +236,49 @@ angular.module('poluxClienteApp')
             path: "notificaciones"
         });
 
-        $scope.$on('$routeChangeStart', function( /*next, current*/ ) {
-            $scope.actual = $location.path();
-            update_url();
+        $scope.$on('$routeChangeStart', function(scope, next, current) {
+            //$scope.actual = $location.path();
+            //update_url();
+            if ($scope.token_service.live_token()) {
+                if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
+                    $location.path("/no_permission");
+                }
+            }
         });
+
+        $scope.havePermission = function (viewPath, menu) {
+            if (viewPath !== undefined && viewPath !== null) {
+                var currentPath = viewPath.replace(".html", "").split("views/").pop();
+                var head = menu;
+                var permission = 0;
+                if (currentPath !== "main") {
+                    permission = $scope.menuWalkThrough(head, currentPath);
+                } else {
+                    permission = 1;
+                }
+                return permission;
+            }
+            return 1;
+
+        };
+
+        $scope.menuWalkThrough = function (head, url) {
+            var acum = 0;
+            if (!angular.isUndefined(head)) {
+                angular.forEach(head, function (node) {
+                    if (node.Opciones === null && node.Url === url) {
+                        acum = acum + 1;
+                    } else if (node.Opciones !== null) {
+                        acum = acum + $scope.menuWalkThrough(node.Opciones, url);
+                    } else {
+                        acum = acum + 0;
+                    }
+                });
+                return acum;
+            } else {
+                return acum;
+            }
+        };
 
         $scope.changeLanguage = function(key) {
             $translate.use(key);
