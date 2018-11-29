@@ -327,6 +327,7 @@ var text_es = {
         VINCULADO_NO_PUEDE_NOTA: "No puede registrar nota en el sistema",
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
+        CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
     },
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -561,6 +562,8 @@ var text_es = {
         ACTA_REGISTRADA: "Acta registrada",
         ACTA_REGISTRADA_CORRECTAMENTE: "El acta de seguimiento fue registrada exitosamente",
         NO_ACTAS_REGISTRADAS_ACTUALMENTE: "Actualmente no hay ningún acta de seguimiento asociada a este trabajo de grado.",
+        NO_CERTIFICADO_ARL: "Actualmente el estudiante no ha subido el certificado de afiliación a ARL.",
+        CERTIFICADO_ARL:"Certificado de afiliación a ARL",
         CARTA: {
             CONFIRMACION: "Confirmación para responder la solicitud",
             MENSAJE_APROBACION: "¿Está seguro de aprobar la solicitud?",
@@ -710,6 +713,7 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
         TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
         SUBIR: "Subir certificado de ARL",
+        WARNING:"Su trabajo de grado no puede comenzar hasta que haya cargado su certificado de afiliación a ARL. Por favor, cargue su certificado de afiliación a ARL en el módulo de revisiones.",
     },
     NUEVA_VERSION: {
         MENSAJE: "Actualización del documento",
@@ -1078,6 +1082,7 @@ var text_en = {
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
         CARGAR_ACTA_SOCIALIZACION: "There was an error occurred loading the socialization certificate, please check your connection and try again.",
         SIN_MODALIDADES: "There are no modalities registered at the moment",
+        CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1312,6 +1317,8 @@ var text_en = {
         ACTA_REGISTRADA: "Minute registered",
         ACTA_REGISTRADA_CORRECTAMENTE: "The follow-up act was registered successfully",
         NO_ACTAS_REGISTRADAS_ACTUALMENTE: "Currently there is no follow-up act associated with this degree work.",
+        NO_CERTIFICADO_ARL: "Currently the student have not uploaded the ARL affiliation certificate.",
+        CERTIFICADO_ARL:"ARL affiliation certificate",
         CARTA: {
             CONFIRMACION: "Confirmation to answer the request",
             MENSAJE_APROBACION: "Are you sure of approve the request?",
@@ -1460,6 +1467,7 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the ARL certificate?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
         SUBIR: "Upload ARL certificate",
+        WARNING:"Your degree work can not start until you have upload your ARL affilation certificate. Please upload your ARL affiliation certificate in the revisions module.",
     },
     NUEVA_VERSION: {
         MENSAJE: "Document update",
