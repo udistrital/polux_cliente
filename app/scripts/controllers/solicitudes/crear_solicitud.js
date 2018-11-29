@@ -761,7 +761,7 @@ angular.module('poluxClienteApp')
         var verificarRequisitosModalidad = function() {
           var deferModalidad = $q.defer();
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {
-              if (responseModalidad.data === "true") {
+              if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
                 ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
