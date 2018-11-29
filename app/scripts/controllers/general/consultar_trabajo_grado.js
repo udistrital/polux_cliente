@@ -250,7 +250,7 @@ angular.module('poluxClienteApp')
        * @name cargarCertificadoARL
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
-       * Consulta el acta de socialización de un trabajo de grado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * Consulta el certificado de afiliación de ARL de un trabajo de grado de la modalidad de pasantia del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
        * @param {undefined} undefined no requiere parametros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
        */
@@ -633,7 +633,7 @@ angular.module('poluxClienteApp')
                   ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.esProyectoModificable = true;
                 }
-                //Si el proyecto es modificable
+                //Si es pasantia y esta en espera de ARL
                 if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21 &&
                   ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.pasantiaEnEsperaArl = true;
