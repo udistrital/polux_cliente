@@ -239,7 +239,7 @@ angular.module('poluxClienteApp')
         $scope.$on('$routeChangeStart', function(scope, next, current) {
             //$scope.actual = $location.path();
             //update_url();
-            if ($scope.token_service.live_token()) {
+            if ($scope.token_service.live_token() && current != undefined ) {
                 if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
                     $location.path("/no_permission");
                 }
