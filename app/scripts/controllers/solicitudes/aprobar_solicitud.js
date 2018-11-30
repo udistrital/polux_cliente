@@ -576,7 +576,9 @@ angular.module('poluxClienteApp')
        */
       ctrl.getEvaluadores = function(solicitud) {
         var defer = $q.defer();
-        poluxMidRequest.post("evaluadores/ObtenerEvaluadores", solicitud).then(function(response) {
+        poluxMidRequest.post("evaluadores/ObtenerEvaluadores", {
+          "Modalidad": solicitud
+        }).then(function(response) {
             ctrl.evaluadoresInicial = new Array(parseInt(response.data.cantidad_evaluadores));
             for (var i = 0; i < ctrl.evaluadoresInicial.length; i++) {
               var label = (ctrl.evaluadoresInicial.length > 1) ? $translate.instant('SELECT.EVALUADOR_NUMERO', {
