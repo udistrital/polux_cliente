@@ -11,7 +11,7 @@
       </div>
       <div ng-if="!load && !d_publicarAsignaturas.errorCargar">
         <div class="row panel-body">
-          <div class="mi-grid" id="mi-grid" ui-grid="d_publicarAsignaturas.gridOptions"></div><br>
+          <div class="mi-grid" id="mi-grid" ui-grid="d_publicarAsignaturas.gridOptions" ui-grid-auto-resize ui-grid-pagination></div><br>
         </div>
         <div class="panel-body alert alert-danger" ng-if="!d_publicarAsignaturas.mostrarBotones">
           {{'ERROR.NO_EN_FECHAS_PUBLICACION_POSGRADO' | translate}}
