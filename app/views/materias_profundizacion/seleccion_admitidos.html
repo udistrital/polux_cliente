@@ -1,0 +1,161 @@
+<br>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{'LISTAR_SOLICITUDES' | translate}}
+  </div>
+  <div class="panel-body">
+    <loading tam="4" load="loadRespuestas" message="cargandoRespuestas"> </loading>
+    <loading tam="4" load="loadParametros" message="cargandoParametros"> </loading>
+    <div class="panel-body alert alert-danger" ng-if="!loadRespuestas && !loadParametros && seleccionAdmitidos.errorCargarParametros">
+      {{seleccionAdmitidos.mensajeError}}
+    </div>
+    <div ng-if="!loadRespuestas && !loadParametros && !seleccionAdmitidos.errorCargarParametros">
+      <!--<pre>{{seleccionAdmitidos.sols | json}}</pre>-->
+      <div class="row">
+      <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
+      <label for="anioSel" class="col-sm-10 control-label">{{seleccionAdmitidos.periodo.anio}}</label>
+
+      <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}</label>
+      <label for="anioSel" class="col-sm-10 control-label">{{seleccionAdmitidos.periodo.periodo}}</label>
+
+      <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}</label>
+      <div class="col-sm-10">
+        <form name="myForm">
+          <ui-select name="carrera" ng-model="seleccionAdmitidos.carreraSeleccionada" required on-select="seleccionAdmitidos.buscarSolicitudes(seleccionAdmitidos.carreraSeleccionada)" style="width:95%;" theme="bootstrap" >
+            <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
+            </ui-select-match>
+            <ui-select-choices repeat="item.codigo_proyecto_curricular as item in seleccionAdmitidos.carreras | filter: $select.search">
+              <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
+            </ui-select-choices>
+          </ui-select>
+          <span ng-show="myForm.carrera.$invalid" style="color: red">{{'SELECCIONAR_CARRERA' | translate}}</span>
+        </form>
+      </div>
+
+      <div class="panel col-sm-12" ng-if="loadSolicitudes">      
+        <loading tam="4" load="loadSolicitudes" message="mensajeCargandoSolicitudes"> </loading>
+      </div>
+
+      <div class="col-sm-12">
+      <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true && !errorCargarSolicitudes">
+       <div class="mi-grid" id="mi-grid" ui-grid="seleccionAdmitidos.gridOptions" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-auto-resize></div><br>
+       <center>
+        <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
+        <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0 " ng-click="seleccionAdmitidos.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
+        <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && seleccionAdmitidos.seleccionAdmitidos.gridOptions.data.length>0" ng-click="seleccionAdmitidos.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>-->
+        <button ng-if="seleccionAdmitidos.permitirPrimeraFecha" ng-click="seleccionAdmitidos.admitirPrimeraFecha()" class="btn btn-primary">Seleccionar Admitidos</button>
+        <button ng-if="seleccionAdmitidos.permitirSegundaFecha" ng-click="seleccionAdmitidos.admitirSegundaFecha()" class="btn btn-success">Seleccionar Admitidos </button>
+      </center><br>
+
+    </div>
+
+    <div ng-if="sols.length===0 && loadSolicitudes!==true && !errorCargarSolicitudes" class="alert alert-danger control-label" style="margin-top: 20px;">
+      {{'NO_SOLICITUDES_PROFUNDIZACION' | translate}}
+    </div>
+
+    <div ng-if="errorCargarSolicitudes" class="alert alert-danger control-label" style="margin-top: 20px;"> 
+      {{mensajeErrorSolicitudes}}
+    </div>
+  </div>
+
+  </div>
+    <!--pre>
+     {{'FECHA_ACTUAL' | translate}}  {{fechaActual| date:'dd-MM-yyyy'}}
+     {{'FECHA_INICIO' | translate}} {{'INICIO' | translate}} {{seleccionAdmitidos.primeraFecha.inicio}} {{'FIN' | translate}} {{seleccionAdmitidos.primeraFecha.fin}}
+     {{'FECHA_INICIO_DOS' | translate}}  {{'INICIO' | translate}} {{seleccionAdmitidos.segundaFecha.inicio}} {{'FIN' | translate}} {{seleccionAdmitidos.segundaFecha.fin}}
+   </pre-->
+    <br>
+    <div class="panel panel-default" >
+      <div class="panel-heading">
+        {{'FECHAS_PROCESO_MATERIAS_PROFUNDIZACION' | translate}}
+      </div>
+      <div class="panel-body">
+        <div class="row" ng-repeat="fecha in seleccionAdmitidos.fechas">
+            <label class="col-sm-12"> {{fecha.SesionHijo.Descripcion}} </label>
+            <!--label class="col-sm-5"> {{fecha.SesionHijo.TipoSesion.Nombre}} </label-->
+            <label class="col-sm-2">{{'FECHA_INICIO' | translate}}:</label>
+            <label class="col-sm-4">{{fecha.inicio}}</label>
+            <label class="col-sm-2">{{'FECHA_FIN' | translate}}</label>
+            <label class="col-sm-4">{{fecha.fin}}</label>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div id="modalAdmitir" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+    <div class="modal-header">
+      <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+    </div>
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        {{'MATERIAS_PROFUNDIZACION.CONFIRMACION_ADMITIR' | translate}}
+      </div>
+
+      <div class="panel-body">
+
+        <div class="row">
+          <div class="col-md-12">
+            <label>{{'MATERIAS_PROFUNDIZACION.CONFIRMAR' | translate}}</label>
+          </div>
+          <br>
+        </div>
+
+        <div class="row" ng-if="seleccionAdmitidos.admitidos.length > 0">
+          <div class="col-md-12">
+            <label>{{'MATERIAS_PROFUNDIZACION.ADMITIDOS' | translate}}</label>
+          </div>
+
+          <div class="col-md-12">
+               <div class="panel panel-default panel-body" style="margin-top: 20px;">
+                 <center>
+                  <div ui-grid="seleccionAdmitidos.gridOptionsAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsAdmitidos.data.length*35)+40}}px" ui-grid-auto-resize></div>
+                </center>
+              </div>
+          </div>
+          <br>
+        </div>
+
+        <div class="row" ng-if="seleccionAdmitidos.opcionados.length > 0">
+          <div class="col-md-12">
+            <label>{{'MATERIAS_PROFUNDIZACION.OPCIONADOS' | translate}}</label>
+          </div>
+          <div class="col-md-12">
+               <div class="panel panel-default panel-body" style="margin-top: 20px;">
+                 <center>
+                  <div ui-grid="seleccionAdmitidos.gridOptionsOpcionados" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsOpcionados.data.length*35)+40}}px" ui-grid-auto-resize></div>
+                </center>
+              </div>
+          </div>
+          <br>
+        </div>
+
+         <div class="row" ng-if="seleccionAdmitidos.noAdmitidos.length > 0">
+          <div class="col-md-12">
+            <label>{{'MATERIAS_PROFUNDIZACION.NO_ADMITIDOS' | translate}}</label>
+          </div>
+          <div class="col-md-12">
+               <div class="panel panel-default panel-body" style="margin-top: 20px;">
+                 <center>
+                  <div ui-grid="seleccionAdmitidos.gridOptionsNoAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsNoAdmitidos.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
+                </center>
+              </div>
+          </div>
+          <br>
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-12"><center>
+            <button class="btn btn-primary" ng-click="seleccionAdmitidos.admitir()">{{'ACEPTAR' | translate}}</button></center>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

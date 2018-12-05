@@ -2,11 +2,12 @@
 
 /**
  * @ngdoc controller
- * @name poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+ * @name poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
  * @description
- * # MateriasPosgradoListarSolicitudesCtrl
+ * # MateriasProfundizacionSeleccionAdmitidosCtrl
  * Controller of the poluxClienteApp
- * Controlador de la vista de listar solicitudes, este controlador permite listar las solicitudes de estudiantes que han sido aceptadas en los pregrados y realizar el proceso de selección de admitidos al posgrado
+ * Controlador de la vista de listar solicitudes, este controlador permite listar las solicitudes de estudiantes que han sido aceptadas en los pregrados y realizar el proceso de selección de admitidos al pregrado en modalidad
+ * de materias de profundizacion
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires $scope
  * @requires $q
@@ -27,7 +28,7 @@
  * @property {Object} carreras Carreras asociadas al coordinador
  * @property {boolean} permitirPrimeraFecha Flag para permitir realizar el proceso de selección en la primera fecha
  * @property {boolean} permitirSegundaFecha Flag para permitir realizar el proceso de selección en la segunda fecha
- * @property {Object} fechas Almacena las fechas correspondientes a la modaldiad de materias de posgrado
+ * @property {Object} fechas Almacena las fechas correspondientes a la modaldiad de materias de profundización
  * @property {number} cuposDisponibles Cantidad de cupos disponibles para selección de admitidos
  * @property {number} numeroAdmitidos Cantidad de personas seleccionadas como admitidos
  * @property {Object} sols Solicitudes de estudiantes
@@ -53,7 +54,7 @@
  * @property {Boolean} loadRespuestas Indicador que maneja la carga de las respuestas a las solicitudes
  */
 angular.module('poluxClienteApp')
-  .controller('MateriasPosgradoListarSolicitudesCtrl',
+  .controller('MateriasProfundizacionSeleccionAdmitidosCtrl',
     function($scope, $q, $translate, academicaRequest, poluxMidRequest, poluxRequest, token_service, sesionesRequest, uiGridConstants) {
       $scope.$ = $;
 
@@ -163,13 +164,13 @@ angular.module('poluxClienteApp')
         name: 'aprobar',
         displayName: $translate.instant('ADMITIR'),
         width: "8%",
-        cellTemplate: '<center><div ng-if="grid.appScope.listarSolicitudes.permitirPrimeraFecha || grid.appScope.listarSolicitudes.permitirSegundaFecha"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.listarSolicitudes.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.listarSolicitudes.permitirPrimeraFecha && !grid.appScope.listarSolicitudes.permitirSegundaFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
+        cellTemplate: '<center><div ng-if="grid.appScope.seleccionAdmitidos.permitirPrimeraFecha || grid.appScope.seleccionAdmitidos.seleccionAdmitidos"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.seleccionAdmitidos.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.seleccionAdmitidos.permitirPrimeraFecha && !grid.appScope.seleccionAdmitidos.permitirSegundaFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
       }];
 
       /**
        * @ngdoc method
        * @name getPeriodoAnterior
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consulta el periodo anterior al actual consultando periodo_academico de {@link services/academicaService.service:academicaRequest academicaRequest}.
        * @param {undefined} undefined No requiere parametros
@@ -198,7 +199,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name getPeriodoActual
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consulta el periodo academico actual del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}.
        * @param {undefined} undefined No requiere parametros
@@ -226,7 +227,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name getCarrerasCoordinador
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consulta las carreras asociadas al coordinador del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}.
        * @param {undefined} undefined No requiere parámetros
@@ -234,14 +235,14 @@ angular.module('poluxClienteApp')
        */
       ctrl.getCarrerasCoordinador = function() {
         var defer = $q.defer()
-        academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"])
+        academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"])
           .then(function(responseCarreras) {
             console.log(responseCarreras);
             if (!angular.isUndefined(responseCarreras.data.coordinadorCollection.coordinador)) {
               ctrl.carreras = responseCarreras.data.coordinadorCollection.coordinador;
               defer.resolve(ctrl.carreras);
             } else {
-              ctrl.mensajeError = $translate.instant("ERROR.SIN_CARRERAS_POSGRADO");
+              ctrl.mensajeError = $translate.instant("ERROR.SIN_CARRERAS_PREGRADO");
               defer.reject("no hay carreras");
             }
           })
@@ -255,7 +256,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name getFechas
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consulta las fechas para el proceso de selección de admitidos en {@link services/poluxClienteApp.service:sesionesService sesionesService}.
        * @param {Object} periodo Periodo en el cual se buscan las fechas vigentes
@@ -266,7 +267,7 @@ angular.module('poluxClienteApp')
         $scope.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
         //traer fechas
         var parametrosSesiones = $.param({
-          query: "SesionPadre.TipoSesion.Id:1,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
+          query: "SesionPadre.TipoSesion.Id:9,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
           limit: 0
         });
         sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
@@ -300,12 +301,12 @@ angular.module('poluxClienteApp')
 
               defer.resolve(ctrl.fechas);
             } else {
-              ctrl.mensajeError = $translate.instant("ERROR.SIN_FECHAS_MODALIDAD_POSGRADO");
+              ctrl.mensajeError = $translate.instant("ERROR.SIN_FECHAS_MODALIDAD_PROFUNDIZACION");
               defer.reject("no hay fechas registradas");
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_PROFUNDIZACION");
             defer.reject("no se pudo cargar fechas")
           });
         return defer.promise
@@ -314,13 +315,13 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name getCupos
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consulta el servicio de {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} para traer el número de cupos disponibles.
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
        */
-      ctrl.getCupos = function() {
+      /*ctrl.getCupos = function() {
         var defer = $q.defer();
         poluxMidRequest.get("cupos/Obtener").then(function(responseCupos) {
             //$scope.cupos_excelencia = response.data.Cupos_excelencia;
@@ -334,12 +335,12 @@ angular.module('poluxClienteApp')
             defer.reject("no se pudo cargar fechas")
           });
         return defer.promise;
-      }
+      }*/
 
       /**
        * @ngdoc method
        * @name cargarParametros
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Llama a las funciones de getPeriodoActual, getPeriodoAnterior, getFechas, getCarrerasCoordinador, getCupos y los une en promesas, los rechaza en caso de que alguna sea rechazada.
        * @param {undefined} undefined No requiere parametros
@@ -354,7 +355,7 @@ angular.module('poluxClienteApp')
               promises.push(ctrl.getPeriodoAnterior());
               promises.push(ctrl.getFechas(periodo));
               promises.push(ctrl.getCarrerasCoordinador());
-              promises.push(ctrl.getCupos());
+              //promises.push(ctrl.getCupos());
               $q.all(promises)
                 .then(function() {
                   console.log(periodo)
@@ -386,7 +387,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarNombreCarrera
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consula el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para obtener la información sobre la carrera de acuerdo al código ingresado.
        * @param {Integer} codigoCarrera Identificador de la carrera del estudiante 
@@ -407,17 +408,17 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name cargarParametrosSolicitud
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener los datos detalles de la solicitud, el usuario y consulta los datos del estudiante del servicio de {@link services/academicaService.service:academicaRequest academicaService}.
        * @param {Object} solicitud Objeto de tipo solicitud para los parámetros de búsqueda
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con el objeto cuposDisponibles
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve csin retornar nada
        */
       ctrl.cargarParametrosSolicitud = function(value) {
         var defer = $q.defer();
         //buscar detalle_tipo_solicitud=37->detalle de Espacios academicos
         var parametros = $.param({
-          query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
+          query: "DetalleTipoSolicitud:44" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
         });
         poluxRequest.get("detalle_solicitud", parametros).then(function(detalleSolicitud) {
             if (Object.keys(detalleSolicitud.data[0]).length > 0) {
@@ -493,14 +494,14 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name buscarSolicitudes
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
-       * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener las solicitudes iniciales de la modalidad de materias de posgrado y sus respuestas y llama a la función CargarParametrosSolicitud para cargar los parámetros asociados a esta.
+       * Consula el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para obtener las solicitudes iniciales de la modalidad de materias de profundización y sus respuestas y llama a la función CargarParametrosSolicitud para cargar los parámetros asociados a esta.
        * @param {Object} carrera Carrera de la cual se van a consultar las solicitudes
-       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con el objeto cuposDisponibles
+       * @returns {Undefined} No retorna ningún valor.
        */
       ctrl.buscarSolicitudes = function(carrera) {
-        ctrl.errorCargarSolicitudes = undefined;
+        ctrl.errorCargarSolicitudes = false;
         $scope.loadSolicitudes = true;
         ctrl.carrera = carrera;
         $scope.carrera = carrera;
@@ -508,7 +509,7 @@ angular.module('poluxClienteApp')
         if (carrera) {
           $scope.sols = [];
           var parametros = $.param({
-            query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8|9|10|11,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+            query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8|9|10|11,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:16",
             limit: 0
           });
           poluxRequest.get("respuesta_solicitud", parametros).then(function(respuestaSolicitud) {
@@ -541,35 +542,35 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name admitirPrimeraFecha
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Muestra el modal para admitir en primera fecha si no se encuentra ningún error.
        * @param {undefined} undefined No recibe ningún parámetro
        * @returns {undefined} No retorna nada
        */
       ctrl.admitirPrimeraFecha = function() {
-        if (ctrl.numeroAdmitidos <= ctrl.cuposDisponibles) {
-          ctrl.opcionados = [];
-          ctrl.admitidos = [];
-          ctrl.noAdmitidos = [];
-          ctrl.gridOptionsAdmitidos.data = [];
-          ctrl.gridOptionsOpcionados.data = [];
-          angular.forEach($scope.sols, function(solicitud) {
-            if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
-              ctrl.admitidos.push(solicitud);
-            } else if (solicitud.estado.Id == 6 || solicitud.estado.Id == 11) {
-              ctrl.noAdmitidos.push(solicitud);
-            } else {
-              ctrl.opcionados.push(solicitud);
-            }
-          });
-          ctrl.fecha = 1;
-          ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
-          ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
-          ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
-          //console.log(ctrl.admitidos, ctrl.opcionados);
-          $('#modalAdmitir').modal('show')
-        } else {
+        //if (ctrl.numeroAdmitidos <= ctrl.cuposDisponibles) {
+	      ctrl.opcionados = [];
+	      ctrl.admitidos = [];
+	      ctrl.noAdmitidos = [];
+	      ctrl.gridOptionsAdmitidos.data = [];
+	      ctrl.gridOptionsOpcionados.data = [];
+	      angular.forEach($scope.sols, function(solicitud) {
+	        if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
+	          ctrl.admitidos.push(solicitud);
+	        } else if (solicitud.estado.Id == 6 || solicitud.estado.Id == 11) {
+	          ctrl.noAdmitidos.push(solicitud);
+	        } else {
+	          ctrl.opcionados.push(solicitud);
+	        }
+	      });
+	      ctrl.fecha = 1;
+	      ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
+	      ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
+	      ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
+	      //console.log(ctrl.admitidos, ctrl.opcionados);
+	      $('#modalAdmitir').modal('show')
+        /*} else {
           swal(
             $translate.instant('ERROR'),
             $translate.instant('ERROR.NUMERO_ADMITIDOS', {
@@ -577,39 +578,39 @@ angular.module('poluxClienteApp')
             }),
             'warning'
           )
-        }
+        }*/
       }
 
       /**
        * @ngdoc method
        * @name admitirSegundaFecha
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Muestra el modal para admitir en segunda fecha si no se encuentra ningún error
        * @param {undefined} undefined No recibe ningún parámetro
        * @returns {undefined} No retorna nada
        */
       ctrl.admitirSegundaFecha = function() {
-        if (ctrl.numeroAdmitidos <= ctrl.cuposDisponibles) {
-          ctrl.opcionados = [];
-          ctrl.admitidos = [];
-          ctrl.noAdmitidos = [];
-          ctrl.gridOptionsAdmitidos.data = [];
-          ctrl.gridOptionsNoAdmitidos.data = [];
-          angular.forEach($scope.sols, function(solicitud) {
-            if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
-              ctrl.admitidos.push(solicitud);
-            } else {
-              ctrl.noAdmitidos.push(solicitud);
-            } 
-          });
-          ctrl.fecha = 2;
-          ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
-          ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
-          ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
-          //console.log(ctrl.admitidos, ctrl.noAdmitidos);
-          $('#modalAdmitir').modal('show')
+        //if (ctrl.numeroAdmitidos <= ctrl.cuposDisponibles) {
+      ctrl.opcionados = [];
+      ctrl.admitidos = [];
+      ctrl.noAdmitidos = [];
+      ctrl.gridOptionsAdmitidos.data = [];
+      ctrl.gridOptionsNoAdmitidos.data = [];
+      angular.forEach($scope.sols, function(solicitud) {
+        if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
+          ctrl.admitidos.push(solicitud);
         } else {
+          ctrl.noAdmitidos.push(solicitud);
+        } 
+      });
+      ctrl.fecha = 2;
+      ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
+      ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
+      ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
+      //console.log(ctrl.admitidos, ctrl.noAdmitidos);
+      $('#modalAdmitir').modal('show')
+        /*} else {
           swal(
             $translate.instant('ERROR'),
             $translate.instant('ERROR.NUMERO_ADMITIDOS', {
@@ -617,13 +618,13 @@ angular.module('poluxClienteApp')
             }),
             'warning'
           )
-        }
+        }*/
       }
 
       /**
        * @ngdoc method
        * @name admitir
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Funcion que hace la petición post a {@link services/poluxService.service:poluxRequest poluxRequest} para empezar a ejecutar el proceso de selección de admitidos.
        * @param {undefined} undefined No recibe ningún parámetro
@@ -651,7 +652,7 @@ angular.module('poluxClienteApp')
             }
             if (solicitud.aprobado === true) {
               respuestaTemp.EstadoSolicitud.Id = 7;
-              respuestaTemp.Justificacion = "Solicitud Aprobada por el Posgrado"
+              respuestaTemp.Justificacion = "Solicitud Aprobada por el Proyecto Curricular"
             } else {
               respuestaTemp.EstadoSolicitud.Id = (ctrl.fecha === 1) ? 5 : 6;
               respuestaTemp.Justificacion = (ctrl.fecha === 1) ? "Opcionada para segunda convocatoria" : "Rechazada por falta de cupos";
@@ -671,8 +672,8 @@ angular.module('poluxClienteApp')
             console.log("Repsuesta", response.data);
             if (response.data[0] === "Success") {
               swal(
-                $translate.instant('MATERIAS_POSGRADO.PROCESO_ADMISION_COMPLETO'),
-                $translate.instant('MATERIAS_POSGRADO.RESPUESTAS_SOLICITUD'),
+                $translate.instant('MATERIAS_PROFUNDIZACION.PROCESO_ADMISION_COMPLETO'),
+                $translate.instant('MATERIAS_PROFUNDIZACION.RESPUESTAS_SOLICITUD'),
                 'success'
               )
               //recargar datos
@@ -700,7 +701,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name verificarDisponibilidad
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionSeleccionAdmitidosCtrl
        * @description 
        * Aumenta o disminuye el número de admitidos.
        * @param {Object} solicitud Solicitud que se selecciona en la cuadrícula

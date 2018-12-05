@@ -235,7 +235,8 @@ var text_es = {
         SIN_FECHAS_MODALIDAD_POSGRADO: "Actualmenten no hay fechas para los procesos de la modalidad de materias de posgrado asociadas al periodo académico.",
         SIN_FECHAS_MODALIDAD_PROFUNDIZACION: "Actualmenten no hay fechas para los procesos de la modalidad de materias de profundización asociadas al periodo académico.",
         SIN_FECHAS_MODALIDAD: "Actualmenten no hay fechas para los procesos de la modalidad asociadas al periodo académico.",
-        SIN_CARRERAS_POSGRADO: "Señor Coordinador, no tiene asignados proyectos curriculares con nivel de POSGRADO",
+        SIN_CARRERAS_POSGRADO: "Señor Coordinador, actualmente usted no tiene asignados proyectos curriculares con nivel de POSGRADO",
+        SIN_CARRERAS_PREGRADO: "Señor Coordinador, actualmente usted no tiene asignados proyectos curriculares con nivel de PREGRADO",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO: "El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
         NO_EN_FECHAS_INSCRIPCION_PROFUNDIZACION: "El proceso de inscripción de materias para cursar la modalidad de materias de profundización no se encuentra vigente.",
         NO_EN_FECHAS_INSCRIPCION: "El proceso de inscripción de materias para cursar la modalidad no se encuentra vigente.",
@@ -557,6 +558,7 @@ var text_es = {
     SIN_AREAS: "Actualmente no hay subáreas vinculadas al área del SNIES seleccionada",
     DESCRIPCION: "Descripción",
     NO_SOLICITUDES_POSGRADO: "No existen solicitudes en la modalidad de espacios académicos de posgrado para el proyecto curricular seleccionado",
+    NO_SOLICITUDES_PROFUNDIZACION: "No existen solicitudes en la modalidad de espacios académicos de profundización para el proyecto curricular seleccionado",
     SELECCIONAR_PERIODO: "Seleccione el periodo académico",
     PASANTIA: {
         DETALLE_PASANTIA: "Detalle de la pasantia",
@@ -591,6 +593,7 @@ var text_es = {
     ACEPTAR: "Aceptar",
     CANCELAR: "Cancelar",
     FECHAS_PROCESO_MATERIAS_POSGRADO: "Fechas del proceso de la modalidad de materias de posgrado",
+    FECHAS_PROCESO_MATERIAS_PROFUNDIZACION: "Fechas del proceso de la modalidad de materias de profundización",
     FECHA_INICIO: "Fecha de inicio",
     FORMALIZAR_SOLICITUD: {
         TITULO: "Formalización de solicitudes",
@@ -632,6 +635,15 @@ var text_es = {
     PERIODO_ACADEMICO: "Período académico",
     SOLICITUD_NO_PUEDE_APROBARSE: "La solicitud no puede ser aprobada",
     MATERIAS_POSGRADO: {
+        CONFIRMACION_ADMITIR: "Confirmación de admitidos",
+        CONFIRMAR: "Al presionar aceptar confirma que desea ejecutar el proceso de admisión con los estudiantes seleccionados, esta acción no puede deshacerse.",
+        ADMITIDOS: "Se admitirán los siguientes estudiantes:",
+        OPCIONADOS: "Los siguientes estudiantes serán opcionados para la segunda convocatoria:",
+        NO_ADMITIDOS: "Los siguientes estudiantes no se admitirán:",
+        PROCESO_ADMISION_COMPLETO: "Proceso de admisión completado",
+        RESPUESTAS_SOLICITUD: "Se han registrado los datos del proceso de admisión exitosamente",
+    },
+    MATERIAS_PROFUNDIZACION: {
         CONFIRMACION_ADMITIR: "Confirmación de admitidos",
         CONFIRMAR: "Al presionar aceptar confirma que desea ejecutar el proceso de admisión con los estudiantes seleccionados, esta acción no puede deshacerse.",
         ADMITIDOS: "Se admitirán los siguientes estudiantes:",
@@ -1002,7 +1014,8 @@ var text_en = {
         SIN_FECHAS_MODALIDAD_POSGRADO: "Currently there are no dates for the processes of the postgraduate subjects modality associated with the academic period.",
         SIN_FECHAS_MODALIDAD_PROFUNDIZACION: "Currently there are no dates for the processes of the undergraduate subjects modality associated with the academic period.",
         SIN_FECHAS_MODALIDAD: "Currently there are no dates for the processes of the modality associated with the academic period.",
-        SIN_CARRERAS_POSGRADO: "Mr. Coordinator, you have not assigned curricular projects with a POSTGRADUATE level.",
+        SIN_CARRERAS_POSGRADO: "Mr. Coordinator, you don't have assigned any curricular projects with a POSTGRADUATE level.",
+        SIN_CARRERAS_PREGRADO: "Mr. Coordinator, you don't have assigned any curricular projects with a UNDERGRADUATE level.",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO: "The process of registration of subjects to course the postgraduate subjects modality is not in force.",
         NO_EN_FECHAS_INSCRIPCION_PROFUNDIZACION: "The process of registration of subjects to course the underraduate subjects modality is not in force.",
         NO_EN_FECHAS_INSCRIPCION: "The process of registration of subjects to course the modality is not in force.",
@@ -1323,6 +1336,7 @@ var text_en = {
     SIN_AREAS: "Currently there are no sub-areas linked to the selected SNIES area",
     DESCRIPCION: "Description",
     NO_SOLICITUDES_POSGRADO: "There are no requests in the graduate academic spaces modality for the selected curricular project",
+    NO_SOLICITUDES_PROFUNDIZACION: "There are no requests in the undergraduate academic spaces modality for the selected curricular project",
     SELECCIONAR_PERIODO: "Select academic period",
     PASANTIA: {
         DETALLE_PASANTIA: "Internship's details",
@@ -1357,6 +1371,7 @@ var text_en = {
     ACEPTAR: "Accept",
     CANCELAR: "Cancel",
     FECHAS_PROCESO_MATERIAS_POSGRADO: "Dates of the process of the postgraduate subjects modality",
+    FECHAS_PROCESO_MATERIAS_PROFUNDIZACION: "Dates of the process of the undergraduate subjects modality",
     FECHA_INICIO: "Start date",
     FORMALIZAR_SOLICITUD: {
         TITULO: "Requests formalization",
@@ -1398,6 +1413,15 @@ var text_en = {
     PERIODO_ACADEMICO: "Academic period",
     SOLICITUD_NO_PUEDE_APROBARSE: "The request can not be approved",
     MATERIAS_POSGRADO: {
+        CONFIRMACION_ADMITIR: "Confirmation of admitted",
+        CONFIRMAR: "Pressing accept confirms that you want to execute the admission process with the selected students, this action can not be undone.",
+        ADMITIDOS: "The following students will be admitted:",
+        OPCIONADOS: "The following students will be eligible for the second call:",
+        NO_ADMITIDOS: "The following students will not be admitted:",
+        PROCESO_ADMISION_COMPLETO: "Admission process completed",
+        RESPUESTAS_SOLICITUD: "The data of the admission process has been successfully registered",
+    },
+    MATERIAS_PROFUNDIZACION: {
         CONFIRMACION_ADMITIR: "Confirmation of admitted",
         CONFIRMAR: "Pressing accept confirms that you want to execute the admission process with the selected students, this action can not be undone.",
         ADMITIDOS: "The following students will be admitted:",

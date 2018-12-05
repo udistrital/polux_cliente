@@ -283,6 +283,11 @@ angular
               controller: 'GeneralConceptoTgCtrl',
               controllerAs: 'conceptoTg'
             })
+            .when('/materias_profundizacion/seleccion_admitidos', {
+              templateUrl: 'views/materias_profundizacion/seleccion_admitidos.html',
+              controller: 'MateriasProfundizacionSeleccionAdmitidosCtrl',
+              controllerAs: 'seleccionAdmitidos'
+            })
             .otherwise({
                 redirectTo: '/'
             });
