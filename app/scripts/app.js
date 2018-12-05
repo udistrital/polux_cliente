@@ -288,6 +288,11 @@ angular
               controller: 'MateriasProfundizacionSeleccionAdmitidosCtrl',
               controllerAs: 'seleccionAdmitidos'
             })
+            .when('/materias_profundizacion/formalizar_solicitud', {
+              templateUrl: 'views/materias_profundizacion/formalizar_solicitud.html',
+              controller: 'MateriasProfundizacionFormalizarSolicitudCtrl',
+              controllerAs: 'profundizacionFormalizarSolicitud'
+            })
             .otherwise({
                 redirectTo: '/'
             });

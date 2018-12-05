@@ -323,7 +323,7 @@ angular.module('poluxClienteApp')
             solicitud.resultado = resultado;
             defer.resolve(resultado);
           } else if (estadoSolicitud === 14) {
-            resultado = $translate.instant("SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO");
+            resultado = $translate.instant("SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS");
             solicitud.resultado = resultado;
             defer.resolve(resultado);
           } else if (estadoSolicitud === 15) {
