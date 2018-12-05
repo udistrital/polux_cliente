@@ -35,14 +35,14 @@
  * @property {Array} espaciosElegidos Objeto que contiene los espacios elegidos por el estudiante en la solicitud inicial.
  * @property {Boolean} detallesCargados Flag que indica que los detalles terminaron de cargarse..
  * @property {Boolean} siPuede Flag que permite identificar si se puede realizar la solicitud (el estudiante cumple con los requisitos y se encuentra en las fechas para hacerlo)
- * @property {Boolean} restringirModalidades Flag que permite identificar si se deben restringir las demas modalidades debido a que el estudiante ya realizo una solicitud inicial de materias de posgrado.
+ * @property {Boolean} restringirModalidadesPosgrado Flag que permite identificar si se deben restringir las demas modalidades debido a que el estudiante ya realizo una solicitud inicial de materias de posgrado.
  * @property {Array} estudiantesTg Estudiantes asociados al tranajo de grado.
  * @property {Array} estudiantes Estudiantes que se agregan a la solicitud inicial.
  * @property {Object} Trabajo Datos del trabajo de grado que cursa el estudiante que esta realizando la solicitud.
  * @property {Boolean} siModalidad Indicador que maneja la habilitación de una modalidad
  * @property {Boolean} modalidad_select Indicador que maneja la selección de una modalidad
  * @property {Boolean} solicitudConDetalles Indicador que maneja el contenido de los detalles dentro de una solicitud
- * @property {Boolean} restringirModalidades Indicador que maneja la restricción de modalidades para crear solicitud
+ * @property {Boolean} restringirModalidadesProfundizacion Indicador que maneja la restricción de modalidades para crear solicitud y solo habilita la modalidad de profundización
  * @property {Array} detallesConDocumento Colección que maneja los detalles con documento de una solicitud
  * @property {Boolean} tieneProrrogas Indicador que maneja si existen prórrogas registradas para el estudiante que realiza la solicitud
  * @property {String} codigo Texto que carga el código del estudiante en sesión
@@ -247,8 +247,12 @@ angular.module('poluxClienteApp')
                   //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
                 } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
                   //console.log(actuales);
-                  //console.log("es inicial y se deben restringir las demás");
-                  ctrl.restringirModalidades = true;
+                  //console.log("es inicial de posgrado y se deben restringir las demás");
+                  ctrl.restringirModalidadesPosgrado = true;
+                  defer.resolve(true);
+                } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 16) {
+                  //console.log("es inicial de profundizacion y se deben restringir las demás");
+                  ctrl.restringirModalidadesProfundizacion = true;
                   defer.resolve(true);
                 } else {
                   //console.log("No puedes");
@@ -593,9 +597,15 @@ angular.module('poluxClienteApp')
             .then(function(responseModalidad) {
               if (Object.keys(responseModalidad.data[0]).length > 0) {
                 ctrl.modalidades = [];
-                if (ctrl.restringirModalidades) {
+                if (ctrl.restringirModalidadesPosgrado) {
                   angular.forEach(responseModalidad.data, function(modalidad) {
                     if (modalidad.Id == 2) {
+                      ctrl.modalidades.push(modalidad);
+                    }
+                  });
+                } else if (ctrl.restringirModalidadesProfundizacion) {
+                  angular.forEach(responseModalidad.data, function(modalidad) {
+                    if (modalidad.Id == 3) {
                       ctrl.modalidades.push(modalidad);
                     }
                   });
@@ -617,11 +627,15 @@ angular.module('poluxClienteApp')
 
         var getSolicitudesAnteriores = function() {
           var defer = $q.defer();
+          //Se consultan modalidad tipo solicitud:
+          //13: para modalidades de materias de posgrado, detalles con id 37 para tener la carrera solicitada
+          //17: Para modalidad de materias de profundizacion, detalles con id 44 para tener las carrearas solicitadas
           var parametrosSolicitudes = $.param({
-            query: "Usuario:" + ctrl.codigo + ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+            query: "Usuario:" + ctrl.codigo + ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:13|16",
             limit: 0,
           });
           poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
+            console.log(responseSolicitudes.data);
               if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                 //console.log("solicitudes hechas",responseSolicitudes.data);
                 //si ha hecho una solicitud se obtienen las materias por el detalle
@@ -629,7 +643,7 @@ angular.module('poluxClienteApp')
                   //console.log(solicitud);
                   var defer = $q.defer();
                   var parametrosSolicitud = $.param({
-                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud:37",
+                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud.in:37|44",
                     limit: 1,
                   });
                   poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
@@ -778,16 +792,24 @@ angular.module('poluxClienteApp')
         var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
           var defer = $q.defer();
           //si la solicitud es de materias de posgrado e inicial
-          if (tipoSolicitud === 2 && modalidad === 2) {
+          if (tipoSolicitud === 2 && (modalidad === 2 || modalidad === 3 )) {
             ctrl.periodo = ctrl.periodoSiguiente.anio + "-" + ctrl.periodoSiguiente.periodo;
             ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
-            //traer fechas
+            var tipoSesionPadre = 0;
+            if (modalidad === 2) {
+              // modalidad == 'POSGRADO'
+              tipoSesionPadre = 1;
+            } else {
+              // modalidad === 3, modalidad === 'PREGRADO'
+              tipoSesionPadre = 9;
+            }
             var parametrosSesiones = $.param({
-              query: "SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
+              query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
               limit: 1
             });
             sesionesRequest.get("relacion_sesiones", parametrosSesiones)
               .then(function(responseFechas) {
+                console.log(responseFechas.data);
                 if (Object.keys(responseFechas.data[0]).length > 0) {
                   //console.log(responseFechas.data[0]);
                   var sesion = responseFechas.data[0];

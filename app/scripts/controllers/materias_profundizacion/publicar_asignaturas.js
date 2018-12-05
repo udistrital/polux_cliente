@@ -6,7 +6,7 @@
  * @description
  * # MateriasProfundizacionPublicarAsignaturasCtrl
  * Controller of the poluxClienteApp
- * Controlador de la vista publicar asignaturas que permite al cooridnador de posgrado publicar las asignaturas que se ofertarán en el periodo académico siguiente.
+ * Controlador de la vista publicar asignaturas que permite al cooridnador de pregrado publicar las asignaturas que se ofertarán en el periodo académico siguiente.
  * @requires $scope 
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest

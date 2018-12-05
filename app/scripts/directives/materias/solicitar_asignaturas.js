@@ -83,10 +83,16 @@ angular.module('poluxClienteApp')
                     if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
                         ctrl.periodo = response.data.periodoAcademicoCollection.periodoAcademico[0];
                     }
-
                     //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
+                    var nivelAsignaturas = '';
+                    if ($scope.modalidad === 2) {
+                        nivelAsignaturas = 'POSGRADO';
+                    } else {
+                        //$scope.modalidad === 3
+                        nivelAsignaturas = 'PREGRADO';
+                    }
                     var parametros = $.param({
-                        query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo,
+                        query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo+",Nivel:"+nivelAsignaturas,
                         fields: "CodigoCarrera,CodigoPensum"
                     });
                     poluxRequest.get("carrera_elegible", parametros).then(function (response) {
