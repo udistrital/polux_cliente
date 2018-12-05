@@ -63,7 +63,7 @@
                         <label class="control-label col-sm-2"> {{'MODALIDAD' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Modalidad.Nombre}} </label>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.areas">
                         <label class="control-label col-sm-2"> {{'AREAS_CONOCIMIENTO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.areas}} </label>
                     </div>

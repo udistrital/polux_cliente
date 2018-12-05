@@ -599,7 +599,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
        * Consulta el trabajo de grado de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
-       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón getEspaciosAcademicosInscritos.
+       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 o 3 llama a la funcón getEspaciosAcademicosInscritos.
        * @param {undefined} undefined no requiere parametros
        * @returns {undefined} No retorna ningún parámetro
        */
@@ -655,7 +655,7 @@ angular.module('poluxClienteApp')
                 }
 
                 //si la modalidad es 2 trae los espacios academicos
-                if (ctrl.trabajoGrado.Modalidad.Id === 2) {
+                if (ctrl.trabajoGrado.Modalidad.Id === 2 || ctrl.trabajoGrado.Modalidad.Id === 3) {
                   promises.push(ctrl.getEspaciosAcademicosInscritos());
                 }
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
