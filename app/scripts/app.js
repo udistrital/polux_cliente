@@ -293,6 +293,11 @@ angular
               controller: 'MateriasProfundizacionFormalizarSolicitudCtrl',
               controllerAs: 'profundizacionFormalizarSolicitud'
             })
+            .when('/materias_profundizacion/vincular_admitidos', {
+              templateUrl: 'views/materias_profundizacion/vincular_admitidos.html',
+              controller: 'MateriasProfundizacionVincularAdmitidosCtrl',
+              controllerAs: 'profundizacionVincularAdmitidos'
+            })
             .otherwise({
                 redirectTo: '/'
             });
