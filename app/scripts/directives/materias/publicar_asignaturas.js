@@ -213,12 +213,12 @@ angular.module('poluxClienteApp')
                   deferFechas.resolve();
                 }
               } else {
-                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                 deferFechas.reject(false);
               }
             })
             .catch(function(error) {
-              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD");
               deferFechas.reject(error);
             });
           return deferFechas.promise;

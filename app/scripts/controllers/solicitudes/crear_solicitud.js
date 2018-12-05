@@ -825,18 +825,18 @@ angular.module('poluxClienteApp')
                   if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                     defer.resolve(true);
                   } else {
-                    ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
+                    ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION');
                     defer.reject(false);
                   }
                   console.log(ctrl.fechaFin);
 
                 } else {
-                  ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                  ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                   defer.reject(false);
                 }
               })
               .catch(function() {
-                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD");
                 defer.reject("no se pudo cargar fechas");
               });
           } else {
