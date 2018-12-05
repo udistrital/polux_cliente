@@ -207,14 +207,23 @@ angular.module('poluxClienteApp')
        */
       ctrl.getFechasAprobacion = function(idModalidadTipoSolicitud) {
         var defer = $q.defer();
-        //si la solicitud es de tipo inicial en la modalidad de materias de posgrado
-        if (idModalidadTipoSolicitud === 13) {
+        //si la solicitud es de tipo inicial en la modalidad de materias de posgrado (13) o de profundizacion (16)
+        if (idModalidadTipoSolicitud === 13 || idModalidadTipoSolicitud === 16) {
           academicaRequest.get("periodo_academico", "X")
             .then(function(responsePeriodo) {
               if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
                 ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+                var tipoSesionPadre = 0;
+                if (idModalidadTipoSolicitud === 13) {
+                  //Materias de posgrado
+                  tipoSesionPadre = 1;
+                } else {
+                  //Materias de profundizacion
+                  //idModalidadTipoSolicitud === 16
+                  tipoSesionPadre = 9;
+                }
                 var parametrosSesiones = $.param({
-                  query: "SesionHijo.TipoSesion.Id:8,SesionPadre.periodo:" + ctrl.periodoSiguiente.anio + ctrl.periodoSiguiente.periodo,
+                  query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:8,SesionPadre.periodo:" + ctrl.periodoSiguiente.anio + ctrl.periodoSiguiente.periodo,
                   limit: 1
                 });
                 sesionesRequest.get("relacion_sesiones", parametrosSesiones)
@@ -233,7 +242,7 @@ angular.module('poluxClienteApp')
                         console.log();
                         defer.resolve();
                       } else {
-                        ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION_POSGRADO', {
+                        ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION', {
                           inicio: ctrl.fechaInicio,
                           fin: ctrl.fechaFin
                         });
@@ -241,13 +250,13 @@ angular.module('poluxClienteApp')
                         defer.resolve();
                       }
                     } else {
-                      ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                      ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                       ctrl.noAprobar = true;
                       defer.resolve();
                     }
                   })
                   .catch(function() {
-                    ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+                    ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD");
                     defer.reject("no se pudo cargar fechas");
                   });
               } else {
