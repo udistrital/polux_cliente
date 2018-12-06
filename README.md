@@ -2,7 +2,7 @@
 Cliente del Sistema de Gestión de Trabajos de Grado **POLUX**
 
 ## Acerca de
-**POLUX** Es el istema de Gestión de Trabajos de Grado para estudiantes de **Pregrado** de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el **acuerdo 038 de 2015** del Consejo Académico de la Universidad, las modalidades son las siguientes: 
+**POLUX** Es el Sistema de Gestión de Trabajos de Grado para estudiantes de **Pregrado** de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el **acuerdo 038 de 2015** del Consejo Académico de la Universidad, las modalidades son las siguientes: 
 - Pasantia
 - Espacios Académicos de Posgrado
 - Espacios Académicos de Profundización
