@@ -239,11 +239,25 @@ angular.module('poluxClienteApp')
         $scope.$on('$routeChangeStart', function(scope, next, current) {
             //$scope.actual = $location.path();
             //update_url();
-            if ($scope.token_service.live_token() && current != undefined ) {
-                if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
-                    $location.path("/no_permission");
+            var waitForMenu = function () {
+                if ($rootScope.my_menu != undefined) {
+                    console.log("espero el menu");
+                    console.log(next.templateUrl);
+                    console.log();
+                    if ($scope.token_service.live_token() && current != undefined ) {
+                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
+                            $location.path("/no_permission");
+                        }
+                    }  else if (current == undefined) {
+                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
+                            $location.path("/no_permission");
+                        }
+                    }                       
+                } else {
+                    setTimeout(waitForMenu, 250);
                 }
-            }
+            } 
+            waitForMenu();
         });
 
         $scope.havePermission = function (viewPath, menu) {
