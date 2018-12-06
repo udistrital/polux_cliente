@@ -442,7 +442,7 @@ var text_es = {
         CARGANDO_SOLICITUDES_APROBADAS: "Cargando solicitudes aprobadas",
         CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
         CARGANDO_TRABAJOS_DE_GRADO_PASANTIA: "Cargando trabajos de grado de la modalidad de pasantia",
-        CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado",
+        CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado",
         CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS: "Cargando los trabajos de grado asociados",
         REGISTRANDO_RESPUESTAS: "Registrando respuestas de las solicitudes del proceso de admisión",
         CARGANDO_DATOS_TRABAJO_GRADO: "Cargando datos del trabajo de grado",
@@ -632,6 +632,7 @@ var text_es = {
     },
     REGISTRAR_NOTA: {
         TITULO: "Registro de calificaciones en espacios académicos de posgrado",
+        TITULO_PROFUNDIZACION: "Registro de calificaciones en espacios académicos de profundización",
         PANEL: "Registrar calificaciones de trabajos de grado",
         CONFIRMACION: "Registrar calificaciones",
         MENSAJE_CONFIRMACION: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
@@ -1234,7 +1235,7 @@ var text_en = {
         CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
         CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
         CARGANDO_TRABAJOS_DE_GRADO_PASANTIA: "Loading internship modality degree works",
-        CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
+        CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works",
         CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS: "Loading associated degree works",
         REGISTRANDO_RESPUESTAS: "Registering responses to applications for the admission process",
         CARGANDO_DATOS_TRABAJO_GRADO: "Loading degree work data",
@@ -1424,6 +1425,7 @@ var text_en = {
     },
     REGISTRAR_NOTA: {
         TITULO: "Grades record in academic postgraduate spaces",
+        TITULO_PROFUNDIZACION: "Grades record in academic undergraduate spaces",
         PANEL: "Record degree works' grades",
         CONFIRMACION: "Grades registration",
         MENSAJE_CONFIRMACION: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",

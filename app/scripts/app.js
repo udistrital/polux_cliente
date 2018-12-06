@@ -298,6 +298,11 @@ angular
               controller: 'MateriasProfundizacionVincularAdmitidosCtrl',
               controllerAs: 'profundizacionVincularAdmitidos'
             })
+            .when('/materias_profundizacion/registrar_nota', {
+              templateUrl: 'views/materias_profundizacion/registrar_nota.html',
+              controller: 'MateriasProfundizacionRegistrarNotaCtrl',
+              controllerAs: 'profundizacionRegistrarNota'
+            })
             .otherwise({
                 redirectTo: '/'
             });
