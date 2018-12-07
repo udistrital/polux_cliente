@@ -195,7 +195,6 @@ angular.module('poluxClienteApp')
                             .catch(
                                 function(response) {
                                     console.log(response);
-                                    self.perfil = $scope.token_service.getAppPayload().appUserRole;
                                     $rootScope.my_menu = response.data;
 
                                 });
@@ -210,7 +209,7 @@ angular.module('poluxClienteApp')
             $scope.menu_service = configuracionRequest.get_menu();*/
 
 
-        var update_url = function() {
+        /*var update_url = function() {
             $scope.breadcrumb = [''];
             for (var i = 0; i < paths.length; i++) {
                 if ($scope.actual === "/" + paths[i].path) {
@@ -219,7 +218,7 @@ angular.module('poluxClienteApp')
                     $scope.breadcrumb = [''];
                 }
             }
-        };
+        };*/
 
         $scope.redirect_url = function(path) {
             var path_sub = path.substring(0, 4);
@@ -240,12 +239,12 @@ angular.module('poluxClienteApp')
             //$scope.actual = $location.path();
             //update_url();
             var waitForMenu = function () {
-                if ($rootScope.my_menu != undefined) {
-                    if ($scope.token_service.live_token() && current != undefined ) {
+                if ($rootScope.my_menu !== undefined) {
+                    if ($scope.token_service.live_token() && current !== undefined ) {
                         if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
                             $location.path("/no_permission");
                         }
-                    }  else if (current == undefined) {
+                    }  else if (current === undefined) {
                         if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
                             $location.path("/no_permission");
                         }
@@ -253,7 +252,7 @@ angular.module('poluxClienteApp')
                 } else {
                     setTimeout(waitForMenu, 250);
                 }
-            } 
+            }; 
             waitForMenu();
         });
 

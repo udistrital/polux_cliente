@@ -803,20 +803,20 @@ var text_es = {
     QUITAR_DOCUMENTO: "Quitar",
     ACTA_SOCIALIZACION: "Acta de socialización",
     ABOUT: "Acerca de Polux",
-    ABOUT_INFO: "Sistema de Gestión de Trabajos de Grado para estudiantes de Pregrado de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el acuerdo 038 de 2015 del Consejo Académico de la Universidad, las modalidades son las siguientes: "
-        + "<ul>"
-        + "<li>Pasantia</li>"
-        + "<li>Espacios Académicos de Posgrado</li>"
-        + "<li>Espacios Académicos de Profundización</li>"
-        + "<li>Monografía</li>"
-        + "<li>Investigación-Innovación</li>"
-        + "<li>Creación o Interpretación</li>"
-        + "<li>Proyecto de Emprendimiento</li>"
-        + "<li>Producción Académica</li>"
-        + "</ul>",
+    ABOUT_INFO: "Sistema de Gestión de Trabajos de Grado para estudiantes de Pregrado de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el acuerdo 038 de 2015 del Consejo Académico de la Universidad, las modalidades son las siguientes: " +
+        "<ul>" +
+        "<li>Pasantia</li>" +
+        "<li>Espacios Académicos de Posgrado</li>" +
+        "<li>Espacios Académicos de Profundización</li>" +
+        "<li>Monografía</li>" +
+        "<li>Investigación-Innovación</li>" +
+        "<li>Creación o Interpretación</li>" +
+        "<li>Proyecto de Emprendimiento</li>" +
+        "<li>Producción Académica</li>" +
+        "</ul>",
     ACUERDO: "Acuerdo 038 de 2015",
-    ACUERDO_INFO: "A continuación se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se "
-        + "reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.",
+    ACUERDO_INFO: "A continuación se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se " +
+        "reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.",
 };
 
 /**
@@ -1610,20 +1610,20 @@ var text_en = {
     QUITAR_DOCUMENTO: "Remove",
     ACTA_SOCIALIZACION: "Socialization certificate",
     ABOUT: "About Polux",
-    ABOUT_INFO: "System of Management of Degree Work for undergraduate students of the District University Francisco José de Caldas. This system contemplates each one of the modalities of degree work available to undergraduate students according to agreement 038 of 2015 of the Academic Council of the University, the modalities are the following:"
-        + "<ul>"
-        + "<li>Internship</li>"
-        + "<li>Graduate Academic Spaces</li>"
-        + "<li>Deep Academic Spaces</li>"
-        + "<li>Monograph</li>"
-        + "<li>Research-Innovation</li>"
-        + "<li>Creation or Interpretation</li>"
-        + "<li>Entrepreneurship Project</li>"
-        + "<li>Academic Production</li>"
-        + "</ul>",
+    ABOUT_INFO: "System of Management of Degree Work for undergraduate students of the District University Francisco José de Caldas. This system contemplates each one of the modalities of degree work available to undergraduate students according to agreement 038 of 2015 of the Academic Council of the University, the modalities are the following:" +
+        "<ul>" +
+        "<li>Internship</li>" +
+        "<li>Graduate Academic Spaces</li>" +
+        "<li>Deep Academic Spaces</li>" +
+        "<li>Monograph</li>" +
+        "<li>Research-Innovation</li>" +
+        "<li>Creation or Interpretation</li>" +
+        "<li>Entrepreneurship Project</li>" +
+        "<li>Academic Production</li>" +
+        "</ul>",
     ACUERDO:"Agreement 038 of 2015",
-    ACUERDO_INFO: "Below is agreement 038 of 2015 of the Academic Council of the District University Francisco Jósé de Caldas by means of which the degree work  for the "
-        + "undergraduate students are regulated of the University and other guidelines are dictated.",
+    ACUERDO_INFO: "Below is agreement 038 of 2015 of the Academic Council of the District University Francisco Jósé de Caldas by means of which the degree work  for the " +
+        "undergraduate students are regulated of the University and other guidelines are dictated.",
 };
 
 /**
