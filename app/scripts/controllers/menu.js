@@ -19,7 +19,7 @@
  */
 angular.module('poluxClienteApp')
     .controller('menuCtrl', function($location, $http, $window, $q, $scope, $rootScope, token_service, configuracionRequest, notificacion, $translate, $route, $mdSidenav) {
-        var paths = [];
+        //var paths = [];
         $scope.language = {
             es: "btn btn-primary btn-circle btn-outline active",
             en: "btn btn-primary btn-circle btn-outline"
@@ -150,7 +150,7 @@ angular.module('poluxClienteApp')
                 "Opciones": null
             }
         ];*/
-        var recorrerArbol = function(item, padre) {
+        /*var recorrerArbol = function(item, padre) {
             var padres = "";
             for (var i = 0; i < item.length; i++) {
                 if (item[i].Opciones === null) {
@@ -165,6 +165,7 @@ angular.module('poluxClienteApp')
             }
             return padres;
         };
+        */
         $scope.logout = function() {
             token_service.logout();
         };
@@ -220,7 +221,8 @@ angular.module('poluxClienteApp')
             }
         };*/
 
-        $scope.redirect_url = function(path) {
+       /* 
+       $scope.redirect_url = function(path) {
             var path_sub = path.substring(0, 4);
             if (path_sub.toUpperCase() === "HTTP") {
                 $window.open(path, "_blank");
@@ -228,27 +230,25 @@ angular.module('poluxClienteApp')
                 $location.path(path);
             }
         };
-
-        recorrerArbol($scope.menu_service, "");
+        */
+        //recorrerArbol($scope.menu_service, "");
+        /*
         paths.push({
             padre: ["", "Notificaciones", "Ver Notificaciones"],
             path: "notificaciones"
         });
+        */
 
         $scope.$on('$routeChangeStart', function(scope, next, current) {
             //$scope.actual = $location.path();
             //update_url();
             var waitForMenu = function () {
                 if ($rootScope.my_menu !== undefined) {
-                    if ($scope.token_service.live_token() && current !== undefined ) {
+                    if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
                         if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
                             $location.path("/no_permission");
                         }
-                    }  else if (current === undefined) {
-                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
-                            $location.path("/no_permission");
-                        }
-                    }                       
+                    }                 
                 } else {
                     setTimeout(waitForMenu, 250);
                 }
