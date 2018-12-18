@@ -773,7 +773,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
 
         var verificarRequisitosModalidad = function() {
-          var deferModalidad = $q.defer();
+          var defer = $q.defer();
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {
               if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
@@ -786,7 +786,7 @@ angular.module('poluxClienteApp')
               ctrl.mensajeError = $translate.instant("ERROR.VALIDAR_REQUISITOS");
               defer.reject("no se pudo cargar requisitos");
             });
-          return deferModalidad.promise;
+          return defer.promise;
         }
 
         var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
