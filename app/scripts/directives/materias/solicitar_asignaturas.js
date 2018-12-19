@@ -45,7 +45,32 @@ angular.module('poluxClienteApp')
                 ctrl.loading = true;
                 ctrl.maxCreditos = 0;
                 ctrl.carreras = [];
-                ctrl.gridOptions = {};
+                ctrl.gridOptions = {
+                    paginationPageSizes: [5, 10, 15, 20, 25],
+                    paginationPageSize: 10,
+                    enableFiltering: true,
+                    enableSorting: true,
+                    enableSelectAll: false,
+                    useExternalPagination: false,
+                };
+                ctrl.gridOptions.columnDefs = [{
+                    name: 'CodigoAsignatura',
+                    displayName: $translate.instant('CODIGO'),
+                    width: 200
+                }, {
+                    name: 'Nombre',
+                    displayName: $translate.instant('NOMBRE'),
+                }, {
+                    name: 'Creditos',
+                    displayName: $translate.instant('CREDITOS'),
+                    width: 200
+                }, {
+                    name: 'Check',
+                    displayName: $translate.instant('SELECCIONAR'),
+                    width: 200,
+                    type: 'boolean',
+                    cellTemplate: '<input type="checkbox" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
+                }];
                 ctrl.estudiante = $scope.estudiante;
                 if ($scope.estudiante.Modalidad === 3) {
                     $scope.estudiante.Tipo = "PREGRADO";
@@ -223,34 +248,11 @@ angular.module('poluxClienteApp')
                             angular.forEach(response.data, function (value) {
                                 //buscar asignaturas
                                 promises.push(getAsignatura(value));
-                            });
-                            //ui-grid
-                            ctrl.gridOptions.columnDefs = [{
-                                name: 'CodigoAsignatura',
-                                displayName: $translate.instant('CODIGO'),
-                                width: 200
-                            }, {
-                                name: 'Nombre',
-                                displayName: $translate.instant('NOMBRE'),
-                            }, {
-                                name: 'Creditos',
-                                displayName: $translate.instant('CREDITOS'),
-                                width: 200
-                            }, {
-                                name: 'Check',
-                                displayName: $translate.instant('SELECCIONAR'),
-                                width: 200,
-                                type: 'boolean',
-                                cellTemplate: '<input type="checkbox" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
-                            }];
-
-                            ctrl.gridOptions = {
-                                data: ctrl.asignaturas,
-                                rowTemplate: '<div ng-style="{}"></div>'
-                            };
+                            });                               
 
                             $q.all(promises).then(function () {
                                 console.log("asignaturas", ctrl.asignaturas);
+                                ctrl.gridOptions.data = ctrl.asignaturas;
                                 ctrl.loadingAsignaturas = false;
                             })
                                 .catch(function (error) {
