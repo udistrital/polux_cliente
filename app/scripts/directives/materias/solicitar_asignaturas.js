@@ -201,6 +201,7 @@ angular.module('poluxClienteApp')
                  * {@link services/academicaService.service:academicaRequest academicaRequest}.
                  */
                 ctrl.cargarMaterias = function (carreraSeleccionada) {
+                    ctrl.creditos = 0;
                     ctrl.loadingAsignaturas = true;
                     ctrl.selected = [];
                     ctrl.selected.push(carreraSeleccionada);
@@ -303,7 +304,6 @@ angular.module('poluxClienteApp')
                         c = parseInt(item.Creditos, 10);
                         ctrl.creditos = ctrl.creditos + c;
                     }
-
                     if (ctrl.creditos >= ctrl.creditosMinimos) {
                         ctrl.minimoCreditos = true;
                     } else {
