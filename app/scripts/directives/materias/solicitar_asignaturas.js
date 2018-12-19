@@ -69,7 +69,7 @@ angular.module('poluxClienteApp')
                     displayName: $translate.instant('SELECCIONAR'),
                     width: 200,
                     type: 'boolean',
-                    cellTemplate: '<input type="checkbox" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
+                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
                 }];
                 ctrl.estudiante = $scope.estudiante;
                 if ($scope.estudiante.Modalidad === 3) {
@@ -202,6 +202,7 @@ angular.module('poluxClienteApp')
                  */
                 ctrl.cargarMaterias = function (carreraSeleccionada) {
                     ctrl.creditos = 0;
+                    $scope.estudiante.minimoCreditos = false;
                     ctrl.loadingAsignaturas = true;
                     ctrl.selected = [];
                     ctrl.selected.push(carreraSeleccionada);
@@ -293,6 +294,10 @@ angular.module('poluxClienteApp')
                     if (ctrl.selected.length == 0) {
                         ctrl.creditos = 0;
                     }
+                    if (item.isSelected === undefined) {
+                        item.isSelected = false;
+                    }
+                    item.isSelected = !item.isSelected;
                     var idx = list.indexOf(item);
                     var c;
                     if (idx > -1) {
