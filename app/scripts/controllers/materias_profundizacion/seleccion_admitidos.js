@@ -164,7 +164,7 @@ angular.module('poluxClienteApp')
         name: 'aprobar',
         displayName: $translate.instant('ADMITIR'),
         width: "8%",
-        cellTemplate: '<center><div ng-if="grid.appScope.seleccionAdmitidos.permitirPrimeraFecha || grid.appScope.seleccionAdmitidos.seleccionAdmitidos"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.seleccionAdmitidos.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.seleccionAdmitidos.permitirPrimeraFecha && !grid.appScope.seleccionAdmitidos.permitirSegundaFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
+        cellTemplate: '<center><div ng-if="grid.appScope.seleccionAdmitidos.permitirPrimeraFecha || grid.appScope.seleccionAdmitidos.permitirSegundaFecha"><md-checkbox class="blue" ng-model="row.entity.aprobado" ng-click="grid.appScope.seleccionAdmitidos.verificarDisponibilidad(row.entity)" aria-label="checkbox" ng-if="row.entity.permitirAprobar" > </md-checkbox> <div ng-if="!row.entity.permitirAprobar">{{"SOLICITUD_NO_PUEDE_APROBARSE"| translate}}</div></div><div ng-if="!grid.appScope.seleccionAdmitidos.permitirPrimeraFecha && !grid.appScope.seleccionAdmitidos.permitirSegundaFecha">{{"ACCION_NO_DISPONIBLE" | translate}}</div></center>',
       }];
 
       /**
@@ -190,7 +190,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject("no se pudo cargar periodo");
           });
         return defer.promise;
@@ -218,7 +218,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject("no se pudo cargar periodo");
           });
         return defer.promise;
