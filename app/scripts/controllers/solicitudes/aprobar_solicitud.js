@@ -265,7 +265,7 @@ angular.module('poluxClienteApp')
               }
             })
             .catch(function(error) {
-              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_PERIODO");
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGANDO_PERIODO");
               defer.reject(error);
             });
         } else {

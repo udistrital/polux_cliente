@@ -189,7 +189,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject("no se pudo cargar periodo");
           });
         return defer.promise;
@@ -217,7 +217,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject("no se pudo cargar periodo");
           });
         return defer.promise;
