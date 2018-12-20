@@ -593,6 +593,8 @@ angular.module('poluxClienteApp')
             } else {
               // Se muestra el error
               ctrl.errorCargandoSolicitudesAprobadas = true;
+              resultadoConsultaSolicitudesRespondidas.sort();
+              resultadoConsultaSolicitudesRespondidas.reverse();
               ctrl.mensajeErrorCargandoSolicitudesAprobadas = resultadoConsultaSolicitudesRespondidas.find(function(mensaje) {
                 return !angular.isUndefined(mensaje);
               });
