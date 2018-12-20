@@ -529,7 +529,7 @@ angular.module('poluxClienteApp')
             } else {
               // Se muestra el error
               ctrl.errorCargandoTrabajosDeGradoCursados = true;
-              ctrl.mensajeErrorCargandoTrabajosDeGradoCursados = resultadoConsultaTrabajosDeGradoCursados[0];
+              ctrl.mensajeErrorCargandoTrabajosDeGradoCursados = resultadoConsultaTrabajosDeGradoCursados.sort().reverse()[0];
             }
           })
           .catch(function(excepcionTrabajosDeGradoCursados) {
