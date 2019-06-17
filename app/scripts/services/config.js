@@ -118,5 +118,5 @@ var conf_cloud_preproduccion = {
  */
 angular.module('poluxClienteApp')
   .constant('CONF', {
-      GENERAL: conf_cloud_preproduccion
+      GENERAL: conf_pruebas
   });
