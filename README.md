@@ -15,6 +15,9 @@ Cliente del Sistema de Gestión de Trabajos de Grado **POLUX**
 ### Acuerdo 038 de 2015
 En este [documento](./app/documentos/acuerdo_2015-038.pdf) se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.
 
+## Requerimientos Previos
+Este cliente es desarrollado utilizando el generador de plantillas para Angular
+
 ## Build & development
 
 Run `grunt` for building and `grunt serve` for preview.
