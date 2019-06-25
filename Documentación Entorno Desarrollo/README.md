@@ -5,8 +5,8 @@ Este repositorio configura un entorno de desarrollo haciendo uso de diferentes h
 Adentro de los archivos correspondientes al entorno de desarrollo existen tres que desencadenan la construcción del entorno **init, start, stop** con extensión .sh
 
 ## Requisitos:
- * Docker
- * docker-compose
+ * [Docker](https://www.docker.com/)
+ * [docker-compose](https://docs.docker.com/compose/)
  * No haber instalado postgresql de forma local, de haberlo hecho desinstalar y borrar las carpetas locales de bases de datos (se recomienda realizar backup de sus bases de datos) y reiniciar el equipo.
  * Agregar al usuario del host al grupo docker con el siguiene comando:
 
@@ -14,15 +14,15 @@ Adentro de los archivos correspondientes al entorno de desarrollo existen tres q
         sudo gpasswd -a $USER docker
     ```
  * Tener acceso a los repositorios del proyeto POLUX  
-    * polux_cliente 
-    * polux_mid
-    * polux_crud
+    * [polux_cliente](https://github.com/udistrital/polux_cliente) 
+    * [polux_mid](https://github.com/udistrital/polux_mid)
+    * [polux_crud](https://github.com/udistrital/polux_crud)
 
 
 
 ## Ejecución del Entorno:
 
-* Clonar el repositorio con el entorno de desarrollo y ingresar en el: 
+* Clonar el repositorio con el entorno de desarrollo y ingresar en el (solo se tiene acceso mendiante permiso del creador del repositorio): 
 
     ```
        git clone https://github.com/JuanPiedrahita/Entorno_desarrollo_Polux.git
