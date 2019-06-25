@@ -203,8 +203,12 @@ angular.module('poluxClienteApp')
               //consultar nombre carrera
               /*academicaRequest.get("carrera",[estudiante.datos.carrera])
               .then(function(responseCarrera){
-                estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
-                defer.resolve();
+                if (!angular.isUndefined(responseCarrera.carrerasCollection.carrera[0].nombre)) {
+                  estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
+                  defer.resolve();
+                } else {
+                  defer.reject("Error consultando la carrera");
+                }
               })
               .catch(function(error){
                 defer.reject(error);

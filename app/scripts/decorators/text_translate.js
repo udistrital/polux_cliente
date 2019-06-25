@@ -45,9 +45,11 @@ var text_es = {
     CARRERA: "Proyecto curricular",
     POSGRADO: "Posgrado",
     CODIGO_POSGRADO: "Código del posgrado",
+    CODIGO_PROYECTO: "Código del proyecto",
     CODIGO_ESP_ACADEMICO: "Código del espacio académico",
     PENSUM: "Pensum",
     CODIGO_PENSUM_POSGRADO: "Código del pensum publicado para el posgrado",
+    CODIGO_PENSUM_PROYECTO: "Código del pensum publicado para el proyecto curricular",
     SELECCIONAR_CARRERA: "Filtrar por proyecto curricular",
     SELECCIONAR_PENSUM: "*Seleccione un pensum",
     CODIGO: "Código",
@@ -230,11 +232,22 @@ var text_es = {
         SIN_SOLICITUDES: "No existen solicitudes asociadas.",
         CARGAR_CARRERAS: "Ocurrió un error al cargar los proyectos curriculares asociados al coordinador, por favor verifique su conexión e intente de nuevo.",
         CARGAR_FECHAS_MODALIDAD_POSGRADO: "Ocurrió un error al cargar las fechas asociadas a los procesos de la modalidad de materias de posgrado, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_FECHAS_MODALIDAD_PROFUNDIZACION: "Ocurrió un error al cargar las fechas asociadas a los procesos de la modalidad de materias de profundización, por favor verifique su conexión e intente de nuevo.",
+        CARGAR_FECHAS_MODALIDAD: "Ocurrió un error al cargar las fechas asociadas a los procesos de la modalidad, por favor verifique su conexión e intente de nuevo.",
         SIN_FECHAS_MODALIDAD_POSGRADO: "Actualmenten no hay fechas para los procesos de la modalidad de materias de posgrado asociadas al periodo académico.",
-        SIN_CARRERAS_POSGRADO: "Señor Coordinador, no tiene asignados proyectos curriculares con nivel de POSGRADO",
+        SIN_FECHAS_MODALIDAD_PROFUNDIZACION: "Actualmenten no hay fechas para los procesos de la modalidad de materias de profundización asociadas al periodo académico.",
+        SIN_FECHAS_MODALIDAD: "Actualmenten no hay fechas para los procesos de la modalidad asociadas al periodo académico.",
+        SIN_CARRERAS_POSGRADO: "Señor Coordinador, actualmente usted no tiene asignados proyectos curriculares con nivel de POSGRADO",
+        SIN_CARRERAS_PREGRADO: "Señor Coordinador, actualmente usted no tiene asignados proyectos curriculares con nivel de PREGRADO",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO: "El proceso de inscripción de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
+        NO_EN_FECHAS_INSCRIPCION_PROFUNDIZACION: "El proceso de inscripción de materias para cursar la modalidad de materias de profundización no se encuentra vigente.",
+        NO_EN_FECHAS_INSCRIPCION: "El proceso de inscripción de materias para cursar la modalidad no se encuentra vigente.",
         NO_EN_FECHAS_PUBLICACION_POSGRADO: "El proceso de publicación de materias para cursar la modalidad de materias de posgrado no se encuentra vigente.",
+        NO_EN_FECHAS_PUBLICACION_PROFUNDIZACION: "El proceso de publicación de materias para cursar la modalidad de materias de profundización no se encuentra vigente.",
+        NO_EN_FECHAS_PUBLICACION: "El proceso de publicación de materias para cursar la modalidad no se encuentra vigente.",
         NO_EN_FECHAS_APROBACION_POSGRADO: "El proceso de aprobación de solicitudes de materias de posgrado no se encuentra vigente, tenga en cuenta que las fechas de aprobación van desde {{inicio}} hasta {{fin}}.",
+        NO_EN_FECHAS_APROBACION_PROFUNDIZACION: "El proceso de aprobación de solicitudes de materias de profundización no se encuentra vigente, tenga en cuenta que las fechas de aprobación van desde {{inicio}} hasta {{fin}}.",
+        NO_EN_FECHAS_APROBACION: "El proceso de aprobación de solicitudes de la modalidad no se encuentra vigente, tenga en cuenta que las fechas de aprobación van desde {{inicio}} hasta {{fin}}.",
         CARGANDO_SOLICITUDES_PARA_FORMALIZAR: "Ocurrió un error al cargar las solicitudes para formalizar. Comuníquese con el proyecto curricular.",
         FUERA_PERIODO_FORMALIZACION: "Este periodo no corresponde al periodo de formalización de solicitudes",
         FORMALIZAR_SOLICITUD: "Se produjo un error al registrar la formalización de la solicitud",
@@ -257,7 +270,9 @@ var text_es = {
         SIN_INFO_ESTUDIANTE: "La información académica sobre el estudiante consultado es insuficiente para realizar esta operación.",
         CARGANDO_INFO_ESTUDIANTE: "Ocurrió un error al consultar la información académica correspondiente. Comuníquese con el administrador.",
         SIN_POSGRADOS: "No existen registros de posgrado asociados a esta coordinación.",
+        SIN_PREGRADOS: "No existen registros de pregrado asociados a esta coordinación.",
         CARGANDO_POSGRADOS: "Ocurrió un error al consultar los posgrados asociados a esta coordinación.",
+        CARGANDO_PREGRADOS: "Ocurrió un error al consultar los programas de pregrado asociados a esta coordinación.",
         REGISTRANDO_MODALIDAD: "Error al registrar la modalidad seleccionada",
         INDEFINIDA_INFO_ACADEMICA: "No hay información académica definida para esta operación.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "No hay información asociada a los espacios académicos inscritos de los trabajos de grado consultados.",
@@ -326,7 +341,8 @@ var text_es = {
         VINCULADO_NO_NOTA: "No ha registrado nota en el sistema",
         VINCULADO_NO_PUEDE_NOTA: "No puede registrar nota en el sistema",
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
-        SIN_MODALIDADES: "There are no modalities registered at the moment",
+        SIN_MODALIDADES: "No existen modalidades registradas por el momento",
+        CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
     },
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
@@ -426,7 +442,7 @@ var text_es = {
         CARGANDO_SOLICITUDES_APROBADAS: "Cargando solicitudes aprobadas",
         CARGANDO_TRANSACCION_REGISTRO: "Cargando transacción de registro",
         CARGANDO_TRABAJOS_DE_GRADO_PASANTIA: "Cargando trabajos de grado de la modalidad de pasantia",
-        CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado en modalidad de espacios académicos de posgrado",
+        CARGANDO_TRABAJOS_DE_GRADO: "Cargando trabajos de grado",
         CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS: "Cargando los trabajos de grado asociados",
         REGISTRANDO_RESPUESTAS: "Registrando respuestas de las solicitudes del proceso de admisión",
         CARGANDO_DATOS_TRABAJO_GRADO: "Cargando datos del trabajo de grado",
@@ -434,6 +450,7 @@ var text_es = {
         CARGANDO_ANTEPROYECTOS: "Cargando anteproyectos",
         CARGANDO_PROYECTOS: "Cargando proyectos asociados",
         REGISTRANDO_REVISION: "Registrando revisión",
+        ACTUALIZANDO_TRABAJO_GRADO: "Actualizando trabajo de grado",
     },
     SELECT: {
         SELECCIONE: "Seleccione una opción",
@@ -490,14 +507,14 @@ var text_es = {
     SOLICITUD_RECHAZADA: "La solicitud fue rechazada",
     SOLICITUD_ES_APROBADA: "La solicitud fue aprobada",
     SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA: "La solicitud esta opcionada para el segundo proceso de admisión.",
-    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES: "La solicitud fue rechazada por disponibilidad de cupos en el posgrado.",
+    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES: "La solicitud fue rechazada por disponibilidad de cupos en el proyecto curricular.",
     SOLICITUD_APROBADA_EXENTA: "La solicitud fue aprobada exenta de pago, el estudiante puede formalizarla.",
-    SOLICITUD_FORMALIZADA_EXENTA_PAGO: "La solicitud está formalizada con exención de pago. El posgrado ahora puede hacer el registro del trabajo de grado.",
+    SOLICITUD_FORMALIZADA_EXENTA_PAGO: "La solicitud está formalizada con exención de pago. El proyecto curricular ahora puede hacer el registro del trabajo de grado.",
     SOLICITUD_FORMALIZADA_NO_EXENTA_PAGO: "La solicitud está formalizada con condiciones económicas. El recibo de pago asociado será generado para oficializar la solicitud.",
     SOLICITUD_NO_FORMALIZADA: "La solicitud ha quedado sin formalizar, dado que el estudiante formalizó otra solicitud ó ignoró el proceso.",
     SOLICITUD_OFICIALIZADA: "La solicitud ha sido oficializada por la notificación del pago realizado por el estudiante.",
     SOLICITUD_NO_OFICIALIZADA: "La solicitud ha quedado sin oficializar porque no se tuvo notificación de que el estudiante realizó el pago asignado.",
-    SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO: "La solicitud se resolvió satisfactoriamente para cursar espacios académicos de posgrado.",
+    SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS: "La solicitud se resolvió satisfactoriamente para cursar espacios académicos en la modalidad solicitada.",
     SOLICITUD_CARTA_APROBADA_PASANTIA: "La solicitud de la carta de presentación fue aprobada por favor vaya a la oficina de pasantias para recogerla.",
     SOLICITUD_CARTA_RECHAZADA_PASANTIA: "La solicitud de la carta fue rechazada, si tiene alguna inquietud por favor vaya a la oficina de pasantias.",
     INFORMACION_PRORROGA: "Información importante sobre la prórroga",
@@ -545,6 +562,7 @@ var text_es = {
     SIN_AREAS: "Actualmente no hay subáreas vinculadas al área del SNIES seleccionada",
     DESCRIPCION: "Descripción",
     NO_SOLICITUDES_POSGRADO: "No existen solicitudes en la modalidad de espacios académicos de posgrado para el proyecto curricular seleccionado",
+    NO_SOLICITUDES_PROFUNDIZACION: "No existen solicitudes en la modalidad de espacios académicos de profundización para el proyecto curricular seleccionado",
     SELECCIONAR_PERIODO: "Seleccione el periodo académico",
     PASANTIA: {
         DETALLE_PASANTIA: "Detalle de la pasantia",
@@ -560,6 +578,8 @@ var text_es = {
         ACTA_REGISTRADA: "Acta registrada",
         ACTA_REGISTRADA_CORRECTAMENTE: "El acta de seguimiento fue registrada exitosamente",
         NO_ACTAS_REGISTRADAS_ACTUALMENTE: "Actualmente no hay ningún acta de seguimiento asociada a este trabajo de grado.",
+        NO_CERTIFICADO_ARL: "Actualmente el estudiante no ha subido el certificado de afiliación a ARL.",
+        CERTIFICADO_ARL:"Certificado de afiliación a ARL",
         CARTA: {
             CONFIRMACION: "Confirmación para responder la solicitud",
             MENSAJE_APROBACION: "¿Está seguro de aprobar la solicitud?",
@@ -577,12 +597,14 @@ var text_es = {
     ACEPTAR: "Aceptar",
     CANCELAR: "Cancelar",
     FECHAS_PROCESO_MATERIAS_POSGRADO: "Fechas del proceso de la modalidad de materias de posgrado",
+    FECHAS_PROCESO_MATERIAS_PROFUNDIZACION: "Fechas del proceso de la modalidad de materias de profundización",
     FECHA_INICIO: "Fecha de inicio",
     FORMALIZAR_SOLICITUD: {
         TITULO: "Formalización de solicitudes",
         CONFIRMACION: "Confirmación para formalizar la solicitud seleccionada",
         ACCION: "Formalizar",
-        MENSAJE_CONFIRMACION: "¿Está seguro de formalizar la solicitud {{idSolicitud}}, en estado {{nombreEstado}}, para cursar espacios académicos en el posgrado {{nombrePosgrado}}?",
+        MENSAJE_CONFIRMACION_POSGRADO: "¿Está seguro de formalizar la solicitud {{idSolicitud}}, en estado {{nombreEstado}}, para cursar espacios académicos en el posgrado {{nombrePosgrado}}?",
+        MENSAJE_CONFIRMACION_PROFUNDIZACION: "¿Está seguro de formalizar la solicitud {{idSolicitud}}, en estado {{nombreEstado}}, para cursar espacios académicos en el posgrado {{nombrePregrado}}?",
         AVISO: "Formalización de la solicitud",
         SOLICITUD_FORMALIZADA: "La solicitud fue formalizada con éxito",
         REVISAR_FECHAS_FORMALIZACION: "Revise los periodos de formalización, o comuníquese con el proyecto curricular",
@@ -599,8 +621,18 @@ var text_es = {
         ESTUDIANTE_REGISTRADO: "La modalidad para espacios académicos de posgrado ha sido registrada con éxito",
         REGISTRO_NO_HABILITADO: "Esta solicitud ya fue atendida con el registro del trabajo de grado asociado"
     },
+    VINCULAR_ADMITIDOS: {
+        TITULO: "Listado de estudiantes admitidos al proyecto",
+        REGISTRAR: "Registrar",
+        DESCRIPCION: "Descripción de la solicitud seleccionada",
+        REGISTRAR_ESTUDIANTE: "¿Está seguro de registrar al estudiante {{nombre}}, con código estudiantil {{codigo}} en estado {{estado}}, para la modalidad de materias de profundización?",
+        AVISO: "Registro de la solicitud aprobada",
+        ESTUDIANTE_REGISTRADO: "La modalidad para espacios académicos de profundización ha sido registrada con éxito",
+        REGISTRO_NO_HABILITADO: "Esta solicitud ya fue atendida con el registro del trabajo de grado asociado"
+    },
     REGISTRAR_NOTA: {
         TITULO: "Registro de calificaciones en espacios académicos de posgrado",
+        TITULO_PROFUNDIZACION: "Registro de calificaciones en espacios académicos de profundización",
         PANEL: "Registrar calificaciones de trabajos de grado",
         CONFIRMACION: "Registrar calificaciones",
         MENSAJE_CONFIRMACION: "¿Está seguro de registrar las calificaciones ingresadas para los espacios académicos del estudiante {{nombre}}, con código estudiantil {{codigo}}?",
@@ -622,7 +654,16 @@ var text_es = {
         CONFIRMAR: "Al presionar aceptar confirma que desea ejecutar el proceso de admisión con los estudiantes seleccionados, esta acción no puede deshacerse.",
         ADMITIDOS: "Se admitirán los siguientes estudiantes:",
         OPCIONADOS: "Los siguientes estudiantes serán opcionados para la segunda convocatoria:",
-        NO_ADMITIDOS: "Los siguientes estudiantes no se admitirán por falta de cupos:",
+        NO_ADMITIDOS: "Los siguientes estudiantes no se admitirán:",
+        PROCESO_ADMISION_COMPLETO: "Proceso de admisión completado",
+        RESPUESTAS_SOLICITUD: "Se han registrado los datos del proceso de admisión exitosamente",
+    },
+    MATERIAS_PROFUNDIZACION: {
+        CONFIRMACION_ADMITIR: "Confirmación de admitidos",
+        CONFIRMAR: "Al presionar aceptar confirma que desea ejecutar el proceso de admisión con los estudiantes seleccionados, esta acción no puede deshacerse.",
+        ADMITIDOS: "Se admitirán los siguientes estudiantes:",
+        OPCIONADOS: "Los siguientes estudiantes serán opcionados para la segunda convocatoria:",
+        NO_ADMITIDOS: "Los siguientes estudiantes no se admitirán:",
         PROCESO_ADMISION_COMPLETO: "Proceso de admisión completado",
         RESPUESTAS_SOLICITUD: "Se han registrado los datos del proceso de admisión exitosamente",
     },
@@ -709,6 +750,7 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
         TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
         SUBIR: "Subir certificado de ARL",
+        WARNING:"Su trabajo de grado no puede comenzar hasta que haya cargado su certificado de afiliación a ARL. Por favor, cargue su certificado de afiliación a ARL en el módulo de revisiones.",
     },
     NUEVA_VERSION: {
         MENSAJE: "Actualización del documento",
@@ -760,6 +802,21 @@ var text_es = {
     DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
     QUITAR_DOCUMENTO: "Quitar",
     ACTA_SOCIALIZACION: "Acta de socialización",
+    ABOUT: "Acerca de Polux",
+    ABOUT_INFO: "Sistema de Gestión de Trabajos de Grado para estudiantes de Pregrado de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el acuerdo 038 de 2015 del Consejo Académico de la Universidad, las modalidades son las siguientes: " +
+        "<ul>" +
+        "<li>Pasantia</li>" +
+        "<li>Espacios Académicos de Posgrado</li>" +
+        "<li>Espacios Académicos de Profundización</li>" +
+        "<li>Monografía</li>" +
+        "<li>Investigación-Innovación</li>" +
+        "<li>Creación o Interpretación</li>" +
+        "<li>Proyecto de Emprendimiento</li>" +
+        "<li>Producción Académica</li>" +
+        "</ul>",
+    ACUERDO: "Acuerdo 038 de 2015",
+    ACUERDO_INFO: "A continuación se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se " +
+        "reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.",
 };
 
 /**
@@ -794,8 +851,10 @@ var text_en = {
     CARRERA: "Curricular project",
     POSGRADO: "Postgraduate",
     CODIGO_POSGRADO: "Postgraduate code",
+    CODIGO_PROYECTO: "Project code",
     CODIGO_ESP_ACADEMICO: "Subject's code",
     CODIGO_PENSUM_POSGRADO: "Code of the list of subjects published for the postgraduate",
+    CODIGO_PENSUM_PROYECTO: "Code of the list of subjects published for the curricular project",
     PENSUM: "List of subjects",
     EVALUAR_PROYECTO: "Evaluate graduation project",
     SELECCIONAR_CARRERA: "Filter by curricular project",
@@ -982,10 +1041,22 @@ var text_en = {
         SIN_SOLICITUDES: "There are not associated requests.",
         CARGAR_CARRERAS: "An error occurred loading the curricular projects associated with the coordinator, please verify your connection and try again.",
         CARGAR_FECHAS_MODALIDAD_POSGRADO: "An error occurred loading the dates associated with the processes of the postgraduate course mode, please verify your connection and try again.",
+        CARGAR_FECHAS_MODALIDAD_PROFUNDIZACION: "An error occurred loading the dates associated with the processes of the undergraduate course mode, please verify your connection and try again.",
+        CARGAR_FECHAS_MODALIDAD: "An error occurred loading the dates associated with the processes of the modality, please verify your connection and try again.",
         SIN_FECHAS_MODALIDAD_POSGRADO: "Currently there are no dates for the processes of the postgraduate subjects modality associated with the academic period.",
-        SIN_CARRERAS_POSGRADO: "Mr. Coordinator, you have not assigned curricular projects with a POSTGRADUATE level.",
+        SIN_FECHAS_MODALIDAD_PROFUNDIZACION: "Currently there are no dates for the processes of the undergraduate subjects modality associated with the academic period.",
+        SIN_FECHAS_MODALIDAD: "Currently there are no dates for the processes of the modality associated with the academic period.",
+        SIN_CARRERAS_POSGRADO: "Mr. Coordinator, you don't have assigned any curricular projects with a POSTGRADUATE level.",
+        SIN_CARRERAS_PREGRADO: "Mr. Coordinator, you don't have assigned any curricular projects with a UNDERGRADUATE level.",
         NO_EN_FECHAS_INSCRIPCION_POSGRADO: "The process of registration of subjects to course the postgraduate subjects modality is not in force.",
+        NO_EN_FECHAS_INSCRIPCION_PROFUNDIZACION: "The process of registration of subjects to course the underraduate subjects modality is not in force.",
+        NO_EN_FECHAS_INSCRIPCION: "The process of registration of subjects to course the modality is not in force.",
         NO_EN_FECHAS_PUBLICACION_POSGRADO: "The process of publication of subjects to course the postgraduate subjects modality is not in force.",
+        NO_EN_FECHAS_PUBLICACION_PROFUNDIZACION: "The process of publication of subjects to course the undergraduate subjects modality is not in force.",
+        NO_EN_FECHAS_PUBLICACION: "The process of publication of subjects for the modality is not in force.",
+        NO_EN_FECHAS_APROBACION_POSGRADO: "The process of aprobbation of subjects for the postgraduate subjects modality is not in force. Please keep in mind that the aprobbation dates go since {{inicio}} until {{fin}}.",
+        NO_EN_FECHAS_APROBACION_PROFUNDIZACION: "The process of aprobbation of subjects for the undergraduate subjects modality is not in force. Please keep in mind that the aprobbation dates go since {{inicio}} until {{fin}}.",
+        NO_EN_FECHAS_APROBACION: "The process of aprobbation of subjects for the  modality is not in force. Please keep in mind that the aprobbation dates go since {{inicio}} until {{fin}}",
         CARGANDO_SOLICITUDES_PARA_FORMALIZAR: "There was an error loading the requests to formalize. Communicate with the curricular project.",
         FUERA_PERIODO_FORMALIZACION: "This period does not correspond to the period of requests formalization",
         SIN_INFO_SOLICITUDES_APROBADAS: "Insufficient information to list approved requests to the postgraduate",
@@ -1007,7 +1078,9 @@ var text_en = {
         SIN_INFO_ESTUDIANTE: "The academic information about the queried student is insufficient to carry out this operation.",
         CARGANDO_INFO_ESTUDIANTE: "An error occurred when querying the corresponding academic information. Contact the administrator.",
         SIN_POSGRADOS: "There are no postgraduate records associated with this coordination.",
+        SIN_PREGRADOS: "There are no undergraduate records associated with this coordination.",
         CARGANDO_POSGRADOS: "An error occurred when querying the postgraduate programs associated with this coordination.",
+        CARGANDO_PREGRADOS: "An error occurred when querying the undergraduate programs associated with this coordination.",
         REGISTRANDO_MODALIDAD: "Error during register the selected modality",
         INDEFINIDA_INFO_ACADEMICA: "There is no academic information defined for this operation.",
         SIN_ESPACIOS_ACADEMICOS_INSCRITOS: "There is no information associated to the academic spaces enrolled of the degree works consulted.",
@@ -1076,7 +1149,8 @@ var text_en = {
         VINCULADO_NO_NOTA: "The teacher have not registered a grade in the system",
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
         CARGAR_ACTA_SOCIALIZACION: "There was an error occurred loading the socialization certificate, please check your connection and try again.",
-        SIN_MODALIDADES: "No existen modalidades registradas por el momento",
+        SIN_MODALIDADES: "There are no modalities registered at the moment",
+        CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1176,7 +1250,7 @@ var text_en = {
         CARGANDO_TRANSACCION_REGISTRO: "Loading registration transaction",
         CARGANDO_SOLICITUDES_APROBADAS: "Loading approved requests",
         CARGANDO_TRABAJOS_DE_GRADO_PASANTIA: "Loading internship modality degree works",
-        CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works under postgraduate academic spaces modality",
+        CARGANDO_TRABAJOS_DE_GRADO: "Loading degree works",
         CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS: "Loading associated degree works",
         REGISTRANDO_RESPUESTAS: "Registering responses to applications for the admission process",
         CARGANDO_DATOS_TRABAJO_GRADO: "Loading degree work data",
@@ -1184,6 +1258,7 @@ var text_en = {
         CARGANDO_ANTEPROYECTOS: "Loading degree work proposals",
         CARGANDO_PROYECTOS: "Loading associated projects",
         REGISTRANDO_REVISION: "Registering revision",
+        ACTUALIZANDO_TRABAJO_GRADO: "Updating degree work",
     },
     SELECT: {
         SELECCIONE: "Select an option",
@@ -1240,14 +1315,14 @@ var text_en = {
     SOLICITUD_RECHAZADA: "The request was rejected",
     SOLICITUD_ES_APROBADA: "The request was approved",
     SOLICITUD_OPCIONADA_SEGUNDA_CONVOCATORIA: "The application is optional for the second admission process.",
-    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES: "The application was rejected due to the availability of places in the postgraduate program.",
+    SOLICITUD_RECHAZADA_CUPOS_INSUFICIENTES: "The application was rejected due to the availability of places in the curricular project.",
     SOLICITUD_APROBADA_EXENTA: "The application was approved free of charge, the student can formalize it.",
-    SOLICITUD_FORMALIZADA_EXENTA_PAGO: "The request is formalized with exemption from payment. The postgraduate can now register the degree work.",
+    SOLICITUD_FORMALIZADA_EXENTA_PAGO: "The request is formalized with exemption from payment. The curricular project can now register the degree work.",
     SOLICITUD_FORMALIZADA_NO_EXENTA_PAGO: "The request is formalized with economic conditions. The associated payment receipt will be generated to formalize the request.",
     SOLICITUD_NO_FORMALIZADA: "The request has not been formalized, given that the student formalized another request or ignored the process.",
     SOLICITUD_OFICIALIZADA: "The request has been made official by the notification of the payment made by the student.",
     SOLICITUD_NO_OFICIALIZADA: "The request has not been made official because there was no notification that the student made the assigned payment.",
-    SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS_POSGRADO: "The request was satisfactorily resolved to study postgraduate academic spaces.",
+    SOLICITUD_CUMPLIDA_PARA_ESPACIOS_ACADEMICOS: "The request was satisfactorily resolved to study academic spaces in the requested modality.",
     SOLICITUD_CARTA_APROBADA_PASANTIA: "The application for the presentation letter was approved, please go to the internship office to pick it up.",
     SOLICITUD_CARTA_RECHAZADA_PASANTIA: "The request for the presentation letter was rejected, if you have any concerns please go to the internship office.",
     INFORMACION_PRORROGA: "Important information about the extension",
@@ -1295,6 +1370,7 @@ var text_en = {
     SIN_AREAS: "Currently there are no sub-areas linked to the selected SNIES area",
     DESCRIPCION: "Description",
     NO_SOLICITUDES_POSGRADO: "There are no requests in the graduate academic spaces modality for the selected curricular project",
+    NO_SOLICITUDES_PROFUNDIZACION: "There are no requests in the undergraduate academic spaces modality for the selected curricular project",
     SELECCIONAR_PERIODO: "Select academic period",
     PASANTIA: {
         DETALLE_PASANTIA: "Internship's details",
@@ -1310,6 +1386,8 @@ var text_en = {
         ACTA_REGISTRADA: "Minute registered",
         ACTA_REGISTRADA_CORRECTAMENTE: "The follow-up act was registered successfully",
         NO_ACTAS_REGISTRADAS_ACTUALMENTE: "Currently there is no follow-up act associated with this degree work.",
+        NO_CERTIFICADO_ARL: "Currently the student have not uploaded the ARL affiliation certificate.",
+        CERTIFICADO_ARL:"ARL affiliation certificate",
         CARTA: {
             CONFIRMACION: "Confirmation to answer the request",
             MENSAJE_APROBACION: "Are you sure of approve the request?",
@@ -1327,12 +1405,14 @@ var text_en = {
     ACEPTAR: "Accept",
     CANCELAR: "Cancel",
     FECHAS_PROCESO_MATERIAS_POSGRADO: "Dates of the process of the postgraduate subjects modality",
+    FECHAS_PROCESO_MATERIAS_PROFUNDIZACION: "Dates of the process of the undergraduate subjects modality",
     FECHA_INICIO: "Start date",
     FORMALIZAR_SOLICITUD: {
         TITULO: "Requests formalization",
         CONFIRMACION: "Confirmation to formalize the request selected",
         ACCION: "Formalize",
-        MENSAJE_CONFIRMACION: "Are you sure you want to formalize the request {{idSolicitud}}, in the state {{nombreEstado}}, to study academic spaces in the postgraduate {{nombrePosgrado}}?",
+        MENSAJE_CONFIRMACION_POSGRADO: "Are you sure you want to formalize the request {{idSolicitud}}, in the state {{nombreEstado}}, to study academic spaces in the postgraduate program {{nombrePosgrado}}?",
+        MENSAJE_CONFIRMACION_PROFUNDIZACION: "Are you sure you want to formalize the request {{idSolicitud}}, in the state {{nombreEstado}}, to study academic spaces in the undergraduate program {{nombrePregrado}}?",
         AVISO: "Request formalization",
         SOLICITUD_FORMALIZADA: "The request was formalized successfully",
         REVISAR_FECHAS_FORMALIZACION: "Review the formalization periods, or contact the curricular project",
@@ -1349,8 +1429,18 @@ var text_en = {
         ESTUDIANTE_REGISTRADO: "The modality for postgraduate academic spaces has been successfully registered",
         REGISTRO_NO_HABILITADO: "This request was already attended with the associate degree work register"
     },
+    VINCULAR_ADMITIDOS: {
+        TITULO: "List of students admitted to the undergraduate program",
+        REGISTRAR: "Register",
+        DESCRIPCION: "Selected request description",
+        REGISTRAR_ESTUDIANTE: "Are you sure to register the student {{nombre}}, with student code {{codigo}}, in {{estado}} state, for the undergraduate subjects modality?",
+        AVISO: "Approved request registration",
+        ESTUDIANTE_REGISTRADO: "The modality for undergraduate academic spaces has been successfully registered",
+        REGISTRO_NO_HABILITADO: "This request was already attended with the associate degree work register"
+    },
     REGISTRAR_NOTA: {
         TITULO: "Grades record in academic postgraduate spaces",
+        TITULO_PROFUNDIZACION: "Grades record in academic undergraduate spaces",
         PANEL: "Record degree works' grades",
         CONFIRMACION: "Grades registration",
         MENSAJE_CONFIRMACION: "Are you sure of registering the grades entered for the academic spaces of the student {{nombre}}, with student code {{codigo}}?",
@@ -1372,7 +1462,16 @@ var text_en = {
         CONFIRMAR: "Pressing accept confirms that you want to execute the admission process with the selected students, this action can not be undone.",
         ADMITIDOS: "The following students will be admitted:",
         OPCIONADOS: "The following students will be eligible for the second call:",
-        NO_ADMITIDOS: "The following students will not be admitted due to lack of quotas:",
+        NO_ADMITIDOS: "The following students will not be admitted:",
+        PROCESO_ADMISION_COMPLETO: "Admission process completed",
+        RESPUESTAS_SOLICITUD: "The data of the admission process has been successfully registered",
+    },
+    MATERIAS_PROFUNDIZACION: {
+        CONFIRMACION_ADMITIR: "Confirmation of admitted",
+        CONFIRMAR: "Pressing accept confirms that you want to execute the admission process with the selected students, this action can not be undone.",
+        ADMITIDOS: "The following students will be admitted:",
+        OPCIONADOS: "The following students will be eligible for the second call:",
+        NO_ADMITIDOS: "The following students will not be admitted:",
         PROCESO_ADMISION_COMPLETO: "Admission process completed",
         RESPUESTAS_SOLICITUD: "The data of the admission process has been successfully registered",
     },
@@ -1458,6 +1557,7 @@ var text_en = {
         MENSAJE_CONFIRMACION: "Are you sure to upload the submitted file as the ARL certificate?",
         TG_ACTUALIZADO: "The degree work has been successfully updated",
         SUBIR: "Upload ARL certificate",
+        WARNING:"Your degree work can not start until you have upload your ARL affilation certificate. Please upload your ARL affiliation certificate in the revisions module.",
     },
     NUEVA_VERSION: {
         MENSAJE: "Document update",
@@ -1509,6 +1609,21 @@ var text_en = {
     DESEA_INCLUIR_DOCUMENTO: "Do you want to include the revision document?",
     QUITAR_DOCUMENTO: "Remove",
     ACTA_SOCIALIZACION: "Socialization certificate",
+    ABOUT: "About Polux",
+    ABOUT_INFO: "System of Management of Degree Work for undergraduate students of the District University Francisco José de Caldas. This system contemplates each one of the modalities of degree work available to undergraduate students according to agreement 038 of 2015 of the Academic Council of the University, the modalities are the following:" +
+        "<ul>" +
+        "<li>Internship</li>" +
+        "<li>Graduate Academic Spaces</li>" +
+        "<li>Deep Academic Spaces</li>" +
+        "<li>Monograph</li>" +
+        "<li>Research-Innovation</li>" +
+        "<li>Creation or Interpretation</li>" +
+        "<li>Entrepreneurship Project</li>" +
+        "<li>Academic Production</li>" +
+        "</ul>",
+    ACUERDO:"Agreement 038 of 2015",
+    ACUERDO_INFO: "Below is agreement 038 of 2015 of the Academic Council of the District University Francisco Jósé de Caldas by means of which the degree work  for the " +
+        "undergraduate students are regulated of the University and other guidelines are dictated.",
 };
 
 /**

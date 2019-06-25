@@ -97,7 +97,11 @@ angular.module('poluxClienteApp')
       ctrl.gridOptionsVinculaciones.columnDefs = [{
         name: 'Nombre',
         displayName: $translate.instant('NOMBRE'),
-        width: '70%',
+        width: '45%',
+      },{
+        name: 'RolTrabajoGrado.Nombre',
+        displayName: $translate.instant('ROL'),
+        width: '25%',
       }, {
         name: 'notaRegistrada',
         displayName: $translate.instant('NOTA'),
@@ -236,6 +240,36 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error) {
             ctrl.mensajeError = $translate.instant("ERROR.CARGAR_ACTA_SOCIALIZACION");
+            defer.reject(error);
+          });
+        return defer.promise;
+      }
+
+      /**
+       * @ngdoc method
+       * @name cargarCertificadoARL
+       * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+       * @description 
+       * Consulta el certificado de afiliación de ARL de un trabajo de grado de la modalidad de pasantia del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * @param {undefined} undefined no requiere parametros
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+       */
+      ctrl.cargarCertificadoARL = function() {
+        var defer = $q.defer();
+        //Se consulta el tipo de documento 6 que es acta de socialización
+        var parametrosActaSocializacion = $.param({
+          query: "DocumentoEscrito.TipoDocumentoEscrito:7,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          limit: 1,
+        });
+        poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
+          .then(function(responseCertificadoARL) {
+            if (Object.keys(responseCertificadoARL.data[0]).length > 0) {
+              ctrl.trabajoGrado.certificadoARL = responseCertificadoARL.data[0];
+            }
+            defer.resolve();
+          })
+          .catch(function(error) {
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CERTIFICADO_ARL");
             defer.reject(error);
           });
         return defer.promise;
@@ -565,7 +599,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
        * Consulta el trabajo de grado de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
-       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón getEspaciosAcademicosInscritos.
+       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 o 3 llama a la funcón getEspaciosAcademicosInscritos.
        * @param {undefined} undefined no requiere parametros
        * @returns {undefined} No retorna ningún parámetro
        */
@@ -599,6 +633,11 @@ angular.module('poluxClienteApp')
                   ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.esProyectoModificable = true;
                 }
+                //Si es pasantia y esta en espera de ARL
+                if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21 &&
+                  ctrl.userRole.includes('ESTUDIANTE')) {
+                  ctrl.pasantiaEnEsperaArl = true;
+                }
                 var promises = [];
                 ctrl.trabajoGrado.estudiante = {
                   "Estudiante": ctrl.codigoEstudiante
@@ -606,6 +645,7 @@ angular.module('poluxClienteApp')
                 promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
                 promises.push(ctrl.cargarAsignaturasTrabajoGrado());
                 promises.push(ctrl.cargarActaSocializacion());
+                promises.push(ctrl.cargarCertificadoARL());
                 promises.push(ctrl.getEstudiantesTg());
 
                 //Consulta las vinculaciones y las áreas de conocimiento
@@ -615,7 +655,7 @@ angular.module('poluxClienteApp')
                 }
 
                 //si la modalidad es 2 trae los espacios academicos
-                if (ctrl.trabajoGrado.Modalidad.Id === 2) {
+                if (ctrl.trabajoGrado.Modalidad.Id === 2 || ctrl.trabajoGrado.Modalidad.Id === 3) {
                   promises.push(ctrl.getEspaciosAcademicosInscritos());
                 }
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento

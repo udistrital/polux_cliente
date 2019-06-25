@@ -19,7 +19,7 @@
  */
 angular.module('poluxClienteApp')
     .controller('menuCtrl', function($location, $http, $window, $q, $scope, $rootScope, token_service, configuracionRequest, notificacion, $translate, $route, $mdSidenav) {
-        var paths = [];
+        //var paths = [];
         $scope.language = {
             es: "btn btn-primary btn-circle btn-outline active",
             en: "btn btn-primary btn-circle btn-outline"
@@ -150,7 +150,7 @@ angular.module('poluxClienteApp')
                 "Opciones": null
             }
         ];*/
-        var recorrerArbol = function(item, padre) {
+        /*var recorrerArbol = function(item, padre) {
             var padres = "";
             for (var i = 0; i < item.length; i++) {
                 if (item[i].Opciones === null) {
@@ -165,6 +165,7 @@ angular.module('poluxClienteApp')
             }
             return padres;
         };
+        */
         $scope.logout = function() {
             token_service.logout();
         };
@@ -209,7 +210,7 @@ angular.module('poluxClienteApp')
             $scope.menu_service = configuracionRequest.get_menu();*/
 
 
-        var update_url = function() {
+        /*var update_url = function() {
             $scope.breadcrumb = [''];
             for (var i = 0; i < paths.length; i++) {
                 if ($scope.actual === "/" + paths[i].path) {
@@ -218,30 +219,76 @@ angular.module('poluxClienteApp')
                     $scope.breadcrumb = [''];
                 }
             }
-        };
+        };*/
 
-        $scope.redirect_url = function(path) {
+       /* 
+       $scope.redirect_url = function(path) {
             var path_sub = path.substring(0, 4);
-            switch (path_sub.toUpperCase()) {
-                case "HTTP":
-                    $window.open(path, "_blank");
-                    break;
-                default:
-                    $location.path(path);
-                    break;
+            if (path_sub.toUpperCase() === "HTTP") {
+                $window.open(path, "_blank");
+            } else {
+                $location.path(path);
             }
         };
-
-        recorrerArbol($scope.menu_service, "");
+        */
+        //recorrerArbol($scope.menu_service, "");
+        /*
         paths.push({
             padre: ["", "Notificaciones", "Ver Notificaciones"],
             path: "notificaciones"
         });
+        */
 
-        $scope.$on('$routeChangeStart', function( /*next, current*/ ) {
-            $scope.actual = $location.path();
-            update_url();
+        $scope.$on('$routeChangeStart', function(scope, next, current) {
+            //$scope.actual = $location.path();
+            //update_url();
+            var waitForMenu = function () {
+                if ($rootScope.my_menu !== undefined) {
+                    if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
+                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
+                            $location.path("/no_permission");
+                        }
+                    }                 
+                } else {
+                    setTimeout(waitForMenu, 250);
+                }
+            }; 
+            waitForMenu();
         });
+
+        $scope.havePermission = function (viewPath, menu) {
+            if (viewPath !== undefined && viewPath !== null) {
+                var currentPath = viewPath.replace(".html", "").split("views/").pop();
+                var head = menu;
+                var permission = 0;
+                if (currentPath !== "main") {
+                    permission = $scope.menuWalkThrough(head, currentPath);
+                } else {
+                    permission = 1;
+                }
+                return permission;
+            }
+            return 1;
+
+        };
+
+        $scope.menuWalkThrough = function (head, url) {
+            var acum = 0;
+            if (!angular.isUndefined(head)) {
+                angular.forEach(head, function (node) {
+                    if (node.Opciones === null && node.Url === url) {
+                        acum = acum + 1;
+                    } else if (node.Opciones !== null) {
+                        acum = acum + $scope.menuWalkThrough(node.Opciones, url);
+                    } else {
+                        acum = acum + 0;
+                    }
+                });
+                return acum;
+            } else {
+                return acum;
+            }
+        };
 
         $scope.changeLanguage = function(key) {
             $translate.use(key);

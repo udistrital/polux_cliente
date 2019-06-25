@@ -134,7 +134,9 @@
       <div class="panel-heading">
         {{'ACTUALIZAR_TG.DESCRIPCION' | translate}}
       </div>
-      <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
+      <div class="panel-body" ng-if="estudianteRevisionDoc.cargandoActualizarTg">
+        <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
+      </div>
       <div class="panel-body" ng-if="!estudianteRevisionDoc.cargandoActualizarTg">
         <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumentoTg()">
           <div class="row">
@@ -244,7 +246,9 @@
       <div class="panel-heading">
         {{'ACTUALIZAR_TG.DESCRIPCION' | translate}}
       </div>
-      <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
+      <div class="panel-body" ng-if="estudianteRevisionDoc.cargandoActualizarTg">
+        <loading tam="4" load="estudianteRevisionDoc.cargandoActualizarTg" message="estudianteRevisionDoc.mensajeCargandoActualizarTg"></loading>
+      </div>
       <div class="panel-body" ng-if="!estudianteRevisionDoc.cargandoActualizarTg">
         <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumento()">
           <div class="row">

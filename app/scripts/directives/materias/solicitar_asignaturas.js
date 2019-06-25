@@ -45,7 +45,32 @@ angular.module('poluxClienteApp')
                 ctrl.loading = true;
                 ctrl.maxCreditos = 0;
                 ctrl.carreras = [];
-                ctrl.gridOptions = {};
+                ctrl.gridOptions = {
+                    paginationPageSizes: [5, 10, 15, 20, 25],
+                    paginationPageSize: 10,
+                    enableFiltering: true,
+                    enableSorting: true,
+                    enableSelectAll: false,
+                    useExternalPagination: false,
+                };
+                ctrl.gridOptions.columnDefs = [{
+                    name: 'CodigoAsignatura',
+                    displayName: $translate.instant('CODIGO'),
+                    width: 200
+                }, {
+                    name: 'Nombre',
+                    displayName: $translate.instant('NOMBRE'),
+                }, {
+                    name: 'Creditos',
+                    displayName: $translate.instant('CREDITOS'),
+                    width: 200
+                }, {
+                    name: 'Check',
+                    displayName: $translate.instant('SELECCIONAR'),
+                    width: 200,
+                    type: 'boolean',
+                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
+                }];
                 ctrl.estudiante = $scope.estudiante;
                 if ($scope.estudiante.Modalidad === 3) {
                     $scope.estudiante.Tipo = "PREGRADO";
@@ -83,10 +108,16 @@ angular.module('poluxClienteApp')
                     if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
                         ctrl.periodo = response.data.periodoAcademicoCollection.periodoAcademico[0];
                     }
-
                     //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
+                    var nivelAsignaturas = '';
+                    if ($scope.modalidad === 2) {
+                        nivelAsignaturas = 'POSGRADO';
+                    } else {
+                        //$scope.modalidad === 3
+                        nivelAsignaturas = 'PREGRADO';
+                    }
                     var parametros = $.param({
-                        query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo,
+                        query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo+",Nivel:"+nivelAsignaturas,
                         fields: "CodigoCarrera,CodigoPensum"
                     });
                     poluxRequest.get("carrera_elegible", parametros).then(function (response) {
@@ -170,6 +201,8 @@ angular.module('poluxClienteApp')
                  * {@link services/academicaService.service:academicaRequest academicaRequest}.
                  */
                 ctrl.cargarMaterias = function (carreraSeleccionada) {
+                    ctrl.creditos = 0;
+                    $scope.estudiante.minimoCreditos = false;
                     ctrl.loadingAsignaturas = true;
                     ctrl.selected = [];
                     ctrl.selected.push(carreraSeleccionada);
@@ -187,7 +220,8 @@ angular.module('poluxClienteApp')
 
                         //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
                         var parametros = $.param({
-                            query: "CarreraElegible:" + response.data[0].Id + ",Activo:true"
+                            query: "CarreraElegible:" + response.data[0].Id + ",Activo:true",
+                            limit: 0
                         });
 
                         poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
@@ -217,34 +251,11 @@ angular.module('poluxClienteApp')
                             angular.forEach(response.data, function (value) {
                                 //buscar asignaturas
                                 promises.push(getAsignatura(value));
-                            });
-                            //ui-grid
-                            ctrl.gridOptions.columnDefs = [{
-                                name: 'CodigoAsignatura',
-                                displayName: $translate.instant('CODIGO'),
-                                width: 200
-                            }, {
-                                name: 'Nombre',
-                                displayName: $translate.instant('NOMBRE'),
-                            }, {
-                                name: 'Creditos',
-                                displayName: $translate.instant('CREDITOS'),
-                                width: 200
-                            }, {
-                                name: 'Check',
-                                displayName: $translate.instant('SELECCIONAR'),
-                                width: 200,
-                                type: 'boolean',
-                                cellTemplate: '<input type="checkbox" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
-                            }];
-
-                            ctrl.gridOptions = {
-                                data: ctrl.asignaturas,
-                                rowTemplate: '<div ng-style="{}"></div>'
-                            };
+                            });                               
 
                             $q.all(promises).then(function () {
                                 console.log("asignaturas", ctrl.asignaturas);
+                                ctrl.gridOptions.data = ctrl.asignaturas;
                                 ctrl.loadingAsignaturas = false;
                             })
                                 .catch(function (error) {
@@ -283,6 +294,10 @@ angular.module('poluxClienteApp')
                     if (ctrl.selected.length == 0) {
                         ctrl.creditos = 0;
                     }
+                    if (item.isSelected === undefined) {
+                        item.isSelected = false;
+                    }
+                    item.isSelected = !item.isSelected;
                     var idx = list.indexOf(item);
                     var c;
                     if (idx > -1) {
@@ -294,7 +309,6 @@ angular.module('poluxClienteApp')
                         c = parseInt(item.Creditos, 10);
                         ctrl.creditos = ctrl.creditos + c;
                     }
-
                     if (ctrl.creditos >= ctrl.creditosMinimos) {
                         ctrl.minimoCreditos = true;
                     } else {

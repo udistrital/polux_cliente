@@ -118,9 +118,7 @@ angular.module('poluxClienteApp')
                 };
 
                 poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function (response) {
-
-                  console.log(response);
-                  if (response.data.includes("true")) {
+                  if (response.data.RequisitosModalidades) {
                     var parametrosTrabajoEstudiante = $.param({
                       query: "EstadoEstudianteTrabajoGrado:1,Estudiante:" + ctrl.codigoEstudiante,
                     });
@@ -135,8 +133,7 @@ angular.module('poluxClienteApp')
                         console.log("cantidad");
                         console.log(ctrl.datosModalidad);
                         poluxMidRequest.post("verificarRequisitos/CantidadModalidades", ctrl.datosModalidad).then(function (validado) {
-                          console.log(validado)
-                          if (validado.data === "true") {
+                          if (validado.data.RequisitosModalidades) {
                             var parametrosEstudiante = $.param({
                               query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:2,Usuario:" + ctrl.codigoEstudiante,
                               sortby: "SolicitudTrabajoGrado",

@@ -63,7 +63,7 @@
                         <label class="control-label col-sm-2"> {{'MODALIDAD' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.Modalidad.Nombre}} </label>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.areas">
                         <label class="control-label col-sm-2"> {{'AREAS_CONOCIMIENTO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.areas}} </label>
                     </div>
@@ -113,6 +113,15 @@
                             </div>
                         </div>
                     </div>
+                    <div ng-if="consultarTrabajoGrado.pasantiaEnEsperaArl">
+                        <div class="row" >
+                            <div class="control-label col-sm-12">
+                                <div class="alert alert-warning">
+                                    {{'ARL.WARNING' | translate}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
                         <div class="panel col-md-12">
@@ -142,6 +151,18 @@
                             <div class="col-sm-12">
                                 <div class="alert alert-danger">
                                     {{'PASANTIA.NO_ACTAS_REGISTRADAS_ACTUALMENTE' | translate}} 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.certificadoARL!=undefined">
+                            <label class="col-sm-3 control-label"> {{'PASANTIA.CERTIFICADO_ARL' | translate}}:  </label>
+                            <label ng-click="consultarTrabajoGrado.getDocumento(consultarTrabajoGrado.trabajoGrado.certificadoARL.DocumentoEscrito.Enlace)" class="col-sm-9" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                        </div>
+                        <div class="row" ng-if="consultarTrabajoGrado.trabajoGrado.certificadoARL===undefined">
+                            <br>
+                            <div class="col-sm-12">
+                                <div class="alert alert-danger">
+                                    {{'PASANTIA.NO_CERTIFICADO_ARL' | translate}} 
                                 </div>
                             </div>
                         </div>

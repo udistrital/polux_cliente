@@ -1,6 +1,4 @@
 {
     "directory": "bower_components",
-    "proxy": "http://10.20.4.15:3128",
-    "https-proxy": "http://10.20.4.15:3128",
     "registry": "https://registry.bower.io"
 }

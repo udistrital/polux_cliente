@@ -2,7 +2,9 @@
   <div class="panel-heading">
     {{'APROBAR_SOLICITUD'|translate}}
   </div>
-  <loading tam="4" load="loadSolicitud" message="msgCargandoSolicitud"> </loading>
+  <div class="panel-body" ng-if="loadSolicitud">
+    <loading tam="4" load="loadSolicitud" message="msgCargandoSolicitud"> </loading>
+  </div>
   <div class="panel-body" ng-if="!loadSolicitud && aprobarSolicitud.errorCargarSolicitud">
     <div class="alert alert-danger">
       {{'ERROR' | translate}}: {{aprobarSolicitud.mensajeErrorCargaSolicitud}}

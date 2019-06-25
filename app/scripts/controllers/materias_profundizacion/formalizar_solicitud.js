@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+ * @name poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
  * @description
- * # MateriasPosgradoFormalizarSolicitudCtrl
+ * # MateriasProfundizacionFormalizarSolicitudCtrl
  * Controller of the poluxClienteApp.
- * Controlador que regula las acciones necesarias para que el estudiante formalice sus solicitudes de cursar espacios académicos de posgrado.
+ * Controlador que regula las acciones necesarias para que el estudiante formalice sus solicitudes de cursar espacios académicos de profundizacion.
  * Se enseñan las solicitudes pendientes o resueltas con respecto a la formalización de solicitudes.
- * El estudiante formaliza según tenga solicitudes aprobadas por el posgrado pendientes.
+ * El estudiante formaliza según tenga solicitudes aprobadas por el pregrado pendientes.
  * Se consultan las solicitudes ya atendidas, pero a manera de consulta únicamente.
  * Para este procedimiento, la ejecución debe encontrarse en los periodos de formalización registrados, en caso contrario, se muestran estas fechas para tener en cuenta.
  * @requires $q
@@ -30,7 +30,7 @@
  * @property {Array} coleccionSolicitudesParaFormalizar Almacena las solicitudes pendientes de formalización para obtener la información visible para el usuario y necesaria para la transacción
  */
 angular.module('poluxClienteApp')
-	.controller('MateriasPosgradoFormalizarSolicitudCtrl',
+	.controller('MateriasProfundizacionFormalizarSolicitudCtrl',
 		function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
 			var ctrl = this;
 
@@ -58,10 +58,10 @@ angular.module('poluxClienteApp')
 				name: 'idSolicitud',
 				displayName: $translate.instant("SOLICITUD"),
 				width: '12%',
-	      sort: {
-	        direction: uiGridConstants.ASC,
-	        priority: 0
-	      }
+			    sort: {
+			      direction: uiGridConstants.ASC,
+			      priority: 0
+			    }
 			}, {
 				name: 'estadoSolicitud',
 				displayName: $translate.instant("ESTADO_SIN_DOSPUNTOS"),
@@ -71,8 +71,8 @@ angular.module('poluxClienteApp')
 				displayName: $translate.instant("DESCRIPCION"),
 				width: '15%'
 			}, {
-				name: 'posgrado',
-				displayName: $translate.instant("POSGRADO"),
+				name: 'pregrado',
+				displayName: $translate.instant("CARRERA"),
 				width: '15%'
 			}, {
 				name: 'espaciosAcademicos',
@@ -84,8 +84,8 @@ angular.module('poluxClienteApp')
 				width: '18%',
 				cellTemplate: '<btn-registro ' +
 					'ng-if="row.entity.idEstadoSolicitud == 7 || row.entity.idEstadoSolicitud == 8"' +
-					'funcion="grid.appScope.formalizarSolicitud.cargarFila(row)"' +
-					'grupobotones="grid.appScope.formalizarSolicitud.botonFormalizarSolicitud">' +
+					'funcion="grid.appScope.profundizacionFormalizarSolicitud.cargarFila(row)"' +
+					'grupobotones="grid.appScope.profundizacionFormalizarSolicitud.botonFormalizarSolicitud">' +
 					'</btn-registro>' +
 					'<div class="ui-grid-cell-contents" ' +
 					'ng-if="row.entity.idEstadoSolicitud == 5 || row.entity.idEstadoSolicitud == 6">' +
@@ -100,7 +100,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name obtenerPeriodoCorrespondiente
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que obtiene el periodo académico según los parámetros de consulta.
 			 * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer los periodos académicos registrados.
@@ -134,16 +134,16 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name obtenerParametrosSesionesDeFormalizacion
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que define los parámetros para consultar en la tabla relacion_sesiones.
-			 * El tipo de sesión 1 trae las sesiones asociadas a la modalidad de materias de posgrado.
+			 * El tipo de sesión 9 trae las sesiones asociadas a la modalidad de materias de profundizacion.
 			 * @param {Object} periodoAcademicoCorrespondiente El periodo académico consultado
 			 * @returns {String} La sentencia para la consulta correspondiente
 			 */
 			ctrl.obtenerParametrosSesionesDeFormalizacion = function(periodoAcademicoCorrespondiente) {
 				return $.param({
-					query: "SesionPadre.TipoSesion.Id:1,SesionPadre.periodo:" +
+					query: "SesionPadre.TipoSesion.Id:9,SesionPadre.periodo:" +
 						periodoAcademicoCorrespondiente.anio +
 						periodoAcademicoCorrespondiente.periodo,
 					limit: 0
@@ -153,7 +153,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name consultarSesiones
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que consulta las sesiones almacenadas en la base de datos.
 			 * Llama a la función: obtenerParametrosSesionesDeFormalizacion.
@@ -194,7 +194,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name comprobarPeriodoFormalizacion
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que comprueba que la sesión permite la formalización de solicitudes.
 			 * Llama a la función: consultarSesiones.
@@ -261,7 +261,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name autorizarFormalizacionDeSolicitudes
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que autoriza la formalización del lado del usuario, dependiendo de si se encuentra en el periodo correspondiente.
 			 * Llama a las funciones: comprobarPeriodoFormalizacion y actualizarCuadriculaSolicitudesParaFormalizar.
@@ -289,21 +289,21 @@ angular.module('poluxClienteApp')
 
 			/**
 			 * @ngdoc method
-			 * @name obtenerDatosDelPosgrado
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @name obtenerDatosDelPregrado
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
-			 * Función que de acuerdo al detalle de la solicitud, obtiene los datos del posgrado.
+			 * Función que de acuerdo al detalle de la solicitud, obtiene los datos del pregrado.
 			 * @param {Object} detalleDeSolicitud El detalle de la solicitud con el formato de almacenado en la base de datos
-			 * @returns {Object} Los datos del posgrado clasificados en una variable
+			 * @returns {Object} Los datos del pregrado clasificados en una variable
 			 */
-			ctrl.obtenerDatosDelPosgrado = function(detalleDeSolicitud) {
+			ctrl.obtenerDatosDelPregrado = function(detalleDeSolicitud) {
 				return JSON.parse(detalleDeSolicitud.split("-")[1]);
 			}
 
 			/**
 			 * @ngdoc method
 			 * @name obtenerEspaciosAcademicos
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que obtiene la información de los espacios académicos de acuerdo al detalle de la solicitud.
 			 * @param {Array} detalleDeSolicitud La colección de registros en el formato que se almacenan en la base de datos
@@ -314,9 +314,9 @@ angular.module('poluxClienteApp')
 				var espaciosAcademicos = [];
 				// Se define una variable que interprete el formato del detalle de la solicitud recibida
 				// de modo que se obtenga la información de los espacios académicos (estos inician desde el índice 2)
-				var detallePosgrado = detalleDeSolicitud.split("-").slice(2);
+				var detallePregrado = detalleDeSolicitud.split("-").slice(2);
 				// Se recorre la información de los espacios académicos almacenados
-				angular.forEach(detallePosgrado, function(espacioAcademico) {
+				angular.forEach(detallePregrado, function(espacioAcademico) {
 					// Como el formato de almacenado guarda en cada posición el objeto de espacio académico,
 					// se pasa a formato JSON para obtener su contenido
 					var objetoEspacioAcademico = JSON.parse(espacioAcademico);
@@ -336,7 +336,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name obtenerEspaciosAcademicosPorNombre
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que obtiene los espacios académicos por su nombre.
 			 * @param {Array} coleccionEspaciosAcademicos La colección de espacios académicos como objetos
@@ -359,7 +359,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name obtenerParametrosSolicitudRespondida
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que define los parámetros para consultar en la tabla respuesta_solicitud.
 			 * El estado de la solicitud que se encuentre en los estados 5, 6, 7, 8, 9, 10 u 11 corresponde a:
@@ -386,7 +386,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name consultarRespuestaSolicitud
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que según la información del estudiante solicitante, carga la información correspondiente a la respuesta de la misma.
 			 * Llama a la función: obtenerParametrosSolicitudRespondida.
@@ -421,16 +421,16 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name obtenerParametrosDetalleDeSolicitud
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que define los parámetros para consultar en la tabla detalle_solicitud.
-			 * El detalle tipo solicitud 37 relaciona el detalle y la modalidad de espacios académicos de posgrado.
+			 * El detalle tipo solicitud 44 relaciona el detalle y la modalidad de espacios académicos de profundizacion.
 			 * @param {Number} idSolicitudTrabajoGrado El identificador de la solicitud de trabajo de grado asociada al usuario
 			 * @returns {String} La sentencia para la consulta correspondiente
 			 */
 			ctrl.obtenerParametrosDetalleDeSolicitud = function(idSolicitudTrabajoGrado) {
 				return $.param({
-					query: "DetalleTipoSolicitud.Id:37," +
+					query: "DetalleTipoSolicitud.Id:44," +
 						"SolicitudTrabajoGrado.Id:" +
 						idSolicitudTrabajoGrado,
 					limit: 1
@@ -440,7 +440,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name consultarDetalleSolicitud
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que según la solicitud, carga la información correspondiente al detalle de la misma.
 			 * Llama a la función: obtenerParametrosDetalleDeSolicitud.
@@ -473,16 +473,16 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name obtenerParametrosUsuariosConSolicitudes
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que define los parámetros para consultar en la tabla usuario_solicitud.
-			 * La modalidad asociada al tipo de solicitud 13 es la que relaciona solicitud inicial con espacios académicos de posgrado.
+			 * La modalidad asociada al tipo de solicitud 16 es la que relaciona solicitud inicial con espacios académicos de profundización.
 			 * @param {undefined} undefined No requiere parámetros
 			 * @returns {String} La sentencia para la consulta correspondiente
 			 */
 			ctrl.obtenerParametrosUsuariosConSolicitudes = function() {
 				return $.param({
-					query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13," +
+					query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:16," +
 						"Usuario:" +
 						ctrl.usuarioSesion,
 					limit: 0
@@ -492,7 +492,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name consultarUsuariosConSolicitudes
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que recorre la base de datos de acuerdo al usuario en sesión y sus solicitudes en espera de ser formalizadas.
 			 * Llama a las funciones: obtenerParametrosUsuariosConSolicitudes, consultarRespuestaSolicitud y consultarDetalleSolicitud.
@@ -552,10 +552,10 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name mostrarSolicitudesParaFormalizar
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que carga las solicitudes aprobadas a la cuadrícula con la información correspondiente.
-			 * Llama a las funciones: obtenerDatosDelPosgrado, obtenerEspaciosAcademicos y obtenerEspaciosAcademicosPorNombre.
+			 * Llama a las funciones: obtenerDatosDelPregrado, obtenerEspaciosAcademicos y obtenerEspaciosAcademicosPorNombre.
 			 * @param {Array} solicitudesParaFormalizarRegistradas Las solicitudes consultadas que están asociadas al estudiante en sesión
 			 * @returns {undefined} No hace retorno de resultados
 			 */
@@ -566,7 +566,7 @@ angular.module('poluxClienteApp')
 					solicitudParaFormalizar.idSolicitud = solicitudParaFormalizar.SolicitudTrabajoGrado.Id;
 					solicitudParaFormalizar.estadoSolicitud = solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Nombre;
 					solicitudParaFormalizar.descripcionSolicitud = solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Descripcion;
-					solicitudParaFormalizar.posgrado = ctrl.obtenerDatosDelPosgrado(solicitudParaFormalizar.detalleDeSolicitud).Nombre;
+					solicitudParaFormalizar.pregrado = ctrl.obtenerDatosDelPregrado(solicitudParaFormalizar.detalleDeSolicitud).Nombre;
 					solicitudParaFormalizar.espaciosAcademicosSolicitados = ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleDeSolicitud);
 					solicitudParaFormalizar.espaciosAcademicos = ctrl.obtenerEspaciosAcademicosPorNombre(ctrl.obtenerEspaciosAcademicos(solicitudParaFormalizar.detalleDeSolicitud));
 					solicitudParaFormalizar.idEstadoSolicitud = solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Id;
@@ -578,7 +578,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name actualizarCuadriculaSolicitudesParaFormalizar
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que actualiza la carga de las solicitudes para formalizar.
 			 * Llama a las funciones: consultarUsuariosConSolicitudes y mostrarSolicitudesParaFormalizar.
@@ -624,7 +624,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name cargarFila
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que carga la fila asociada según la selección del usuario.
 			 * Llama a la función: formalizarSolicitudSeleccionada.
@@ -638,7 +638,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name formalizarSolicitudSeleccionada
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que formaliza la solicitud a petición del usuario.
 			 * Llama a las funciones: registrarFormalizacion y autorizarFormalizacionDeSolicitudes.
@@ -648,11 +648,11 @@ angular.module('poluxClienteApp')
 			ctrl.formalizarSolicitudSeleccionada = function(solicitudSeleccionada) {
 				swal({
 						title: $translate.instant("FORMALIZAR_SOLICITUD.CONFIRMACION"),
-						text: $translate.instant("FORMALIZAR_SOLICITUD.MENSAJE_CONFIRMACION_POSGRADO", {
+						text: $translate.instant("FORMALIZAR_SOLICITUD.MENSAJE_CONFIRMACION_PROFUNDIZACION", {
 							// Se cargan datos de la solicitud para que el usuario pueda verificar antes de confirmar
 							idSolicitud: solicitudSeleccionada.idSolicitud,
 							nombreEstado: solicitudSeleccionada.estadoSolicitud,
-							nombrePosgrado: solicitudSeleccionada.posgrado
+							nombrePregrado: solicitudSeleccionada.pregrado
 						}),
 						type: "info",
 						confirmButtonText: $translate.instant("ACEPTAR"),
@@ -709,7 +709,7 @@ angular.module('poluxClienteApp')
 			/**
 			 * @ngdoc method
 			 * @name registrarFormalizacion
-			 * @methodOf poluxClienteApp.controller:MateriasPosgradoFormalizarSolicitudCtrl
+			 * @methodOf poluxClienteApp.controller:MateriasProfundizacionFormalizarSolicitudCtrl
 			 * @description
 			 * Función que realiza la transacción de registro de la formalización.
 			 * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar los resultados de la formalización en la base de datos.

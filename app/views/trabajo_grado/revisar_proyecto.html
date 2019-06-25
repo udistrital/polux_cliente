@@ -3,10 +3,11 @@
     <div class="panel-heading">
       {{'REVISAR_PROYECTO.TITULO' | translate}}
     </div>
-  
+
+    <loading tam="4" load="revisarProyecto.cargandoProyectos" message="revisarProyecto.mensajeCargandoProyectos"></loading>
+
     <div class="panel-body">
   
-      <loading tam="4" load="revisarProyecto.cargandoProyectos" message="revisarProyecto.mensajeCargandoProyectos"></loading>
       <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="revisarProyecto.cuadriculaProyectos.data.length > 0 && !revisarProyecto.cargandoProyectos">
         <div class="mi-grid" id="mi-grid" ui-grid="revisarProyecto.cuadriculaProyectos"></div>
       </div>

@@ -336,6 +336,7 @@ angular.module('poluxClienteApp')
         .catch(function(excepcionInformacionDocente) {
           ctrl.errorCargando = true;
           ctrl.mensajeError = excepcionInformacionDocente;
+          ctrl.cargando = false;
         });
 
       /**

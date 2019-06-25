@@ -283,6 +283,26 @@ angular
               controller: 'GeneralConceptoTgCtrl',
               controllerAs: 'conceptoTg'
             })
+            .when('/materias_profundizacion/seleccion_admitidos', {
+              templateUrl: 'views/materias_profundizacion/seleccion_admitidos.html',
+              controller: 'MateriasProfundizacionSeleccionAdmitidosCtrl',
+              controllerAs: 'seleccionAdmitidos'
+            })
+            .when('/materias_profundizacion/formalizar_solicitud', {
+              templateUrl: 'views/materias_profundizacion/formalizar_solicitud.html',
+              controller: 'MateriasProfundizacionFormalizarSolicitudCtrl',
+              controllerAs: 'profundizacionFormalizarSolicitud'
+            })
+            .when('/materias_profundizacion/vincular_admitidos', {
+              templateUrl: 'views/materias_profundizacion/vincular_admitidos.html',
+              controller: 'MateriasProfundizacionVincularAdmitidosCtrl',
+              controllerAs: 'profundizacionVincularAdmitidos'
+            })
+            .when('/materias_profundizacion/registrar_nota', {
+              templateUrl: 'views/materias_profundizacion/registrar_nota.html',
+              controller: 'MateriasProfundizacionRegistrarNotaCtrl',
+              controllerAs: 'profundizacionRegistrarNota'
+            })
             .otherwise({
                 redirectTo: '/'
             });

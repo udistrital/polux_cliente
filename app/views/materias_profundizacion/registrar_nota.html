@@ -1,0 +1,86 @@
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    {{'REGISTRAR_NOTA.TITULO_PROFUNDIZACION' | translate}}
+  </div>
+
+  <div class="panel-body">
+
+    <loading tam="4" load="profundizacionRegistrarNota.cargandoPregradosAsociados" message="profundizacionRegistrarNota.mensajeCargandoPregradosAsociados"></loading>
+    <div class="row" ng-if="profundizacionRegistrarNota.pregradosAsociados.length > 0 && !profundizacionRegistrarNota.cargandoPregradosAsociados">
+      <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
+      <div class="col-sm-10">
+        <ui-select name="pregrado" ng-model="profundizacionRegistrarNota.pregradoSeleccionado" required on-select="profundizacionRegistrarNota.escogerPregrado()" style="width:97%;" theme="bootstrap">
+          <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">
+            {{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
+          </ui-select-match>
+          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in profundizacionRegistrarNota.pregradosAsociados | filter: $select.search">
+            <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+
+    <br ng-if="profundizacionRegistrarNota.periodoCorrespondienteHabilitado">
+
+    <div class="row" ng-if="profundizacionRegistrarNota.periodoCorrespondienteHabilitado">
+      <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
+      <div class="col-sm-10">
+        <select ng-model="profundizacionRegistrarNota.periodoSeleccionado" ng-change="profundizacionRegistrarNota.actualizarTrabajosDeGradoCursados()">
+          <option ng-repeat="periodo in profundizacionRegistrarNota.periodosCorrespondientes" ng-value="periodo">
+            {{periodo.anio}}-{{periodo.periodo}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel-body alert alert-danger" ng-if="profundizacionRegistrarNota.errorCargandoConsultasIniciales">
+      <span ng-bind="profundizacionRegistrarNota.mensajeErrorCargandoConsultasIniciales"></span>
+    </div>
+    
+    <loading tam="4" load="profundizacionRegistrarNota.cargandoTrabajosDeGradoCursados" message="profundizacionRegistrarNota.mensajeCargandoTrabajosDeGrado"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="profundizacionRegistrarNota.cuadriculaTrabajosDeGradoModalidadProfundizacion.data.length > 0 && !profundizacionRegistrarNota.cargandoTrabajosDeGradoCursados">
+      <div class="mi-grid" id="mi-grid" ui-grid="profundizacionRegistrarNota.cuadriculaTrabajosDeGradoModalidadProfundizacion"></div>
+    </div>
+
+    <br ng-if="profundizacionRegistrarNota.errorCargandoTrabajosDeGradoCursados">
+    
+    <div class="panel-body alert alert-danger" ng-if="profundizacionRegistrarNota.errorCargandoTrabajosDeGradoCursados">
+      <span ng-bind="profundizacionRegistrarNota.mensajeErrorCargandoTrabajosDeGradoCursados"></span>
+    </div>
+
+  </div>
+
+  <div id="modalVerTrabajoDeGrado" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+      <div class="modal-header">
+        {{'REGISTRAR_NOTA.DESCRIPCION' | translate}}
+        <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+        <br>
+      </div>
+      <loading tam="4" load="profundizacionRegistrarNota.cargandoEspaciosAcademicos" message="mensajeCargandoTransaccionRegistro"></loading>
+      <div class="panel panel-default" ng-if="profundizacionRegistrarNota.cuadriculaEspaciosAcademicosInscritos.data.length > 0 && !profundizacionRegistrarNota.cargandoEspaciosAcademicos">
+        <div class="panel-heading">
+          {{'ESP_ACADEMICOS' | translate}}
+        </div>
+        <div class="panel-body">
+          <div class="panel col-md-12">
+            <div class="mi-grid" id="mi-grid" ui-grid-edit ui-grid-cellNav ui-grid="profundizacionRegistrarNota.cuadriculaEspaciosAcademicosInscritos" style="height: {{(profundizacionRegistrarNota.cuadriculaEspaciosAcademicosInscritos.data.length * 35) + 40}}px"></div>
+          </div>
+          <div class="panel col-md-12">
+            <label class="col-sm-12">{{'REGISTRAR_NOTA.INSTRUCCIONES' | translate}}</label>
+          </div>
+          <div class="row row-centered">
+            <div class="col-sm-2 col-centered">
+              <input type="submit" class="btn btn-success" value="{{'BTN.REGISTRAR_NOTA'|translate}}" ng-click="profundizacionRegistrarNota.confirmarRegistroNotas()">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body alert alert-danger" ng-if="profundizacionRegistrarNota.errorCargandoEspaciosAcademicos">
+        <span ng-bind="profundizacionRegistrarNota.mensajeErrorCargandoEspaciosAcademicos"></span>
+      </div>
+    </div>
+  </div>
+
+</div>

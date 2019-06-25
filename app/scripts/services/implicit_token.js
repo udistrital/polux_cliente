@@ -66,7 +66,8 @@ angular.module('implicitToken', [])
             var appUserRole;
             var emailInfo = {
               //Email: "karianov@correo.udistrital.edu.co"
-              Email: appUserInfo.sub,
+              //Email: appUserInfo.sub,
+              Email: appUserInfo.email,
               Rol: appUserInfo.role,
               Documento: appUserInfo.documento
             };
@@ -200,7 +201,6 @@ angular.module('implicitToken', [])
         }
         if (window.localStorage.getItem('state') === state) {
           window.localStorage.clear();
-          valid = true;
         } else {
           valid = false;
         }

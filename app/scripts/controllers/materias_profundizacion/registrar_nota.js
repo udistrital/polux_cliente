@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+ * @name poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
  * @description
- * # MateriasPosgradoRegistrarNotaCtrl
+ * # MateriasProfundizacionRegistrarNotaCtrl
  * Controller of the poluxClienteApp.
- * Controlador que regula las acciones necesarias para que el coordinador del posgrado liste los trabajos de grado cursados y registre las calificaciones finales.
- * Se realiza una selección del posgrado y el periodo académico para listar los trabajos de grado cursados por los estudiantes.
+ * Controlador que regula las acciones necesarias para que el coordinador del pregrado liste los trabajos de grado cursados y registre las calificaciones finales.
+ * Se realiza una selección del pregrado y el periodo académico para listar los trabajos de grado cursados por los estudiantes.
  * El coordinador selecciona cada trabajo de grado guardado, y registra las calificaciones finales obtenidas por el estudiante.
  * Pueden volver a registrarse las calificaciones, en caso de que el coordinador haya cometido algún error durante el ingreso.
  * Este procedimiento actualiza la asginatura de trabajo de grado, y pasa el estado de dicha a "Cursado".
@@ -19,21 +19,21 @@
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires uiGridConstants
- * @property {String} usuarioSesion El identificador del coordinador en sesión para consultar los posgrados asociados
- * @property {Boolean} cargandoPosgradosAsociados Indicador que maneja la carga de los posgrados asociados al coordinador en sesión
- * @property {String} mensajeCargandoPosgradosAsociados Mensaje que aparece durante la carga de los posgrados asociados al coordinador
+ * @property {String} usuarioSesion El identificador del coordinador en sesión para consultar los pregrados asociados
+ * @property {Boolean} cargandoPoegradosAsociados Indicador que maneja la carga de los pregrados asociados al coordinador en sesión
+ * @property {String} mensajeCargandoPregradosAsociados Mensaje que aparece durante la carga de los pregrados asociados al coordinador
  * @property {Boolean} periodoCorrespondienteHabilitado Indicador que maneja la habilitación del periodo correspondiente
  * @property {String} mensajeCargandoTrabajosDeGrado Mensaje que aparece durante la carga de los trabajos de grado consultados por el coordinador según los parámetros
  * @property {String} mensajeCargandoTransaccionRegistro Mensaje que aparece durante la carga de la transacción que registra las calificaciones del trabajo de grado seleccionado
  * @property {Array} botonRegistrarCalificaciones Establece las propiedades del botón que se muestra para cada trabajo de grado y efectúa el registro de las calificaciones obtenidas
- * @property {Object} cuadriculaTrabajosDeGradoModalidadPosgrado Almacena y adapta la información de los trabajos de grado cursados por cada estudiante, de forma que el coordinador observe la información pertinente
+ * @property {Object} cuadriculaTrabajosDeGradoModalidadPregrado Almacena y adapta la información de los trabajos de grado cursados por cada estudiante, de forma que el coordinador observe la información pertinente
  * @property {Object} cuadriculaEspaciosAcademicosInscritos Almacena y adapta la información de los espacios académicos cursados por cada estudiante seleccionado
- * @property {Array} posgradosAsociados Define el conjunto de posgrados asociados al coordinador en sesión
- * @property {Array} periodosCorrespondientes Define el conjunto de periodos académicos que corresponden a la modalidad de espacios académicos de posgrado
+ * @property {Array} pregradosAsociados Define el conjunto de pregrados asociados al coordinador en sesión
+ * @property {Array} periodosCorrespondientes Define el conjunto de periodos académicos que corresponden a la modalidad de espacios académicos de pregrado
  * @property {Object} periodoAcademicoPrevio Establece el año y el periodo académico anterior a la operación, para traer los registros académicos de cada estudiante
  * @property {Object} periodoSeleccionado Almacena el periodo académico que el coordinador seleccionó desde la vista
- * @property {Boolean} errorCargandoConsultasIniciales Indicador que maneja la aparición de un error durante las consultas de posgrados asociados y periodos correspondientes
- * @property {String} mensajeErrorCargandoConsultasIniciales Mensaje que aparece en caso de que ocurra un error durante las consultas de posgrados asociados y periodos correspondientes
+ * @property {Boolean} errorCargandoConsultasIniciales Indicador que maneja la aparición de un error durante las consultas de pregrados asociados y periodos correspondientes
+ * @property {String} mensajeErrorCargandoConsultasIniciales Mensaje que aparece en caso de que ocurra un error durante las consultas de pregrados asociados y periodos correspondientes
  * @property {Boolean} cargandoTrabajosDeGradoCursados Indicador que maneja la carga de los trabajos de grado cursados
  * @property {Boolean} errorCargandoTrabajosDeGradoCursados Indicador que maneja la aparición de algún error durante la carga de los trabajos de grado cursados
  * @property {String} mensajeErrorCargandoTrabajosDeGradoCursados Mensaje que aparece en caso de que ocurra algún error durante la carga de los trabajos de grado cursados
@@ -43,7 +43,7 @@
  * @property {Object} estudianteSeleccionado Es el trabajo de grado que el coordinador seleccionó desde la lista de trabajos de grado cursados
  */
 angular.module('poluxClienteApp')
-  .controller('MateriasPosgradoRegistrarNotaCtrl',
+  .controller('MateriasProfundizacionRegistrarNotaCtrl',
     function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
       var ctrl = this;
 
@@ -53,9 +53,9 @@ angular.module('poluxClienteApp')
 
       ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 
-      // En el inicio de la página, se están cargando los posgrados
-      ctrl.cargandoPosgradosAsociados = true;
-      ctrl.mensajeCargandoPosgradosAsociados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
+      // En el inicio de la página, se están cargando los pregrados
+      ctrl.cargandoPregradosAsociados = true;
+      ctrl.mensajeCargandoPregradosAsociados = $translate.instant("LOADING.CARGANDO_INFO_ACADEMICA");
 
       // Se inhabilita la selección del periodo correspondiente
       ctrl.periodoCorrespondienteHabilitado = false;
@@ -74,9 +74,9 @@ angular.module('poluxClienteApp')
         estado: true
       }];
 
-      // Se define la cuadrícula de los trabajos de grados bajo la modalidad de espacios académicos de posgrado
-      ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado = {};
-      ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.columnDefs = [{
+      // Se define la cuadrícula de los trabajos de grados bajo la modalidad de espacios académicos de profundizacion
+      ctrl.cuadriculaTrabajosDeGradoModalidadProfundizacion = {};
+      ctrl.cuadriculaTrabajosDeGradoModalidadProfundizacion.columnDefs = [{
         name: 'idTrabajoGrado',
         displayName: $translate.instant("TRABAJO_GRADO"),
         width: '15%',
@@ -109,8 +109,8 @@ angular.module('poluxClienteApp')
         displayName: $translate.instant("LISTAR_APROBADOS.REGISTRAR"),
         width: '10%',
         cellTemplate: '<btn-registro ' +
-          'funcion="grid.appScope.registrarNota.cargarFila(row)" ' +
-          'grupobotones="grid.appScope.registrarNota.botonRegistrarCalificaciones">' +
+          'funcion="grid.appScope.profundizacionRegistrarNota.cargarFila(row)" ' +
+          'grupobotones="grid.appScope.profundizacionRegistrarNota.botonRegistrarCalificaciones">' +
           '</btn-registro>'
       }];
 
@@ -147,46 +147,46 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
-       * @name obtenerParametrosPosgradosDelCoordinador
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @name obtenerParametrosPregradosDelCoordinador
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que define los parámetros para consultar en la tabla coordinador_carrera.
        * @param {undefined} undefined No requiere parámetros
-       * @returns {Array} Los parámetros necesarios para realizar la consulta de los posgrados asociados al coordinador
+       * @returns {Array} Los parámetros necesarios para realizar la consulta de los pregrados asociados al coordinador
        */
-      ctrl.obtenerParametrosPosgradosDelCoordinador = function() {
-        return [ctrl.usuarioSesion, "POSGRADO"];
+      ctrl.obtenerParametrosPregradosDelCoordinador = function() {
+        return [ctrl.usuarioSesion, "PREGRADO"];
       }
 
       /**
        * @ngdoc method
-       * @name consultarPosgradosAsociados
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @name consultarPregradosAsociados
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
-       * Función que recorre la base de datos de acuerdo al coordinador en sesión y sus posgrados asociados.
-       * Llama a la función: obtenerParametrosPosgradosDelCoordinador.
-       * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer los posgrados asociados al coordinador.
+       * Función que recorre la base de datos de acuerdo al coordinador en sesión y sus pregrados asociados.
+       * Llama a la función: obtenerParametrosPregradosDelCoordinador.
+       * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer los pregrados asociados al coordinador.
        * @param {undefined} undefined No requiere parámetros
-       * @returns {Promise} La colección de posgrados asociados, o la excepción generada
+       * @returns {Promise} La colección de pregrados asociados, o la excepción generada
        */
-      ctrl.consultarPosgradosAsociados = function() {
+      ctrl.consultarPregradosAsociados = function() {
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
-        // Se traen los resultados de los posgrados asociados desde el servicio de académica
-        academicaRequest.get("coordinador_carrera", ctrl.obtenerParametrosPosgradosDelCoordinador())
-          .then(function(resultadoPosgradosAsociados) {
+        // Se traen los resultados de los pregrados asociados desde el servicio de académica
+        academicaRequest.get("coordinador_carrera", ctrl.obtenerParametrosPregradosDelCoordinador())
+          .then(function(resultadoPregradosAsociados) {
             // Se verifica que el resultado y los datos necesarios son válidos
-            if (!angular.isUndefined(resultadoPosgradosAsociados.data.coordinadorCollection.coordinador)) {
-              // Se resuelven los posgrados asociados
-              deferred.resolve(resultadoPosgradosAsociados.data.coordinadorCollection.coordinador);
+            if (!angular.isUndefined(resultadoPregradosAsociados.data.coordinadorCollection.coordinador)) {
+              // Se resuelven los pregraods asociados
+              deferred.resolve(resultadoPregradosAsociados.data.coordinadorCollection.coordinador);
             } else {
               // En caso de no estar definida la respuesta, se rechaza el mensaje correspondiente
-              deferred.reject($translate.instant("ERROR.SIN_POSGRADOS"));
+              deferred.reject($translate.instant("ERROR.SIN_PREGRADOS"));
             }
           })
-          .catch(function(excepcionPosgradosAsociados) {
+          .catch(function(excepcionPregradosAsociados) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
-            deferred.reject($translate.instant("ERROR.CARGANDO_POSGRADOS"));
+            deferred.reject($translate.instant("ERROR.CARGANDO_PREGRADOS"));
           });
         // Se devuelve el diferido que maneja la promesa
         return deferred.promise;
@@ -195,7 +195,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarPeriodosCorrespondientes
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que recorre la base de datos hacia los periodos académicos.
        * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer los periodos académicos registrados.
@@ -228,7 +228,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarPeriodoAcademicoPrevio
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que obtiene el periodo académico según los parámetros de consulta.
        * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer el periodo académico previo al actual.
@@ -262,49 +262,49 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name cargarConsultasIniciales
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que carga las consultas iniciales para poder listar los trabajos de grado.
-       * Llama a las funciones: consultarPosgradosAsociados, consultarPeriodosCorrespondientes y consultarPeriodoAcademicoPrevio.
+       * Llama a las funciones: consultarPregradosAsociados, consultarPeriodosCorrespondientes y consultarPeriodoAcademicoPrevio.
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
       ctrl.cargarConsultasIniciales = function() {
         // Se garantiza que se cumplan todas las promesas de carga desde un inicio
-        $q.all([ctrl.consultarPosgradosAsociados(), ctrl.consultarPeriodosCorrespondientes(), ctrl.consultarPeriodoAcademicoPrevio()])
+        $q.all([ctrl.consultarPregradosAsociados(), ctrl.consultarPeriodosCorrespondientes(), ctrl.consultarPeriodoAcademicoPrevio()])
           .then(function(resultadoConsultasIniciales) {
             // Se apaga el mensaje de carga
-            ctrl.cargandoPosgradosAsociados = false;
+            ctrl.cargandoPregradosAsociados = false;
             // Y se establecen los resultados obtenidos por las consultas iniciales
-            ctrl.posgradosAsociados = resultadoConsultasIniciales[0];
+            ctrl.pregradosAsociados = resultadoConsultasIniciales[0];
             ctrl.periodosCorrespondientes = resultadoConsultasIniciales[1];
             ctrl.periodoAcademicoPrevio = resultadoConsultasIniciales[2];
           })
           .catch(function(excepcionConsultasIniciales) {
             // Se apaga el mensaje de carga y se muestra el error
-            ctrl.cargandoPosgradosAsociados = false;
+            ctrl.cargandoPregradosAsociados = false;
             ctrl.errorCargandoConsultasIniciales = true;
             ctrl.mensajeErrorCargandoConsultasIniciales = excepcionConsultasIniciales;
           });
       }
 
       /**
-       * Se lanza la función que carga las consultas de posgrado asociado al coordinador y el periodo académico correspondientes
+       * Se lanza la función que carga las consultas de pregrado asociado al coordinador y el periodo académico correspondientes
        */
       ctrl.cargarConsultasIniciales();
 
       /**
        * @ngdoc method
-       * @name escogerPosgrado
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @name escogerPregrado
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
-       * Función que se ejecuta cuando se escoge el posgrado asociado desde la vista.
+       * Función que se ejecuta cuando se escoge el pregrado asociado desde la vista.
        * Llama a la función: actualizarTrabajosDeGradoCursados.
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultado
        */
-      ctrl.escogerPosgrado = function() {
-        // Se notifica que el posgrado asociado ha sido escogido
+      ctrl.escogerPregrado = function() {
+        // Se notifica que el pregrado asociado ha sido escogido
         ctrl.periodoCorrespondienteHabilitado = true;
         // Se estudia si el periodo ha sido seleccionado
         if (ctrl.periodoSeleccionado) {
@@ -316,7 +316,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name obtenerParametrosEspaciosAcademicosInscritos
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que define los parámetros para consultar en la tabla espacio_academico_inscrito.
        * Los espacios académicos inscritos que estén activos o cursados ya sea para el primer registro, o para corregir las notas:
@@ -330,7 +330,7 @@ angular.module('poluxClienteApp')
           query: "EstadoEspacioAcademicoInscrito.Id.in:1|3," +
             "EspaciosAcademicosElegibles.Activo:True," +
             "EspaciosAcademicosElegibles.CarreraElegible.CodigoCarrera:" +
-            ctrl.posgradoSeleccionado +
+            ctrl.pregradoSeleccionado +
             ",TrabajoGrado:" +
             idTrabajoGrado,
           limit: 0
@@ -340,7 +340,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarEspaciosAcademicosInscritos
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que según el trabajo de grado, carga la información correspondiente a los espacios académicos inscritos.
        * Llama a la función: obtenerParametrosEspaciosAcademicosInscritos.
@@ -373,7 +373,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarInformacionAcademicaDelEstudiante
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que según la solicitud, carga los datos académicos del estudiante asociado.
        * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información académica registrada.
@@ -405,17 +405,17 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name obtenerParametrosEstudianteTrabajoGrado
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que define los parámetros para consultar en la tabla estudiante_trabajo_grado.
-       * La modalidad 2 corresponde a Espacios Académicos de Posgrado.
-       * El estado del trabajo de grado 20 corresponde a Cursando espacios académicos de posgrado.
+       * La modalidad 3 corresponde a Espacios Académicos de Profundización.
+       * El estado del trabajo de grado 20 corresponde a Cursando espacios académicos.
        * @param {undefined} undefined No requiere parámetros
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
         return $.param({
-          query: "TrabajoGrado.Modalidad.Id:2," +
+          query: "TrabajoGrado.Modalidad.Id:3," +
             "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|3|20," +
             "TrabajoGrado.PeriodoAcademico:" +
             ctrl.periodoSeleccionado.anio +
@@ -428,9 +428,9 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarTrabajosDeGradoCursados
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
-       * Función que consulta los estudiantes con trabajos de grado bajo la modalidad de espacios académicos de posgrado y añade los detalles necesarios para registrar las notas.
+       * Función que consulta los estudiantes con trabajos de grado bajo la modalidad de espacios académicos de profundización y añade los detalles necesarios para registrar las notas.
        * Llama a las funciones: obtenerParametrosEstudianteTrabajoGrado, consultarInformacionAcademicaDelEstudiante y consultarEspaciosAcademicosInscritos.
        * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para traer los estudiantes con trabajos de grado registrados.
        * @param {undefined} undefined No requiere parámetros
@@ -480,7 +480,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name mostrarTrabajosDeGradoCursados
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que carga los trabajos de grado cursados a la cuadrícula con la información correspondiente.
        * @param {Array} estudiantesCursandoTrabajoDeGrado La colección de trabajos de grado cursados ya consultados
@@ -498,13 +498,13 @@ angular.module('poluxClienteApp')
           estudianteConTrabajoDeGrado.nombreEstado = estudianteConTrabajoDeGrado.TrabajoGrado.EstadoTrabajoGrado.Nombre;
         });
         // Se cargan los datos visibles a la cuadrícula
-        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = estudiantesCursandoTrabajoDeGrado;
+        ctrl.cuadriculaTrabajosDeGradoModalidadProfundizacion.data = estudiantesCursandoTrabajoDeGrado;
       }
 
       /**
        * @ngdoc method
        * @name actualizarTrabajosDeGradoCursados
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que actualiza el contenido de la lista de trabajos de grado cursados.
        * Llama a las funciones: consultarTrabajosDeGradoCursados y mostrarTrabajosDeGradoCursados.
@@ -513,7 +513,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.actualizarTrabajosDeGradoCursados = function() {
         // Se recargan los trabajos de grado visibles
-        ctrl.cuadriculaTrabajosDeGradoModalidadPosgrado.data = [];
+        ctrl.cuadriculaTrabajosDeGradoModalidadProfundizacion.data = [];
         // Se establece que inicia la carga de los trabajos de grado cursados
         ctrl.cargandoTrabajosDeGradoCursados = true;
         ctrl.errorCargandoConsultasIniciales = false;
@@ -543,7 +543,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name cargarDescripcionEspaciosAcademicos
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que carga la descripción de los espacios académicos del trabajo de grado.
        * Consulta el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para traer la información sobre los espacios académicos.
@@ -578,7 +578,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name cargarFila
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que carga la fila asociada según la selección del usuario.
        * Llama a la función: cargarTrabajoDeGradoSeleccionado.
@@ -592,7 +592,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name cargarTrabajoDeGradoSeleccionado
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que carga el trabajo de grado seleccionado por el coordinador en sesión.
        * Llama a la función: cargarDescripcionEspaciosAcademicos.
@@ -635,7 +635,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name verificarIngresoDeNotas
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que recorre las notas ingresadas por el usuario y verifica que sean válidas.
        * @param {undefined} undefined No requiere parámetros
@@ -658,7 +658,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name confirmarRegistroNotas
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que maneja la confirmación del coordinador para registrar las notas.
        * Llama a las funciones: verificarIngresoDeNotas, registrarNotasIngresadas y actualizarTrabajosDeGradoCursados.
@@ -737,7 +737,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name registrarNotasIngresadas
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que prepara el contenido de la información para actualizar.
        * Llama a la función: consultarAsignaturasDeTrabajoDeGrado.
@@ -786,12 +786,12 @@ angular.module('poluxClienteApp')
               trabajoDeGrado.EstadoTrabajoGrado = {
                 Id: 1
               };
-              trabajoDeGrado.Titulo = "Aprobada la modalidad de cursar espacios académicos de posgrado";
+              trabajoDeGrado.Titulo = "Aprobada la modalidad de cursar espacios académicos de profundización";
             } else {
               trabajoDeGrado.EstadoTrabajoGrado = {
                 Id: 3
               };
-              trabajoDeGrado.Titulo = "Reprobada la modalidad de cursar espacios académicos de posgrado";
+              trabajoDeGrado.Titulo = "Reprobada la modalidad de cursar espacios académicos de profundización";
             }
             // Se define el objeto para enviar como información para actualizar
             var informacionParaActualizar = {
@@ -819,7 +819,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name obtenerParametrosAsignaturaTrabajoGrado
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que define los parámetros para consultar en la tabla asignatura_trabajo_grado.
        * Las asignaturas para trabajo grado estén cursándose o cursadas ya sea para el primer registro, o para corregir las notas:
@@ -844,7 +844,7 @@ angular.module('poluxClienteApp')
       /**
        * @ngdoc method
        * @name consultarAsignaturasDeTrabajoDeGrado
-       * @methodOf poluxClienteApp.controller:MateriasPosgradoRegistrarNotaCtrl
+       * @methodOf poluxClienteApp.controller:MateriasProfundizacionRegistrarNotaCtrl
        * @description
        * Función que según el trabajo de grado, consulta la información correspondiente a la(s) asignatura(s) del trabajo de grado.
        * Llama a la función: obtenerParametrosAsignaturaTrabajoGrado.

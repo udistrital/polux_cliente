@@ -61,7 +61,12 @@ angular.module('poluxClienteApp')
         ctrl.habilitar2 = true;
 
         ctrl.gridOptions = {
-          //showGridFooter: true
+          paginationPageSizes: [5, 10, 15, 20, 25],
+          paginationPageSize: 10,
+          enableFiltering: true,
+          enableSorting: true,
+          enableSelectAll: false,
+          useExternalPagination: false,
         };
 
         /**
@@ -173,11 +178,18 @@ angular.module('poluxClienteApp')
         ctrl.verificarFechas = function(periodo, anio) {
           var deferFechas = $q.defer();
           ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
-          //traer fechas
+          var tipoSesionPadre = 0;
+          if ($scope.modalidad === 'POSGRADO') {
+            tipoSesionPadre = 1;
+          } else {
+            //$scope.modalidad === 'PREGRADO'
+            tipoSesionPadre = 9;
+          }
           var parametrosSesiones = $.param({
-            query: "SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
+            query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
             limit: 1
           });
+          //traer fechas
           sesionesRequest.get("relacion_sesiones", parametrosSesiones)
             .then(function(responseFechas) {
               if (Object.keys(responseFechas.data[0]).length > 0) {
@@ -201,12 +213,12 @@ angular.module('poluxClienteApp')
                   deferFechas.resolve();
                 }
               } else {
-                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                 deferFechas.reject(false);
               }
             })
             .catch(function(error) {
-              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+              ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD");
               deferFechas.reject(error);
             });
           return deferFechas.promise;
@@ -376,6 +388,7 @@ angular.module('poluxClienteApp')
                   "Periodo": parseInt(ctrl.periodo, 10),
                   "Anio": parseInt(ctrl.anio, 10),
                   "CodigoPensum": parseInt(ctrl.pensum, 10),
+                  "Nivel":$scope.modalidad,
                 };
                 var dataEspacios = [];
                 angular.forEach(ctrl.selected, function(espacio) {

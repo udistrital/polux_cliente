@@ -8,7 +8,7 @@
      * @param {injector} $q componente para promesas de angular
      * @param {injector} CONF compenente de configuración
      * @description
-     * # coreService
+     * # nuxeo
      * Fabrica sobre la cual se consumen los servicios proveidos por el API de nuxeo
      */
 angular.module('poluxClienteApp')

@@ -47,6 +47,7 @@ angular.module('poluxClienteApp')
       ctrl.codigoEstudiante = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
+      ctrl.mensajeCargandoActualizarTg = $translate.instant("LOADING.ACTUALIZANDO_TRABAJO_GRADO");
 
       $scope.mindoc = false;
 

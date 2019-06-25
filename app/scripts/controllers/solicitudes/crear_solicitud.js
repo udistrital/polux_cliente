@@ -18,7 +18,7 @@
  * @requires $window
  * @requires services/academicaService.service:academicaRequest
  * @requires services/cidcRequest.service:cidcService
- * @requires services/poluxClienteApp.service:coreService
+ * @requires services/poluxClienteApp.service:coreAmazonCrudService
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxService.service:nuxeoClient
@@ -35,14 +35,14 @@
  * @property {Array} espaciosElegidos Objeto que contiene los espacios elegidos por el estudiante en la solicitud inicial.
  * @property {Boolean} detallesCargados Flag que indica que los detalles terminaron de cargarse..
  * @property {Boolean} siPuede Flag que permite identificar si se puede realizar la solicitud (el estudiante cumple con los requisitos y se encuentra en las fechas para hacerlo)
- * @property {Boolean} restringirModalidades Flag que permite identificar si se deben restringir las demas modalidades debido a que el estudiante ya realizo una solicitud inicial de materias de posgrado.
+ * @property {Boolean} restringirModalidadesPosgrado Flag que permite identificar si se deben restringir las demas modalidades debido a que el estudiante ya realizo una solicitud inicial de materias de posgrado.
  * @property {Array} estudiantesTg Estudiantes asociados al tranajo de grado.
  * @property {Array} estudiantes Estudiantes que se agregan a la solicitud inicial.
  * @property {Object} Trabajo Datos del trabajo de grado que cursa el estudiante que esta realizando la solicitud.
  * @property {Boolean} siModalidad Indicador que maneja la habilitación de una modalidad
  * @property {Boolean} modalidad_select Indicador que maneja la selección de una modalidad
  * @property {Boolean} solicitudConDetalles Indicador que maneja el contenido de los detalles dentro de una solicitud
- * @property {Boolean} restringirModalidades Indicador que maneja la restricción de modalidades para crear solicitud
+ * @property {Boolean} restringirModalidadesProfundizacion Indicador que maneja la restricción de modalidades para crear solicitud y solo habilita la modalidad de profundización
  * @property {Array} detallesConDocumento Colección que maneja los detalles con documento de una solicitud
  * @property {Boolean} tieneProrrogas Indicador que maneja si existen prórrogas registradas para el estudiante que realiza la solicitud
  * @property {String} codigo Texto que carga el código del estudiante en sesión
@@ -78,7 +78,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
+    function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -247,8 +247,12 @@ angular.module('poluxClienteApp')
                   //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
                 } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
                   //console.log(actuales);
-                  //console.log("es inicial y se deben restringir las demás");
-                  ctrl.restringirModalidades = true;
+                  //console.log("es inicial de posgrado y se deben restringir las demás");
+                  ctrl.restringirModalidadesPosgrado = true;
+                  defer.resolve(true);
+                } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 16) {
+                  //console.log("es inicial de profundizacion y se deben restringir las demás");
+                  ctrl.restringirModalidadesProfundizacion = true;
                   defer.resolve(true);
                 } else {
                   //console.log("No puedes");
@@ -404,7 +408,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
        * @description 
        * Consulta las áreas de conocimiento del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y las 
-       * áreas asociadas del snies en el servicio de {@link services/poluxClienteApp.service:coreService coreService}.
+       * áreas asociadas del snies en el servicio de {@link services/poluxClienteApp.service:coreAmazonCrudService coreAmazonCrudService}.
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve sin retornar ningún objeto
        */
@@ -417,7 +421,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
             ctrl.areas = responseAreas.data;
             if (Object.keys(ctrl.areas[0]).length > 0) {
-              coreService.get("snies_area").then(function(responseAreas) {
+              coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
                   var areasSnies = responseAreas.data;
                   if (Object.keys(areasSnies[0]).length > 0) {
                     angular.forEach(ctrl.areas, function(area) {
@@ -533,6 +537,9 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("vinculacion_trabajo_grado", parametrosVinculacion).then(function(responseVinculacion) {
               ctrl.Trabajo.evaluadores = [];
+              if (Object.keys(responseVinculacion.data[0]).length === 0) {
+                responseVinculacion.data = [];
+              }
               angular.forEach(responseVinculacion.data, function(vinculado) {
                 if (vinculado.RolTrabajoGrado.Id == 1) {
                   ctrl.Trabajo.directorInterno = vinculado;
@@ -590,9 +597,15 @@ angular.module('poluxClienteApp')
             .then(function(responseModalidad) {
               if (Object.keys(responseModalidad.data[0]).length > 0) {
                 ctrl.modalidades = [];
-                if (ctrl.restringirModalidades) {
+                if (ctrl.restringirModalidadesPosgrado) {
                   angular.forEach(responseModalidad.data, function(modalidad) {
                     if (modalidad.Id == 2) {
+                      ctrl.modalidades.push(modalidad);
+                    }
+                  });
+                } else if (ctrl.restringirModalidadesProfundizacion) {
+                  angular.forEach(responseModalidad.data, function(modalidad) {
+                    if (modalidad.Id == 3) {
                       ctrl.modalidades.push(modalidad);
                     }
                   });
@@ -614,11 +627,15 @@ angular.module('poluxClienteApp')
 
         var getSolicitudesAnteriores = function() {
           var defer = $q.defer();
+          //Se consultan modalidad tipo solicitud:
+          //13: para modalidades de materias de posgrado, detalles con id 37 para tener la carrera solicitada
+          //17: Para modalidad de materias de profundizacion, detalles con id 44 para tener las carrearas solicitadas
           var parametrosSolicitudes = $.param({
-            query: "Usuario:" + ctrl.codigo + ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+            query: "Usuario:" + ctrl.codigo + ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:13|16",
             limit: 0,
           });
           poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
+            console.log(responseSolicitudes.data);
               if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                 //console.log("solicitudes hechas",responseSolicitudes.data);
                 //si ha hecho una solicitud se obtienen las materias por el detalle
@@ -626,7 +643,7 @@ angular.module('poluxClienteApp')
                   //console.log(solicitud);
                   var defer = $q.defer();
                   var parametrosSolicitud = $.param({
-                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud:37",
+                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud.in:37|44",
                     limit: 1,
                   });
                   poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
@@ -756,9 +773,9 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
 
         var verificarRequisitosModalidad = function() {
-          var deferModalidad = $q.defer();
+          var defer = $q.defer();
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {
-              if (responseModalidad.data === "true") {
+              if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
                 ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
@@ -769,22 +786,30 @@ angular.module('poluxClienteApp')
               ctrl.mensajeError = $translate.instant("ERROR.VALIDAR_REQUISITOS");
               defer.reject("no se pudo cargar requisitos");
             });
-          return deferModalidad.promise;
+          return defer.promise;
         }
 
         var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
           var defer = $q.defer();
           //si la solicitud es de materias de posgrado e inicial
-          if (tipoSolicitud === 2 && modalidad === 2) {
+          if (tipoSolicitud === 2 && (modalidad === 2 || modalidad === 3 )) {
             ctrl.periodo = ctrl.periodoSiguiente.anio + "-" + ctrl.periodoSiguiente.periodo;
             ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
-            //traer fechas
+            var tipoSesionPadre = 0;
+            if (modalidad === 2) {
+              // modalidad == 'POSGRADO'
+              tipoSesionPadre = 1;
+            } else {
+              // modalidad === 3, modalidad === 'PREGRADO'
+              tipoSesionPadre = 9;
+            }
             var parametrosSesiones = $.param({
-              query: "SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
+              query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
               limit: 1
             });
             sesionesRequest.get("relacion_sesiones", parametrosSesiones)
               .then(function(responseFechas) {
+                console.log(responseFechas.data);
                 if (Object.keys(responseFechas.data[0]).length > 0) {
                   //console.log(responseFechas.data[0]);
                   var sesion = responseFechas.data[0];
@@ -800,18 +825,18 @@ angular.module('poluxClienteApp')
                   if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                     defer.resolve(true);
                   } else {
-                    ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION_POSGRADO');
+                    ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION');
                     defer.reject(false);
                   }
                   console.log(ctrl.fechaFin);
 
                 } else {
-                  ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                  ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                   defer.reject(false);
                 }
               })
               .catch(function() {
-                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD");
                 defer.reject("no se pudo cargar fechas");
               });
           } else {

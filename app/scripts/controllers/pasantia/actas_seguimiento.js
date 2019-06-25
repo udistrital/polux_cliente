@@ -113,7 +113,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function (responseEstudiantes) {
-            if (responseEstudiantes.data != null) {
+            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
               var promises = [];
               angular.forEach(responseEstudiantes.data, function (estudiante) {
                 promises.push(getDatosEstudiante(estudiante.Estudiante));
@@ -163,7 +163,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
           .then(function (responseActas) {
-            if (responseActas.data != null) {
+            if (Object.keys(responseActas.data[0]).length > 0) {
               trabajoGrado.Actas = responseActas.data;
             } else {
               trabajoGrado.Actas = [];
@@ -198,7 +198,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosDirector)
           .then(function (responsePasantias) {
-            if (responsePasantias.data != null) {
+            if (Object.keys(responsePasantias.data[0]).length > 0) {
               ctrl.trabajosPasantia = responsePasantias.data;
               var promises = [];
               angular.forEach(ctrl.trabajosPasantia, function (pasantia) {

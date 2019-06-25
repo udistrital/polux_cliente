@@ -429,13 +429,13 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.actualizarCuadriculaDeProyectos = function() {
-				ctrl.cargandoProyectos = false;
-				ctrl.errorCargandoProyectos = false;
 				ctrl.coleccionProyectos = [];
 				ctrl.cuadriculaProyectos.data = [];
 				ctrl.consultarProyectos()
 					.then(function(respuestaConsultandoProyectos) {
+						ctrl.cargandoProyectos = false;
 						if (ctrl.coleccionProyectos.length > 0) {
+							ctrl.errorCargandoProyectos = false;
 							ctrl.mostrarProyectos(ctrl.coleccionProyectos);
 						} else {
 							ctrl.errorCargandoProyectos = true;
@@ -443,6 +443,7 @@ angular.module('poluxClienteApp')
 						}
 					})
 					.catch(function(excepcionConsultandoProyectos) {
+						ctrl.cargandoProyectos = false;
 						ctrl.errorCargandoProyectos = true;
 						ctrl.mensajeErrorCargandoProyectos = excepcionConsultandoProyectos;
 					});
