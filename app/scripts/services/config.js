@@ -66,7 +66,7 @@ var conf_local = {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
         //CLIENTE_ID: "pszmROXqfec4pTShgF_fn2DAAX0a",
-        CLIENTE_ID:"fftE67YyfTsExQfR86Fp6Y8HGvMa",
+        CLIENTE_ID:"sWe9_P_C76DWGOsLcOY4T7BYH6oa",
         REDIRECT_URL: "http://localhost:9000/",
         RESPONSE_TYPE: "id_token token",
         SCOPE: "openid email documento",
