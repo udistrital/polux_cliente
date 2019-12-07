@@ -52,16 +52,17 @@
  * Variables de configuración de entorno local
  */
 var conf_local = {
-    ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
+    //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
+    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1",
     //ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm_pruebas/v1",
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
-    CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
+    CONFIGURACION_SERVICE: "http://pruebasapi.intranetoas.udistrital.edu.co:8086/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
-    CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
-    CORE_AMAZON_CRUD_SERVICE:"http://10.20.0.254/core_amazon_crud/v1/",
-    OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
+    CORE_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8092/v1/",
+    CORE_AMAZON_CRUD_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8106/v1/",
+    OIKOS_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8087/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
