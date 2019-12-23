@@ -53,7 +53,7 @@
  */
 var conf_local = {
     //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
-    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1",
+    ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxyProduccion/",
     //ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm_pruebas/v1",
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
@@ -76,7 +76,8 @@ var conf_local = {
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    // AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    AUTENTICATION_MID_SERVICE:"http://localhost:8080/v1/"
 };
 
 /**
@@ -108,7 +109,8 @@ var conf_cloud_preproduccion = {
         SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    // AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    AUTENTICATION_MID_SERVICE:"https://localhost:8080/v1/"
 };
 
 /**
