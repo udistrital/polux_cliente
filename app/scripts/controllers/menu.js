@@ -173,23 +173,24 @@ angular.module('poluxClienteApp')
             token_service.getLoginData()
                 .then(function() {
                     $scope.token = token_service.getAppPayload();
-                    if (!angular.isUndefined($scope.token.appUserRole)) {
+                    console.log(token_service.getAppPayload())
+                    if (!angular.isUndefined($scope.token.role)) {
                         var roles = "";
-                        if (typeof $scope.token.appUserRole === "object") {
+                        if (typeof $scope.token.role === "object") {
                             var rl = [];
-                            for (var index = 0; index < $scope.token.appUserRole.length; index++) {
-                                if ($scope.token.appUserRole[index].indexOf("/") < 0) {
-                                    rl.push($scope.token.appUserRole[index]);
+                            for (var index = 0; index < $scope.token.role.length; index++) {
+                                if ($scope.token.role[index].indexOf("/") < 0) {
+                                    rl.push($scope.token.role[index]);
                                 }
                             }
                             roles = rl.toString();
                         } else {
-                            roles = $scope.token.appUserRole;
+                            roles = $scope.token.role;
                         }
-
+                        //console.log(roles)
                         roles = roles.replace(/,/g, '%2C');
                         configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '').then(function(response) {
-                                //console.log(response);
+                                console.log(response);
                                 $rootScope.my_menu = response.data;
 
                             })
