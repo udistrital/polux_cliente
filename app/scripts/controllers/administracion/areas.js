@@ -392,5 +392,4 @@ angular.module('poluxClienteApp')
             break;
         }
       };
-
     });
