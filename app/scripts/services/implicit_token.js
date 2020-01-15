@@ -162,7 +162,7 @@ angular.module('implicitToken', [])
         var access_role = window.localStorage.getItem('access_role');
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
-        data.appUserRole = JSON.parse(atob(access_role));
+        data.appUserRole = data.role;
         return data;
       },
       logout: function() {
