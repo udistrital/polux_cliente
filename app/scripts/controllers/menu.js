@@ -174,18 +174,18 @@ angular.module('poluxClienteApp')
                 .then(function() {
                     $scope.token = token_service.getAppPayload();
                     console.log(token_service.getAppPayload())
-                    if (!angular.isUndefined($scope.token.role)) {
+                    if (!angular.isUndefined($scope.token.appUserRole)) {
                         var roles = "";
-                        if (typeof $scope.token.role === "object") {
+                        if (typeof $scope.token.appUserRole === "object") {
                             var rl = [];
-                            for (var index = 0; index < $scope.token.role.length; index++) {
-                                if ($scope.token.role[index].indexOf("/") < 0) {
-                                    rl.push($scope.token.role[index]);
+                            for (var index = 0; index < $scope.token.appUserRole.length; index++) {
+                                if ($scope.token.appUserRole[index].indexOf("/") < 0) {
+                                    rl.push($scope.token.appUserRole[index]);
                                 }
                             }
                             roles = rl.toString();
                         } else {
-                            roles = $scope.token.role;
+                            roles = $scope.token.appUserRole;
                         }
                         //console.log(roles)
                         roles = roles.replace(/,/g, '%2C');
