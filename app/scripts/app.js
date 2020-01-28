@@ -303,6 +303,11 @@ angular
               controller: 'MateriasProfundizacionRegistrarNotaCtrl',
               controllerAs: 'profundizacionRegistrarNota'
             })
+            .when('/reportes/reporte_general', {
+              templateUrl: 'views/reportes/reporte_general.html',
+              controller: 'ReportesReporteGeneralCtrl',
+              controllerAs: 'reporteGeneral'
+            })
             .otherwise({
                 redirectTo: '/'
             });

@@ -78,7 +78,7 @@ angular.module('implicitToken', [])
                 }
               })
               .then(function(respuestaAutenticacion) {
-                //console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
+                console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
                 appUserDocument = respuestaAutenticacion.data.Codigo; 
                 appUserRole = respuestaAutenticacion.data.Rol;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
