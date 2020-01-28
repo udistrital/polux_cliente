@@ -817,6 +817,7 @@ var text_es = {
     ACUERDO: "Acuerdo 038 de 2015",
     ACUERDO_INFO: "A continuación se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se " +
         "reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.",
+    REPORTE_GENERAL: "Reporte general",
 };
 
 /**
@@ -1624,6 +1625,7 @@ var text_en = {
     ACUERDO:"Agreement 038 of 2015",
     ACUERDO_INFO: "Below is agreement 038 of 2015 of the Academic Council of the District University Francisco Jósé de Caldas by means of which the degree work  for the " +
         "undergraduate students are regulated of the University and other guidelines are dictated.",
+    REPORTE_GENERAL: "General report",
 };
 
 /**
