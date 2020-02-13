@@ -24,6 +24,7 @@
  * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxClienteApp.service:oikosRequest
  * @property {Array} modalidades Modalidades disponibles para la elección del estudiante.
  * @property {Object} estudiante Datos del estudiante que esta realizando la solicitud.
  * @property {Object} periodoAnterior Periodo academico anterior.
@@ -79,6 +80,46 @@
 
 angular.module('poluxClienteApp')
 .controller('ReportesReporteGeneralCtrl',
-  function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
-   
+  function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, oikosRequest, token_service) {
+    $scope.load = true;
+    var ctrl = this;
+      $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_REPORTES');
+      ctrl.solicitudes = [];
+      ctrl.carrerasCoordinador = [];
+      //token_service.token.documento = "79647592";
+      //token_service.token.role.push("COORDINADOR_PREGRADO");
+      //token_service.token.documento = "20131020002";
+      //token_service.token.role.push("ESTUDIANTE");
+      ctrl.userRole = token_service.getAppPayload().appUserRole;
+      $scope.userId = token_service.getAppPayload().appUserDocument;
+      ctrl.userId = $scope.userId;
+      console.log(ctrl.userId);
+      ctrl.carreras_oikos = [];
+
+      oikosRequest.get("dependencia", "/?query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function(carreras) {
+        ctrl.carreras_oikos = carreras.data ; 
+        console.log(carreras_oikos)
+        $scope.load = false;
+      })
+      .catch(function(error) {
+        console.log(error);
+        ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
+        ctrl.errorCargarParametros = true;
+        $scope.load = false;
+      });
+
+    /**
+       * @ngdoc method
+       * @name SolicitudesIniciales
+       * @methodOf poluxClienteApp.controller:ReportesReporteGeneralCtrl
+       * @description 
+       * Esta Función consulta los proyectos curriculares de la universidad para mostrarlos en el desplegable y que se pueda seleccionar para consultar los docentes de los reportes.
+       * @returns {undefined} No retorna nigún valor. 
+       */
+
+      ctrl.SolicitudesIniciales = function() {
+        
+      }
+
+
 });
