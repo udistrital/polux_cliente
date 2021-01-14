@@ -20,7 +20,7 @@
     "angular-websocket": "^2.0.0",
     "angular-input-masks": "^2.6.0",
     "angular-moment": "^1.0.1",
-    "sweetalert2": "*",
+    "sweetalert2": "^6.4.4",
     "bootstrap-fileinput": "^4.4.5",
     "angular-loading-bar": "^0.9.0",
     "angular-translate": "^2.15.1",

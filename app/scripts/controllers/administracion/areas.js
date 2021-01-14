@@ -317,6 +317,8 @@ angular.module('poluxClienteApp')
        */
       ctrl.cambiarEstadoArea = function(area) {
         //Se cambia el estado del área
+        console.log("se cambia estado de area")
+        console.log(area)
         $scope.loadAreas = true;
         area.Activo = !area.Activo;
         poluxRequest.put("area_conocimiento", area.Id, area)
@@ -353,12 +355,12 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       $scope.loadrow = function(row, operacion) {
+
         switch (operacion) {
           case "editar":
             ctrl.areaSeleccionada = row.entity;
             ctrl.areaSeleccionadaTemp = JSON.parse(JSON.stringify(row.entity));
             $('#modalEditarArea').modal('show');
-            console.log("editar");
             break;
           case "activar":
             swal({
@@ -369,7 +371,7 @@ angular.module('poluxClienteApp')
               cancelButtonText: $translate.instant("CANCELAR"),
               showCancelButton: true
             }).then(function(responseSwal) {
-              if (responseSwal.value) {
+              if (responseSwal) {
                 ctrl.cambiarEstadoArea(row.entity);
               }
             });
@@ -383,7 +385,7 @@ angular.module('poluxClienteApp')
               cancelButtonText: $translate.instant("CANCELAR"),
               showCancelButton: true
             }).then(function(responseSwal) {
-              if (responseSwal.value) {
+              if (responseSwal) {
                 ctrl.cambiarEstadoArea(row.entity);
               }
             });
@@ -392,5 +394,4 @@ angular.module('poluxClienteApp')
             break;
         }
       };
-
     });

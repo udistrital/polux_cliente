@@ -52,21 +52,23 @@
  * Variables de configuración de entorno local
  */
 var conf_local = {
-    ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
-    //ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm_pruebas/v1",
+    //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
+    //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxyProduccion",
+    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1",
     POLUX_SERVICE: "http://localhost:8085/v1/",
     POLUX_MID_SERVICE: "http://localhost:8098/v1/",
-    SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
-    CONFIGURACION_SERVICE: "http://10.20.0.254/configuracion_api/v1/",
+    // SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
+    SESIONES_SERVICE:"http://pruebasapi2.intranetoas.udistrital.edu.co:8107/v1/",
+    CONFIGURACION_SERVICE: "http://pruebasapi.intranetoas.udistrital.edu.co:8086/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
-    CORE_SERVICE:"http://10.20.0.254/core_api/v1/",
-    CORE_AMAZON_CRUD_SERVICE:"http://10.20.0.254/core_amazon_crud/v1/",
-    OIKOS_SERVICE:"http://10.20.0.254/oikos_api/v1/",
+    CORE_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8092/v1/",
+    CORE_AMAZON_CRUD_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8106/v1/",
+    OIKOS_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8087/v1/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
         //CLIENTE_ID: "pszmROXqfec4pTShgF_fn2DAAX0a",
-        CLIENTE_ID:"fftE67YyfTsExQfR86Fp6Y8HGvMa",
+        CLIENTE_ID:"sWe9_P_C76DWGOsLcOY4T7BYH6oa",
         REDIRECT_URL: "http://localhost:9000/",
         RESPONSE_TYPE: "id_token token",
         SCOPE: "openid email documento",
@@ -75,7 +77,8 @@ var conf_local = {
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    // AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    AUTENTICATION_MID_SERVICE:"http://localhost:8080/v1/"
 };
 
 /**
@@ -107,7 +110,8 @@ var conf_cloud_preproduccion = {
         SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    // AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    AUTENTICATION_MID_SERVICE:"https://localhost:8080/v1/"
 };
 
 /**
