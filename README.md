@@ -25,3 +25,20 @@ Run `grunt` for building and `grunt serve` for preview.
 ## Testing
 
 Running `grunt test` will run the unit tests with karma.
+
+## Estado CI
+
+| Develop | Relese 0.0.1 | Master |
+| -- | -- | -- |
+|[![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/polux_cliente/status.svg?ref=refs/heads/develop)](https://hubci.portaloas.udistrital.edu.co/udistrital/polux_cliente)|[![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/polux_cliente/status.svg?ref=refs/heads/release/0.0.1)](https://hubci.portaloas.udistrital.edu.co/udistrital/polux_cliente)|[![Build Status](https://hubci.portaloas.udistrital.edu.co/api/badges/udistrital/polux_cliente/status.svg?ref=refs/heads/master)](https://hubci.portaloas.udistrital.edu.co/udistrital/polux_cliente)|
+
+
+## Licencia
+
+This file is part of novedades_cliente
+
+novedades_cliente is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+novedades_cliente is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with novedades_cliente. If not, see https://www.gnu.org/licenses/.
