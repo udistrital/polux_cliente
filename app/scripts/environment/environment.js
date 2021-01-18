@@ -14,10 +14,10 @@ angular.module("poluxClienteApp").constant("CONF", {
   APP_MENU: "Polux", // Ingrese valor de la aplicación asociado al menú registrado en wso2
   GENERAL: {
     ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1/",
-    POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
+    POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
     POLUX_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_mid/v1/",
     SESIONES_SERVICE:"http://pruebasapi2.intranetoas.udistrital.edu.co:8107/v1/",
-    CONFIGURACION_SERVICE: "http://pruebasapi.intranetoas.udistrital.edu.co:8086/v1/",
+    CONFIGURACION_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/configuracion_crud_api/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8092/v1/",
     CORE_AMAZON_CRUD_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8106/v1/",
