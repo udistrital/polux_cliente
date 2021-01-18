@@ -64,14 +64,17 @@ angular.module('implicitToken', [])
             var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
             var appUserDocument;
             var appUserRole;
-            var emailInfo = {
+            /*var emailInfo = {
               //Email: "karianov@correo.udistrital.edu.co"
               //Email: appUserInfo.sub,
               Email: appUserInfo.email,
               Rol: appUserInfo.role,
               Documento: appUserInfo.documento
-            };
-            autenticacionMidRequest.post("token/emailToken", emailInfo, {
+            };*/
+            var userRol= {
+              user: appUserInfo.sub
+            }
+            autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
                   'Accept': 'application/json',
                   "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
@@ -79,8 +82,15 @@ angular.module('implicitToken', [])
               })
               .then(function(respuestaAutenticacion) {
                 console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
-                appUserDocument = respuestaAutenticacion.data.Codigo; 
-                appUserRole = respuestaAutenticacion.data.Rol;            
+                appUserDocument = respuestaAutenticacion.data.documento;
+                
+                /*if(respuestaAutenticacion.data.Codigo!="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
+                  appUserDocument = respuestaAutenticacion.data.Codigo;
+                  //window.localStorage.setItem('access_codigo', btoa(JSON.stringify(appUserCodigo))));
+                }else{
+                  appUserDocument = respuestaAutenticacion.data.documento;
+                }*/
+                appUserRole = respuestaAutenticacion.data.role;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
                 //console.log("appUserDocument", respuestaAutenticacion.data.Codigo)
@@ -157,12 +167,14 @@ angular.module('implicitToken', [])
       },
       // Contiene el documento para las búsquedas
       getAppPayload: function() {
+
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
+        //console.log(data);
         return data;
       },
       logout: function() {

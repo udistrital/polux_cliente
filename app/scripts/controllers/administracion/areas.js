@@ -104,6 +104,7 @@ angular.module('poluxClienteApp')
       });
       coreAmazonCrudService.get("snies_area", parametrosAreas)
         .then(function(responseAreas) {
+          //console.log(responseAreas);
           ctrl.areasSnies = responseAreas.data;
           if (Object.keys(ctrl.areasSnies[0]).length > 0) {
             $scope.loadAreas = false;
