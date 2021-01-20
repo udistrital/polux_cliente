@@ -82,14 +82,14 @@ angular.module('implicitToken', [])
               })
               .then(function(respuestaAutenticacion) {
                 console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
-                appUserDocument = respuestaAutenticacion.data.documento;
+                //appUserDocument = respuestaAutenticacion.data.documento;
                 
-                /*if(respuestaAutenticacion.data.Codigo!="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
+                if(respuestaAutenticacion.data.Codigo!="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                   //window.localStorage.setItem('access_codigo', btoa(JSON.stringify(appUserCodigo))));
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
-                }*/
+                }
                 appUserRole = respuestaAutenticacion.data.role;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
