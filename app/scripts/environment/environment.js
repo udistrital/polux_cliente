@@ -18,7 +18,7 @@ angular.module("poluxClienteApp").constant("CONF", {
     POLUX_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_mid/v1/",
     SESIONES_SERVICE:"http://pruebasapi2.intranetoas.udistrital.edu.co:8107/v1/",
     CONFIGURACION_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/configuracion_crud_api/v1/",
-    NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
+    NUXEO_SERVICE:"https://documental.portaloas.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8092/v1/",
     CORE_AMAZON_CRUD_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8106/v1/",
     OIKOS_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8087/v1/",

@@ -108,7 +108,7 @@ angular.module('poluxClienteApp')
                   "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                   "Modalidad": $scope.modalidad,
                   "Tipo": "POSGRADO",
-                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
+                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje_cursado,
                   "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                   "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                   "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,

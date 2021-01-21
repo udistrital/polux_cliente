@@ -18,8 +18,8 @@ angular.module('poluxClienteApp')
             baseURL: CONF.GENERAL.NUXEO_SERVICE,
             auth: {
                 method: 'basic',
-                username: 'Administrator',
-                password: 'S1st3m4s04S=Fr331P4'
+                username: 'desarrollooas',
+                password: 'desarrollooas2019'
             }
         });
     });
