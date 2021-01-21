@@ -777,6 +777,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {
               if (responseModalidad.data.RequisitosModalidades) {
+                console.log("Requisitos",responseModalidad.data.RequisitosModalidades);
                 defer.resolve(true);
               } else {
                 ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
@@ -787,6 +788,7 @@ angular.module('poluxClienteApp')
               ctrl.mensajeError = $translate.instant("ERROR.VALIDAR_REQUISITOS");
               defer.reject("no se pudo cargar requisitos");
             });
+          //console.log(defer.promise);
           return defer.promise;
         }
 
@@ -965,7 +967,7 @@ angular.module('poluxClienteApp')
         ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
         var tipoSolicitud = tipoSolicitudSeleccionada.Id;
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
-        console.log(tipoSolicitudSeleccionada);
+        console.log("tipo solicitud: ",tipoSolicitudSeleccionada);
         if (modalidad_seleccionada !== undefined) {
           ctrl.estudiante.Modalidad = modalidad_seleccionada;
           ctrl.modalidad = modalidad_seleccionada;
@@ -1546,7 +1548,7 @@ angular.module('poluxClienteApp')
           if (!fileTypeError) {
             var promiseArr = [];
             angular.forEach(ctrl.detallesConDocumento, function(detalle) {
-              var anHttpPromise = nuxeoClient.createDocument(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, 'Solicitudes', function(url) {
+              var anHttpPromise = nuxeoClient.createDocument(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, 'solicitudes', function(url) {
                 detalle.respuesta = url;
               });
               promiseArr.push(anHttpPromise);
