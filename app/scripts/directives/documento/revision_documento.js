@@ -258,7 +258,7 @@ angular.module('poluxClienteApp')
                                 showCancelButton: true
                             })
                                 .then(function (confirmacionDelUsuario) {
-                                    if (confirmacionDelUsuario.value) {
+                                    if (confirmacionDelUsuario) {
                                         ctrl.cargandoRevision = true;
                                         if (ctrl.documentModel) {
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones

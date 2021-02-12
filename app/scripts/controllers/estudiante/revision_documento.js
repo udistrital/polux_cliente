@@ -845,7 +845,7 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               ctrl.loadTrabajoGrado = true;
               ctrl.cargandoActualizarTg = true;
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {

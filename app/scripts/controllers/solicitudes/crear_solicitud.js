@@ -807,7 +807,7 @@ angular.module('poluxClienteApp')
               tipoSesionPadre = 9;
             }
             var parametrosSesiones = $.param({
-              query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
+              query: "SesionPadre.TipoSesion.Id:9,SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:1",
               limit: 1
             });
             sesionesRequest.get("relacion_sesiones", parametrosSesiones)
@@ -1393,7 +1393,7 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       ctrl.validarFormularioSolicitud = function() {
-        // console.log("detalles");
+        //console.log("detalles",ctrl.detalles);
 
         ctrl.detallesConDocumento = [];
 

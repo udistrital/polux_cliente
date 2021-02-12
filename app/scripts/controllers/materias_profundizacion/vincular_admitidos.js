@@ -715,7 +715,7 @@ angular.module('poluxClienteApp')
           })
           .then(function(confirmacionDelUsuario) {
             // Se valida que el coordinador haya confirmado el registro
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               // Se detiene la visualización de solicitudes mientras se formaliza
               ctrl.cuadriculaSolicitudesAprobadas.data = [];
               // Se inicia la carga del formulario mientras se formaliza

@@ -595,7 +595,7 @@ angular.module('poluxClienteApp')
                     $scope.load = false;
                   });
               } else {
-                ctrl.mensajeError = $translate.instant("ERROR.SIN_CARRERAS_POSGRADO");
+                ctrl.mensajeError = $translate.instant("ERROR.SIN_CARRERAS_PREGRADO");
                 ctrl.errorCargarParametros = true;
                 $scope.load = false;
               }

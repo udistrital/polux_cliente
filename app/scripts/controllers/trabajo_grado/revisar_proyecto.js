@@ -530,7 +530,7 @@ angular.module('poluxClienteApp')
 						showCancelButton: true
 					})
 					.then(function(confirmacionDelUsuario) {
-						if (confirmacionDelUsuario.value) {
+						if (confirmacionDelUsuario) {
 							ctrl.cargandoProyectos = true;
 							ctrl.cargandoDatosEstudiantiles = true;
 							ctrl.actualizarEstadoProyecto()
