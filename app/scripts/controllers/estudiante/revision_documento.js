@@ -812,21 +812,21 @@ angular.module('poluxClienteApp')
           titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16) {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 13) {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         // Para certificado de ARL
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {

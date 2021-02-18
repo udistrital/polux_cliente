@@ -378,7 +378,7 @@ angular.module('poluxClienteApp')
             var nombreDocumento = "Acta de sustentación de trabajo id: " + ctrl.trabajoSeleccionado.Id;
             var descripcionDocumento = "Acta de sustentación de el trabajo con id: " + ctrl.trabajoSeleccionado.Id + ", nombre:" + ctrl.trabajoSeleccionado.Titulo + ".";
             //Se carga el documento
-            nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'Actas de sustentacion', undefined)
+            nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
               .then(function(urlActa) {
                 console.log("acta", urlActa);
                 console.log("nota", ctrl.trabajoSeleccionado.nota);

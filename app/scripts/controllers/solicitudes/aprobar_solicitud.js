@@ -1407,7 +1407,7 @@ angular.module('poluxClienteApp')
           $scope.loadFormulario = true;
           var documento = ctrl.acta;
           if (documento.type !== "application/pdf" || documento.size > tam) {
-            nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'Actas', function(url) {
+            nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'actas', function(url) {
                 ctrl.urlActa = url;
               })
               .then(function() {

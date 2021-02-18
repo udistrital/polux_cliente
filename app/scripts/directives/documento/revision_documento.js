@@ -262,7 +262,7 @@ angular.module('poluxClienteApp')
                                         ctrl.cargandoRevision = true;
                                         if (ctrl.documentModel) {
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones
-                                            nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "Correcciones", undefined)
+                                            nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correcciones", undefined)
                                                 .then(function (respuestaCrearDocumento) {
                                                     console.log(respuestaCrearDocumento);
                                                     ctrl.correcciones.push({
