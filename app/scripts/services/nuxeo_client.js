@@ -41,7 +41,7 @@ angular.module('nuxeoService',[])
             name: nombre,
             properties: 'dc:title=' +  nombre + ' \ndc:description=' + descripcion
           })
-          .input('/desarrollo/workspaces/sga/Proyectos de Grado/'+dominio)
+          .input('/desarrollo/workspaces/sga/proyectos_grado/'+dominio)
           .execute()
           .then(function(doc) {
             var nuxeoBlob = new Nuxeo.Blob({
