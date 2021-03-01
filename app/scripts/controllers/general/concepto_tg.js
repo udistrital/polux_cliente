@@ -41,7 +41,7 @@ angular.module('poluxClienteApp')
       ctrl.idVinculacion = $routeParams.idVinculacion;
       ctrl.cargando = true;
       ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_PROYECTOS");
-
+      //console.log("parametros",$routeParams);
       //token_service.token.documento = "80093200";
       //ctrl.userId = token_service.token.documento;
 
@@ -404,9 +404,9 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               if (ctrl.revisionActual.documentModel) {
-                nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "Correcciones", undefined)
+                nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
                   .then(function(respuestaCrearDocumento) {
                     console.log(respuestaCrearDocumento);
                     ctrl.revisionActual.Correcciones.push({

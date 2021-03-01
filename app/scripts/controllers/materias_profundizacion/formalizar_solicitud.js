@@ -661,7 +661,7 @@ angular.module('poluxClienteApp')
 					})
 					.then(function(confirmacionDelUsuario) {
 						// Se valida que el usuario haya confirmado la formalización
-						if (confirmacionDelUsuario.value) {
+						if (confirmacionDelUsuario) {
 							// Se detiene la visualización de solicitudes mientras se formaliza
 							ctrl.cuadriculaSolicitudesParaFormalizar.data = [];
 							// Se inicia la carga del formulario mientras se formaliza

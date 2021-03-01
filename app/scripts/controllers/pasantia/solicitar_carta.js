@@ -333,7 +333,7 @@ angular.module('poluxClienteApp')
           cancelButtonText: $translate.instant("CANCELAR"),
           showCancelButton: true
         }).then(function(responseSwal) {
-          if (responseSwal.value) {
+          if (responseSwal) {
             $scope.loadFormulario = true;
             ctrl.postSolicitud()
               .then(function(response) {

@@ -362,7 +362,7 @@ angular.module('poluxClienteApp')
             })
             .then(function(response) {
               // Se valida que el usuario haya confirmado la formalización
-              if (response.value) {
+              if (response) {
                 ctrl.postRespuesta(row.entity, true, "La solicitud ha sido aprobada");
               }
             });
@@ -377,7 +377,7 @@ angular.module('poluxClienteApp')
             })
             .then(function(response) {
               // Se valida que el usuario haya confirmado la formalización
-              if (response.value) {
+              if (response) {
                 ctrl.postRespuesta(row.entity, false, "La solicitud fue rechazada, para cualquier inquietud acerquese a la oficina de pasantias.");
               }
             });

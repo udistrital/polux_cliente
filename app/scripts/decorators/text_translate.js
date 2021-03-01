@@ -409,7 +409,7 @@ var text_es = {
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Cargue el Plan o modelo de negocios nuevo",
     SELECCIONE_ESTUDIANTES_PROYECTO: "Seleccione los estudiantes que pertenecen al proyecto",
     SELECCIONE_DOCUMENTO_FINAL_PARA_REVISION: "Seleccione el documento final para la revisión",
-    INGRESE_EVIDENCIA_DE_PUBLICACION: "Ingrese la carta de acpetación del artículo o el artículo publicado",
+    INGRESE_EVIDENCIA_DE_PUBLICACION: "Ingrese la carta de aceptación del artículo o el artículo publicado",
     NOMBRE_EVALUADORES_ACTUALES: "Evaluadores actuales",
     SOLICITUD_SIN_FORMULARIO: "Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla?",
     NUMERO_RADICADO: "Número de radicado",

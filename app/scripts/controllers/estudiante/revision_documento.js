@@ -570,7 +570,8 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
+              console.log("entro a subirNuevoDocumento");
               ctrl.cargandoTrabajoGrado = true;
               $('#modalSubirNuevaVersion').modal('hide');
               //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
@@ -654,7 +655,9 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            console.log(confirmacionDelUsuario);
+            if (confirmacionDelUsuario) {
+              console.log("entro a registrarRevision");
               var nuevaRevision = {
                 NumeroRevision: (angular.isUndefined(ctrl.revisionesTrabajoGrado)) ? 1 : ctrl.revisionesTrabajoGrado.length + 1,
                 FechaRecepcion: new Date(),
@@ -809,21 +812,21 @@ angular.module('poluxClienteApp')
           titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16) {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 13) {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         // Para certificado de ARL
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
@@ -842,7 +845,7 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               ctrl.loadTrabajoGrado = true;
               ctrl.cargandoActualizarTg = true;
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {

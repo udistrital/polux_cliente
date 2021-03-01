@@ -249,7 +249,7 @@ angular.module('poluxClienteApp')
         var nombreDoc = "Acta de seguimiento " + (ctrl.pasantiaSeleccionada.Actas.length + 1);
         //SE carga el documento a nuxeo
         //ctrl.cargarDocumento(nombreDoc, nombreDoc, ctrl.actaModel)
-        nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'Actas de seguimiento', undefined)
+        nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'actas_seguimiento', undefined)
           .then(function (urlDocumento) {
             var dataDocumentoTrabajoGrado = {
               TrabajoGrado: {

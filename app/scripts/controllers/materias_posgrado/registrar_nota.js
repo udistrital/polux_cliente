@@ -682,7 +682,7 @@ angular.module('poluxClienteApp')
               })
               .then(function(confirmacionDelUsuario) {
                 // Se valida que el coordinador haya confirmado el registro
-                if (confirmacionDelUsuario.value) {
+                if (confirmacionDelUsuario) {
                   // Se detiene la visualización de trabajos de grado
                   ctrl.cargandoTrabajosDeGradoCursados = true;
                   ctrl.cargandoEspaciosAcademicos = true;
