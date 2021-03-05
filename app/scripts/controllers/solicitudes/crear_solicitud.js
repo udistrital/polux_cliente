@@ -120,7 +120,7 @@ angular.module('poluxClienteApp')
       //token_service.token.documento = "20131020002";
       //ctrl.codigo = token_service.token.documento;
       ctrl.codigo = token_service.getAppPayload().appUserDocument;
-
+      
       /**
        * @ngdoc method
        * @name getProrroga
@@ -807,7 +807,7 @@ angular.module('poluxClienteApp')
               tipoSesionPadre = 9;
             }
             var parametrosSesiones = $.param({
-              query: "SesionPadre.TipoSesion.Id:9,SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:1",
+              query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:3,SesionPadre.periodo:"+ctrl.periodoSiguiente.anio+ ctrl.periodoSiguiente.periodo,
               limit: 1
             });
             sesionesRequest.get("relacion_sesiones", parametrosSesiones)
