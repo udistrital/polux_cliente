@@ -21,7 +21,7 @@ angular.module("poluxClienteApp").constant("CONF", {
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/core_api/v1/",
     CORE_AMAZON_CRUD_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/core_amazon_crud/v1/",
-    OIKOS_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/oikos_api/v1/",
+    OIKOS_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/oikos_crud_api/v2/",
     DOCUMENTO_CRUD_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/documento_crud/v2/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
