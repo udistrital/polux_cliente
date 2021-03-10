@@ -22,6 +22,7 @@ angular.module("poluxClienteApp").constant("CONF", {
     CORE_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8092/v1/",
     CORE_AMAZON_CRUD_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8106/v1/",
     OIKOS_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8087/v1/",
+    DOCUMENTO_CRUD_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/documento_crud/v2/",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",
