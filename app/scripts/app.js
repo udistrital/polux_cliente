@@ -34,6 +34,7 @@ angular
         'angularMoment',
         'ui.utils.masks',
         'poluxService',
+        'documentoService',
         'oikosService',
         'academicaService',
         'cadenaService',

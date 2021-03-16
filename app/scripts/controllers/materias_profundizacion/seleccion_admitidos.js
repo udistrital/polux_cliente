@@ -274,7 +274,6 @@ angular.module('poluxClienteApp')
             if (Object.keys(responseFechas.data[0]).length > 0) {
               ctrl.fechas = responseFechas.data;
               angular.forEach(ctrl.fechas, function(fecha) {
-                //console.log(fecha.SesionHijo);
                 var fechaInicio = new Date(fecha.SesionHijo.FechaInicio);
                 fechaInicio.setTime(fechaInicio.getTime() + fechaInicio.getTimezoneOffset() * 60 * 1000);
                 var fechaFin = new Date(fecha.SesionHijo.FechaFin);
@@ -441,7 +440,7 @@ angular.module('poluxClienteApp')
                                 "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                                 "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                                 "estado": value.EstadoSolicitud,
-                                "porcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado + "%",
+                                "porcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje_cursado + "%",
                                 "nombreCarrera": nombreCarrera,
                                 //"respuesta": ""+value.Id,
                                 "respuestaSolicitud": value
