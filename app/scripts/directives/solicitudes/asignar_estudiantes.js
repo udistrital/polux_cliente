@@ -108,7 +108,7 @@ angular.module('poluxClienteApp')
                   "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                   "Modalidad": $scope.modalidad,
                   "Tipo": "POSGRADO",
-                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
+                  "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje_cursado,
                   "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                   "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                   "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
@@ -118,14 +118,12 @@ angular.module('poluxClienteApp')
                 };
 
                 poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function (response) {
-
-                  console.log(response);
-                  if (response.data.includes("true")) {
+                  if (response.data.RequisitosModalidades) {
                     var parametrosTrabajoEstudiante = $.param({
                       query: "EstadoEstudianteTrabajoGrado:1,Estudiante:" + ctrl.codigoEstudiante,
                     });
                     poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajoEstudiante).then(function (responseTrabajoEstudiante) {
-                      if (responseTrabajoEstudiante.data === null) {
+                      if (Object.keys(responseTrabajoEstudiante.data[0]).length === 0) {
                         var cantidad;
                         cantidad = 2 + ctrl.nuevosEstudiantes.length;
                         ctrl.datosModalidad = {
@@ -135,8 +133,7 @@ angular.module('poluxClienteApp')
                         console.log("cantidad");
                         console.log(ctrl.datosModalidad);
                         poluxMidRequest.post("verificarRequisitos/CantidadModalidades", ctrl.datosModalidad).then(function (validado) {
-                          console.log(validado)
-                          if (validado.data === "true") {
+                          if (validado.data.RequisitosModalidades) {
                             var parametrosEstudiante = $.param({
                               query: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id:2,Usuario:" + ctrl.codigoEstudiante,
                               sortby: "SolicitudTrabajoGrado",
@@ -144,13 +141,13 @@ angular.module('poluxClienteApp')
                               limit: 1
                             });
                             poluxRequest.get("usuario_solicitud", parametrosEstudiante).then(function (responseSolicitud) {
-                              if (responseSolicitud.data !== null) {
+                              if (Object.keys(responseSolicitud.data[0]).length > 0) {
                                 var idSolicitud = responseSolicitud.data[0].SolicitudTrabajoGrado.Id;
                                 var parametrosSolicitudEstudiante = $.param({
                                   query: "Activo:true,EstadoSolicitud.Id:1,SolicitudTrabajoGrado.Id:" + idSolicitud,
                                 });
                                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudEstudiante).then(function (resultadoSolicitudes) {
-                                  if (resultadoSolicitudes.data === null) {
+                                  if (Object.keys(resultadoSolicitudes.data[0]).length === 0) {
                                     ctrl.nuevosEstudiantes.push(ctrl.codigoEstudiante);
                                     $scope.estudiantes = ctrl.nuevosEstudiantes;
                                     ctrl.loading = false;

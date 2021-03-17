@@ -36,8 +36,9 @@ angular.module('poluxClienteApp')
       ctrl.mensajeCargandoTrabajos = $translate.instant("LOADING.CARGANDO_TRABAJOS_DE_GRADO_PASANTIA");
       ctrl.mensajeCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
 
-      token_service.token.documento = "80093200";
-      ctrl.userDocument = token_service.token.documento;
+      //token_service.token.documento = "80093200";
+      //ctrl.userDocument = token_service.token.documento;
+      ctrl.userDocument = token_service.getAppPayload().appUserDocument;
 
       $scope.botones = [{
         clase_color: "ver",
@@ -112,7 +113,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function (responseEstudiantes) {
-            if (responseEstudiantes.data != null) {
+            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
               var promises = [];
               angular.forEach(responseEstudiantes.data, function (estudiante) {
                 promises.push(getDatosEstudiante(estudiante.Estudiante));
@@ -162,7 +163,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
           .then(function (responseActas) {
-            if (responseActas.data != null) {
+            if (Object.keys(responseActas.data[0]).length > 0) {
               trabajoGrado.Actas = responseActas.data;
             } else {
               trabajoGrado.Actas = [];
@@ -197,7 +198,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosDirector)
           .then(function (responsePasantias) {
-            if (responsePasantias.data != null) {
+            if (Object.keys(responsePasantias.data[0]).length > 0) {
               ctrl.trabajosPasantia = responsePasantias.data;
               var promises = [];
               angular.forEach(ctrl.trabajosPasantia, function (pasantia) {
@@ -248,7 +249,7 @@ angular.module('poluxClienteApp')
         var nombreDoc = "Acta de seguimiento " + (ctrl.pasantiaSeleccionada.Actas.length + 1);
         //SE carga el documento a nuxeo
         //ctrl.cargarDocumento(nombreDoc, nombreDoc, ctrl.actaModel)
-        nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'Actas de seguimiento', undefined)
+        nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'actas_seguimiento', undefined)
           .then(function (urlDocumento) {
             var dataDocumentoTrabajoGrado = {
               TrabajoGrado: {
@@ -317,9 +318,9 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function (error) {
-            console.log("error", error);
+            console.log("Error ->", error);
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
               'warning'
             );
@@ -337,13 +338,9 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       $scope.loadrow = function (row, operacion) {
-        switch (operacion) {
-          case "ver":
-            ctrl.pasantiaSeleccionada = row.entity.TrabajoGrado;
-            $('#modalVerPasantia').modal('show');
-            break;
-          default:
-            break;
+        if (operacion == "ver") {
+          ctrl.pasantiaSeleccionada = row.entity.TrabajoGrado;
+          $('#modalVerPasantia').modal('show');
         }
       };
 

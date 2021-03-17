@@ -35,11 +35,12 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //token_service.token.documento = "51551021";
-      token_service.token.documento = "79777053";
+      //token_service.token.documento = "79777053";
       //token_service.token.documento = "80093200";
+      //token_service.token.role.push("DOCENTE");
+      //ctrl.documentoDocente = token_service.token.documento;
 
-      token_service.token.role.push("DOCENTE");
-      ctrl.documentoDocente = token_service.token.documento;
+      ctrl.documentoDocente = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
 
@@ -83,7 +84,7 @@ angular.module('poluxClienteApp')
       ctrl.obtenerParametrosVinculacionTrabajoGrado = function() {
         return $.param({
           query: "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|4|5|6|8|9|10|11|12|13|14|15|16|17|18|19|21|22," +
-            "RolTrabajoGrado.Id:1," +
+            "RolTrabajoGrado.Id.in:1|4," +
             "Activo:True,Usuario:" +
             ctrl.documentoDocente,
           limit: 0
@@ -98,14 +99,14 @@ angular.module('poluxClienteApp')
        * Función que recorre la base de datos de acuerdo al trabajo de grado y trae sus vinculaciones asociadas.
        * Llama a la función: obtenerParametrosVinculacionTrabajoGrado.
        * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para operar sobre la base de datos del proyecto.
-       * @param {Object} trabajoGrado El trabajo de grado para cargar la información del documento
+       * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} La información sobre el documento, el mensaje en caso de no corresponder la información, o la excepción generada
        */
-      ctrl.consultarVinculacionTrabajoGrado = function(trabajoGrado) {
+      ctrl.consultarVinculacionTrabajoGrado = function() {
         var deferred = $q.defer();
         poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
           .then(function(respuestaVinculaciones) {
-            if (respuestaVinculaciones.data) {
+            if (Object.keys(respuestaVinculaciones.data[0]).length > 0) {
               deferred.resolve(respuestaVinculaciones.data);
             } else {
               deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
@@ -184,7 +185,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
           .then(function(respuestaDocumentoTrabajoGrado) {
-            if (respuestaDocumentoTrabajoGrado.data) {
+            if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
               deferred.resolve(respuestaDocumentoTrabajoGrado.data[0]);
             } else {
               deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
@@ -228,7 +229,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
           .then(function(respuestaRevisionesTrabajoGrado) {
-            if (respuestaRevisionesTrabajoGrado.data) {
+            if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado.data;
             }
             deferred.resolve($translate.instant("ERROR.SIN_REVISIONES"));
@@ -270,6 +271,7 @@ angular.module('poluxClienteApp')
           })
           .catch(function(excepcionDocumentoTrabajoGrado) {
             ctrl.errorCargandoDocumento = true;
+            ctrl.documentoEscrito = null;
             ctrl.mensajeErrorCargandoDocumento = excepcionDocumentoTrabajoGrado;
           });
       }

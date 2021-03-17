@@ -40,11 +40,14 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       //ctrl.estudiante = $routeParams.idEstudiante;
-      token_service.token.documento = "20131020039";
-      token_service.token.role.push("ESTUDIANTE");
-      ctrl.codigoEstudiante = token_service.token.documento;
+      //token_service.token.documento = "20131020002";
+      //token_service.token.role.push("ESTUDIANTE");
+      //ctrl.codigoEstudiante = token_service.token.documento;
+
+      ctrl.codigoEstudiante = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
+      ctrl.mensajeCargandoActualizarTg = $translate.instant("LOADING.ACTUALIZANDO_TRABAJO_GRADO");
 
       $scope.mindoc = false;
 
@@ -80,7 +83,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("detalle_pasantia", ctrl.obtenerParametrosDirectorExterno(vinculacionTrabajoGrado.TrabajoGrado.Id))
           .then(function(docenteExterno) {
-            if (docenteExterno.data) {
+            if (Object.keys(docenteExterno.data[0]).length > 0) {
               var resultadoDocenteExterno = docenteExterno.data[0].Observaciones.split(" y dirigida por ");
               resultadoDocenteExterno = resultadoDocenteExterno[1].split(" con número de identificacion ");
               vinculacionTrabajoGrado.Nombre = resultadoDocenteExterno[0];
@@ -151,7 +154,7 @@ angular.module('poluxClienteApp')
         var conjuntoProcesamientoDocentes = [];
         poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado(trabajoGrado.Id))
           .then(function(respuestaVinculaciones) {
-            if (respuestaVinculaciones.data) {
+            if (Object.keys(respuestaVinculaciones.data[0]).length > 0) {
               angular.forEach(respuestaVinculaciones.data, function(vinculacionTrabajoGrado) {
                 if (vinculacionTrabajoGrado.RolTrabajoGrado.Id == 2) {
                   conjuntoProcesamientoDocentes.push(ctrl.consultarDirectorExterno(vinculacionTrabajoGrado));
@@ -167,8 +170,9 @@ angular.module('poluxClienteApp')
                 .catch(function(excepcionDelProcesamiento) {
                   deferred.reject(excepcionDelProcesamiento);
                 });
+            } else {
+              deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
-            deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           })
           .catch(function(excepcionVinculacionTrabajoGrado) {
             deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
@@ -235,16 +239,14 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado))
           .then(function(respuestaDocumentoTrabajoGrado) {
-            if (respuestaDocumentoTrabajoGrado.data) {
+            if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
               trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
               trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
-              deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
-            } else {
-              deferred.resolve($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
+            deferred.resolve($translate.instant("ERROR.CARGAR_DOCUMENTO"));
           })
           .catch(function(excepcionDocumentoTrabajoGrado) {
-            deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
+            deferred.reject($translate.instant("ERROR.CARGAR_DOCUMENTO"));
           });
         return deferred.promise;
       }
@@ -343,7 +345,7 @@ angular.module('poluxClienteApp')
         var conjuntoProcesamientoEstudianteTrabajoGrado = [];
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
-            if (estudianteConTrabajoDeGrado.data) {
+            if (Object.keys(estudianteConTrabajoDeGrado.data[0]).length > 0) {
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(ctrl.codigoEstudiante));
@@ -446,7 +448,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
           .then(function(respuestaRevisionesTrabajoGrado) {
-            if (respuestaRevisionesTrabajoGrado.data) {
+            if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
                 if (revision.EstadoRevisionTrabajoGrado.Id == 1) {
                   ctrl.revisionSolicitada = true;
@@ -521,7 +523,7 @@ angular.module('poluxClienteApp')
             .catch(function(error) {
               ctrl.loadingVersion = false;
               swal(
-                $translate.instant("ERROR"),
+                $translate.instant("MENSAJE_ERROR"),
                 $translate.instant("ERROR.CARGAR_DOCUMENTO"),
                 'warning'
               );
@@ -568,7 +570,8 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
+              console.log("entro a subirNuevoDocumento");
               ctrl.cargandoTrabajoGrado = true;
               $('#modalSubirNuevaVersion').modal('hide');
               //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
@@ -652,7 +655,9 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            console.log(confirmacionDelUsuario);
+            if (confirmacionDelUsuario) {
+              console.log("entro a registrarRevision");
               var nuevaRevision = {
                 NumeroRevision: (angular.isUndefined(ctrl.revisionesTrabajoGrado)) ? 1 : ctrl.revisionesTrabajoGrado.length + 1,
                 FechaRecepcion: new Date(),
@@ -791,7 +796,6 @@ angular.module('poluxClienteApp')
         var titleConfirmacion;
         var mensajeConfirmacion;
         var mensajeSuccess;
-        var mensajeError;
         var workspace;
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
           ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) {
@@ -808,21 +812,21 @@ angular.module('poluxClienteApp')
           titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16) {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 13) {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
-          workspace = 'Versiones TG';
+          workspace = 'versiones_TG';
         }
         // Para certificado de ARL
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
@@ -841,7 +845,7 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               ctrl.loadTrabajoGrado = true;
               ctrl.cargandoActualizarTg = true;
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {

@@ -1,39 +1,29 @@
-<br>
 <div class="panel panel-default">
     <div class="panel-heading">
-        about.
+        {{'ABOUT' | translate}}
     </div>
     <div class="panel-body">
-
-      <div class="cropper-canvas" style="width: 823.423px; height: 343px; left: 218.788px; top: 0px;">
-        <iframe class="style-scope nuxeo-pdf-viewer" src="https://athento.udistritaloas.edu.co/nuxeo/viewers/pdfjs/web/viewer.html?file=https://athento.udistritaloas.edu.co/nuxeo/site/api/v1/repo/default/id/ce5791c7-fd9f-41a5-90c6-fb9c882772bb/@blob/file:content/@preview/pdf"></iframe>
-      </div>
-
-        <!--<subir-documento></subir-documento>-->
-
-        <div class="col-md-6">
-            <select ng-model="about.SelectedFormat" ng-options='formato.id as formato.title for formato in about.formatos'
-            ng-change="about.actualizar_formato()"></select>
-            <br>
-
-            <pre>{{about.id}}</pre>
-            <pre>{{about.formatos|json}}</pre>
-
-            <div class="row">
-                <label>Seleccionar Formato de Evaluación: <label>
-                <input class="form-control" list="testList" placeholder="Seleccione el formato" type="" ng-model="about.SelectedFormat" ng-change="about.actualizar_formato()" />
-                <datalist id="testList">
-
-                  <option ng-repeat="formato in about.formatos" label="{{formato.title}}"  ng-value="{{formato.id}}" ></option>
-                </datalist>
-            </div>
-          </div>
-          <pre>
-              {{token_service.token | json}}
-          </pre>
-
-      <div class="col-md-6">
-          <iframe src="{{about.trustSrc(about.id)}}" width="800" height="900"></iframe>
-      </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <label> Polux </label>
+            <p translate="ABOUT_INFO">  </p>
+          </div>        
+        </div>
     </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+      {{'ACUERDO' | translate}}
+  </div>
+  <div class="panel-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <p> {{'ACUERDO_INFO' | translate}} </p>
+        </div>
+        <div class="col-sm-12">
+            <iframe src="../../../documentos/acuerdo_2015-038.pdf" style="width: 100%; height: 700px;border: none;"></iframe>
+        </div>
+      </div>
+  </div>
 </div>

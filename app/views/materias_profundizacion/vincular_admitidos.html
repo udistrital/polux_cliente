@@ -1,0 +1,134 @@
+<div class="panel panel-default">
+
+  <div class="panel-heading">
+    {{'VINCULAR_ADMITIDOS.TITULO' | translate}}
+  </div>
+
+  <div class="panel-body">
+
+    <loading tam="4" load="profundizacionVincularAdmitidos.cargandoPregradosAsociados" message="profundizacionVincularAdmitidos.mensajeCargandoPregradosAsociados"></loading>
+    <div class="row" ng-if="profundizacionVincularAdmitidos.pregradosAsociados.length > 0 && !profundizacionVincularAdmitidos.cargandoPregradosAsociados">
+      <label class="col-sm-2">{{'SELECCIONAR_CARRERA' | translate}}</label> 
+      <div class="col-sm-10">
+        <ui-select name="pregrado" ng-model="profundizacionVincularAdmitidos.pregradoSeleccionado" required on-select="profundizacionVincularAdmitidos.escogerPregrado()" style="width:97%;" theme="bootstrap">
+          <ui-select-match placeholder="{{'SELECT.SELECCIONE' | translate}}">
+            {{$select.selected.codigo_proyecto_curricular}} - {{$select.selected.nombre_proyecto_curricular}}
+          </ui-select-match>
+          <ui-select-choices repeat="item.codigo_proyecto_curricular as item in profundizacionVincularAdmitidos.pregradosAsociados | filter: $select.search">
+            <span ng-bind="item.codigo_proyecto_curricular"></span> - <span ng-bind="item.nombre_proyecto_curricular"></span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+
+    <br ng-if="profundizacionVincularAdmitidos.periodoCorrespondienteHabilitado">
+
+    <div class="row" ng-if="profundizacionVincularAdmitidos.periodoCorrespondienteHabilitado">
+      <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
+      <div class="col-sm-10">
+        <select ng-model="profundizacionVincularAdmitidos.periodoSeleccionado" ng-change="profundizacionVincularAdmitidos.actualizarSolicitudesAprobadas()">
+          <option ng-repeat="periodo in profundizacionVincularAdmitidos.periodosCorrespondientes" ng-value="periodo">
+            {{periodo.anio}}-{{periodo.periodo}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel-body alert alert-danger" ng-if="profundizacionVincularAdmitidos.errorCargandoConsultasIniciales">
+      <span ng-bind="profundizacionVincularAdmitidos.mensajeErrorCargandoConsultasIniciales"></span>
+    </div>
+    
+    <loading tam="4" load="profundizacionVincularAdmitidos.cargandoSolicitudesAprobadas" message="profundizacionVincularAdmitidos.mensajeCargandoSolicitudesAprobadas"></loading>
+    <div class="panel panel-default panel-body col-md-12" style="margin-top: 20px;" ng-if="profundizacionVincularAdmitidos.cuadriculaSolicitudesAprobadas.data.length > 0 && !profundizacionVincularAdmitidos.cargandoSolicitudesAprobadas">
+      <div class="mi-grid" id="mi-grid" ui-grid="profundizacionVincularAdmitidos.cuadriculaSolicitudesAprobadas"></div>
+    </div>
+
+    <br ng-if="profundizacionVincularAdmitidos.errorCargandoSolicitudesAprobadas">
+    
+    <div class="panel-body alert alert-danger" ng-if="profundizacionVincularAdmitidos.errorCargandoSolicitudesAprobadas">
+      <span ng-bind="profundizacionVincularAdmitidos.mensajeErrorCargandoSolicitudesAprobadas"></span>
+    </div>
+
+  </div>
+
+  <div id="modalVerSolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+      <div class="modal-header">
+        {{'VINCULAR_ADMITIDOS.DESCRIPCION' | translate}}
+        <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button>
+        <br>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          {{'INFORMACION_ESTUDIANTE' | translate}}
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'SOLICITANTE' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.nombreEstudiante}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CODIGO' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.codigoEstudiante}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'PROMEDIO' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.promedioAcademico}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'RENDIMIENTO' | translate}}:  </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.informacionAcademica.rendimiento}} </label>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          {{'INFORMACION_SOLICITUD' | translate}}
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'SOLICITUD' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.SolicitudTrabajoGrado.Id}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'FECHA' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.fechaSolicitud}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'ESTADO_SOLICITUD' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.nombreEstado}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CODIGO_PROYECTO' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.codigoPregrado}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CARRERA' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.nombrePregrado}} </label>
+          </div>
+          <div class="row">
+            <label class="col-sm-4 control-label"> {{'CODIGO_PENSUM_PROYECTO' | translate}}: </label>
+            <label class="col-sm-8 control-label"> {{profundizacionVincularAdmitidos.solicitudSeleccionada.pensumPregrado}} </label>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default" ng-if="profundizacionVincularAdmitidos.cuadriculaEspaciosAcademicosSolicitados.data.length > 0">
+        <div class="panel-heading">
+          {{'ESP_ACADEMICOS' | translate}}
+        </div>
+        <loading tam="4" load="profundizacionVincularAdmitidos.cargandoTransaccionRegistro" message="profundizacionVincularAdmitidos.mensajeCargandoTransaccionRegistro"></loading>
+        <div class="panel-body" ng-if="!profundizacionVincularAdmitidos.cargandoTransaccionRegistro">
+          <div class="panel col-md-12">
+            <div class="mi-grid" id="mi-grid" ui-grid="profundizacionVincularAdmitidos.cuadriculaEspaciosAcademicosSolicitados" style="height: {{(profundizacionVincularAdmitidos.cuadriculaEspaciosAcademicosSolicitados.data.length * 35) + 40}}px"></div>
+          </div>
+          <div class="row row-centered">
+            <div class="col-sm-2 col-centered">
+              <input type="submit" class="btn btn-success" value="{{'BTN.REGISTRAR_TRABAJO_GRADO'|translate}}" ng-click="profundizacionVincularAdmitidos.confirmarRegistroSolicitud()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

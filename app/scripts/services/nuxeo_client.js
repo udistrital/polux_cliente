@@ -17,7 +17,7 @@ angular.module('nuxeoService',[])
    * # nuxeoClient
    * Fabrica sobre la cual se consumen los servicios proveidos por el API de nuxeo sobre los metodos GET, POST, PUT y DELETE
    */
-  .factory('nuxeoClient', function ($q,nuxeo) {
+  .factory('nuxeoClient', function ($q, nuxeo) {
     return {
       /**
        * @ngdoc method
@@ -34,14 +34,14 @@ angular.module('nuxeoService',[])
        */
       createDocument : function(nombre, descripcion, documento,dominio, callback) {
         var defer = $q.defer();
-        nuxeo.connect().then(function(client) {
+        nuxeo.connect().then(function() {
           nuxeo.operation('Document.Create')
           .params({
             type: 'File',
             name: nombre,
             properties: 'dc:title=' +  nombre + ' \ndc:description=' + descripcion
           })
-          .input('/default-domain/workspaces/Proyectos de Grado POLUX/'+dominio)
+          .input('/desarrollo/workspaces/sga/proyectos_grado/'+dominio)
           .execute()
           .then(function(doc) {
             var nuxeoBlob = new Nuxeo.Blob({
@@ -53,7 +53,7 @@ angular.module('nuxeoService',[])
                 return doc.set({'file:content': res.blob})
                 .save({
                   headers: {'X-Versioning-Option': 'major'}
-                })
+                });
               })
               .then(function() {
                 return nuxeo.repository().fetch(doc.uid, {
@@ -62,16 +62,16 @@ angular.module('nuxeoService',[])
               })
               .then(function(doc) {
                 if(!angular.isUndefined(callback)){
-                  callback(doc.uid)
+                  callback(doc.uid);
                 }
                 defer.resolve(doc.uid);
               })
               .catch(function(error) {
-                defer.reject(error)
+                defer.reject(error);
               });
           })
           .catch(function(error) {
-            defer.reject(error)
+            defer.reject(error);
           });
         })
         .catch(function(error){
@@ -96,17 +96,17 @@ angular.module('nuxeoService',[])
           .input(uid)
           .execute()
           .then(function(responseBlob){
-            return responseBlob.blob()
+            return responseBlob.blob();
           })
           .then(function(blob){
             var document = {
               url : URL.createObjectURL(blob),
               blob : blob,
-            }
+            };
             defer.resolve(document);
           })
           .catch(function(error){
-              defer.reject(error)
+              defer.reject(error);
           });
         return defer.promise;
       },
@@ -138,8 +138,7 @@ angular.module('nuxeoService',[])
                 defer.reject(error);
               });
               return defer.promise;
-            }
-
+            };
             var promises = [];
             angular.forEach(doc.entries, function(document){
               promises.push(getDocument(document));
@@ -183,7 +182,7 @@ angular.module('nuxeoService',[])
             return doc.set({'file:content': res.blob})
             .save({
               headers: {'X-Versioning-Option': 'major'}
-            })
+            });
           })
           .then(function() {
             return nuxeo.repository().fetch(uid, {
@@ -200,7 +199,7 @@ angular.module('nuxeoService',[])
         .then(function(docResponse){
           //console.log(docResponse);
           //ctrl.getVersionesDocumento(uid);
-          defer.resolve();
+          defer.resolve(docResponse);
         })
         .catch(function(error) {
           defer.reject(error);

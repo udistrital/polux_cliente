@@ -15,12 +15,12 @@
   </div>
   <div id="navbar" class="navbar-collapse collapse in">
     <ul class="nav navbar-nav navbar-right">
-      <li ng-repeat="nivel_1 in menu_service">
+      <li ng-repeat="nivel_1 in ::my_menu">
         <a ng-if="nivel_1.Opciones === null" ng-href="{{'#/' + nivel_1.Url}}">
           {{nivel_1.Nombre}}
         </a>
       </li>
-      <li ng-repeat="nivel_1 in menu_service" class="dropdown">
+      <li ng-repeat="nivel_1 in ::my_menu" class="dropdown">
         <a ng-if="nivel_1.Opciones !== null" ng-href="{{actual}}" class="dropdown-toggle" data-toggle="dropdown">
             {{nivel_1.Nombre}} <b class="caret">
           </b>
@@ -97,7 +97,7 @@
           <ul class="dropdown-menu dropdown-user">
             <li>
               <a ng-click="">
-                <i class="fa fa-sign-in fa-fw"></i> {{token_service.token.sub}}</a>
+                <i class="fa fa-sign-in fa-fw"></i> {{token_service.getPayload().sub}}</a>
               </a>
             </li>
             <li><a><i class="fa fa-gear fa-fw"></i> Settings</a>

@@ -1,6 +1,6 @@
-'use strict';
+//'use strict';
 
-/**
+/*/**
    * @ngdoc service
    * @name poluxClienteApp.service:tokenService
    * @requires $http
@@ -19,7 +19,7 @@
    */
 
 // First, parse the query string
-var params = {},
+/*var params = {},
   queryString = location.search.substring(1),
   regex = /([^&=]+)=([^&]*)/g,
   m;
@@ -160,3 +160,5 @@ angular.module('poluxClienteApp')
     service.get_id_token();
     return service;
   });
+
+*/

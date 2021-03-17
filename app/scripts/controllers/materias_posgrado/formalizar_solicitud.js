@@ -35,9 +35,9 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "20131020002";
-			ctrl.usuarioSesion = token_service.token.documento;
-
+			//token_service.token.documento = "20131020002";
+			//ctrl.usuarioSesion = token_service.token.documento;
+			ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 			// En el inicio de la página, se están cargando las solicitudes
 			ctrl.cargandoSolicitudesParaFormalizar = true;
 			ctrl.mensajeCargandoSolicitudesParaFormalizar = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
@@ -171,7 +171,7 @@ angular.module('poluxClienteApp')
 						sesionesRequest.get("relacion_sesiones", ctrl.obtenerParametrosSesionesDeFormalizacion(periodoAcademicoCorrespondiente))
 							.then(function(sesionesDeFormalizacion) {
 								// Se estudia que las sesiones tengan contenido
-								if (sesionesDeFormalizacion.data) {
+								if (Object.keys(sesionesDeFormalizacion.data[0]).length > 0) {
 									// Se resuelve la información de las sesiones consultadas
 									deferred.resolve(sesionesDeFormalizacion.data);
 								} else {
@@ -204,10 +204,10 @@ angular.module('poluxClienteApp')
 			ctrl.comprobarPeriodoFormalizacion = function() {
 				// Se trae el diferido desde el servicio para manejar las promesas
 				var deferred = $q.defer();
+				// Se define una colección que trabaje las fechas de formalización
+				ctrl.coleccionFechasFormalizacion = [];
 				ctrl.consultarSesiones()
 					.then(function(sesionesDeFormalizacion) {
-						// Se define una colección que trabaje las fechas de formalización
-						ctrl.coleccionFechasFormalizacion = [];
 						// Se define la fecha actual de sesión
 						var fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
 						// Se recorre la colección de sesiones de formalización consultadas
@@ -401,7 +401,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(usuarioAsociado.SolicitudTrabajoGrado.Id))
 					.then(function(respuestaDeSolicitud) {
 						// Se comprueba que se trajeron datos no vacíos
-						if (respuestaDeSolicitud.data) {
+						if (Object.keys(respuestaDeSolicitud.data[0]).length > 0) {
 							// Se elimina la información redundante
 							delete respuestaDeSolicitud.data[0].SolicitudTrabajoGrado;
 							// Se adquieren los datos de la respuesta de la solicitud dentro de la misma solicitud
@@ -455,7 +455,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleDeSolicitud(usuarioAsociado.SolicitudTrabajoGrado.Id))
 					.then(function(detalleDeSolicitud) {
 						// Se comprueba que se trajeron datos no vacíos
-						if (detalleDeSolicitud.data) {
+						if (Object.keys(detalleDeSolicitud.data[0]).length > 0) {
 							// Se adquieren los datos del detalle de la solicitud dentro de la misma solicitud
 							usuarioAsociado.detalleDeSolicitud = detalleDeSolicitud.data[0].Descripcion;
 						}
@@ -511,7 +511,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuariosConSolicitudes())
 					.then(function(usuariosConSolicitudes) {
 						// Se comprueba que existen registros
-						if (usuariosConSolicitudes.data) {
+						if (Object.keys(usuariosConSolicitudes.data[0]).length > 0) {
 							// Se recorre la colección de usuarios con solicitudes
 							angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
 								// Se agrega el proceso de consulta hacia la respuesta de la solicitud
@@ -648,7 +648,7 @@ angular.module('poluxClienteApp')
 			ctrl.formalizarSolicitudSeleccionada = function(solicitudSeleccionada) {
 				swal({
 						title: $translate.instant("FORMALIZAR_SOLICITUD.CONFIRMACION"),
-						text: $translate.instant("FORMALIZAR_SOLICITUD.MENSAJE_CONFIRMACION", {
+						text: $translate.instant("FORMALIZAR_SOLICITUD.MENSAJE_CONFIRMACION_POSGRADO", {
 							// Se cargan datos de la solicitud para que el usuario pueda verificar antes de confirmar
 							idSolicitud: solicitudSeleccionada.idSolicitud,
 							nombreEstado: solicitudSeleccionada.estadoSolicitud,
@@ -661,7 +661,7 @@ angular.module('poluxClienteApp')
 					})
 					.then(function(confirmacionDelUsuario) {
 						// Se valida que el usuario haya confirmado la formalización
-						if (confirmacionDelUsuario.value) {
+						if (confirmacionDelUsuario) {
 							// Se detiene la visualización de solicitudes mientras se formaliza
 							ctrl.cuadriculaSolicitudesParaFormalizar.data = [];
 							// Se inicia la carga del formulario mientras se formaliza
@@ -752,7 +752,7 @@ angular.module('poluxClienteApp')
 						Usuario: solicitudParaFormalizar.respuestaDeSolicitud.Usuario
 					};
 					// Se verifica si la solicitud es la seleccionada
-					if (solicitudParaFormalizar.Id == solicitudSeleccionada.idSolicitud) {
+					if (solicitudParaFormalizar.idSolicitud == solicitudSeleccionada.idSolicitud) {
 						// Se estudia el estado de la solicitud
 						// Se verifica si la solicitud está aprobada exenta de pago (7)
 						if (solicitudParaFormalizar.respuestaDeSolicitud.EstadoSolicitud.Id == 7) {

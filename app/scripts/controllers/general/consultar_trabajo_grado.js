@@ -39,10 +39,13 @@ angular.module('poluxClienteApp')
 
       //token_service.token.documento = "79647592";
       //token_service.token.role.push("COORDINADOR_PREGRADO");
-      token_service.token.documento = "20141020036";
-      token_service.token.role.push("ESTUDIANTE");
-      ctrl.userRole = token_service.token.role;
-      ctrl.userId = token_service.token.documento;
+      //token_service.token.documento = "20131020002";
+      //token_service.token.role.push("ESTUDIANTE");
+      //ctrl.userRole = token_service.token.role;
+      //ctrl.userId = token_service.token.documento;
+
+      ctrl.userRole = token_service.getAppPayload().appUserRole;
+      ctrl.userId = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
       ctrl.mensajeCargandoActualizarTg = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
@@ -55,7 +58,7 @@ angular.module('poluxClienteApp')
         width: '20%',
       }, {
         name: 'Anio',
-        displayName: $translate.instant('ANIO'),
+        displayName: $translate.instant('ANO'),
         width: '20%',
       }, {
         name: 'Periodo',
@@ -94,7 +97,11 @@ angular.module('poluxClienteApp')
       ctrl.gridOptionsVinculaciones.columnDefs = [{
         name: 'Nombre',
         displayName: $translate.instant('NOMBRE'),
-        width: '70%',
+        width: '45%',
+      },{
+        name: 'RolTrabajoGrado.Nombre',
+        displayName: $translate.instant('ROL'),
+        width: '25%',
       }, {
         name: 'notaRegistrada',
         displayName: $translate.instant('NOTA'),
@@ -156,7 +163,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("asignatura_trabajo_grado", parametrosAsignaturasTrabajoGrado)
           .then(function(responseAsignaturaTrabajoGrado) {
-            if (responseAsignaturaTrabajoGrado.data != null) {
+            if (Object.keys(responseAsignaturaTrabajoGrado.data[0]).length > 0) {
               ctrl.trabajoGrado.asignaturas = responseAsignaturaTrabajoGrado.data;
               angular.forEach(ctrl.trabajoGrado.asignaturas, function(asignatura) {
                 asignatura.Estado = asignatura.EstadoAsignaturaTrabajoGrado.Nombre;
@@ -191,7 +198,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("areas_trabajo_grado", parametrosAreasConocimiento)
           .then(function(responseAreasConocimiento) {
-            if (responseAreasConocimiento.data != null) {
+            if (Object.keys(responseAreasConocimiento.data[0]).length > 0) {
               ctrl.trabajoGrado.areas = responseAreasConocimiento.data.map(function(area) {
                 return area.AreaConocimiento.Nombre;
               }).join(', ');
@@ -226,13 +233,43 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
           .then(function(responseActaSocializacion) {
-            if (responseActaSocializacion.data != null) {
+            if (Object.keys(responseActaSocializacion.data[0]).length > 0) {
               ctrl.trabajoGrado.actaSocializacion = responseActaSocializacion.data[0];
             }
             defer.resolve();
           })
           .catch(function(error) {
             ctrl.mensajeError = $translate.instant("ERROR.CARGAR_ACTA_SOCIALIZACION");
+            defer.reject(error);
+          });
+        return defer.promise;
+      }
+
+      /**
+       * @ngdoc method
+       * @name cargarCertificadoARL
+       * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+       * @description 
+       * Consulta el certificado de afiliación de ARL de un trabajo de grado de la modalidad de pasantia del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * @param {undefined} undefined no requiere parametros
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve sin retornar ningún objeto
+       */
+      ctrl.cargarCertificadoARL = function() {
+        var defer = $q.defer();
+        //Se consulta el tipo de documento 6 que es acta de socialización
+        var parametrosActaSocializacion = $.param({
+          query: "DocumentoEscrito.TipoDocumentoEscrito:7,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          limit: 1,
+        });
+        poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
+          .then(function(responseCertificadoARL) {
+            if (Object.keys(responseCertificadoARL.data[0]).length > 0) {
+              ctrl.trabajoGrado.certificadoARL = responseCertificadoARL.data[0];
+            }
+            defer.resolve();
+          })
+          .catch(function(error) {
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CERTIFICADO_ARL");
             defer.reject(error);
           });
         return defer.promise;
@@ -274,7 +311,7 @@ angular.module('poluxClienteApp')
 
         poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos)
           .then(function(responseEspacios) {
-            if (responseEspacios.data != null) {
+            if (Object.keys(responseEspacios.data[0]).length > 0) {
               ctrl.trabajoGrado.espacios = responseEspacios.data;
               var promises = [];
               //Consultar nombres de los espacios
@@ -318,7 +355,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("detalle_pasantia", parametrosPasantia)
           .then(function(responsePasantia) {
-            if (responsePasantia.data != null) {
+            if (Object.keys(responsePasantia.data[0]).length > 0) {
               ctrl.trabajoGrado.DetallePasantia = responsePasantia.data[0].Observaciones;
               defer.resolve();
             } else {
@@ -352,7 +389,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
           .then(function(responseActas) {
-            if (responseActas.data != null) {
+            if (Object.keys(responseActas.data[0]).length > 0) {
               ctrl.trabajoGrado.Actas = responseActas.data;
             } else {
               ctrl.trabajoGrado.Actas = [];
@@ -385,7 +422,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("detalle_pasantia", parametrosVinculado)
             .then(function(dataExterno) {
-              if (dataExterno.data != null) {
+              if (Object.keys(dataExterno.data[0]).length > 0) {
                 var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
                 temp = temp[1].split(" con número de identificacion ");
                 vinculado.Nombre = temp[0];
@@ -419,7 +456,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
           //SI es director externo o codirector
           if (vinculado.RolTrabajoGrado.Id == 2 || vinculado.RolTrabajoGrado.Id == 4) {
-            vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");;
+            vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");
             defer.resolve();
           }
           //Si es director interno o evaluador
@@ -430,7 +467,7 @@ angular.module('poluxClienteApp')
             });
             poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
               .then(function(responseEvaluacion) {
-                if (responseEvaluacion.data != null) {
+                if (Object.keys(responseEvaluacion.data[0]).length > 0) {
                   //Si no ha registrado ninguna nota
                   vinculado.notaRegistrada = responseEvaluacion.data[0].Nota;
                 } else {
@@ -453,7 +490,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosVinculados)
           .then(function(responseVinculados) {
-            if (responseVinculados.data != null) {
+            if (Object.keys(responseVinculados.data[0]).length > 0) {
               ctrl.trabajoGrado.Vinculados = responseVinculados.data;
               var promises = [];
               angular.forEach(ctrl.trabajoGrado.Vinculados, function(vinculado) {
@@ -502,9 +539,9 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("error", error);
+            console.log("Error ->", error);
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
               'warning'
             );
@@ -529,7 +566,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function(responseEstudiantes) {
-            if (responseEstudiantes.data != null) {
+            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
               var promesasEstudiantes = [];
               angular.forEach(responseEstudiantes.data, function(estudiante) {
                 promesasEstudiantes.push(ctrl.cargarEstudiante(estudiante));
@@ -562,7 +599,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
        * Consulta el trabajo de grado de un estudiatne del servicio de {@link services/poluxService.service:poluxRequest poluxRequest}, llama a las funciones
-       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 llama a la funcón getEspaciosAcademicosInscritos.
+       * cargarEstudiante, cargar AsignaturasTrabajoGrado y si el trabajo esta en la modalidad 2 o 3 llama a la funcón getEspaciosAcademicosInscritos.
        * @param {undefined} undefined no requiere parametros
        * @returns {undefined} No retorna ningún parámetro
        */
@@ -578,7 +615,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get('estudiante_trabajo_grado', parametrosTrabajoGrago)
             .then(function(response_trabajoGrado) {
-              if (response_trabajoGrado.data != null) {
+              if (Object.keys(response_trabajoGrado.data[0]).length > 0) {
                 ctrl.trabajoGrado = response_trabajoGrado.data[0].TrabajoGrado;
                 if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
                     ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) &&
@@ -596,23 +633,29 @@ angular.module('poluxClienteApp')
                   ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.esProyectoModificable = true;
                 }
+                //Si es pasantia y esta en espera de ARL
+                if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21 &&
+                  ctrl.userRole.includes('ESTUDIANTE')) {
+                  ctrl.pasantiaEnEsperaArl = true;
+                }
                 var promises = [];
                 ctrl.trabajoGrado.estudiante = {
                   "Estudiante": ctrl.codigoEstudiante
                 }
                 promises.push(ctrl.cargarEstudiante(ctrl.trabajoGrado.estudiante));
                 promises.push(ctrl.cargarAsignaturasTrabajoGrado());
-                promises.push(ctrl.cargarAreasConocimiento());
                 promises.push(ctrl.cargarActaSocializacion());
+                promises.push(ctrl.cargarCertificadoARL());
                 promises.push(ctrl.getEstudiantesTg());
 
-                //Consulta las vinculaciones 
+                //Consulta las vinculaciones y las áreas de conocimiento
                 if (ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3) {
                   promises.push(ctrl.getVinculaciones());
+                  promises.push(ctrl.cargarAreasConocimiento());
                 }
 
                 //si la modalidad es 2 trae los espacios academicos
-                if (ctrl.trabajoGrado.Modalidad.Id === 2) {
+                if (ctrl.trabajoGrado.Modalidad.Id === 2 || ctrl.trabajoGrado.Modalidad.Id === 3) {
                   promises.push(ctrl.getEspaciosAcademicosInscritos());
                 }
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
@@ -692,7 +735,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado.Id))
           .then(function(documentoAsociado) {
-            if (documentoAsociado.data) {
+            if (Object.keys(documentoAsociado.data[0]).length > 0) {
               trabajoGrado.documentoTrabajoGrado = documentoAsociado.data[0].Id;
               trabajoGrado.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
             }

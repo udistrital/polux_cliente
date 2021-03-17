@@ -11,13 +11,14 @@
             <div class="row" ng-if="!administrarAreas.areasError">
                 <label class="col-sm-2 control-label"> {{'SELECT.AREA_SNIES' | translate}} </label>
                 <div class="col-sm-10">
-                    <select class="form-control"  ng-model="area_seleccionada" ng-change="administrarAreas.cargarAreasConocimiento(area_seleccionada);">
+                    <select class="form-control" ng-model="administrarAreas.sniesSeleccionada" ng-change="administrarAreas.cargarAreasConocimiento(administrarAreas.sniesSeleccionada);">
                         <option  ng-repeat="area in administrarAreas.areasSnies" ng-value="area">{{area.Nombre}} </option>
                     </select>
                 </div>
             </div>
             <div class="row" ng-if="loadAreasConocimiento!==undefined">
                 <loading tam="4" load="loadAreasConocimiento" message="msgCargandoAreas"> </loading>
+                <br>
                 <div class="col-sm-12" ng-if="!loadAreasConocimiento">
                     <div class="alert alert-danger" ng-if="administrarAreas.areasConocimientoError">
                         {{'ERROR.NO_AREAS_CARGADAS' | translate}}
@@ -40,25 +41,28 @@
 <div id="modalAgregarArea" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
     <div class="modal-content col-md-offset-2 col-md-8">
         <div class="modal-header">
-              {{'NUEVA_AREA' | translate}}
             <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{'AREAS.DATOS_AREA'| translate}}
+                {{'NUEVA_AREA' | translate}}
             </div>       
             <div class="panel-body"> 
                 <loading tam="4" load="loadCargandoArea" message="msgRegistrandoArea"> </loading>
                 <form ng-if="!loadCargandoArea" method="post" name="formularioArea" ng-submit="administrarAreas.cargarArea()">
                     <div class="row">
-                        <label class="col-sm-4 control-label"> {{'AREAS.INGRESE_NOMBRE_AREA'|translate}}:  </label>
+                        <label class="col-sm-4 control-label">
+                            {{'AREAS.INGRESE_NOMBRE_AREA'|translate}}
+                        </label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" ng-model="administrarAreas.nombreArea" required></input>
                         </div>
                     </div>
                     <br>
                     <div class="row">
-                        <label class="col-sm-4 control-label"> {{'AREAS.INGRESE_DESCRIPCION_AREA'|translate}}:  </label>
+                        <label class="col-sm-4 control-label">
+                            {{'AREAS.INGRESE_DESCRIPCION_AREA'|translate}}
+                        </label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" ng-model="administrarAreas.descripcionArea" required></input>
                         </div>
@@ -67,6 +71,47 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <input type="submit" value="{{'AREAS.REGISTRAR_AREA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+
+<div id="modalEditarArea" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'EDITAR_AREA' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadEditandoArea" message="msgRegistrandoArea"> </loading>
+                <form ng-if="!loadEditandoArea" method="post" name="formularioEditarArea" ng-submit="administrarAreas.editarArea()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'AREAS.INGRESE_NOMBRE_AREA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="administrarAreas.areaSeleccionadaTemp.Nombre" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'AREAS.INGRESE_DESCRIPCION_AREA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="administrarAreas.areaSeleccionadaTemp.Descripcion" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" ng-if="administrarAreas.areaSeleccionadaTemp.Descripcion != administrarAreas.areaSeleccionada.Descripcion || administrarAreas.areaSeleccionadaTemp.Nombre != administrarAreas.areaSeleccionada.Nombre" >
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'AREAS.EDITAR_AREA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
                         </div>
                     </div>
                 </form>

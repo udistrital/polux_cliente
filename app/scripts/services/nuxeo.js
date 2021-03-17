@@ -8,7 +8,7 @@
      * @param {injector} $q componente para promesas de angular
      * @param {injector} CONF compenente de configuración
      * @description
-     * # coreService
+     * # nuxeo
      * Fabrica sobre la cual se consumen los servicios proveidos por el API de nuxeo
      */
 angular.module('poluxClienteApp')
@@ -18,8 +18,8 @@ angular.module('poluxClienteApp')
             baseURL: CONF.GENERAL.NUXEO_SERVICE,
             auth: {
                 method: 'basic',
-                username: 'Administrator',
-                password: 'S1st3m4s04S=Fr331P4'
+                username: 'desarrollooas',
+                password: 'desarrollooas2019'
             }
         });
     });

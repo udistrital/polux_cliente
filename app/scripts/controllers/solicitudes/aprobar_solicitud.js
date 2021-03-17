@@ -125,8 +125,9 @@ angular.module('poluxClienteApp')
         };*/
       //$scope.userId=19451396;
       //token_service.token.documento = "79537917"; //Coordinador de artes
-      token_service.token.documento = "79647592" //Coordinador de sistemas
-      $scope.userId = parseInt(token_service.token.documento);
+      //token_service.token.documento = "79647592" //Coordinador de sistemas
+      //$scope.userId = parseInt(token_service.token.documento);
+      $scope.userId = parseInt(token_service.getAppPayload().appUserDocument);
 
       ctrl.carrerasCoordinador = [];
 
@@ -174,7 +175,7 @@ angular.module('poluxClienteApp')
           query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud + ",Activo:TRUE"
         });
         poluxRequest.get("respuesta_solicitud", parametros).then(function(responseRespuesta) {
-            if (responseRespuesta.data != null) {
+            if (Object.keys(responseRespuesta.data[0]).length > 0) {
               ctrl.respuestaActual = responseRespuesta.data[0];
               if (responseRespuesta.data[0].EstadoSolicitud.Id != 1) {
                 ctrl.mensajeNoAprobar += ' ' + $translate.instant('SOLICITUD_CON_RESPUESTA');
@@ -206,19 +207,28 @@ angular.module('poluxClienteApp')
        */
       ctrl.getFechasAprobacion = function(idModalidadTipoSolicitud) {
         var defer = $q.defer();
-        //si la solicitud es de tipo inicial en la modalidad de materias de posgrado
-        if (idModalidadTipoSolicitud === 13) {
+        //si la solicitud es de tipo inicial en la modalidad de materias de posgrado (13) o de profundizacion (16)
+        if (idModalidadTipoSolicitud === 13 || idModalidadTipoSolicitud === 16) {
           academicaRequest.get("periodo_academico", "X")
             .then(function(responsePeriodo) {
               if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
                 ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
+                var tipoSesionPadre = 0;
+                if (idModalidadTipoSolicitud === 13) {
+                  //Materias de posgrado
+                  tipoSesionPadre = 1;
+                } else {
+                  //Materias de profundizacion
+                  //idModalidadTipoSolicitud === 16
+                  tipoSesionPadre = 9;
+                }
                 var parametrosSesiones = $.param({
-                  query: "SesionHijo.TipoSesion.Id:8,SesionPadre.periodo:" + ctrl.periodoSiguiente.anio + ctrl.periodoSiguiente.periodo,
+                  query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:8,SesionPadre.periodo:" + ctrl.periodoSiguiente.anio + ctrl.periodoSiguiente.periodo,
                   limit: 1
                 });
                 sesionesRequest.get("relacion_sesiones", parametrosSesiones)
                   .then(function(responseFechas) {
-                    if (responseFechas.data !== null) {
+                    if (Object.keys(responseFechas.data[0]).length > 0) {
                       ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
                       var sesion = responseFechas.data[0];
                       var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
@@ -232,7 +242,7 @@ angular.module('poluxClienteApp')
                         console.log();
                         defer.resolve();
                       } else {
-                        ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION_POSGRADO', {
+                        ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION', {
                           inicio: ctrl.fechaInicio,
                           fin: ctrl.fechaFin
                         });
@@ -240,13 +250,13 @@ angular.module('poluxClienteApp')
                         defer.resolve();
                       }
                     } else {
-                      ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.SIN_FECHAS_MODALIDAD_POSGRADO');
+                      ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                       ctrl.noAprobar = true;
                       defer.resolve();
                     }
                   })
                   .catch(function() {
-                    ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD_POSGRADO");
+                    ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_FECHAS_MODALIDAD");
                     defer.reject("no se pudo cargar fechas");
                   });
               } else {
@@ -255,7 +265,7 @@ angular.module('poluxClienteApp')
               }
             })
             .catch(function(error) {
-              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_PERIODO");
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGANDO_PERIODO");
               defer.reject(error);
             });
         } else {
@@ -281,12 +291,11 @@ angular.module('poluxClienteApp')
         var promise = defered.promise;
         poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function(responseDetalles) {
             poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(function(responseEstudiantes) {
-                if (responseDetalles.data === null) {
+                if (Object.keys(responseDetalles.data[0]).length === 0) {
                   ctrl.detallesSolicitud = [];
                 } else {
                   ctrl.detallesSolicitud = responseDetalles.data;
                 }
-
                 var solicitantes = "";
                 ctrl.detallesSolicitud.id = ctrl.solicitud;
                 ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
@@ -399,7 +408,7 @@ angular.module('poluxClienteApp')
                   });
                   poluxRequest.get("detalle_pasantia", parametrosVinculado)
                     .then(function(dataExterno) {
-                      if (dataExterno.data != null) {
+                      if (Object.keys(dataExterno.data[0]).length > 0) {
                         var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
                         temp = temp[1].split(" con número de identificacion ");
                         detalle.Descripcion = temp[0];
@@ -576,7 +585,9 @@ angular.module('poluxClienteApp')
        */
       ctrl.getEvaluadores = function(solicitud) {
         var defer = $q.defer();
-        poluxMidRequest.post("evaluadores/ObtenerEvaluadores", solicitud).then(function(response) {
+        poluxMidRequest.post("evaluadores/ObtenerEvaluadores", {
+          "Modalidad": solicitud
+        }).then(function(response) {
             ctrl.evaluadoresInicial = new Array(parseInt(response.data.cantidad_evaluadores));
             for (var i = 0; i < ctrl.evaluadoresInicial.length; i++) {
               var label = (ctrl.evaluadoresInicial.length > 1) ? $translate.instant('SELECT.EVALUADOR_NUMERO', {
@@ -622,7 +633,7 @@ angular.module('poluxClienteApp')
         limit: 1
       });
       poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitud).then(function(responseSolicitud) {
-          if (responseSolicitud.data != null) {
+          if (Object.keys(responseSolicitud.data[0]).length > 0) {
             var parametrosDetallesSolicitud = $.param({
               query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
               limit: 0
@@ -645,7 +656,7 @@ angular.module('poluxClienteApp')
                     limit: 0
                   });
                   poluxRequest.get("vinculacion_trabajo_grado", parametrosVinculacion).then(function(docentesVinculados) {
-                      if (docentesVinculados.data !== null) {
+                      if (Object.keys(docentesVinculados.data[0]).length > 0) {
                         var vinculados = [];
                         ctrl.docentesVinculadosTg = docentesVinculados.data;
                         angular.forEach(ctrl.docentes, function(docente) {
@@ -758,17 +769,17 @@ angular.module('poluxClienteApp')
             //se recorren los detalles y se obtienen los nombres de las nuevas vinculaciones
             angular.forEach(ctrl.todoDetalles, function(detalle) {
               if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Director Actual") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.directorActual = Number(aux[0]);
+                var auxiliarDirectorActual = detalle.Descripcion.split(" ");
+                ctrl.directorActual = Number(auxiliarDirectorActual[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Director Nuevo") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.directorNuevo = Number(aux[0]);
+                var auxiliarDirectorNuevo = detalle.Descripcion.split(" ");
+                ctrl.directorNuevo = Number(auxiliarDirectorNuevo[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Evaluador Actual") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.evaluadorActual = Number(aux[0]);
+                var auxiliarEvaluadorActual = detalle.Descripcion.split(" ");
+                ctrl.evaluadorActual = Number(auxiliarEvaluadorActual[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Evaluador Nuevo") {
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.evaluadorNuevo = Number(aux[0]);
+                var auxiliarEvaluadorNuevo = detalle.Descripcion.split(" ");
+                ctrl.evaluadorNuevo = Number(auxiliarEvaluadorNuevo[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Enunciado == "ESCRIBA_NOMBRE_NUEVO_PROPUESTA") {
                 ctrl.tituloNuevo = detalle.Descripcion;
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 23) {
@@ -790,8 +801,8 @@ angular.module('poluxClienteApp')
                 }
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 57) {
                 //Documento del codirector
-                var aux = detalle.Descripcion.split(" ");
-                ctrl.codirector = Number(aux[0]);
+                var auxiliarCodirector = detalle.Descripcion.split(" ");
+                ctrl.codirector = Number(auxiliarCodirector[0]);
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59 || detalle.DetalleTipoSolicitud.Detalle.Id == 60) {
                 //Documento de propuesta final si el detalle es documennto fila o evidencias de publicación
                 ctrl.docPropuestaFinal = detalle.Descripcion;
@@ -1127,8 +1138,6 @@ angular.module('poluxClienteApp')
                   vinculacionActual = docenteVinculado;
                 } else if (docenteVinculado.Usuario === Number(ctrl.codirector)) {
                   vinculacionActual = docenteVinculado;
-                } else if (docenteVinculado.Usuario === Number(ctrl.directorExternoActual)) {
-                  vinculacionActual = docenteVinculado;
                 }
               });
               var nuevaVinculacion = angular.copy(vinculacionActual);
@@ -1282,25 +1291,25 @@ angular.module('poluxClienteApp')
             } else if (ctrl.dataSolicitud.TipoSolicitud == 6) {
               //Solicitud de socialización
               //Vinculaciones del tg
-              var data_vinculaciones = [];
+              var dataVinculaciones = [];
               //Si se escogio cambiar las vinculaciones se cambian, el resto de la justificación va en la data
               if (ctrl.switchRevision) {
                 //Si se cambio el  director original
                 if (ctrl.directorOpcionTg.id != ctrl.directorActualTg.id) {
                   //Cambiar vinculaciones
-                  addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
+                  addVinculacion(dataVinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
                 }
                 //Si se cambiaron los evaluadores actuales
                 if (ctrl.evaluadoresActualesTg != undefined) {
-                  for (var e = 0; e < ctrl.evaluadoresActualesTg.length; e++) {
-                    if (ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id) {
+                  for (var item = 0; item < ctrl.evaluadoresActualesTg.length; item++) {
+                    if (ctrl.evaluadoresActualesTg[item].docente.id != ctrl.evaluadoresOpcionesTg[item].docente.id) {
                       //Cambiar vinculaciones                  
-                      addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
+                      addVinculacion(dataVinculaciones, ctrl.evaluadoresActualesTg[item].docente.id, ctrl.evaluadoresOpcionesTg[item].docente.id);
                     }
                   }
                   //buscar si hay algun valor repetido
-                  angular.forEach(data_vinculaciones, function(vinculacion) {
-                    if (data_vinculaciones.filter(function(value) {
+                  angular.forEach(dataVinculaciones, function(vinculacion) {
+                    if (dataVinculaciones.filter(function(value) {
                         return value.Usuario === vinculacion.Usuario
                       }).length > 1) {
                       errorDocente = true;
@@ -1308,9 +1317,9 @@ angular.module('poluxClienteApp')
                   });
                 }
               } else {
-                data_vinculaciones = null;
+                dataVinculaciones = null;
               }
-              ctrl.dataRespuesta.Vinculaciones = data_vinculaciones;
+              ctrl.dataRespuesta.Vinculaciones = dataVinculaciones;
             }
           }
 
@@ -1322,14 +1331,14 @@ angular.module('poluxClienteApp')
               .catch(function(error) {
                 console.log(error);
                 swal(
-                  $translate.instant("ERROR"),
+                  $translate.instant("MENSAJE_ERROR"),
                   $translate.instant("ERROR.ENVIO_SOLICITUD"),
                   'warning'
                 );
               });
           } else {
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.DOCENTE_DUPLICADO"),
               'warning'
             );
@@ -1398,7 +1407,7 @@ angular.module('poluxClienteApp')
           $scope.loadFormulario = true;
           var documento = ctrl.acta;
           if (documento.type !== "application/pdf" || documento.size > tam) {
-            nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'Actas', function(url) {
+            nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'actas', function(url) {
                 ctrl.urlActa = url;
               })
               .then(function() {
@@ -1533,9 +1542,9 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("error", error);
+            console.log("Error ->", error);
             swal(
-              $translate.instant("ERROR"),
+              $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
               'warning'
             );
@@ -1586,18 +1595,17 @@ angular.module('poluxClienteApp')
           });
           $scope.loadDocumento = true;
           poluxRequest.get("documento_escrito", parametrosDocumentos).then(function(responseDocumentos) {
-
-              console.log(responseDocumentos);
-
-              angular.forEach(responseDocumentos.data, function(documento) {
-                console.log("documentos", documento);
-                var tempDoc = {
-                  "id": documento.Id,
-                  "nombre": documento.Titulo,
-                  "url": documento.Enlace,
-                }
-                ctrl.documentos.push(tempDoc);
-              });
+              if (Object.keys(responseDocumentos.data[0]).length > 0) {
+                angular.forEach(responseDocumentos.data, function(documento) {
+                  console.log("documentos", documento);
+                  var tempDoc = {
+                    "id": documento.Id,
+                    "nombre": documento.Titulo,
+                    "url": documento.Enlace,
+                  }
+                  ctrl.documentos.push(tempDoc);
+                });
+              }
               $scope.loadDocumento = false;
             })
             .catch(function(error) {

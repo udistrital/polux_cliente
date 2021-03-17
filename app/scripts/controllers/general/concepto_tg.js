@@ -39,9 +39,14 @@ angular.module('poluxClienteApp')
     function($location, $q, $routeParams, $scope, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
       ctrl.idVinculacion = $routeParams.idVinculacion;
+      ctrl.cargando = true;
+      ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_PROYECTOS");
+      //console.log("parametros",$routeParams);
+      //token_service.token.documento = "80093200";
+      //ctrl.userId = token_service.token.documento;
 
-      token_service.token.documento = "80093200";
-      ctrl.userId = token_service.token.documento;
+      ctrl.userId = token_service.getAppPayload().appUserDocument;
+
       $scope.showc = true;
 
       /**
@@ -88,7 +93,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosDocumentoEscrito)
           .then(function(responseDocumento) {
-            if (responseDocumento.data) {
+            if (Object.keys(responseDocumento.data[0]).length > 0) {
               defer.resolve(responseDocumento.data[0]);
             } else {
               ctrl.mensajeError = $translate.instant("DOCUMENTO.NO_EXISTE_DOCUMENTO");
@@ -120,7 +125,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("revision_trabajo_grado", parametrosRevisionesTrabajoGrado)
           .then(function(responseRevisiones) {
-            if (responseRevisiones.data) {
+            if (Object.keys(responseRevisiones.data[0]).length > 0) {
               defer.resolve(responseRevisiones.data);
             } else {
               defer.resolve([]);
@@ -207,12 +212,12 @@ angular.module('poluxClienteApp')
         ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_PROYECTOS");
         if (idVinculacion) {
           var parametrosTg = $.param({
-            query: "Id:" + idVinculacion,
+            query: "Id:" + idVinculacion + ",Usuario:" + ctrl.userId,
             limit: 1,
           });
           poluxRequest.get("vinculacion_trabajo_grado", parametrosTg)
             .then(function(responseVinculacion) {
-              if (responseVinculacion.data) {
+              if (Object.keys(responseVinculacion.data[0]).length > 0) {
                 ctrl.vinculacion = responseVinculacion.data[0];
 
                 ctrl.tipoDocumento = 0;
@@ -254,9 +259,9 @@ angular.module('poluxClienteApp')
                   .then(function(documentoTg) {
                     trabajoGrado.documentoTg = documentoTg;
                     //ctrl.getRevisiones(documentoTg);
-                    ctrl.cargando = false;
                     ctrl.getRevisiones(documentoTg.TrabajoGrado.Id)
                       .then(function(revisiones) {
+                        ctrl.cargando = false;
                         trabajoGrado.revisiones = revisiones;
                         //Se habilita la directiva para solicitar la revisión
                         if (trabajoGrado.EstadoTrabajoGrado.Id == 4 || trabajoGrado.EstadoTrabajoGrado.Id == 15) {
@@ -331,6 +336,7 @@ angular.module('poluxClienteApp')
         .catch(function(excepcionInformacionDocente) {
           ctrl.errorCargando = true;
           ctrl.mensajeError = excepcionInformacionDocente;
+          ctrl.cargando = false;
         });
 
       /**
@@ -398,9 +404,9 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               if (ctrl.revisionActual.documentModel) {
-                nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "Correcciones", undefined)
+                nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
                   .then(function(respuestaCrearDocumento) {
                     console.log(respuestaCrearDocumento);
                     ctrl.revisionActual.Correcciones.push({

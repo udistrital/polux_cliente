@@ -57,12 +57,12 @@ angular.module('poluxClienteApp')
       nombre: "Administración PWI",
       link: "#/"
     }];
-    $scope.copyright = "© Copyright 1995 - 2017 - Todos los Derechos Reservados ...";
+    $scope.copyright = "© Copyright 1995 - 2019 - Todos los Derechos Reservados ...";
     $scope.map = [{
       nombre: "Preguntas Frecuentes",
       link: "#/"
     }, {
-      nombre: "Mapa del Porta",
+      nombre: "Mapa del Portal",
       link: "#/"
     }, {
       nombre: "Política de Privacidad",

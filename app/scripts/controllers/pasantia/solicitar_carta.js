@@ -39,8 +39,9 @@ angular.module('poluxClienteApp')
       $scope.cargandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
 
       //código de la pesona que se loguea
-      token_service.token.documento = "20141020036";
-      ctrl.codigo = token_service.token.documento;
+      //token_service.token.documento = "20141020036";
+      //ctrl.codigo = token_service.token.documento;
+      ctrl.codigo = token_service.getAppPayload().appUserDocument;
 
       /**
        * @ngdoc method
@@ -76,21 +77,21 @@ angular.module('poluxClienteApp')
               };
               if (ctrl.estudiante.Nombre != undefined) {
                 poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(verificacion) {
-                    if (verificacion.data === 'true') {
+                    if (verificacion.data.RequisitosModalidades) {
                       // se verifica que no tenga trabajos de grado actualmente
                       var parametrosTrabajo = $.param({
                         query: "EstadoEstudianteTrabajoGrado:1,Estudiante:" + ctrl.codigo,
                         limit: 1,
                       });
                       poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajo).then(function(responseTrabajo) {
-                          if (responseTrabajo.data === null) {
+                          if (Object.keys(responseTrabajo.data[0]).length > 0) {
                             // se verifica que no tenga solicitudes pendientes
                             var parametrosUsuario = $.param({
                               query: "usuario:" + ctrl.codigo,
                               limit: 0,
                             });
                             poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(responseSolicitudes) {
-                                if (responseSolicitudes.data === null) {
+                                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
                                   //no ha hecho solicitudes
                                   $scope.loadEstudiante = false;
                                 } else {
@@ -102,7 +103,7 @@ angular.module('poluxClienteApp')
                                       limit: 1,
                                     });
                                     poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
-                                        if (responseSolicitudesActuales.data != null) {
+                                        if (Object.keys(responseSolicitudesActuales.data[0]).length > 0) {
                                           defered.resolve(responseSolicitudesActuales.data);
                                           solicitudesActuales.push(responseSolicitudesActuales.data[0]);
                                         } else {
@@ -332,7 +333,7 @@ angular.module('poluxClienteApp')
           cancelButtonText: $translate.instant("CANCELAR"),
           showCancelButton: true
         }).then(function(responseSwal) {
-          if (responseSwal.value) {
+          if (responseSwal) {
             $scope.loadFormulario = true;
             ctrl.postSolicitud()
               .then(function(response) {

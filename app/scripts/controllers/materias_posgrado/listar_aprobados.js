@@ -46,8 +46,9 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
-      token_service.token.documento = "12237136";
-      ctrl.usuarioSesion = token_service.token.documento;
+      //token_service.token.documento = "12237136";
+      //ctrl.usuarioSesion = token_service.token.documento;
+      ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 
       // En el inicio de la página, se están cargando los posgrados
       ctrl.cargandoPosgradosAsociados = true;
@@ -346,12 +347,15 @@ angular.module('poluxClienteApp')
         poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitudRespondida(solicitudAprobada.SolicitudTrabajoGrado.Id))
           .then(function(detalleSolicitudRespondida) {
             // Se estudia si la información existe y corresponde al posgrado seleccionado
-            if (ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data[0].Descripcion).Codigo == ctrl.posgradoSeleccionado) {
+            if (Object.keys(detalleSolicitudRespondida.data[0]).length > 0 &&
+              ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data[0].Descripcion).Codigo === Number(ctrl.posgradoSeleccionado)) {
               // Se actualiza el elemento de la colección
               solicitudAprobada.detalleDeSolicitud = detalleSolicitudRespondida.data[0].Descripcion;
+              deferred.resolve();
+            } else {
+              // Se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
             }
-            // Se resuelve el mensaje correspondiente
-            deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
           })
           .catch(function(excepcionDetalleSolicitudRespondida) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
@@ -401,12 +405,14 @@ angular.module('poluxClienteApp')
         poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosRespuestaDeSolicitud(solicitudAprobada.SolicitudTrabajoGrado.Id))
           .then(function(respuestaDeSolicitud) {
             // Se estudia si la información existe
-            if (respuestaDeSolicitud.data) {
+            if (Object.keys(respuestaDeSolicitud.data[0]).length > 0) {
               // Se resuelve la solicitud aprobada con el usuario dentro
               solicitudAprobada.respuestaDeSolicitud = respuestaDeSolicitud.data[0];
+              deferred.resolve();
+            } else {
+              // Se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
             }
-            // Se resuelve el mensaje correspondiente
-            deferred.resolve($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
           })
           .catch(function(excepcionRespuestaDeSolicitud) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
@@ -436,9 +442,11 @@ angular.module('poluxClienteApp')
             if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
               // Se resuelve la información académica del estudiante
               solicitudAsociada.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
+              deferred.resolve();
+            } else {
+              // Se resuelve el mensaje correspondiente
+              deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
             }
-            // Se resuelve el mensaje correspondiente
-            deferred.resolve($translate.instant("ERROR.SIN_INFO_ESTUDIANTE"));
           })
           .catch(function(excepcionEstudianteConsultado) {
             // En caso de error se rechaza la petición con el mensaje correspondiente
@@ -490,7 +498,7 @@ angular.module('poluxClienteApp')
         // Se consulta hacia las solicitudes respondidas en la base de datos
         poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuarioDeSolicitud())
           .then(function(usuariosConSolicitudes) {
-            if (usuariosConSolicitudes.data) {
+            if (Object.keys(usuariosConSolicitudes.data[0]).length > 0) {
               angular.forEach(usuariosConSolicitudes.data, function(solicitudAprobada) {
                 conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarDetalleSolicitudRespondida(solicitudAprobada));
                 conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarRespuestaDeSolicitud(solicitudAprobada));
@@ -584,7 +592,11 @@ angular.module('poluxClienteApp')
             } else {
               // Se muestra el error
               ctrl.errorCargandoSolicitudesAprobadas = true;
-              ctrl.mensajeErrorCargandoSolicitudesAprobadas = resultadoConsultaSolicitudesRespondidas[0];
+              resultadoConsultaSolicitudesRespondidas.sort();
+              resultadoConsultaSolicitudesRespondidas.reverse();
+              ctrl.mensajeErrorCargandoSolicitudesAprobadas = resultadoConsultaSolicitudesRespondidas.find(function(mensaje) {
+                return !angular.isUndefined(mensaje);
+              });
             }
           })
           .catch(function(excepcionSolicitudesRespondidas) {
@@ -702,7 +714,7 @@ angular.module('poluxClienteApp')
           })
           .then(function(confirmacionDelUsuario) {
             // Se valida que el coordinador haya confirmado el registro
-            if (confirmacionDelUsuario.value) {
+            if (confirmacionDelUsuario) {
               // Se detiene la visualización de solicitudes mientras se formaliza
               ctrl.cuadriculaSolicitudesAprobadas.data = [];
               // Se inicia la carga del formulario mientras se formaliza
@@ -741,6 +753,15 @@ angular.module('poluxClienteApp')
                   );
                 });
             }
+          })
+          .catch(function(excepcionRegistro) {
+            // En caso de fallar el envío de los datos, se detiene la carga y notifica al usuario
+            ctrl.cargandoTransaccionRegistro = false;
+            swal(
+              $translate.instant("LISTAR_APROBADOS.AVISO"),
+              $translate.instant("ERROR.REGISTRANDO_MODALIDAD"),
+              'warning'
+            );
           });
       }
 

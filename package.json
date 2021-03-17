@@ -14,7 +14,7 @@
     "grunt-contrib-htmlmin": "^0.4.0",
     "grunt-contrib-imagemin": "^1.0.0",
     "grunt-contrib-jshint": "^0.11.0",
-    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-filerev": "^2.1.2",
     "grunt-google-cdn": "^0.4.3",
@@ -44,10 +44,12 @@
     "node": ">=0.10.0"
   },
   "scripts": {
+    "serve": "grunt serve",
     "test": "karma start test/karma.conf.js"
   },
   "dependencies": {
     "angular-async-await": "^1.1.2",
-    "angular-pdf": "^1.5.1"
+    "angular-pdf": "^1.5.1",
+    "natives": "^1.1.6"
   }
 }

@@ -48,8 +48,10 @@ angular.module('poluxClienteApp')
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
-      token_service.token.documento = "12237136";
-      ctrl.usuarioSesion = token_service.token.documento;
+      // token_service.token.documento = "12237136";
+      //ctrl.usuarioSesion = token_service.token.documento;
+
+      ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 
       // En el inicio de la página, se están cargando los posgrados
       ctrl.cargandoPosgradosAsociados = true;
@@ -353,7 +355,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("espacio_academico_inscrito", ctrl.obtenerParametrosEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado.TrabajoGrado.Id))
           .then(function(espaciosAcademicosInscritos) {
             // Se estudia si la información existe
-            if (espaciosAcademicosInscritos.data) {
+            if (Object.keys(espaciosAcademicosInscritos.data[0]).length > 0) {
               // Se actualiza el elemento de la colección
               estudianteConTrabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
             }
@@ -444,7 +446,7 @@ angular.module('poluxClienteApp')
         // Se consulta hacia los estudiantes con trabajos de grados registrados en la base de datos
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudiantesCursandoTrabajoDeGrado) {
-            if (estudiantesCursandoTrabajoDeGrado.data) {
+            if (Object.keys(estudiantesCursandoTrabajoDeGrado.data[0]).length > 0) {
               angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(estudianteConTrabajoDeGrado));
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado));
@@ -527,7 +529,7 @@ angular.module('poluxClienteApp')
             } else {
               // Se muestra el error
               ctrl.errorCargandoTrabajosDeGradoCursados = true;
-              ctrl.mensajeErrorCargandoTrabajosDeGradoCursados = resultadoConsultaTrabajosDeGradoCursados[0];
+              ctrl.mensajeErrorCargandoTrabajosDeGradoCursados = resultadoConsultaTrabajosDeGradoCursados.sort().reverse()[0];
             }
           })
           .catch(function(excepcionTrabajosDeGradoCursados) {
@@ -680,7 +682,7 @@ angular.module('poluxClienteApp')
               })
               .then(function(confirmacionDelUsuario) {
                 // Se valida que el coordinador haya confirmado el registro
-                if (confirmacionDelUsuario.value) {
+                if (confirmacionDelUsuario) {
                   // Se detiene la visualización de trabajos de grado
                   ctrl.cargandoTrabajosDeGradoCursados = true;
                   ctrl.cargandoEspaciosAcademicos = true;
@@ -857,7 +859,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("asignatura_trabajo_grado", ctrl.obtenerParametrosAsignaturaTrabajoGrado(idTrabajoGrado))
           .then(function(asignaturasDeTrabajoDeGrado) {
             // Se estudia si la información existe
-            if (asignaturasDeTrabajoDeGrado.data) {
+            if (Object.keys(asignaturasDeTrabajoDeGrado.data[0]).length > 0) {
               // Se resuelve el resultado
               deferred.resolve(asignaturasDeTrabajoDeGrado.data);
             } else {

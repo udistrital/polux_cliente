@@ -34,6 +34,7 @@ angular
         'angularMoment',
         'ui.utils.masks',
         'poluxService',
+        'documentoService',
         'oikosService',
         'academicaService',
         'cadenaService',
@@ -48,7 +49,9 @@ angular
         'infinite-scroll',
         'uiSwitch',
         'configuracionService',
-        'nuxeoService'
+        'nuxeoService',
+        'implicitToken',
+        'autenticacionMidService'
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
@@ -280,6 +283,31 @@ angular
               templateUrl: 'views/general/concepto_tg.html',
               controller: 'GeneralConceptoTgCtrl',
               controllerAs: 'conceptoTg'
+            })
+            .when('/materias_profundizacion/seleccion_admitidos', {
+              templateUrl: 'views/materias_profundizacion/seleccion_admitidos.html',
+              controller: 'MateriasProfundizacionSeleccionAdmitidosCtrl',
+              controllerAs: 'seleccionAdmitidos'
+            })
+            .when('/materias_profundizacion/formalizar_solicitud', {
+              templateUrl: 'views/materias_profundizacion/formalizar_solicitud.html',
+              controller: 'MateriasProfundizacionFormalizarSolicitudCtrl',
+              controllerAs: 'profundizacionFormalizarSolicitud'
+            })
+            .when('/materias_profundizacion/vincular_admitidos', {
+              templateUrl: 'views/materias_profundizacion/vincular_admitidos.html',
+              controller: 'MateriasProfundizacionVincularAdmitidosCtrl',
+              controllerAs: 'profundizacionVincularAdmitidos'
+            })
+            .when('/materias_profundizacion/registrar_nota', {
+              templateUrl: 'views/materias_profundizacion/registrar_nota.html',
+              controller: 'MateriasProfundizacionRegistrarNotaCtrl',
+              controllerAs: 'profundizacionRegistrarNota'
+            })
+            .when('/reportes/reporte_general', {
+              templateUrl: 'views/reportes/reporte_general.html',
+              controller: 'ReportesReporteGeneralCtrl',
+              controllerAs: 'reporteGeneral'
             })
             .otherwise({
                 redirectTo: '/'

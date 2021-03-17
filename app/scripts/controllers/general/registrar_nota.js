@@ -37,10 +37,12 @@ angular.module('poluxClienteApp')
     function($scope, $q, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
-      token_service.token.documento = "80093200";
+      //token_service.token.documento = "80093200";
       //token_service.token.documento = "79777053";
       //token_service.token.documento = "12237136";
-      ctrl.documento = token_service.token.documento;
+      //ctrl.documento = token_service.token.documento;
+
+      ctrl.documento = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
       ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
@@ -126,7 +128,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosTrabajoGrado)
           .then(function(dataTrabajos) {
-            if (dataTrabajos.data != null) {
+            if (Object.keys(dataTrabajos.data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data;
               //Se decide que trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
@@ -134,7 +136,7 @@ angular.module('poluxClienteApp')
                 trabajo.permitirRegistrar = false;
                 //Si el rol es director
                 var rol = trabajo.RolTrabajoGrado.Id;
-                var modalidad = trabajo.TrabajoGrado.Modalidad.Id;
+                // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
                 /*if( rol === 1 ){
                   //Si la modalidad es pasantia o articulo se permite sino no
                   if( modalidad === 1 || modalidad === 8){
@@ -201,8 +203,12 @@ angular.module('poluxClienteApp')
               //consultar nombre carrera
               /*academicaRequest.get("carrera",[estudiante.datos.carrera])
               .then(function(responseCarrera){
-                estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
-                defer.resolve();
+                if (!angular.isUndefined(responseCarrera.carrerasCollection.carrera[0].nombre)) {
+                  estudiante.datos.proyecto = estudiante.datos.carrera + " - " + responseCarrera.data.carrerasCollection.carrera[0].nombre;
+                  defer.resolve();
+                } else {
+                  defer.reject("Error consultando la carrera");
+                }
               })
               .catch(function(error){
                 defer.reject(error);
@@ -236,7 +242,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function(responseEstudiantes) {
-            if (responseEstudiantes.data != null) {
+            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
               trabajoGrado.estudiantes = responseEstudiantes.data;
               var promesasEstudiante = [];
               angular.forEach(trabajoGrado.estudiantes, function(estudiante) {
@@ -278,7 +284,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
           .then(function(responseEvaluacion) {
-            if (responseEvaluacion.data != null) {
+            if (Object.keys(responseEvaluacion.data[0]).length > 0) {
               //Si no ha registrado ninguna nota
               trabajoGrado.notaRegistrada = true;
               trabajoGrado.evaluacion = responseEvaluacion.data[0];
@@ -370,9 +376,9 @@ angular.module('poluxClienteApp')
           //Si es director se debe subir el acta
           if (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1) {
             var nombreDocumento = "Acta de sustentación de trabajo id: " + ctrl.trabajoSeleccionado.Id;
-            var descripcionDocumento = "Acta de sustentación de el trabajo con id: " + ctrl.trabajoSeleccionado.Id + ", nombre:" + ctrl.trabajoSeleccionado.Titulo + ".";
+            var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
             //Se carga el documento
-            nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'Actas de sustentacion', undefined)
+            nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
               .then(function(urlActa) {
                 console.log("acta", urlActa);
                 console.log("nota", ctrl.trabajoSeleccionado.nota);

@@ -119,73 +119,44 @@ angular.module('poluxClienteApp')
                         alignment: 'center'
                     });
                     angular.forEach(formato.TrPreguntas, function (d) {
-                        switch (d.Pregunta.Tipo) {
-                            case "cerrado_unico":
-
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
-                                    style: 'subheader',
-                                    alignment: 'justify'
-                                });
-
-                                var ul = [];
-                                console.log(d.Respuestas);
-                                angular.forEach(d.Respuestas, function (r) {
-                                    console.log(r.IdRespuesta.Descripcion);
-                                    ul.push(r.IdRespuesta.Descripcion);
-                                });
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    type: 'circle',
-                                    ul: ul
-                                });
-                                break;
-
-                            case "cerrado_multiple":
-
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
-                                    style: 'subheader',
-                                    alignment: 'justify'
-                                });
-
-                                var ul = [];
-                                console.log(d.Respuestas);
-                                angular.forEach(d.Respuestas, function (r) {
-                                    console.log(r.IdRespuesta.Descripcion);
-                                    ul.push(r.IdRespuesta.Descripcion);
-                                });
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    type: 'circle',
-                                    ul: ul
-                                });
-                                break;
-                            case "abierto":
-
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
-                                    style: 'subheader',
-                                    alignment: 'justify'
-                                });
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    text: ["_______________________________________________________________________________________\n",
-                                        "_______________________________________________________________________________________\n"
-                                    ],
-                                    alignment: 'center'
-                                });
-                                break;
-                            case "calificado":
-
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
-                                    style: 'subheader',
-                                    alignment: 'justify'
-                                });
-                                $scope.pdfgen_all.pdfgen.content.push({
-                                    text: ["_______________________________________________________________________________________\n"],
-                                    alignment: 'center'
-                                });
-                                break;
-                            default:
+                        if (d.Pregunta.Tipo == "cerrado_unico" || d.Pregunta.Tipo == "cerrado_multiple") {
+                            $scope.pdfgen_all.pdfgen.content.push({
+                                text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
+                                style: 'subheader',
+                                alignment: 'justify'
+                            });
+                            var ul = [];
+                            console.log(d.Respuestas);
+                            angular.forEach(d.Respuestas, function (r) {
+                                console.log(r.IdRespuesta.Descripcion);
+                                ul.push(r.IdRespuesta.Descripcion);
+                            });
+                            $scope.pdfgen_all.pdfgen.content.push({
+                                type: 'circle',
+                                ul: ul
+                            });
+                        } else if (d.Pregunta.Tipo == "abierto") {
+                            $scope.pdfgen_all.pdfgen.content.push({
+                                text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
+                                style: 'subheader',
+                                alignment: 'justify'
+                            });
+                            $scope.pdfgen_all.pdfgen.content.push({
+                                text: ["_______________________________________________________________________________________\n",
+                                    "_______________________________________________________________________________________\n"
+                                ],
+                                alignment: 'center'
+                            });
+                        } else if (d.Pregunta.Tipo == "calificado") {
+                            $scope.pdfgen_all.pdfgen.content.push({
+                                text: "\n" + d.Pregunta.Orden + ". " + d.Pregunta.IdPregunta.Enunciado + "\n\n",
+                                style: 'subheader',
+                                alignment: 'justify'
+                            });
+                            $scope.pdfgen_all.pdfgen.content.push({
+                                text: ["_______________________________________________________________________________________\n"],
+                                alignment: 'center'
+                            });
                         }
                     });
 

@@ -44,7 +44,7 @@ angular.module('poluxClienteApp')
        */
       controller: function ($scope, nuxeoClient, $q, poluxRequest, $translate) {
         var ctrl = this;
-
+        ctrl.mensajeCargandoDocumentos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
         $scope.showVersiones = true;
 
         $scope.$watch('trabajoGradoVersiones', function () {
@@ -77,7 +77,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
             .then(function (responseDocumento) {
-              if (responseDocumento.data != null) {
+              if (Object.keys(responseDocumento.data[0]).length > 0) {
                 ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
                   .then(function (versiones) {
                     var nombreNodo = "";
@@ -200,10 +200,10 @@ angular.module('poluxClienteApp')
                 window.open(documento.url);
               })
               .catch(function (error) {
-                console.log("error", error);
+                console.log("Error ->", error);
                 ctrl.loadingVersion = false;
                 swal(
-                  $translate.instant("ERROR"),
+                  $translate.instant("MENSAJE_ERROR"),
                   $translate.instant("ERROR.CARGAR_DOCUMENTO"),
                   'warning'
                 );

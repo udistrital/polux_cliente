@@ -56,7 +56,7 @@ angular.module('poluxClienteApp')
          * Permite buscar los datos de las asignaturas del servicio de {@link services/academicaService.service:academicaRequest academicaRequest}
          */
         ctrl.obtenerNombres = function (asignaturas, arreglo) {
-          var arreglo = [];
+          arreglo = [];
           angular.forEach(asignaturas, function (value) {
             //buscar los datos de la asignatura
             var parametros = {
@@ -114,20 +114,21 @@ angular.module('poluxClienteApp')
          */
         academicaRequest.obtenerPeriodo().then(function (response) {
           ctrl.periodo = response[0];
+          var parametros;
           if (ctrl.estudiante.TipoCarrera != "TECNOLOGIA") {
             //buscar si hay TG para el estudiante en la modalidad de materias de posgrado
-            var parametros = $.param({
+            parametros = $.param({
               query: "Estudiante:" + ctrl.estudiante.Codigo + "," + "TrabajoGrado.Modalidad.Id:3",
               related: "TrabajoGrado"
             });
           } else {
-            var parametros = $.param({
+            parametros = $.param({
               query: "Estudiante:" + ctrl.estudiante.Codigo + "," + "TrabajoGrado.Modalidad.Id:4",
               related: "TrabajoGrado"
             });
           }
           poluxRequest.get("estudiante_trabajo_grado", parametros).then(function (response) {
-            if (response.data) {
+            if (Object.keys(response.data[0]).length > 0) {
               //por cada TG, buscar la solicitud asociada al TG
               angular.forEach(response.data, function (value) {
                 console.log(value.IdTrabajoGrado.IdModalidad.Id);
@@ -168,7 +169,7 @@ angular.module('poluxClienteApp')
                             nombre: "",
                           };
                           if (!angular.isUndefined(resp2.data.carrerasCollection.carrera)) {
-                            var resultado = response2.data.carrerasCollection.carrera[0];
+                            resultado = response2.data.carrerasCollection.carrera[0];
                           }
                           var sol = {
                             "Id": value.Id,
@@ -188,26 +189,24 @@ angular.module('poluxClienteApp')
                   });
                 } else {
                   if ((ctrl.estudiante.Tipo == 'PREGRADO') && (value.IdTrabajoGrado.IdModalidad.Id == 4)) {
-                    var parametros = $.param({
+                    var parametrosSolicitudMaterias = $.param({
                       query: "IdTrabajoGrado:" + value.IdTrabajoGrado.Id + ",Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER
                     });
                     //buscar la solicitud asociada al TG
-                    poluxRequest.get("solicitud_materias", parametros).then(function (response) {
+                    poluxRequest.get("solicitud_materias", parametrosSolicitudMaterias).then(function (response) {
                       academicaRequest.get("carrera", [response.data[0].CodigoCarrera]).then(function (resp) {
-
-                        var parametros = $.param({
+                        var parametrosAsignaturaInscrita = $.param({
                           query: "IdSolicitudMaterias:" + response.data[0].Id,
                           related: "IdAsignaturasElegibles"
                         });
                         //buscar asignaturas asociadas a la solicitud
-                        poluxRequest.get("asignatura_inscrita", parametros).then(function (resp2) {
-
+                        poluxRequest.get("asignatura_inscrita", parametrosAsignaturaInscrita).then(function (resp2) {
                           angular.forEach(resp2.data, function (value) {
                             //buscar nombre-datos de la asignaturas
-                            var parametros = {
+                            var parametrosBuscarAsignaturas = {
                               'codigo': value.IdAsignaturasElegibles.CodigoAsignatura
                             };
-                            academicaRequest.buscarAsignaturas(parametros).then(function (resp3) {
+                            academicaRequest.buscarAsignaturas(parametrosBuscarAsignaturas).then(function (resp3) {
                               var asign = resp3[0];
                               ctrl.a.push(asign);
                             });

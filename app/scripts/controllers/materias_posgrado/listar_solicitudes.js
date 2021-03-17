@@ -68,8 +68,9 @@ angular.module('poluxClienteApp')
       ctrl.carreras = [];
       ctrl.otro = [];
       //cedula coordinador
-      token_service.token.documento = "12237136";
-      $scope.userId = token_service.token.documento;
+      //token_service.token.documento = "12237136";
+      //$scope.userId = token_service.token.documento;
+      $scope.userId = token_service.getAppPayload().appUserDocument;
       //uigrid
       ctrl.gridOptionsAdmitidos = {
         enableSorting: false,
@@ -188,7 +189,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject("no se pudo cargar periodo");
           });
         return defer.promise;
@@ -216,7 +217,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function() {
-            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_PERIODO");
+            ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
             defer.reject("no se pudo cargar periodo");
           });
         return defer.promise;
@@ -265,14 +266,13 @@ angular.module('poluxClienteApp')
         $scope.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
         //traer fechas
         var parametrosSesiones = $.param({
-          query: "SesionPadre.periodo:" + periodo.anio + periodo.periodo,
+          query: "SesionPadre.TipoSesion.Id:1,SesionPadre.periodo:" + periodo.anio + periodo.periodo,
           limit: 0
         });
         sesionesRequest.get("relacion_sesiones", parametrosSesiones).then(function(responseFechas) {
-            if (responseFechas.data !== null) {
+            if (Object.keys(responseFechas.data[0]).length > 0) {
               ctrl.fechas = responseFechas.data;
               angular.forEach(ctrl.fechas, function(fecha) {
-                //console.log(fecha.SesionHijo);
                 var fechaInicio = new Date(fecha.SesionHijo.FechaInicio);
                 fechaInicio.setTime(fechaInicio.getTime() + fechaInicio.getTimezoneOffset() * 60 * 1000);
                 var fechaFin = new Date(fecha.SesionHijo.FechaFin);
@@ -419,7 +419,7 @@ angular.module('poluxClienteApp')
           query: "DetalleTipoSolicitud:37" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
         });
         poluxRequest.get("detalle_solicitud", parametros).then(function(detalleSolicitud) {
-            if (detalleSolicitud.data !== null) {
+            if (Object.keys(detalleSolicitud.data[0]).length > 0) {
               var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
               if (ctrl.carrera == carreraSolicitud.Codigo) {
                 var parametros = $.param({
@@ -439,7 +439,7 @@ angular.module('poluxClienteApp')
                                 "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                                 "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                                 "estado": value.EstadoSolicitud,
-                                "porcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado + "%",
+                                "porcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje_cursado + "%",
                                 "nombreCarrera": nombreCarrera,
                                 //"respuesta": ""+value.Id,
                                 "respuestaSolicitud": value
@@ -513,7 +513,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("respuesta_solicitud", parametros).then(function(respuestaSolicitud) {
               var promises = [];
               angular.forEach(respuestaSolicitud.data, function(value) {
-                if (value != null) {
+                if (Object.keys(value).length > 0) {
                   promises.push(ctrl.cargarParametrosSolicitud(value));
                 }
               });
@@ -556,7 +556,7 @@ angular.module('poluxClienteApp')
           angular.forEach($scope.sols, function(solicitud) {
             if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
               ctrl.admitidos.push(solicitud);
-            } else if (solicitud.estado.Id == 6) {
+            } else if (solicitud.estado.Id == 6 || solicitud.estado.Id == 11) {
               ctrl.noAdmitidos.push(solicitud);
             } else {
               ctrl.opcionados.push(solicitud);
@@ -598,11 +598,9 @@ angular.module('poluxClienteApp')
           angular.forEach($scope.sols, function(solicitud) {
             if (solicitud.aprobado === true && (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10)) {
               ctrl.admitidos.push(solicitud);
-            } else if (solicitud.estado.Id == 6) {
-              ctrl.noAdmitidos.push(solicitud);
             } else {
-              ctrl.opcionados.push(solicitud);
-            }
+              ctrl.noAdmitidos.push(solicitud);
+            } 
           });
           ctrl.fecha = 2;
           ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;

@@ -27,7 +27,7 @@ angular.module('cidcService', [])
               "Id":"2",
               "Nombre":"Python"
             }
-          ]
+          ];
       },
       obtenerDoncentes:function(){
           return [
@@ -38,7 +38,7 @@ angular.module('cidcService', [])
               "Id":"2",
               "Nombre":"Carlos Gutierrez"
             }
-          ]
+          ];
       }
     };
 

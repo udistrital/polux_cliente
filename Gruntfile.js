@@ -11,12 +11,13 @@ module.exports = function(grunt) {
 
     //sonarqube
     grunt.loadNpmTasks('grunt-sonar-runner');
-
+    grunt.loadNpmTasks('grunt-contrib-uglify-es');
     //ngdocs
-    grunt.loadNpmTasks('grunt-ngdocs');
+   // grunt.loadNpmTasks('grunt-ngdocs');
 
     // Time how long tasks take. Can help when optimizing build times
     require('time-grunt')(grunt);
+
 
     // Automatically load required Grunt tasks
     require('jit-grunt')(grunt, {
@@ -33,7 +34,6 @@ module.exports = function(grunt) {
 
     // Define the configuration for all the tasks
     grunt.initConfig({
-
         // Project settings
         yeoman: appConfig,
 
@@ -476,7 +476,7 @@ ngtemplates: {
                         host: {
                             url: 'http://localhost:9000'
                         },
-                        projectKey: 'sonar:polux_cliente:20180615',
+                        projectKey: 'sonar:polux_cliente:20181003',
                         projectName: 'polux_cliente',
                         projectVersion: '0.10',
                         sources: ['app','test'].join(','),

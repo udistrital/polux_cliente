@@ -49,8 +49,10 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "80093200";
-			ctrl.usuarioSesion = token_service.token.documento;
+			//token_service.token.documento = "80093200";
+			//ctrl.usuarioSesion = token_service.token.documento;
+
+			ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 
 			ctrl.cargandoAnteproyectos = true;
 			ctrl.mensajeCargandoAnteproyectos = $translate.instant("LOADING.CARGANDO_ANTEPROYECTOS");
@@ -65,7 +67,7 @@ angular.module('poluxClienteApp')
 
 			ctrl.botonRevisarAnteproyecto = [{
 				clase_color: "ver",
-				clase_css: "fa fa-cog fa-lg  faa-shake animated-hover",
+				clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
 				titulo: $translate.instant('BTN.REVISAR_ANTEPROYECTO'),
 				estado: true
 			}];
@@ -223,7 +225,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (estudiantesAsociados.data) {
+						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
 							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
@@ -268,7 +270,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (documentoAsociado.data) {
+						if (Object.keys(documentoAsociado.data[0]).length > 0) {
 							anteproyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
 							anteproyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
 						}
@@ -319,7 +321,7 @@ angular.module('poluxClienteApp')
 				ctrl.coleccionAnteproyectos = [];
 				poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
 					.then(function(anteproyectosPendientes) {
-						if (anteproyectosPendientes.data) {
+						if (Object.keys(anteproyectosPendientes.data[0]).length > 0) {
 							angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarEstudiantesAsociados(anteproyecto));
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarDocumentoTrabajoGrado(anteproyecto));
@@ -379,12 +381,12 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.actualizarCuadriculaDeAnteproyectos = function() {
 				ctrl.cuadriculaAnteproyectos.data = [];
-				ctrl.cargandoAnteproyectos = false;
-				ctrl.errorCargandoAnteproyectos = false;
 				ctrl.consultarAnteproyectos()
 					.then(function(respuestaConsultandoAnteproyectos) {
+						ctrl.cargandoAnteproyectos = false;
 						if (ctrl.coleccionAnteproyectos.length > 0) {
 							ctrl.mostrarAnteproyectos(ctrl.coleccionAnteproyectos);
+							ctrl.errorCargandoAnteproyectos = false;
 						} else {
 							ctrl.errorCargandoAnteproyectos = true;
 							ctrl.mensajeErrorCargandoAnteproyectos = respuestaConsultandoAnteproyectos[0];
@@ -392,6 +394,7 @@ angular.module('poluxClienteApp')
 					})
 					.catch(function(excepcionConsultandoAnteproyectos) {
 						ctrl.errorCargandoAnteproyectos = true;
+						ctrl.cargandoAnteproyectos = false;
 						ctrl.mensajeErrorCargandoAnteproyectos = excepcionConsultandoAnteproyectos;
 					});
 			}
@@ -497,7 +500,7 @@ angular.module('poluxClienteApp')
 						showCancelButton: true
 					})
 					.then(function(confirmacionDelUsuario) {
-						if (confirmacionDelUsuario.value) {
+						if (confirmacionDelUsuario) {
 							ctrl.cargandoAnteproyectos = true;
 							ctrl.cargandoDatosEstudiantiles = true;
 							ctrl.actualizarEstadoAnteproyecto()
@@ -619,9 +622,9 @@ angular.module('poluxClienteApp')
 						$window.open(document.url);
 					})
 					.catch(function(error) {
-						console.log("error", error);
+						console.log("Error ->", error);
 						swal(
-							$translate.instant("ERROR"),
+							$translate.instant("MENSAJE_ERROR"),
 							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
 							'warning'
 						);

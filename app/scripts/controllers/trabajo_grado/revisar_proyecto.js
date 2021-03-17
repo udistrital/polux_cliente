@@ -49,8 +49,10 @@ angular.module('poluxClienteApp')
 			var ctrl = this;
 
 			//El Id del usuario en sesión
-			token_service.token.documento = "80093200";
-			ctrl.usuarioSesion = token_service.token.documento;
+			//token_service.token.documento = "80093200";
+			//ctrl.usuarioSesion = token_service.token.documento;
+
+			ctrl.usuarioSesion = token_service.getAppPayload().appUserDocument;
 
 			ctrl.cargandoProyectos = true;
 			ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
@@ -65,7 +67,7 @@ angular.module('poluxClienteApp')
 
 			ctrl.botonRevisarProyecto = [{
 				clase_color: "ver",
-				clase_css: "fa fa-cog fa-lg  faa-shake animated-hover",
+				clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
 				titulo: $translate.instant('BTN.REVISAR_PROYECTO'),
 				estado: true
 			}];
@@ -223,7 +225,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(Proyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (estudiantesAsociados.data) {
+						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
 							Proyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
@@ -268,7 +270,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(Proyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (documentoAsociado.data) {
+						if (Object.keys(documentoAsociado.data[0]).length > 0) {
 							Proyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
 							Proyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
 						}
@@ -345,7 +347,11 @@ angular.module('poluxClienteApp')
 					var deferred = $q.defer();
 					poluxRequest.get("vinculacion_trabajo_grado", parametros)
 						.then(function(responseProyectosPendientes) {
-							deferred.resolve(responseProyectosPendientes.data);
+							if (Object.keys(responseProyectosPendientes.data[0]).length > 0) {
+								deferred.resolve(responseProyectosPendientes.data);
+							} else {
+								deferred.resolve([]);
+							}
 						})
 						.catch(function(error) {
 							deferred.reject(error);
@@ -423,13 +429,13 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.actualizarCuadriculaDeProyectos = function() {
-				ctrl.cargandoProyectos = false;
-				ctrl.errorCargandoProyectos = false;
 				ctrl.coleccionProyectos = [];
 				ctrl.cuadriculaProyectos.data = [];
 				ctrl.consultarProyectos()
 					.then(function(respuestaConsultandoProyectos) {
+						ctrl.cargandoProyectos = false;
 						if (ctrl.coleccionProyectos.length > 0) {
+							ctrl.errorCargandoProyectos = false;
 							ctrl.mostrarProyectos(ctrl.coleccionProyectos);
 						} else {
 							ctrl.errorCargandoProyectos = true;
@@ -437,6 +443,7 @@ angular.module('poluxClienteApp')
 						}
 					})
 					.catch(function(excepcionConsultandoProyectos) {
+						ctrl.cargandoProyectos = false;
 						ctrl.errorCargandoProyectos = true;
 						ctrl.mensajeErrorCargandoProyectos = excepcionConsultandoProyectos;
 					});
@@ -523,7 +530,7 @@ angular.module('poluxClienteApp')
 						showCancelButton: true
 					})
 					.then(function(confirmacionDelUsuario) {
-						if (confirmacionDelUsuario.value) {
+						if (confirmacionDelUsuario) {
 							ctrl.cargandoProyectos = true;
 							ctrl.cargandoDatosEstudiantiles = true;
 							ctrl.actualizarEstadoProyecto()
@@ -699,18 +706,18 @@ angular.module('poluxClienteApp')
 								$window.open(fileURL);
 							})
 							.catch(function(error) {
-								console.log("error", error);
+								console.log("Error ->", error);
 								swal(
-									$translate.instant("ERROR"),
+									$translate.instant("MENSAJE_ERROR"),
 									$translate.instant("ERROR.CARGAR_DOCUMENTO"),
 									'warning'
 								);
 							});
 					})
 					.catch(function(error) {
-						console.log("error", error);
+						console.log("Error ->", error);
 						swal(
-							$translate.instant("ERROR"),
+							$translate.instant("MENSAJE_ERROR"),
 							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
 							'warning'
 						);
