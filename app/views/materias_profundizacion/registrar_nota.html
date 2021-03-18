@@ -26,8 +26,7 @@
     <div class="row" ng-if="profundizacionRegistrarNota.periodoCorrespondienteHabilitado">
       <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
       <div class="col-sm-10">
-        <select ng-model="profundizacionRegistrarNota.periodoSeleccionado" ng-change="profundizacionRegistrarNota.actualizarTrabajosDeGradoCursados()">
-          <option ng-repeat="periodo in profundizacionRegistrarNota.periodosCorrespondientes" ng-value="periodo">
+        <select ng-model="profundizacionRegistrarNota.periodoSeleccionado" ng-change="profundizacionRegistrarNota.actualizarTrabajosDeGradoCursados()">          <option ng-repeat="periodo in profundizacionRegistrarNota.periodosCorrespondientes" ng-value="{{periodo.anio}}-{{periodo.periodo}}">
             {{periodo.anio}}-{{periodo.periodo}}
           </option>
         </select>

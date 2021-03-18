@@ -79,10 +79,10 @@
  */
 
 angular.module('poluxClienteApp')
-.controller('ReportesReporteGeneralCtrl',
-  function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, oikosRequest, token_service) {
-    $scope.load = true;
-    var ctrl = this;
+  .controller('ReportesReporteGeneralCtrl',
+    function ($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, oikosRequest, token_service) {
+      $scope.load = true;
+      var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_REPORTES');
       ctrl.solicitudes = [];
       ctrl.carrerasCoordinador = [];
@@ -95,31 +95,79 @@ angular.module('poluxClienteApp')
       ctrl.userId = $scope.userId;
       console.log(ctrl.userId);
       ctrl.carreras_oikos = [];
+      ctrl.carreras= [];
+      ctrl.periodos = [];
+      ctrl.periodo_seleccionado = '';
+      ctrl.carrera_seleccionada = '';
+      ctrl.generarReporte=0;
 
-      oikosRequest.get("dependencia", "/?query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function(carreras) {
-        ctrl.carreras_oikos = carreras.data ; 
+      /*oikosRequest.get("dependencia", "query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function (carreras) {
+        ctrl.carreras_oikos = carreras.data;
         console.log(carreras_oikos)
         $scope.load = false;
       })
-      .catch(function(error) {
+        .catch(function (error) {
+          console.log(error);
+          ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
+          ctrl.errorCargarParametros = true;
+          $scope.load = false;
+        });*/
+
+      academicaRequest.get("periodos")
+        .then(function (resultadoPeriodosCorrespondientes) {
+          if (!angular.isUndefined(resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos)) {
+            ctrl.periodos = resultadoPeriodosCorrespondientes.data.periodosCollection.datosPeriodos;
+            $scope.load = false;
+          } else {
+            ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
+          }
+        })
+        .catch(function (excepcionPeriodosCorrespondientes) {
+          console.log(error);
+          ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
+          ctrl.errorCargarParametros = true;
+          $scope.load = false;
+        });
+
+      academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function (responseCoordinador) {
+        ctrl.carrerasCoordinador = [];
+        var carreras = [];
+        if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
+          ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
+          console.log('carreras respuesta:', ctrl.carrerasCoordinador);
+          angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function (carrera) {
+            ctrl.carreras.push(carrera.codigo_proyecto_curricular);
+          });
+          console.log('carrera',ctrl.carreras)
+        }
+      }).catch(function (error) {
         console.log(error);
         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
         ctrl.errorCargarParametros = true;
         $scope.load = false;
       });
 
-    /**
-       * @ngdoc method
-       * @name SolicitudesIniciales
-       * @methodOf poluxClienteApp.controller:ReportesReporteGeneralCtrl
-       * @description 
-       * Esta Función consulta los proyectos curriculares de la universidad para mostrarlos en el desplegable y que se pueda seleccionar para consultar los docentes de los reportes.
-       * @returns {undefined} No retorna nigún valor. 
-       */
+      /**
+         * @ngdoc method
+         * @name SolicitudesIniciales
+         * @methodOf poluxClienteApp.controller:ReportesReporteGeneralCtrl
+         * @description 
+         * Esta Función consulta los proyectos curriculares de la universidad para mostrarlos en el desplegable y que se pueda seleccionar para consultar los docentes de los reportes.
+         * @returns {undefined} No retorna nigún valor. 
+         */
 
-      ctrl.SolicitudesIniciales = function() {
-        
+      ctrl.generar_reporte= function (){
+        if (ctrl.carrera_seleccionada && ctrl.periodo_seleccionado) {
+          ctrl.generarReporte++;
+        } else {
+          swal({
+            title: $translate.instant('ERROR'),
+            text: $translate.instant('COMPLETE_CAMPOS'),
+            type: 'error',
+            confirmButtonText: $translate.instant('ACEPTAR')
+          })
+        }
       }
 
 
-});
+    });
