@@ -110,19 +110,16 @@ angular.module('poluxClienteApp')
                 });
                 $scope.gridApi.selection.on.rowSelectionChanged($scope, function (row) {
                     self.sel_pregunta = row.entity;
-                    //console.log(row);
                 });
             }
         };
 
         self.gridOptions.isRowSelectable = function (row) {
-            console.log(row);
             return row.treeLevel === 0;
         };
 
         self.actualizar_formato = function () {
             self.gridOptions.data = [];
-            //console.log($scope.SelectedFormat);
             poluxRequest.get("tr_formato/" + self.SelectedFormat, '')
                 .then(function (response) {
                     self.formato_vista = response.data;
@@ -131,9 +128,9 @@ angular.module('poluxClienteApp')
         };
 
         self.cargar_en_uigrid = function (data) {
-            //console.log(data);
+            //
             angular.forEach(data.TrPreguntas, function (fila) {
-                console.log(fila);
+                
                 self.gridOptions.data.push({
                     Orden: fila.Pregunta.Orden,
                     IdPregunta: fila.Pregunta.IdPregunta,

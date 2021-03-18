@@ -29,7 +29,6 @@ angular.module('poluxClienteApp')
         limit: 0
       });
       poluxRequest.get("vinculacion_trabajo_grado", parametrosTrabajosEvaluador).then(function (responseTrabajosGrado) {
-        console.log("trabajos", responseTrabajosGrado.data);
         ctrl.trabajosEvaluador = responseTrabajosGrado.data;
         defered.resolve(ctrl.trabajosEvaluador);
       });
@@ -43,7 +42,6 @@ angular.module('poluxClienteApp')
         limit: 0
       });
       poluxRequest.get("distincion_trabajo_grado", parametrosDistinciones).then(function (responseDistinciones) {
-        console.log("distinciones", responseDistinciones.data);
         ctrl.distinciones = responseDistinciones.data;
         defered.resolve(ctrl.distinciones);
       });
@@ -80,7 +78,6 @@ angular.module('poluxClienteApp')
         limit: 1
       });
       poluxRequest.get("solicitud_trabajo_grado", parametrosHayDistincion).then(function (responseHayDistincion) {
-        console.log("hayDistinciones", responseHayDistincion.data);
         var response = true;
         if (responseHayDistincion.data === null) {
           response = false;
@@ -99,8 +96,6 @@ angular.module('poluxClienteApp')
       var data_usuarios = [];
       var data_respuesta = {};
       var fecha = new Date();
-
-      console.log(ctrl.solicitudDistincion.trabajoGrado);
 
       var getModalidadTipoSolicitud = function () {
         var defered = $q.defer();
@@ -134,7 +129,6 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles).then(function (responseDetalles) {
-          console.log(responseDetalles);
           angular.forEach(responseDetalles.data, function (detalle) {
             var desc = "";
             if (detalle.Detalle.Id === 13) {
@@ -220,10 +214,8 @@ angular.module('poluxClienteApp')
             UsuariosSolicitud: data_usuarios
           }
 
-          console.log("data solicitud", solicitud);
 
           poluxRequest.post("tr_solicitud", solicitud).then(function (response) {
-            console.log(response.data);
             if (response.data[0] === "Success") {
               swal(
                 $translate.instant("FORMULARIO_SOLICITUD"),

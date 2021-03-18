@@ -55,7 +55,7 @@ Sbi.sdk.namespace =  function() {
                 o=o[d[j]];
             }
         } catch (error) {
-            console.log(error);
+            
         }
     }
 };

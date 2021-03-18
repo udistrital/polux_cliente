@@ -46,7 +46,7 @@ angular.module('poluxClienteApp')
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      console.log(ctrl.userId);
+      
 
       //$scope.$watch("userId",function() {
       //ctrl.conSolicitudes = false;
@@ -436,7 +436,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("usuario_solicitud", parametrosSolicitudes)
             .then(function(responseSolicitudes) {
-              console.log(responseSolicitudes.data);
+              
               if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                 ctrl.conSolicitudes = true;
               }
@@ -465,7 +465,7 @@ angular.module('poluxClienteApp')
                     defer.resolve(solicitud.data);
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     defer.reject(error);
                   })
                 return defer.promise;
@@ -475,11 +475,11 @@ angular.module('poluxClienteApp')
               });
               $q.all(promiseArr).then(function() {
                   ctrl.gridOptions.data = ctrl.solicitudes;
-                  console.log(ctrl.solicitudes)
+                  
                   $scope.load = false;
                 })
                 .catch(function(error) {
-                  console.log(error);
+                  
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargarParametros = true;
                   $scope.load = false;
@@ -487,7 +487,7 @@ angular.module('poluxClienteApp')
 
             })
             .catch(function(error) {
-              console.log(error);
+              
               ctrl.mensajeError = $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTES');
               ctrl.errorCargarParametros = true;
               $scope.load = false;
@@ -582,14 +582,14 @@ angular.module('poluxClienteApp')
                         $scope.load = false;
                       })
                       .catch(function(error) {
-                        console.log(error);
+                        
                         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                         ctrl.errorCargarParametros = true;
                         $scope.load = false;
                       });
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     ctrl.mensajeError = $translate.instant("ERROR.CARGAR_RESPUESTA_SOLICITUD");
                     ctrl.errorCargarParametros = true;
                     $scope.load = false;
@@ -601,7 +601,7 @@ angular.module('poluxClienteApp')
               }
             })
             .catch(function(error) {
-              console.log(error);
+              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
               ctrl.errorCargarParametros = true;
               $scope.load = false;
@@ -626,7 +626,7 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("Error ->", error);
+            
             swal(
               $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
@@ -672,11 +672,11 @@ angular.module('poluxClienteApp')
             query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id
           });
           poluxRequest.get("detalle_solicitud", parametros).then(function(detalles) {
-              console.log(detalles);
+              
               angular.forEach(detalles.data, function(detalle) {
-                console.log(detalle.DetalleTipoSolicitud.Detalle.Id);
+                
                 if (detalle.DetalleTipoSolicitud.Detalle.Id === 50) { //buscar el detalle asociado al TG
-                  console.log(detalle.Descripcion);
+                  
                   var parametros = $.param({
                     query: "TrabajoGrado.Id:" + detalle.Descripcion
                   });
@@ -744,7 +744,7 @@ angular.module('poluxClienteApp')
                 }
                 var promises = [];
                 var solicitantes = "";
-                console.log("respuesta", fila.entity.Respuesta);
+                
                 ctrl.detallesSolicitud.id = fila.entity.Id;
                 ctrl.detallesSolicitud.tipoSolicitud = fila.entity.ModalidadTipoSolicitud;
                 ctrl.detallesSolicitud.fechaSolicitud = fila.entity.Fecha;
@@ -842,7 +842,7 @@ angular.module('poluxClienteApp')
                       datosAreas.splice(0, 1);
                       detalle.Descripcion = "";
                       angular.forEach(datosAreas, function(area) {
-                        console.log(JSON.parse(area));
+                        
                         detalle.Descripcion = detalle.Descripcion + ", " + JSON.parse(area).Nombre;
                       });
                       detalle.Descripcion = detalle.Descripcion.substring(2);
@@ -880,7 +880,7 @@ angular.module('poluxClienteApp')
                     $('#modalVerSolicitud').modal('show');
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     swal(
                       $translate.instant('ERROR'),
                       $translate.instant('ERROR.CARGAR_DETALLES_SOLICITUD'),
@@ -889,7 +889,7 @@ angular.module('poluxClienteApp')
                   });
               })
               .catch(function(error) {
-                console.log(error);
+                
                 swal(
                   $translate.instant('ERROR'),
                   $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTES'),
@@ -898,7 +898,7 @@ angular.module('poluxClienteApp')
               });
           })
           .catch(function(error) {
-            console.log(error);
+            
             swal(
               $translate.instant('ERROR'),
               $translate.instant('ERROR.CARGAR_DETALLES_SOLICITUD'),

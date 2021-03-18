@@ -245,25 +245,25 @@ angular.module('poluxClienteApp')
               });
               $q.all(promises)
                 .then(function() {
-                  console.log(ctrl.solicitudes);
+                  
                   ctrl.gridOptions.data = ctrl.solicitudes;
                   ctrl.cargandoSolicitudes = false;
                 })
                 .catch(function(error) {
-                  console.log(error);
+                  
                   ctrl.errorCargandoSolicitudes = true;
                   ctrl.cargandoSolicitudes = false;
                 });
             } else {
               //Si no hay solicitudes
-              console.log("No hay solicitudes por aprobación");
+              
               ctrl.mensajeError = $translate.instant("PASANTIA.ERROR.SIN_SOLICITUDES_CARTA");
               ctrl.errorCargandoSolicitudes = true;
               ctrl.cargandoSolicitudes = false;
             }
           })
           .catch(function(error) {
-            console.log(error);
+            
             ctrl.mensajeError = $translate.instant("ERROR.CARGAR_SOLICITUDES");
             ctrl.errorCargandoSolicitudes = true;
             ctrl.cargandoSolicitudes = false;
@@ -305,10 +305,10 @@ angular.module('poluxClienteApp')
           RespuestasNuevas: [respuestaNueva],
           RespuestasAntiguas: [respuestaSolicitud]
         }
-        console.log(dataRegistrarRespuesta);
+        
         poluxRequest.post("tr_registrar_respuestas_solicitudes", dataRegistrarRespuesta)
           .then(function(responseRespuesta) {
-            console.log("Respuesta registrada");
+            
             if (responseRespuesta.data[0] === "Success") {
               swal(
                 $translate.instant("RESPUESTA_SOLICITUD"),
@@ -327,7 +327,7 @@ angular.module('poluxClienteApp')
           })
           .catch(function(error) {
             ctrl.cargandoSolicitudes = false;
-            console.log(error);
+            
             swal(
               $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR_SOLICITUDES_3"),
@@ -349,7 +349,7 @@ angular.module('poluxClienteApp')
       $scope.loadrow = function(row, operacion) {
         if (operacion == "ver") {
           ctrl.solicitud = row.entity;
-          console.log(ctrl.solicitud);
+          
           $('#modalVerSolicitud').modal('show');
         } else if (operacion == "aprobar") {
           swal({

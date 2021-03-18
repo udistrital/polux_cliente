@@ -52,9 +52,9 @@ angular.module('poluxClienteApp')
     ctrl.get_all_format();
 
     ctrl.cargar_en_uigrid = function (data) {
-      console.log(data);
+      
       angular.forEach(data.TrPreguntas, function (fila) {
-        console.log(fila);
+        
         $scope.gridOptions.data.push({
           Orden: fila.Pregunta.Orden,
           IdPregunta: fila.Pregunta.IdPregunta,
@@ -85,7 +85,7 @@ angular.module('poluxClienteApp')
 
     ctrl.refresh_format_view = function () {
       $scope.gridOptions.data = [];
-      console.log($scope.SelectedFormat);
+      
       poluxRequest.get("tr_formato/" + $scope.SelectedFormat, '')
         .then(function (response) {
           ctrl.formato_vista = response.data;
@@ -302,7 +302,7 @@ angular.module('poluxClienteApp')
       };
       var i = -1;
       angular.forEach($scope.gridOptions.data, function (data) {
-        console.log(data);
+        
         if (data.$$treeLevel === 0) {
           formato_post.TrPreguntas.push({
             Pregunta: {
@@ -336,10 +336,10 @@ angular.module('poluxClienteApp')
         }
       });
       i += 1;
-      console.log(formato_post);
+      
       $scope.sumadre = formato_post;
       poluxRequest.post("tr_formato", formato_post).then(function (response) {
-        console.log(response.data);
+        
       });
     };
 

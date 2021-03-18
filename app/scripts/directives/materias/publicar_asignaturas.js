@@ -131,13 +131,13 @@ angular.module('poluxClienteApp')
                     cellTemplate: '<center><md-checkbox ng-model="row.entity.check" aria-label="checkbox" ng-click="grid.appScope.d_publicarAsignaturas.toggle(row.entity, grid.appScope.d_publicarAsignaturas.selected)" ng-disabled="grid.appScope.d_publicarAsignaturas.habilitar" ></md-checkbox><center>'
                   }];
                 }).catch(function(error) {
-                  console.log(error);
+                  
                   ctrl.errorCargar = true;
                   $scope.load = false;
                 });
               })
               .catch(function(error) {
-                console.log(error);
+                
                 ctrl.mensajeError = $translate.instant('ERROR.CARGAR_ASIGNATURAS_SOLICITUD');
                 ctrl.errorCargar = true;
                 $scope.load = false;
@@ -193,7 +193,7 @@ angular.module('poluxClienteApp')
           sesionesRequest.get("relacion_sesiones", parametrosSesiones)
             .then(function(responseFechas) {
               if (Object.keys(responseFechas.data[0]).length > 0) {
-                console.log(responseFechas.data[0]);
+                
                 var sesion = responseFechas.data[0];
                 var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
                 fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
@@ -202,9 +202,9 @@ angular.module('poluxClienteApp')
                 fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
                 ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
                 ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
-                console.log("fechas", ctrl.fechaInicio, ctrl.fechaFin);
-                //console.log("fechas", ctrl.fechaInicio);
-                //console.log("fechas", ctrl.fechaFin);
+                
+                //
+                //
                 if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                   ctrl.mostrarBotones = true;
                   deferFechas.resolve();
@@ -342,10 +342,10 @@ angular.module('poluxClienteApp')
           }
           if (item.check === false) {
             ctrl.totalCreditos = ctrl.totalCreditos + c;
-            console.log(ctrl.totalCreditos);
+            
           } else {
             ctrl.totalCreditos = ctrl.totalCreditos - c;
-            console.log(ctrl.totalCreditos);
+            
           }
         };
 
@@ -362,22 +362,22 @@ angular.module('poluxClienteApp')
          */
         ctrl.add = function() {
           poluxMidRequest.get('creditos/ObtenerMinimo').then(function(response) {
-              console.log(response.data);
+              
               $scope.creditosMinimosPosgrado = response.data['minimo_creditos_posgrado'];
               $scope.creditosMinimosProfundizacion = response.data['minimo_creditos_profundizacion'];
               if ($scope.modalidad == 'POSGRADO') {
                 /*     ctrl.creditosMinimos=8;
                  */
                 ctrl.creditosMinimos = parseInt($scope.creditosMinimosPosgrado);
-                console.log("Creditos minimos posgrado: " + ctrl.creditosMinimos);
+                
               } else {
                 /*ctrl.creditosMinimos=6;*/
                 ctrl.creditosMinimos = parseInt($scope.creditosMinimosProfundizacion);
-                console.log("Creditos minimos profundizacion" + ctrl.creditosMinimos);
+                
               }
-              console.log("Creditos minimos obtenidos de la vista " + $scope.modalidad + " : " + ctrl.creditosMinimos);
+              
 
-              console.log(ctrl.totalCreditos);
+              
 
               if (ctrl.totalCreditos >= ctrl.creditosMinimos) {
                 ctrl.cambiar();
@@ -412,7 +412,7 @@ angular.module('poluxClienteApp')
                     $route.reload();
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     swal(
                       $translate.instant('ERROR'),
                       $translate.instant('ERROR.GUARDANDO_ESPACIOS_ACADEMICOS_ELEGIBLES'),
@@ -433,7 +433,7 @@ angular.module('poluxClienteApp')
 
             })
             .catch(function(error) {
-              console.log(error);
+              
               swal(
                 $translate.instant('ERROR'),
                 $translate.instant('ERROR.CARGAR_MINIMO_CREDITOS'),

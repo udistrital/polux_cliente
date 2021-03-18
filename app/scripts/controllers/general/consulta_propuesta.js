@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
                 });
         };
         ctrl.ver_asignaturas = function (item, model) {
-            console.log(item);
+            
             poluxRequest.get("areas_docente", $.param({
                 limit: -1,
                 query: "IdentificacionDocente:" + item.DOC_NRO_IDEN
@@ -138,7 +138,7 @@ angular.module('poluxClienteApp')
 
         ctrl.load_row = function (row, operacion) {
             ctrl.row_entity = row.entity;
-            console.log(ctrl.row_entity);
+            
             switch (operacion) {
                 case "ver":
                     poluxRequest.get("vinculacion_docente", $.param({
@@ -147,7 +147,7 @@ angular.module('poluxClienteApp')
                     }))
                         .then(function (response) {
                             ctrl.vinculacion_docente_tg = response.data;
-                            console.log(ctrl.vinculacion_docente_tg);
+                            
                             angular.forEach(ctrl.vinculacion_docente_tg, function (vd) {
                                 $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
                                     .then(function (response) {
@@ -169,7 +169,7 @@ angular.module('poluxClienteApp')
                     }))
                         .then(function (response) {
                             ctrl.vinculacion_docente_tg = response.data;
-                            console.log(ctrl.vinculacion_docente_tg);
+                            
                             angular.forEach(ctrl.vinculacion_docente_tg, function (vd) {
                                 $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
                                     .then(function (response) {
@@ -200,8 +200,8 @@ angular.module('poluxClienteApp')
                                                     var jsonObj = JSON.parse(json[1]);
                                                     var docente = jsonObj[0];
                                                     if (ctrl.DocentesAreaConocimiento.indexOf(docente) == -1) {
-                                                        console.log("Heyyy");
-                                                        console.log(docente);
+                                                        
+                                                        
                                                     }
                                                     ctrl.DocentesAreaConocimiento.push(docente);
 

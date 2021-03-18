@@ -22,11 +22,11 @@ angular.module('poluxClienteApp')
             poluxRequest.get("socializacion", $.param({
                 limit: "-1"
             })).then(function(response) {
-                console.log(response);
+                
                 //ctrl.socializacion = response.data;
 
                 angular.forEach(response.data, function(s) {
-                  console.log(s);
+                  
                   //buscar datos tg
                   poluxRequest.get("trabajo_grado", $.param({
                       query: "Id:" + s.TrabajoGrado.Id
@@ -39,12 +39,12 @@ angular.module('poluxClienteApp')
                         s.Lugar = response3.data[0];
                       });
                   });
-                  console.log(s);
+                  
                   ctrl.socializacion.push(s);
 
                 });
 
-                console.log(ctrl.socializacion);
+                
                 ctrl.gridOptions.data = ctrl.socializacion;
                 angular.forEach(ctrl.socializacion, function(social) {
                     oikosRequest.get("espacio_fisico", $.param({
@@ -69,20 +69,20 @@ angular.module('poluxClienteApp')
                 limit: "-1"
             })).then(function(response) {
                 ctrl.lugares = response.data;
-                console.log(ctrl.lugares);
+                
             });
         };
         ctrl.add_socializacion = function() {
             var data = {};
-            console.log(ctrl.trabajo_grado.selected);
+            
             ctrl.trabajo_grado.selected.$$hashKey = undefined;
             data.TrabajoGrado = ctrl.trabajo_grado.selected;
             data.Lugar = ctrl.lugar.selected.Id;
             data.Fecha = ctrl.fecha;
-            console.log(data);
+            
             poluxRequest.post("socializacion", data)
                 .then(function(response) {
-                    console.log(response.data);
+                    
                     $('#add').modal('hide');
                     swal(
                         '',
