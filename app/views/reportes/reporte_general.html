@@ -1,37 +1,60 @@
-
-
-
 <div class="panel panel-default">
     <div class="panel-heading">
         {{'REPORTE_GENERAL_DOCENTES' | translate}}
     </div>
     <div class="panel-body">
         <div class="panel-body alert alert-danger" ng-if="!load && reporteGeneral.errorCargarParametros">
-                {{listarSolicitudes.mensajeError}}
+            {{listarSolicitudes.mensajeError}}
         </div>
         <div>
             <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
 
         </div>
-        <h4>
-            Seleccione Facultad y proyecto curricular antes de realizar la consulta por docente.
-        </h4>
         <div ng-if="load!=true">
-            <div class="row" >
+            <h4>
+                Seleccione Facultad y proyecto curricular antes de realizar la consulta por docente.
+            </h4>
+            <!-- <div class="row" >
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
                 <div class="col-sm-10">
                     <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
                         <option  ng-repeat="carrera in reporteGeneral.carreras_oikos" ng-value="carrera.Nombre"> {{carrera.Nombre}}</option>
                     </select>
                 </div>
-            </div>
-            <div class="row" ng-if="listarSolicitudes.userRole.includes('COORDINADOR_PREGRADO') && listarSolicitudes.carrerasCoordinador.length>1">
+            </div> -->
+            <div class="row"
+                ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
                 <div class="col-sm-10">
-                    <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
-                        <option  ng-repeat="carrera in listarSolicitudes.carrerasCoordinador" ng-value="carrera.codigo_proyecto_curricular"> {{carrera.codigo_proyecto_curricular}} - {{carrera.nombre_proyecto_curricular}} </option>
+                    <select class="form-control" ng-model="reporteGeneral.carrera_seleccionada"
+                        ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
+                        <option ng-repeat="carrera in reporteGeneral.carrerasCoordinador"
+                            ng-value="carrera.codigo_proyecto_curricular"> {{carrera.codigo_proyecto_curricular}} -
+                            {{carrera.nombre_proyecto_curricular}} </option>
                     </select>
                 </div>
+            </div>
+            <div class="row"
+                ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
+                <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
+                <div class="col-sm-10">
+                    <select ng-model="reporteGeneral.periodo_seleccionado" ng-change="">
+                        <option ng-repeat="periodo in reporteGeneral.periodos"
+                            ng-value="periodo.anio+-+periodo.periodo">
+                            {{periodo.anio}}-{{periodo.periodo}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="row"
+                ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
+                <div class="col-sm-10">
+                    <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte()">Generar Reporte</button>
+                </div>
+            </div>
+            <div class="row" ng-show="reporteGeneral.generarReporte !== 0">
+                <spagobi reporte="polux_tg_pregrado" periodo="reporteGeneral.periodo_seleccionado"
+                    codigo="reporteGeneral.carrera_seleccionada" boton="reporteGeneral.generarReporte"></spagobi>
             </div>
         </div>
     </div>
