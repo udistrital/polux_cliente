@@ -50,7 +50,7 @@ angular.module('poluxClienteApp')
                  */
                 $scope.$watch('documento', function () {
                     if ($scope.documento != undefined) {
-                        console.log("documento", $scope.documento);
+                        
                         self.getDocumento($scope.documento.Enlace);
                         self.documento = $scope.documento;
                     }
@@ -67,7 +67,7 @@ angular.module('poluxClienteApp')
                  */
                 self.getDocumento = function (docid) {
                     $scope.loadDocumento = true;
-                    console.log(docid);
+                    
                     if (docid != null) {
                         nuxeoClient.getDocument(docid)
                             .then(function (documento) {

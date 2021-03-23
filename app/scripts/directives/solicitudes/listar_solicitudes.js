@@ -90,7 +90,7 @@ angular.module('poluxClienteApp')
          * @returns {undefined} no retorna ningún valor
          */
         ctrl.consultarSolicitudes = function(trabajoGrado) {
-          console.log(trabajoGrado.Id);
+          
           ctrl.loadingSolicitudes = true;
           ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
           var parametrosSolicitudes = $.param({
@@ -125,7 +125,7 @@ angular.module('poluxClienteApp')
                       defer.resolve();
                     })
                     .catch(function(error) {
-                      console.log(error);
+                      
                       defer.reject(error);
                     })
                   return defer.promise;
@@ -138,24 +138,24 @@ angular.module('poluxClienteApp')
                 });
                 $q.all(promises).then(function() {
                     ctrl.gridOptions.data = trabajoGrado.Solicitudes;
-                    console.log(trabajoGrado.Solicitudes)
+                    
                     ctrl.loadingSolicitudes = false;
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                     ctrl.errorCargando = true;
                     ctrl.loadingSolicitudes = false;
                   });
               } else {
-                console.log("Sin solicitudes");
+                
                 ctrl.mensajeError = $translate.instant("ERROR.SIN_SOLICITUDES");
                 ctrl.errorCargando = true;
                 ctrl.loadingSolicitudes = false;
               }
             })
             .catch(function(error) {
-              console.log(error);
+              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
               ctrl.errorCargando = true;
               ctrl.loadingSolicitudes = false;
@@ -177,7 +177,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
           var promise = defer.promise;
           var detalles = solicitud.detallesSolicitud;
-          console.log("solicitud", solicitud);
+          
           var estadoSolicitud = solicitud.data.Respuesta.EstadoSolicitud.Id;
           var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
           var nuevo = "";
@@ -477,7 +477,7 @@ angular.module('poluxClienteApp')
                         datosAreas.splice(0, 1);
                         detalle.Descripcion = "";
                         angular.forEach(datosAreas, function(area) {
-                          console.log(JSON.parse(area));
+                          
                           detalle.Descripcion = detalle.Descripcion + ", " + JSON.parse(area).Nombre;
                         });
                         detalle.Descripcion = detalle.Descripcion.substring(2);
@@ -515,7 +515,7 @@ angular.module('poluxClienteApp')
                       $('#modalSolicitud').modal('show');
                     })
                     .catch(function(error) {
-                      console.log(error);
+                      
                       swal(
                         $translate.instant('ERROR'),
                         $translate.instant('ERROR.CARGAR_DETALLES_SOLICITUD'),
@@ -524,7 +524,7 @@ angular.module('poluxClienteApp')
                     });
                 })
                 .catch(function(error) {
-                  console.log(error);
+                  
                   swal(
                     $translate.instant('ERROR'),
                     $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTES'),
@@ -533,7 +533,7 @@ angular.module('poluxClienteApp')
                 });
             })
             .catch(function(error) {
-              console.log(error);
+              
               swal(
                 $translate.instant('ERROR'),
                 $translate.instant('ERROR.CARGAR_DETALLES_SOLICITUD'),
@@ -560,7 +560,7 @@ angular.module('poluxClienteApp')
                 window.open(documento.url);
               })
               .catch(function(error) {
-                console.log("Error ->", error);
+                
                 ctrl.loadingVersion = false;
                 swal(
                   $translate.instant("MENSAJE_ERROR"),

@@ -52,11 +52,11 @@ angular.module('poluxClienteApp')
           self.codigodocente = parseFloat($scope.docactual);
           angular.forEach(dataArea, function (value) {
             if (value.Id == null) {
-              console.log("areasnulas: " + value.Id);
+              
 
             }
             if (value.Nombre == null) {
-              console.log("nombre de area nulo");
+              
             }
             var data = {
               AreaConocimiento: {

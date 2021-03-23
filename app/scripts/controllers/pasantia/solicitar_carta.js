@@ -125,14 +125,14 @@ angular.module('poluxClienteApp')
                                         //no tiene solicitudes pendientes por responder
                                         $scope.loadEstudiante = false;
                                       } else {
-                                        console.log("el estudiante tiene solicitudes pendientes");
+                                        
                                         ctrl.mensajeError = $translate.instant("ERROR.HAY_SOLICITUD_PENDIENTE");
                                         ctrl.errorCargar = true;
                                         $scope.loadEstudiante = false;
                                       }
                                     })
                                     .catch(function(error) {
-                                      console.log(error);
+                                      
                                       ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                                       ctrl.errorCargar = true;
                                       $scope.loadEstudiante = false;
@@ -140,58 +140,58 @@ angular.module('poluxClienteApp')
                                 }
                               })
                               .catch(function(error) {
-                                console.log(error);
+                                
                                 ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                                 ctrl.errorCargar = true;
                                 $scope.loadEstudiante = false;
                               });
                           } else {
-                            console.log("el estudiante ya tiene un trabajo de grado ");
+                            
                             ctrl.mensajeError = $translate.instant("ESTUDIANTE_TRABAJO_GRADO");
                             ctrl.errorCargar = true;
                             $scope.loadEstudiante = false;
                           }
                         })
                         .catch(function(error) {
-                          console.log(error);
+                          
                           ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                           ctrl.errorCargar = true;
                           $scope.loadEstudiante = false;
                         });
                     } else {
-                      console.log("el estudiante no cumple los requisitos");
+                      
                       ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
                       ctrl.errorCargar = true;
                       $scope.loadEstudiante = false;
                     }
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                     ctrl.errorCargar = true;
                     $scope.loadEstudiante = false;
                   });
               } else {
                 //faltan datos del estudiante
-                console.log("Faltan datos estudiante");
+                
                 ctrl.mensajeError = $translate.instant("FALTAN_DATOS_ESTUDIANTE");
                 ctrl.errorCargar = true;
                 $scope.loadEstudiante = false;
               }
             } else {
-              console.log("Estudiante no enccontrado");
+              
               ctrl.mensajeError = $translate.instant("ERROR.ESTUDIANTE_NO_ENCONTRADO");
               ctrl.errorCargar = true;
               $scope.loadEstudiante = false;
             }
           }).catch(function(error) {
-            console.log(error);
+            
             ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
             ctrl.errorCargar = true;
             $scope.loadEstudiante = false;
           });
         }).catch(function(error) {
-          console.log(error);
+          
           ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
           ctrl.errorCargar = true;
           $scope.loadEstudiante = false;
@@ -206,7 +206,7 @@ angular.module('poluxClienteApp')
           ctrl.validarRequisitosEstudiante();
         })
         .catch(function(error) {
-          console.log(error);
+          
           ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_PERIODO");
           ctrl.errorCargar = true;
           $scope.loadEstudiante = false;

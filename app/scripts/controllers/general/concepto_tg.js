@@ -41,7 +41,7 @@ angular.module('poluxClienteApp')
       ctrl.idVinculacion = $routeParams.idVinculacion;
       ctrl.cargando = true;
       ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_PROYECTOS");
-      //console.log("parametros",$routeParams);
+      //
       //token_service.token.documento = "80093200";
       //ctrl.userId = token_service.token.documento;
 
@@ -285,13 +285,13 @@ angular.module('poluxClienteApp')
                         }
                       })
                       .catch(function(excecpionRevisiones) {
-                        console.log(excecpionRevisiones);
+                        
                         ctrl.errorCargando = true;
                         ctrl.cargando = false;
                       });
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     ctrl.errorCargando = true;
                     ctrl.cargando = false;
                   });
@@ -302,26 +302,26 @@ angular.module('poluxClienteApp')
                     ctrl.cargando = false;
                   })
                   .catch(function(error){
-                    console.log(error);
+                    
                     ctrl.errorCargando = true;
                     ctrl.cargando = false;
                   });
                 */
               } else {
-                console.log("La consulta de las vinculaciones es vacía");
+                
                 ctrl.mensajeError = $translate.instant("ERROR.SIN_VINCULACIONES");
                 ctrl.errorCargando = true;
                 ctrl.cargando = false;
               }
             })
             .catch(function(error) {
-              console.log(error);
+              
               ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_VINCULACIONES");
               ctrl.errorCargando = true;
               ctrl.cargando = false;
             });
         } else {
-          console.log("No se ha definido el identificador de la vinculación");
+          
           ctrl.mensajeError = $translate.instant("ERROR.IDENTIFICADOR_INDEFINIDO");
           ctrl.errorCargando = true;
           ctrl.cargando = false;
@@ -369,14 +369,14 @@ angular.module('poluxClienteApp')
           "RevisionTrabajoGrado": ctrl.revisionActual,
           "Comentarios": comentarios,
         };
-        console.log(informacionParaActualizar);
+        
         poluxRequest
           .post("tr_revisar_tg", informacionParaActualizar)
           .then(function(respuestaRevisarTg) {
             deferred.resolve(respuestaRevisarTg);
           })
           .catch(function(excepcionRevisarTg) {
-            console.log("Recuerde el campo de corrección que identifica si es documento");
+            
             deferred.reject(excepcionRevisarTg);
           });
         return deferred.promise;
@@ -393,7 +393,7 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       ctrl.guardarRevision = function() {
-        console.log(ctrl.revisionActual);
+        
         ctrl.cargando = true;
         swal({
             title: $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
@@ -408,7 +408,7 @@ angular.module('poluxClienteApp')
               if (ctrl.revisionActual.documentModel) {
                 nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
                   .then(function(respuestaCrearDocumento) {
-                    console.log(respuestaCrearDocumento);
+                    
                     ctrl.revisionActual.Correcciones.push({
                       Observacion: respuestaCrearDocumento,
                       Justificacion: "Por favor descargue el documento de observaciones",
@@ -437,7 +437,7 @@ angular.module('poluxClienteApp')
                         }
                       })
                       .catch(function(excepcionRevisarTg) {
-                        console.log(excepcionRevisarTg);
+                        
                         ctrl.cargando = false;
                         swal(
                           $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
@@ -447,7 +447,7 @@ angular.module('poluxClienteApp')
                       });
                   })
                   .catch(function(excepcionCrearDocumento) {
-                    console.log(excepcionCrearDocumento);
+                    
                     ctrl.cargando = false;
                     swal(
                       $translate.instant("ERROR.SUBIR_DOCUMENTO"),

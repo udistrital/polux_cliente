@@ -93,7 +93,7 @@ angular.module('poluxClienteApp')
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      console.log(ctrl.userId);
+      
       ctrl.carreras_oikos = [];
       ctrl.carreras= [];
       ctrl.periodos = [];
@@ -103,11 +103,11 @@ angular.module('poluxClienteApp')
 
       /*oikosRequest.get("dependencia", "query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function (carreras) {
         ctrl.carreras_oikos = carreras.data;
-        console.log(carreras_oikos)
+        
         $scope.load = false;
       })
         .catch(function (error) {
-          console.log(error);
+          
           ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
           ctrl.errorCargarParametros = true;
           $scope.load = false;
@@ -123,7 +123,7 @@ angular.module('poluxClienteApp')
           }
         })
         .catch(function (excepcionPeriodosCorrespondientes) {
-          console.log(error);
+          
           ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
           ctrl.errorCargarParametros = true;
           $scope.load = false;
@@ -134,14 +134,14 @@ angular.module('poluxClienteApp')
         var carreras = [];
         if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
           ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
-          console.log('carreras respuesta:', ctrl.carrerasCoordinador);
+          
           angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function (carrera) {
             ctrl.carreras.push(carrera.codigo_proyecto_curricular);
           });
-          console.log('carrera',ctrl.carreras)
+          
         }
       }).catch(function (error) {
-        console.log(error);
+        
         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
         ctrl.errorCargarParametros = true;
         $scope.load = false;

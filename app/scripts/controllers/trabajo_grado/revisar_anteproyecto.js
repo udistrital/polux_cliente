@@ -413,7 +413,7 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.revisarAnteproyectoSeleccionado = function(filaAsociada) {
 				//se  redireccióna a la página para dar el concepto
-				//console.log(filaAsociada.entity.Id);
+				//
 				$location.path("general/concepto_tg/" + filaAsociada.entity.Id);
 				/*
 				ctrl.anteproyectoSeleccionado = filaAsociada.entity;
@@ -622,7 +622,7 @@ angular.module('poluxClienteApp')
 						$window.open(document.url);
 					})
 					.catch(function(error) {
-						console.log("Error ->", error);
+						
 						swal(
 							$translate.instant("MENSAJE_ERROR"),
 							$translate.instant("ERROR.CARGAR_DOCUMENTO"),

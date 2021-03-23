@@ -17,7 +17,7 @@ angular.module('poluxClienteApp')
         nuxeo.connect()
             .then(function (client) {
                 // client.user.id === 'Administrator'
-                console.log(client.user);
+                
             })
             .catch(function (error) {
                 // wrong credentials / auth method / ...

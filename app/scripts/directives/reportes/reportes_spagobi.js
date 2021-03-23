@@ -31,7 +31,7 @@ angular.module('poluxClienteApp')
           if ($scope.codigo && $scope.codigo.length !== 0 && $scope.periodo && $scope.periodo.length !== 0) {
             var parametros = '';
             parametros = 'codigo_carrera=' + $scope.codigo + '&Periodo=' + $scope.periodo;
-            console.log(parametros);
+            
             function execTest() {
               var url = sbi.api.getDocumentHtml({
                 documentLabel: $scope.reporte, 
@@ -45,7 +45,7 @@ angular.module('poluxClienteApp')
                     width: '100%.'
                 }
               });
-              console.log(url);
+              
               $('#frame').html('');
               $('#frame').append(url);
             };

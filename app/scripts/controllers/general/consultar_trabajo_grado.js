@@ -539,7 +539,7 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("Error ->", error);
+            
             swal(
               $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
@@ -667,15 +667,15 @@ angular.module('poluxClienteApp')
 
                 $q.all(promises)
                   .then(function() {
-                    console.log(ctrl.trabajoGrado);
-                    console.log(ctrl.trabajoGrado.estudiante);
+                    
+                    
                     ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
                     ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
                     ctrl.trabajoCargado = true;
                     ctrl.loadTrabajoGrado = false;
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     ctrl.errorCargandoTrabajoGrado = true;
                     ctrl.loadTrabajoGrado = false;
                   });
@@ -686,7 +686,7 @@ angular.module('poluxClienteApp')
               }
             })
             .catch(function(error) {
-              console.log(error);
+              
               ctrl.mensajeError = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
               ctrl.errorCargandoTrabajoGrado = true;
               ctrl.loadTrabajoGrado = false;

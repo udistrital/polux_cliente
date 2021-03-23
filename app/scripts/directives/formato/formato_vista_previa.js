@@ -126,9 +126,9 @@ angular.module('poluxClienteApp')
                                 alignment: 'justify'
                             });
                             var ul = [];
-                            console.log(d.Respuestas);
+                            
                             angular.forEach(d.Respuestas, function (r) {
-                                console.log(r.IdRespuesta.Descripcion);
+                                
                                 ul.push(r.IdRespuesta.Descripcion);
                             });
                             $scope.pdfgen_all.pdfgen.content.push({

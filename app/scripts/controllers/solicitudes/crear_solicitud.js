@@ -240,22 +240,22 @@ angular.module('poluxClienteApp')
               }
             });
             $q.all(promesas).then(function() {
-                //console.log("actuales", actuales);
+                //
                 if (actuales.length == 0) {
-                  //console.log("si se puede");
+                  //
                   defer.resolve(true);
                   //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
                 } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
-                  //console.log(actuales);
-                  //console.log("es inicial de posgrado y se deben restringir las demás");
+                  //
+                  //
                   ctrl.restringirModalidadesPosgrado = true;
                   defer.resolve(true);
                 } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 16) {
-                  //console.log("es inicial de profundizacion y se deben restringir las demás");
+                  //
                   ctrl.restringirModalidadesProfundizacion = true;
                   defer.resolve(true);
                 } else {
-                  //console.log("No puedes");
+                  //
                   defer.resolve(false);
                 }
               })
@@ -432,7 +432,7 @@ angular.module('poluxClienteApp')
                         }
                       });
                     });
-                    //console.log("areas", ctrl.areas);
+                    //
                     defer.resolve();
                   } else {
                     ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
@@ -474,7 +474,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("modalidad_tipo_solicitud", parametrosTiposSolicitudes).then(function(responseTiposSolicitudes) {
             //ctrl.solicitudes = responseTiposSolicitudes.data;
-            //console.log("Prorrogas", ctrl.tieneProrrogas);
+            //
             if (ctrl.tieneProrrogas) {
               angular.forEach(responseTiposSolicitudes.data, function(solicitud) {
                 //si la solicitud es diferente de una de prorroga
@@ -555,10 +555,10 @@ angular.module('poluxClienteApp')
                   ctrl.Trabajo.codirector = vinculado;
                 }
               });
-              //console.log("directorInterno", ctrl.Trabajo.directorInterno);
-              //console.log("directorInterno", ctrl.Trabajo.codirector);
-              //console.log("directorExterno", ctrl.Trabajo.directorExterno);
-              //console.log("evaluadores", ctrl.Trabajo.evaluadores);
+              //
+              //
+              //
+              //
               defer.resolve();
             })
             .catch(function(error) {
@@ -580,7 +580,7 @@ angular.module('poluxClienteApp')
                 angular.forEach(responseEspacios.data, function(espacio) {
                   ctrl.espaciosElegidos.push(espacio.EspaciosAcademicosElegibles);
                 });
-                //console.log("espacios", ctrl.espaciosElegidos);
+                //
                 ctrl.carreraElegida = responseEspacios.data[0].EspaciosAcademicosElegibles.CarreraElegible.Id;
               }
               defer.resolve();
@@ -636,12 +636,12 @@ angular.module('poluxClienteApp')
             limit: 0,
           });
           poluxRequest.get("usuario_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
-            console.log(responseSolicitudes.data);
+            
               if (Object.keys(responseSolicitudes.data[0]).length > 0) {
-                //console.log("solicitudes hechas",responseSolicitudes.data);
+                //
                 //si ha hecho una solicitud se obtienen las materias por el detalle
                 var getSolicitud = function(solicitud) {
-                  //console.log(solicitud);
+                  //
                   var defer = $q.defer();
                   var parametrosSolicitud = $.param({
                     query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud.in:37|44",
@@ -664,7 +664,7 @@ angular.module('poluxClienteApp')
                   promises.push(getSolicitud(solicitud));
                 });
                 $q.all(promises).then(function() {
-                    //console.log("carreras elegidas",ctrl.carrerasElegidas);
+                    //
                     defer.resolve();
                   })
                   .catch(function(error) {
@@ -736,13 +736,13 @@ angular.module('poluxClienteApp')
                     $scope.loadParametros = false;
                   })
                   .catch(function(error) {
-                    console.log(error)
+                    
                     ctrl.errorCarga = true;
                     $scope.loadParametros = false
                   });
               })
               .catch(function(error) {
-                console.log(error)
+                
                 ctrl.errorCarga = true;
                 $scope.loadParametros = false
               });
@@ -753,7 +753,7 @@ angular.module('poluxClienteApp')
           }
         })
         .catch(function(error) {
-          console.log(error)
+          
           ctrl.errorCarga = true;
           $scope.loadParametros = false;
         });
@@ -777,7 +777,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {
               if (responseModalidad.data.RequisitosModalidades) {
-                console.log("Requisitos",responseModalidad.data.RequisitosModalidades);
+                
                 defer.resolve(true);
               } else {
                 ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
@@ -788,7 +788,7 @@ angular.module('poluxClienteApp')
               ctrl.mensajeError = $translate.instant("ERROR.VALIDAR_REQUISITOS");
               defer.reject("no se pudo cargar requisitos");
             });
-          //console.log(defer.promise);
+          //
           return defer.promise;
         }
 
@@ -812,9 +812,9 @@ angular.module('poluxClienteApp')
             });
             sesionesRequest.get("relacion_sesiones", parametrosSesiones)
               .then(function(responseFechas) {
-                console.log(responseFechas.data);
+                
                 if (Object.keys(responseFechas.data[0]).length > 0) {
-                  //console.log(responseFechas.data[0]);
+                  //
                   var sesion = responseFechas.data[0];
                   var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
                   fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
@@ -823,15 +823,15 @@ angular.module('poluxClienteApp')
                   fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
                   ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
                   ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
-                  //console.log("fechas", ctrl.fechaInicio);
-                  //console.log("fechas", ctrl.fechaFin);
+                  //
+                  //
                   if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                     defer.resolve(true);
                   } else {
                     ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION');
                     defer.reject(false);
                   }
-                  console.log(ctrl.fechaFin);
+                  
 
                 } else {
                   ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
@@ -850,7 +850,7 @@ angular.module('poluxClienteApp')
 
         var verificarTipoSolicitud = function(tipoSolicitud) {
           var defer = $q.defer();
-          console.log(tipoSolicitud);
+          
           if (tipoSolicitud.TipoSolicitud.Id === 6) {
             // solicitud de socialización
             // el estado del trabajo de grado debe ser Listo para sustentar Id 17
@@ -936,10 +936,10 @@ angular.module('poluxClienteApp')
             }
           }
         }
-        //console.log("directorInterno",ctrl.Trabajo.directorInterno);
-        //console.log("directorInterno",ctrl.Trabajo.codirector);
-        //console.log("directorExterno",ctrl.Trabajo.directorExterno);
-        //console.log("evaluadores",ctrl.Trabajo.evaluadores);
+        //
+        //
+        //
+        //
         return false;
       }
 
@@ -967,7 +967,7 @@ angular.module('poluxClienteApp')
         ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
         var tipoSolicitud = tipoSolicitudSeleccionada.Id;
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
-        console.log("tipo solicitud: ",tipoSolicitudSeleccionada);
+        
         if (modalidad_seleccionada !== undefined) {
           ctrl.estudiante.Modalidad = modalidad_seleccionada;
           ctrl.modalidad = modalidad_seleccionada;
@@ -1015,7 +1015,7 @@ angular.module('poluxClienteApp')
             .then(function(responseDetalles) {
               if (Object.keys(responseDetalles.data[0]).length > 0) {
                 ctrl.detalles = responseDetalles.data;
-                console.log("detalles", ctrl.detalles);
+                
                 //Se cargan opciones de los detalles
                 angular.forEach(ctrl.detalles, function(detalle) {
                   //Se internacionalizan variables y se crean labels de los detalles
@@ -1077,10 +1077,10 @@ angular.module('poluxClienteApp')
                               defer.resolve();
                             } else if (detalle.Detalle.Nombre.includes("Propuesta actual")) {
                               detalle.respuesta = responseOpciones.data[0].DocumentoEscrito.Enlace;
-                              //console.log("Documento", detalle.respuesta);
+                              //
                               defer.resolve();
                             } else if (detalle.Detalle.Nombre.includes("Areas de conocimiento actuales")) {
-                              //console.log("Opciones", responseOpciones);
+                              //
                               var areasString = "";
                               angular.forEach(responseOpciones.data, function(area) {
                                 areasString = areasString + ", " + area.AreaConocimiento.Nombre;
@@ -1154,13 +1154,13 @@ angular.module('poluxClienteApp')
                             } else if (detalle.Detalle.Nombre.includes("Director Actual")) {
                               academicaRequest.get("docente_tg", [ctrl.Trabajo.directorInterno.Usuario]).then(function(docente) {
                                   if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                                    //console.log("Respuesta docente", docente.data.docenteTg.docente);
+                                    //
                                     detalle.opciones.push({
                                       "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                                       //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
                                       "bd": docente.bd = docente.data.docenteTg.docente[0].id
                                     });
-                                    //console.log(detalle.opciones);
+                                    //
                                   }
                                   defer.resolve();
                                 })
@@ -1171,13 +1171,13 @@ angular.module('poluxClienteApp')
                               if (!angular.isUndefined(ctrl.Trabajo.codirector)) {
                                 academicaRequest.get("docente_tg", [ctrl.Trabajo.codirector.Usuario]).then(function(docente) {
                                     if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                                      //console.log("Respuesta docente", docente.data.docenteTg.docente);
+                                      //
                                       detalle.opciones.push({
                                         "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                                         //"bd":  docente.bd = docente[0].DIR_NRO_IDEN+"-"+docente[0].NOMBRE,
                                         "bd": docente.bd = docente.data.docenteTg.docente[0].id
                                       });
-                                      //console.log(detalle.opciones);
+                                      //
                                     }
                                     defer.resolve();
                                   })
@@ -1352,7 +1352,7 @@ angular.module('poluxClienteApp')
                     ctrl.errorParametros = true;
                     $scope.loadDetalles = false;
                     ctrl.detalles = [];
-                    console.log(error);
+                    
                   });
               } else {
                 ctrl.mensajeError = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
@@ -1366,7 +1366,7 @@ angular.module('poluxClienteApp')
               ctrl.errorParametros = true;
               $scope.loadDetalles = false;
               ctrl.detalles = [];
-              console.log(error);
+              
             });
           //}else {
           //$scope.loadDetalles = false;
@@ -1377,7 +1377,7 @@ angular.module('poluxClienteApp')
           ctrl.errorParametros = true;
           $scope.loadDetalles = false;
           ctrl.detalles = [];
-          console.log(error);
+          
         });
       };
 
@@ -1393,7 +1393,7 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       ctrl.validarFormularioSolicitud = function() {
-        //console.log("detalles",ctrl.detalles);
+        //
 
         ctrl.detallesConDocumento = [];
 
@@ -1453,7 +1453,7 @@ angular.module('poluxClienteApp')
               "Diligencie correctamente el formulario por favor.",
               'warning'
             );
-            //console.log("Diligencie correctamente el formulario por favor.");
+            //
             ctrl.erroresFormulario = true;
           }
           if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle.Nombre !== "Directiva" && detalle.Detalle.TipoDetalle.Nombre !== "Selector") {
@@ -1462,7 +1462,7 @@ angular.module('poluxClienteApp')
               "Debe completar todos los campos del formulario.",
               'warning'
             );
-            //console.log("Debe completar todos los campos del formulario.");
+            //
             ctrl.erroresFormulario = true;
           }
           if (ctrl.estudiante.areas_elegidas.length === 0 && detalle.Detalle.Descripcion == 'asignar-area') {
@@ -1471,7 +1471,7 @@ angular.module('poluxClienteApp')
               "Debe ingresar al menos un área de conocimiento.",
               'warning'
             );
-            //console.log("Debe ingresar al menos un area.");
+            //
             ctrl.erroresFormulario = true;
           }
           if (detalle.Detalle.Descripcion == 'solicitar-asignaturas' && !ctrl.estudiante.minimoCreditos) {
@@ -1484,7 +1484,7 @@ angular.module('poluxClienteApp')
           }
           if (detalle.Detalle.TipoDetalle.Nombre === "Selector" || detalle.Detalle.TipoDetalle.Nombre === "Lista") {
             var contiene = false;
-            //console.log(detalle.opciones, detalle.respuesta, typeof(detalle.respuesta));
+            //
             angular.forEach(detalle.opciones, function(opcion) {
               if (opcion.bd == detalle.respuesta) {
                 contiene = true;
@@ -1501,7 +1501,7 @@ angular.module('poluxClienteApp')
                 "Error ingrese una opcion valida.",
                 'warning'
               );
-              console.log("Error ingrese una opcion valida")
+              
               ctrl.erroresFormulario = true;
             }
           }
@@ -1512,7 +1512,7 @@ angular.module('poluxClienteApp')
                 "Error ingrese una opcion valida. (Documento)",
                 'warning'
               );
-              console.log("Error con el documento")
+              
               ctrl.erroresFormulario = true;
             }
           }
@@ -1683,10 +1683,10 @@ angular.module('poluxClienteApp')
           UsuariosSolicitud: data_usuarios
         }
 
-        console.log(ctrl.solicitud);
+        
 
         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-          console.log(response.data);
+          
           if (response.data[0] === "Success") {
             swal(
               $translate.instant("FORMULARIO_SOLICITUD"),
@@ -1745,7 +1745,7 @@ angular.module('poluxClienteApp')
           ctrl.obtenerFetch(ctrl.document).then(function(r) {
             ctrl.blob = r;
             var fileURL = URL.createObjectURL(ctrl.blob);
-            //console.log(fileURL);
+            //
             ctrl.content = $sce.trustAsResourceUrl(fileURL);
             $window.open(fileURL);
           });

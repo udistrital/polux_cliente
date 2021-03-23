@@ -65,7 +65,7 @@ angular.module('poluxClienteApp')
           });
           //buscar solicitudes
           poluxRequest.get("solicitud_materias", parametros).then(function(response) {
-            console.log(response);
+            
             angular.forEach(response.data, function(value) {
               ctrl.buscarEstudianteTg(value);
             });

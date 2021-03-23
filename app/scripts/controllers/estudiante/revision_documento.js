@@ -571,7 +571,6 @@ angular.module('poluxClienteApp')
           })
           .then(function(confirmacionDelUsuario) {
             if (confirmacionDelUsuario) {
-              console.log("entro a subirNuevoDocumento");
               ctrl.cargandoTrabajoGrado = true;
               $('#modalSubirNuevaVersion').modal('hide');
               //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
@@ -655,9 +654,7 @@ angular.module('poluxClienteApp')
             showCancelButton: true
           })
           .then(function(confirmacionDelUsuario) {
-            console.log(confirmacionDelUsuario);
             if (confirmacionDelUsuario) {
-              console.log("entro a registrarRevision");
               var nuevaRevision = {
                 NumeroRevision: (angular.isUndefined(ctrl.revisionesTrabajoGrado)) ? 1 : ctrl.revisionesTrabajoGrado.length + 1,
                 FechaRecepcion: new Date(),

@@ -701,12 +701,12 @@ angular.module('poluxClienteApp')
 							.then(function(r) {
 								ctrl.blob = r;
 								var fileURL = URL.createObjectURL(ctrl.blob);
-								console.log(fileURL);
+								
 								ctrl.content = $sce.trustAsResourceUrl(fileURL);
 								$window.open(fileURL);
 							})
 							.catch(function(error) {
-								console.log("Error ->", error);
+								
 								swal(
 									$translate.instant("MENSAJE_ERROR"),
 									$translate.instant("ERROR.CARGAR_DOCUMENTO"),
@@ -715,7 +715,7 @@ angular.module('poluxClienteApp')
 							});
 					})
 					.catch(function(error) {
-						console.log("Error ->", error);
+						
 						swal(
 							$translate.instant("MENSAJE_ERROR"),
 							$translate.instant("ERROR.CARGAR_DOCUMENTO"),

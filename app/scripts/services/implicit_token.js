@@ -21,7 +21,7 @@ if (window.localStorage.getItem('access_token') === null ||
   var req = new XMLHttpRequest();
   // consider using POST so query isn't logged
   var query = 'https://' + window.location.host + '?' + queryString;
-  // console.log(query);
+  // 
   req.open('GET', query, true);
   if (params.id_token !== null && params.id_token !== undefined) {
     window.localStorage.setItem('access_token', params.access_token);
@@ -34,11 +34,11 @@ if (window.localStorage.getItem('access_token') === null ||
   req.onreadystatechange = function(e) {
     if (req.readyState === 4) {
       if (req.status === 200) {
-        //console.log("Status: Ok", e);
+        //
       } else if (req.status === 400) {
-        console.log("Status: Bad request", e);
+        
       } else {
-        console.log("Status: Not recognizable", e);
+        
       }
     }
   };
@@ -73,7 +73,7 @@ angular.module('implicitToken', [])
             };*/
             var userRol= {
               user: appUserInfo.sub
-            }
+            };
             autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
                   'Accept': 'application/json',
@@ -81,10 +81,10 @@ angular.module('implicitToken', [])
                 }
               })
               .then(function(respuestaAutenticacion) {
-                console.log("Respuesta del mid de autentiación:", respuestaAutenticacion);
+                
                 //appUserDocument = respuestaAutenticacion.data.documento;
                 
-                if(respuestaAutenticacion.data.Codigo!="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
+                if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                   //appUserDocument="20031085066";
                 }else{
@@ -93,11 +93,11 @@ angular.module('implicitToken', [])
                 appUserRole = respuestaAutenticacion.data.role;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
-                //console.log("appUserDocument", respuestaAutenticacion.data.Codigo)
+                //
                 deferred.resolve(true);
               })
               .catch(function(excepcionAutenticacion) {
-                console.log("Excepción durante la autentiación:", excepcionAutenticacion);
+                
                 //service.logout();
               });
           } else {
@@ -174,7 +174,7 @@ angular.module('implicitToken', [])
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
-        //console.log(data);
+        //
         return data;
       },
       logout: function() {
