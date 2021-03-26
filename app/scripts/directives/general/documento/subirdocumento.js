@@ -41,10 +41,10 @@ angular.module('poluxClienteApp')
 
                 nuxeo.connect().then(function (client) {
                     // OK, the returned client is connected
-                    console.log('Client is connected: ' + client.connected);
+                    
                 }, function (err) {
                     // cannot connect
-                    console.log('Client is not connected: ' + err);
+                    
                 });
 
                 /**
@@ -66,9 +66,9 @@ angular.module('poluxClienteApp')
                         .input('/default-domain/workspaces/Proyectos de Grado POLUX/Solicitudes')
                         .execute()
                         .then(function (doc) {
-                            console.log(doc);
+                            
                             var nuxeoBlob = new Nuxeo.Blob({ content: ctrl.fileModel });
-                            console.log(nuxeoBlob);
+                            
                             nuxeo.batchUpload()
                                 .upload(nuxeoBlob)
                                 .then(function (res) {

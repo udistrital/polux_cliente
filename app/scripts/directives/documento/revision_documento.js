@@ -61,7 +61,7 @@ angular.module('poluxClienteApp')
                     $scope.paginadoc = $scope.paginadoc;
                 });
 
-                console.log($scope.revisionid);
+                
                 ctrl.correcciones = [];
 
                 /**
@@ -76,7 +76,7 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("revision_trabajo_grado", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function (response) {
-                    console.log(response);
+                    
                     ctrl.revision = response.data[0];
                 });
                 poluxRequest.get("correccion", $.param({
@@ -115,7 +115,7 @@ angular.module('poluxClienteApp')
                      * Permite clonar un objeto.
                      */
                 ctrl.editar = function (correc, temp) {
-                    console.log("edit");
+                    
                     for (var key in correc) {
                         correc[key] = temp[key];
                     }
@@ -220,7 +220,7 @@ angular.module('poluxClienteApp')
                 ctrl.guardar_revision = function (accion) {
                     /*switch (accion) {
                         case "borrador":
-                            console.log(ctrl.revision);
+                            
                             if (ctrl.revision.EstadoRevisionTrabajoGrado.Id != 2) {
                                 ctrl.revision.EstadoRevisionTrabajoGrado.Id=2;
                                 poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
@@ -235,7 +235,7 @@ angular.module('poluxClienteApp')
                     }
                     for (var i = 0; i < ctrl.correcciones.length; i++) {
                         if (ctrl.correcciones[i].Cambio == "nuevo") {
-                            console.log(ctrl.correcciones[i]);
+                            
                             poluxRequest.post("correccion", ctrl.correcciones[i]);
                         }
                         if (ctrl.correcciones[i].Cambio == "editado") {
@@ -264,7 +264,7 @@ angular.module('poluxClienteApp')
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones
                                             nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correciones", undefined)
                                                 .then(function (respuestaCrearDocumento) {
-                                                    console.log(respuestaCrearDocumento);
+                                                    
                                                     ctrl.correcciones.push({
                                                         Observacion: respuestaCrearDocumento,
                                                         Justificacion: "Por favor descargue el documento de observaciones",
@@ -277,7 +277,7 @@ angular.module('poluxClienteApp')
                                                     ctrl.registrarRevision();
                                                 })
                                                 .catch(function (excepcionCrearDocumento) {
-                                                    console.log(excepcionCrearDocumento);
+                                                    
                                                     ctrl.cargandoRevision = false;
                                                     swal(
                                                         $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -285,7 +285,7 @@ angular.module('poluxClienteApp')
                                                         'warning'
                                                     );
                                                 });
-                                            //console.log(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo);
+                                            //
                                         } else {
                                             ctrl.registrarRevision();
                                         }
@@ -326,7 +326,7 @@ angular.module('poluxClienteApp')
                                     RevisionTrabajoGrado: ctrl.revision,
                                     Comentarios: comentarios
                                 }
-                                console.log(data_transaccion);
+                                
                                 poluxRequest.post("tr_registrar_revision_tg", data_transaccion)
                                     .then(function (respuestaRegistrarRevisionTg) {
                                         if (respuestaRegistrarRevisionTg.data[0] === "Success") {
@@ -347,7 +347,7 @@ angular.module('poluxClienteApp')
                                         }
                                     })
                                     .catch(function (excepcionRegistrarRevisionTg) {
-                                        console.log(excepcionRegistrarRevisionTg);
+                                        
                                         swal(
                                             $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                             $translate.instant("REGISTRAR_REVISION.ERROR"),
@@ -365,7 +365,7 @@ angular.module('poluxClienteApp')
                             }
                         })
                         .catch(function (excepcionInformacionDocente) {
-                            console.log(excepcionInformacionDocente);
+                            
                             swal(
                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                 $translate.instant("REGISTRAR_REVISION.ERROR"),

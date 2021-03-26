@@ -42,7 +42,7 @@ angular.module('poluxClienteApp')
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
 
         if ($scope.carreras !== []) {
-          console.log($scope.carreras);
+          
           if ($scope.carreras.length === 1) {
             $scope.carrera = $scope.carreras[0];
           }
@@ -110,7 +110,7 @@ angular.module('poluxClienteApp')
          * lo registra en {@link services/poluxService.service:poluxRequest poluxRequest}
          */
         ctrl.enviarDocumento = function () {
-          console.log("consecutivo", ctrl.consecutivo);
+          
           /*if ($scope.carreras.length === 1) {
             ctrl.carrera = $scope.carreras[0].CODIGO_CARRERA;
           }*/
@@ -146,7 +146,7 @@ angular.module('poluxClienteApp')
                 ctrl.consecutivo = null;
               })
               .catch(function (error) {
-                console.log("Error ->", error);
+                
                 $scope.loadDocumento = false;
                 swal(
                   $translate.instant("MENSAJE_ERROR"),
@@ -159,7 +159,7 @@ angular.module('poluxClienteApp')
             $scope.loadDocumento = false;
             /*})
             .catch(function(error){
-              console.log("Error ->",error);
+              
               $scope.loadDocumento = false;
               swal(
                 $translate.instant("MENSAJE_ERROR"),

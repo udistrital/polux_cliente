@@ -507,7 +507,7 @@ angular.module('poluxClienteApp')
               $q.all(conjuntoProcesamientoDeSolicitudes)
                 .then(function(resultadoSolicitudesProcesadas) {
                   // Se filtra el contenido de las solicitudes aprobadas
-                  console.log(resultadoSolicitudesProcesadas);
+                  
                   angular.forEach(usuariosConSolicitudes.data, function(solicitudAprobada) {
                     if (solicitudAprobada.detalleDeSolicitud &&
                       solicitudAprobada.respuestaDeSolicitud &&

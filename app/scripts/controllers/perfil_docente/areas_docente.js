@@ -21,7 +21,7 @@ angular.module('poluxClienteApp')
         self.ardocente = [];
         /**/
         self.estadoboton = function (estadoboton) {
-            console.log("Estadoboton: " + estadoboton + " menucreacion: " + self.menucreacion);
+            
             self.menucreacion = !self.menucreacion;
             if (estadoboton == "Agregar Área") {
                 self.buttonDirective = "Cancelar";

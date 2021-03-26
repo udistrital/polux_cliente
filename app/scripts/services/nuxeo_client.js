@@ -197,7 +197,7 @@ angular.module('nuxeoService',[])
           });
         })
         .then(function(docResponse){
-          //console.log(docResponse);
+          //
           //ctrl.getVersionesDocumento(uid);
           defer.resolve(docResponse);
         })

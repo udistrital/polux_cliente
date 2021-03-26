@@ -144,7 +144,7 @@ angular.module('poluxClienteApp')
       ctrl.getCarrerasCoordinador = function() {
         var defer = $q.defer();
         academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function(response) {
-            //console.log(response);
+            //
             if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
               ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
               defer.resolve();
@@ -239,7 +239,7 @@ angular.module('poluxClienteApp')
                       ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
                       ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
                       if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
-                        console.log();
+                        
                         defer.resolve();
                       } else {
                         ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION', {
@@ -310,14 +310,14 @@ angular.module('poluxClienteApp')
                   var defer = $q.defer();
                   academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente) {
                       if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                        console.log(docente.data.docenteTg.docente[0]);
+                        
                         detalle.Descripcion = docente.data.docenteTg.docente[0].id + " " + docente.data.docenteTg.docente[0].nombre;
                         if (id === 9 || id === 37) {
                           ctrl.docenteDirector = {
                             "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                             "id": docente.data.docenteTg.docente[0].id,
                           };
-                          //console.log(ctrl.docenteDirector);
+                          //
                         }
 
                         //docente codirector solicitado
@@ -334,7 +334,7 @@ angular.module('poluxClienteApp')
                             "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                             "id": docente.data.docenteTg.docente[0].id,
                           };
-                          //  console.log("docente cambio", ctrl.docenteCambio);
+                          //  
                         }
 
                         //docente en solicitud de socialización o de director
@@ -458,7 +458,7 @@ angular.module('poluxClienteApp')
                       datosMaterias.splice(0, 2);
                       angular.forEach(datosMaterias, function(materia) {
                         detalle.filas.push(JSON.parse(materia));
-                        console.log(materia);
+                        
                       });
 
                       detalle.gridOptions = [];
@@ -484,7 +484,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 $q.all(promises).then(function() {
-                    console.log(ctrl.todoDetalles);
+                    
                     ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2);
                     defered.resolve(ctrl.detallesSolicitud);
                   })
@@ -522,7 +522,7 @@ angular.module('poluxClienteApp')
         ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Nombre;
         ctrl.dataSolicitud.NombreModalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Nombre;
         ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
-        console.log(ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id);
+        
         if (ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2) {
           if (ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3) {
             ctrl.isInicial = true;
@@ -661,7 +661,7 @@ angular.module('poluxClienteApp')
                         ctrl.docentesVinculadosTg = docentesVinculados.data;
                         angular.forEach(ctrl.docentes, function(docente) {
                           if (ctrl.docenteVinculado(docentesVinculados.data, docente.id)) {
-                            console.log("vinculado", docente);
+                            
                             vinculados.push(docente);
                           }
                         });
@@ -675,7 +675,7 @@ angular.module('poluxClienteApp')
                       }
                     })
                     .catch(function(error) {
-                      console.log(error);
+                      
                       ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_VINCULADOS_TRABAJO_GRADO");
                       ctrl.errorCargarSolicitud = true;
                       $scope.loadSolicitud = false;
@@ -685,7 +685,7 @@ angular.module('poluxClienteApp')
                 }
               })
               .catch(function(error) {
-                console.log(error);
+                
                 ctrl.errorCargarSolicitud = true;
                 $scope.loadSolicitud = false;
               });
@@ -696,7 +696,7 @@ angular.module('poluxClienteApp')
           }
         })
         .catch(function(error) {
-          console.log(error);
+          
           ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.SOLICITUD_NO_ENCONTRADA");
           ctrl.errorCargarSolicitud = true;
           $scope.loadSolicitud = false;
@@ -864,9 +864,9 @@ angular.module('poluxClienteApp')
                         "Id": 1
                     }
                 }
-                console.log(estudiante);
+                
                 data_estudiantes.push(estudiante);
-                console.log(data_estudiantes);
+                
                 ctrl.trabajo_grado = {
                     TrabajoGrado: data_trabajo_grado,
                     EstudianteTrabajoGrado: data_estudiantes,
@@ -875,7 +875,7 @@ angular.module('poluxClienteApp')
                     AreasTrabajoGrado: null,
                     VinculacionTrabajoGrado: null
                 }
-                console.log(ctrl.trabajo_grado);
+                
                 ctrl.rtaSol = {
                     RespuestaAnterior: objRtaAnterior,
                     RespuestaNueva: objRtaNueva,
@@ -1152,7 +1152,7 @@ angular.module('poluxClienteApp')
               vinculaciones.push(vinculacionActual);
               vinculaciones.push(nuevaVinculacion);
               //Esperar a que se cumplan las promesas
-              console.log(vinculaciones);
+              
               //Se escribe la data de las vinculaciones
               ctrl.dataRespuesta.Vinculaciones = vinculaciones;
               //Si la solicitud es de cambio de director externo se envia el detalle de la pasantia para actualizarlo
@@ -1181,7 +1181,7 @@ angular.module('poluxClienteApp')
               angular.forEach(ctrl.docentesVinculadosTg, function(docente) {
                 docente.FechaFin = fechaRespuesta;
               });
-              console.log(ctrl.docentesVinculadosTg);
+              
               ctrl.dataRespuesta.VinculacionesCancelacion = ctrl.docentesVinculadosTg;
               ctrl.dataRespuesta.EstudianteTrabajoGrado = dataEstudianteTg;
             } else if (ctrl.dataSolicitud.TipoSolicitud == 8) {
@@ -1218,7 +1218,7 @@ angular.module('poluxClienteApp')
                 "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
               });
               ctrl.dataRespuesta.EspaciosAcademicos = espacios;
-              console.log("Espacios", ctrl.dataRespuesta.EspaciosAcademicos);
+              
             } else if (ctrl.dataSolicitud.TipoSolicitud == 13) {
               //Solicitud de revisión de tg
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
@@ -1242,7 +1242,7 @@ angular.module('poluxClienteApp')
                 //Si se cambio el  director original
                 if (ctrl.directorOpcionTg.id != ctrl.directorActualTg.id) {
                   //Cambiar vinculaciones
-                  // console.log("Cambia director");
+                  // 
                   addVinculacion(data_vinculaciones, ctrl.directorActualTg.id, ctrl.directorOpcionTg.id);
                 }
                 //Si se cambiaron los evaluadores actuales
@@ -1250,12 +1250,12 @@ angular.module('poluxClienteApp')
                   for (var e = 0; e < ctrl.evaluadoresActualesTg.length; e++) {
                     if (ctrl.evaluadoresActualesTg[e].docente.id != ctrl.evaluadoresOpcionesTg[e].docente.id) {
                       //Cambiar vinculaciones                  
-                      //console.log(ctrl.evaluadoresOpcionesTg[e].docente.id, ctrl.evaluadoresActualesTg[e].docente.id);
-                      //console.log("Cambia evaluador"+(e+1));
+                      //
+                      //
                       addVinculacion(data_vinculaciones, ctrl.evaluadoresActualesTg[e].docente.id, ctrl.evaluadoresOpcionesTg[e].docente.id);
                     }
                   }
-                  //console.log("Vinculaciones revisión", data_vinculaciones);
+                  //
                   //buscar si hay algun valor repetido
                   angular.forEach(data_vinculaciones, function(vinculacion) {
                     if (data_vinculaciones.filter(function(value) {
@@ -1324,12 +1324,12 @@ angular.module('poluxClienteApp')
           }
 
           if (!errorDocente) {
-            //console.log("envia", ctrl.dataRespuesta);
+            //
             poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function(response) {
                 ctrl.mostrarRespuesta(response);
               })
               .catch(function(error) {
-                console.log(error);
+                
                 swal(
                   $translate.instant("MENSAJE_ERROR"),
                   $translate.instant("ERROR.ENVIO_SOLICITUD"),
@@ -1402,7 +1402,7 @@ angular.module('poluxClienteApp')
       ctrl.cargarJustificacion = function(callFunction) {
         nuxeo.connect().then(function(client) {
           // OK, the returned client is connected
-          console.log("CONECTADO");
+          
           var tam = 2000;
           $scope.loadFormulario = true;
           var documento = ctrl.acta;
@@ -1542,7 +1542,7 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function(error) {
-            console.log("Error ->", error);
+            
             swal(
               $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),
@@ -1597,7 +1597,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("documento_escrito", parametrosDocumentos).then(function(responseDocumentos) {
               if (Object.keys(responseDocumentos.data[0]).length > 0) {
                 angular.forEach(responseDocumentos.data, function(documento) {
-                  console.log("documentos", documento);
+                  
                   var tempDoc = {
                     "id": documento.Id,
                     "nombre": documento.Titulo,
@@ -1609,7 +1609,7 @@ angular.module('poluxClienteApp')
               $scope.loadDocumento = false;
             })
             .catch(function(error) {
-              console.log(error);
+              
               ctrl.errorCargarDocumento = true;
               $scope.loadDocumento = false;
             });

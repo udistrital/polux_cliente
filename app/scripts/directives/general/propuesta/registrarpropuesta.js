@@ -78,8 +78,8 @@ angular.module('poluxClienteApp')
                 self.registro_TG = [];
                 self.areasTG = [];
                 self.dial = function (doc) {
-                    console.log("funciona llamado de directiva hija a directiva padre");
-                    console.log(" " + doc.enlace);
+                    
+                    
                 };
 
                 /**
@@ -92,7 +92,7 @@ angular.module('poluxClienteApp')
                  * Permite asignar a un estudiante un trabajo de grado.
                  */
                 self.asignarEstudiante = function (codEstudiante) {
-                    console.log(codEstudiante);
+                    
                     codEstudiante = parseInt(codEstudiante);
                     self.parametros = $.param({
                         query: "Estudiante:" + codEstudiante
@@ -110,12 +110,12 @@ angular.module('poluxClienteApp')
                  */
                 self.asignarModalidad = function (codigo) {
                     try {
-                        console.log("Codigo Estudiante: " + self.estudianteSeleccionado);
+                        
                         //self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
                         codigo = parseInt(codigo);
-                        console.log("Modalidad seleccionada: " + codigo);
+                        
                         if (isNaN(codigo)) {
-                            console.log("Error.");
+                            
                         } else {
                             self.verificarRequisitos(parseInt(self.estudianteSeleccionado), codigo);
                         }
@@ -152,10 +152,10 @@ angular.module('poluxClienteApp')
                             "ano": periodoAnterior[0].APE_ANO,
                             "periodo": periodoAnterior[0].APE_PER
                         };
-                        console.log(parametros);
+                        
                         academicaRequest.promedioEstudiante(parametros).then(function (respuestaPromedio) {
-                            console.log("Entro a Promedio");
-                            console.log(respuestaPromedio);
+                            
+                            
                             if (respuestaPromedio) {
                                 //porcentaje cursado
                                 academicaRequest.porcentajeCursado(parametros).then(function (respuestaPorcentaje) {
@@ -174,10 +174,10 @@ angular.module('poluxClienteApp')
 
                                     };
 
-                                    console.log(self.estudiante);
+                                    
                                     self.modalidad = "MATERIAS POSGRADO";
                                     poluxMidRequest.post("verificarRequisitos/Registrar", self.estudiante).then(function (response) {
-                                        console.log("response mid api: " + response.data);
+                                        
                                         self.validar = response.data;
                                     });
                                 });
@@ -223,7 +223,7 @@ angular.module('poluxClienteApp')
                         query: "Id:" + idModalidad
                     })).then(function (response) {
                         objModalidad = response.data;
-                        console.log(objModalidad[0].Nombre);
+                        
 
                         swal({
                             title: 'Confirma el registro del documento:',
@@ -236,7 +236,7 @@ angular.module('poluxClienteApp')
                         }).then(function () {
                             var idTrabajoGrado;
                             // codEstudiante = parseInt(estudiante);
-                            console.log("titulo: " + doc.titulo + " , modalidad: " + idModalidad);
+                            
                             self.registro_TG = [];
                             self.estudiante_TG = [];
                             self.docregistrado = [];
@@ -244,13 +244,13 @@ angular.module('poluxClienteApp')
                             self.areas_TG = [];
                             self.docTG = [];
                             self.preguardarTG(doc.titulo, parseInt(idModalidad));
-                            // console.log("self.registro_TG" + self.registro_TG);
+                            // 
                             self.guardarTG(self.registro_TG, estudiante, doc);
 
-                            // console.log("idTrabajoGrado: " + idTrabajoGrado);
+                            // 
                             // self.estudiante_TG = self.preguardarEstudianteTG(idTrabajoGrado, estudiante);
                             // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]);
-                            console.log(idTrabajoGrado);
+                            
                             $scope.$apply(function () { $location.path("/general/cons_prop"); });
                             swal(
                                 'Registro Existoso',
@@ -299,16 +299,16 @@ angular.module('poluxClienteApp')
                     // var idEstudianteTG; ***Aún no se utiliza esta variable
                     self.TGregistrado = [];
                     poluxRequest.post("trabajo_grado", data[0]).then(function (responseTG) {
-                        console.log("respuesta del post del trabajo de grado" + responseTG.data.Id);
+                        
                         self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Id, estudiante);
                         // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]); ***Aún no se utiliza esta variable
-                        console.log("respuesta del post del trabajo de grado" + responseTG.data);
+                        
                         self.areas_TG = self.preguardarAreasTG(responseTG.data.Id);
                         self.asignarAreasTG(self.areas_TG);
                         self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
-                        console.log("doc: " + self.docregistrado[0]);
+                        
                         poluxRequest.post("documento", self.docregistrado[0]).then(function (responseDoc) {
-                            console.log("data.Id: " + responseDoc.data.Id);
+                            
                             self.guardarDocumentoTG(responseDoc.data.Id, responseTG.data.Id);
                             poluxRequest.get("documento", $.param({
                                 query: "Id:" + responseDoc.data.Id
@@ -355,7 +355,7 @@ angular.module('poluxClienteApp')
                  * Permite crear la data de las áreas de conocimiento asociadas al trabajo de grado.
                  */     
                 self.preguardarAreasTG = function (dataIdTG) {
-                    console.log("Nueva area de conocimiento" + self.nuevaArea);
+                    
                     for (var i = 0; i < self.nuevaArea.length; i++) {
                         self.areas_TG.push({
                             "IdAreaConocimiento": {
@@ -389,7 +389,7 @@ angular.module('poluxClienteApp')
                             "Id": idTG
                         }
                     });
-                    console.log(self.estudiante_TG);
+                    
                     return self.estudiante_TG;
                 };
 
@@ -404,7 +404,7 @@ angular.module('poluxClienteApp')
                  */
                 self.guardarestudianteTG = function (data) {
                     poluxRequest.post("estudiante_tg", data).then(function (response) {
-                        console.log("respuesta del post estudiante_tg: " + response.data.Id);
+                        
                         return response.data.Id;
                     });
                 };

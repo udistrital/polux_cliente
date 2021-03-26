@@ -76,7 +76,7 @@ angular.module('poluxClienteApp')
           ctrl.estudianteNoEncontrado = false;
           ctrl.estudianteConSolicitud = false;
 
-          console.log("estudiante", $scope.estudiante);
+          
           if (!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && $scope.estudiante !== "" + ctrl.codigoEstudiante) {
             ctrl.verificarEstudiante();
           } else {
@@ -130,8 +130,8 @@ angular.module('poluxClienteApp')
                           "Modalidad": $scope.modalidad + "",
                           "Cantidad": cantidad + ""
                         };
-                        console.log("cantidad");
-                        console.log(ctrl.datosModalidad);
+                        
+                        
                         poluxMidRequest.post("verificarRequisitos/CantidadModalidades", ctrl.datosModalidad).then(function (validado) {
                           if (validado.data.RequisitosModalidades) {
                             var parametrosEstudiante = $.param({
@@ -157,7 +157,7 @@ angular.module('poluxClienteApp')
                                   }
                                 })
                                   .catch(function (error) {
-                                    console.log(error);
+                                    
                                     ctrl.error = true;
                                     ctrl.loading = false;
                                   });
@@ -168,7 +168,7 @@ angular.module('poluxClienteApp')
                               }
                             })
                               .catch(function (error) {
-                                console.log(error);
+                                
                                 ctrl.error = true;
                                 ctrl.loading = false;
                               });
@@ -178,7 +178,7 @@ angular.module('poluxClienteApp')
                           }
                         })
                           .catch(function (error) {
-                            console.log(error);
+                            
                             ctrl.error = true;
                             ctrl.loading = false;
                           });
@@ -188,7 +188,7 @@ angular.module('poluxClienteApp')
                       }
                     })
                       .catch(function (error) {
-                        console.log(error);
+                        
                         ctrl.error = true;
                         ctrl.loading = false;
                       });
@@ -200,7 +200,7 @@ angular.module('poluxClienteApp')
 
                 })
                   .catch(function (error) {
-                    console.log(error);
+                    
                     ctrl.error = true;
                     ctrl.loading = false;
                   });
@@ -210,13 +210,13 @@ angular.module('poluxClienteApp')
               }
             })
               .catch(function (error) {
-                console.log(error);
+                
                 ctrl.error = true;
                 ctrl.loading = false;
               });
           })
             .catch(function (error) {
-              console.log(error);
+              
               ctrl.error = true;
               ctrl.loading = false;
             });

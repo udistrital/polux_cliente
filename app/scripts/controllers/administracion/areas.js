@@ -104,7 +104,6 @@ angular.module('poluxClienteApp')
       });
       coreAmazonCrudService.get("snies_area", parametrosAreas)
         .then(function(responseAreas) {
-          //console.log(responseAreas);
           ctrl.areasSnies = responseAreas.data;
           if (Object.keys(ctrl.areasSnies[0]).length > 0) {
             $scope.loadAreas = false;
@@ -146,7 +145,6 @@ angular.module('poluxClienteApp')
             $scope.loadAreasConocimiento = false;
           })
           .catch(function(error) {
-            console.log(error);
             ctrl.areasConocimientoError = true;
             $scope.loadAreasConocimiento = false;
           });
@@ -245,7 +243,6 @@ angular.module('poluxClienteApp')
               ctrl.descripcionArea = "";
             })
             .catch(function(error) {
-              console.log(error);
               $scope.loadCargandoArea = false;
               swal(
                 $translate.instant("MENSAJE_ERROR"),
@@ -318,8 +315,6 @@ angular.module('poluxClienteApp')
        */
       ctrl.cambiarEstadoArea = function(area) {
         //Se cambia el estado del área
-        console.log("se cambia estado de area")
-        console.log(area)
         $scope.loadAreas = true;
         area.Activo = !area.Activo;
         poluxRequest.put("area_conocimiento", area.Id, area)
@@ -332,7 +327,6 @@ angular.module('poluxClienteApp')
             );
           })
           .catch(function(error) {
-            console.log(error);
             area.Activo = !area.Activo;
             $scope.loadAreas = false;
             swal(

@@ -80,23 +80,23 @@ angular.module('poluxClienteApp')
          */
         ctrl.formalizarSolicitud = function (solicitud) {
           //si existen más solicitudes, quedan canceladas
-          console.log("ctrl.solicitud2: ");
-          console.log(ctrl.solicitud2);
+          
+          
           //se formaliza la solicitud
           angular.forEach(ctrl.solicitud2, function (value) {
-            console.log("value.Id: ");
-            console.log(value.Id);
+            
+            
             if (value.Id == solicitud.Id) {
               value.Formalizacion = 'confirmado';
               poluxRequest.put("solicitud_materias", solicitud.Id, value).then(function (response) {
-                console.log("response.data confirmado: " + response.data);
+                
               });
             }
             //se cancelan las sols adicionales
             else {
               value.Estado = 'rechazado';
               poluxRequest.put("solicitud_materias", value.Id, value).then(function (response) {
-                console.log("response.data rechazado: " + response.data);
+                
               });
             }
           })
@@ -131,15 +131,15 @@ angular.module('poluxClienteApp')
             if (Object.keys(response.data[0]).length > 0) {
               //por cada TG, buscar la solicitud asociada al TG
               angular.forEach(response.data, function (value) {
-                console.log(value.IdTrabajoGrado.IdModalidad.Id);
-                console.log(ctrl.estudiante.Tipo);
+                
+                
                 if ((ctrl.estudiante.Tipo == 'POSGRADO') && (value.IdTrabajoGrado.IdModalidad.Id == 3)) {
                   var parametros = $.param({
                     query: "TrabajoGrado:" + value.IdTrabajoGrado.Id + ",Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER
                   });
                   //buscar las solicitudes asociadas al TG
                   poluxRequest.get("solicitud_materias", parametros).then(function (response) {
-                    console.log(response.data);
+                    
                     angular.forEach(response.data, function (value) {
                       ctrl.solicitud2.push(value);
                       ctrl.carreras.push(value.CodigoCarrera);
@@ -162,7 +162,7 @@ angular.module('poluxClienteApp')
 
                             });
                           });
-                          //console.log(resp2.data);
+                          //
                           ctrl.asignaturas = resp2.data;
                           var aaa = ctrl.obtenerNombres(resp2.data);
                           var resultado = {
@@ -212,7 +212,7 @@ angular.module('poluxClienteApp')
                             });
                           });
 
-                          //console.log(resp2.data);
+                          //
                           ctrl.asignaturas = resp2.data;
                           var aaa = ctrl.obtenerNombres(resp2.data);
 
@@ -237,7 +237,7 @@ angular.module('poluxClienteApp')
                     });
 
                   }
-                  console.log("No coincide con ninguna modalidad");
+                  
                 }
               });
             }

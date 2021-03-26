@@ -43,7 +43,7 @@ angular.module('poluxClienteApp')
         $scope.load = true;
         ctrl.carreras = [];
         academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function(response) {
-            console.log(response);
+            
             if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
               ctrl.carreras = response.data.coordinadorCollection.coordinador;
               academicaRequest.get("periodo_academico", "X").then(function(response) {
@@ -56,7 +56,7 @@ angular.module('poluxClienteApp')
                   $scope.load = false;
                 })
                 .catch(function(error) {
-                  console.log(error);
+                  
                   ctrl.mensajeErrorCarga = $translate.instant('ERROR.CARGANDO_PERIODO');
                   ctrl.errorCargarParametros = true;
                   $scope.load = false;
@@ -68,7 +68,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error) {
-            console.log(error);
+            
             ctrl.mensajeErrorCarga = $translate.instant('ERROR.CARGAR_CARRERAS');
             ctrl.errorCargarParametros = true;
             $scope.load = false;
@@ -102,7 +102,7 @@ angular.module('poluxClienteApp')
             }
           })
           .catch(function(error) {
-            console.log(error);
+            
             ctrl.mensajeCargaPensum = $translate.instant('ERROR.CARGAR_CARRERAS');
             ctrl.errorCargarPensum = true;
             $scope.load = false;

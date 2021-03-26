@@ -181,7 +181,7 @@ angular.module('poluxClienteApp')
           .then(function(responsePeriodo) {
             if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
               ctrl.periodoAnterior = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
-              console.log(ctrl.periodoAnterior);
+              
               defer.resolve(ctrl.periodoAnterior);
             } else {
               ctrl.mensajeError = $translate.instant("ERROR.SIN_PERIODO");
@@ -236,7 +236,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer()
         academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"])
           .then(function(responseCarreras) {
-            console.log(responseCarreras);
+            
             if (!angular.isUndefined(responseCarreras.data.coordinadorCollection.coordinador)) {
               ctrl.carreras = responseCarreras.data.coordinadorCollection.coordinador;
               defer.resolve(ctrl.carreras);
@@ -287,7 +287,7 @@ angular.module('poluxClienteApp')
                   if (ctrl.primeraFecha.inicio <= $scope.fechaActual && ctrl.primeraFecha.fin >= $scope.fechaActual) {
                     ctrl.permitirPrimeraFecha = true;
                   }
-                  //console.log(fecha.inicio, ctrl.primeraFecha.inicio<=$scope.fechaActual && ctrl.primeraFecha.fin>=$scope.fechaActual);
+                  //
                 } else if (fecha.SesionHijo.TipoSesion.Id === 6) {
                   //segunda fecha de selección de admitidos
                   ctrl.segundaFecha = fecha;
@@ -347,7 +347,7 @@ angular.module('poluxClienteApp')
       ctrl.cargarParametros = function() {
         ctrl.getPeriodoActual()
           .then(function(periodo) {
-            console.log(periodo)
+            
             if (!angular.isUndefined(periodo)) {
               var promises = [];
               promises.push(ctrl.getPeriodoAnterior());
@@ -356,25 +356,25 @@ angular.module('poluxClienteApp')
               promises.push(ctrl.getCupos());
               $q.all(promises)
                 .then(function() {
-                  console.log(periodo)
-                  console.log(ctrl.fechas);
-                  console.log(ctrl.carreras);
-                  console.log("success");
+                  
+                  
+                  
+                  
                   $scope.loadParametros = false;
                 })
                 .catch(function(error) {
-                  console.log(ctrl.mensajeError);
+                  
                   ctrl.errorCargarParametros = true;
                   $scope.loadParametros = false;
                 });
             } else {
-              console.log(ctrl.mensajeError);
+              
               ctrl.errorCargarParametros = true;
               $scope.loadParametros = false;
             }
           })
           .catch(function(error) {
-            console.log(ctrl.mensajeError);
+            
             ctrl.errorCargarParametros = true;
             $scope.loadParametros = false;
           });
@@ -444,7 +444,7 @@ angular.module('poluxClienteApp')
                                 //"respuesta": ""+value.Id,
                                 "respuestaSolicitud": value
                               };
-                              console.log("datos estudiante", response2.data.estudianteCollection.datosEstudiante[0]);
+                              
                               if (solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10) {
                                 solicitud.aprobado = true;
                                 ctrl.numeroAdmitidos += 1;
@@ -467,12 +467,12 @@ angular.module('poluxClienteApp')
                         }
                       })
                       .catch(function(error) {
-                        console.log(error);
+                        
                         defer.reject("ERROR.CARGAR_DATOS_ESTUDIANTES");
                       });
                   })
                   .catch(function(error) {
-                    console.log(error);
+                    
                     defer.reject("ERROR.CARGAR_SOLICITANTES");
                   });
               } else {
@@ -524,14 +524,14 @@ angular.module('poluxClienteApp')
                   $scope.mensajeErrorSolicitudes = $translate.instant(error);
                   $scope.errorCargarSolicitudes = true;
                   $scope.loadSolicitudes = false;
-                  console.log(error);
+                  
                 });
             })
             .catch(function() {
               $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
               $scope.errorCargarSolicitudes = true;
               $scope.loadSolicitudes = false;
-              console.log("error traer respuestas")
+              
             });
           ctrl.gridOptions.data = $scope.sols;
         }
@@ -566,7 +566,7 @@ angular.module('poluxClienteApp')
           ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
           ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
           ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
-          //console.log(ctrl.admitidos, ctrl.opcionados);
+          //
           $('#modalAdmitir').modal('show')
         } else {
           swal(
@@ -606,7 +606,7 @@ angular.module('poluxClienteApp')
           ctrl.gridOptionsAdmitidos.data = ctrl.admitidos;
           ctrl.gridOptionsOpcionados.data = ctrl.opcionados;
           ctrl.gridOptionsNoAdmitidos.data = ctrl.noAdmitidos;
-          //console.log(ctrl.admitidos, ctrl.noAdmitidos);
+          //
           $('#modalAdmitir').modal('show')
         } else {
           swal(
@@ -663,11 +663,11 @@ angular.module('poluxClienteApp')
           "RespuestasAntiguas": respuestasUpdate,
         }
         $scope.loadRespuestas = true;
-        console.log("dataAdmitidos", dataAdmitidos)
+        
         $('#modalAdmitir').modal('hide')
         poluxRequest.post("tr_registrar_respuestas_solicitudes", dataAdmitidos).then(function(response) {
             $scope.loadRespuestas = false;
-            console.log("Repsuesta", response.data);
+            
             if (response.data[0] === "Success") {
               swal(
                 $translate.instant('MATERIAS_POSGRADO.PROCESO_ADMISION_COMPLETO'),
@@ -686,7 +686,7 @@ angular.module('poluxClienteApp')
 
           })
           .catch(function(error) {
-            console.log(error);
+            
             $scope.loadRespuestas = false;
             swal(
               $translate.instant('ERROR'),

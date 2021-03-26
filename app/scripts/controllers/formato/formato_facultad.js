@@ -36,7 +36,7 @@ angular.module('poluxClienteApp')
         };
 
         ctrl.actualizar_formato = function () {
-            //console.log($scope.SelectedFormat);
+            //
             poluxRequest.get("tr_formato/" + ctrl.SelectedFormat, '')
                 .then(function (response) {
                     ctrl.formato_vista = response.data;
@@ -74,7 +74,7 @@ angular.module('poluxClienteApp')
             });
             var formato_facultad_carrera = {};
             formato_facultad_carrera.formato_facultad = ctrl.formato_facultad;
-            console.log(formato_facultad_carrera);
+            
             poluxRequest.post("formato_evaluacion_carrera/TrFormatoEvaluacionCarrera", formato_facultad_carrera)
                 .then(function (response) {
                     if (response.data === null) {

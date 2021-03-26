@@ -58,7 +58,7 @@ angular.module('poluxClienteApp')
          */
         self.agregarRegistroEstudiante = function (tg, codEstudiante) {
           codEstudiante = parseInt(codEstudiante);
-          console.log(tg.Id);
+          
           var data = {
             CodigoEstudiante: codEstudiante,
             Estado: "activo",   //cambiar consultado el estado real: activo,retirado o inactivo
@@ -100,7 +100,7 @@ angular.module('poluxClienteApp')
               query: "Id:" + response.data.Id
             })).then(function (response) {
               $scope.tgparam = response.data;
-              console.log($scope.tgparam);
+              
               self.agregarRegistroEstudiante($scope.tgparam[0], estudiante);
             });
           });

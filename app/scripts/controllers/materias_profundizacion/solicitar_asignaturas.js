@@ -29,10 +29,10 @@ angular.module('poluxClienteApp')
                 "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
                 "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera
               };
-              console.log(ctrl.estudiante);
+              
               ctrl.modalidad = "MATERIAS PROFUNDIZACION";
               poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(response) {
-                console.log(response);
+                
                 ctrl.validar = response.data.RequisitosModalidades;
               });
             }

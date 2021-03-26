@@ -83,7 +83,7 @@ angular.module('poluxClienteApp')
                     //"Codigo": "null",
                     // };
                 }
-                console.log("carreras ya elegidas", $scope.e);
+                
                 /*número de créditos mínimos, según la modalidad
                   modalidad de espacios académicos de posgrado: 8 créditos,
                   modalidad de espacios académicos de profundización: 6 créditos*/
@@ -173,19 +173,19 @@ angular.module('poluxClienteApp')
                             ctrl.loading = false;
                         })
                             .catch(function (error) {
-                                console.log(error);
+                                
                                 ctrl.errorCargando = true;
                                 ctrl.loading = false;
                             });
                     })
                         .catch(function (error) {
-                            console.log(error);
+                            
                             ctrl.errorCargando = true;
                             ctrl.loading = false;
                         });
                 })
                     .catch(function (error) {
-                        console.log(error);
+                        
                         ctrl.errorCargando = true;
                         ctrl.loading = false;
                     });
@@ -254,25 +254,25 @@ angular.module('poluxClienteApp')
                             });                               
 
                             $q.all(promises).then(function () {
-                                console.log("asignaturas", ctrl.asignaturas);
+                                
                                 ctrl.gridOptions.data = ctrl.asignaturas;
                                 ctrl.loadingAsignaturas = false;
                             })
                                 .catch(function (error) {
-                                    console.log(error);
+                                    
                                     ctrl.errorCargandoAsignaturas = true;
                                     ctrl.loadingAsignaturas = false;
                                 });
                         })
                             .catch(function (error) {
-                                console.log(error);
+                                
                                 ctrl.errorCargandoAsignaturas = true;
                                 ctrl.loadingAsignaturas = false;
                             });
 
                     })
                         .catch(function (error) {
-                            console.log(error);
+                            
                             ctrl.errorCargandoAsignaturas = true;
                             ctrl.loadingAsignaturas = false;
                         });
@@ -315,7 +315,7 @@ angular.module('poluxClienteApp')
                         ctrl.minimoCreditos = false;
                     }
                     $scope.estudiante.minimoCreditos = ctrl.minimoCreditos;
-                    console.log(JSON.stringify($scope.estudiante.asignaturas_elegidas))
+                    
 
                 }; ///////////fin add()///////////////////
 

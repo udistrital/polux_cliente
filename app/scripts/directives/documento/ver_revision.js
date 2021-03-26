@@ -49,7 +49,7 @@ angular.module('poluxClienteApp')
                  * Vigila los cambios del elemento paginaset, y la muestra en el controlador.
                  */
                 $scope.$watch('paginaset', function () {
-                    console.log("pagina" + $scope.paginaset);
+                    
                     $scope.pageNum = $scope.paginaset;
                 });
 
@@ -98,7 +98,7 @@ angular.module('poluxClienteApp')
                     mycomentario.Autor = $scope.autor;
                     ctrl.pruebac = mycomentario;
                     var comentarios = [];
-                    console.log(mycomentario);
+                    
                     poluxRequest.post("comentario", mycomentario).then(function (response) {
                         poluxRequest.get("comentario", $.param({
                             query: "Correccion:" + mycomentario.Correccion.Id,
@@ -107,7 +107,7 @@ angular.module('poluxClienteApp')
                         })).then(function (response) {
                             comentarios.push(response.data);
                         });
-                    }); //.then(function(data){console.log(data);});
+                    }); //.then(function(data){
                     //ctrl.coment = null;
                     comentario = null;
                     return comentarios;
@@ -152,7 +152,7 @@ angular.module('poluxClienteApp')
                                 window.open(documento.url);
                             })
                             .catch(function (error) {
-                                console.log("Error ->", error);
+                                
                                 swal(
                                     $translate.instant("MENSAJE_ERROR"),
                                     $translate.instant("ERROR.CARGAR_DOCUMENTO"),

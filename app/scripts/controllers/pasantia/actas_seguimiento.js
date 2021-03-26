@@ -207,24 +207,24 @@ angular.module('poluxClienteApp')
               });
               $q.all(promises)
                 .then(function () {
-                  console.log("trabajos", ctrl.trabajosPasantia);
+                  
                   ctrl.gridOptions.data = ctrl.trabajosPasantia;
                   ctrl.loadingTrabajos = false;
                 })
                 .catch(function (error) {
-                  console.log(error);
+                  
                   ctrl.errorCargando = true;
                   ctrl.loadingTrabajos = false;
                 });
             } else {
-              console.log("No hay trabajos asociados");
+              
               ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.DOCENTE_DIRECTOR_SIN_PASANTIAS");
               ctrl.errorCargando = true;
               ctrl.loadingTrabajos = false;
             }
           })
           .catch(function (error) {
-            console.log(error);
+            
             ctrl.mensajeErrorCargando = $translate.instant("PASANTIA.ERROR.CARGANDO_TRABAJOS_PASANTIA");
             ctrl.errorCargando = true;
             ctrl.loadingTrabajos = false;
@@ -284,7 +284,7 @@ angular.module('poluxClienteApp')
                 ctrl.loadingDocumento = false;
               })
               .catch(function (error) {
-                console.log(error);
+                
                 swal(
                   $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                   $translate.instant("VERIFICAR_DOCUMENTO"),
@@ -318,7 +318,7 @@ angular.module('poluxClienteApp')
             $window.open(document.url);
           })
           .catch(function (error) {
-            console.log("Error ->", error);
+            
             swal(
               $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),

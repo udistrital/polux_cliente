@@ -156,7 +156,7 @@ angular.module('poluxClienteApp')
                 /*if( rol === 4 || rol === 2){
                   //No se permite registrar
                 }
-                console.log(trabajo);*/
+                */
               });
               ctrl.gridOptions.data = ctrl.trabajosGrado;
               defer.resolve();
@@ -177,7 +177,7 @@ angular.module('poluxClienteApp')
           ctrl.cargandoTrabajos = false;
         })
         .catch(function(error) {
-          console.log(error);
+          
           ctrl.errorCargando = true;
           ctrl.cargandoTrabajos = false;
         })
@@ -327,8 +327,6 @@ angular.module('poluxClienteApp')
         }
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
         ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1);
-        //console.log(ctrl.registrarNota);
-        //console.log(ctrl.trabajoSeleccionado);
         //Promesas del tg
         var promesasTrabajo = [];
         promesasTrabajo.push(ctrl.getEstudiantes(ctrl.trabajoSeleccionado));
@@ -338,10 +336,10 @@ angular.module('poluxClienteApp')
         $q.all(promesasTrabajo)
           .then(function() {
             ctrl.cargandoTrabajo = false;
-            console.log(ctrl.trabajoSeleccionado);
+            
           })
           .catch(function(error) {
-            console.log(error);
+            
             ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
             ctrl.errorCargandoTrabajo = true;
             ctrl.cargandoTrabajo = false;
@@ -380,9 +378,6 @@ angular.module('poluxClienteApp')
             //Se carga el documento
             nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
               .then(function(urlActa) {
-                console.log("acta", urlActa);
-                console.log("nota", ctrl.trabajoSeleccionado.nota);
-                console.log("trabajo", ctrl.trabajoSeleccionado);
                 dataRegistrarNota.DocumentoEscrito = {
                   Id: 0,
                   Titulo: nombreDocumento,
@@ -407,7 +402,6 @@ angular.module('poluxClienteApp')
           .then(function(dataRegistrarNota) {
             //Se ejecuta la transacción
             poluxRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function(response) {
-                console.log(response);
                 if (response.data[0] === "Success") {
                   swal(
                     $translate.instant("REGISTRAR_NOTA.AVISO"),
@@ -421,7 +415,6 @@ angular.module('poluxClienteApp')
                       ctrl.cargandoTrabajos = false;
                     })
                     .catch(function(error) {
-                      console.log(error);
                       ctrl.errorCargando = true;
                       ctrl.cargandoTrabajos = false;
                     })
@@ -434,8 +427,7 @@ angular.module('poluxClienteApp')
                 }
                 ctrl.registrandoNotaTG = false;
               })
-              .catch(function(error) {
-                console.log(error);
+              .catch(function(error) {                     
                 swal(
                   $translate.instant("REGISTRAR_NOTA.AVISO"),
                   $translate.instant("REGISTRAR_NOTA.ERROR.REGISTRANDO_NOTA"),
@@ -445,7 +437,6 @@ angular.module('poluxClienteApp')
               });
           })
           .catch(function(error) {
-            console.log(error);
             ctrl.registrandoNotaTG = false;
             swal(
               $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -482,6 +473,5 @@ angular.module('poluxClienteApp')
             break;
         }
       };
-
 
     });

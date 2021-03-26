@@ -239,7 +239,7 @@ angular.module('poluxClienteApp')
             };
             var i = -1;
             angular.forEach($scope.gridOptions.data, function (data) {
-                console.log(data);
+                
                 if (data.$$treeLevel === 0 && (data.Tipo === 'cerrado_unico' || data.Tipo === 'cerrado_multiple')) {
                     formato_post.TrPreguntas.push({
                         Pregunta: {
@@ -299,9 +299,9 @@ angular.module('poluxClienteApp')
                 }
             });
             i += 1;
-            console.log(formato_post);
+            
             poluxRequest.post("tr_formato", formato_post).then(function (response) {
-                console.log(response.data);
+                
                 swal({
                     title: 'Ok',
                     text: 'Se ha creado formato: <br> ' +

@@ -145,7 +145,7 @@ angular.module('poluxClienteApp')
           }
           $q.all(promesasDocumentos)
             .then(function () {
-              console.log("tree", ctrl.dataForTree);
+              
               if (ctrl.dataForTree.length == 0) {
                 ctrl.mensajeError = $translate.instant("NO_HAY_DOCUMENTOS");
                 ctrl.errorCargando = true;
@@ -153,7 +153,7 @@ angular.module('poluxClienteApp')
               ctrl.loadingVersion = false;
             })
             .catch(function (error) {
-              console.log(error);
+              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO");
               ctrl.errorCargando = true;
               ctrl.loadingVersion = false;
@@ -200,7 +200,7 @@ angular.module('poluxClienteApp')
                 window.open(documento.url);
               })
               .catch(function (error) {
-                console.log("Error ->", error);
+                
                 ctrl.loadingVersion = false;
                 swal(
                   $translate.instant("MENSAJE_ERROR"),
