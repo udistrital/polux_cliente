@@ -72,7 +72,7 @@ angular.module('implicitToken', [])
               Documento: appUserInfo.documento
             };*/
             var userRol= {
-              user: appUserInfo.sub
+              user: appUserInfo.email
             };
             autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
