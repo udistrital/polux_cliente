@@ -238,9 +238,9 @@ angular.module('poluxClienteApp')
         */
 
         $scope.$on('$routeChangeStart', function(scope, next, current) {
-            //$scope.actual = $location.path();
-            //update_url();
-           /* var waitForMenu = function () {
+            $scope.actual = $location.path();
+            update_url();
+            var waitForMenu = function () {
                 if ($rootScope.my_menu !== undefined) {
                     if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
                         if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
@@ -251,7 +251,7 @@ angular.module('poluxClienteApp')
                     setTimeout(waitForMenu, 250);
                 }
             }; 
-            waitForMenu();*/
+            waitForMenu();
         });
 
         $scope.havePermission = function (viewPath, menu) {
