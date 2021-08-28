@@ -1,0 +1,689 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'ADMINISTRAR_TABLAS' | translate}}
+    </div>
+    <div class="panel-body">
+        <loading tam="4" load="loadTablas" message="msgCargandotablas"> </loading>
+        <div ng-if="!loadTablas">
+            <div class="panel-body alert alert-danger" ng-if="Parametrizacion.TablasError">
+                {{'ERROR.NO_TABLAS_CARGADAS' | translate}}
+            </div>
+            <div class="row" ng-if="!Parametrizacion.TablasError">
+                <label class="col-sm-2 control-label"> {{'SELECT.TABLA_PARAMETRICA' | translate}} </label>
+                <div class="col-sm-10">
+                    <select class="form-control" ng-model="Parametrizacion.tablaSeleccionada" ng-change="Parametrizacion.cargarTabla(Parametrizacion.tablaSeleccionada);">
+                        <option  ng-repeat="tabla in Parametrizacion.TablasParametricas" ng-value="tabla">{{tabla.name}} </option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" ng-if="loadATablasColeccion!==undefined">
+                <loading tam="4" load="loadATablasColeccion" message="msgCargandotablas"> </loading>
+                <br>
+                <div class="col-sm-12" ng-if="!loadATablasColeccion">
+                    <div class="alert alert-danger" ng-if="Parametrizacion.TablasColeccionError">
+                        {{'ERROR.NO_TABLAS_CARGADAS' | translate}}
+                    </div>
+                    <div ng-if="!Parametrizacion.TablasColeccionError">
+                       <div ng-if="Parametrizacion.TablasColeccion.length>0" class="panel panel-default panel-body col-md-12">
+                            <div ui-grid="Parametrizacion.gridOptions"  ui-grid-cellNav  ui-grid-pagination class="mi-grid" id="mi-grid" ui-grid-auto-resize></div>
+                        </div>
+                      <div ng-if="Parametrizacion.TablasColeccion.length===0" class="alert alert-danger">
+                            {{'SIN_INFORMACION_TABLA' | translate}}
+                        </div>
+                        <input type="submit" value="{{'NUEVO_VALOR_TABLA' | translate}}"  class="col-sm-12 btn btn-success" type="submit" ng-click="Parametrizacion.insertarvariable(Parametrizacion.tablaSeleccionada)"></input>           
+                    </div>                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA Estado_ASIGNATURA-->
+<div id="modalAgregarestadoasignatura" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ESTADO_ASIGNATURA' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ESTADO_ASIGNATURA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ESTADO_ASIGNATURA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_ESTADO_ASIGNATURA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ESTADO_ASIGNATURA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA Estado_ESPACIO_ACADEMICO_INSCRITO-->
+<div id="modalAgregarestadoacademico" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ESTADO_ACADEMICO_INSCRITO' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ESTADO_ACADEMICO_INSCRITO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ESTADO_ACADEMICO_INSCRITO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_ESTADO_ACADEMICO_INSCRITO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ESTADO_ACADEMICO_INSCRITO' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA Estado_ESTUDIANTE_TRABAJO_GRADO-->
+<div id="modalAgregarestadoestudiante" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ESTADO_ESTUDIANTE' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ESTADO_ESTUDIANTE'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ESTADO_ESTUDIANTE'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_ESTADO_ESTUDIANTE'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ESTADO_ESTUDIANTE' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA Estado_REVISION_TRABAJO_GRADO-->
+<div id="modalAgregarestadorevision" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ESTADO_REVISION' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ESTADO_REVISION'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ESTADO_REVISION'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_ESTADO_REVISION'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ESTADO_REVISION' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA Estado_SOLICITUD-->
+<div id="modalAgregarestadosolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ESTADO_SOLICITUD' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ESTADO_SOLICITUD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ESTADO_SOLICITUD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_ESTADO_SOLICITUD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ESTADO_SOLICITUD' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA Estado_TRABAJO_GRADO-->
+<div id="modalAgregarestadotrabajogrado" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ESTADO_TRABAJO_GRADO' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ESTADO_TRABAJO_GRADO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ESTADO_TRABAJO_GRADO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_ESTADO_TRABAJO_GRADO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ESTADO_TRABAJO_GRADO' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA MODALIDAD-->
+<div id="modalAgregarmodalidad" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_MODALIDAD' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_MODALIDAD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_MODALIDAD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_MODALIDAD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_MODALIDAD' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA PREGUNTA-->
+<div id="modalAgregarpregunta" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_PREGUNTA' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ENUNCIADO_PREGUNTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreEnunciadoTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_PREGUNTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACION_PREGUNTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_PREGUNTA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA RESPUESTA-->
+<div id="modalAgregarrespuesta" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_RESPUESTA' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_RESPUESTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_RESPUESTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACION_RESPUESTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_RESPUESTA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA ROL TRABAJO GRADO-->
+<div id="modalAgregarroltrabajogrado" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_ROL_TRABAJO_GRADO' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_ROL_TRABAJO_GRADO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_ROL_TRABAJO_GRADO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACION_ROL_TRABAJO_GRADO'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_ROL_TRABAJO_GRADO' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA TIPO DETALLE-->
+<div id="modalAgregartipodetalle" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_TIPO_DETALLE' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_TIPO_DETALLE'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_TIPO_DETALLE'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACION_TIPO_DETALLE'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_TIPO_DETALLE' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA TIPO PREGUNTA-->
+<div id="modalAgregartipopregunta" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_TIPO_PREGUNTA' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_TIPO_PREGUNTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_TIPO_PREGUNTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACION_TIPO_PREGUNTA'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_TIPO_PREGUNTA' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
+<!---MODAL DE TABLA TIPO SOLICITUD-->
+<div id="modalAgregartiposolicitud" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal" ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'TABLAS.NUEVO_TIPO_SOLICITUD' | translate}}
+            </div>       
+            <div class="panel-body"> 
+                <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
+                <form ng-if="!loadCargandoTabla" method="post" name="formularioDetalle" ng-submit="Parametrizacion.insertartabla()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_NOMBRE_TIPO_SOLICITUD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.nombreValorTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_DESCRIPCION_TIPO_SOLICITUD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="col-sm-4 control-label">
+                            {{'TABLAS.INGRESE_ABREVIACION_TIPO_SOLICITUD'|translate}}
+                        </label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="submit" value="{{'TABLAS.REGISTRAR_TIPO_SOLICITUD' | translate}}"  class="col-sm-12 btn btn-success" type="submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>         
+        </div>
+    </div>
+</div>
