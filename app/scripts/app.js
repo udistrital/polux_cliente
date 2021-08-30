@@ -308,6 +308,11 @@ angular
               templateUrl: 'views/reportes/reporte_general.html',
               controller: 'ReportesReporteGeneralCtrl',
               controllerAs: 'reporteGeneral'
+            })       
+            .when('/administracion/parametrizacion', {
+              templateUrl: 'views/administracion/Parametrizacion.html',
+              controller: 'AdministrarTablasCTRL',
+              controllerAs: 'Parametrizacion'
             })
             .otherwise({
                 redirectTo: '/'
