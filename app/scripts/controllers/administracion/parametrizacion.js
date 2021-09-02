@@ -14,10 +14,8 @@
  * @requires services/poluxService.service:poluxRequest
  * @property {Array} TablasParametricas Colección de tablas a las cuales serán validadas para la vista
  * @property {Array} TablasColeccion Colección de informacion de tablas parametricas
- * @property {Object} gridOptions Objeto que maneja las opciones de la cuadrícula que muestra las tablas parametricas
  * @property {String} nombreTabla Variable que guardara el nombre de la tabal usada
  * @property {Object} gridOptions2 Objeto que maneja las opciones de la cuadrícula que muestra las tablas parametricas sin enunciado
- * @property {Object} gridOptions3 Objeto que maneja las opciones de la cuadrícula que muestra las tablas parametricas  sin descripcion ni enunciado
  * @property {Boolean} TablaError Indicador que maneja la aparición de error durante la consulta
  * @property {Boolean} TablasColeccionError Indicador que maneja la aparición de error durante la consulta de tablas
  * @property {String} nombreValorTabla Texto que manipula el nombre ingresado en la tabla
@@ -34,7 +32,6 @@ angular.module('poluxClienteApp')
   .controller('AdministrarTablasCTRL',
     function($scope, $translate, coreAmazonCrudService, poluxRequest) {
       var ctrl = this;
-var a=0;
       $scope.msgCargandotablas = $translate.instant('LOADING.CARGANDO_TABLAS');
       $scope.msgRegistrandotablas = $translate.instant('LOADING.CREACION_DATOS_TABLAS');
       $scope.loadAreas = true;
@@ -58,45 +55,6 @@ var a=0;
         operacion: 'activar',
         estado: true
       }];
-      /**MENU CON NORMAL */
-      ctrl.gridOptions = {
-        paginationPageSizes: [5, 10, 15, 20, 25],
-        paginationPageSize: 10,
-        enableFiltering: true,
-        enableSorting: true,
-        enableSelectAll: false,
-        useExternalPagination: false,
-      };
-
-      ctrl.gridOptions.columnDefs = [{
-        name: 'Nombre',
-        displayName: $translate.instant('NOMBRE'),
-        width: '30%',
-      }, {
-        name: 'Enunciado',
-        displayName: $translate.instant('ENUNCIADO'),
-        width: '40%',
-      }, 
-      {
-        name: 'Descripcion',
-        displayName: $translate.instant('DESCRIPCION'),
-        width: '15%',
-      },
-      {
-        name: 'Activo',
-        displayName: $translate.instant('ESTADO'),
-        width: '15%',
-        cellTemplate: '<div ng-if="row.entity.Activo">Activo</div><div ng-if="!row.entity.Activo">No activo</div>'
-      },         
-      {
-        name: 'Acciones',
-        displayName: $translate.instant('ACCIONES'),
-        width: '15%',
-        type: 'boolean',
-        cellTemplate: '<div ng-if="row.entity.Activo"><btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesActivo" fila="row"></btn-registro></div>' +
-          '<div ng-if="!row.entity.Activo"><btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesNoActivo" fila="row"></btn-registro></div>'
-      }];
-      /**MENU SIN ENUNCIADO */
       ctrl.gridOptions2 = {
         paginationPageSizes: [5, 10, 15, 20, 25],
         paginationPageSize: 10,
@@ -158,7 +116,6 @@ var a=0;
        */
       ctrl.cargarTabla = function(tabla) {  
         ctrl.TablasColeccion = [];
-        ctrl.gridOptions.data = ctrl.TablasColeccion;
         ctrl.gridOptions2.data = ctrl.TablasColeccion;
         $scope.loadATablasColección = true;
         poluxRequest.get(tabla.name)
@@ -167,9 +124,7 @@ var a=0;
                   ctrl.nombretabla = "";           
                   ctrl.TablasColeccion = responsetabla.data;
                   ctrl.gridOptions2.data = ctrl.TablasColeccion;
-                  ctrl.nombretabla = tabla.name;
-                  ctrl.gridOptions = ctrl.gridOptions2;
-                                    
+                  ctrl.nombretabla = tabla.name;                            
             }
             $scope.loadATablasColeccion = false;
           })
@@ -244,8 +199,7 @@ var a=0;
        * @param {Object} tabla 
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.insertartabla = function() {
-       $scope.loadCargandoTabla = true;
+      ctrl.insertartabla = function() {      
        var verificarParametro = false;
        var quitarAcentos = function(text) {
         var r = text.toString().toLowerCase();
@@ -271,13 +225,13 @@ var a=0;
         }});
       }else{
       var nuevoparam = cambiarFormato(ctrl.nombreValorTabla);
-      console.log(ctrl.TablasColeccion);
       angular.forEach(ctrl.TablasColeccion ,function(tabla) {     
         $scope.loadTablas = true; 
         if (nuevoparam === cambiarFormato(tabla.Nombre)) {
           verificarParametro = true;
       }});
     }
+     $scope.loadCargandoTabla = true;
         if (verificarParametro) {
           $scope.loadCargandoTabla = false;
           ctrl.nombreValorTabla = "";
@@ -285,6 +239,7 @@ var a=0;
           ctrl.tipo_detalle="";
           ctrl.abreviacionTabla="";
           ctrl.nombreEnunciadoTabla="";
+          $scope.loadTablas = false; 
           swal(
             $translate.instant("MENSAJE_ERROR"),
             $translate.instant("AREAS.AREA_EXISTENTE"),
@@ -300,7 +255,18 @@ var a=0;
               Id:0,
               Enunciado: ctrl.nombreEnunciadoTabla
             }
-          } else{
+          }
+          if(ctrl.tablaSeleccionada.name=="modalidad")         
+          {           
+            var dataArea = {                 
+              Activa: true,   
+              CodigoAbreviacion: ctrl.abreviacionTabla,
+              Descripcion: ctrl.descripcionTabla,
+              Id: 0,
+              Nombre: ctrl.nombreValorTabla
+            }
+          }else{
+            
             var dataArea = {                 
               Activo: true,   
               CodigoAbreviacion: ctrl.abreviacionTabla,
@@ -324,28 +290,30 @@ var a=0;
               $('#modalAgregartipodetalle').modal('hide');
               $('#modalAgregartipopregunta').modal('hide');
               $('#modalAgregartiposolicitud').modal('hide');            
-              $scope.loadCargandoTabla = false;           
+              $scope.loadCargandoTabla = false;  
               swal(
                 $translate.instant("REGISTRO_EXITOSO"),
                 $translate.instant("TABLAS.PARAMETRO_REGISTRADO"),
                 'success'
-              );          
+              );   
+              ctrl.cargarTabla(ctrl.tablaSeleccionada);    
               ctrl.nombreValorTabla = "";
               ctrl.descripcionTabla = "";
               ctrl.tipo_detalle="";
               ctrl.abreviacionTabla="";
-              ctrl.nombreEnunciadoTabla="";
+              ctrl.nombreEnunciadoTabla="";    
+              $scope.loadTablas = false;     
             })
             .catch(function(error) {
-              $scope.loadCargandoTabla = false;
-              ctrl.cargarTabla(ctrl.tablaSeleccionada);
+              $scope.loadCargandoTabla = true;
+              $scope.loadTablas = false; 
               swal(
                 $translate.instant("MENSAJE_ERROR"),
                 $translate.instant("TABLAS.ERROR_REGISTRAR_PARAMETRO"),
                 'warning'
               );
             });
-            ctrl.cargarTabla(ctrl.tablaSeleccionada);
+
         }
       
     }
