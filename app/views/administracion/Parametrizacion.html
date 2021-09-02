@@ -25,7 +25,7 @@
                     </div>
                     <div ng-if="!Parametrizacion.TablasColeccionError">
                        <div ng-if="Parametrizacion.TablasColeccion.length>0" class="panel panel-default panel-body col-md-12">
-                            <div ui-grid="Parametrizacion.gridOptions"  ui-grid-cellNav  ui-grid-pagination class="mi-grid" id="mi-grid" ui-grid-auto-resize></div>
+                            <div ui-grid="Parametrizacion.gridOptions2"  ui-grid-cellNav  ui-grid-pagination class="mi-grid" id="mi-grid" ui-grid-auto-resize></div>
                         </div>
                       <div ng-if="Parametrizacion.TablasColeccion.length===0" class="alert alert-danger">
                             {{'SIN_INFORMACION_TABLA' | translate}}
@@ -345,7 +345,7 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                {{'TABLAS.NUEVO_MODALIDAD' | translate}}
+                {{'TABLAS.NUEVO_ESTADO_MODALIDAD' | translate}}
             </div>       
             <div class="panel-body"> 
                 <loading tam="4" load="loadCargandoTabla" message="msgRegistrandotablas"> </loading>
@@ -361,7 +361,7 @@
                     <br>
                     <div class="row">
                         <label class="col-sm-4 control-label">
-                            {{'TABLAS.INGRESE_MODALIDAD'|translate}}
+                            {{'TABLAS.INGRESE_DESCRIPCION_MODALIDAD'|translate}}
                         </label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" ng-model="Parametrizacion.descripcionTabla" required></input>
@@ -370,7 +370,7 @@
                     <br>
                     <div class="row">
                         <label class="col-sm-4 control-label">
-                            {{'TABLAS.INGRESE_MODALIDAD'|translate}}
+                            {{'TABLAS.INGRESE_ABREVIACIÓN_MODALIDAD'|translate}}
                         </label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" ng-model="Parametrizacion.abreviacionTabla" required></input>
