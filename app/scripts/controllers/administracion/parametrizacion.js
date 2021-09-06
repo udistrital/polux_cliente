@@ -118,7 +118,8 @@ angular.module('poluxClienteApp')
         ctrl.TablasColeccion = [];
         ctrl.gridOptions2.data = ctrl.TablasColeccion;
         $scope.loadATablasColección = true;
-        poluxRequest.get(tabla.name)
+        console.log('hh');
+        poluxRequest.get(tabla.name,'limit=100')
           .then(function(responsetabla) {
             if (Object.keys(responsetabla.data[0]).length > 0) {
                   ctrl.nombretabla = "";           
