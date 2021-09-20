@@ -52,6 +52,7 @@ angular
         'nuxeoService',
         'implicitToken',
         'autenticacionMidService'
+        
     ])
     .run(function(amMoment) {
         amMoment.changeLocale('es');
