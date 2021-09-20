@@ -173,8 +173,6 @@ angular.module('implicitToken', [])
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
-        //
-        console.log(data);
         return data;
       },
       logout: function() {
