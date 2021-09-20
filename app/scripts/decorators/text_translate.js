@@ -9,7 +9,7 @@
  */
 var text_es = {
     TITULO: "Sistema de gestión de trabajos de grado Polux",
-    MENSAJE_INICIAL: "Sistema de gestión de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
+    MENSAJE_INICIAL: "Sistema de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     EVALUAR_PROYECTO: "Evaluación de Proyecto de Grado",
     LISTADO_SOLICITUD: "Listado de Solicitudes",
     MODALIDAD: "Modalidad",
@@ -913,7 +913,7 @@ var text_es = {
  */
 var text_en = {
     TITULO: "Sistema de gestión de trabajos de grado Polux",
-    MENSAJE_INICIAL: "Sistema de gestión de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
+    MENSAJE_INICIAL: "Sistema de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     LISTADO_SOLICITUD: "List of Requests",
     MODALIDAD: "Modality",
     TITULO_PROPUESTA: "Title of proposal",

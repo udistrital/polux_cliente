@@ -167,7 +167,6 @@ angular.module('implicitToken', [])
       },
       // Contiene el documento para las búsquedas
       getAppPayload: function() {
-
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
@@ -175,6 +174,7 @@ angular.module('implicitToken', [])
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
         //
+        console.log(data);
         return data;
       },
       logout: function() {
