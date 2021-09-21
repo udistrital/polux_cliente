@@ -72,7 +72,7 @@ angular.module('implicitToken', [])
               Documento: appUserInfo.documento
             };*/
             var userRol= {
-              user: appUserInfo.sub
+              user: appUserInfo.email
             };
             autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
@@ -167,14 +167,12 @@ angular.module('implicitToken', [])
       },
       // Contiene el documento para las búsquedas
       getAppPayload: function() {
-
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
-        //
         return data;
       },
       logout: function() {

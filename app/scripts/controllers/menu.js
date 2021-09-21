@@ -173,15 +173,18 @@ angular.module('poluxClienteApp')
             token_service.getLoginData()
                 .then(function() {
                     $scope.token = token_service.getAppPayload();
-                    if (!angular.isUndefined($scope.token.appUserRole)) {
-                        var roles = "";
+                    if (!angular.isUndefined($scope.token.appUserRole)) {                      
+                        var roles = "";                     
                         if (typeof $scope.token.appUserRole === "object") {
                             var rl = [];
                             $scope.token.appUserRole = $scope.token.appUserRole.concat( $scope.token.role);
+                            
                             for (var index = 0; index < $scope.token.appUserRole.length; index++) {
+                                if($scope.token.appUserRole[index]!= undefined){
                                 if ($scope.token.appUserRole[index].indexOf("/") < 0) {
                                     rl.push($scope.token.appUserRole[index]);
                                 }
+                            }
                             }
                             roles = rl.toString();
                         } else {
@@ -238,8 +241,8 @@ angular.module('poluxClienteApp')
         */
 
         $scope.$on('$routeChangeStart', function(scope, next, current) {
-            //$scope.actual = $location.path();
-            //update_url();
+            $scope.actual = $location.path();
+           // update_url();
             var waitForMenu = function () {
                 if ($rootScope.my_menu !== undefined) {
                     if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
