@@ -12,16 +12,16 @@
         </div>
         <div ng-if="load!=true">
             <h4>
-                Seleccione Facultad y proyecto curricular antes de realizar la consulta por docente.
+                Seleccione Facultad y proyecto curricular antes de realizar la consulta por docente. a
             </h4>
-            <!-- <div class="row" >
+             <div class="row" >
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
                 <div class="col-sm-10">
                     <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
                         <option  ng-repeat="carrera in reporteGeneral.carreras_oikos" ng-value="carrera.Nombre"> {{carrera.Nombre}}</option>
                     </select>
                 </div>
-            </div> -->
+            </div> 
             <div class="row"
                 ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
@@ -46,7 +46,7 @@
                     </select>
                 </div>
             </div>
-            <div class="row"
+            <!--<div class="row"
                 ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
                 <div class="col-sm-10">
                     <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte()">Generar Reporte</button>
@@ -56,6 +56,15 @@
                 <spagobi reporte="polux_tg_pregrado" periodo="reporteGeneral.periodo_seleccionado"
                     codigo="reporteGeneral.carrera_seleccionada" boton="reporteGeneral.generarReporte"></spagobi>
             </div>
+        -->
+        <select class="form-control" ng-model="reportesCt.nombreReporte">      
+            <option value="ReportegeneralPolux">Reporte General</option>
+            <option value="ReportedocentePolux">Reporte Docente</option>
+          </select>
+          <div class="col-md-1"></div>
+          <spagobi reporte="{{reportesCt.nombreReporte}}"></spagobi>
+        </div>
+        </div>
         </div>
     </div>
 </div>

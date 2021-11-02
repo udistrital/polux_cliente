@@ -102,6 +102,22 @@ angular.module('poluxClienteApp')
         query: "Estado:ACTIVO",
         limit: 0,
       });
+
+
+      ctrl.areasSnies = [
+        {Id:1,estado:true,Nombre:'AGRONOMIA VETERINARIA Y AFINES'},
+        {Id:2,estado:true,Nombre:'BELLAS ARTES'},
+        {Id:3,estado:true,Nombre:'CIENCIAS DE LA EDUCACION'},
+        {Id:4,estado:true,Nombre:'CIENCIAS DE LA SALUD'},
+        {Id:5,estado:true,Nombre:'CIENCIAS SOCIALES Y HUMANAS'},
+        {Id:6,estado:true,Nombre:'ECONOMIA, ADMINISTRACION, CONTADURIA Y AFINES'},
+        {Id:7,estado:true,Nombre:'INGENIERIA, ARQUITECTURA, URBANISMO Y AFINES'},
+        {Id:8,estado:true,Nombre:'MATEMATICAS Y CIENCIAS NATURALES'},      
+        {Id:9,estado:true,Nombre:'SIN CLASIFICAR'}
+        ];
+        $scope.loadAreas = false;
+        ctrl.areasError = false;
+      /**
       coreAmazonCrudService.get("snies_area", parametrosAreas)
         .then(function(responseAreas) {
           ctrl.areasSnies = responseAreas.data;
