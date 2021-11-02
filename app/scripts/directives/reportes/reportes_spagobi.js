@@ -51,17 +51,7 @@ angular.module('poluxClienteApp')
               $('#frame').append(url);
             };
 
-            /*sbi.api.authenticate({
-              params: {
-                user: 'desarrollooas',
-                password: 'desarrollooas'
-              },
-              callback: {
-                fn: execTest,
-                scope: this
-              }
-            });
-            */
+           
           }
         });
       },
