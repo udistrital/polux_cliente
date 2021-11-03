@@ -85,7 +85,7 @@ angular.module('implicitToken', [])
                 //appUserDocument = respuestaAutenticacion.data.documento;
                 
                 if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
-                  appUserDocument = respuestaAutenticacion.data.Codigo;
+                  appUserDocument = respuestaAutenticacion.data.documento;
                   //appUserDocument="20031085066";
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
