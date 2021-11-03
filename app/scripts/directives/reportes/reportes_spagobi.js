@@ -22,9 +22,9 @@ angular.module('poluxClienteApp')
 
         sbi.services.setBaseUrl({
           protocol: 'https', 
-          host: 'intelligentia.udistrital.edu.co', 
-          port: '8443', 
-          contextPath: 'SpagoBI', 
+          host: 'inteligenciainstitucional.portaloas .udistrital.edu.co', 
+          port: '443', 
+          contextPath: 'knowage', 
           controllerPath: 'servlet/AdapterHTTP'
         });
         $scope.$watch('boton', function (oldValue,newValue) {
@@ -35,7 +35,7 @@ angular.module('poluxClienteApp')
             function execTest() {
               var url = sbi.api.getDocumentHtml({
                 documentLabel: $scope.reporte, 
-                executionRole: '/spagobi/user/admin', 
+                executionRole: '/spagobi/user/user', 
                 parameters: {'PARAMETERS':parametros}, 
                 displayToolbar: true, 
                 displaySliders: true, 
@@ -45,21 +45,13 @@ angular.module('poluxClienteApp')
                     width: '100%.'
                 }
               });
-              
+              url = "https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SitanJECT " = true & EL
+               
               $('#frame').html('');
               $('#frame').append(url);
             };
 
-            sbi.api.authenticate({
-              params: {
-                user: 'sergio_orjuela',
-                password: 'sergio_orjuela'
-              },
-              callback: {
-                fn: execTest,
-                scope: this
-              }
-            });
+           
           }
         });
       },
