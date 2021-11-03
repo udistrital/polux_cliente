@@ -71,7 +71,7 @@ steps:
     - push
     - pull_request
 
- name: build_master
+- name: build_master
   image: node:10.7.0
   commands:
   - npm install -g grunt-cli bower
