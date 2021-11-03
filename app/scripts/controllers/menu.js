@@ -220,7 +220,7 @@ angular.module('poluxClienteApp')
                     $scope.breadcrumb = [''];
                 }
             }
-        };*/
+        };
 
        /* 
        $scope.redirect_url = function(path) {
@@ -242,11 +242,15 @@ angular.module('poluxClienteApp')
 
         $scope.$on('$routeChangeStart', function(scope, next, current) {
             $scope.actual = $location.path();
-           // update_url();
+            
+            prueba();
             var waitForMenu = function () {
                 if ($rootScope.my_menu !== undefined) {
                     if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
+
                         if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
+                           
+                           
                             $location.path("/no_permission");
                         }
                     }                 

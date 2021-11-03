@@ -62,7 +62,7 @@ angular.module('poluxClienteApp')
                   $scope.load = false;
                 });
             } else {
-              ctrl.mensajeErrorCarga = $translate.instant('NO_CARRERAS_PREGADO');
+              ctrl.mensajeErrorCarga = $translate.instant('ERROR.NO_CARRERAS_PREGADO');
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             }
