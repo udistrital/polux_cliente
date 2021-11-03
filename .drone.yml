@@ -67,7 +67,6 @@ steps:
   when:
     branch:
     - release/*
-    - feature/*
     event:
     - push
     - pull_request
