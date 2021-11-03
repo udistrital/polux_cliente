@@ -69,7 +69,8 @@ steps:
 #    event:
 #    - push
 #    - pull_request
-- name: buildtest
+
+- name: build_release
     image: node:10.7.0
     commands:
      - npm install -g grunt-cli bower
@@ -79,10 +80,10 @@ steps:
      - cp -f app/scripts/environment/environment_test.js app/scripts/environment/environment.js
      - grunt build
     when:
-      branch: [test]
+      branch: [test,release,feature]
       event: [push, pull_request]
 
-  - name: buildmaster
+  - name: build_master
     image: node:10.7.0
     commands:
      - npm install -g grunt-cli bower
@@ -94,6 +95,7 @@ steps:
     when:
       branch: [master]
       event: [push, pull_request]
+      
 # name: build_master
 #  image: node:10.7.0
 #  commands:
