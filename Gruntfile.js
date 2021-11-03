@@ -23,7 +23,7 @@ module.exports = function(grunt) {
     require('jit-grunt')(grunt, {
         useminPrepare: 'grunt-usemin',
         ngtemplates: 'grunt-angular-templates',
-        ngAnnotate: 'grunt-ng-annotate-patched',
+        ngAnnotate: 'grunt-ng-annotate',
      //   cdnify: 'grunt-google-cdn'
     });
 
