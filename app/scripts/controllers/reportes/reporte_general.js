@@ -101,7 +101,7 @@ angular.module('poluxClienteApp')
       ctrl.carrera_seleccionada = '';
       ctrl.generarReporte=0;
 
-      /*oikosRequest.get("dependencia", "query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function (carreras) {
+      oikosRequest.get("dependencia", "query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function (carreras) {
         ctrl.carreras_oikos = carreras.data;
         
         $scope.load = false;
@@ -111,7 +111,7 @@ angular.module('poluxClienteApp')
           ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
           ctrl.errorCargarParametros = true;
           $scope.load = false;
-        });*/
+        });
 
       academicaRequest.get("periodos")
         .then(function (resultadoPeriodosCorrespondientes) {
