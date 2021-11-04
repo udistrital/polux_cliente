@@ -132,12 +132,13 @@ angular.module('poluxClienteApp')
       academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function (responseCoordinador) {
         ctrl.carrerasCoordinador = [];
         var carreras = [];
-        if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
-          ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
+        ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
           
-          angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function (carrera) {
-            ctrl.carreras.push(carrera.codigo_proyecto_curricular);
-          });
+        angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function (carrera) {
+          ctrl.carreras.push(carrera.codigo_proyecto_curricular);
+        });
+        if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
+         
           
         }
       }).catch(function (error) {
@@ -146,7 +147,6 @@ angular.module('poluxClienteApp')
         ctrl.errorCargarParametros = true;
         $scope.load = false;
       });
-
       /**
          * @ngdoc method
          * @name SolicitudesIniciales
@@ -157,7 +157,9 @@ angular.module('poluxClienteApp')
          */
 
       ctrl.generar_reporte= function (){
-        if (ctrl.carrera_seleccionada && ctrl.periodo_seleccionado) {
+       
+        if (ctrl.carrera_seleccionada && ctrl.periodo_seleccionado) {   
+          console.log(ctrl.carrera_seleccionada," + ", ctrl.periodo_seleccionado);    
           ctrl.generarReporte++;
         } else {
           swal({
@@ -166,7 +168,7 @@ angular.module('poluxClienteApp')
             type: 'error',
             confirmButtonText: $translate.instant('ACEPTAR')
           })
-        }
+       }
       }
 
 
