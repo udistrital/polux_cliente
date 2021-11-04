@@ -56,7 +56,7 @@ steps:
 
 
 - name: build_release
-  image: node:10.7.0
+  image: node:12.22.1
   commands:
   - npm install -g grunt-cli bower
   - npm install natives
@@ -71,7 +71,7 @@ steps:
     - push
     - pull_request
 - name: build_master
-  image: node:10.7.0
+  image: node:12.22.1
   commands:
   - npm install -g grunt-cli bower
   - npm install natives
