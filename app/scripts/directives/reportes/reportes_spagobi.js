@@ -18,43 +18,17 @@ angular.module('poluxClienteApp')
       },
       template: '<div id="frame" ></div>',
       controller:function($scope){
-        var sbi = Sbi.sdk;
-
-        sbi.services.setBaseUrl({
-          protocol: 'https', 
-          host: 'inteligenciainstitucional.portaloas .udistrital.edu.co', 
-          port: '443', 
-          contextPath: 'knowage', 
-          controllerPath: 'servlet/AdapterHTTP'
-        });
         $scope.$watch('boton', function (oldValue,newValue) {
           if ($scope.codigo && $scope.codigo.length !== 0 && $scope.periodo && $scope.periodo.length !== 0) {
             var parametros = '';
-            parametros = 'codigo_carrera=' + $scope.codigo + '&Periodo=' + $scope.periodo;
-            
-            function execTest() {
-              var url = sbi.api.getDocumentHtml({
-                documentLabel: $scope.reporte, 
-                executionRole: '/spagobi/user/user', 
-                parameters: {'PARAMETERS':parametros}, 
-                displayToolbar: true, 
-                displaySliders: true, 
-                iframe: {
-                    style: 'border: 0px;',
-                    height: '500px;',
-                    width: '100%.'
-                }
-              });
-              url = "https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SitanJECT " = true & EL
-               
-              $('#frame').html('');
-              $('#frame').append(url);
-            };
-
-           
-          }
-        });
-      },
-      controllerAs:'d_reportesSpagobi'
-    };
-  });
+            parametros = 'codigo_carrera=' + $scope.codigo + '&Periodo=' + $scope.periodo;       
+            url="https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true&OBJECT_LABEL="+ReportePoluxG
+            $('#frame').html('');
+            $('#frame').append(url);
+          
+        }
+      });
+    },
+    controllerAs:'d_reportesSpagobi'
+  };
+});
