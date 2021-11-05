@@ -156,10 +156,8 @@ angular.module('poluxClienteApp')
          * @returns {undefined} No retorna nigún valor. 
          */
 
-      ctrl.generar_reporte= function (){
-       
+      ctrl.generar_reporte= function (){  
         if (ctrl.carrera_seleccionada && ctrl.periodo_seleccionado) {   
-          console.log(ctrl.carrera_seleccionada," + ", ctrl.periodo_seleccionado);    
           ctrl.generarReporte++;
         } else {
           swal({
