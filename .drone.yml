@@ -34,7 +34,7 @@ steps:
     branch:
     - develop
     - feature/*
-    - release/*
+    - release
     event:
     - push
 
