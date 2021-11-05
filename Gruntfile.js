@@ -361,7 +361,7 @@ ngtemplates: {
 
         // ng-annotate tries to make the code safe for minification automatically
         // by using the Angular long form for dependency injection.
-        ngAnnotatepatched: {
+        ngAnnotate: {
             dist: {
                 files: [{
                     expand: true,
@@ -531,7 +531,34 @@ grunt.registerTask('serve', 'Compile then start a connect web server', function(
         'watch'
         ]);
 });
+grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function(target) {
+    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
+    grunt.task.run(['serve:' + target]);
+});
+grunt.registerTask('build', [
+    'clean:dist',
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'postcss',
+    'ngtemplates',
+    'concat',
+    'ngAnnotate',
+    'copy:dist',
+    //'cdnify',
+    'cssmin',
+    'uglify',
+    'filerev',
+    'usemin',
+    'htmlmin'
+    ]);
 
+grunt.registerTask('default', [
+    'newer:jshint',
+    'newer:jscs',
+    'test',
+    'build'
+    ]);
 grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function(target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
     grunt.task.run(['serve:' + target]);
