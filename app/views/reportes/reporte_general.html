@@ -54,11 +54,14 @@
                 <spagobi reporte="polux_tg_pregrado" periodo="reporteGeneral.periodo_seleccionado"
                     codigo="reporteGeneral.carrera_seleccionada" boton="reporteGeneral.generarReporte"></spagobi>
             </div>
-        <select class="form-control" ng-model="reportesCt.nombreReporte">      
+          <select class="form-control" ng-model="reportesCt.nombreReporte">      
             <option value="ReportePoluxG">Reporte general PoluxG</option>
           </select>
           <div class="col-md-1"></div>
           <spagobi reporte="{{reportesCt.nombreReporte}}"></spagobi>
+          <iframe width="100%" height="1200" 
+          src=https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=ReportePoluxG&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true
+           frameborder="0">
         </div>
         </div>
         </div>
