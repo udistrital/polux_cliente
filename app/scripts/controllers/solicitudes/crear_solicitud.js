@@ -422,8 +422,19 @@ angular.module('poluxClienteApp')
         poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
             ctrl.areas = responseAreas.data;
             if (Object.keys(ctrl.areas[0]).length > 0) {
-              coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
-                  var areasSnies = responseAreas.data;
+              var areasSnies = [
+                {Id:1,estado:true,Nombre:'AGRONOMIA VETERINARIA Y AFINES'},
+                {Id:2,estado:true,Nombre:'BELLAS ARTES'},
+                {Id:3,estado:true,Nombre:'CIENCIAS DE LA EDUCACION'},
+                {Id:4,estado:true,Nombre:'CIENCIAS DE LA SALUD'},
+                {Id:5,estado:true,Nombre:'CIENCIAS SOCIALES Y HUMANAS'},
+                {Id:6,estado:true,Nombre:'ECONOMIA, ADMINISTRACION, CONTADURIA Y AFINES'},
+                {Id:7,estado:true,Nombre:'INGENIERIA, ARQUITECTURA, URBANISMO Y AFINES'},
+                {Id:8,estado:true,Nombre:'MATEMATICAS Y CIENCIAS NATURALES'},      
+                {Id:9,estado:true,Nombre:'SIN CLASIFICAR'}
+                ];
+            //  coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
+            //      var areasSnies = responseAreas.data;
                   if (Object.keys(areasSnies[0]).length > 0) {
                     angular.forEach(ctrl.areas, function(area) {
                       angular.forEach(areasSnies, function(areaSnies) {
@@ -438,11 +449,12 @@ angular.module('poluxClienteApp')
                     ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
                     defer.reject("no hay areas");
                   }
-                })
+              /*  })
                 .catch(function(error) {
                   ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
                   defer.reject(error);
                 });
+                */
             } else {
               ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
               defer.reject("no hay areas");
