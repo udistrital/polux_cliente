@@ -85,7 +85,6 @@ angular.module('implicitToken', [])
                 //appUserDocument = respuestaAutenticacion.data.documento;
                 
                 if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
-                  //Se cambia a Codigo cuando se desea probar por ws2d 
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                   //appUserDocument="20031085066";
                 }else{
