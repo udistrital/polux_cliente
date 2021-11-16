@@ -53,6 +53,7 @@
  * @property {Object} carreraElegida Objeto que carga la información sobre la carrera elegida por el estudiante
  * @property {Object} trabajo_grado_completo Objeto que carga la información del trabajo de grado en curso
  * @property {Number} trabajo_grado Valor que carga el identificador del trabajo de grado
+ * @property {Number} muestra_btn Valor que determina la carga de menus por el rol
  * @property {Object} trabajoGrado Objeto que carga la información del trabajo de grado en curso
  * @property {Boolean} errorCarga Indicador que maneja la aparición de un error durante la carga de información
  * @property {String} mensajeError Texto que aparece en caso de haber un error al cargar los datos del estudiante con solicitud de trabajo de grado
@@ -85,6 +86,7 @@ angular.module('poluxClienteApp')
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_REPORTES');
       ctrl.solicitudes = [];
+      ctrl.muestra_btn = 0;
       ctrl.carrerasCoordinador = [];
       //token_service.token.documento = "79647592";
       //token_service.token.role.push("COORDINADOR_PREGRADO");
@@ -93,14 +95,18 @@ angular.module('poluxClienteApp')
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      
+      if(ctrl.userRole.includes('COORDINADOR_POSGRADO')||ctrl.userRole.includes('COORDINADOR_PREGRADO')||ctrl.userRole.includes('ADMIN_POLUX'))
+      {
+        ctrl.muestra_btn ++;
+      }
       ctrl.carreras_oikos = [];
       ctrl.carreras= [];
       ctrl.periodos = [];
       ctrl.periodo_seleccionado = '';
       ctrl.carrera_seleccionada = '';
-      ctrl.generarReporte=0;
-
+      ctrl.generarReporte1=0;
+      ctrl.generarReporte2=0;
+      ctrl.url = "ReportePoluxG";
       oikosRequest.get("dependencia", "query=DependenciaTipoDependencia.TipoDependenciaId.Id:14,Activo:true&limit=0").then(function (carreras) {
         ctrl.carreras_oikos = carreras.data;
         
@@ -149,25 +155,56 @@ angular.module('poluxClienteApp')
       });
       /**
          * @ngdoc method
-         * @name SolicitudesIniciales
+         * @name generar_reporte_general
          * @methodOf poluxClienteApp.controller:ReportesReporteGeneralCtrl
          * @description 
          * Esta Función consulta los proyectos curriculares de la universidad para mostrarlos en el desplegable y que se pueda seleccionar para consultar los docentes de los reportes.
          * @returns {undefined} No retorna nigún valor. 
          */
 
-      ctrl.generar_reporte= function (){  
-        if (ctrl.carrera_seleccionada && ctrl.periodo_seleccionado) {   
-          ctrl.generarReporte++;
-        } else {
+      ctrl.generar_reporte_general= function (){ 
+        ctrl.generarReporte1 ++;
+         /* if (ctrl.carrera_seleccionada && ctrl.periodo_seleccionado) {   
+        ctrl.generarReporte++;
+        }*/
+       /* else {
           swal({
             title: $translate.instant('ERROR'),
             text: $translate.instant('COMPLETE_CAMPOS'),
             type: 'error',
             confirmButtonText: $translate.instant('ACEPTAR')
           })
-       }
+       }*/
       }
+
+      /**
+         * @ngdoc method
+         * @name generar_reporte_docente
+         * @methodOf poluxClienteApp.controller:ReportesReporteGeneralCtrl
+         * @description 
+         * Esta Función consulta los proyectos curriculares de la universidad para mostrarlos en el desplegable y que se pueda seleccionar para consultar los docentes de los reportes.
+         * @returns {undefined} No retorna nigún valor. 
+         */
+
+       ctrl.generar_reporte_docente= function (){ 
+          ctrl.generarReporte2 ++;
+      }
+       /**
+         * @ngdoc method
+         * @name Cambio_reporte
+         * @methodOf poluxClienteApp.controller:ReportesReporteGeneralCtrl
+         * @description 
+         * Esta Función consulta los proyectos curriculares de la universidad para mostrarlos en el desplegable y que se pueda seleccionar para consultar los docentes de los reportes.
+         * @returns {undefined} No retorna nigún valor. 
+         */
+
+        ctrl.cambio_reporte= function (){ 
+          ctrl.generarReporte2 = 0;
+          ctrl.generarReporte1 = 0;
+
+        }
+        
+      
 
 
     });
