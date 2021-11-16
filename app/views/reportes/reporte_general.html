@@ -12,9 +12,10 @@
         </div>
         <div ng-if="load!=true">
             <h4>
-                Seleccione Facultad y proyecto curricular antes de realizar la consulta por docente. a
+                <label class="col-sm-6"> Seleccione el reporte que desea generar </label>
+
             </h4>
-             <div class="row" >
+            <!-- <div class="row" >
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
                 <div class="col-sm-10">
                     <select class="form-control"  ng-model="reporteGeneral.carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(reporte_general.carrera_seleccionada);">
@@ -54,16 +55,38 @@
                 <spagobi reporte="polux_tg_pregrado" periodo="reporteGeneral.periodo_seleccionado"
                     codigo="reporteGeneral.carrera_seleccionada" boton="reporteGeneral.generarReporte"></spagobi>
             </div>
-          <select class="form-control" ng-model="reportesCt.nombreReporte">      
-            <option value="ReportePoluxG">Reporte general PoluxG</option>
-          </select>
-          <div class="col-md-1"></div>
-          <spagobi reporte="{{reportesCt.nombreReporte}}"></spagobi>
-          <iframe width="100%" height="1200" 
-          src=https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=ReportePoluxG&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true
-           frameborder="0">
-        </div>
-        </div>
+            
+          -->
+            <div class="row">
+                <div class="col-sm-10" ng-show="reporteGeneral.muestra_btn !== 0">
+                    <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte_general()">Reporte General
+                        modalidades de grado</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-10">
+                    <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte_docente()">Generar Reporte
+                        por docente</button>
+                </div>
+                <div class="col-sm-10" ng-show="reporteGeneral.muestra_btn !== 0">
+                    <button class="btn btn-success" ng-click="reporteGeneral.cambio_reporte()">Cambiar Reporte</button>
+                </div>  
+                <div class="col-md-10">
+
+                   <iframe id="ReporteGeneral" ng-show="reporteGeneral.generarReporte1 >= 1" width="100%" height="1200"
+                        src="https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=PoluxReporteG&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true"
+                        frameborder="0">></iframe>
+                  
+                </div>
+
+                <div class="col-md-10">
+
+                   <iframe id="ReporteDocente" ng-show="reporteGeneral.generarReporte2 >= 1" width="100%" height="1200"
+                        src="https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=RDPolux&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true"
+                        frameborder="0">></iframe>
+                  
+                
+                </div>
+            </div>
         </div>
     </div>
-</div>
