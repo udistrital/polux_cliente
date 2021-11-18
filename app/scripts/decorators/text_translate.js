@@ -557,6 +557,12 @@ var text_es = {
         CONFIRMACION_ACTIVAR: "¿Está seguro de querer activar el subárea de conocimiento?",
         CONFIRMACION_DESACTIVAR: "¿Está seguro de querer desactivar el subárea de conocimiento?",
     },
+    REPORTES:{
+        SELECCIONE_TIPO_REPORTE: "Seleccione el reporte que desea generar",
+        REPORTE_GENERAL:"Reporte General modalidades de grado",
+        REPORTE_DOCENTE:"Generar Reporte por docente",
+        CAMBIO_REPORTE:"Cambiar Reporte"
+    },
     TABLAS: {
     PARAMETRO_EDITADO:"Se cambio exitosamente el estado del parametro",
     PARAMETRO_REGISTRADO:"Se registro correctamente el parametro",
@@ -1449,6 +1455,12 @@ var text_en = {
         DESACTIVAR_AREA: "Deactivate sub-area",
         CONFIRMACION_ACTIVAR: "Are you sure you want to activate the knowledge sub-area?",
         CONFIRMACION_DESACTIVAR: "Are you sure you want to deactivate the knowledge sub-area?",
+    },
+     REPORTES:{
+        SELECCIONE_TIPO_REPORTE: "Select Report",
+        REPORTE_GENERAL:"General report",
+        REPORTE_DOCENTE:"General teacher report",
+        CAMBIO_REPORTE:"Change report"
     },
     TABLAS: {
         PARAMETRO_EDITADO:"Se cambio exitosamente el estado del parametro",
