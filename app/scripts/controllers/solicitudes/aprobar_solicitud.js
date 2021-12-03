@@ -913,7 +913,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
-                var estadoTrabajoGrado = 4;
+                var estadoTrabajoGrado = 13;
                 // si  la modalidad es de producción academica de una se vez se crea en estado listo para sustentar
                 if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                   estadoTrabajoGrado = 13;
@@ -1224,7 +1224,7 @@ angular.module('poluxClienteApp')
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
               //trabajo de grado en revisión id 15
               data_tg.EstadoTrabajoGrado = {
-                Id: 15
+                Id: 17
               };
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                 // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar

@@ -979,7 +979,6 @@ angular.module('poluxClienteApp')
         ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
         var tipoSolicitud = tipoSolicitudSeleccionada.Id;
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
-        
         if (modalidad_seleccionada !== undefined) {
           ctrl.estudiante.Modalidad = modalidad_seleccionada;
           ctrl.modalidad = modalidad_seleccionada;
@@ -992,14 +991,14 @@ angular.module('poluxClienteApp')
           ctrl.detalles = [];
           var promises = []
           var parametrosDetalles;
-          if (modalidad_seleccionada === undefined) {
+            if (modalidad_seleccionada === undefined) {
             parametrosDetalles = $.param({
-              query: "Activo:TRUE,ModalidadTipoSolicitud:" + tipoSolicitud,
+              query: "ModalidadTipoSolicitud:" + tipoSolicitud,
               limit: 0,
               sortby: "NumeroOrden",
               order: "asc"
             });
-          } else {
+          } else {           
             parametrosDetalles = $.param({
               query: "Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:" + modalidad_seleccionada,
               limit: 0,
@@ -1009,11 +1008,12 @@ angular.module('poluxClienteApp')
             var getModalidadTipoSolicitud = function(modalidad_seleccionada) {
               var defer = $q.defer();
               var parametrosModalidadTipoSolicitud = $.param({
-                query: "TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:" + modalidad_seleccionada,
+                query: "TipoSolicitud.Id:2,Modalidad.Id:" + modalidad_seleccionada,
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
-                  ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
+                console.log(responseModalidadTipoSolicitud.data[0].Id);
+                ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;                
                   defer.resolve();
                 })
                 .catch(function(error) {
@@ -1023,8 +1023,10 @@ angular.module('poluxClienteApp')
             }
             promises.push(getModalidadTipoSolicitud(modalidad_seleccionada));
           }
+          console.log(parametrosDetalles);
           poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles)
             .then(function(responseDetalles) {
+              
               if (Object.keys(responseDetalles.data[0]).length > 0) {
                 ctrl.detalles = responseDetalles.data;
                 
@@ -1696,7 +1698,7 @@ angular.module('poluxClienteApp')
         }
 
         
-
+  
         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
           
           if (response.data[0] === "Success") {

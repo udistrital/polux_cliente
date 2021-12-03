@@ -190,9 +190,13 @@ angular.module('poluxClienteApp')
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(trabajoGrado) {
+        var a=0;
         //El tipo de documento que se busca 
         ctrl.tipoDocumento = 0;
         //Si el estado del trabajo es
+        if (trabajoGrado.EstadoTrabajoGrado.Id == 13 && a > 0) {
+          ctrl.tipoDocumento = 4; 
+        }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 1 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 4 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
@@ -201,12 +205,11 @@ angular.module('poluxClienteApp')
           trabajoGrado.EstadoTrabajoGrado.Id == 9 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 11 ||
+          trabajoGrado.EstadoTrabajoGrado.Id == 13 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 21 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 22) {
           ctrl.tipoDocumento = 3;
-        }
-        if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
-          ctrl.tipoDocumento = 4;
+          a ++;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 14 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 15 ||
@@ -239,6 +242,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado))
           .then(function(respuestaDocumentoTrabajoGrado) {
+            console.log(ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado));
             if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
               trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
               trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
@@ -446,8 +450,9 @@ angular.module('poluxClienteApp')
        */
       ctrl.consultarRevisionesTrabajoGrado = function() {
         var deferred = $q.defer();
-        poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
+        poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())        
           .then(function(respuestaRevisionesTrabajoGrado) {
+            console.log(respuestaRevisionesTrabajoGrado);
             if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
                 if (revision.EstadoRevisionTrabajoGrado.Id == 1) {
