@@ -540,9 +540,9 @@ angular.module('poluxClienteApp')
                         limit: 1,
                       });
 
-                      poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+                      poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                           ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                              academicaRequest.get("datos_basicos_estudiante", [codigo_estudiante]).then(function(response2) {
+                              academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                   if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                     var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
                                     if (carreras.includes(carreraEstudiante)) {
