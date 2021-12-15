@@ -39,6 +39,5 @@ angular.module("poluxClienteApp").constant("CONF", {
         SIGN_OUT_APPEND_TOKEN: "true",
     },
     AUTENTICATION_MID_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8110/v1/"
-    
   }
 });
