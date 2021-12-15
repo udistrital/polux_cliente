@@ -26,17 +26,17 @@ steps:
     event:
     - push
 
-- name: check_commits
-  image: jjvargass/qa_develoment:latest
-  commands:
-  - python /app/check_commits.py
-  when:
-    branch:
-    - develop
-    - feature/*
-    - release/*
-    event:
-    - push
+#- name: check_commits
+#  image: jjvargass/qa_develoment:latest
+#  commands:
+#  - python /app/check_commits.py
+#  when:
+#    branch:
+#    - develop
+#    - feature/*
+#    - release/*
+#    event:
+#    - push
 
 - name: run_sonar_scanner
   image: aosapps/drone-sonar-plugin
@@ -53,8 +53,10 @@ steps:
     event:
     - push
 
+
+
 - name: build_release
-  image: node:10.7.0
+  image: node:12.22.1
   commands:
   - npm install -g grunt-cli bower
   - npm install natives
@@ -68,9 +70,8 @@ steps:
     event:
     - push
     - pull_request
-
 - name: build_master
-  image: node:10.7.0
+  image: node:12.22.1
   commands:
   - npm install -g grunt-cli bower
   - npm install natives

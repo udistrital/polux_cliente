@@ -18,51 +18,17 @@ angular.module('poluxClienteApp')
       },
       template: '<div id="frame" ></div>',
       controller:function($scope){
-        var sbi = Sbi.sdk;
-
-        sbi.services.setBaseUrl({
-          protocol: 'https', 
-          host: 'intelligentia.udistrital.edu.co', 
-          port: '8443', 
-          contextPath: 'SpagoBI', 
-          controllerPath: 'servlet/AdapterHTTP'
-        });
         $scope.$watch('boton', function (oldValue,newValue) {
-          if ($scope.codigo && $scope.codigo.length !== 0 && $scope.periodo && $scope.periodo.length !== 0) {
+       //   if ($scope.codigo && $scope.codigo.length !== 0 && $scope.periodo && $scope.periodo.length !== 0) {
             var parametros = '';
-            parametros = 'codigo_carrera=' + $scope.codigo + '&Periodo=' + $scope.periodo;
-            
-            function execTest() {
-              var url = sbi.api.getDocumentHtml({
-                documentLabel: $scope.reporte, 
-                executionRole: '/spagobi/user/admin', 
-                parameters: {'PARAMETERS':parametros}, 
-                displayToolbar: true, 
-                displaySliders: true, 
-                iframe: {
-                    style: 'border: 0px;',
-                    height: '500px;',
-                    width: '100%.'
-                }
-              });
-              
-              $('#frame').html('');
-              $('#frame').append(url);
-            };
-
-            sbi.api.authenticate({
-              params: {
-                user: 'sergio_orjuela',
-                password: 'sergio_orjuela'
-              },
-              callback: {
-                fn: execTest,
-                scope: this
-              }
-            });
-          }
-        });
-      },
-      controllerAs:'d_reportesSpagobi'
-    };
-  });
+            parametros = 'codigo_carrera=' + $scope.codigo + '&Periodo=' + $scope.periodo;       
+            url="https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true&OBJECT_LABEL="+ReportePoluxG
+            $('#frame').html('');
+            $('#frame').append(url);
+          
+       // }
+      });
+    },
+    controllerAs:'d_reportesSpagobi'
+  };
+});

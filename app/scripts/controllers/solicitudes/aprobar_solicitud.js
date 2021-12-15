@@ -1226,7 +1226,7 @@ angular.module('poluxClienteApp')
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
               //trabajo de grado en revisión id 15
               data_tg.EstadoTrabajoGrado = {
-                Id: 15
+                Id: 17
               };
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                 // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar

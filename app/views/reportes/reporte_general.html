@@ -12,22 +12,22 @@
         </div>
         <div ng-if="load!=true">
             <h4>
-                Seleccione Facultad y proyecto curricular antes de realizar la consulta por docente.
+                <label class="col-sm-6"> {{'REPORTES.SELECCIONE_TIPO_REPORTE' | translate}} </label>
+
             </h4>
             <!-- <div class="row" >
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
                 <div class="col-sm-10">
-                    <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
+                    <select class="form-control"  ng-model="reporteGeneral.carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(reporte_general.carrera_seleccionada);">
                         <option  ng-repeat="carrera in reporteGeneral.carreras_oikos" ng-value="carrera.Nombre"> {{carrera.Nombre}}</option>
                     </select>
                 </div>
-            </div> -->
-            <div class="row"
-                ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
+            </div> 
+            <div class="row">
                 <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
                 <div class="col-sm-10">
                     <select class="form-control" ng-model="reporteGeneral.carrera_seleccionada"
-                        ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
+                        ng-change="listarSolicitudes.filtrarSolicitudes(reporte_general.carrera_seleccionada);">
                         <option ng-repeat="carrera in reporteGeneral.carrerasCoordinador"
                             ng-value="carrera.codigo_proyecto_curricular"> {{carrera.codigo_proyecto_curricular}} -
                             {{carrera.nombre_proyecto_curricular}} </option>
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="row"
-                ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
+               >
                 <label class="col-sm-2">{{'SELECCIONAR_PERIODO' | translate}}</label>
                 <div class="col-sm-10">
                     <select ng-model="reporteGeneral.periodo_seleccionado" ng-change="">
@@ -46,8 +46,7 @@
                     </select>
                 </div>
             </div>
-            <div class="row"
-                ng-if="reporteGeneral.userRole.includes('COORDINADOR_PREGRADO') && reporteGeneral.carrerasCoordinador.length>1">
+           <div class="row">
                 <div class="col-sm-10">
                     <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte()">Generar Reporte</button>
                 </div>
@@ -56,8 +55,37 @@
                 <spagobi reporte="polux_tg_pregrado" periodo="reporteGeneral.periodo_seleccionado"
                     codigo="reporteGeneral.carrera_seleccionada" boton="reporteGeneral.generarReporte"></spagobi>
             </div>
+            
+          -->
+            <div class="row">
+                <div class="col-sm-10" ng-show="reporteGeneral.muestra_btn !== 0">
+                    <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte_general()">{{'REPORTES.REPORTE_GENERAL' | translate}}</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-10">
+                    <button class="btn btn-success" ng-click="reporteGeneral.generar_reporte_docente()">{{'REPORTES.REPORTE_DOCENTE' | translate}}</button>
+                </div>
+                <div class="col-sm-10" ng-show="reporteGeneral.muestra_btn !== 0">
+                    <button class="btn btn-success" ng-click="reporteGeneral.cambio_reporte()">{{'REPORTES.CAMBIO_REPORTE' | translate}}</button>
+                </div>  
+                <div class="col-md-10">
+
+                   <iframe id="ReporteGeneral" ng-show="reporteGeneral.generarReporte1 >= 1" width="100%" height="1200"
+                        src="https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/public/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=PoluxReporteG&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true"
+                        frameborder="0">></iframe>
+                  
+                </div>
+
+                <div class="col-md-10">
+
+                   <iframe id="ReporteDocente" ng-show="reporteGeneral.generarReporte2 >= 1" width="100%" height="1200"
+                        src="https://inteligenciainstitucional.portaloas.udistrital.edu.co/knowage/public/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=RDPolux&TOOLBAR_VISIBLE=true&ORGANIZATION=DEFAULT_TENANT&NEW_SESSION=true"
+                        frameborder="0">></iframe>
+                  
+                
+                </div>
+            </div>
         </div>
     </div>
 
-    
-</div>

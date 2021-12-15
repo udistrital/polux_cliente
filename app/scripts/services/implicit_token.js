@@ -167,18 +167,16 @@ angular.module('implicitToken', [])
       },
       // Contiene el documento para las búsquedas
       getAppPayload: function() {
-
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
-        //
         return data;
       },
       logout: function() {
-        window.location.replace(service.logout_url);
+        window.localStorage.clear();
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());
