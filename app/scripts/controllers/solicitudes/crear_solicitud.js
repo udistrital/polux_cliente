@@ -427,8 +427,19 @@ angular.module('poluxClienteApp')
         poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
             ctrl.areas = responseAreas.data;
             if (Object.keys(ctrl.areas[0]).length > 0) {
-              coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
-                  var areasSnies = responseAreas.data;
+              var areasSnies = [
+                {Id:1,estado:true,Nombre:'AGRONOMIA VETERINARIA Y AFINES'},
+                {Id:2,estado:true,Nombre:'BELLAS ARTES'},
+                {Id:3,estado:true,Nombre:'CIENCIAS DE LA EDUCACION'},
+                {Id:4,estado:true,Nombre:'CIENCIAS DE LA SALUD'},
+                {Id:5,estado:true,Nombre:'CIENCIAS SOCIALES Y HUMANAS'},
+                {Id:6,estado:true,Nombre:'ECONOMIA, ADMINISTRACION, CONTADURIA Y AFINES'},
+                {Id:7,estado:true,Nombre:'INGENIERIA, ARQUITECTURA, URBANISMO Y AFINES'},
+                {Id:8,estado:true,Nombre:'MATEMATICAS Y CIENCIAS NATURALES'},      
+                {Id:9,estado:true,Nombre:'SIN CLASIFICAR'}
+                ];
+            //  coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
+            //      var areasSnies = responseAreas.data;
                   if (Object.keys(areasSnies[0]).length > 0) {
                     angular.forEach(ctrl.areas, function(area) {
                       angular.forEach(areasSnies, function(areaSnies) {
@@ -443,11 +454,12 @@ angular.module('poluxClienteApp')
                     ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
                     defer.reject("no hay areas");
                   }
-                })
+              /*  })
                 .catch(function(error) {
                   ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
                   defer.reject(error);
                 });
+                */
             } else {
               ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
               defer.reject("no hay areas");
@@ -972,7 +984,6 @@ angular.module('poluxClienteApp')
         ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
         var tipoSolicitud = tipoSolicitudSeleccionada.Id;
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
-        
         if (modalidad_seleccionada !== undefined) {
           ctrl.estudiante.Modalidad = modalidad_seleccionada;
           ctrl.modalidad = modalidad_seleccionada;
@@ -985,14 +996,14 @@ angular.module('poluxClienteApp')
           ctrl.detalles = [];
           var promises = []
           var parametrosDetalles;
-          if (modalidad_seleccionada === undefined) {
+            if (modalidad_seleccionada === undefined) {
             parametrosDetalles = $.param({
-              query: "Activo:TRUE,ModalidadTipoSolicitud:" + tipoSolicitud,
+              query: "ModalidadTipoSolicitud:" + tipoSolicitud,
               limit: 0,
               sortby: "NumeroOrden",
               order: "asc"
             });
-          } else {
+          } else {           
             parametrosDetalles = $.param({
               query: "Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:2,ModalidadTipoSolicitud.Modalidad.Id:" + modalidad_seleccionada,
               limit: 0,
@@ -1006,7 +1017,8 @@ angular.module('poluxClienteApp')
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
-                  ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
+                console.log(responseModalidadTipoSolicitud.data[0].Id);
+                ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;                
                   defer.resolve();
                 })
                 .catch(function(error) {
@@ -1016,8 +1028,10 @@ angular.module('poluxClienteApp')
             }
             promises.push(getModalidadTipoSolicitud(modalidad_seleccionada));
           }
+          console.log(parametrosDetalles);
           poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles)
             .then(function(responseDetalles) {
+              
               if (Object.keys(responseDetalles.data[0]).length > 0) {
                 ctrl.detalles = responseDetalles.data;
                 
@@ -1727,7 +1741,7 @@ angular.module('poluxClienteApp')
         }
 
         
-
+  
         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
           
           if (response.data[0] === "Success") {

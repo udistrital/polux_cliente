@@ -40,8 +40,9 @@
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
         REFRESH_TOKEN: "https://autenticacion.udistrital.edu.co/oauth2/token",
-        CLIENT_SECRET: "2crHq2IRkFHEVTBfpznLhKHyKVIa"
+       // CLIENT_SECRET: "2crHq2IRkFHEVTBfpznLhKHyKVIa"
     },
+    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
 };
 
  /**
@@ -77,8 +78,8 @@ var conf_local = {
         SIGN_OUT_REDIRECT_URL: "http://localhost:9000/",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    // AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
-    AUTENTICATION_MID_SERVICE:"http://localhost:8080/v1/"
+    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
+   //    AUTENTICATION_MID_SERVICE:"http://localhost:8080/v1/"
 };
 
 /**

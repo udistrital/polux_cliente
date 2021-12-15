@@ -35,8 +35,6 @@ module.exports = function(config) {
       'bower_components/AngularJS-OAuth2/dist/angularJsOAuth2.js',
       'bower_components/angular-aria/angular-aria.js',
       'bower_components/angular-material/angular-material.js',
-      'bower_components/pdfmake/build/pdfmake.js',
-      'bower_components/pdfmake/build/vfs_fonts.js',
       'bower_components/ngstorage/ngStorage.js',
       'bower_components/kjur-jsrsasign/jsrsasign-all-min.js',
       'bower_components/angular-websocket/dist/angular-websocket.js',
@@ -83,7 +81,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      'PhantomJS'
+      'PhantomJS','PhantomJS_custom'
     ],
 
     // Which plugins to enable
@@ -94,6 +92,7 @@ module.exports = function(config) {
       'karma-coverage',
       'karma-spec-reporter'
     ],
+    
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
@@ -129,6 +128,24 @@ module.exports = function(config) {
      coverageReporter: {
       type : 'html',
       dir : 'coverage/'
+    },
+    customLaunchers: {
+      'PhantomJS_custom': {
+        base: 'PhantomJS',
+        options: {
+          windowName: 'my-window',
+          settings: {
+            webSecurityEnabled: false
+          },
+        },
+        flags: ['--load-images=true'],
+        debug: true
+      }
+    },
+
+    phantomjsLauncher: {
+      // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+      exitOnResourceError: true
     }
   });
 };

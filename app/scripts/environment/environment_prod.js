@@ -16,7 +16,7 @@ angular.module("poluxClienteApp").constant("CONF", {
     ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1/",
     POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
     POLUX_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_mid/v1/",
-    SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v1/",
+    SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v2/",
     CONFIGURACION_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/configuracion_crud_api/v1/",
     NUXEO_SERVICE:"https://documental.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/core_api/v1/",
@@ -36,5 +36,8 @@ angular.module("poluxClienteApp").constant("CONF", {
         SIGN_OUT_REDIRECT_URL: "https://polux.portaloas.udistrital.edu.co",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
+    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
+    AUTENTICACION_MID : 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol'  ,
+    LOGOUT_REDIRECT : "https://pruebascatalogo.portaloas.udistrital.edu.co"
   }
 });

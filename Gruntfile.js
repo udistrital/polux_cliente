@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
     //sonarqube
     grunt.loadNpmTasks('grunt-sonar-runner');
-    grunt.loadNpmTasks('grunt-contrib-uglify-es');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     //ngdocs
    // grunt.loadNpmTasks('grunt-ngdocs');
 
@@ -23,7 +23,8 @@ module.exports = function(grunt) {
     require('jit-grunt')(grunt, {
         useminPrepare: 'grunt-usemin',
         ngtemplates: 'grunt-angular-templates',
-        cdnify: 'grunt-google-cdn'
+        ngAnnotate: 'grunt-ng-annotate-patched',
+     //   cdnify: 'grunt-google-cdn'
     });
 
     // Configurable paths for the application
@@ -31,7 +32,7 @@ module.exports = function(grunt) {
         app: require('./bower.json').appPath || 'app',
         dist: 'dist'
     };
-
+    var serveStatic = require('serve-static');
     // Define the configuration for all the tasks
     grunt.initConfig({
         // Project settings
@@ -88,16 +89,16 @@ livereload: {
                     open: true,
                     middleware: function(connect) {
                         return [
-                        connect.static('.tmp'),
+                            serveStatic('.tmp'),
                         connect().use(
                             '/bower_components',
-                            connect.static('./bower_components')
+                            serveStatic('./bower_components')
                             ),
                         connect().use(
                             '/app/styles',
-                            connect.static('./app/styles')
+                            serveStatic('./app/styles')
                             ),
-                        connect.static(appConfig.app)
+                            serveStatic(appConfig.app)
                         ];
                     }
                 }
@@ -107,13 +108,13 @@ livereload: {
                     port: 9001,
                     middleware: function(connect) {
                         return [
-                        connect.static('.tmp'),
-                        connect.static('test'),
+                            serveStatic('.tmp'),
+                            serveStatic('test'),
                         connect().use(
                             '/bower_components',
-                            connect.static('./bower_components')
+                            serveStatic('./bower_components')
                             ),
-                        connect.static(appConfig.app)
+                            serveStatic(appConfig.app)
                         ];
                     }
                 }
@@ -371,12 +372,12 @@ ngtemplates: {
             }
         },
 
-        // Replace Google CDN references
+        /* Replace Google CDN references
         cdnify: {
             dist: {
                 html: ['<%= yeoman.dist %>/*.html']
             }
-        },
+        },*/
 
         // Copies remaining files to places other tasks can use
         copy: {
@@ -530,7 +531,34 @@ grunt.registerTask('serve', 'Compile then start a connect web server', function(
         'watch'
         ]);
 });
+grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function(target) {
+    grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
+    grunt.task.run(['serve:' + target]);
+});
+grunt.registerTask('build', [
+    'clean:dist',
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'postcss',
+    'ngtemplates',
+    'concat',
+    'ngAnnotate',
+    'copy:dist',
+    //'cdnify',
+    'cssmin',
+    'uglify',
+    'filerev',
+    'usemin',
+    'htmlmin'
+    ]);
 
+grunt.registerTask('default', [
+    'newer:jshint',
+    'newer:jscs',
+    'test',
+    'build'
+    ]);
 grunt.registerTask('server', 'DEPRECATED TASK. Use the "serve" task instead', function(target) {
     grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
     grunt.task.run(['serve:' + target]);
@@ -555,7 +583,7 @@ grunt.registerTask('build', [
     'concat',
     'ngAnnotate',
     'copy:dist',
-    'cdnify',
+    //'cdnify',
     'cssmin',
     'uglify',
     'filerev',
