@@ -15,6 +15,8 @@
  * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxService.service:gestorDocumentalMidService
+ * @requires services/poluxService.service:nuxeoMidService
  * @property {Boolean} mindoc Indicador que maneja la minimización del documento en la vista
  * @property {String} codigoEstudiante Valor que carga el documento del estudiante en sesión
  * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
@@ -36,7 +38,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('EstudianteRevisionDocumentoCtrl',
-    function($q, $scope, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function($q, $scope, $translate, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //ctrl.estudiante = $routeParams.idEstudiante;
@@ -190,12 +192,11 @@ angular.module('poluxClienteApp')
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(trabajoGrado) {
-        var a=0;
         //El tipo de documento que se busca 
         ctrl.tipoDocumento = 0;
         //Si el estado del trabajo es
-        if (trabajoGrado.EstadoTrabajoGrado.Id == 13 && a > 0) {
-          ctrl.tipoDocumento = 4; 
+        if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
+          ctrl.tipoDocumento = 4;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 1 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 4 ||
@@ -209,7 +210,6 @@ angular.module('poluxClienteApp')
           trabajoGrado.EstadoTrabajoGrado.Id == 21 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 22) {
           ctrl.tipoDocumento = 3;
-          a ++;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 14 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 15 ||
@@ -495,6 +495,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.actualizarTrabajoGrado = function(respuestaCargarDocumento) {
         var deferred = $q.defer();
+        console.log(respuestaCargarDocumento);
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
         poluxRequest
           .put("documento_escrito", ctrl.trabajoGrado.documentoEscrito.Id, ctrl.trabajoGrado.documentoEscrito)
@@ -520,11 +521,18 @@ angular.module('poluxClienteApp')
       ctrl.verDocumento = function(doc) {
         if (doc.uid) {
           ctrl.loadingVersion = true;
-          nuxeoClient.getDocument(doc.uid)
+          /*nuxeoClient.getDocument(doc.uid)
             .then(function(documento) {
               ctrl.loadingVersion = false;
               window.open(documento.url);
-            })
+            })*/
+            gestorDocumentalMidRequest.get('/document/'+doc.uid).then(function (response) {  
+                var varia = utils.base64ToArrayBuffer(response.data.file);
+                var file = new Blob([varia], {type: 'application/pdf'});
+                var fileURL = URL.createObjectURL(file);
+                $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+              
+             })
             .catch(function(error) {
               ctrl.loadingVersion = false;
               swal(
@@ -579,37 +587,63 @@ angular.module('poluxClienteApp')
               ctrl.cargandoTrabajoGrado = true;
               $('#modalSubirNuevaVersion').modal('hide');
               //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
-              nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, ctrl.nuevaVersionTrabajoGrado)
-                .then(function(respuestaCargarDocumento) {
-                  ctrl.actualizarTrabajoGrado(respuestaCargarDocumento)
-                    .then(function(respuestaActualizarTg) {
-                      if (respuestaActualizarTg.statusText === "OK") {
+             // nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, ctrl.nuevaVersionTrabajoGrado)
+             //   .then(function(respuestaCargarDocumento) {
+                  // Upload de nueva version 
+                  var descripcion;
+                  var fileBase64 ;
+                  var data = [];
+                  var URL = "";
+                    descripcion = "Versión nueva del trabajo de grado";
+                    utils.getBase64(ctrl.nuevaVersionTrabajoGrado).then(
+                      function (base64) {                 
+                       fileBase64 = base64;
+                    data = [{
+                     IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                     nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
+                     file:  fileBase64,
+                     metadatos: {
+                       NombreArchivo: ctrl.trabajoGrado.Titulo+": "+ctrl.codigoEstudiante,
+                       Tipo: "Archivo",
+                       Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
+                     }, 
+                     descripcion:descripcion,
+                    }]  
+                    console.log(data)  
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                      URL =  response.data.res.Enlace 
+                      ctrl.actualizarTrabajoGrado(URL)
+                    
+                 
+                      .then(function(respuestaActualizarTg) {
+                        if (respuestaActualizarTg.statusText === "OK") {
+                          ctrl.cargandoTrabajoGrado = false;
+                          swal(
+                            $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
+                            $translate.instant("CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO"),
+                            'success'
+                          );
+                          ctrl.actualizarContenidoRevisiones();
+                          //$('#modalSubirNuevaVersion').modal('hide');
+                        } else {
+                          ctrl.cargandoTrabajoGrado = false;
+                          swal(
+                            $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
+                            $translate.instant(respuestaActualizarTg.data[1]),
+                            'warning'
+                          );
+                        }
+                      })
+                      .catch(function(excepcionActualizarTg) {
                         ctrl.cargandoTrabajoGrado = false;
                         swal(
                           $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                          $translate.instant("CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO"),
-                          'success'
-                        );
-                        ctrl.actualizarContenidoRevisiones();
-                        //$('#modalSubirNuevaVersion').modal('hide');
-                      } else {
-                        ctrl.cargandoTrabajoGrado = false;
-                        swal(
-                          $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                          $translate.instant(respuestaActualizarTg.data[1]),
+                          $translate.instant("ERROR.MODIFICANDO_TG"),
                           'warning'
                         );
-                      }
-                    })
-                    .catch(function(excepcionActualizarTg) {
-                      ctrl.cargandoTrabajoGrado = false;
-                      swal(
-                        $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
-                        $translate.instant("ERROR.MODIFICANDO_TG"),
-                        'warning'
-                      );
-                    });
-                })
+                      });
+                  })
+                })  
                 .catch(function(excepcionCargarDocumento) {
                   ctrl.cargandoTrabajoGrado = false;
                   swal(
@@ -853,11 +887,62 @@ angular.module('poluxClienteApp')
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {
                 //Actualiza el documento
                 if (estadoTg == 6 || estadoTg == 11 || estadoTg == 13 || estadoTg == 16) {
-                  return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)
+                  //return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)     
+                  var descripcion;
+                  var fileBase64 ;
+                  var data = [];
+                  var URL = "";
+                    descripcion = "Versión nueva del trabajo de grado";
+                    utils.getBase64(fileModel).then(
+                      function (base64) {                   
+                       fileBase64 = base64;
+                    data = [{
+                     IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                     nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
+                     file:  fileBase64,
+                     metadatos: {
+                       NombreArchivo: ctrl.trabajoGrado.Titulo  +": "+ctrl.codigoEstudiante,
+                       Tipo: "Archivo",
+                       Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
+                     }, 
+                     descripcion:descripcion,
+                    }] 
+                    return gestorDocumentalMidRequest.post('/document/upload',data)
+                  })  
                 }
                 //Si es primera versión crea el documento
                 if (estadoTg == 5 || estadoTg == 10 || estadoTg == 21 || estadoTg == 22) {
-                  return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
+                  //Se carga el documento con el gestor documental        
+                  var fileBase64 ;
+                  var data = [];
+                  var URL;
+                    utils.getBase64(fileModel).then(
+                      function (base64) {                   
+                       fileBase64 = base64;
+                    data = [{
+                     IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                     nombre: titulo ,// nombre formado por el titulo
+                     file:  fileBase64,
+                     metadatos: {
+                       NombreArchivo: titulo,
+                       Tipo: "Archivo",
+                       Observaciones: workspace
+                     }, 
+                     descripcion:descripcion,
+                    }] 
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                     
+                       URL = response;                                        
+                      nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                         .then(function (response) {
+                          console.log('nuxeoMid response: ',response) 
+                      }).catch(function (error) {
+                        console.log('nuxeoMid error:',error)
+                      })
+                      return URL  
+                     })
+    
+                  })    
+                 // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
                 }
               }
               functionDocument(ctrl.trabajoGrado.EstadoTrabajoGrado.Id, ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace)

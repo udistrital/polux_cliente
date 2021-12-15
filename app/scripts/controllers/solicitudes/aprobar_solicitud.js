@@ -19,6 +19,8 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:nuxeoClient
+ * @requires services/poluxService.service:gestorDocumentalMidService
+ * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @property {Object} carrerasCoordinador Objeto que contiene las carreras asociadas al coordinador que aprueba la solicitud
@@ -83,7 +85,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function($location, $q, $routeParams, $scope, $translate, $window, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
+    function($location, $q, $routeParams, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $window, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = "";
@@ -960,7 +962,7 @@ angular.module('poluxClienteApp')
                   "Titulo": tempTrabajo.Titulo,
                   "Enlace": tempTrabajo.Enlace,
                   "Resumen": tempTrabajo.Resumen,
-                  "TipoDocumentoEscrito": 3
+                  "TipoDocumentoEscrito": 4
                 }
                 //SI la modalidad es la de producción academica se sube de una vez como propuesta el documento
                 if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
@@ -1407,12 +1409,46 @@ angular.module('poluxClienteApp')
           $scope.loadFormulario = true;
           var documento = ctrl.acta;
           if (documento.type !== "application/pdf" || documento.size > tam) {
-            nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'actas', function(url) {
-                ctrl.urlActa = url;
-              })
-              .then(function() {
-                ctrl.cargarRespuesta();
-              }).catch(function(error) {
+
+            //Subida de archivos por medio del Gestor documental
+              var fileBase64 ;
+              var data = [];
+              var URL = "";
+                utils.getBase64(documento).then(
+                  function (base64) {                   
+                   fileBase64 = base64;
+                data = [{
+                 IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                 nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
+                 file:  fileBase64,
+                 metadatos: {
+                   NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
+                   Tipo: "Archivo",
+                   Observaciones: "actas"
+                 }, 
+                 descripcion:"Acta de evaluación de la solicitud " +ctrl.solicitud,
+                }] 
+
+                  gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                  URL =  response.data.res.Enlace 
+                  ctrl.urlActa = URL
+                  ctrl.cargarRespuesta();                                             
+                  nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                     .then(function (response) {
+                      console.log('nuxeoMid response: ',response) 
+                  }).catch(function (error) {
+                    console.log('nuxeoMid error:',error)
+                  })
+                 })
+
+              }) 
+            //nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'actas', function(url) {
+             //   ctrl.urlActa = url;
+             // })
+            //  .then(function() {
+            //    ctrl.cargarRespuesta();
+              //})
+              .catch(function(error) {
                 ctrl.swalError();
                 $scope.loadFormulario = false;
               });
@@ -1531,16 +1567,24 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
        * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y mostrarlo en una nueva ventana.
        */
       ctrl.getDocumento = function(docid) {
-        nuxeoClient.getDocument(docid)
+        /*nuxeoClient.getDocument(docid)
           .then(function(document) {
             $window.open(document.url);
           })
+          */
+         //Muestra de documento con el gestor documental
+         gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
+          var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+          var fileURL = URL.createObjectURL(file);
+          $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+      
+         })
           .catch(function(error) {
             
             swal(
