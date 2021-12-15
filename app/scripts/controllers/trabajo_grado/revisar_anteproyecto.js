@@ -20,6 +20,7 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires uiGridConstants
  * @property {String} usuarioSesion El identificador del docente en sesión para consultar y revisar sus anteproyectos pendientes
  * @property {Boolean} cargandoAnteproyectos Indicador que maneja la carga de los anteproyectos para revisar
@@ -45,7 +46,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
+		function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -617,11 +618,19 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.abrirDocumento = function(docid) {
-				nuxeoClient.getDocument(docid)
+				/*nuxeoClient.getDocument(docid)
 					.then(function(document) {
 						$window.open(document.url);
 					})
-					.catch(function(error) {
+				*/
+				  //  obtener un documento por la id 
+				  gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
+					var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+					var fileURL = URL.createObjectURL(file);
+					$window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+				
+						 })
+				.catch(function(error) {
 						
 						swal(
 							$translate.instant("MENSAJE_ERROR"),

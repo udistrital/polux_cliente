@@ -14,6 +14,8 @@
  * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxService.service:gestorDocumentalMidService
+ * @requires services/poluxService.service:nuxeoMidService
  * @property {String} documento Documento del docente que entra al modulo y que va a registrar las notas
  * @property {Boolean} cargandoTrabajos Bandera que muestra el loading y permite identificar cuando se cargaron todos los trabajos
  * @property {String} mensajeTrabajos Mensaje que se muestra mientras se cargan lso trabajos
@@ -34,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function($scope, $q, $translate, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -376,17 +378,51 @@ angular.module('poluxClienteApp')
             var nombreDocumento = "Acta de sustentación de trabajo id: " + ctrl.trabajoSeleccionado.Id;
             var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
             //Se carga el documento
-            nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
-              .then(function(urlActa) {
-                dataRegistrarNota.DocumentoEscrito = {
-                  Id: 0,
-                  Titulo: nombreDocumento,
-                  Resumen: descripcionDocumento,
-                  Enlace: urlActa,
-                  TipoDocumentoEscrito: 6, //Para acta de sustentación
-                };
-                defer.resolve(dataRegistrarNota);
-              })
+            // Se carga el documento por medio del gestor documental
+            var descripcion;
+              var fileBase64 ;
+              var data = [];
+              var URL = "";
+                descripcion = descripcionDocumento;
+                utils.getBase64(ctrl.trabajoSeleccionado.actaSustentacion).then(
+                  function (base64) {                   
+                   fileBase64 = base64;
+                data = [{
+                 IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                 nombre: nombreDocumento ,// nombre formado por el acta del trabajo y el id de trabajo
+                 file:  fileBase64,
+                 metadatos: {
+                   NombreArchivo: nombreDocumento,
+                   Tipo: "Archivo",
+                   Observaciones: "actas_sustentacion"
+                 }, 
+                 descripcion:descripcion,
+                }] 
+
+                  gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                  URL =  response.data.res.Enlace 
+                  dataRegistrarNota.DocumentoEscrito = {
+                    Id: 0,
+                    Titulo: nombreDocumento,
+                    Resumen: descripcionDocumento,
+                    Enlace: URL,
+                    TipoDocumentoEscrito: 6, //Para acta de sustentación
+                  };
+                  defer.resolve(dataRegistrarNota);                                         
+                  nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                     .then(function (response) {
+                      console.log('nuxeoMid response: ',response) 
+                  }).catch(function (error) {
+                    console.log('nuxeoMid error:',error)
+                  })
+                 })
+
+              })     
+            
+            //nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
+            //  .then(function(urlActa) {
+               
+            //  })
               .catch(function(error) {
                 defer.reject(error);
               });

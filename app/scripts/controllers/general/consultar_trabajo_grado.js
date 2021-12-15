@@ -13,6 +13,7 @@
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
+ * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires services/poluxClienteApp.service:tokenService
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
@@ -34,7 +35,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConsultarTrabajoGradoCtrl',
-    function($q, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "79647592";
@@ -534,10 +535,19 @@ angular.module('poluxClienteApp')
        * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
        */
       ctrl.getDocumento = function(docid) {
-        nuxeoClient.getDocument(docid)
+        /*nuxeoClient.getDocument(docid)
           .then(function(document) {
             $window.open(document.url);
-          })
+          })*/
+
+
+          // Muestra de documento con gestor documental
+          gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
+            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+            var fileURL = URL.createObjectURL(file);
+            $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+        
+           })
           .catch(function(error) {
             
             swal(
