@@ -14,7 +14,7 @@
  * @param {string} docdocente Documento del docente que revisan el documento.
  */
 angular.module('poluxClienteApp')
-    .directive('revisionDocumento', function (poluxRequest, $translate, $route, academicaRequest, nuxeoClient) {
+    .directive('revisionDocumento', function (poluxRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient) {
         return {
             restrict: "E",
             scope: {
@@ -262,20 +262,50 @@ angular.module('poluxClienteApp')
                                         ctrl.cargandoRevision = true;
                                         if (ctrl.documentModel) {
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones
-                                            nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correciones", undefined)
-                                                .then(function (respuestaCrearDocumento) {
-                                                    
-                                                    ctrl.correcciones.push({
-                                                        Observacion: respuestaCrearDocumento,
+                                            //Carga de documento con Gesto Documental
+                                            var descripcion;
+                                            var fileBase64 ;
+                                            var data = [];
+                                            var URL = "";    
+                                            utils.getBase64(ctrl.documentModel).then(
+                                                function (base64) {                   
+                                                 fileBase64 = base64;
+                                              data = [{
+                                               IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                                               nombre:ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,// nombre formado el titulo y correccion
+                                               file:  fileBase64,
+                                               metadatos: {
+                                                 NombreArchivo: ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,
+                                                 Tipo: "Archivo",
+                                                 Observaciones: "correciones"
+                                               }, 
+                                               descripcion:"Correcciones sobre el proyecto",
+                                              }] 
+                              
+                                                gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
+                                                ctrl.correcciones.push({
+                                                        Observacion: response.data.res.Enlace,
                                                         Justificacion: "Por favor descargue el documento de observaciones",
                                                         Pagina: 1,
                                                         RevisionTrabajoGrado: {
                                                             Id: $scope.revisionid
                                                         },
                                                         Documento: true
-                                                    });
-                                                    ctrl.registrarRevision();
+                                                })  
+                                                console.log(ctrl.correcciones) 
+                                                ctrl.registrarRevision();                                                                  
+                                                nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                                                   .then(function (response) {
+                                                    console.log('nuxeoMid response: ',response) 
+                                                }).catch(function (error) {
+                                                  console.log('nuxeoMid error:',error)
                                                 })
+                                               })
+                                                //  nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correciones", undefined)
+                                                //.then(function (respuestaCrearDocumento) {
+                                                
+                                                    
+                                               // })
                                                 .catch(function (excepcionCrearDocumento) {
                                                     
                                                     ctrl.cargandoRevision = false;
@@ -286,6 +316,9 @@ angular.module('poluxClienteApp')
                                                     );
                                                 });
                                             //
+                                            })    
+
+                                         
                                         } else {
                                             ctrl.registrarRevision();
                                         }

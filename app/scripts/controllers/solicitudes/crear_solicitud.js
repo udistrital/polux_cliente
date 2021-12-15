@@ -22,6 +22,8 @@
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxService.service:nuxeoClient
+ * @requires services/poluxService.service:gestorDocumentalMidService
+ * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @property {Array} modalidades Modalidades disponibles para la elección del estudiante.
@@ -78,7 +80,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
+    function($location ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -282,7 +284,9 @@ angular.module('poluxClienteApp')
       ctrl.obtenerDatosEstudiante = function() {
         var defer = $q.defer();
         academicaRequest.get("datos_estudiante", [ctrl.codigo, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
+          console.log(response2.data.estudianteCollection.datosEstudiante);
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
+              
               ctrl.estudiante = {
                 "Codigo": ctrl.codigo,
                 "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
@@ -297,6 +301,7 @@ angular.module('poluxClienteApp')
                 "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
                 "Carrera": response2.data.estudianteCollection.datosEstudiante[0].carrera
               };
+              
               if (ctrl.estudiante.Nombre === undefined) {
                 ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                 defer.reject("datos del estudiante invalidos");
@@ -997,7 +1002,7 @@ angular.module('poluxClienteApp')
             var getModalidadTipoSolicitud = function(modalidad_seleccionada) {
               var defer = $q.defer();
               var parametrosModalidadTipoSolicitud = $.param({
-                query: "TipoSolicitud.Activo:TRUE,TipoSolicitud.Id:2,Modalidad.Id:" + modalidad_seleccionada,
+                query: "TipoSolicitud.Id:2,Modalidad.Id:" + modalidad_seleccionada,
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
@@ -1548,12 +1553,47 @@ angular.module('poluxClienteApp')
           if (!fileTypeError) {
             var promiseArr = [];
             angular.forEach(ctrl.detallesConDocumento, function(detalle) {
-              var anHttpPromise = nuxeoClient.createDocument(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, 'solicitudes', function(url) {
+              //carga de documentos por el Gestor documental 
+              var descripcion;
+              var fileBase64 ;
+              var data = [];
+              var URL = "";
+                descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
+                utils.getBase64(detalle.fileModel).then(
+                  function (base64) {                   
+                   fileBase64 = base64;
+                data = [{
+                 IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                 nombre: detalle.Detalle.Nombre ,// nombre formado por nombre de la solicitud
+                 file:  fileBase64,
+                 metadatos: {
+                   NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
+                   Tipo: "Archivo",
+                   Observaciones: "Solicitud inicial"
+                 }, 
+                 descripcion:descripcion,
+                }] 
+
+                  gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                  URL =  response.data.res.Enlace 
+                  detalle.respuesta = URL
+                  console.log(detalle.respuesta)
+                  ctrl.cargarSolicitudes();                                              
+                  nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                     .then(function (response) {
+                      console.log('nuxeoMid response: ',response) 
+                  }).catch(function (error) {
+                    console.log('nuxeoMid error:',error)
+                  })
+                 })
+
+              })     
+
+        /*      var anHttpPromise = nuxeoClient.createDocument(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, 'solicitudes', function(url) {
                 detalle.respuesta = url;
               });
-              promiseArr.push(anHttpPromise);
             });
-            $q.all(promiseArr).then(function() {
+            $q.all(promiseArr).then(function() {                     
               ctrl.cargarSolicitudes();
             }).catch(function(error) {
               swal(
@@ -1562,6 +1602,7 @@ angular.module('poluxClienteApp')
                 'warning'
               );
               $scope.loadFormulario = false;
+              */
             });
           } else {
             swal(
@@ -1618,6 +1659,7 @@ angular.module('poluxClienteApp')
         }
         angular.forEach(ctrl.detalles, function(detalle) {
           data_detalles.push({
+            
             "Descripcion": detalle.respuesta,
             "SolicitudTrabajoGrado": {
               "Id": 0
@@ -1625,6 +1667,7 @@ angular.module('poluxClienteApp')
             "DetalleTipoSolicitud": {
               "Id": detalle.Id
             }
+        
           });
 
         });
@@ -1752,5 +1795,6 @@ angular.module('poluxClienteApp')
         });
 
       }
-
+      
+   
     });

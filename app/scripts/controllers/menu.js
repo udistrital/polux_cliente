@@ -239,7 +239,7 @@ angular.module('poluxClienteApp')
 
         $scope.$on('$routeChangeStart', function(scope, next, current) {
             //$scope.actual = $location.path();
-            //update_url();
+            update_url();
             var waitForMenu = function () {
                 if ($rootScope.my_menu !== undefined) {
                     if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {

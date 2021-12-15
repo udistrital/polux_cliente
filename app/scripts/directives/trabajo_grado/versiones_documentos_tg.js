@@ -34,6 +34,7 @@ angular.module('poluxClienteApp')
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
        * @requires services/poluxService.service:nuxeoClient
+       * @requires services/poluxService.service:gestorDocumentalMidService
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Boolean} showVersiones Booleano para mostrar la directiva
        * @property {object} treeOptions Opciones para el arbol
@@ -42,7 +43,7 @@ angular.module('poluxClienteApp')
        * @property {Boolean} errorCargando Booleano para indicar que hubo un error cargando los parametros
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        */
-      controller: function ($scope, nuxeoClient, $q, poluxRequest, $translate) {
+      controller: function ($scope,gestorDocumentalMidRequest,utils, nuxeoClient, $q, poluxRequest, $translate) {
         var ctrl = this;
         ctrl.mensajeCargandoDocumentos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
         $scope.showVersiones = true;
@@ -192,15 +193,22 @@ angular.module('poluxClienteApp')
          * @returns {undefined} No hace retorno de resultados
          */
         ctrl.verDocumento = function (doc) {
+          console.log(doc);
           if (doc.uid) {
             ctrl.loadingVersion = true;
-            nuxeoClient.getDocument(doc.uid)
-              .then(function (documento) {
-                ctrl.loadingVersion = false;
-                window.open(documento.url);
-              })
+            //  obtener un documento por la id 
+            gestorDocumentalMidRequest.get('/document/'+doc.uid).then(function (response) {
+            //nuxeoClient.getDocument(doc.uid)
+            //  .then(function (documento) {
+            //    ctrl.loadingVersion = false;
+            //    window.open(documento.data.res.Enlace);
+            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+            var fileURL = URL.createObjectURL(file);
+            ctrl.loadingVersion = false;
+            window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+        
+           })
               .catch(function (error) {
-                
                 ctrl.loadingVersion = false;
                 swal(
                   $translate.instant("MENSAJE_ERROR"),

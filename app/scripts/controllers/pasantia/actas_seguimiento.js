@@ -15,6 +15,8 @@
  * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/poluxService.service:gestorDocumentalMidService
+ * @requires services/poluxService.service:nuxeoMidService
  * @property {String} userDocument Documento del usuario que se loguea en el sistema
  * @property {boolean} loadingTrabajos Booleano que permite identificar cuando los trabajos de grado esta cargando
  * @property {boolean} loadingDocumento Booleano que permite identificar cuando esta cargando un documento
@@ -30,7 +32,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('PasantiaActasSeguimientoCtrl',
-    function ($q, $scope, $translate, $window, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function ($q, $scope, $translate, $window,nuxeoMidRequest,utils,gestorDocumentalMidRequest,academicaRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       ctrl.mensajeCargandoTrabajos = $translate.instant("LOADING.CARGANDO_TRABAJOS_DE_GRADO_PASANTIA");
@@ -249,15 +251,34 @@ angular.module('poluxClienteApp')
         var nombreDoc = "Acta de seguimiento " + (ctrl.pasantiaSeleccionada.Actas.length + 1);
         //SE carga el documento a nuxeo
         //ctrl.cargarDocumento(nombreDoc, nombreDoc, ctrl.actaModel)
-        nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'actas_seguimiento', undefined)
-          .then(function (urlDocumento) {
+        //Subida de archivos por medio del Gestor documental
+        var fileBase64 ;
+        var data = [];
+        var URL = "";
+          utils.getBase64(ctrl.actaModel).then(
+            function (base64) {                   
+             fileBase64 = base64;
+          data = [{
+           IdTipoDocumento: 19, //id tipo documento de documentos_crud
+           nombre: nombreDoc,// nombre formado por el nombre de documento
+           file:  fileBase64,
+           metadatos: {
+             NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
+             Tipo: "Archivo",
+             Observaciones: "actas_seguimiento"
+           }, 
+           descripcion: nombreDoc
+          }] 
+
+            gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+            URL =  response.data.res.Enlace 
             var dataDocumentoTrabajoGrado = {
               TrabajoGrado: {
                 Id: ctrl.pasantiaSeleccionada.Id
               },
               DocumentoEscrito: {
                 Titulo: nombreDoc,
-                Enlace: urlDocumento,
+                Enlace: URL,
                 Resumen: nombreDoc,
                 //Tipo de documento 2, que es el que corresponde a acta de seguimiento
                 TipoDocumentoEscrito: 2
@@ -282,7 +303,19 @@ angular.module('poluxClienteApp')
                   );
                 }
                 ctrl.loadingDocumento = false;
-              })
+              })                                       
+            nuxeoMidRequest.post('workflow?docID=' + URL, null)
+               .then(function (response) {
+                console.log('nuxeoMid response: ',response) 
+            }).catch(function (error) {
+              console.log('nuxeoMid error:',error)
+            })
+           })
+
+        }) 
+
+       /*nuxeoClient.createDocument(nombreDoc, nombreDoc, ctrl.actaModel, 'actas_seguimiento', undefined)  
+          .then(function (urlDocumento) {
               .catch(function (error) {
                 
                 swal(
@@ -292,7 +325,7 @@ angular.module('poluxClienteApp')
                 );
                 ctrl.loadingDocumento = false;
               });
-          })
+          })*/
           .catch(function (error) {
             swal(
               $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -307,16 +340,27 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:PasantiaActasSeguimientoCtrl
-       * @param {Number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+       * @param {Number} docid Identificador del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
        * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana.
        */
       ctrl.getDocumento = function (docid) {
-        nuxeoClient.getDocument(docid)
+
+
+
+        /*nuxeoClient.getDocument(docid)
           .then(function (document) {
             $window.open(document.url);
           })
+          */
+          // Muestra del documento por medio del gestor documental
+          gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
+            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+            var fileURL = URL.createObjectURL(file);
+            $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+        
+           })
           .catch(function (error) {
             
             swal(

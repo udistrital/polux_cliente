@@ -17,6 +17,8 @@
  * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
+* @requires services/poluxService.service:gestorDocumentalMidService
+ * @requires services/poluxService.service:nuxeoMidService
  * @property {Number} idVinculacion Identificador de la vinculación del docente con el trabajo de grado
  * @property {String} userId Documento del usuario en sesión
  * @property {Number} tipoDocumento Tipo de documento escrito sobre el que se está operando
@@ -36,7 +38,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConceptoTgCtrl',
-    function($location, $q, $routeParams, $scope, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function($location, $q, $routeParams, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
       ctrl.idVinculacion = $routeParams.idVinculacion;
       ctrl.cargando = true;
@@ -406,11 +408,31 @@ angular.module('poluxClienteApp')
           .then(function(confirmacionDelUsuario) {
             if (confirmacionDelUsuario) {
               if (ctrl.revisionActual.documentModel) {
-                nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
-                  .then(function(respuestaCrearDocumento) {
-                    
+                //Se crea el documento con el gestor documental
+                var descripcion;
+                var fileBase64 ;
+                var data = [];
+                var URL = "";
+                  descripcion = "Correcciones sobre el proyecto";
+                  utils.getBase64(ctrl.revisionActual.documentModel).then(
+                    function (base64) {                   
+                     fileBase64 = base64;
+                  data = [{
+                   IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                   nombre: ctrl.vinculacion.TrabajoGrado.Titulo,// nombre formado por nombre de la solicitud
+                   file:  fileBase64,
+                   metadatos: {
+                     NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
+                     Tipo: "Archivo",
+                     Observaciones: "correcciones"
+                   }, 
+                   descripcion:descripcion,
+                  }] 
+  
+                    gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                    URL =  response.data.res.Enlace 
                     ctrl.revisionActual.Correcciones.push({
-                      Observacion: respuestaCrearDocumento,
+                      Observacion: response,
                       Justificacion: "Por favor descargue el documento de observaciones",
                       Pagina: 1,
                       RevisionTrabajoGrado: {
@@ -436,7 +458,27 @@ angular.module('poluxClienteApp')
                           );
                         }
                       })
-                      .catch(function(excepcionRevisarTg) {
+                                                                 
+                    nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                       .then(function (response) {
+                        console.log('nuxeoMid response: ',response) 
+                    }).catch(function (error) {
+                      console.log('nuxeoMid error:',error)
+                    })
+                   })
+  
+                })  
+
+
+
+
+
+
+
+              // nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
+              /*    .then(function(respuestaCrearDocumento) {
+                    
+                 .catch(function(excepcionRevisarTg) {
                         
                         ctrl.cargando = false;
                         swal(
@@ -446,6 +488,7 @@ angular.module('poluxClienteApp')
                         );
                       });
                   })
+                  */
                   .catch(function(excepcionCrearDocumento) {
                     
                     ctrl.cargando = false;
