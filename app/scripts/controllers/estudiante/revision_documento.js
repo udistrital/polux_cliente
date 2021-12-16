@@ -195,9 +195,7 @@ angular.module('poluxClienteApp')
         //El tipo de documento que se busca 
         ctrl.tipoDocumento = 0;
         //Si el estado del trabajo es
-        if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
-          ctrl.tipoDocumento = 4;
-        }
+        
         if (trabajoGrado.EstadoTrabajoGrado.Id == 1 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 4 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
@@ -206,10 +204,12 @@ angular.module('poluxClienteApp')
           trabajoGrado.EstadoTrabajoGrado.Id == 9 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 11 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 13 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 21 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 22) {
           ctrl.tipoDocumento = 3;
+        }
+        if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
+          ctrl.tipoDocumento = 4;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 14 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 15 ||
