@@ -540,7 +540,7 @@ angular.module('poluxClienteApp')
                         order: "asc",
                         limit: 1,
                       });
-
+                      console.log(parametrosUsuario);
                       poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                           ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
                               academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
