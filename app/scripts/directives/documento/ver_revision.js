@@ -31,12 +31,13 @@ angular.module('poluxClienteApp')
              * @requires services/poluxService.service:poluxRequest
              * @requires $scope
              * @requires services/poluxClienteApp.service:nuxeoClient
+            * @requires services/poluxService.service:gestorDocumentalMidService
              * @property {number} pageNum Número de la página en donde se realiza la revisión.
              * @property {object} revision Revisión que se está mostrando.
              * @property {array} correcciones Arreglo de correcciones que se muestren.
              * @property {object} pruebac Comentario temporal que se guarda.
              */
-            controller: function ($scope, nuxeoClient) {
+            controller: function ($scope, nuxeoClient,gestorDocumentalMidRequest) {
                 var ctrl = this;
 
                 /**
@@ -140,19 +141,31 @@ angular.module('poluxClienteApp')
                  * @name getDocument
                  * @methodOf poluxClienteApp.directive:verRevision.controller:verRevisionCtrl
                  * @description 
-                 * Permite cargar un documento de {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient} y mostrarlo en una ventana nueva.
+                 * Permite cargar un documento de {@link services/poluxClienteApp.service:gestorDocumentalMidRequest gestorDocumentalMidRequest} y mostrarlo en una ventana nueva.
                  * @param {String} uid Uid del documento que se va a descargar
                  * @returns {undefined} No hace retorno de resultados
                  */
                 ctrl.getDocument = function (uid) {
                     if (uid) {
-                        nuxeoClient.getDocument(uid)
+                         //  obtener un documento por la id 
+                        //gestorDocumentalMidRequest.get('/document/'+uid).then(function (response) {
+                        /* nuxeoClient.getDocument(uid)
                             .then(function (documento) {
                                 ctrl.loadingVersion = false;
                                 window.open(documento.url);
                             })
-                            .catch(function (error) {
+                            */
+                            gestorDocumentalMidRequest.get('/document/'+uid).then(function (response) {  
+                               
+                                ctrl.loadingVersion = false;
+                                  var varia = utils.base64ToArrayBuffer(response.data.file);
+                                  var file = new Blob([varia], {type: 'application/pdf'});
+                                  var fileURL = URL.createObjectURL(file);
+                                  window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
                                 
+                           })
+                            .catch(function (error) {
+                                ctrl.loadingVersion = false;
                                 swal(
                                     $translate.instant("MENSAJE_ERROR"),
                                     $translate.instant("ERROR.CARGAR_DOCUMENTO"),

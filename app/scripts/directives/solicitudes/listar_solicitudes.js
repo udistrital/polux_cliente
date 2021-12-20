@@ -28,6 +28,7 @@ angular.module('poluxClienteApp')
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
        * @requires services/poluxService.service:nuxeoClient
+       * @requires services/poluxService.service:gestorDocumentalMidService
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Object} gridOptions Grid Options de la grilla de solicitudes
        * @property {Boolean} loadingSolicitudes Booleano para indicar que se estan consultando las versiones de los documentos
@@ -35,7 +36,7 @@ angular.module('poluxClienteApp')
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        * @property {String} mensajeCargando Mensaje que se muestra cuando esta cargando
        */
-      controller: function($scope, $translate, poluxRequest, $q, academicaRequest, nuxeoClient) {
+      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, nuxeoClient,gestorDocumentalMidRequest) {
         var ctrl = this;
         ctrl.trabajoGrado = $scope.tg;
 
@@ -554,11 +555,19 @@ angular.module('poluxClienteApp')
         ctrl.getDocumento = function(uid) {
           if (uid) {
             ctrl.loadingDocument = true;
-            nuxeoClient.getDocument(uid)
-              .then(function(documento) {
-                ctrl.loadingDocument = false;
-                window.open(documento.url);
-              })
+            //  obtener un documento por la id 
+            gestorDocumentalMidRequest.get('/document/'+uid).then(function (response) {
+            //nuxeoClient.getDocument(uid)
+           //   .then(function(documento) {
+           //    ctrl.loadingDocument = false;
+           //     window.open(documento.data.res.Enlace);
+           //   })
+
+           var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+           var fileURL = URL.createObjectURL(file);
+           $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+       
+          })
               .catch(function(error) {
                 
                 ctrl.loadingVersion = false;

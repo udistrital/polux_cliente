@@ -18,6 +18,7 @@
  * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService 
+ * @requires services/poluxService.service:gestorDocumentalMidService
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
  * @property {Object} gridOptions Opciones del ui-grid que contiene las solicitudes
@@ -34,7 +35,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
-    function($filter, $location, $q, $scope, $translate, $window, academicaRequest, nuxeo, nuxeoClient, poluxRequest, token_service) {
+    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, academicaRequest, nuxeo, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
@@ -539,10 +540,10 @@ angular.module('poluxClienteApp')
                         order: "asc",
                         limit: 1,
                       });
-
-                      poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+                      console.log(parametrosUsuario);
+                      poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                           ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                              academicaRequest.get("datos_basicos_estudiante", [codigo_estudiante]).then(function(response2) {
+                              academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                   if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                     var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
                                     if (carreras.includes(carreraEstudiante)) {
@@ -615,16 +616,27 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:SolicitudesListarSolicitudesCtrl
-       * @param {Number} docid Identificador del documento en {@requires services/poluxService.service:nuxeoClient nuxeoClient}
+       * @param {Number} docid Identificador del documento en {@requires services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
        * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana
        */
       ctrl.getDocumento = function(docid) {
-        nuxeoClient.getDocument(docid)
+          /*nuxeoClient.getDocument(docid)
           .then(function(document) {
             $window.open(document.url);
           })
+          */
+        //Muestra el documento desde el gestor documental
+        gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {     
+      
+          var varia = utils.base64ToArrayBuffer(response.data.file);   
+          var file = new Blob([varia], {type: 'application/pdf'});
+					var fileURL = URL.createObjectURL(file);
+					$window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+				
+						 })
+         
           .catch(function(error) {
             
             swal(

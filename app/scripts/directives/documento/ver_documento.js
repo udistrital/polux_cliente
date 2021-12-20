@@ -11,7 +11,7 @@
  * @param {object} documento Documento que se va a mostrar
  */
 angular.module('poluxClienteApp')
-    .directive('verDocumento', function (poluxRequest, constantes, nuxeoClient, $q, $sce, $translate) {
+    .directive('verDocumento', function (poluxRequest, constantes,utils,gestorDocumentalMidRequest, nuxeoClient, $q, $sce, $translate) {
         return {
             restrict: "E",
             scope: {
@@ -29,6 +29,7 @@ angular.module('poluxClienteApp')
              * @requires decorators/poluxClienteApp.decorator:TextTranslate
              * @requires $scope
              * @requires services/poluxClienteApp.service:nuxeoClient
+             * @requires services/poluxService.service:gestorDocumentalMidService
              * @property {string} msgCargandoDocumento Mensaje que se muestra mientras se esta cargando el documento.
              * @property {string} mensajeError Error que se muestra cuando ocurre un error cargando el documento.
              * @property {boolean} loadDocumento Load que indica que se esta cargando el documento.
@@ -63,18 +64,24 @@ angular.module('poluxClienteApp')
                  * @param {number} docid Uid del documento que se va a traer de nuxeo.
                  * @returns {undefined} No retorna ningún valor.
                  * @description 
-                 * Permite cargar un documento de {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient} para mostrarlo.
+                 * Permite cargar un documento de {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService} para mostrarlo.
                  */
                 self.getDocumento = function (docid) {
                     $scope.loadDocumento = true;
                     
                     if (docid != null) {
-                        nuxeoClient.getDocument(docid)
-                            .then(function (documento) {
+                      //  nuxeoClient.getDocument(docid)
+                      //      .then(function (documento) {
+                     //  obtener un documento por la id 
+                            gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
                                 //$window.open(fileURL);
-                                $scope.pdfUrl = documento.url;
-                                $scope.loadDocumento = false;
-                            })
+                            //})
+                            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+                            var fileURL = URL.createObjectURL(file);
+                            $scope.pdfUrl = fileURL;
+                            $scope.loadDocumento = false;
+                        
+                                 })
                             .catch(function (error) {
                                 $scope.errorDocumento = true;
                                 $scope.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO");
