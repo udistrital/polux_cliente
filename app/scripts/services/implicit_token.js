@@ -154,10 +154,12 @@ angular.module('implicitToken', [])
               "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
             }
           };
+          
           service.logout_url = CONF.GENERAL.TOKEN.SIGN_OUT_URL;
           service.logout_url += '?id_token_hint=' + window.localStorage.getItem('id_token');
           service.logout_url += '&post_logout_redirect_uri=' + CONF.GENERAL.TOKEN.SIGN_OUT_REDIRECT_URL;
           service.logout_url += '&state=' + window.localStorage.getItem('state');
+  
           return true;
         }
       },
@@ -176,8 +178,8 @@ angular.module('implicitToken', [])
         return data;
       },
       logout: function() {
-        window.localStorage.clear();
         window.location.replace(service.logout_url);
+        window.localStorage.clear();
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());
