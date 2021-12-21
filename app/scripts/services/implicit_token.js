@@ -176,6 +176,7 @@ angular.module('implicitToken', [])
         return data;
       },
       logout: function() {
+        window.localStorage.clear();
         window.location.replace(service.logout_url);
       },
       expired: function() {
@@ -194,8 +195,6 @@ angular.module('implicitToken', [])
         if (!angular.isUndefined(window.localStorage.getItem('expires_at')) || window.localStorage.getItem('expires_at') === null) {
           $interval(function() {
             if (service.expired()) {
-
-              window.location.replace(service.logout_url);
               window.localStorage.clear();
             }
           }, 5000);
@@ -213,7 +212,7 @@ angular.module('implicitToken', [])
         }
         if (window.localStorage.getItem('state') === state) {
 
-        window.location.replace(service.logout_url);
+        
           window.localStorage.clear();
         } else {
           valid = false;
