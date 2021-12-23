@@ -64,29 +64,22 @@ angular.module('implicitToken', [])
             var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
             var appUserDocument;
             var appUserRole;
-            /*var emailInfo = {
-              //Email: "karianov@correo.udistrital.edu.co"
-              //Email: appUserInfo.sub,
-              Email: appUserInfo.email,
-              Rol: appUserInfo.role,
-              Documento: appUserInfo.documento
-            };*/
             var userRol= {
               user: appUserInfo.email
             };
+            if((appUserInfo.role===null ||appUserInfo.role===undefined) 
+            &&(appUserInfo.documento===null ||appUserInfo.documento===undefined) 
+            && (appUserInfo.email!=null && appUserInfo.email!=undefined)){
             autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
                   'Accept': 'application/json',
                   "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
+                  
                 }
               })
-              .then(function(respuestaAutenticacion) {
-                
-                //appUserDocument = respuestaAutenticacion.data.documento;
-                
+              .then(function(respuestaAutenticacion) {                
                 if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
-                  appUserDocument = respuestaAutenticacion.data.Codigo;
-                  //appUserDocument="20031085066";
+                  appUserDocument = respuestaAutenticacion.data.Codigo; 
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
                 }
@@ -105,6 +98,9 @@ angular.module('implicitToken', [])
           }
         } else {
           deferred.resolve(true);
+        }}
+        else {
+          deferred.resolve(true);
         }
         return deferred.promise;
       },
@@ -120,6 +116,7 @@ angular.module('implicitToken', [])
           headers: {
             'Accept': 'application/json',
             "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
+     
           }
         };
         return service.setting_bearer;
@@ -173,7 +170,6 @@ angular.module('implicitToken', [])
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
         var data = angular.fromJson(atob(id_token[1]));
-        console.log(data);
         if(!data.appUserDocument){
           data.appUserDocument = angular.fromJson(atob(access_code));
         }
@@ -201,9 +197,12 @@ angular.module('implicitToken', [])
         if (!angular.isUndefined(window.localStorage.getItem('expires_at')) || window.localStorage.getItem('expires_at') === null) {
           $interval(function() {
             if (service.expired()) {
+              service.logout();
               service.clearStorage();
             }
           }, 5000);
+        }else{
+          window.location.reload();
         }
       },
       logoutValid: function() {
