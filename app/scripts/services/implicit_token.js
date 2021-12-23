@@ -197,12 +197,11 @@ angular.module('implicitToken', [])
         if (!angular.isUndefined(window.localStorage.getItem('expires_at')) || window.localStorage.getItem('expires_at') === null) {
           $interval(function() {
             if (service.expired()) {
-              service.logout();
               service.clearStorage();
             }
           }, 5000);
         }else{
-          window.location.reload();
+          window.location.reload(); 
         }
       },
       logoutValid: function() {
@@ -215,6 +214,7 @@ angular.module('implicitToken', [])
           state = decodeURIComponent(m[2]);
         }
         if (window.localStorage.getItem('state') === state) {
+          service.logout();
           service.clearStorage();
         } else {
           valid = false;
