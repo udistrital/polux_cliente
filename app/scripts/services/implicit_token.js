@@ -211,7 +211,7 @@ angular.module('implicitToken', [])
           state = decodeURIComponent(m[2]);
         }
         if (window.localStorage.getItem('state') === state) {
-          window.localStorage.clear();
+          service.clearStorage();
         } else {
           valid = false;
         }
