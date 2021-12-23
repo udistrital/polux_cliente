@@ -196,7 +196,7 @@ angular.module('implicitToken', [])
         if (!angular.isUndefined(window.localStorage.getItem('expires_at')) || window.localStorage.getItem('expires_at') === null) {
           $interval(function() {
             if (service.expired()) {
-              window.localStorage.clear();
+              service.clearStorage();
             }
           }, 5000);
         }
@@ -216,6 +216,13 @@ angular.module('implicitToken', [])
           valid = false;
         }
         return valid;
+      },
+      clearStorage: function () {
+        window.localStorage.removeItem('access_token');
+        window.localStorage.removeItem('id_token');
+        window.localStorage.removeItem('expires_in');
+        window.localStorage.removeItem('state');
+        window.localStorage.removeItem('expires_at');
       }
     };
     service.setExpiresAt();
