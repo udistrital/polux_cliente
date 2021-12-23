@@ -37,6 +37,8 @@ angular.module("poluxClienteApp").constant("CONF", {
         SIGN_OUT_REDIRECT_URL: "https://polux.portaloas.udistrital.edu.co",
         SIGN_OUT_APPEND_TOKEN: "true",
     },
-    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
+    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
+    AUTENTICACION_MID : 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol' ,
+    LOGOUT_REDIRECT : "https://pruebascatalogo.portaloas.udistrital.edu.co"
   }
 });
