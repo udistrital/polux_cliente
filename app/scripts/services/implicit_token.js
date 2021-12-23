@@ -138,8 +138,9 @@ angular.module('implicitToken', [])
           'scope=' + encodeURIComponent(CONF.GENERAL.TOKEN.SCOPE);
         if (CONF.GENERAL.TOKEN.nonce) {
           url += '&nonce=' + encodeURIComponent(CONF.GENERAL.TOKEN.nonce);
+       
         }
-        url += '&state=' + encodeURIComponent(CONF.GENERAL.TOKEN.state);
+        url += '&state=' + encodeURIComponent(CONF.GENERAL.TOKEN.state); 
         window.location = url;
         return url;
       },
@@ -154,7 +155,6 @@ angular.module('implicitToken', [])
               "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
             }
           };
-          
           service.logout_url = CONF.GENERAL.TOKEN.SIGN_OUT_URL;
           service.logout_url += '?id_token_hint=' + window.localStorage.getItem('id_token');
           service.logout_url += '&post_logout_redirect_uri=' + CONF.GENERAL.TOKEN.SIGN_OUT_REDIRECT_URL;
@@ -164,7 +164,7 @@ angular.module('implicitToken', [])
         }
       },
       getPayload: function() {
-        var id_token = window.localStorage.getItem('id_token').split('.');
+        var id_token = window.localStorage.getItem('id_token').split('.');  
         return JSON.parse(atob(id_token[1]));
       },
       // Contiene el documento para las búsquedas
@@ -179,7 +179,6 @@ angular.module('implicitToken', [])
       },
       logout: function() {
         window.location.replace(service.logout_url);
-        window.localStorage.clear();
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());
@@ -202,7 +201,6 @@ angular.module('implicitToken', [])
           }, 5000);
         }
       },
-
       logoutValid: function() {
         var state;
         var valid = true;
@@ -213,8 +211,6 @@ angular.module('implicitToken', [])
           state = decodeURIComponent(m[2]);
         }
         if (window.localStorage.getItem('state') === state) {
-
-        
           window.localStorage.clear();
         } else {
           valid = false;

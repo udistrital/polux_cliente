@@ -97,13 +97,13 @@
           <ul class="dropdown-menu dropdown-user">
             <li>
               <a ng-click="">
-                <i class="fa fa-sign-in fa-fw"></i> {{token_service.getPayload().sub}}</a>
+                <i class="fa fa-sign-in fa-fw"></i> {{token_service.getPayload().email}}</a>
               </a>
             </li>
-            <li><a><i class="fa fa-gear fa-fw"></i> Settings</a>
+            <li><a><i class="fa fa-gear fa-fw"></i> Configuración</a>
             </li>
             <li class="divider"></li>
-            <li><a ng-click="token_service.logout()"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+            <li><a ng-click="token_service.logout()"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
             </li>
           </ul>
           <!-- /.dropdown-user -->
