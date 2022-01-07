@@ -64,22 +64,29 @@ angular.module('implicitToken', [])
             var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
             var appUserDocument;
             var appUserRole;
+            /*var emailInfo = {
+              //Email: "karianov@correo.udistrital.edu.co"
+              //Email: appUserInfo.sub,
+              Email: appUserInfo.email,
+              Rol: appUserInfo.role,
+              Documento: appUserInfo.documento
+            };*/
             var userRol= {
               user: appUserInfo.email
             };
-            if((appUserInfo.role===null ||appUserInfo.role===undefined) 
-            &&(appUserInfo.documento===null ||appUserInfo.documento===undefined) 
-            && (appUserInfo.email!=null && appUserInfo.email!=undefined)){
             autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
                   'Accept': 'application/json',
                   "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
-                  
                 }
               })
-              .then(function(respuestaAutenticacion) {                
+              .then(function(respuestaAutenticacion) {
+                
+                //appUserDocument = respuestaAutenticacion.data.documento;
+                
                 if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
-                  appUserDocument = respuestaAutenticacion.data.Codigo; 
+                  appUserDocument = respuestaAutenticacion.data.Codigo;
+                  //appUserDocument="20031085066";
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
                 }
@@ -98,9 +105,6 @@ angular.module('implicitToken', [])
           }
         } else {
           deferred.resolve(true);
-        }}
-        else {
-          deferred.resolve(true);
         }
         return deferred.promise;
       },
@@ -116,7 +120,6 @@ angular.module('implicitToken', [])
           headers: {
             'Accept': 'application/json',
             "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
-     
           }
         };
         return service.setting_bearer;
@@ -135,9 +138,8 @@ angular.module('implicitToken', [])
           'scope=' + encodeURIComponent(CONF.GENERAL.TOKEN.SCOPE);
         if (CONF.GENERAL.TOKEN.nonce) {
           url += '&nonce=' + encodeURIComponent(CONF.GENERAL.TOKEN.nonce);
-       
         }
-        url += '&state=' + encodeURIComponent(CONF.GENERAL.TOKEN.state); 
+        url += '&state=' + encodeURIComponent(CONF.GENERAL.TOKEN.state);
         window.location = url;
         return url;
       },
@@ -156,12 +158,11 @@ angular.module('implicitToken', [])
           service.logout_url += '?id_token_hint=' + window.localStorage.getItem('id_token');
           service.logout_url += '&post_logout_redirect_uri=' + CONF.GENERAL.TOKEN.SIGN_OUT_REDIRECT_URL;
           service.logout_url += '&state=' + window.localStorage.getItem('state');
-  
           return true;
         }
       },
       getPayload: function() {
-        var id_token = window.localStorage.getItem('id_token').split('.');  
+        var id_token = window.localStorage.getItem('id_token').split('.');
         return JSON.parse(atob(id_token[1]));
       },
       // Contiene el documento para las búsquedas
@@ -169,13 +170,9 @@ angular.module('implicitToken', [])
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
-        var data = angular.fromJson(atob(id_token[1]));
-        if(!data.appUserDocument){
-          data.appUserDocument = angular.fromJson(atob(access_code));
-        }
-        if(!data.appUserRole){
-          data.appUserRole =  angular.fromJson(atob(access_role));
-        }
+        var data = JSON.parse(atob(id_token[1]));
+        data.appUserDocument = JSON.parse(atob(access_code));
+        data.appUserRole = JSON.parse(atob(access_role));
         return data;
       },
       logout: function() {
@@ -188,7 +185,7 @@ angular.module('implicitToken', [])
       setExpiresAt: function() {
         if (angular.isUndefined(window.localStorage.getItem('expires_at')) || window.localStorage.getItem('expires_at') === null) {
           var expires_at = new Date();
-          expires_at.setSeconds(expires_at.getSeconds() + parseInt(window.localStorage.getItem('expires_in')) - 40); // 60 seconds less to secure browser and response latency
+          expires_at.setSeconds(expires_at.getSeconds() + parseInt(window.localStorage.getItem('expires_in')) - 60); // 60 seconds less to secure browser and response latency
           window.localStorage.setItem('expires_at', expires_at);
         }
       },
@@ -197,14 +194,12 @@ angular.module('implicitToken', [])
         if (!angular.isUndefined(window.localStorage.getItem('expires_at')) || window.localStorage.getItem('expires_at') === null) {
           $interval(function() {
             if (service.expired()) {
-              service.logout();
-              service.clearStorage();
+              window.localStorage.clear();
             }
           }, 5000);
-        }else{
-          window.location.reload(); 
         }
       },
+
       logoutValid: function() {
         var state;
         var valid = true;
@@ -215,19 +210,11 @@ angular.module('implicitToken', [])
           state = decodeURIComponent(m[2]);
         }
         if (window.localStorage.getItem('state') === state) {
-          service.logout();
-          service.clearStorage();
+          window.localStorage.clear();
         } else {
           valid = false;
         }
         return valid;
-      },
-      clearStorage: function () {
-        window.localStorage.removeItem('access_token');
-        window.localStorage.removeItem('id_token');
-        window.localStorage.removeItem('expires_in');
-        window.localStorage.removeItem('state');
-        window.localStorage.removeItem('expires_at');
       }
     };
     service.setExpiresAt();
