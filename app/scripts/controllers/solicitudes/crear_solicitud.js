@@ -1588,11 +1588,9 @@ angular.module('poluxClienteApp')
                  descripcion:descripcion,
                  file:  fileBase64,
                 }] 
-                console.log(data);
-                  gestorDocumentalMidRequest.post('/document/uploadasd',data).then(function (response){
+                  gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                   URL =  response.data.res.Enlace 
                   detalle.respuesta = URL
-                  console.log(detalle.respuesta)
                   ctrl.cargarSolicitudes();                                              
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {
