@@ -599,17 +599,16 @@ angular.module('poluxClienteApp')
                       function (base64) {                 
                        fileBase64 = base64;
                     data = [{
-                     IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                     IdTipoDocumento: 5, //id tipo documento de documentos_crud
                      nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
-                     file:  fileBase64,
                      metadatos: {
                        NombreArchivo: ctrl.trabajoGrado.Titulo+": "+ctrl.codigoEstudiante,
                        Tipo: "Archivo",
                        Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
                      }, 
                      descripcion:descripcion,
+                     file:  fileBase64,
                     }]  
-                    console.log(data)  
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                       URL =  response.data.res.Enlace 
                       ctrl.actualizarTrabajoGrado(URL)
@@ -920,15 +919,16 @@ angular.module('poluxClienteApp')
                       function (base64) {                   
                        fileBase64 = base64;
                     data = [{
-                     IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                     IdTipoDocumento: 18, //id tipo documento de documentos_crud
                      nombre: titulo ,// nombre formado por el titulo
-                     file:  fileBase64,
+                    
                      metadatos: {
                        NombreArchivo: titulo,
                        Tipo: "Archivo",
                        Observaciones: workspace
                      }, 
                      descripcion:descripcion,
+                     file:  fileBase64,
                     }] 
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                     
                        URL = response;                                        

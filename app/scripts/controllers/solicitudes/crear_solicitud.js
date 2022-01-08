@@ -1577,21 +1577,20 @@ angular.module('poluxClienteApp')
                   function (base64) {                   
                    fileBase64 = base64;
                 data = [{
-                 IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                 IdTipoDocumento: 5, //id tipo documento de documentos_crud
                  nombre: detalle.Detalle.Nombre ,// nombre formado por nombre de la solicitud
-                 file:  fileBase64,
+                
                  metadatos: {
                    NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
                    Tipo: "Archivo",
                    Observaciones: "Solicitud inicial"
                  }, 
                  descripcion:descripcion,
+                 file:  fileBase64,
                 }] 
-
                   gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                   URL =  response.data.res.Enlace 
                   detalle.respuesta = URL
-                  console.log(detalle.respuesta)
                   ctrl.cargarSolicitudes();                                              
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {

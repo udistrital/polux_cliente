@@ -418,15 +418,16 @@ angular.module('poluxClienteApp')
                     function (base64) {                   
                      fileBase64 = base64;
                   data = [{
-                   IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                   IdTipoDocumento: 5, //id tipo documento de documentos_crud
                    nombre: ctrl.vinculacion.TrabajoGrado.Titulo,// nombre formado por nombre de la solicitud
-                   file:  fileBase64,
+                  
                    metadatos: {
                      NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
                      Tipo: "Archivo",
                      Observaciones: "correcciones"
                    }, 
                    descripcion:descripcion,
+                   file:  fileBase64,
                   }] 
   
                     gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
