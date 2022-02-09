@@ -211,15 +211,7 @@ angular.module('poluxClienteApp')
             $scope.menu_service = configuracionRequest.get_menu();*/
 
 
-        /*var update_url = function() {
-            $scope.breadcrumb = [''];
-            for (var i = 0; i < paths.length; i++) {
-                if ($scope.actual === "/" + paths[i].path) {
-                    $scope.breadcrumb = paths[i].padre;
-                } else if ('/' === $scope.actual) {
-                    $scope.breadcrumb = [''];
-                }
-            }
+        var update_url = function() {  
         };
 
        /* 
