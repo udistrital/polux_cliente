@@ -1,3 +1,4 @@
+  
 'use strict';
 
 /**
@@ -219,5 +220,6 @@ angular.module('implicitToken', [])
     };
     service.setExpiresAt();
     service.timer();
+    
     return service;
   });
