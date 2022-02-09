@@ -1590,8 +1590,7 @@ angular.module('poluxClienteApp')
                 }] 
                   gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                   URL =  response.data.res.Enlace 
-                  detalle.respuesta = URL
-                  ctrl.cargarSolicitudes();                                              
+                  detalle.respuesta = URL;                                            
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {
                       console.log('nuxeoMid response: ',response) 
@@ -1617,6 +1616,16 @@ angular.module('poluxClienteApp')
               $scope.loadFormulario = false;
               */
             });
+            $q.all(promiseArr).then(function() {                     
+              ctrl.cargarSolicitudes();
+            }).catch(function(error)
+            {
+              swal(
+                $translate.instant("ERROR.CARGA_SOLICITUDES"),
+                $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                'warning'
+              )
+            })
           } else {
             swal(
               $translate.instant("ERROR.SUBIR_DOCUMENTO"),
