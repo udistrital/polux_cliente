@@ -186,12 +186,14 @@ angular.module('poluxClienteApp')
             tipoSesionPadre = 9;
           }
           var parametrosSesiones = $.param({
-            query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + anio + periodo,
+            query: "SesionPadre.TipoSesion.Id:"+tipoSesionPadre+",SesionHijo.TipoSesion.Id:2,SesionPadre.periodo:" + 2020 + 1,
             limit: 1
           });
           //traer fechas
           sesionesRequest.get("relacion_sesiones", parametrosSesiones)
+         
             .then(function(responseFechas) {
+              console.log(parametrosSesiones);
               if (Object.keys(responseFechas.data[0]).length > 0) {
                 
                 var sesion = responseFechas.data[0];
@@ -206,10 +208,10 @@ angular.module('poluxClienteApp')
                 //
                 //
                 if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
-                  ctrl.mostrarBotones = true;
+                  ctrl.mostrarBotones = false;
                   deferFechas.resolve();
                 } else {
-                  ctrl.mostrarBotones = false;
+                  ctrl.mostrarBotones = true;
                   deferFechas.resolve();
                 }
               } else {

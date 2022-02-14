@@ -84,12 +84,9 @@ angular.module('implicitToken', [])
                 
                 //appUserDocument = respuestaAutenticacion.data.documento;
                 
-                if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
-                  appUserDocument = respuestaAutenticacion.data.Codigo;
-                  //appUserDocument="20031085066";
-                }else{
-                  appUserDocument = respuestaAutenticacion.data.documento;
-                }
+                
+                appUserDocument = respuestaAutenticacion.data.documento;
+                
                 appUserRole = respuestaAutenticacion.data.role;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
@@ -138,14 +135,13 @@ angular.module('implicitToken', [])
           'scope=' + encodeURIComponent(CONF.GENERAL.TOKEN.SCOPE);
         if (CONF.GENERAL.TOKEN.nonce) {
           url += '&nonce=' + encodeURIComponent(CONF.GENERAL.TOKEN.nonce);
-       
         }
-        url += '&state=' + encodeURIComponent(CONF.GENERAL.TOKEN.state); 
+        url += '&state=' + encodeURIComponent(CONF.GENERAL.TOKEN.state);
         window.location = url;
         return url;
       },
       live_token: function() {
-        if (window.localStorage.getItem('id_token') === 'undefined' || window.localStorage.getItem('id_token') === null || service.logoutValid()) {
+        if (window.localStorage.getItem('id_token') === 'undefined' || window.localStorage.getItem('id_token') === null || service.logoutValid()) {         
           service.login();
           return false;
         } else {
@@ -159,26 +155,27 @@ angular.module('implicitToken', [])
           service.logout_url += '?id_token_hint=' + window.localStorage.getItem('id_token');
           service.logout_url += '&post_logout_redirect_uri=' + CONF.GENERAL.TOKEN.SIGN_OUT_REDIRECT_URL;
           service.logout_url += '&state=' + window.localStorage.getItem('state');
-  
           return true;
         }
       },
       getPayload: function() {
-        var id_token = window.localStorage.getItem('id_token').split('.');  
+        var id_token = window.localStorage.getItem('id_token').split('.');
         return JSON.parse(atob(id_token[1]));
       },
       // Contiene el documento para las búsquedas
       getAppPayload: function() {
+
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
+        //
         return data;
       },
       logout: function() {
-        window.location.replace(service.logout_url);
+        window.localStorage.clear();
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());
@@ -201,6 +198,7 @@ angular.module('implicitToken', [])
           }, 5000);
         }
       },
+
       logoutValid: function() {
         var state;
         var valid = true;

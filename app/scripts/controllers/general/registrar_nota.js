@@ -36,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -50,6 +50,11 @@ angular.module('poluxClienteApp')
       ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
       ctrl.mensajeRegistrandoNota = $translate.instant('LOADING.REGISTRANDO_NOTA');
       ctrl.cargandoTrabajos = true;
+
+      var Atributos={
+        rol:'ESTUDIANTE',
+    }
+    notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO Prueba funcional notificaciones',Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
 
       $scope.botonesNota = [{
         clase_color: "ver",
@@ -388,15 +393,16 @@ angular.module('poluxClienteApp')
                   function (base64) {                   
                    fileBase64 = base64;
                 data = [{
-                 IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                 IdTipoDocumento: 18, //id tipo documento de documentos_crud
                  nombre: nombreDocumento ,// nombre formado por el acta del trabajo y el id de trabajo
-                 file:  fileBase64,
+               
                  metadatos: {
                    NombreArchivo: nombreDocumento,
                    Tipo: "Archivo",
                    Observaciones: "actas_sustentacion"
                  }, 
                  descripcion:descripcion,
+                 file:  fileBase64,
                 }] 
 
                   gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
@@ -411,9 +417,9 @@ angular.module('poluxClienteApp')
                   defer.resolve(dataRegistrarNota);                                         
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {
-                      console.log('nuxeoMid response: ',response) 
+                     // console.log('nuxeoMid response: ',response) 
                   }).catch(function (error) {
-                    console.log('nuxeoMid error:',error)
+                  //  console.log('nuxeoMid error:',error)
                   })
                  })
 
@@ -439,7 +445,13 @@ angular.module('poluxClienteApp')
             //Se ejecuta la transacción
             poluxRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function(response) {
                 if (response.data[0] === "Success") {
-                  swal(
+                  var Atributos={
+                    rol:'ESTUDIANTE',
+                }
+                notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+        //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              
+       swal(
                     $translate.instant("REGISTRAR_NOTA.AVISO"),
                     $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
                     'success'

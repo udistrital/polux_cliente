@@ -85,7 +85,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function($location, $q, $routeParams, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $window, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
+    function($location, $q, $routeParams,notificacionRequest, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $window, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = "";
@@ -120,6 +120,7 @@ angular.module('poluxClienteApp')
         $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
       };
 
+    
       //carreras del coordinador
       /*  var parametrosCoordinador = {
           "identificacion":19451396,
@@ -1329,7 +1330,7 @@ angular.module('poluxClienteApp')
             //
             poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function(response) {
                 ctrl.mostrarRespuesta(response);
-              })
+             })
               .catch(function(error) {
                 
                 swal(
@@ -1362,6 +1363,13 @@ angular.module('poluxClienteApp')
       ctrl.mostrarRespuesta = function(response) {
         if (response.data !== undefined) {
           if (response.data[0] == 'Success') {
+            var Atributos={
+              rol:'ESTUDIANTE',
+          }
+          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,['101850341'],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+           // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+              
             swal(
               $translate.instant("RESPUESTA_SOLICITUD"),
               $translate.instant("SOLICITUD_APROBADA"),
@@ -1418,15 +1426,16 @@ angular.module('poluxClienteApp')
                   function (base64) {                   
                    fileBase64 = base64;
                 data = [{
-                 IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                 IdTipoDocumento: 18, //id tipo documento de documentos_crud
                  nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
-                 file:  fileBase64,
+                
                  metadatos: {
                    NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
                    Tipo: "Archivo",
                    Observaciones: "actas"
                  }, 
                  descripcion:"Acta de evaluación de la solicitud " +ctrl.solicitud,
+                 file:  fileBase64,
                 }] 
 
                   gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
@@ -1435,9 +1444,9 @@ angular.module('poluxClienteApp')
                   ctrl.cargarRespuesta();                                             
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {
-                      console.log('nuxeoMid response: ',response) 
+                     // console.log('nuxeoMid response: ',response) 
                   }).catch(function (error) {
-                    console.log('nuxeoMid error:',error)
+                    //console.log('nuxeoMid error:',error)
                   })
                  })
 

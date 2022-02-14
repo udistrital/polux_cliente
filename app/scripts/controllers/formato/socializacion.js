@@ -14,7 +14,7 @@
  * @requires services/oikosService.service:oikosRequest
  */
 angular.module('poluxClienteApp')
-    .controller('SocializacionCtrl', function(poluxRequest, oikosRequest, $translate, $scope) {
+    .controller('SocializacionCtrl', function(poluxRequest,notificacionRequest, oikosRequest, $translate, $scope) {
         var ctrl = this;
 
         ctrl.get_socializacion = function() {
@@ -82,7 +82,8 @@ angular.module('poluxClienteApp')
             
             poluxRequest.post("socializacion", data)
                 .then(function(response) {
-                    
+                    var nick = token_service.getAppPayload().email.split("@").slice(0);
+                    notificacionRequest.enviarNotificacion('Socializacion de ' +nick[0],'PoluxCola','/solicitudes/listar_solicitudes');   
                     $('#add').modal('hide');
                     swal(
                         '',

@@ -418,15 +418,16 @@ angular.module('poluxClienteApp')
                     function (base64) {                   
                      fileBase64 = base64;
                   data = [{
-                   IdTipoDocumento: 19, //id tipo documento de documentos_crud
+                   IdTipoDocumento: 5, //id tipo documento de documentos_crud
                    nombre: ctrl.vinculacion.TrabajoGrado.Titulo,// nombre formado por nombre de la solicitud
-                   file:  fileBase64,
+                  
                    metadatos: {
                      NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
                      Tipo: "Archivo",
                      Observaciones: "correcciones"
                    }, 
                    descripcion:descripcion,
+                   file:  fileBase64,
                   }] 
   
                     gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
@@ -444,7 +445,13 @@ angular.module('poluxClienteApp')
                       .then(function(respuestaRevisarTg) {
                         ctrl.cargando = false;
                         if (respuestaRevisarTg.data[0] === "Success") {
-                          swal(
+                          var Atributos={
+                            rol:'ESTUDIANTE',
+                        }
+                        notificacionRequest.enviarCorreo('Respuesta de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+                          //notificacionRequest.enviarCorreo('Respuesta de revisión ',Atributos,[estudianteAsociado.Estudiante],'','','Se ha realizado la respuesta de la solicitud de revision del trabajo de grado, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                      		
+swal(
                             $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
                             $translate.instant("REVISAR_PROYECTO.REVISION_REGISTRADA"),
                             'success'
@@ -461,9 +468,9 @@ angular.module('poluxClienteApp')
                                                                  
                     nuxeoMidRequest.post('workflow?docID=' + URL, null)
                        .then(function (response) {
-                        console.log('nuxeoMid response: ',response) 
+                        //console.log('nuxeoMid response: ',response) 
                     }).catch(function (error) {
-                      console.log('nuxeoMid error:',error)
+                     // console.log('nuxeoMid error:',error)
                     })
                    })
   

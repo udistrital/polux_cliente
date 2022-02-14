@@ -14,7 +14,7 @@
  * @requires $q
  */
 angular.module('poluxClienteApp')
-  .controller('FormatoEvaluarCtrl', function ($translate, $q, $scope, poluxRequest) {
+  .controller('FormatoEvaluarCtrl', function ($translate,notificacionRequest, $q, $scope, poluxRequest) {
     var ctrl = this;
     ctrl.distinciones = [];
     ctrl.trabajosEvaluador = [];
@@ -133,7 +133,7 @@ angular.module('poluxClienteApp')
             var desc = "";
             if (detalle.Detalle.Id === 13) {
               desc = ctrl.solicitudDistincion.justificacion;
-            } else if (detalle.Detalle.Id === 48) {
+            } else if (detalle.Detalle.Id === 48) { 
               desc = ctrl.evaluador;
             } else if (detalle.Detalle.Id === 49) {
               desc = ctrl.solicitudDistincion.tipoDistincion.Id + "-" + ctrl.solicitudDistincion.tipoDistincion.Nombre;
@@ -217,6 +217,9 @@ angular.module('poluxClienteApp')
 
           poluxRequest.post("tr_solicitud", solicitud).then(function (response) {
             if (response.data[0] === "Success") {
+              var nick = token_service.getAppPayload().email.split("@").slice(0);
+              notificacionRequest.enviarNotificacion('Solicitud de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');
+              
               swal(
                 $translate.instant("FORMULARIO_SOLICITUD"),
                 $translate.instant("SOLICITUD_REGISTRADA"),

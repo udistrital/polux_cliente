@@ -107,6 +107,10 @@ angular.module('poluxClienteApp')
                             order: "asc"
                         })).then(function (response) {
                             comentarios.push(response.data);
+                            var Atributos={
+                                rol:'ESTUDIANTE',
+                            }
+                            notificacionRequest.enviarCorreo('Revision realizada',Atributos,['101850341'],'','','Se ha realizado la revision del trabajo de grado, se ha dado de parte de '+token_service.getAppPayload().email+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');                                      
                         });
                     }); //.then(function(data){
                     //ctrl.coment = null;
