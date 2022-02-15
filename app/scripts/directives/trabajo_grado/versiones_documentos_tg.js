@@ -97,12 +97,14 @@ angular.module('poluxClienteApp')
                         nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                         break;
                     }
-                    angular.forEach(versiones, function (version) {
+                    console.log(nombreHijo);
+                    angular.forEach(versiones, function (version) {   
                       version.name = nombreHijo + version.get('uid:major_version')
+                      
                     });
                     ctrl.dataForTree.push({
                       name: nombreNodo,
-                      children: versiones,
+                      children: responseDocumento.data[0].DocumentoEscrito.Enlace,
                     });
                     defer.resolve();
                   })
@@ -193,11 +195,10 @@ angular.module('poluxClienteApp')
          * @returns {undefined} No hace retorno de resultados
          */
         ctrl.verDocumento = function (doc) {
-          console.log(doc);
-          if (doc.uid) {
+          if (doc.children) {
             ctrl.loadingVersion = true;
             //  obtener un documento por la id 
-            gestorDocumentalMidRequest.get('/document/'+doc.uid).then(function (response) {
+            gestorDocumentalMidRequest.get('/document/'+doc.children).then(function (response) {
             //nuxeoClient.getDocument(doc.uid)
             //  .then(function (documento) {
             //    ctrl.loadingVersion = false;

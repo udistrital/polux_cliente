@@ -261,7 +261,7 @@ angular.module('poluxClienteApp')
           data = [{
            IdTipoDocumento: 18, //id tipo documento de documentos_crud
            nombre: nombreDoc,// nombre formado por el nombre de documento
-         
+
            metadatos: {
              NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
              Tipo: "Archivo",
@@ -307,9 +307,9 @@ angular.module('poluxClienteApp')
               })                                       
             nuxeoMidRequest.post('workflow?docID=' + URL, null)
                .then(function (response) {
-                console.log('nuxeoMid response: ',response) 
+                //console.log('nuxeoMid response: ',response) 
             }).catch(function (error) {
-              console.log('nuxeoMid error:',error)
+             // console.log('nuxeoMid error:',error)
             })
            })
 

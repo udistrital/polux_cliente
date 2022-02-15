@@ -274,12 +274,14 @@ angular.module('poluxClienteApp')
                                                IdTipoDocumento: 5, //id tipo documento de documentos_crud
                                                nombre:ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,// nombre formado el titulo y correccion
                                                file:  fileBase64,
+
                                                metadatos: {
                                                  NombreArchivo: ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,
                                                  Tipo: "Archivo",
                                                  Observaciones: "correciones"
                                                }, 
                                                descripcion:"Correcciones sobre el proyecto",
+                                               file:  fileBase64,
                                               }] 
                               
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
@@ -363,6 +365,12 @@ angular.module('poluxClienteApp')
                                 poluxRequest.post("tr_registrar_revision_tg", data_transaccion)
                                     .then(function (respuestaRegistrarRevisionTg) {
                                         if (respuestaRegistrarRevisionTg.data[0] === "Success") {
+                                            var Atributos={
+                                                rol:'ESTUDIANTE',
+                                            }
+                                            notificacionRequest.enviarCorreo('Revision realizada',Atributos,['101850341'],'','','Se ha realizado la revision del trabajo de grado, se ha dado de parte de '+nombreDocente+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+                                           // notificacionRequest.enviarCorreo('Revision realizada',Atributos,['Documento.estudiante'],'','','Se ha realizado larevision del trabajo de grado, se ha dado de parte de '+nombreDocente+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+                      
                                             swal(
                                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                                 $translate.instant("REGISTRAR_REVISION.REGISTRADA"),

@@ -310,7 +310,13 @@ angular.module('poluxClienteApp')
           .then(function(responseRespuesta) {
             
             if (responseRespuesta.data[0] === "Success") {
-              swal(
+              var Atributos={
+                rol:'ESTUDIANTE',
+            }
+            notificacionRequest.enviarCorreo('Mensaje de respuesta de solicitud de carta',Atributos,['101850341'],'','','Se ha registrado la respuesta de carta de parte de '+token_service.getAppPayload().email+' para la pasantia asociada.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+           //notificacionRequest.enviarCorreo('Mensaje de respuesta de solicitud de carta',Atributos,[responseEstudiante.data[0].Usuario],'','','Se ha registrado la respuesta de carta de parte de '+token_service.getAppPayload().email+' para la pasantia asociada.');              
+           swal(
                 $translate.instant("RESPUESTA_SOLICITUD"),
                 $translate.instant("SOLICITUD_APROBADA"),
                 'success'

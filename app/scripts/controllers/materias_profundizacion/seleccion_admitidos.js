@@ -55,7 +55,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasProfundizacionSeleccionAdmitidosCtrl',
-    function($scope, $q, $translate, academicaRequest, poluxMidRequest, poluxRequest, token_service, sesionesRequest, uiGridConstants) {
+    function($scope, $q, $translate, notificacionRequest,academicaRequest, poluxMidRequest, poluxRequest, token_service, sesionesRequest, uiGridConstants) {
       $scope.$ = $;
 
       $scope.loadParametros = true;
@@ -320,7 +320,7 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el objeto cuposDisponibles
        */
-      /*ctrl.getCupos = function() {
+      ctrl.getCupos = function() {
         var defer = $q.defer();
         poluxMidRequest.get("cupos/Obtener").then(function(responseCupos) {
             //$scope.cupos_excelencia = response.data.Cupos_excelencia;
@@ -334,7 +334,7 @@ angular.module('poluxClienteApp')
             defer.reject("no se pudo cargar fechas")
           });
         return defer.promise;
-      }*/
+      }
 
       /**
        * @ngdoc method
@@ -670,6 +670,13 @@ angular.module('poluxClienteApp')
             $scope.loadRespuestas = false;
             
             if (response.data[0] === "Success") {
+              var Atributos={
+                rol:'ESTUDIANTE',
+            }
+            notificacionRequest.enviarCorreo('Mensaje de ADMISIÓN de materia de profundizacion',Atributos,['101850341'],'','','Se ha registrado la solicitud de admision de parte de '+token_service.getAppPayload().email+' para la materia de profundizacion asociado.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+              //notificacionRequest.enviarCorreo('Mensaje de ADMISIÓN de materia de profundizacion',Atributos,[usuarioSolicitud.data[0].Usuario],'','','Se ha registrado la solicitud de admision de parte de '+token_service.getAppPayload().email+' para la materia de profundizacion asociado.');              
+   
               swal(
                 $translate.instant('MATERIAS_PROFUNDIZACION.PROCESO_ADMISION_COMPLETO'),
                 $translate.instant('MATERIAS_PROFUNDIZACION.RESPUESTAS_SOLICITUD'),

@@ -18,7 +18,7 @@
  * @property {array} menu_app Menú de las aplicaciones asociadas a la universidad que se muestra en la parte lateral.
  */
 angular.module('poluxClienteApp')
-    .controller('menuCtrl', function($location, $http, $window, $q, $scope, $rootScope, token_service, configuracionRequest, notificacion, $translate, $route, $mdSidenav) {
+    .controller('menuCtrl', function($location, $http, $window, $q, $scope, $rootScope, token_service, configuracionRequest, notificacionRequest, $translate, $route, $mdSidenav) {
         //var paths = [];
         $scope.language = {
             es: "btn btn-primary btn-circle btn-outline active",
@@ -61,7 +61,7 @@ angular.module('poluxClienteApp')
             title: "SGA",
             url: "http://10.20.0.254/kronos"
         }];
-        $scope.notificacion = notificacion;
+        $scope.notificacion=notificacionRequest;
         $scope.actual = "";
         $scope.token_service = token_service;
         $scope.breadcrumb = [];
@@ -178,7 +178,6 @@ angular.module('poluxClienteApp')
                         if (typeof $scope.token.appUserRole === "object") {
                             var rl = [];
                             $scope.token.appUserRole = $scope.token.appUserRole.concat( $scope.token.role);
-                            
                             for (var index = 0; index < $scope.token.appUserRole.length; index++) {
                                 if($scope.token.appUserRole[index]!= undefined){
                                 if ($scope.token.appUserRole[index].indexOf("/") < 0) {
@@ -186,6 +185,30 @@ angular.module('poluxClienteApp')
                                 }
                             }
                             }
+                            // Confirmar la subcripcion de notificaciones
+                 notificacionRequest.verificarSuscripcion().then(function(respuestasub)
+                {
+                    if(respuestasub.data.Data!=false)
+                    {
+                        console.log(respuestasub.data.Data+" Ya se encuentra registrado el usuario en notificaciones");                
+                    }
+                    else
+                    {
+                        notificacionRequest.suscripcion().then(function(respuestasubs)
+                        {
+                            if(respuestasubs.data.Data!=false)
+                            {
+                                console.log(respuestasubs.data.Data+" Se ha registrado el usuario en notificaciones");
+                            }
+                        }).catch(
+                                function (error) {
+                                    console.log(error)
+                                }
+                            );
+                    
+                    }
+                  }
+                );
                             roles = rl.toString();
                         } else {
                             roles = $scope.token.appUserRole;
@@ -209,6 +232,7 @@ angular.module('poluxClienteApp')
           });
             /*configuracionRequest.update_menu(https://10.20.0.162:9443/store/apis/authenticate response.data);
             $scope.menu_service = configuracionRequest.get_menu();*/
+
 
 
         var update_url = function() {  
@@ -235,15 +259,14 @@ angular.module('poluxClienteApp')
         $scope.$on('$routeChangeStart', function(scope, next, current) {
             //$scope.actual = $location.path();
             update_url();
-
+            /*
             var waitForMenu = function () {
                 if ($rootScope.my_menu !== undefined) {
                     if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
 
-                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {
-                           
-                           
-                            $location.path("/no_permission");
+                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {             
+                          //  $location.path("/no_permission");
+
                         }
                     }                 
                 } else {
@@ -251,6 +274,7 @@ angular.module('poluxClienteApp')
                 }
             }; 
             waitForMenu();
+            */
         });
 
         $scope.havePermission = function (viewPath, menu) {
@@ -302,6 +326,7 @@ angular.module('poluxClienteApp')
             }
             $route.reload();
         };
+      
 
         function buildToggler(componentId) {
             return function() {
