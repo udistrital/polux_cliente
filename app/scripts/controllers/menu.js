@@ -234,7 +234,8 @@ angular.module('poluxClienteApp')
             $scope.menu_service = configuracionRequest.get_menu();*/
 
 
-        var update_url = function() {        
+
+        var update_url = function() {  
         };
 
        /* 

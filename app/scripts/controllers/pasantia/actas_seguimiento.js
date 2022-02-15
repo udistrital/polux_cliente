@@ -261,6 +261,7 @@ angular.module('poluxClienteApp')
           data = [{
            IdTipoDocumento: 18, //id tipo documento de documentos_crud
            nombre: nombreDoc,// nombre formado por el nombre de documento
+
            metadatos: {
              NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
              Tipo: "Archivo",
