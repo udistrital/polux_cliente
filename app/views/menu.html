@@ -57,37 +57,51 @@
       </li>
 
       <!-- /.dropdown Notifications-->
-      <li class="dropdown">
-        <a class=" notificacion_vista dropdown-toggle" data-toggle="dropdown" ng-href="{{actual}}" ng-if="notificacion.no_vistos() > 0">
-          <i class="fa fa-bell fa-fw faa-ring animated"></i>{{notificacion.no_vistos()}}
+      <li class="dropdown" >
+      
+        <a class=" notificacion_vista dropdown-toggle" data-toggle="dropdown" ng-href="{{actual}}" ng-if=" !roles.includes('ESTUDIANTE')"  >
+      
+          <!-- Numero notificaciones numero 
+          recuadro más grande , izquier materias y abajo mitad 
+          MArgen del fondo
+          separar notificaciones
+          bajar intensisdad color
+opcion 
+            marco azul sin fondo letra negra
+            Agrandar o expandir notificaciones
+
+
+          -->
+          <div>
+          <div>
+          <i class="fa fa-bell fa-fw faa-ring animated" style="color:rgb(223, 115, 115)"  ng-if="!loading && !roles.includes('ESTUDIANTE')"></i>
+          <i class="fa fa-bell fa-fw faa-ring animated" ng-if="loading && !roles.includes('ESTUDIANTE')" ></i>
+          <i style="color: rgb(255, 255, 255);">{{notificaciones.length}}</i></div>           
           <i class="fa fa-caret-down"></i>
+          </div>
+
         </a>
-        <a class="dropdown-toggle" data-toggle="dropdown" ng-href="{{actual}}" ng-if="notificacion.no_vistos() == 0">
-          <i class="fa fa-bell fa-fw"></i>
-          <i class="fa fa-caret-down"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-alerts">
-          <li ng-repeat=" notificacion in notificacion.log | limitTo:6">
-            <a ng-href="{{'#' + actual}}" ng-click="notificacion.viewed = true">
+        <ul ng-if=" !roles.includes('ESTUDIANTE')" style="height: 500px; width: 400px;" class="dropdown-menu dropdown-alerts">
+            <div class="notifications-container"  >
+              <h4 style="color:#9D9D9D" class="text-center" > <strong>Notificaciones</strong></h4>
               <div>
-                <i ng-if="! notificacion.viewed" class="fa fa-comment fa-fw "></i>
-                <i ng-if="notificacion.viewed" class="fa fa-check-circle"></i>
-                <strong>{{notificacion.user}}</strong>
-                <span class="pull-right text-muted">
-                  <em><span am-time-ago="notificacion.FechaCreacion"></span></em>
-                </span>
-              </div>
-              <div ng-if="! notificacion.viewed">{{notificacion.message | limitTo:100}} ...</div>
-              <div ng-if="notificacion.viewed">{{notificacion.message| limitTo:100}} ...</div>
-            </a>
-          </li>
-          <li class="divider"></li>
-          <li>
-            <a class="text-center" ng-href="#/notificaciones">
-              <strong>Ver todas las notificaciones</strong>
-              <i class="fa fa-angle-right"></i>
-            </a>
-          </li>
+                <loading tam="4" load="load"> </loading>
+                <div ng-if="loading"class="panel-body alert alert-danger">
+                  No hay notificaciones
+                </div> 
+              <select ng-if="!loading" style="height: 400px;" class="form-control" multiple aria-label="multiple select example" class="limit 10">
+                <option style="overflow:hidden;padding:4px;margin:3px;  width:100%;border-width: 1px;border: 2px solid rgb(34, 105, 163);color:#000000 marginheight=200px" ng-repeat="notifi in notificaciones" ng-click="redirect_url(notifi.Body.Message)">{{notifi.Body.Subject}}</option>                               
+              </select>
+            </div> 
+            
+            </div> 
+            <li class="divider"></li>
+            <li ng-if="!load">
+              <a class="text-center" ng-href="#/notificaciones">
+                <strong >Ver todas las notificaciones</strong>
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </li>
         </ul>
         <!-- /.dropdown -->
         <li class="dropdown" ng-if="token_service.live_token()">
@@ -106,13 +120,18 @@
             <li><a ng-click="token_service.logout()"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
             </li>
           </ul>
-          <!-- /.dropdown-user -->
+          <!-- /.dropdown-user 
         </li>
-        <li ng-if="!token_service.live_token()">
-          <oauth2 authorization-url="{{token_service.config.AUTORIZATION_URL}}" client-id="{{token_service.config.CLIENTE_ID}}" redirect-url="{{token_service.config.REDIRECT_URL}}" response-type="{{token_service.config.RESPONSE_TYPE}}" scope="{{token_service.config.SCOPE}}"
-              button-class="{{token_service.config.BUTTON_CLASS}}">
+        <li ng-hide="token_service.live_token()">
+          <oauth2 authorization-url="{{token_service.config.AUTORIZATION_URL}}"
+              client-id="{{token_service.config.CLIENTE_ID}}" redirect-url="{{token_service.config.REDIRECT_URL}}"
+              response-type="{{token_service.config.RESPONSE_TYPE}}" scope="{{token_service.config.SCOPE}}"
+              sign-out-append-token="{{SIGN_OUT_APPEND_TOKEN}}" sign-out-url="{{SIGN_OUT_URL}}"
+              sign-out-redirect-url="{{SIGN_OUT_REDIRECT_URL}}"
+              button-class="{{token_service.config.BUTTON_CLASS}}" signInText="Inicio Sesión"
+              signOutText="Cerrar Sesión">
           </oauth2>
-        </li>
+      </li>
         <!-- /.dropdown -->
     </ul>
   </div>

@@ -47,14 +47,11 @@ angular.module('poluxClienteApp')
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      
-
       //$scope.$watch("userId",function() {
       //ctrl.conSolicitudes = false;
       //ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
       //$scope.load = true;
       //});
-
       /**
        * @ngdoc method
        * @name mostrarResultado
@@ -475,6 +472,7 @@ angular.module('poluxClienteApp')
                 promiseArr.push(getDataSolicitud(solicitud));
               });
               $q.all(promiseArr).then(function() {
+                  
                   ctrl.gridOptions.data = ctrl.solicitudes;
                   
                   $scope.load = false;
@@ -520,6 +518,7 @@ angular.module('poluxClienteApp')
                 });
 
                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
+                  
                     if (Object.keys(responseSolicitudes.data[0]).length > 0) {
                       ctrl.conSolicitudes = true;
                     }
@@ -540,7 +539,6 @@ angular.module('poluxClienteApp')
                         order: "asc",
                         limit: 1,
                       });
-                      console.log(parametrosUsuario);
                       poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                           ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
                               academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {

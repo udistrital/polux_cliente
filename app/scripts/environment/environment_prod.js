@@ -25,6 +25,9 @@ angular.module("poluxClienteApp").constant("CONF", {
     DOCUMENTO_CRUD_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/documento_crud/v2/",
     GESTION_DOCUMENTAL_SERVICE:" https://autenticacion.portaloas.udistrital.edu.co/apioas/gestor_documental_mid/v1",
     AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
+    NOTIFICACION_WS:
+      "https://autenticacion.portaloas.udistrital.edu.co/apioas/notificacion_mid/v1/",
+    ARM_AWS_NOTIFICACIONES:"arn:aws:sns:us-east-1:699001025740:production-Cumplidos",
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",

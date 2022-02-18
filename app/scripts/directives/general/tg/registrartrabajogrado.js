@@ -69,6 +69,9 @@ angular.module('poluxClienteApp')
               query: "CodigoEstudiante:" + response.data.CodigoEstudiante
             }));
           });
+          var nick = token_service.getAppPayload().email.split("@").slice(0);
+          notificacionRequest.enviarNotificacion('Se registro el trabajo de grado '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');           
+        
           swal({
             title: 'Ok',
             text: "Registro de trabajo de grado agregado a estudiante: " + codEstudiante,

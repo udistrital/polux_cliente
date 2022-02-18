@@ -31,7 +31,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('DocenteTgsRevisionDocumentoCtrl',
-    function($q, $scope, $translate, academicaRequest, poluxRequest, token_service) {
+    function($q, $scope, $translate, academicaRequest, notificacionRequest,poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "51551021";
@@ -43,7 +43,8 @@ angular.module('poluxClienteApp')
       ctrl.documentoDocente = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
-
+      
+    
       /**
        * @ngdoc method
        * @name consultarDocenteTrabajoGrado

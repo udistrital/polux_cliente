@@ -44,6 +44,7 @@ angular
         //'blueimp.fileupload',
         'poluxMidService',
         'gestorDocumentalMidService',
+        'notificacionService',
         'pdf',
         'nuxeoMidService',
         'pascalprecht.translate',
@@ -74,10 +75,10 @@ angular
                 controllerAs: 'main'
             })
             .when('/notificaciones', {
-                templateUrl: 'views/notificaciones.html',
-                controller: 'NotificacionesCtrl',
-                controllerAs: 'notificaciones'
-            })
+              templateUrl: 'views/notificaciones.html',
+              controller: 'notificacionesCtrla',
+              controllerAs: 'notificaciones'
+          })
             .when('/about', {
                 templateUrl: 'views/about.html',
                 controller: 'AboutCtrl',
@@ -312,7 +313,7 @@ angular
               templateUrl: 'views/reportes/reporte_general.html',
               controller: 'ReportesReporteGeneralCtrl',
               controllerAs: 'reporteGeneral'
-            })       
+            })   
             .when('/administracion/parametrizacion', {
               templateUrl: 'views/administracion/Parametrizacion.html',
               controller: 'AdministrarTablasCTRL',

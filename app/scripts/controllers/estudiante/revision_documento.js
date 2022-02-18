@@ -38,7 +38,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('EstudianteRevisionDocumentoCtrl',
-    function($q, $scope, $translate, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($q, $scope, $translate, notificacionRequest,academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //ctrl.estudiante = $routeParams.idEstudiante;
@@ -52,7 +52,8 @@ angular.module('poluxClienteApp')
       ctrl.mensajeCargandoActualizarTg = $translate.instant("LOADING.ACTUALIZANDO_TRABAJO_GRADO");
 
       $scope.mindoc = false;
-
+     
+        
       /**
        * @ngdoc method
        * @name obtenerParametrosDirectorExterno
@@ -195,7 +196,7 @@ angular.module('poluxClienteApp')
         //El tipo de documento que se busca 
         ctrl.tipoDocumento = 0;
         //Si el estado del trabajo es
-        
+      
         if (trabajoGrado.EstadoTrabajoGrado.Id == 1 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 4 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
@@ -225,6 +226,7 @@ angular.module('poluxClienteApp')
             trabajoGrado.Id,
           limit: 1
         });
+        
       }
 
       /**
@@ -240,9 +242,11 @@ angular.module('poluxClienteApp')
        */
       ctrl.consultarDocumentoTrabajoGrado = function(trabajoGrado) {
         var deferred = $q.defer();
+       
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado))
           .then(function(respuestaDocumentoTrabajoGrado) {
-            console.log(ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado));
+
+            console.log(respuestaDocumentoTrabajoGrado);
             if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
               trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
               trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
@@ -350,7 +354,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
             if (Object.keys(estudianteConTrabajoDeGrado.data[0]).length > 0) {
-              conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
+              conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));     
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(ctrl.codigoEstudiante));
               $q.all(conjuntoProcesamientoEstudianteTrabajoGrado)
@@ -452,7 +456,7 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())        
           .then(function(respuestaRevisionesTrabajoGrado) {
-            console.log(respuestaRevisionesTrabajoGrado);
+            //console.log(respuestaRevisionesTrabajoGrado);
             if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
                 if (revision.EstadoRevisionTrabajoGrado.Id == 1) {
@@ -495,7 +499,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.actualizarTrabajoGrado = function(respuestaCargarDocumento) {
         var deferred = $q.defer();
-        console.log(respuestaCargarDocumento);
+        //console.log(respuestaCargarDocumento);
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
         poluxRequest
           .put("documento_escrito", ctrl.trabajoGrado.documentoEscrito.Id, ctrl.trabajoGrado.documentoEscrito)
@@ -617,7 +621,21 @@ angular.module('poluxClienteApp')
                       .then(function(respuestaActualizarTg) {
                         if (respuestaActualizarTg.statusText === "OK") {
                           ctrl.cargandoTrabajoGrado = false;
-                          swal(
+                          var nick = token_service.getAppPayload().email.split("@").slice(0);
+                          academicaRequest.get("datos_basicos_estudiante", [self.token.appUserDocument])
+                          .then(function(responseDatosBasicos) {
+                              var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                              academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
+                                carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
+                                notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0]+' de REVISIÓN NUEVA de Trabajo de grado','PoluxColaDocente','/docente/tgs/revision_documento');               
+                                var Atributos={
+                                  rol:'DOCENTE',
+                              }
+                              notificacionRequest.enviarCorreo('Petición de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+//                             notificacionRequest.enviarCorreo('Petición de revisión',Atributos,[ctrl.docenteRevision.Id],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud');   
+                              });
+                            });
+                            swal(
                             $translate.instant("CORREGIR_ANTEPROYECTO.CONFIRMACION"),
                             $translate.instant("CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO"),
                             'success'
@@ -708,6 +726,22 @@ angular.module('poluxClienteApp')
               };
               poluxRequest.post("revision_trabajo_grado", nuevaRevision)
                 .then(function(respuestaSolicitarRevision) {
+                  var nick = token_service.getAppPayload().email.split("@").slice(0);
+                  academicaRequest.get("datos_basicos_estudiante", [self.token.appUserDocument])
+                  .then(function(responseDatosBasicos) {
+                      var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                      academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
+                        carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
+                        notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0]+' de REVISIÓN NUEVA de trabajo de grado ','PoluxColaDocente','/docente/tgs/revision_documento'); 
+                        var Atributos={
+                          rol:'DOCENTE',
+                      }
+                      notificacionRequest.enviarCorreo('Petición de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+                      //  notificacionRequest.enviarCorreo('Petición de revisión',Atributos,[ctrl.docenteRevision.Id],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud');                      		
+           
+                      });
+                    });
                   swal(
                     $translate.instant("FORMULARIO_SOLICITAR_REVISION.CONFIRMACION"),
                     $translate.instant("FORMULARIO_SOLICITAR_REVISION.REVISION_SOLICITADA"),
@@ -931,12 +965,13 @@ angular.module('poluxClienteApp')
                      file:  fileBase64,
                     }] 
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                     
-                       URL = response;                                        
-                      nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                       URL = response;  
+                       console.log(URL);                                      
+                      nuxeoMidRequest.post('workflow?docID=' + URL.data[0].DocumentoEscrito.Enlace, null)
                          .then(function (response) {
-                          console.log('nuxeoMid response: ',response) 
+                          //console.log('nuxeoMid response: ',response) 
                       }).catch(function (error) {
-                        console.log('nuxeoMid error:',error)
+                        //console.log('nuxeoMid error:',error)
                       })
                       return URL  
                      })
@@ -953,6 +988,21 @@ angular.module('poluxClienteApp')
                       if (respuestaActualizarTG.data[0] === "Success") {
                         ctrl.loadTrabajoGrado = false;
                         ctrl.cargandoActualizarTg = false;
+                        var nick = token_service.getAppPayload().email.split("@").slice(0);
+                        academicaRequest.get("datos_basicos_estudiante", [self.token.appUserDocument])
+                        .then(function(responseDatosBasicos) {
+                            var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                            academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
+                              carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
+                              notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0]+' de REVISION de proyecto','PoluxColaDocente','/docente/tgs/revision_documento');               
+                              var Atributos={
+                                rol:'DOCENTE',
+                            }
+                            notificacionRequest.enviarCorreo('Petición de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+                            //  notificacionRequest.enviarCorreo('Petición de revisión',Atributos,[ctrl.docenteRevision.Id],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud.Cuando se desee puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');   
+                            });
+                          });
                         swal(
                           $translate.instant(titleConfirmacion),
                           $translate.instant(mensajeSuccess),
