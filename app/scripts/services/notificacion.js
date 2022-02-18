@@ -76,7 +76,7 @@ angular.module('notificacionService', [])
                     ArnTopic: arm,
                     Suscritos: [
                       {
-                        Endpoint: self.token.email,
+                        Endpoint: self.token.email, 
                         Id: self.token.appUserDocument,
                         Protocolo: 'email'
                       }
