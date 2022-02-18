@@ -1595,12 +1595,10 @@ angular.module('poluxClienteApp')
                  descripcion:descripcion,
                  file:  fileBase64,
                 }] 
-     
-       
-              
                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                  
                    URL =  response.data.res.Enlace 
                   detalle.respuesta = URL                      
+
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {
                      // console.log('nuxeoMid response: ',response) 
@@ -1638,7 +1636,8 @@ angular.module('poluxClienteApp')
                 'warning'
               )
             })
-          }else {
+
+          } else {
             swal(
               $translate.instant("ERROR.SUBIR_DOCUMENTO"),
               $translate.instant("VERIFICAR_DOCUMENTO"),
