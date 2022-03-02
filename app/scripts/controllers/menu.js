@@ -186,7 +186,7 @@ angular.module('poluxClienteApp')
                             }
                             }
                             // Confirmar la subcripcion de notificaciones
-                    /*        
+                            
                  notificacionRequest.verificarSuscripcion().then(function(respuestasub)
                 {
                     if(respuestasub.data.Data!=false)
@@ -210,7 +210,7 @@ angular.module('poluxClienteApp')
                     }
                   }
                   
-                );*/
+                );
                             roles = rl.toString();
                         } else {
                             roles = $scope.token.appUserRole;

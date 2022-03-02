@@ -83,6 +83,7 @@ angular.module('notificacionService', [])
                     ]
                   }
                 return $http.post(path + 'notificaciones/suscribir'+'?atributos=rol:'+ROL, elemento, token_service.getHeader());
+              
             },
             enviarCorreo: function(asunto,atributos,destinatarios,idDuplicacion,idGrupoMensaje,mensaje) {
                 var elemento={
