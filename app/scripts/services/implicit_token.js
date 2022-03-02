@@ -177,9 +177,8 @@ angular.module('implicitToken', [])
         return data;
       },
       logout: function() {
-      
-        window.location.replace(service.logout_url);
 
+        window.location.replace(service.logout_url);
 
       },
       expired: function() {

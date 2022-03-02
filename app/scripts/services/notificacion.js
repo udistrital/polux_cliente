@@ -77,6 +77,7 @@ angular.module('notificacionService', [])
                     Suscritos: [
                       {
                         Endpoint: self.token.email, 
+
                         Id: self.token.appUserDocument,
                         Protocolo: 'email'
                       }
