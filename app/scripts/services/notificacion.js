@@ -76,13 +76,15 @@ angular.module('notificacionService', [])
                     ArnTopic: arm,
                     Suscritos: [
                       {
-                        Endpoint: self.token.email,
+                        Endpoint: self.token.email, 
+
                         Id: self.token.appUserDocument,
                         Protocolo: 'email'
                       }
                     ]
                   }
                 return $http.post(path + 'notificaciones/suscribir'+'?atributos=rol:'+ROL, elemento, token_service.getHeader());
+              
             },
             enviarCorreo: function(asunto,atributos,destinatarios,idDuplicacion,idGrupoMensaje,mensaje) {
                 var elemento={
