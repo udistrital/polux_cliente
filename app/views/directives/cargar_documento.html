@@ -46,10 +46,12 @@
                   <!--
                   Se inhabilita la carga del documento que solía hacerse para las actas, en concordancia con la atención al requerimiento sobre cargar las actas y pedir la fecha de reunión en la que se discutió dicha respuesta
 
-                  <input type="file" class="col-sm-8" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="d_cargarDocumento.documento.fileModel" required> </input>
                   -->
                   <input type="date" class="form-control" min="2017-01-01" ng-model="d_cargarDocumento.fechaReunion" required></input>
                   <!--<md-datepicker ng-model="d_cargarDocumento.fechaReunion" md-placeholder="{{'SELECCIONAR' | translate}}" ng-required="true"></md-datepicker>-->
+               
+                  <input type="file" class="col-sm-8" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="d_cargarDocumento.documento.fileModel" required> </input>
+                 
                 </div>
         </div>
         <br>

@@ -113,11 +113,8 @@
         <div class="row">
           <label class="col-sm-4 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
           <div class="col-sm-8">
-            <!--
-            Se evita la solicitud del archivo que se sube como acta de consejo de carrera
-
-            <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.acta" required> </input>
-            -->
+          
+           
             <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
             <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONAR_ACTA' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
           </div>
@@ -299,11 +296,18 @@
                   <div class="col-sm-3">
                   <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
                   </div>
+
+                  Carga de acta
+                   <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.acta" required> </input>
+            
                   -->
+                  
+
                   <div class="col-sm-2" ng-if="aprobarSolicitud.acta != null">
                     <button class="btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'SELECCIONAR' | translate}}</button>
                   </div>
                 </div>
+               
               </div>
             </div>
           <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
