@@ -177,7 +177,13 @@ angular.module('implicitToken', [])
         return data;
       },
       logout: function() {
+<<<<<<< HEAD
         window.location.replace(service.logout_url);
+=======
+
+        window.location.replace(service.logout_url);
+
+>>>>>>> 363924c035ee3151e7f9c5223c0b0d65bc15b3ef
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());
