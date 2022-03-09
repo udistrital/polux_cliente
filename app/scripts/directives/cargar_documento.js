@@ -36,8 +36,9 @@ angular.module('poluxClienteApp')
        * @requires services/poluxClienteApp.service:nuxeoService
        * @property {object} documento Documento que se va a cargar
        */
-      controller: function (poluxRequest, $translate, $filter, $scope) {
+      controller: function (poluxRequest, $translate, $filter, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest) {
         var ctrl = this;
+        var url;
         ctrl.documento = [];
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
 
@@ -57,47 +58,40 @@ angular.module('poluxClienteApp')
          * @description 
          * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
          */
-        /*
-        Se deja de utilizar la función que carga el documento a nuxeo, pues se atiende a que ahora no se suben las actas
+        
         ctrl.cargarDocumento = function(){
-          var defered = $q.defer();
-          var promise = defered.promise;
-          nuxeo.operation('Document.Create')
-            .params({
-              type: 'File',
-              name: ctrl.documento.nombre,
-              properties: 'dc:title=' + ctrl.documento.nombre + ' \ndc:description=' + ctrl.documento.descripcion
+          var fileBase64;
+          var data = [];
+          var URL = "";
+          utils.getBase64(ctrl.documento.fileModel).then(
+            function (base64) {
+              fileBase64 = base64;
+              data = [{
+                IdTipoDocumento: 18, //id tipo documento de documentos_crud
+                nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
+
+                metadatos: {
+                  NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
+                  Tipo: "Archivo",
+                  Observaciones: "actas"
+                },
+                descripcion: "Acta de respuesta de la solicitud " + ctrl.solicitud,
+                file: fileBase64,
+              }]
+
+              gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                URL = response.data.res.Enlace;
+                url = URL;
+                console.log(url);
+              })
+
             })
-            .input('/default-domain/workspaces/Proyectos de Grado POLUX/Actas')
-            .execute()
-            .then(function(doc) {
-                ctrl.documento.resumen = ctrl.documento.fileModel.name;
-                ctrl.documento.url = doc.uid;
-                var nuxeoBlob = new Nuxeo.Blob({ content: ctrl.documento.fileModel });
-                nuxeo.batchUpload()
-                .upload(nuxeoBlob)
-                .then(function(res) {
-                  return nuxeo.operation('Blob.AttachOnDocument')
-                      .param('document', doc.uid)
-                      .input(res.blob)
-                      .execute();
-                })
-                .then(function() {
-                  return nuxeo.repository().fetch(doc.uid, { schemas: ['dublincore', 'file'] });
-                })
-                .then(function(doc) {
-                  defered.resolve(doc);
-                })
-                .catch(function(error) {
-                  defered.reject(error)
-                });
-            })
-            .catch(function(error) {
-                defered.reject(error)
+            .catch(function (error) {
+              ctrl.swalError();
+              $scope.loadFormulario = false;
             });
-            return promise;
+            return url;
         }
-        */
 
         /**
          * @ngdoc method
@@ -120,11 +114,11 @@ angular.module('poluxClienteApp')
             //Ahora la fecha se ingresa desde la vista
             var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
             ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.codigo_proyecto_curricular + " Fecha: " + date;
-            //Se deja de utilizar la función de cargar el documento
-            //ctrl.cargarDocumento().then(function(){
+            //Se comienza a usar la subida de actas al gestor 
+           ctrl.cargarDocumento();
             var documento = {
               "Titulo": ctrl.documento.nombre,
-              //"Enlace":ctrl.documento.url,
+              "Enlace": url ,
               //"Resumen":ctrl.documento.resumen,
               "Resumen": "Acta de consejo de carrera del proyecto curricular",
               "TipoDocumentoEscrito": 1,
@@ -154,9 +148,11 @@ angular.module('poluxClienteApp')
                   'warning'
                 );
               });
-
+            
             ctrl.documento = [];
-            $scope.loadDocumento = false;
+            $scope.loadDocumento = true;
+           
+            
             /*})
             .catch(function(error){
               
@@ -165,8 +161,9 @@ angular.module('poluxClienteApp')
                 $translate.instant("MENSAJE_ERROR"),
                 $translate.instant("ERROR.SUBIR_DOCUMENTO"),
                 'warning'
-              );
-            });*/
+              );*/
+            
+          
           } else {
             swal(
               $translate.instant("MENSAJE_ERROR"),
