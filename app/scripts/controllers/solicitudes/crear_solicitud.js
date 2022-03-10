@@ -132,10 +132,8 @@ angular.module('poluxClienteApp')
       }
       ctrl.Docente_trabajos=false;
       ctrl.tipoSolicitud_Docente=null;
-      //ctrl.codigo = $routeParams.idEstudiante;
-      //token_service.token.documento = "20131020002";
-      //ctrl.codigo = token_service.token.documento;
       ctrl.codigo = token_service.getAppPayload().appUserDocument;
+      
       ctrl.codigoEstu = 0;
       /**
        * @ngdoc method
@@ -301,7 +299,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerDatosEstudiante = function() {
         var defer = $q.defer();
-        academicaRequest.get("datos_estudiante", [ctrl.codigo, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {       
+        academicaRequest.get("datos_estudiante", [ctrl.codigo, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {  
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
               ctrl.estudiante = {
                 "Codigo": ctrl.codigo,
@@ -519,9 +517,9 @@ angular.module('poluxClienteApp')
             if (ctrl.tieneProrrogas) {
               angular.forEach(responseTiposSolicitudes.data, function(solicitud) {
                 //si la solicitud es diferente de una de prorroga
-                
-                if (solicitud.TipoSolicitud.Id !== 7) {
+                if (solicitud.TipoSolicitud.Id !== 7 ) {
                   ctrl.solicitudes.push(solicitud);
+                
                 }
               });
             } 
@@ -536,7 +534,14 @@ angular.module('poluxClienteApp')
                 });                
                 }
                 else{
-              ctrl.solicitudes = responseTiposSolicitudes.data;
+                  angular.forEach(responseTiposSolicitudes.data, function(solicitud) {
+                    //si la solicitud es diferente de una de socializacion
+               
+                    if (solicitud.TipoSolicitud.Id !== 6 ) {
+                      ctrl.solicitudes.push(solicitud);
+                    
+                    }
+                  });
                 }
             }
             defer.resolve(ctrl.solicitudes);
@@ -765,8 +770,10 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("vinculacion_trabajo_grado", parametrodocente).then(function(responseVinculacion) {
                   angular.forEach(responseVinculacion.data, function(solicitud) {
+                    if(solicitud.TrabajoGrado.EstadoTrabajoGrado.Id===17){
                     ctrl.Docente_solicitudes.push(solicitud);
                     ctrl.loadDocenteSolicitud = true;
+                  }
                   });
                   if (Object.keys(responseVinculacion.data[0]).length > 0) {
                     ctrl.Trabajo = responseVinculacion.data[0];
@@ -860,15 +867,17 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         var verificarRequisitosModalidad = function() {
           var defer = $q.defer();
+          if(ctrl.estudiante.Modalidad == null)
+          {
+            ctrl.estudiante.Modalidad =modalidad;
+          }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
-             
               if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
                 
                 if(ctrl.Docente == 1){
                   defer.resolve(true);
-
                 }
                 else{
                 ctrl.mensajeError = $translate.instant("ESTUDIANTE_NO_REQUISITOS");
@@ -1072,7 +1081,6 @@ angular.module('poluxClienteApp')
         
           ctrl.modalidad = modalidad_seleccionada;
         }
-
         ctrl.verificarRequisitos(tipoSolicitudSeleccionada, modalidad_seleccionada).then(function() {
           ctrl.soliciudConDetalles = true;
           ctrl.detalles = [];
@@ -1841,7 +1849,6 @@ angular.module('poluxClienteApp')
           DetallesSolicitud: data_detalles,
           UsuariosSolicitud: data_usuarios
         }
-        console.log(ctrl.solicitud);
         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
           
           if (response.data[0] === "Success") {

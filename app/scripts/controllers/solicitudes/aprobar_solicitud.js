@@ -294,12 +294,16 @@ angular.module('poluxClienteApp')
         var promise = defered.promise;
         poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function(responseDetalles) {
             poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(function(responseEstudiantes) {
+             
                 if (Object.keys(responseDetalles.data[0]).length === 0) {
                   ctrl.detallesSolicitud = [];
+                
                 } else {
+                 
                   ctrl.detallesSolicitud = responseDetalles.data;
                 }
                 var solicitantes = "";
+
                 ctrl.detallesSolicitud.id = ctrl.solicitud;
                 ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
                 ctrl.detallesSolicitud.fechaSolicitud = ctrl.dataSolicitud.Fecha.toString().substring(0, 10);
@@ -307,9 +311,12 @@ angular.module('poluxClienteApp')
                 angular.forEach(responseEstudiantes.data, function(estudiante) {
                   solicitantes += (", " + estudiante.Usuario);
                 });
+               
                 ctrl.todoDetalles = [];
                 var promises = [];
+                
                 var getDocente = function(id, detalle) {
+                 
                   var defer = $q.defer();
                   academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente) {
                       if (!angular.isUndefined(docente.data.docenteTg.docente)) {
@@ -364,17 +371,19 @@ angular.module('poluxClienteApp')
                     });
                   return defer.promise;
                 }
-
+               
                 var getDocentes = function(detalle) {
                   var defer = $q.defer();
                   var promesasDocentes = [];
                   var detallesTemporales = [];
+                
                   angular.forEach(detalle.Descripcion.split(","), function(docDocente) {
                     var detalleTemp = {
                       Descripcion: docDocente,
                       id: docDocente,
                     }
                     detallesTemporales.push(detalleTemp);
+                    
                     promesasDocentes.push(getDocente(0, detalleTemp));
                   })
                   $q.all(promesasDocentes)
@@ -429,8 +438,10 @@ angular.module('poluxClienteApp')
 
                 angular.forEach(ctrl.detallesSolicitud, function(detalle) {
                   ctrl.todoDetalles.push(detalle);
+                  
                   detalle.filas = [];
                   var id = detalle.DetalleTipoSolicitud.Detalle.Id
+                  
                   if (id === 49) {
                     detalle.Descripcion = detalle.Descripcion.split("-")[1];
                   } else if (id === 9 || id === 14 || id === 15 || id === 16 || id === 17 || id === 48 || id === 37 || id === 56 || id === 57 || id === 58) {
@@ -444,7 +455,6 @@ angular.module('poluxClienteApp')
                     promises.push(getExterno(detalle));
                   } else if (detalle.Descripcion.includes("JSON-")) {
                     if (detalle.DetalleTipoSolicitud.Detalle.Id === 8) {
-                      //areas de conocimiento
                       ctrl.areas = [];
                       var datosAreas = detalle.Descripcion.split("-");
                       datosAreas.splice(0, 1);
@@ -635,6 +645,7 @@ angular.module('poluxClienteApp')
         query: "Id:" + ctrl.solicitud,
         limit: 1
       });
+     
       poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitud).then(function(responseSolicitud) {
           if (Object.keys(responseSolicitud.data[0]).length > 0) {
             var parametrosDetallesSolicitud = $.param({
@@ -642,8 +653,8 @@ angular.module('poluxClienteApp')
               limit: 0
             });
             ctrl.mensajeNoAprobar = $translate.instant('ERROR') + ':';
-
             ctrl.dataSolicitud = responseSolicitud.data[0];
+
             var promises = [];
             promises.push(ctrl.getDetallesSolicitud(parametrosDetallesSolicitud));
             promises.push(ctrl.evaluarSolicitud());
@@ -749,7 +760,7 @@ angular.module('poluxClienteApp')
               "Id": Number(ctrl.solicitud)
             }
           }
-
+        
           ctrl.dataRespuesta = {
             RespuestaAnterior: objRtaAnterior,
             RespuestaNueva: objRtaNueva,
@@ -1270,6 +1281,7 @@ angular.module('poluxClienteApp')
                 }
               }
               //Documento escrito
+
               var data_documentoEscrito = {
                 Id: 0,
                 Titulo: data_tg.Titulo,
@@ -1278,6 +1290,7 @@ angular.module('poluxClienteApp')
                 //Tipo documento 5 para revisión final
                 TipoDocumentoEscrito: 5
               };
+             
               var data_revision = {
                 TrabajoGrado: data_tg,
                 Vinculaciones: data_vinculaciones,
@@ -1366,7 +1379,7 @@ angular.module('poluxClienteApp')
             var Atributos={
               rol:'ESTUDIANTE',
           }
-          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,['101850341'],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
 
            // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
               
@@ -1410,7 +1423,6 @@ angular.module('poluxClienteApp')
        * Conecta el cliente de {@link services/poluxClienteApp.service:nuxeoService nuxeo} y crea la data del documento que se va a cargar y llama a la función cargar documento.
        */
       ctrl.cargarJustificacion = function(callFunction) {
-        nuxeo.connect().then(function(client) {
           // OK, the returned client is connected
           
           var tam = 2000;
@@ -1465,10 +1477,7 @@ angular.module('poluxClienteApp')
             ctrl.swalError();
             $scope.loadFormulario = false;
           }
-        }, function(err) {
-          // cannot connect
-          ctrl.swalError();
-        });
+        
 
       };
 

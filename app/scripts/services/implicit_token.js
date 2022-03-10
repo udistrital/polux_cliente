@@ -84,10 +84,12 @@ angular.module('implicitToken', [])
               .then(function(respuestaAutenticacion) {
                 
                 //appUserDocument = respuestaAutenticacion.data.documento;
-                
-                
-                appUserDocument = respuestaAutenticacion.data.documento;
-                
+       
+                if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
+                  appUserDocument = respuestaAutenticacion.data.Codigo;
+                }else{
+                  appUserDocument = respuestaAutenticacion.data.documento;
+                }
                 appUserRole = respuestaAutenticacion.data.role;            
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
@@ -142,7 +144,7 @@ angular.module('implicitToken', [])
         return url;
       },
       live_token: function() {
-        if (window.localStorage.getItem('id_token') === 'undefined' || window.localStorage.getItem('id_token') === null || service.logoutValid()) {         
+        if (window.localStorage.getItem('id_token') === 'undefined' || window.localStorage.getItem('id_token') === null || service.logoutValid()) {
           service.login();
           return false;
         } else {
@@ -165,21 +167,22 @@ angular.module('implicitToken', [])
       },
       // Contiene el documento para las búsquedas
       getAppPayload: function() {
-
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
         var data = JSON.parse(atob(id_token[1]));
-        
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
-        //
         return data;
       },
       logout: function() {
+<<<<<<< HEAD
+        window.location.replace(service.logout_url);
+=======
 
         window.location.replace(service.logout_url);
 
+>>>>>>> 363924c035ee3151e7f9c5223c0b0d65bc15b3ef
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());
@@ -222,6 +225,5 @@ angular.module('implicitToken', [])
     };
     service.setExpiresAt();
     service.timer();
-    
     return service;
   });
