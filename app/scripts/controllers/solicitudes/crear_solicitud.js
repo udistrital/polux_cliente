@@ -132,10 +132,8 @@ angular.module('poluxClienteApp')
       }
       ctrl.Docente_trabajos=false;
       ctrl.tipoSolicitud_Docente=null;
-      //ctrl.codigo = $routeParams.idEstudiante;
-      //token_service.token.documento = "20131020002";
       ctrl.codigo = token_service.getAppPayload().appUserDocument;
-      //ctrl.codigo = "20101020075";
+      
       ctrl.codigoEstu = 0;
       /**
        * @ngdoc method
