@@ -193,7 +193,6 @@ angular.module('poluxClienteApp')
           sesionesRequest.get("relacion_sesiones", parametrosSesiones)
          
             .then(function(responseFechas) {
-              console.log(parametrosSesiones);
               if (Object.keys(responseFechas.data[0]).length > 0) {
                 
                 var sesion = responseFechas.data[0];

@@ -245,8 +245,6 @@ angular.module('poluxClienteApp')
        
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado))
           .then(function(respuestaDocumentoTrabajoGrado) {
-
-            console.log(respuestaDocumentoTrabajoGrado);
             if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
               trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
               trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
@@ -965,8 +963,7 @@ angular.module('poluxClienteApp')
                      file:  fileBase64,
                     }] 
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                     
-                       URL = response;  
-                       console.log(URL);                                      
+                       URL = response;                                     
                       nuxeoMidRequest.post('workflow?docID=' + URL.data[0].DocumentoEscrito.Enlace, null)
                          .then(function (response) {
                           //console.log('nuxeoMid response: ',response) 

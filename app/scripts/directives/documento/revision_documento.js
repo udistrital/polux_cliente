@@ -294,7 +294,6 @@ angular.module('poluxClienteApp')
                                                         },
                                                         Documento: true
                                                 })  
-                                                console.log(ctrl.correcciones) 
                                                 ctrl.registrarRevision();                                                                  
                                                 nuxeoMidRequest.post('workflow?docID=' + URL, null)
                                                    .then(function (response) {

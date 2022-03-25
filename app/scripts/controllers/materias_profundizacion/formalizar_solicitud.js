@@ -272,7 +272,6 @@ angular.module('poluxClienteApp')
 			 * @returns {undefined} No hace retorno de resultados
 			 */
 			ctrl.autorizarFormalizacionDeSolicitudes = function() {
-				console.log("holi");
 				ctrl.comprobarPeriodoFormalizacion()
 					.then(function(autorizacionPeriodoFormalizacion) {
 						
