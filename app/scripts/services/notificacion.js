@@ -66,7 +66,7 @@ angular.module('notificacionService', [])
             verificarSuscripcion: function() {
                 var elemento={
                     ArnTopic:arm,   
-                    Endpoint:self.token.email,
+                    Endpoint:"",//self.token.email,
                     
                 }
                 return $http.post(path + 'notificaciones/suscripcion', elemento, token_service.getHeader());
@@ -76,7 +76,7 @@ angular.module('notificacionService', [])
                     ArnTopic: arm,
                     Suscritos: [
                       {
-                        Endpoint: self.token.email, 
+                        Endpoint: "",//self.token.email, 
 
                         Id: self.token.appUserDocument,
                         Protocolo: 'email'
