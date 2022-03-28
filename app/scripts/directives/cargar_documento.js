@@ -82,7 +82,6 @@ angular.module('poluxClienteApp')
               gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
                 URL = response.data.res.Enlace;
                 url = URL;
-                console.log(url);
               })
 
             })

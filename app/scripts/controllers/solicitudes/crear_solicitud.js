@@ -204,7 +204,6 @@ angular.module('poluxClienteApp')
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
-            
               if (Object.keys(responseSolicitudesActuales.data[0]).length > 0) {
                 solicitudesActuales.push(responseSolicitudesActuales.data[0]);
                 defer.resolve(responseSolicitudesActuales.data);
@@ -1769,6 +1768,38 @@ angular.module('poluxClienteApp')
             "PeriodoAcademico": ctrl.periodo
           };
         } else {
+          if(ctrl.ModalidadTipoSolicitud === 2)
+          {
+            ctrl.ModalidadTipoSolicitud = 70;   
+          }
+          if(ctrl.ModalidadTipoSolicitud === 13)
+          {
+            ctrl.ModalidadTipoSolicitud = 71; 
+          }
+          if(ctrl.ModalidadTipoSolicitud === 16)
+          {
+            ctrl.ModalidadTipoSolicitud = 72; 
+          }
+          if(ctrl.ModalidadTipoSolicitud === 20)
+          {
+            ctrl.ModalidadTipoSolicitud = 73; 
+          }
+          if(ctrl.ModalidadTipoSolicitud === 28)
+          {
+            ctrl.ModalidadTipoSolicitud = 74; 
+          }
+          if(ctrl.ModalidadTipoSolicitud === 38)
+          {
+            ctrl.ModalidadTipoSolicitud = 75; 
+          }
+          if(ctrl.ModalidadTipoSolicitud === 46)
+          {
+            ctrl.ModalidadTipoSolicitud = 76; 
+          }
+          if(ctrl.ModalidadTipoSolicitud === 55)
+          {
+            ctrl.ModalidadTipoSolicitud = 77; 
+          }
           data_solicitud = {
             "Fecha": fecha,
             "ModalidadTipoSolicitud": {

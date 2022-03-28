@@ -88,7 +88,6 @@ angular.module('poluxClienteApp')
                       });
                       poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajo).then(function(responseTrabajo) {
                           if (Object.keys(responseTrabajo.data[0]).length > 0) {
-                            console.log(responseTrabajo);
                             // se verifica que no tenga solicitudes pendientes
                             var parametrosUsuario = $.param({
                               query: "usuario:" + ctrl.codigo,
@@ -312,7 +311,6 @@ angular.module('poluxClienteApp')
               var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
               academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
                 carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
-                console.log("se crea soli");
                 notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');               
               });
               });  defer.resolve(response);

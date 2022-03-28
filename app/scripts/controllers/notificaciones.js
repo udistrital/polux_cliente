@@ -118,10 +118,8 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
             {
                     if(response)
                     {
-                        
-                        console.log("si funciono");
-
-                         
+                        $translate.instant("Se ha eliminado correctamente"),
+                        'warning' 
                 $location.path("/notificaciones");
                 traerNoticicaciones()
                     }

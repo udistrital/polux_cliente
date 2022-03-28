@@ -97,7 +97,6 @@ angular.module('poluxClienteApp')
                         nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                         break;
                     }
-                    console.log(nombreHijo);
                     angular.forEach(versiones, function (version) {   
                       version.name = nombreHijo + version.get('uid:major_version')
                       

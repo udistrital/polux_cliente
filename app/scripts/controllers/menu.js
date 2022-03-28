@@ -191,7 +191,7 @@ angular.module('poluxClienteApp')
                 {
                     if(respuestasub.data.Data!=false)
                     {
-                        console.log(respuestasub.data.Data+" Ya se encuentra registrado el usuario en notificaciones");                
+                                      
                     }
                     else
                     {
