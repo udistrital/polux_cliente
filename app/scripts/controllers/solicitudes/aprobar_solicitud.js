@@ -1771,7 +1771,9 @@ angular.module('poluxClienteApp')
 
               if (responsesolicitud.data !== undefined) {
                 parametro.ModalidadTipoSolicitud = responsesolicitud.data;
-                console.log(parametro);
+
+               // console.log(parametro);
+
                 var parametrosSolicitud1 = {
                   "Id": parametro.Id,
                   "Fecha": parametro.Fecha,
@@ -1830,7 +1832,9 @@ angular.module('poluxClienteApp')
           var objRtaNueva = {
             "Id": null,
             "Fecha": fechaRespuesta,
-            "Justificacion": "El director no aprobo ser el director del proyecto",
+
+            "Justificacion": "El director no aprobo ser el Docente del proyecto",
+
             "EnteResponsable": 0,
             "Usuario": $scope.userId,
             "Activo": true,
@@ -1856,7 +1860,8 @@ angular.module('poluxClienteApp')
               TrabajoGrado: null,
               
             };
-            console.log(ctrl.dataRespuesta);
+            //console.log(ctrl.dataRespuesta);
+
           poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
             ctrl.mostrarRespuesta(response);
           })
