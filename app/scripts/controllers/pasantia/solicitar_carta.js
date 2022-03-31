@@ -31,7 +31,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('PasantiaSolicitarCartaCtrl',
-    function($location, $q, $scope, $translate, academicaRequest, poluxRequest, poluxMidRequest, token_service) {
+    function($location, $q, $scope,notificacionRequest, $translate, academicaRequest, poluxRequest, poluxMidRequest, token_service) {
       var ctrl = this;
 
       //mensajes para load
@@ -61,22 +61,25 @@ angular.module('poluxClienteApp')
         ctrl.errorCargar = false;
         academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
           academicaRequest.get("datos_estudiante", [ctrl.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
+            
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
+             
               ctrl.estudiante = {
                 "Codigo": ctrl.codigo,
                 "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                 "Modalidad": 1, //id modalidad de pasantia
                 "Tipo": "POSGRADO",
-                "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].creditosCollection.datosCreditos[0].porcentaje.porcentaje_cursado[0].porcentaje_cursado,
+                "PorcentajeCursado": response2.data.estudianteCollection.datosEstudiante[0].porcentaje_cursado,
                 "Promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                 "Rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
                 "Estado": response2.data.estudianteCollection.datosEstudiante[0].estado,
                 "Nivel": response2.data.estudianteCollection.datosEstudiante[0].nivel,
-                "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].nombre_tipo_carrera,
+                "TipoCarrera": response2.data.estudianteCollection.datosEstudiante[0].tipo_carrera,
                 "Carrera": response2.data.estudianteCollection.datosEstudiante[0].carrera
               };
               if (ctrl.estudiante.Nombre != undefined) {
                 poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(verificacion) {
+                  
                     if (verificacion.data.RequisitosModalidades) {
                       // se verifica que no tenga trabajos de grado actualmente
                       var parametrosTrabajo = $.param({
@@ -302,7 +305,15 @@ angular.module('poluxClienteApp')
 
         poluxRequest.post("tr_solicitud", ctrl.postSolicitud)
           .then(function(response) {
-            defer.resolve(response);
+            var nick = token_service.getAppPayload().email.split("@").slice(0);
+            academicaRequest.get("datos_basicos_estudiante", [ctrl.codigo])
+            .then(function(responseDatosBasicos) {
+              var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+              academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
+                carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
+                notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');               
+              });
+              });  defer.resolve(response);
           })
           .catch(function(error) {
             defer.reject(error);

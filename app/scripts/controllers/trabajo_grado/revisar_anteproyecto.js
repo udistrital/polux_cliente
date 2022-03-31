@@ -46,7 +46,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
+		function($q, $translate,notificacionRequest, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -509,6 +509,12 @@ angular.module('poluxClienteApp')
 									if (respuestaActualizarAnteproyecto.data[0] === "Success") {
 										ctrl.cargandoAnteproyectos = false;
 										ctrl.cargandoDatosEstudiantiles = false;
+										var Atributos={
+											rol:'ESTUDIANTE',
+										}
+										notificacionRequest.enviarCorreo('espuesta de revisión',Atributos,['101850341'],'','','Se ha realizado la respuesta de la solicitud de revision del trabajo de grado, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+									//	notificacionRequest.enviarCorreo('Respuesta de revisión ',Atributos,[estudianteAsociado.Estudiante],'','','Se ha realizado la respuesta de la solicitud de revision del trabajo de grado, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                      		
 										swal(
 											$translate.instant("REVISAR_ANTEPROYECTO.CONFIRMACION"),
 											$translate.instant("REVISAR_ANTEPROYECTO.REVISION_REGISTRADA"),

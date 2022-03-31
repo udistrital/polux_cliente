@@ -346,7 +346,9 @@ var text_es = {
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
+        NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación"
     },
+    VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
@@ -908,6 +910,9 @@ var text_es = {
     ACUERDO_INFO: "A continuación se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se " +
         "reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.",
     REPORTE_GENERAL_DOCENTES: "Reporte general por docentes",
+    NOTIFICACIONES_ELIMINADA: "Eliminación correcta de la notificación",
+    NOTIFICACIONES_REALIZADA: "Se completo la petición",
+    SIN_NOTIFICACIONES: "No se encuentran notificaciones en espera",
 };
 
 /**

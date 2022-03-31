@@ -42,7 +42,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('MateriasProfundizacionVincularAdmitidosCtrl',
-    function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+    function($q, $translate, academicaRequest,notificacionRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
       var ctrl = this;
 
       // El Id del usuario depende de la sesión
@@ -726,6 +726,12 @@ angular.module('poluxClienteApp')
                   // Se estudia si la transacción fue exitosa
                   if (respuestaRegistrarSolicitudAprobada.data[0] === "Success") {
                     // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
+                    var Atributos={
+                      rol:'ESTUDIANTE',
+                  }
+                  notificacionRequest.enviarCorreo('Mensaje de ADMISIÓN de materia de profundizacion',Atributos,['101850341'],'','','Se ha registrado la solicitud de admision de parte de '+token_service.getAppPayload().email+' para la materia de profundizacion asociado.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+
+             //       notificacionRequest.enviarCorreo('Mensaje de ADMISIÓN de materia de profundizacion',Atributos,[ctrl.solicitudSeleccionada.codigoEstudiante],'','','Se ha registrado la solicitud de admision de parte de '+token_service.getAppPayload().email+' para la materia de profundizacion asociado.');               
                     ctrl.cargandoTransaccionRegistro = false;
                     swal(
                       $translate.instant("LISTAR_APROBADOS.AVISO"),

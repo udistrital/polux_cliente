@@ -31,7 +31,7 @@
  */
 angular.module('poluxClienteApp')
 	.controller('MateriasProfundizacionFormalizarSolicitudCtrl',
-		function($q, $translate, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
+		function($q, $translate,notificacionRequest, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -144,7 +144,8 @@ angular.module('poluxClienteApp')
 			ctrl.obtenerParametrosSesionesDeFormalizacion = function(periodoAcademicoCorrespondiente) {
 				return $.param({
 					query: "SesionPadre.TipoSesion.Id:9,SesionPadre.periodo:" +
-						periodoAcademicoCorrespondiente.anio +
+						//periodoAcademicoCorrespondiente.anio +
+						2020+
 						periodoAcademicoCorrespondiente.periodo,
 					limit: 0
 				});
@@ -212,12 +213,13 @@ angular.module('poluxClienteApp')
 						var fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
 						// Se recorre la colección de sesiones de formalización consultadas
 						angular.forEach(sesionesDeFormalizacion, function(sesionDeFormalizacion) {
+							
 							/**
 							 * Se estudia que el Id del tipo de sesión corresponda a los periodos de formalización
 							 * 5 - Primera fecha de formalización
 							 * 7 - Segunda fecha de formalización
 							 */
-							if (sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 5 || sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 7) {
+							if (sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 8 || sesionDeFormalizacion.SesionHijo.TipoSesion.Id == 7) {
 								// Se ajusta el formato de la fecha de inicio de formalización
 								var registroInicioDeFormalizacion = new Date(sesionDeFormalizacion.SesionHijo.FechaInicio);
 								registroInicioDeFormalizacion.setTime(
@@ -235,6 +237,7 @@ angular.module('poluxClienteApp')
 								// Se establece la fecha de inicio de formalización comparable
 								var fechaFinDeFormalizacion = moment(registroFinDeFormalizacion).format("YYYY-MM-DD HH:mm");
 								// Se almacenan las fechas de inicio y fin de formalización para enseñarlas al usuario
+								
 								ctrl.coleccionFechasFormalizacion.push({
 									descripcionFechaDeFormalizacion: sesionDeFormalizacion.SesionHijo.Descripcion,
 									fechaInicioDeFormalizacion: fechaInicioDeFormalizacion,
@@ -271,6 +274,7 @@ angular.module('poluxClienteApp')
 			ctrl.autorizarFormalizacionDeSolicitudes = function() {
 				ctrl.comprobarPeriodoFormalizacion()
 					.then(function(autorizacionPeriodoFormalizacion) {
+						
 						ctrl.actualizarCuadriculaSolicitudesParaFormalizar();
 					})
 					.catch(function(excepcionAutorizacionPeriodoFormalizacion) {
@@ -674,6 +678,15 @@ angular.module('poluxClienteApp')
 									// Se verifica que la respuesta es exitosa
 									if (respuestaFormalizarSolicitud.data[0] === "Success") {
 										// Se despliega el mensaje que confirma el registro de la formalización
+										var nick = token_service.getAppPayload().email.split("@").slice(0);
+										academicaRequest.get("datos_basicos_estudiante", [self.token.appUserDocument])
+										.then(function(responseDatosBasicos) {
+											var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+											academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
+											  carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
+											  notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');               
+											});
+										  });
 										swal(
 											$translate.instant("FORMALIZAR_SOLICITUD.AVISO"),
 											$translate.instant("FORMALIZAR_SOLICITUD.SOLICITUD_FORMALIZADA"),

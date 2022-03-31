@@ -1,3 +1,4 @@
+  
 'use strict';
 
 /**
@@ -83,10 +84,9 @@ angular.module('implicitToken', [])
               .then(function(respuestaAutenticacion) {
                 
                 //appUserDocument = respuestaAutenticacion.data.documento;
-                
+       
                 if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
-                  //appUserDocument="20031085066";
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
                 }
@@ -176,7 +176,9 @@ angular.module('implicitToken', [])
         return data;
       },
       logout: function() {
+
         window.location.replace(service.logout_url);
+
       },
       expired: function() {
         return (new Date(window.localStorage.getItem('expires_at')) < new Date());

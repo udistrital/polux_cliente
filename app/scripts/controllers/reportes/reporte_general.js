@@ -9,6 +9,7 @@
  * Controlador que permite al estudiante crear una solicitud, en caso de que cuente con un trabajo de grado muestra los tipos de solicitudes
  * asociadas a esa modalidad (cancelación, cambio de nombre, cambio de director, entre otros), en caso contrario, muestra una lista de las solicitudes
  * iniciales de cada modalidad.
+
  * @requires $location
  * @requires $q
  * @requires $routeParams

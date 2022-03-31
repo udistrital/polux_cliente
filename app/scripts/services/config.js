@@ -1,6 +1,6 @@
 'use strict';
 //ya no se usa este servicio
-
+/*
 /**
  * @ngdoc property
  * @name poluxClienteApp.service:CONF.conf_cloud
@@ -18,7 +18,7 @@
  * @propertyOf poluxClienteApp.service:CONF
  * @description
  * Variables de configuración de entorno de pruebas
- */
+
  var conf_pruebas = {
     ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     POLUX_SERVICE: "http://10.20.0.254/polux_api_crud/v1/",
@@ -45,6 +45,7 @@
     },
     AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/"
 };
+*/
 
  /**
  * @ngdoc property
@@ -52,7 +53,7 @@
  * @propertyOf poluxClienteApp.service:CONF
  * @description
  * Variables de configuración de entorno local
- */
+ 
 var conf_local = {
     //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxy",
     //ACADEMICA_SERVICE: "http://jbpm.udistritaloas.edu.co:8280/services/academicaProxyProduccion",
@@ -81,7 +82,7 @@ var conf_local = {
     },
     AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
    //    AUTENTICATION_MID_SERVICE:"http://localhost:8080/v1/"
-};
+};*/
 
 /**
  * @ngdoc property
@@ -89,7 +90,7 @@ var conf_local = {
  * @propertyOf poluxClienteApp.service:CONF
  * @description
  * Variables de configuración de preproducción - pruebas en la nube
- */
+
 var conf_cloud_preproduccion = {
     ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1/",
     POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
@@ -116,13 +117,14 @@ var conf_cloud_preproduccion = {
     //AUTENTICATION_MID_SERVICE:"https://localhost:8080/v1/"
 };
 
-/**
+
  * @ngdoc service
  * @name poluxClienteApp.service:CONF
  * @description
  * Constante que retorna las direcciones en el servicio
- */
+ 
 angular.module('poluxClienteApp')
   .constant('CONF', {
       GENERAL: conf_local
   });
+  */

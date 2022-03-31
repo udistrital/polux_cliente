@@ -16,7 +16,7 @@ angular.module('poluxClienteApp')
   .controller('MateriasPosgradoSolicitarAsignaturasCtrl',
     function($scope, poluxMidRequest, academicaRequest) {
       var ctrl = this;
-      $scope.codigo = "20092020008";
+      $scope.codigo = token_service.getAppPayload().appUserDocument;
 
       /**
        * @ngdoc method
