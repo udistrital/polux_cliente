@@ -528,7 +528,6 @@ angular.module('poluxClienteApp')
                   }
                   if (Object.keys(responseSolicitudes.data[0]).length === 0) {
                     responseSolicitudes.data = [];
-                    console.log(responseSolicitudes);
                     ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
                     ctrl.errorCargarParametros = true;
                   }
@@ -602,7 +601,6 @@ angular.module('poluxClienteApp')
                         ctrl.errorCargarParametros = true;
                       } else {
 
-                    console.log(responseDetalles);
                           if(responseDetalles.data[4].Descripcion === ctrl.userId || responseDetalles.data[5].Descripcion === ctrl.userId)
                           {
                             promiseArr.push(verificarSolicitud(solicitud));
