@@ -546,7 +546,6 @@ angular.module('poluxClienteApp')
                       order: "asc",
                       limit: 1,
                     });
-                    
                     poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                         ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
                          
@@ -638,6 +637,7 @@ angular.module('poluxClienteApp')
                 ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
                 angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {
                   carreras.push(carrera.codigo_proyecto_curricular);
+                  //carreras.push('20')
                 });
 
                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
@@ -662,14 +662,12 @@ angular.module('poluxClienteApp')
                         order: "asc",
                         limit: 1,
                       });
-                      
                       poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                        
                           ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
                               academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                   if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                     var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
-                              
                                     if (carreras.includes(carreraEstudiante)) {
                                       solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
                                       
