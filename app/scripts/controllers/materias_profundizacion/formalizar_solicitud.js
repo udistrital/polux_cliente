@@ -679,7 +679,7 @@ angular.module('poluxClienteApp')
 									if (respuestaFormalizarSolicitud.data[0] === "Success") {
 										// Se despliega el mensaje que confirma el registro de la formalización
 										var nick = token_service.getAppPayload().email.split("@").slice(0);
-										academicaRequest.get("datos_basicos_estudiante", [self.token.appUserDocument])
+										academicaRequest.get("datos_basicos_estudiante", [token_service.getAppPayload().appUserDocument])
 										.then(function(responseDatosBasicos) {
 											var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
 											academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){

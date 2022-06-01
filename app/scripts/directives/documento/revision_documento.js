@@ -14,7 +14,7 @@
  * @param {string} docdocente Documento del docente que revisan el documento.
  */
 angular.module('poluxClienteApp')
-    .directive('revisionDocumento', function (poluxRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient) {
+    .directive('revisionDocumento', function (poluxRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient,notificacionRequest) {
         return {
             restrict: "E",
             scope: {
@@ -387,7 +387,6 @@ angular.module('poluxClienteApp')
                                         }
                                     })
                                     .catch(function (excepcionRegistrarRevisionTg) {
-                                        
                                         swal(
                                             $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                             $translate.instant("REGISTRAR_REVISION.ERROR"),
@@ -405,7 +404,6 @@ angular.module('poluxClienteApp')
                             }
                         })
                         .catch(function (excepcionInformacionDocente) {
-                            
                             swal(
                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                 $translate.instant("REGISTRAR_REVISION.ERROR"),

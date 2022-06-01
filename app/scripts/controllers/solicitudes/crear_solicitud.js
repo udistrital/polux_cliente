@@ -121,6 +121,7 @@ angular.module('poluxClienteApp')
       ctrl.Docente_solicitudes=[];
       ctrl.loadDocenteSolicitud=false;
       ctrl.rol= token_service.getAppPayload().role;
+      ctrl.url="url"
       if( ctrl.rol==null)
       {
         ctrl.rol= token_service.getAppPayload().appUserRole;
@@ -1518,7 +1519,7 @@ angular.module('poluxClienteApp')
             detalle.respuesta = detalle.opciones[0].bd;
           }
           if (detalle.Detalle.TipoDetalle.Nombre === 'Documento') {
-            detalle.respuesta = "urlDocumento";
+            detalle.respuesta = ctrl.url;
             ctrl.detallesConDocumento.push(detalle);
           }
           if (detalle.Detalle.TipoDetalle.Nombre === 'Directiva') {
@@ -1684,13 +1685,22 @@ angular.module('poluxClienteApp')
                  file:  fileBase64,
                 }] 
                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                  
-                   URL =  response.data.res.Enlace 
-                  detalle.respuesta = URL                      
+                   URL =  response.data.res.Enlace
+                  detalle.respuesta = URL
+                  ctrl.url=response.data.res.Enlace
 
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
                      .then(function (response) {
                   }).catch(function (error) {
                   })
+                  ctrl.cargarSolicitudes().catch(function(error)
+                  {
+                    swal(
+                      $translate.instant("ERROR.CARGA_SOLICITUDES"),
+                      $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                      'warning'
+                    )
+                  });
                  })
 
               })     
@@ -1713,7 +1723,7 @@ angular.module('poluxClienteApp')
 
             });
             $q.all(promiseArr).then(function() {                     
-              ctrl.cargarSolicitudes();
+              //ctrl.cargarSolicitudes();
             }).catch(function(error)
             {
               swal(
