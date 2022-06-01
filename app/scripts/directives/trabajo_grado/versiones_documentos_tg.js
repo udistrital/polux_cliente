@@ -74,7 +74,7 @@ angular.module('poluxClienteApp')
           var parametrosDocumento = $.param({
             query: "TrabajoGrado.Id:" + trabajoGrado.Id
               + ",DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumento,
-            limi: 1
+            limit: 1
           });
           poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
             .then(function (responseDocumento) {

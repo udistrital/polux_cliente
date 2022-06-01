@@ -512,7 +512,7 @@ angular.module('poluxClienteApp')
 										var Atributos={
 											rol:'ESTUDIANTE',
 										}
-										notificacionRequest.enviarCorreo('espuesta de revisión',Atributos,['101850341'],'','','Se ha realizado la respuesta de la solicitud de revision del trabajo de grado, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+										notificacionRequest.enviarCorreo('Respuesta de revisión',Atributos,['101850341'],'','','Se ha realizado la respuesta de la solicitud de revision del trabajo de grado, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
 
 									//	notificacionRequest.enviarCorreo('Respuesta de revisión ',Atributos,[estudianteAsociado.Estudiante],'','','Se ha realizado la respuesta de la solicitud de revision del trabajo de grado, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                      		
 										swal(
@@ -533,6 +533,7 @@ angular.module('poluxClienteApp')
 									}
 								})
 								.catch(function(excepcionActualizarAnteproyecto) {
+									console.log(excepcionActualizarAnteproyecto)
 									ctrl.cargandoAnteproyectos = false;
 									ctrl.cargandoDatosEstudiantiles = false;
 									swal(
