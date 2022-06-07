@@ -1661,20 +1661,20 @@ angular.module('poluxClienteApp')
           });
           $scope.loadFormulario = true;
           if (!fileTypeError) {
-            var promiseArr = [];
-            angular.forEach(ctrl.detallesConDocumento, function(detalle) {
+            var p =new Promise((resolve, reject) => {
+              angular.forEach(ctrl.detallesConDocumento, function(detalle,index) {
               //carga de documentos por el Gestor documental 
+              var URL = "";
               var descripcion;
               var fileBase64 ;
               var data = [];
-              var URL = "";
                 descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
                 utils.getBase64(detalle.fileModel).then(
                   function (base64) {                   
                    fileBase64 = base64;
                 data = [{
                  IdTipoDocumento: 5, //id tipo documento de documentos_crud
-                 nombre: detalle.Detalle.Nombre ,// nombre formado por nombre de la solicitud
+                 nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
                 
                  metadatos: {
                    NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
@@ -1684,46 +1684,21 @@ angular.module('poluxClienteApp')
                  descripcion:descripcion,
                  file:  fileBase64,
                 }] 
-                gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                  
-                   URL =  response.data.res.Enlace
+                gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
+                  URL =  response.data.res.Enlace
                   detalle.respuesta = URL
                   ctrl.url=response.data.res.Enlace
 
-                  nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                     .then(function (response) {
-                  }).catch(function (error) {
-                  })
-                  ctrl.cargarSolicitudes().catch(function(error)
-                  {
-                    swal(
-                      $translate.instant("ERROR.CARGA_SOLICITUDES"),
-                      $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                      'warning'
-                    )
-                  });
+                  //nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                  if(index+1===ctrl.detallesConDocumento.length && response.data.res.Enlace){
+                    resolve();
+                  }
                  })
-
-              })     
-
-        /*      var anHttpPromise = nuxeoClient.createDocument(detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.Detalle.Nombre + ":" + ctrl.codigo, detalle.fileModel, 'solicitudes', function(url) {
-                detalle.respuesta = url;
-              });
-            });
-            $q.all(promiseArr).then(function() {                     
-              
-            }).catch(function(error) {
-              swal(
-                $translate.instant("ERROR.CARGA_SOLICITUDES"),
-                $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                'warning'
-              );
-              $scope.loadFormulario = false;
-
-              */
-
-            });
-            $q.all(promiseArr).then(function() {                     
-              //ctrl.cargarSolicitudes();
+              })
+            })
+          });
+            p.then(function() {
+              ctrl.cargarSolicitudes();
             }).catch(function(error)
             {
               swal(
