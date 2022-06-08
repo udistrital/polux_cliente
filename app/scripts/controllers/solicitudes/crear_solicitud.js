@@ -1661,43 +1661,44 @@ angular.module('poluxClienteApp')
           });
           $scope.loadFormulario = true;
           if (!fileTypeError) {
-            var p =new Promise((resolve, reject) => {
-              angular.forEach(ctrl.detallesConDocumento, function(detalle,index) {
-              //carga de documentos por el Gestor documental 
-              var URL = "";
-              var descripcion;
-              var fileBase64 ;
-              var data = [];
-                descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
-                utils.getBase64(detalle.fileModel).then(
-                  function (base64) {                   
-                   fileBase64 = base64;
-                data = [{
-                 IdTipoDocumento: 5, //id tipo documento de documentos_crud
-                 nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
-                
-                 metadatos: {
-                   NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
-                   Tipo: "Archivo",
-                   Observaciones: "Solicitud inicial"
-                 }, 
-                 descripcion:descripcion,
-                 file:  fileBase64,
-                }] 
-                gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
-                  URL =  response.data.res.Enlace
-                  detalle.respuesta = URL
-                  ctrl.url=response.data.res.Enlace
+            var promiseArray = []
+            ctrl.detallesConDocumento.map((detalle)=>{
+              //carga de documentos por el Gestor documental
+              promiseArray.push(new Promise((resolve,reject) => {
+                var URL = "";
+                var descripcion;
+                var fileBase64 ;
+                var data = [];
+                  descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
+                  utils.getBase64(detalle.fileModel).then(
+                    function (base64) {                   
+                      fileBase64 = base64;
+                      data = [{
+                      IdTipoDocumento: 5, //id tipo documento de documentos_crud
+                      nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
+                      
+                      metadatos: {
+                        NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
+                        Tipo: "Archivo",
+                        Observaciones: "Solicitud inicial"
+                      }, 
+                      descripcion:descripcion,
+                      file:  fileBase64,
+                      }] 
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
+                        URL =  response.data.res.Enlace
+                        detalle.respuesta = URL
+                        ctrl.url=response.data.res.Enlace
 
-                  //nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                  if(index+1===ctrl.detallesConDocumento.length && response.data.res.Enlace){
-                    resolve();
-                  }
-                 })
-              })
-            })
-          });
-            p.then(function() {
+                        //nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                        if(response.data.res.Enlace){
+                          resolve("Posted");
+                        }
+                      })
+                    })
+                }))
+            });
+            Promise.all(promiseArray).then(function(resultado) {
               ctrl.cargarSolicitudes();
             }).catch(function(error)
             {
