@@ -80,7 +80,6 @@ angular.module('poluxClienteApp')
                             var fileURL = URL.createObjectURL(file);
                             $scope.pdfUrl = fileURL;
                             $scope.loadDocumento = false;
-                        
                                  })
                             .catch(function (error) {
                                 $scope.errorDocumento = true;
