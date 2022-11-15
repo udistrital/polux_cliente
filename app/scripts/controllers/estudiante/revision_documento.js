@@ -533,7 +533,6 @@ angular.module('poluxClienteApp')
                 var file = new Blob([varia], {type: 'application/pdf'});
                 var fileURL = URL.createObjectURL(file);
                 $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-              
              })
             .catch(function(error) {
               ctrl.loadingVersion = false;
@@ -550,7 +549,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name subirDocumentoTg
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Ordena el llamado de funciones para subir documentos de acuerdo al estado del trabajo de grado.
        * Funciona con: subirNuevoDocumento y subirDocumento
        * @param {undefined} undefined No requiere parámetros
