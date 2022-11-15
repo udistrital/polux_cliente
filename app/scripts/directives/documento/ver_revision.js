@@ -12,7 +12,7 @@
  * @param {string} autor Nombre del autor que realiza el comentario.
  */
 angular.module('poluxClienteApp')
-    .directive('verRevision', function (poluxRequest, $translate) {
+    .directive('verRevision', function (poluxRequest, $translate, utils) {
         return {
             restrict: "E",
             scope: {

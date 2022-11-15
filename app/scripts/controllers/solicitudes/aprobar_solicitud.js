@@ -1822,8 +1822,9 @@ angular.module('poluxClienteApp')
         } else {
           var fechaRespuesta = new Date();
           var data_documento = {
+            //PENDIENTE POR VERIFICAR EL DOCUMENTO CORRECTO
             "DocumentoEscrito": {
-              "Id": 1,
+              "Id": 49,
             },
             "SolicitudTrabajoGrado": {
               "Id": Number(ctrl.solicitud)

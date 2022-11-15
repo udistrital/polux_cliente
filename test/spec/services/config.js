@@ -6,8 +6,8 @@ describe('Service: config.js', function () {
   beforeEach(module('poluxClienteApp'));
 
   // instantiate service
-  var config.js;
-  beforeEach(inject(function (_config.js_) {
+  var config;
+  beforeEach(inject(function (_config_) {
     config.js = _config.js_;
   }));
 
