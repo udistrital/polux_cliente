@@ -872,6 +872,7 @@ angular.module('poluxClienteApp')
             ctrl.estudiante.Modalidad =modalidad;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
+            ctrl.estudiante.Modalidad = null;
               if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
