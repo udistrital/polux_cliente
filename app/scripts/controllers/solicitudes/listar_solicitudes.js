@@ -517,7 +517,7 @@ angular.module('poluxClienteApp')
                   //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
                  //query: "ESTADOSOLICITUD.ID:1,Activo:true",
                   //Para traer la solicitud inicial del proyecto a ser director
-                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77",
+                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77,EnteResponsable:" + ctrl.userId,
                   
                  // exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:1",
                   limit: 0
