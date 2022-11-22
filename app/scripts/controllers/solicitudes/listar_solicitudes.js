@@ -546,9 +546,8 @@ angular.module('poluxClienteApp')
                       order: "asc",
                       limit: 1,
                     });
-                    poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
+                    poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
                         ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                         
                             academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                 if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                   var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
@@ -595,11 +594,9 @@ angular.module('poluxClienteApp')
                     });
                     poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function(responseDetalles) {
                       if (Object.keys(responseDetalles.data[0]).length === 0) {
-                        
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                       } else {
-
                           if(responseDetalles.data[4].Descripcion === ctrl.userId || responseDetalles.data[5].Descripcion === ctrl.userId)
                           {
                             promiseArr.push(verificarSolicitud(solicitud));
