@@ -840,7 +840,7 @@ var text_es = {
         INSTRUCCIONES_PREVIAS: "Presionando el siguiente botón podrá subir el certificado de la ARL. El estado de su pasantia cambiara a En curso pero sin documento inicial.",
         CONFIRMACION: "Subir certificado de ARL",
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
-        TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
+        TG_ACTUALIZADO: "La ARL se ha subido satisfactoriamente satisfactoriamente",
         SUBIR: "Subir certificado de ARL",
         WARNING:"Su trabajo de grado no puede comenzar hasta que haya cargado su certificado de afiliación a ARL. Por favor, cargue su certificado de afiliación a ARL en el módulo de revisiones.",
     },
