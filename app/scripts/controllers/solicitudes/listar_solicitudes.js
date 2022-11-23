@@ -517,7 +517,7 @@ angular.module('poluxClienteApp')
                   //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
                  //query: "ESTADOSOLICITUD.ID:1,Activo:true",
                   //Para traer la solicitud inicial del proyecto a ser director
-                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77",
+                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77,EnteResponsable:" + ctrl.userId,
                   
                  // exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:1",
                   limit: 0
@@ -547,9 +547,8 @@ angular.module('poluxClienteApp')
                       order: "asc",
                       limit: 1,
                     });
-                    poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
+                    poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
                         ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                         
                             academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                 if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                   var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
@@ -596,11 +595,9 @@ angular.module('poluxClienteApp')
                     });
                     poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function(responseDetalles) {
                       if (Object.keys(responseDetalles.data[0]).length === 0) {
-                        
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                       } else {
-
 
                           if(responseDetalles.data[4].Descripcion === ctrl.userId || responseDetalles.data[5].Descripcion === ctrl.userId)
                           {

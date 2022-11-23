@@ -77,6 +77,8 @@
  * @property {Object} infiniteScroll Objeto que configura las propiedades para la barra de desplazamiento en la visualización
  * @property {Boolean} loadDetalles Indicador que define el periodo de carga para los detalles de la solicitud
  * @property {Boolean} loadFormulario Indicador que define el periodo de carga para el formulario
+ * @property {Number} posDocente Posición en la que se encuentra la información del docente en los detalles del tipo de solicitud
+ * @property {Number} docDocenteDir Documento del docente director
  * @property {Number} contador contador para no repetir valores en la modalidad de pasantia
  */
 angular.module('poluxClienteApp')
@@ -872,6 +874,7 @@ angular.module('poluxClienteApp')
             ctrl.estudiante.Modalidad =modalidad;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
+            ctrl.estudiante.Modalidad = null;
               if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
@@ -1098,8 +1101,7 @@ angular.module('poluxClienteApp')
               sortby: "NumeroOrden",
               order: "asc"
             });
-          } else {     
-
+          } else {
             parametrosDetalles = $.param({
               query: "Activo:TRUE,ModalidadTipoSolicitud.TipoSolicitud.Id:"+tipo_solicitud+",ModalidadTipoSolicitud.Modalidad.Id:" + modalidad_seleccionada,
               limit: 0,
@@ -1113,7 +1115,7 @@ angular.module('poluxClienteApp')
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
-                ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;  
+                ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
                   defer.resolve();
                 })
                 .catch(function(error) {
@@ -1125,10 +1127,8 @@ angular.module('poluxClienteApp')
           }
           poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles)
             .then(function(responseDetalles) {
-              
               if (Object.keys(responseDetalles.data[0]).length > 0) {
                 ctrl.detalles = responseDetalles.data;
-                
                 //Se cargan opciones de los detalles
                 angular.forEach(ctrl.detalles, function(detalle) {
                   //Se internacionalizan variables y se crean labels de los detalles
@@ -1136,6 +1136,9 @@ angular.module('poluxClienteApp')
                   detalle.respuesta = "";
                   detalle.fileModel = null;
                   detalle.opciones = [];
+                  if (detalle.Detalle.Enunciado.includes('DOCENTE_AVALA_PROPUESTA') || detalle.Detalle.Enunciado.includes('SELECCIONE_DOCENTE_DESIGNADO_INVESTIGACION')) {
+                    ctrl.posDocente = detalle.Id;
+                  }
                   //Se evalua si el detalle necesita cargar datos
                   if (!detalle.Detalle.Descripcion.includes('no_service') && detalle.Detalle.TipoDetalle.Id !== 8) {
                     //Se separa el strig
@@ -1795,8 +1798,10 @@ angular.module('poluxClienteApp')
           };
         }
         angular.forEach(ctrl.detalles, function(detalle) {
+          if (detalle.Id == ctrl.posDocente) {
+            ctrl.docDocenteDir = detalle.respuesta;
+          }
           data_detalles.push({
-            
             "Descripcion": detalle.respuesta,
             "SolicitudTrabajoGrado": {
               "Id": 0
@@ -1804,18 +1809,15 @@ angular.module('poluxClienteApp')
             "DetalleTipoSolicitud": {
               "Id": detalle.Id
             }
-        
           });
 
         });
-       
         //Se agrega solicitud al estudiante
         data_usuarios.push({
           "Usuario": ctrl.codigo,
           "SolicitudTrabajoGrado": {
             "Id": 0
           }
-         
         });
         //estudiantes que ya pertenecian al tg
         //si es diferente a una solicitud de cancelación
@@ -1834,21 +1836,19 @@ angular.module('poluxClienteApp')
         }
         //estudiantes agregados en la solicitud inicial
         angular.forEach(ctrl.estudiantes, function(estudiante) {
-       
             data_usuarios.push({
             "Usuario": estudiante,
             "SolicitudTrabajoGrado": {
               "Id": 0
             }
           });
-          
         });
 
         //Respuesta de la solicitud
         data_respuesta = {
           "Fecha": fecha,
           "Justificacion": "Su solicitud fue radicada",
-          "EnteResponsable": 0,
+          "EnteResponsable": parseInt(ctrl.docDocenteDir),
           "Usuario": 0,
           "EstadoSolicitud": {
             "Id": 1
@@ -1867,7 +1867,6 @@ angular.module('poluxClienteApp')
           UsuariosSolicitud: data_usuarios
         }
         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-          
           if (response.data[0] === "Success") {
             academicaRequest.get("datos_basicos_estudiante", [ctrl.codigo])
             .then(function(responseDatosBasicos) {
@@ -1998,8 +1997,7 @@ angular.module('poluxClienteApp')
                             ctrl.Trabajo.codirector = vinculado;
                           }
                         });
-                        academicaRequest.get("datos_estudiante", [ctrl.codigoEstu, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {  
-     
+                        academicaRequest.get("datos_estudiante", [ctrl.codigoEstu, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
                           if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                             ctrl.estudiante = {
                               "Codigo": ctrl.codigo,
