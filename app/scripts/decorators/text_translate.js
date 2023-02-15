@@ -154,6 +154,7 @@ var text_es = {
     SEL_FECHA: "Seleccione una fecha",
     ENVIAR_EVALUACION_BOTON: "Enviar calificación",
     SOLICITAR_REVISION: "Solicitar revisión",
+    DOCUMENTO_REVISION: "Documento para revisión",
     SELECCIONAR: "Seleccionar",
     SELECCIONAR_ACTA: "Seleccionar acta",
     NUEVA_SOLICITUD: "Crear nueva solicitud",
