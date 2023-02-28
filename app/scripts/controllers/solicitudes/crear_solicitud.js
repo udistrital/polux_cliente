@@ -871,7 +871,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
           if(ctrl.estudiante.Modalidad == null)
           {
-            ctrl.estudiante.Modalidad =modalidad;
+            ctrl.estudiante.Modalidad = ctrl.modalidad;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
             ctrl.estudiante.Modalidad = null;
@@ -918,7 +918,6 @@ angular.module('poluxClienteApp')
             });
             sesionesRequest.get("relacion_sesiones", parametrosSesiones)
               .then(function(responseFechas) {
-                
                 if (Object.keys(responseFechas.data[0]).length > 0) {
                   //
                   var sesion = responseFechas.data[0];
@@ -937,8 +936,6 @@ angular.module('poluxClienteApp')
                     ctrl.mensajeError = $translate.instant('ERROR.NO_EN_FECHAS_INSCRIPCION');
                     defer.reject(false);
                   }
-                  
-
                 } else {
                   ctrl.mensajeError = $translate.instant('ERROR.SIN_FECHAS_MODALIDAD');
                   defer.reject(false);
@@ -1014,7 +1011,6 @@ angular.module('poluxClienteApp')
        * @returns {boolean} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuelve con un valor True o False que indica si el estudiante puede o no realizar la solicitud.
        */
       ctrl.docenteVinculado = function(docente) {
-
         if (ctrl.Trabajo != undefined) {
           if (ctrl.Trabajo.directorInterno !== undefined) {
             if (ctrl.Trabajo.directorInterno.Usuario == docente) {

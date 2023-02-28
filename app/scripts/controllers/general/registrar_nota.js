@@ -29,6 +29,7 @@
  * @property {Object} gridOptions Opciones del ui-grid que muestra los trabajos de grado a los cuales se vincula el usuario
  * @property {Boolean} registrarNota Bandera que permite identificar la acción que se quiere realizar
  * @property {Object} trabajoSeleccionado Trabajo seleccionado en un ui-grid
+ * @property {Object} docTrabajoGrado Enlace del documento de trabajo de grado
  * @property {Object} trabajosGrado Objeto que carga la información de los trabajos de grado asociados
  * @property {Object} registrandoNotaTG Indicador que opera durante el registro de la nota hacia el trabajo de grado
  * @property {Array} botonesNota Colección que maneja la configuración de los botones para registrar la nota
@@ -36,7 +37,8 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient,
+            $window ,poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -309,6 +311,80 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name getDocumento
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+       */
+    ctrl.getDocumento = function(docid) {
+      /*nuxeoClient.getDocument(docid)
+        .then(function(document) {
+          $window.open(document.url);
+        })*/
+        // Muestra de documento con gestor documental
+        gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
+          var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+          var fileURL = URL.createObjectURL(file);
+          $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+         })
+        .catch(function(error) {
+          swal(
+            $translate.instant("MENSAJE_ERROR"),
+            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+            'warning'
+          );
+        });
+    }
+
+      /**
+       * @ngdoc method
+       * @name obtenerParametrosDocumentoTrabajoGrado
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @description
+       * Función que define los parámetros para consultar en la tabla documento_trabajo_grado.
+       * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+       * @returns {String} La sentencia para la consulta correspondiente
+       */
+      ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+        return $.param({
+          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+            "TrabajoGrado.Id:" +
+            idTrabajoGrado,
+          limit: 1
+        });
+      }
+
+      /**
+      * @ngdoc method
+      * @name consultarDocTrabajoGrado
+      * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+      * @description
+      * Función que recorre la base de datos de acuerdo al trabajo de grado vinculado y trae el documento asociado.
+      * Llama a la función: obtenerParametrosDocumentoTrabajoGrado.
+      * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para operar sobre la base de datos del proyecto.
+      * @param {Object} vinculacionTrabajoGrado La vinculación hacia el trabajo de grado seleccionado
+      * @returns {Promise} La información sobre el documento, el mensaje en caso de no corresponder la información, o la excepción generada
+      */
+    ctrl.consultarDocTrabajoGrado = function(vinculacionTrabajoGrado) {
+      var deferred = $q.defer();
+      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
+        .then(function(respuestaDocumentoTrabajoGrado) {
+          if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
+            deferred.resolve(respuestaDocumentoTrabajoGrado.data[0]);
+          } else {
+            deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
+          }
+        })
+        .catch(function(excepcionDocumentoTrabajoGrado) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
+        });
+      return deferred.promise;
+    }
+
+      /**
+       * @ngdoc method
        * @name cargarTrabajo
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
@@ -319,6 +395,9 @@ angular.module('poluxClienteApp')
       ctrl.cargarTrabajo = function(fila) {
         ctrl.cargandoTrabajo = true;
         ctrl.trabajoSeleccionado = fila.entity.TrabajoGrado;
+        ctrl.consultarDocTrabajoGrado(fila.entity).then(function(resultadoDocTrabajoGrado) {
+          ctrl.docTrabajoGrado = resultadoDocTrabajoGrado.DocumentoEscrito.Enlace
+        })
         //Se guarda la vinculación al tg
         ctrl.trabajoSeleccionado.vinculacion = {
           Id: fila.entity.Id,
