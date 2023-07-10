@@ -82,6 +82,7 @@
  * @property {Object} infiniteScroll Objeto que configura las propiedades para la barra de desplazamiento en la visualización
  * @property {Number} userId Valor que carga el código de identificación para el usuario
  * @property {Boolean} loadDocumento Indicador que maneja la carga del documento para la solicitud
+ * @property {String} ObjetivoNuevo Texto que carga el contenido del nuevo objetivo para el trabajo de grado
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
@@ -552,7 +553,7 @@ angular.module('poluxClienteApp')
                 ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
                 defer.reject(error);
               });
-            if (ctrl.dataSolicitud.modalidad === 1) {
+            if (ctrl.dataSolicitud.modalidad === 1 || ctrl.dataSolicitud.modalidad === 9) {
               ctrl.isPasantia = true;
             }
           } else {
@@ -828,6 +829,8 @@ angular.module('poluxClienteApp')
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59 || detalle.DetalleTipoSolicitud.Detalle.Id == 60) {
                 //Documento de propuesta final si el detalle es documennto fila o evidencias de publicación
                 ctrl.docPropuestaFinal = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.Enunciado == "OBJETIVO_NUEVO"){
+                ctrl.ObjetivoNuevo = detalle.Descripcion;
               }
             });
 
@@ -909,7 +912,7 @@ angular.module('poluxClienteApp')
                     ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
                 };
                 */
-              } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28) {
+              } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
                 //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                 //se obtienen datos para crear el trabajo
                 var tempTrabajo = {};
@@ -932,6 +935,8 @@ angular.module('poluxClienteApp')
                     tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director externo") {
                     tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
+                    tempTrabajo.Objetivo = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -941,7 +946,7 @@ angular.module('poluxClienteApp')
                   estadoTrabajoGrado = 13;
                 }
                 // si la modalidad es de pasantia se crea en estado de espera de ARL id 21
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1) {
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 9) {
                   //estadoTrabajoGrado = 5;
                   estadoTrabajoGrado = 21;
                 }
@@ -961,6 +966,7 @@ angular.module('poluxClienteApp')
                   },
                   "DistincionTrabajoGrado": null,
                   "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico,
+                  "Objetivo": tempTrabajo.Objetivo,
                 }
                 //se agregan estudiantes
                 var estudiante = {};
@@ -1105,7 +1111,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2) {
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1344,6 +1350,12 @@ angular.module('poluxClienteApp')
                 dataVinculaciones = null;
               }
               ctrl.dataRespuesta.Vinculaciones = dataVinculaciones;
+            }else if (ctrl.dataSolicitud.TipoSolicitud == 15){
+              // SOLICITUD DE CAMBIOS DE OBJETIVOS DEL TRABAJO DE GRADO
+              var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
+              // SE CAMBIAN LOS OBJETIVOS
+              tgTemp.Objetivo = ctrl.ObjetivoNuevo;
+              ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             }
           }
           if (!errorDocente) {
@@ -1742,31 +1754,58 @@ angular.module('poluxClienteApp')
             var modalidad = 0;
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 1) {
               modalidad = 2;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 70,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 2) {
               modalidad = 13;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 71,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 3) {
               modalidad = 16;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 72,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 4) {
               modalidad = 20;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 73,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 5) {
               modalidad = 28;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 74,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 6) {
               modalidad = 38;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 75,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 7) {
               modalidad = 46;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 76,
+              });
             }
             if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 8) {
               modalidad = 55;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 77,
+              });
             }
-            var parametrosSolicitud = $.param({
-              query: "Id:" + 70,
-            });
+            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 9){
+              modalidad = 82;
+              var parametrosSolicitud = $.param({
+                query: "Id:" + 83,
+              });
+            }
             poluxRequest.get("modalidad_tipo_solicitud", parametrosSolicitud).then(function (responsesolicitud) {
 
               if (responsesolicitud.data !== undefined) {

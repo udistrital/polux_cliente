@@ -505,7 +505,7 @@ angular.module('poluxClienteApp')
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
             query: "ESTADOSOLICITUD.ID:1,Activo:true",
             // excluye las solicitudes de tipo carta de presentacion
-            exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:1|70|71|72|73|74|75|76|77",
+            exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:1|70|71|72|73|74|75|76|77|83",
             limit: 0
           });
           academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function(responseCoordinador) {
@@ -517,7 +517,7 @@ angular.module('poluxClienteApp')
                   //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
                  //query: "ESTADOSOLICITUD.ID:1,Activo:true",
                   //Para traer la solicitud inicial del proyecto a ser director
-                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77,EnteResponsable:" + ctrl.userId,
+                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77|83,EnteResponsable:" + ctrl.userId,
                   
                  // exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:1",
                   limit: 0
@@ -598,15 +598,17 @@ angular.module('poluxClienteApp')
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                       } else {
-
-                          if(responseDetalles.data[4].Descripcion === ctrl.userId || responseDetalles.data[5].Descripcion === ctrl.userId)
-                          {
+                        var UserExiste = false;
+                        for(var i=0;i<responseDetalles.data.length;i++){
+                          if(responseDetalles.data[i].Descripcion === ctrl.userId){
                             promiseArr.push(verificarSolicitud(solicitud));
+                            UserExiste = true;
                           }
-                          else{
-                            ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
-                            ctrl.errorCargarParametros = true;
-                          }
+                        }
+                        if(UserExiste == false){
+                          ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
+                          ctrl.errorCargarParametros = true;
+                        }
                       }
                     });
                   });

@@ -80,6 +80,7 @@
  * @property {Number} posDocente Posición en la que se encuentra la información del docente en los detalles del tipo de solicitud
  * @property {Number} docDocenteDir Documento del docente director
  * @property {Number} contador contador para no repetir valores en la modalidad de pasantia
+ * @property {Boolean} Nota flag que indica si el trabajo de grado ya está calificado
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
@@ -136,8 +137,62 @@ angular.module('poluxClienteApp')
       ctrl.Docente_trabajos=false;
       ctrl.tipoSolicitud_Docente=null;
       ctrl.codigo = token_service.getAppPayload().appUserDocument;
-      
       ctrl.codigoEstu = 0;
+      ctrl.Nota = false;
+      //CONSULTA A VINCULACIÓN_TRABAJO_GRADO
+      /**
+       * @ngdoc method
+       * @name getNotaTrabajoGrado
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para saber si al trabajo de grado
+       * ya posee una nota
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {boolean} Boleano que indica si el trabajo de grado posee una nota o no
+       */
+      ctrl.getNotaTrabajoGrado = function() {
+        var parametros = $.param({
+          query: "estudiante:" + ctrl.codigo + ",EstadoEstudianteTrabajoGrado:1",
+          limit: 1,
+        });
+
+        return poluxRequest.get("estudiante_trabajo_grado", parametros)
+          .then(function (estudiante_trabajo_grado) {
+            parametros = $.param({
+              query: "TrabajoGrado:" + estudiante_trabajo_grado.data[0].TrabajoGrado.Id,
+              limit: 0,
+            });
+
+            return poluxRequest.get("vinculacion_trabajo_grado", parametros);
+          })
+          .then(function (vinculacion_trabajo_grado) {
+            var promises = [];
+
+            for (var i = 0; i < vinculacion_trabajo_grado.data.length; i++) {
+              parametros = $.param({
+                query: "VinculacionTrabajoGrado:" + vinculacion_trabajo_grado.data[i].Id,
+                limit: 0,
+              });
+
+              promises.push(poluxRequest.get("evaluacion_trabajo_grado", parametros));
+            }
+
+            return $q.all(promises);
+          })
+          .then(function (evaluacion_trabajo_grado_results) {
+            for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
+              if (evaluacion_trabajo_grado_results[i].data[0].Nota >= 0) {
+                return true;
+              }
+            }
+
+            return false;
+          })
+          .catch(function (error) {
+            return false;
+          });
+      }
+
       /**
        * @ngdoc method
        * @name getProrroga
@@ -1080,6 +1135,13 @@ angular.module('poluxClienteApp')
         
           ctrl.modalidad = modalidad_seleccionada;
         }
+
+        //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS MODALIDADES
+        ctrl.getNotaTrabajoGrado().then(function (resultado) {
+          ctrl.Nota = resultado;
+          ctrl.mensajeErrorCarga = $translate.instant("ERROR.CALIFICADO");
+        });
+
         ctrl.verificarRequisitos(tipoSolicitudSeleccionada, modalidad_seleccionada).then(function() {
           ctrl.soliciudConDetalles = true;
           ctrl.detalles = [];
@@ -1378,7 +1440,13 @@ angular.module('poluxClienteApp')
                                 .catch(function(error) {
                                   defer.reject(error);
                                 });
-                              //Resolve promesa
+                            }else if(detalle.Detalle.Nombre.includes("Objetivo Actual")){
+                              detalle.opciones.push({
+                                "NOMBRE": responseOpciones.data[0].Objetivo,
+                                "bd": responseOpciones.data[0].Objetivo,
+                              });
+                              defer.resolve();
+                            //Resolve promesa
                             } else {
                               detalle.opciones = responseOpciones.data;
                               defer.resolve();
@@ -1785,6 +1853,9 @@ angular.module('poluxClienteApp')
           {
             ctrl.ModalidadTipoSolicitud = 77; 
           }
+          if(ctrl.ModalidadTipoSolicitud === 82){
+            ctrl.ModalidadTipoSolicitud = 83;
+          }
           data_solicitud = {
             "Fecha": fecha,
             "ModalidadTipoSolicitud": {
@@ -2016,7 +2087,7 @@ angular.module('poluxClienteApp')
                               ctrl.estudiante.areas_elegidas = [];
                               ctrl.estudiante.minimoCreditos = false;
                             }
-                          ctrl.cargarDetalles(ctrl.tipoSolicitud_Docente,ctrl.modalidad);
+                            ctrl.cargarDetalles(ctrl.tipoSolicitud_Docente,ctrl.modalidad);
                           } else {
                            
                             ctrl.mensajeErrorCarga = $translate.instant("ERROR.ESTUDIANTE_NO_ENCONTRADO");
