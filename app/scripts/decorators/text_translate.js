@@ -8,6 +8,9 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
+    OBJETIVO_NUEVO: "Escriba los nuevos objetivos de la propuesta",
+    OBJETIVO_ACTUAL: "Objetivos actuales de la propuesta",
+    INGRESAR_OBJETIVO: "Ingrese los objetivos de la propuesta",
     TITULO: "Sistema de gestión de trabajos de grado Polux",
     MENSAJE_INICIAL: "Sistema de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     EVALUAR_PROYECTO: "Evaluación de Proyecto de Grado",
@@ -178,7 +181,7 @@ var text_es = {
         "Recuerde que según el acuerdo 038 de 2015 los requisitos mínimos para cursar una modalidad de trabajo de grado son:" +
         "<ul>" +
         "<li>Ser estudiante con estado Activo.</li>" +
-        "<li>Haber aprobado el 80% de los créditos de su plan de estudios.</li>" +
+        "<li>Haber aprobado el 70% de los créditos de su plan de estudios.</li>" +
         "<li>Para la modalidad de Espacios Académicos de Posgrado debe tener un promedio acumulado igual o superior a tres punto ocho (3.8).</li>" +
         "</ul",
     ESTUDIANTE_TRABAJO_GRADO: "Error: El estudiante solicitado actualmente esta realizando un trabajo de grado.",
@@ -218,6 +221,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_16: "Ocurrió un error al actualizar el detalle de la pasantia.",
     ERROR_RTA_SOLICITUD_17: "Ocurrió un error al actualizar el estado del trabajo de grado.",
     ERROR_RTA_SOLICITUD_18: "Ocurrió un error al registrar el docuento final del trabajo de grado.",
+    ERROR_RTA_SOLICITUD_19: "Ocurrió un error al actualizar los objetivos del trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO: "Error al intentar subir un documento.",
         CARGAR_DOCUMENTO: "Ocurrió un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
@@ -347,7 +351,8 @@ var text_es = {
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
-        NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación"
+        NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
+        CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones."
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
@@ -375,7 +380,7 @@ var text_es = {
     INGRESAR_RESUMEN_PROPUESTA: "Escriba un resumen de su propuesta",
     CARGUE_PROPUESTA: "Cargue su propuesta",
     CARGUE_HOJA_VIDA_EXTERNO: "Cargue la hoja de vida del director externo",
-    DOCENTE_AVALA_PROPUESTA: "Seleccione el docente que avala la propuesta",
+    DOCENTE_AVALA_PROPUESTA: "Seleccione el nombre del docente que avala su propuesta de trabajo de grado.",
     SELECCIONE_DOCENTE_CODIRECTOR: "Seleccione el docente co-director (Si no tiene uno por favor no seleccione ninguno)",
     ESPACIOS_ACADEMICOS: "Espacios académicos",
     CARGUE_CERTIFICACION_ARL: "Cargue la certificación de afiliación a la ARL",
@@ -402,14 +407,14 @@ var text_es = {
     CARGUE_NUEVA_PROPUESTA: "Cargue la nueva propuesta",
     ANTERIORES_AREAS_CONOCIMIENTO: "Areas de conocimiento actuales",
     SELECCIONE_NUEVAS_AREAS_CONOCIMIENTO: "Seleccione las nuevas áreas de conocimiento que abarca su proyecto",
-    CARGUE_PLAN_INVESTIGACION: "Cargue el plan de actividades de investigación",
+    CARGUE_PLAN_INVESTIGACION: "Cargue la propuesta de investigación",
     INGRESE_ESTRUCTURA_INVESTIGACION_AVALA: "Ingrese la Estructura de investigación que avala la propuesta",
     SELECCIONE_DOCENTE_DESIGNADO_INVESTIGACION: "Seleccione el Docente director designado por la estructura de investigación",
     CARGUE_PLAN_NEGOCIOS: "Cargue el plan o el modelo de negocios",
     ANTERIOR_DIRECTOR_EXTERNO: "Director externo actual",
     ESCRIBA_DIRECTOR_EXTERNO_NUEVO: "Escriba el nombre del nuevo director externo",
-    PLAN_INVESTIGACION_ANTERIOR: "Plan de actividades de investigación actual",
-    CARGUE_PLAN_INVESTIGACION_NUEVO: "Cargue Plan de actividades de investigación nuevo",
+    PLAN_INVESTIGACION_ANTERIOR: "Propuesta de investigación actual",
+    CARGUE_PLAN_INVESTIGACION_NUEVO: "Cargue Propuesta de investigación nueva",
     CREACION_INDIVIDUAL_COLECTIVA: "Seleccione si su creación es individual o colectiva",
     ANTERIOR_PLAN_NEGOCIOS: "Plan o modelo de negocios actual",
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Cargue el Plan o modelo de negocios nuevo",
@@ -924,6 +929,9 @@ var text_es = {
  * Contiene las variables del servicio de internacionalización en ingles
  */
 var text_en = {
+    OBJETIVO_NUEVO: "Enter the new proposal objectives",
+    OBJETIVO_ACTUAL: "Current objectives of the proposal",
+    INGRESAR_OBJETIVO: "Enter the objectives of the proposal",
     TITULO: "Sistema de gestión de trabajos de grado Polux",
     MENSAJE_INICIAL: "Sistema de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     LISTADO_SOLICITUD: "List of Requests",
@@ -1083,7 +1091,7 @@ var text_en = {
         "Remember that according to agreement 038 of 2015 the minimum requirements to apply for a work degree modality are:" +
         "<ul>" +
         "<li>Be an active studend.</li>" +
-        "<li>Have approved 80% of the credits of your curriculum.</li>" +
+        "<li>Have approved 70% of the credits of your curriculum.</li>" +
         "<li>For the modality of Postgraduate Academic Spaces, you must have an accumulated average equal to or greater than three point eight (3.8).</li>" +
         "</ul",
     ESTUDIANTE_TRABAJO_GRADO: "Error: The currently requested student is performing a degree assignment.",
@@ -1123,6 +1131,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_16: "There was an error updating the  internship's details",
     ERROR_RTA_SOLICITUD_17: "There was an error updating the degree work's state",
     ERROR_RTA_SOLICITUD_18: "There was an error inserting the degree wokr's final document",
+    ERROR_RTA_SOLICITUD_19: "An error occurred while updating the objectives of the degree project.",
     ERROR: {
         SUBIR_DOCUMENTO: "Error attempting to load a document.",
         CARGAR_DOCUMENTO: "An error occurred loading the documents, please verify your connection and try again.",
@@ -1251,6 +1260,7 @@ var text_en = {
         CARGAR_ACTA_SOCIALIZACION: "There was an error occurred loading the socialization certificate, please check your connection and try again.",
         SIN_MODALIDADES: "There are no modalities registered at the moment",
         CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
+        CALIFICADO:"The degree work is already graded, so you cannot make any further changes."
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
