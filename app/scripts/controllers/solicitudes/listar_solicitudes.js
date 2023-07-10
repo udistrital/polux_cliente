@@ -503,7 +503,7 @@ angular.module('poluxClienteApp')
 
           parametrosSolicitudes = $.param({
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
-            query: "ESTADOSOLICITUD.ID:1,Activo:true",
+            query: "ESTADOSOLICITUD.Id.in:1|17,Activo:true",
             // excluye las solicitudes de tipo carta de presentacion
             exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:1|70|71|72|73|74|75|76|77",
             limit: 0
@@ -517,7 +517,7 @@ angular.module('poluxClienteApp')
                   //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
                  //query: "ESTADOSOLICITUD.ID:1,Activo:true",
                   //Para traer la solicitud inicial del proyecto a ser director
-                  query: "ESTADOSOLICITUD.ID:1,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:70|71|72|73|74|75|76|77,EnteResponsable:" + ctrl.userId,
+                  query: "ESTADOSOLICITUD.Id.in:1|19,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id.in:3|4|5|8|9|10|12|14|15,EnteResponsable:" + ctrl.userId,
                   
                  // exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:1",
                   limit: 0
@@ -599,6 +599,7 @@ angular.module('poluxClienteApp')
                         ctrl.errorCargarParametros = true;
                       } else {
 
+                        if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id==14){
                           if(responseDetalles.data[4].Descripcion === ctrl.userId || responseDetalles.data[5].Descripcion === ctrl.userId)
                           {
                             promiseArr.push(verificarSolicitud(solicitud));
@@ -607,6 +608,9 @@ angular.module('poluxClienteApp')
                             ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
                             ctrl.errorCargarParametros = true;
                           }
+                        }else{
+                          promiseArr.push(verificarSolicitud(solicitud));
+                        }
                       }
                     });
                   });

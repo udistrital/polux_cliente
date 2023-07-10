@@ -984,8 +984,10 @@ angular.module('poluxClienteApp')
           return defer.promise;
         }
         var promesas = [];
-        promesas.push(verificarRequisitosModalidad());
-        promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
+        if(!ctrl.siModalidad){
+          promesas.push(verificarRequisitosModalidad());
+          promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
+        }
         if (!angular.isUndefined(tipoSolicitud.TipoSolicitud)) {
           promesas.push(verificarTipoSolicitud(tipoSolicitud));
         }
@@ -1840,20 +1842,39 @@ angular.module('poluxClienteApp')
           });
         });
 
-        //Respuesta de la solicitud
-        data_respuesta = {
-          "Fecha": fecha,
-          "Justificacion": "Su solicitud fue radicada",
-          "EnteResponsable": parseInt(ctrl.docDocenteDir),
-          "Usuario": 0,
-          "EstadoSolicitud": {
-            "Id": 1
-          },
-          "SolicitudTrabajoGrado": {
-            "Id": 0
-          },
-          "Activo": true
+        if( [3,4,5,8,10,12,15].includes(ctrl.TipoSolicitud.TipoSolicitud.Id) ){
+          //Respuesta de la solicitud
+          data_respuesta = {
+            "Fecha": fecha,
+            "Justificacion": "Su solicitud esta pendiente a la revision del docente",
+            "EnteResponsable": ctrl.Trabajo.directorInterno.Usuario,
+            "Usuario": 0,
+            "EstadoSolicitud": {
+              "Id": 19
+            },
+            "SolicitudTrabajoGrado": {
+              "Id": 0
+            },
+            "Activo": true
+          }
+        }else{
+          //Respuesta de la solicitud
+          data_respuesta = {
+            "Fecha": fecha,
+            "Justificacion": "Su solicitud fue radicada",
+            "EnteResponsable": parseInt(ctrl.docDocenteDir),
+            "Usuario": 0,
+            "EstadoSolicitud": {
+              "Id": 1
+            },
+            "SolicitudTrabajoGrado": {
+              "Id": 0
+            },
+            "Activo": true
+          }
         }
+
+       
 
         //se crea objeto con las solicitudes
         ctrl.solicitud = {
