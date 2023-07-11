@@ -258,7 +258,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
 
           var parametrosSolicitudesActuales = $.param({
-            query: "EstadoSolicitud.in:1,activo:TRUE,SolicitudTrabajoGrado:" + id,
+            query: "EstadoSolicitud.in:1|19,activo:TRUE,SolicitudTrabajoGrado:" + id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {

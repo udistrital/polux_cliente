@@ -599,11 +599,17 @@ angular.module('poluxClienteApp')
                         ctrl.errorCargarParametros = true;
                       } else {
                         var UserExiste = false;
-                        for(var i=0;i<responseDetalles.data.length;i++){
-                          if(responseDetalles.data[i].Descripcion === ctrl.userId){
-                            promiseArr.push(verificarSolicitud(solicitud));
-                            UserExiste = true;
+                        if(solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id==14){
+                          for(var i=0;i<responseDetalles.data.length;i++){
+                            if(responseDetalles.data[i].Descripcion === ctrl.userId){
+                              promiseArr.push(verificarSolicitud(solicitud));
+                              UserExiste = true;
+                            }
                           }
+                        
+                        }else{
+                          promiseArr.push(verificarSolicitud(solicitud));
+                          UserExiste = true;
                         }
                         if(UserExiste == false){
                           ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
