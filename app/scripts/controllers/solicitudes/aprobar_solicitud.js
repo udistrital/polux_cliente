@@ -1752,11 +1752,11 @@ angular.module('poluxClienteApp')
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
             var parametro = responsesolicitud.data[0];
             var modalidad = 0;
-            if (parametro.ModalidadTipoSolicitud.TipoSolicitud.Id == 2) {
+            if (parametro.ModalidadTipoSolicitud.TipoSolicitud.Id == 14) {
               if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 1) {
                 modalidad = 2;
                 var parametrosSolicitud = $.param({
-                query: "Id:" + 70,
+                  query: "Id:" + 70,
               });
             }
               if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 2) {
