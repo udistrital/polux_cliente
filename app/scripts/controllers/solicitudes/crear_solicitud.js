@@ -1921,8 +1921,7 @@ angular.module('poluxClienteApp')
             }
           });
         });
-
-        if( [3,4,5,8,10,12,15].includes(ctrl.TipoSolicitud)){
+        if(this.siModalidad && [3,4,5,8,10,12,13,15].includes(ctrl.TipoSolicitud.TipoSolicitud.Id)){
           //Respuesta de la solicitud
           data_respuesta = {
             "Fecha": fecha,
