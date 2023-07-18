@@ -100,6 +100,14 @@
              <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}" required><b>AUTORIZAR</b></input>
           </div>
 
+          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">
+            <div class="panel-body">
+              <div class="row">
+                <label class="col-sm-12 control-label" translate="MENSAJE_REVISTA"></label>
+              </div>
+            </div>
+          </div>
+
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
