@@ -36,6 +36,7 @@ angular
         'poluxService',
         'documentoService',
         'oikosService',
+        'parametrosService',
         'academicaService',
         'cadenaService',
         'ui.select',

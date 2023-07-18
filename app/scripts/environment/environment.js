@@ -28,6 +28,7 @@ angular.module("poluxClienteApp").constant("CONF", {
     GESTION_DOCUMENTAL_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/gestor_documental_mid/v1",
     //GESTION_DOCUMENTAL_SERVICE:"http://pruebasapi2.intranetoas.udistrital.edu.co:8199/v1",
     NUXEO_MID:"https://autenticacion.portaloas.udistrital.edu.co/apioas/nuxeo_mid/v1/",
+    PARAMETROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/parametros/v1/',
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",
         URL_USER_INFO: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/userinfo",

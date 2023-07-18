@@ -919,6 +919,14 @@ var text_es = {
     NOTIFICACIONES_ELIMINADA: "Eliminación correcta de la notificación",
     NOTIFICACIONES_REALIZADA: "Se completo la petición",
     SIN_NOTIFICACIONES: "No se encuentran notificaciones en espera",
+    NOMBRE_REVISTA: "Nombre de la revista",
+    LINK_REVISTA: "Link de la revista de aceptación del artículo",
+    CLASIFICACION_REVISTA: "Clasificación de la revista dónde fue aceptado el artículo",
+    MENSAJE_REVISTA: "Seleccione la categoría del artículo aceptado con base en la clasificación dispuesta por Publindex." +
+        "<ul>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>Revistas Nacionales</a></li>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
+        "</ul>"
 };
 
 /**
@@ -1822,6 +1830,14 @@ var text_en = {
     ACUERDO_INFO: "Below is agreement 038 of 2015 of the Academic Council of the District University Francisco Jósé de Caldas by means of which the degree work  for the " +
         "undergraduate students are regulated of the University and other guidelines are dictated.",
     REPORTE_GENERAL_DOCENTES: "General report by teachers",
+    NOMBRE_REVISTA: "Magazine name",
+    LINK_REVISTA: "Link of the article acceptance journal",
+    CLASIFICACION_REVISTA: "Journal classification where the article was accepted",
+    MENSAJE_REVISTA: "Select the category of the accepted article based on the classification provided by Publindex." +
+        "<ul>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +
+        "</ul>"
 };
 
 /**

@@ -16,6 +16,7 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires $window
+ * @requires services/parametrosService.service:parametrosRequest
  * @requires services/academicaService.service:academicaRequest
  * @requires services/cidcRequest.service:cidcService
  * @requires services/poluxClienteApp.service:coreAmazonCrudService
@@ -84,7 +85,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -1517,6 +1518,22 @@ angular.module('poluxClienteApp')
                         "bd": $translate.instant(parametrosServicio[1])
                       });
                     }
+
+                    if(parametrosServicio[0] === "categorias-revista"){
+                      var parametrosConsulta = $.param({
+                        query:"CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+                      });
+
+                      parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+                        angular.forEach(parametros.data.Data, function(parametro){
+                          console.log(parametro);
+                          detalle.opciones.push({
+                            "NOMBRE": parametro.Nombre,
+                            "bd": parametro.Id
+                          });
+                        });
+                      });
+                    }
                   }
                 });
                 $q.all(promises).then(function() {
@@ -1754,7 +1771,7 @@ angular.module('poluxClienteApp')
                       descripcion:descripcion,
                       file:  fileBase64,
                       }] 
-                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                         URL =  response.data.res.Enlace
                         detalle.respuesta = URL
                         ctrl.url=response.data.res.Enlace
@@ -1823,41 +1840,33 @@ angular.module('poluxClienteApp')
             "PeriodoAcademico": ctrl.periodo
           };
         } else {
-          if(ctrl.ModalidadTipoSolicitud === 2)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 2){
             ctrl.ModalidadTipoSolicitud = 70;   
           }
-          if(ctrl.ModalidadTipoSolicitud === 13)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 13){
             ctrl.ModalidadTipoSolicitud = 71; 
           }
-          if(ctrl.ModalidadTipoSolicitud === 16)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 16){
             ctrl.ModalidadTipoSolicitud = 72; 
           }
-          if(ctrl.ModalidadTipoSolicitud === 20)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 20){
             ctrl.ModalidadTipoSolicitud = 73; 
           }
-          if(ctrl.ModalidadTipoSolicitud === 28)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 28){
             ctrl.ModalidadTipoSolicitud = 74; 
           }
-          if(ctrl.ModalidadTipoSolicitud === 38)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 38){
             ctrl.ModalidadTipoSolicitud = 75; 
           }
-          if(ctrl.ModalidadTipoSolicitud === 46)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 46){
             ctrl.ModalidadTipoSolicitud = 76; 
           }
-          if(ctrl.ModalidadTipoSolicitud === 55)
-          {
+          if(ctrl.ModalidadTipoSolicitud === 55){
             ctrl.ModalidadTipoSolicitud = 77; 
-          }
-          if(ctrl.ModalidadTipoSolicitud === 82){
+          }if(ctrl.ModalidadTipoSolicitud === 82){
             ctrl.ModalidadTipoSolicitud = 83;
           }
+          
           data_solicitud = {
             "Fecha": fecha,
             "ModalidadTipoSolicitud": {
@@ -1913,7 +1922,7 @@ angular.module('poluxClienteApp')
           });
         });
 
-        if( [3,4,5,8,10,12,15].includes(ctrl.TipoSolicitud.TipoSolicitud.Id) ){
+        if( [3,4,5,8,10,12,15].includes(ctrl.TipoSolicitud)){
           //Respuesta de la solicitud
           data_respuesta = {
             "Fecha": fecha,
