@@ -108,7 +108,32 @@
       </div>
       <div class="row" ng-if="formularioAprobacionDocente.$valid  ">
         <label class="col-sm-5 control-label"> </label>
-        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} docente " docente  class="col-sm-2 btn btn-success"></input>
+        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} docente "  class="col-sm-2 btn btn-success"></input>
+        <label class="col-sm-5 control-label"> </label>
+      </div>
+
+    </form>
+    </div>
+
+    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS') && !aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR_PREGRADO')">
+      <form name="formularioAprobacionExtensionPasantia" ng-submit="aprobarSolicitud.RespuestaExtensionPasantia()">
+      <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
+      <div class="col-sm-8">
+        <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
+          <option></option>
+          <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
+          <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+        </select>
+      </div>
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 2">
+        <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
+        <div class="col-sm-8">
+          <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
+        </div>
+      </div>
+      <div class="row" ng-if="formularioAprobacionExtensionPasantia.$valid  ">
+        <label class="col-sm-5 control-label"> </label>
+        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} "  class="col-sm-2 btn btn-success"></input>
         <label class="col-sm-5 control-label"> </label>
       </div>
 
@@ -116,7 +141,7 @@
     </div>
     
 
-    <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 ">
+    <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 && aprobarSolicitud.UnidadExtPasantia !== 1">
       <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
         <div class="row">
           <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>

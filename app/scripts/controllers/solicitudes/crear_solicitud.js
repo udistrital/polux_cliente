@@ -1788,6 +1788,7 @@ angular.module('poluxClienteApp')
               ctrl.cargarSolicitudes();
             }).catch(function(error)
             {
+              console.log(error)
               swal(
                 $translate.instant("ERROR.CARGA_SOLICITUDES"),
                 $translate.instant("ERROR.ENVIO_SOLICITUD"),
