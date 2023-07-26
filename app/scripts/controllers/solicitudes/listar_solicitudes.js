@@ -44,7 +44,6 @@ angular.module('poluxClienteApp')
       //token_service.token.role.push("COORDINADOR_PREGRADO");
       //token_service.token.documento = "20131020002";
       //token_service.token.role.push("ESTUDIANTE");
-      console.log(token_service.getAppPayload())
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
@@ -383,7 +382,6 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna nigún valor. 
        */
       ctrl.actualizarSolicitudes = function(identificador, lista_roles) {
-        console.log(identificador,lista_roles)
         $scope.load = true;
         var promiseArr = [];
 

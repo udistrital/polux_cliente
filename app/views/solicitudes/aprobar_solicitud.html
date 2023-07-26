@@ -131,6 +131,12 @@
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
         </div>
       </div>
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 3 && (aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==64  || aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==92)">
+        <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
+       <div class="col-sm-9">
+        <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>
+       </div>
+      </div>
       <div class="row" ng-if="formularioAprobacionExtensionPasantia.$valid  ">
         <label class="col-sm-5 control-label"> </label>
         <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} "  class="col-sm-2 btn btn-success"></input>
