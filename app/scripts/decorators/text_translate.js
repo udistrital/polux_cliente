@@ -928,7 +928,8 @@ var text_es = {
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>Revistas Nacionales</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
-        "</ul>"
+        "</ul>",
+    CERTIFICADO_UNIDAD_EXT_PASANTIA:"Certificado de la unidad de extension de pasantias"
 };
 
 /**
