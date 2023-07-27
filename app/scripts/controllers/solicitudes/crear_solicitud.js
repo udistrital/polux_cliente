@@ -184,7 +184,8 @@ angular.module('poluxClienteApp')
           .then(function (evaluacion_trabajo_grado_results) {
             for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
               if (evaluacion_trabajo_grado_results[i].data[0].Nota >= 0) {
-                return true;
+                //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
+                return false;
               }
             }
 
@@ -226,7 +227,8 @@ angular.module('poluxClienteApp')
               promises.push(poluxRequest.get("respuesta_solicitud", parametros).then(function (respuesta_solicitud) {
 
                 if (respuesta_solicitud.data[0].EstadoSolicitud.Id == 3) {
-                  return true;
+                  //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
+                  return false;
                 }
                 return false;
               }));
