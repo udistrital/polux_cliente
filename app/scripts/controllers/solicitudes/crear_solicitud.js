@@ -140,6 +140,7 @@ angular.module('poluxClienteApp')
       ctrl.codigo = token_service.getAppPayload().appUserDocument;
       ctrl.codigoEstu = 0;
       ctrl.Nota = false;
+      ctrl.Cancelacion = false;
       //CONSULTA A VINCULACIÓN_TRABAJO_GRADO
       /**
        * @ngdoc method
@@ -194,6 +195,49 @@ angular.module('poluxClienteApp')
           });
       }
 
+
+      /**
+       * @ngdoc method
+       * @name getCancelaciondeModalidad
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para saber si el estudiante ya tiene una solicitud
+       * de cancelación aprobada
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {boolean} Boleano que indica si el trabajo de grado posee una nota o no
+       */
+
+      ctrl.getCancelacionModalidad = function () {
+        var parametros = $.param({
+          query: "usuario:" + ctrl.codigo,
+          limit: 0,
+        });
+
+        return poluxRequest.get("usuario_solicitud", parametros).then(function (usuario_solicitud) {
+          var promises = [];
+
+          usuario_solicitud.data.forEach(function (solicitud) {
+            if (solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.CodigoAbreviacion == "SCM") {
+              parametros = $.param({
+                query: "solicitud_trabajo_grado:" + solicitud.SolicitudTrabajoGrado.Id + ",estado_solicitud:3",
+                limit: 0,
+              });
+
+              promises.push(poluxRequest.get("respuesta_solicitud", parametros).then(function (respuesta_solicitud) {
+
+                if (respuesta_solicitud.data[0].EstadoSolicitud.Id == 3) {
+                  return true;
+                }
+                return false;
+              }));
+            }
+          });
+
+          return Promise.all(promises).then(function (cancelados) {
+            return cancelados.includes(true);
+          });
+        });
+      }
       /**
        * @ngdoc method
        * @name getProrroga
@@ -1139,10 +1183,20 @@ angular.module('poluxClienteApp')
           ctrl.modalidad = modalidad_seleccionada;
         }
 
+        if(tipoSolicitudSeleccionada != 2 && tipoSolicitudSeleccionada.TipoSolicitud.Id == 3){
+          // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
+          ctrl.getCancelacionModalidad().then(function (cancelado) {
+            ctrl.Cancelacion = cancelado;
+            ctrl.mensajeCancelacion = $translate.instant("ERROR.CANCELACIONES");
+          });
+        }else{
+          ctrl.Cancelacion = false;
+        }
+
         //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS MODALIDADES
         ctrl.getNotaTrabajoGrado().then(function (resultado) {
           ctrl.Nota = resultado;
-          ctrl.mensajeErrorCarga = $translate.instant("ERROR.CALIFICADO");
+          ctrl.mensajeCalificado = $translate.instant("ERROR.CALIFICADO");
         });
 
         ctrl.verificarRequisitos(tipoSolicitudSeleccionada, modalidad_seleccionada).then(function() {
@@ -1526,7 +1580,6 @@ angular.module('poluxClienteApp')
 
                       parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
                         angular.forEach(parametros.data.Data, function(parametro){
-                          console.log(parametro);
                           detalle.opciones.push({
                             "NOMBRE": parametro.Nombre,
                             "bd": parametro.Id

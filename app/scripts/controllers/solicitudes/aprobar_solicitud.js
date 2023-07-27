@@ -14,6 +14,7 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires $window
+ * @requires services/parametrosService.service:parametrosRequest
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
@@ -86,7 +87,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = 0;
@@ -137,6 +138,27 @@ angular.module('poluxClienteApp')
         ctrl.Docente = 1;
       }
       ctrl.carrerasCoordinador = [];
+
+      /**
+       * @ngdoc method
+       * @name getParametros
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que consuta los parametros requeridos
+       * @description 
+       * se consueme el servicio {@link parametrosService.service:parametrosRequest parametrosRequest}
+       */
+      ctrl.getParametros = function() {
+        var parametrosConsulta = $.param({
+          query:"CodigoAbreviacion.in:NRVS_PLX|LRVS_PLX|CRVS_PLX"
+        });
+
+        //CONSULTA A PARAMETROS
+        parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+          ctrl.parametro = parametros;
+        });
+      }
+
 
       /**
        * @ngdoc method
@@ -318,6 +340,9 @@ angular.module('poluxClienteApp')
             ctrl.todoDetalles = [];
             var promises = [];
 
+            //PARA EJECUTAR LA FUNCION DE PARAMETROS
+            promises.push(ctrl.getParametros());
+            
             var getDocente = function (id, detalle) {
 
               var defer = $q.defer();
@@ -785,6 +810,7 @@ angular.module('poluxClienteApp')
             EspaciosAcademicos: null,
             DetallesPasantia: null,
             TrRevision: null,
+            DetalleTrabajoGrado: null,
           };
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == 3) {
@@ -937,6 +963,12 @@ angular.module('poluxClienteApp')
                     tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
                     tempTrabajo.Objetivo = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Revista"){
+                    tempTrabajo.NombreRevista = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Link Revista"){
+                    tempTrabajo.LinkRevista = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Clasificación Revista"){
+                    tempTrabajo.ClasificacionRevista = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -967,6 +999,32 @@ angular.module('poluxClienteApp')
                   "DistincionTrabajoGrado": null,
                   "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico,
                   "Objetivo": tempTrabajo.Objetivo,
+                }
+
+                //DETALLE TRABAJO GRADO GUARDADO
+                if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8){
+                  //GUARDA LOS VALORES
+                  ctrl.dataRespuesta.DetalleTrabajoGrado = [{
+                    "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                    "Valor": tempTrabajo.NombreRevista,
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  },
+                  {
+                    "Parametro": String(ctrl.parametro.data.Data[1].Id),
+                    "Valor": tempTrabajo.LinkRevista,
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  },
+                  {
+                    "Parametro": String(ctrl.parametro.data.Data[2].Id),
+                    "Valor": tempTrabajo.ClasificacionRevista,
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  }]
                 }
                 //se agregan estudiantes
                 var estudiante = {};
