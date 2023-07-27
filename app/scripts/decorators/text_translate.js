@@ -222,6 +222,7 @@ var text_es = {
     ERROR_RTA_SOLICITUD_17: "Ocurrió un error al actualizar el estado del trabajo de grado.",
     ERROR_RTA_SOLICITUD_18: "Ocurrió un error al registrar el docuento final del trabajo de grado.",
     ERROR_RTA_SOLICITUD_19: "Ocurrió un error al actualizar los objetivos del trabajo de grado.",
+    ERROR_RTA_SOLICITUD_20: "Ocurrió un error al registrar los detalles del trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO: "Error al intentar subir un documento.",
         CARGAR_DOCUMENTO: "Ocurrió un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
@@ -352,7 +353,8 @@ var text_es = {
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
         NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
-        CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones."
+        CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones.",
+        CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez."
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
