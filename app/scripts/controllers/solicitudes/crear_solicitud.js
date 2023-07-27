@@ -969,8 +969,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         var verificarRequisitosModalidad = function() {
           var defer = $q.defer();
-          if(ctrl.estudiante.Modalidad == null)
-          {
+          if(ctrl.estudiante.Modalidad == null){
             ctrl.estudiante.Modalidad = ctrl.modalidad;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
@@ -1085,10 +1084,13 @@ angular.module('poluxClienteApp')
         }
         var promesas = [];
         if(!ctrl.siModalidad){
+          //console.log("INGRESÓ EN EL PRIMER IF");
           promesas.push(verificarRequisitosModalidad());
           promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
         }
         if (!angular.isUndefined(tipoSolicitud.TipoSolicitud)) {
+          //console.log("INGRESÓ EN EL SEGUNDO IF", verificarRequisitosModalidad());
+          promesas.push(verificarRequisitosModalidad());
           promesas.push(verificarTipoSolicitud(tipoSolicitud));
         }
         $q.all(promesas)
@@ -1164,8 +1166,7 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna ningún valor
        */
       ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {
-        if(ctrl.Docente==1 && ctrl.Docente_trabajos==false)
-        {
+        if(ctrl.Docente==1 && ctrl.Docente_trabajos==false){
           ctrl.Docente_trabajos =true;
           ctrl.tipoSolicitud_Docente = tipoSolicitudSeleccionada;
         }else{
@@ -1179,7 +1180,6 @@ angular.module('poluxClienteApp')
         ctrl.ModalidadTipoSolicitud = tipoSolicitud;
 
         if (modalidad_seleccionada !== undefined) {
-        
           ctrl.modalidad = modalidad_seleccionada;
         }
 
@@ -1193,7 +1193,7 @@ angular.module('poluxClienteApp')
           ctrl.Cancelacion = false;
         }
 
-        //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS MODALIDADES
+        //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS NOVEDADES
         ctrl.getNotaTrabajoGrado().then(function (resultado) {
           ctrl.Nota = resultado;
           ctrl.mensajeCalificado = $translate.instant("ERROR.CALIFICADO");
@@ -1203,8 +1203,7 @@ angular.module('poluxClienteApp')
           ctrl.soliciudConDetalles = true;
           ctrl.detalles = [];
           var tipo_solicitud = 2;
-          if(ctrl.Docente==1)
-          {
+          if(ctrl.Docente==1){
             tipo_solicitud = 6;
           }
           var promises = []

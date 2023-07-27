@@ -199,6 +199,7 @@ var text_es = {
     REGISTRO_PAGO: "Registro del pago",
     REGISTRO_NOTA: "Registro de las notas",
     SOLICITUD_REGISTRADA: "El formulario se registro correctamente",
+    APROBACION: "Aprobación",
     ERROR_CARGAR_SOLICITUDES: "Ocurrio un error al intentar cargar la solicitud",
     ERROR_SOLICITUDES_1: "Ocurrió un error al insertar los detalles de la solicitud",
     ERROR_SOLICITUDES_2: "Ocurrió un error al insertar los usuarios de la solicitud.",

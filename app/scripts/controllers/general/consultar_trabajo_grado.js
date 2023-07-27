@@ -73,6 +73,10 @@ angular.module('poluxClienteApp')
         name: 'EstadoAsignaturaTrabajoGrado.Nombre',
         displayName: $translate.instant('ESTADO'),
         width: '20%',
+      }, {
+        name: 'aprobacion',
+        displayName: $translate.instant('APROBACION'),
+        width: '20%',
       }];
 
       ctrl.gridOptionsEspacios = [];
