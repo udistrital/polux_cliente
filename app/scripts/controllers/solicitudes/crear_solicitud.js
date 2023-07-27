@@ -1245,7 +1245,13 @@ angular.module('poluxClienteApp')
           poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles)
             .then(function(responseDetalles) {
               if (Object.keys(responseDetalles.data[0]).length > 0) {
-                ctrl.detalles = responseDetalles.data;
+
+                var filtereddetalles = responseDetalles.data;
+                angular.forEach(filtereddetalles, function(detalle){
+                  if(detalle.Detalle.Id !==69){
+                    ctrl.detalles.push(detalle);
+                  }
+                });                
                 //Se cargan opciones de los detalles
                 angular.forEach(ctrl.detalles, function(detalle) {
                   //Se internacionalizan variables y se crean labels de los detalles
