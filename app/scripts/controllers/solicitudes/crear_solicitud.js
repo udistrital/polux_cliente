@@ -184,7 +184,8 @@ angular.module('poluxClienteApp')
           .then(function (evaluacion_trabajo_grado_results) {
             for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
               if (evaluacion_trabajo_grado_results[i].data[0].Nota >= 0) {
-                return true;
+                //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
+                return false;
               }
             }
 
@@ -226,7 +227,8 @@ angular.module('poluxClienteApp')
               promises.push(poluxRequest.get("respuesta_solicitud", parametros).then(function (respuesta_solicitud) {
 
                 if (respuesta_solicitud.data[0].EstadoSolicitud.Id == 3) {
-                  return true;
+                  //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
+                  return false;
                 }
                 return false;
               }));
@@ -1242,7 +1244,13 @@ angular.module('poluxClienteApp')
           poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles)
             .then(function(responseDetalles) {
               if (Object.keys(responseDetalles.data[0]).length > 0) {
-                ctrl.detalles = responseDetalles.data;
+
+                var filtereddetalles = responseDetalles.data;
+                angular.forEach(filtereddetalles, function(detalle){
+                  if(detalle.Detalle.Id !==69){
+                    ctrl.detalles.push(detalle);
+                  }
+                });                
                 //Se cargan opciones de los detalles
                 angular.forEach(ctrl.detalles, function(detalle) {
                   //Se internacionalizan variables y se crean labels de los detalles
@@ -1840,6 +1848,7 @@ angular.module('poluxClienteApp')
               ctrl.cargarSolicitudes();
             }).catch(function(error)
             {
+              console.log(error)
               swal(
                 $translate.instant("ERROR.CARGA_SOLICITUDES"),
                 $translate.instant("ERROR.ENVIO_SOLICITUD"),
