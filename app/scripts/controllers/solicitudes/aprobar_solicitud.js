@@ -169,6 +169,14 @@ angular.module('poluxClienteApp')
         parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
           ctrl.parametro = parametros;
         });
+
+        var parametrosConsulta = $.param({
+          query:"CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+        });
+
+        parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+          ctrl.parametro_revista = parametros;
+        });
       }
 
 
@@ -537,7 +545,17 @@ angular.module('poluxClienteApp')
               }
             });
             $q.all(promises).then(function () {
-
+              //CAMBIO DE VISUALIZACIÓN DE PARAMETRO
+              angular.forEach(ctrl.detallesSolicitud, function(data_detalle){
+                if(data_detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
+                  angular.forEach(ctrl.parametro_revista.data.Data, function(PR){
+                    if(data_detalle.Descripcion == String(PR.Id)){
+                      data_detalle.Descripcion = PR.Nombre;
+                    }
+                  });
+                }
+              });
+              
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2);
               defered.resolve(ctrl.detallesSolicitud);
             })
@@ -822,8 +840,7 @@ angular.module('poluxClienteApp')
             SolicitudTrabajoGrado: null,
             EspaciosAcademicos: null,
             DetallesPasantia: null,
-            TrRevision: null,
-            DetalleTrabajoGrado: null,
+            TrRevision: null
           };
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == 3) {
@@ -976,12 +993,6 @@ angular.module('poluxClienteApp')
                     tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
                     tempTrabajo.Objetivo = detalle.Descripcion;
-                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Revista"){
-                    tempTrabajo.NombreRevista = detalle.Descripcion;
-                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Link Revista"){
-                    tempTrabajo.LinkRevista = detalle.Descripcion;
-                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Clasificación Revista"){
-                    tempTrabajo.ClasificacionRevista = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -1014,31 +1025,6 @@ angular.module('poluxClienteApp')
                   "Objetivo": tempTrabajo.Objetivo,
                 }
 
-                //DETALLE TRABAJO GRADO GUARDADO
-                if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8){
-                  //GUARDA LOS VALORES
-                  ctrl.dataRespuesta.DetalleTrabajoGrado = [{
-                    "Parametro": String(ctrl.parametro.data.Data[0].Id),
-                    "Valor": tempTrabajo.NombreRevista,
-                    TrabajoGrado: {
-                      Id: 0,
-                    }
-                  },
-                  {
-                    "Parametro": String(ctrl.parametro.data.Data[1].Id),
-                    "Valor": tempTrabajo.LinkRevista,
-                    TrabajoGrado: {
-                      Id: 0,
-                    }
-                  },
-                  {
-                    "Parametro": String(ctrl.parametro.data.Data[2].Id),
-                    "Valor": tempTrabajo.ClasificacionRevista,
-                    TrabajoGrado: {
-                      Id: 0,
-                    }
-                  }]
-                }
                 //se agregan estudiantes
                 var estudiante = {};
                 var data_estudiantes = [];
@@ -1321,6 +1307,7 @@ angular.module('poluxClienteApp')
             } else if (ctrl.dataSolicitud.TipoSolicitud == 13) {
               //Solicitud de revisión de tg
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
+              var data_ttg = null;
               //trabajo de grado en revisión id 15
               data_tg.EstadoTrabajoGrado = {
                 Id: 17
@@ -1328,6 +1315,51 @@ angular.module('poluxClienteApp')
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
                 // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
                 data_tg.EstadoTrabajoGrado.Id = 17;
+                var detalles_trabajo_grado = {};
+
+                //RESTABLECIMIENTO DE ID DEL PARAMETRO ASOCIADO A LA CLASIFICACION DE REVISTA
+                angular.forEach(ctrl.detallesSolicitud, function(detalles_finales){
+                  if(detalles_finales.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
+                    angular.forEach(ctrl.parametro_revista.data.Data, function(data_parametro){
+                      if(detalles_finales.Descripcion == data_parametro.Nombre){
+                        detalles_finales.Descripcion = data_parametro.Id;
+                      }
+                    });
+                  }
+                });
+                
+                angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+                  if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Revista"){
+                    detalles_trabajo_grado.NombreRevista = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Link Revista"){
+                    detalles_trabajo_grado.LinkRevista = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Clasificación Revista"){
+                    detalles_trabajo_grado.ClasificacionRevista = detalle.Descripcion;
+                  }
+                });
+
+                //GUARDA LOS VALORES
+                data_ttg = [{
+                  "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                  "Valor": String(detalles_trabajo_grado.NombreRevista),
+                  TrabajoGrado: {
+                    Id: data_tg.Id,
+                  }
+                },
+                {
+                  "Parametro": String(ctrl.parametro.data.Data[1].Id),
+                  "Valor": String(detalles_trabajo_grado.LinkRevista),
+                  TrabajoGrado: {
+                    Id: data_tg.Id,
+                  }
+                },
+                {
+                  "Parametro": String(ctrl.parametro.data.Data[2].Id),
+                  "Valor": String(detalles_trabajo_grado.ClasificacionRevista),
+                  TrabajoGrado: {
+                    Id: data_tg.Id,
+                  }
+                }]
               }
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
                 // Si la modalidad es creación o interpretación el trabajo de grado de una vez pasa a listo para sustentar
@@ -1386,7 +1418,8 @@ angular.module('poluxClienteApp')
                     Id: 0,
                   },
                   TrabajoGrado: data_tg,
-                }
+                },
+                DetalleTrabajoGrado: data_ttg
               }
               ctrl.dataRespuesta.TrRevision = data_revision;
             } else if (ctrl.dataSolicitud.TipoSolicitud == 6) {
