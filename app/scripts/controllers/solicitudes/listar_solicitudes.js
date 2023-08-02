@@ -13,6 +13,7 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires $window
+ * @requires services/parametrosService.service:parametrosRequest
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:nuxeoClient
@@ -35,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
-    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, academicaRequest, nuxeo, nuxeoClient, poluxRequest, token_service) {
+    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, nuxeo, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
@@ -1081,6 +1082,19 @@ angular.module('poluxClienteApp')
                 }
 
                 angular.forEach(ctrl.detallesSolicitud, function(detalle) {
+                  if(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
+                    var parametrosConsulta = $.param({
+                      query:"CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+                    });
+
+                    parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+                      angular.forEach(parametros.data.Data, function(parametro){
+                        if(detalle.Descripcion == String(parametro.Id)){
+                          detalle.Descripcion = parametro.Nombre;
+                        }
+                      });
+                    });
+                  }
                   detalle.filas = [];
                   var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                   if (id === 49) {
