@@ -1341,21 +1341,21 @@ angular.module('poluxClienteApp')
                 //GUARDA LOS VALORES
                 data_ttg = [{
                   "Parametro": String(ctrl.parametro.data.Data[0].Id),
-                  "Valor": detalles_trabajo_grado.NombreRevista,
+                  "Valor": String(detalles_trabajo_grado.NombreRevista),
                   TrabajoGrado: {
                     Id: data_tg.Id,
                   }
                 },
                 {
                   "Parametro": String(ctrl.parametro.data.Data[1].Id),
-                  "Valor": detalles_trabajo_grado.LinkRevista,
+                  "Valor": String(detalles_trabajo_grado.LinkRevista),
                   TrabajoGrado: {
                     Id: data_tg.Id,
                   }
                 },
                 {
                   "Parametro": String(ctrl.parametro.data.Data[2].Id),
-                  "Valor": detalles_trabajo_grado.ClasificacionRevista,
+                  "Valor": String(detalles_trabajo_grado.ClasificacionRevista),
                   TrabajoGrado: {
                     Id: data_tg.Id,
                   }
