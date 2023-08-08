@@ -56,22 +56,26 @@ angular.module('poluxClienteApp')
       ctrl.gridOptionsAsignaturas.columnDefs = [{
         name: 'CodigoAsignatura',
         displayName: $translate.instant('ASIGNATURA'),
-        width: '20%',
+        width: '15%',
       }, {
         name: 'Anio',
         displayName: $translate.instant('ANO'),
-        width: '20%',
+        width: '15%',
       }, {
         name: 'Periodo',
         displayName: $translate.instant('PERIODO'),
-        width: '20%',
+        width: '15%',
       }, {
         name: 'Calificacion',
         displayName: $translate.instant('NOTA'),
-        width: '20%',
+        width: '15%',
       }, {
         name: 'EstadoAsignaturaTrabajoGrado.Nombre',
         displayName: $translate.instant('ESTADO'),
+        width: '20%',
+      }, {
+        name: 'Aprobacion',
+        displayName: $translate.instant('APROBACION'),
         width: '20%',
       }];
 
@@ -125,6 +129,7 @@ angular.module('poluxClienteApp')
           .then(function(responseDatosBasicos) {
             if (!angular.isUndefined(responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante)) {
               estudiante.datos = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
+              ctrl.datos_basicos_estudiante = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0];
               //consultar nombre carrera
               academicaRequest.get("carrera", [estudiante.datos.carrera])
                 .then(function(responseCarrera) {
@@ -469,11 +474,15 @@ angular.module('poluxClienteApp')
             poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
               .then(function(responseEvaluacion) {
                 if (Object.keys(responseEvaluacion.data[0]).length > 0) {
-                  //Si no ha registrado ninguna nota
+                  //Si ya registro la nota
                   vinculado.notaRegistrada = responseEvaluacion.data[0].Nota;
                 } else {
-                  //Si ya registro la nota
+                  //Si no ha registrado ninguna nota
                   vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_NOTA");
+                  //NOTIFICA QUE EL TRABAJO DE GRADO ESTÁ SIN CALIFICAR
+                  angular.forEach(ctrl.trabajoGrado.asignaturas, function(asignatura){
+                    asignatura.Aprobacion = $translate.instant("ERROR.SIN_CALIFICACION");
+                  })
                 }
                 defer.resolve();
               })
@@ -675,10 +684,41 @@ angular.module('poluxClienteApp')
                   promises.push(ctrl.getDetallePasantia());
                 }
 
-                $q.all(promises)
-                  .then(function() {
-                    
-                    
+                $q.all(promises).then(function() {
+                    //COMPRUEBA SI EL USUARIO APROBÓ O NO
+                    angular.forEach(ctrl.trabajoGrado.asignaturas, function (asignatura) {
+                      if (asignatura.Aprobacion == undefined) {
+                        //CONSULTA EL PERIODO ACADEMICO ANTERIOR
+                        academicaRequest.get("periodo_academico", "P").then(function (Periodo) {
+                          var P = Periodo.data.periodoAcademicoCollection.periodoAcademico[0];
+                          //CONSULTA LOS DATOS DEL ESTUDIANTE
+                          academicaRequest.get("datos_estudiante", [ctrl.datos_basicos_estudiante.codigo, P.anio, P.periodo]).then(function (data_estudiante) {
+                            if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "PREGRADO") {
+                              //VALIDACIÓN PARA LA MODADLIDAD DE MATERIAS DE PROFUNDIZACIÓN EN PREGRADO
+                              if(ctrl.trabajoGrado.Modalidad.CodigoAbreviacion == "EAPOS"){
+                                if (asignatura.Calificacion >= 3.5) {
+                                  asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                                } else {
+                                  asignatura.Aprobacion = $translate.instant("REPROBADO");
+                                }
+                              }else{
+                                if (asignatura.Calificacion >= 3.0) {
+                                  asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                                } else {
+                                  asignatura.Aprobacion = $translate.instant("REPROBADO");
+                                }
+                              }
+                            } else if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "POSGRADO") {
+                              if (asignatura.Calificacion >= 3.5) {
+                                asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                              } else {
+                                asignatura.Aprobacion = $translate.instant("REPROBADO");
+                              }
+                            }
+                          });
+                        });
+                      }
+                    });
                     ctrl.gridOptionsAsignaturas.data = ctrl.trabajoGrado.asignaturas;
                     ctrl.gridOptionsEspacios.data = ctrl.trabajoGrado.espacios;
                     ctrl.trabajoCargado = true;
