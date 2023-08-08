@@ -57,6 +57,9 @@ angular.module('poluxClienteApp')
         ctrl.estudianteConSolicitud = false;
         ctrl.removable = false;
         ctrl.nuevosEstudiantes = [];
+        ctrl.codigo_estudiantes = [];
+        ctrl.estudiantes = [];
+        ctrl.ErrorNivel = false;
 
         /**
          * @ngdoc method
@@ -78,12 +81,60 @@ angular.module('poluxClienteApp')
 
           
           if (!ctrl.nuevosEstudiantes.includes(ctrl.codigoEstudiante) && $scope.estudiante !== "" + ctrl.codigoEstudiante) {
-            ctrl.verificarEstudiante();
+            ctrl.codigo_estudiantes.push($scope.estudiante);
+            ctrl.codigo_estudiantes.push(ctrl.codigoEstudiante);
+            ctrl.FiltroSegunNivel();
+            ctrl.codigo_estudiantes = [];
+            ctrl.estudiantes = [];
+            ctrl.ErrorNivel = false;
           } else {
             ctrl.estudianteRegistrado = true;
           }
         };
 
+        /**
+         * @ngdoc method
+         * @name FiltroSegunNivel
+         * @methodOf poluxClienteApp.directive:asignarEstudiante.controller:asignarEstudianteCtrl
+         * @param {undefined} undefined No recibe parametros
+         * @returns {undefined} No retorna ningún valor
+         * @description 
+         * Verifica que los estudiantes pertenezcan al mismo nivel de formación
+         */
+        ctrl.FiltroSegunNivel = function() {
+          ctrl.loading = true;
+          var promises = [];
+        
+          angular.forEach(ctrl.codigo_estudiantes, function(codigo) {
+            var promise = academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
+              var P = periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0];
+              return academicaRequest.get("datos_estudiante", [codigo, P.anio, P.periodo]).then(function(data_estudiante) {
+                var E = data_estudiante.data.estudianteCollection.datosEstudiante[0];
+                ctrl.estudiantes.push(E);
+              });
+            });
+            
+            promises.push(promise);
+          });
+        
+          Promise.all(promises).then(function() {
+            if (ctrl.estudiantes[0].nivel === ctrl.estudiantes[1].nivel && ctrl.estudiantes[0].nivel === "PREGRADO") {
+              if (ctrl.estudiantes[0].nombre_tipo_carrera !== "TECNOLOGIA" && ctrl.estudiantes[1].nombre_tipo_carrera !== "TECNOLOGIA") {
+                ctrl.verificarEstudiante();
+              } else {
+                ctrl.ErrorNivel = true;
+                ctrl.loading = false;
+              }
+            } else {
+              ctrl.ErrorNivel = true;
+              ctrl.loading = false;
+            }
+          }).catch(function(error) {
+            console.error("Error al cargar los datos de estudiantes:", error);
+            ctrl.estudianteNoEncontrado = true;
+            ctrl.loading = false;
+          });
+        };
         /**
          * @ngdoc method
          * @name verificarEstudiante
