@@ -44,7 +44,9 @@
             <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.error">
                 {{'ERROR.CARGAR_DATOS_ESTUDIANTE' | translate}}
             </div>
-
+            <div class="panel-body alert alert-danger" ng-show="d_asignarEstudiante.ErrorNivel">
+                {{'ERROR.DIFERENCIA_NIVEL' | translate}}
+            </div>
             <div class="row">
                 <md-chips class="custom-chips col-md-12" ng-model="d_asignarEstudiante.nuevosEstudiantes" readonly="true" md-removable="d_asignarEstudiante.removable">
                     <md-chip-template ng-click="d_asignarEstudiante.removable=!d_asignarEstudiante.removable">

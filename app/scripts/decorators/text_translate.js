@@ -199,6 +199,7 @@ var text_es = {
     REGISTRO_PAGO: "Registro del pago",
     REGISTRO_NOTA: "Registro de las notas",
     SOLICITUD_REGISTRADA: "El formulario se registro correctamente",
+    APROBACION: "Aprobación",
     ERROR_CARGAR_SOLICITUDES: "Ocurrio un error al intentar cargar la solicitud",
     ERROR_SOLICITUDES_1: "Ocurrió un error al insertar los detalles de la solicitud",
     ERROR_SOLICITUDES_2: "Ocurrió un error al insertar los usuarios de la solicitud.",
@@ -347,6 +348,7 @@ var text_es = {
         SIN_REVISIONES: "No se han podido encontrar revisiones asociadas al trabajo de grado, verifique que se haya realizado alguna anteriormente",
         CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al trabajo de grado. Comuníquese con el administrador.",
         INSERTANDO_REVISIONES: "Ocurrió un error al registrar las revisiones del trabajo de grado",
+        SIN_CALIFICACION: "Sin Calificación",
         VINCULADO_NO_NOTA: "No ha registrado nota en el sistema",
         VINCULADO_NO_PUEDE_NOTA: "No puede registrar nota en el sistema",
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
@@ -354,7 +356,8 @@ var text_es = {
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
         NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
         CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones.",
-        CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez."
+        CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez.",
+        DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación."
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
@@ -552,7 +555,9 @@ var text_es = {
         DIRECTOR_EXTERNO: "Se cambia el director externo por el solicitado.",
         SOCIALIZACION: "Lea los detalles de la respuesta para saber más sobre la socialización.",
         REVISION: "El trabajo de grado ahora se encuentra en revisión por parte del evaluador asignado.",
+        ASIGNATURA: "Aprobado"
     },
+    REPROBADO: "Reprobado",
     AREAS: {
         INGRESE_NOMBRE_AREA: "Ingrese el nombre de la nueva subárea",
         INGRESE_DESCRIPCION_AREA: "Ingrese una descripción de la nueva subárea",
@@ -1281,12 +1286,14 @@ var text_en = {
         SIN_REVISIONES: "It has not been possible to find revisions associated to the work of degree, verify that it has been done previously",
         CARGANDO_REVISIONES: "An error occurred when trying to query the revisions associated with the degree work. Contact the administrator.",
         INSERTANDO_REVISIONES: "An error ocurred when trying to register the degree work corrections",
+        SIN_CALIFICACION: "Unrated",
         VINCULADO_NO_NOTA: "The teacher have not registered a grade in the system",
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
         CARGAR_ACTA_SOCIALIZACION: "There was an error occurred loading the socialization certificate, please check your connection and try again.",
         SIN_MODALIDADES: "There are no modalities registered at the moment",
         CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
-        CALIFICADO:"The degree work is already graded, so you cannot make any further changes."
+        CALIFICADO:"The degree work is already graded, so you cannot make any further changes.",
+        DIFERENCIA_NIVEL: "Students have to be at the same training level."
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1483,7 +1490,9 @@ var text_en = {
         DIRECTOR_EXTERNO: "The external director was changed by the requested",
         SOCIALIZACION: "Read the details of the answer to know more about the socialization.",
         REVISION: "The degree work is now under review by the assigned evaluator.",
+        ASIGNATURA: "Approved"
     },
+    REPROBADO: "Reproached",
     AREAS: {
         INGRESE_NOMBRE_AREA: "Enter the name of the new sub-area",
         INGRESE_DESCRIPCION_AREA: "Enter a description of the new sub-area",
