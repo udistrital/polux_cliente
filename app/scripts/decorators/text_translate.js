@@ -370,6 +370,7 @@ var text_es = {
         EDITAR: "Editar",
         ACTIVAR: "Activar",
         DESACTIVAR: "Desactivar",
+        DEVOLVER: 'Solicitar correcciones'
     },
     ENVIAR_SOLICITUD: "Enviar Solicitud",
     INGRESE_NOMBRE_DIRECTOR_EXTERNO: "Ingrese el nombre del director externo",
@@ -877,6 +878,20 @@ var text_es = {
         ERROR: "Ocurrió un error al intentar registrar la revisión",
         AGREGAR_COMENTARIO: "Debe agregar al menos un comentario sobre la revisión",
     },
+    SOLICITAR_CORRECCIONES: {
+        AVISO: 'Solicitar Corrección',
+        CONFIRMACION: 'Enviar Correcciones',
+        CORRECCION_REGISTRADA: 'Las corrección ha sido ingresada con éxito',
+        ERROR: {
+            REGISTRANDO_CORRECCION: 'Ocurrió un error registrando la corrección, por favor intente de nuevo',
+        },
+        PANEL: 'Correcciones',
+        LABEL: 'Correcciones y recomendaciones al trabajo de grado',
+        MENSAJE_CONFIRMACION: '¿Está seguro de devolver el proyecto de grado con las correcciones indicadas?',
+        PLACEHOLDER: 'Ingrese los cambios o solicitudes que deben realizarse al proyecto de grado',
+        SUBMIT: 'Enviar Correcciones',
+        TITULO: 'Solicitar correcciones a trabajo de grado'
+    },
     REVISION_SOLICITADA_OTRO: "está solicitada a otro docente",
     AGREGAR_COMENTARIO: "Agregar comentario",
     GUARDAR_REVISION: "Guardar revisión",
@@ -1286,6 +1301,7 @@ var text_en = {
         EDITAR: "Edit",
         ACTIVAR: "Activate",
         DESACTIVAR: "Deactivate",
+        DEVOLVER: 'Solicitar correcciones'
     },
     ENVIAR_SOLICITUD: "Send Form",
     INGRESE_NOMBRE_DIRECTOR_EXTERNO: "Enter the external director's name",
@@ -1791,6 +1807,20 @@ var text_en = {
         REGISTRADA: "The review has been successfully registered",
         ERROR: "An error ocurred when trying to register the review",
         AGREGAR_COMENTARIO: "You must add at least a comment about the review",
+    },
+    SOLICITAR_CORRECCIONES: {
+        AVISO: 'Solicitar Corrección',
+        CONFIRMACION: 'Enviar Correcciones',
+        CORRECCION_REGISTRADA: 'Las corrección ha sido ingresada con éxito',
+        ERROR: {
+            REGISTRANDO_CORRECCION: 'Ocurrió un error registrando la corrección, por favor intente de nuevo',
+        },
+        PANEL: 'Correcciones',
+        LABEL: 'Correcciones y recomendaciones al trabajo de grado',
+        MENSAJE_CONFIRMACION: '¿Está seguro de devolver el proyecto de grado con las correcciones indicadas?',
+        PLACEHOLDER: 'Ingrese los cambios o solicitudes que deben realizarse al proyecto de grado',
+        SUBMIT: 'Enviar Correcciones',
+        TITULO: 'Solicitar correcciones a trabajo de grado'
     },
     REVISION_SOLICITADA_OTRO: "is requested to another teacher",
     AGREGAR_COMENTARIO: "Add comment",

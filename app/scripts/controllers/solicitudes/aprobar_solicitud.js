@@ -1321,19 +1321,20 @@ angular.module('poluxClienteApp')
             } else if (ctrl.dataSolicitud.TipoSolicitud == 13) {
               //Solicitud de revisión de tg
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
-              //trabajo de grado en revisión id 15
+              // trabajo de grado en revisión id 15
+              // Por ahora para todas las modalidades se cambia estado a revisión de docente evaluador
               data_tg.EstadoTrabajoGrado = {
-                Id: 17
+                Id: 23,
               };
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
-                // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
-                data_tg.EstadoTrabajoGrado.Id = 17;
-              }
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
-                // Si la modalidad es creación o interpretación el trabajo de grado de una vez pasa a listo para sustentar
-                //KB 26100
-                data_tg.EstadoTrabajoGrado.Id = 17;
-              }
+              // if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+              //   // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
+              //   data_tg.EstadoTrabajoGrado.Id = 23;
+              // }
+              // if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
+              //   // Si la modalidad es creación o interpretación el trabajo de grado de una vez pasa a listo para sustentar
+              //   //KB 26100
+              //   data_tg.EstadoTrabajoGrado.Id = 23;
+              // }
               //Vinculaciones del tg
               var data_vinculaciones = [];
               //Si se escogio cambiar la vinculación
