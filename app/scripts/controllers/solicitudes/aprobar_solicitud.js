@@ -1309,12 +1309,18 @@ angular.module('poluxClienteApp')
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
               var data_ttg = null;
               //trabajo de grado en revisión id 15
-              data_tg.jEstadoTrabajoGrado = {
+              const modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion;
+              // Por defecto el trabajo de grado pasa a listo para sustentar
+              data_tg.EstadoTrabajoGrado = {
                 Id: 17,
               };
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
-                // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
-                data_tg.EstadoTrabajoGrado.Id = 17;
+
+              // Para las modalidades innovación, monografía o interpretación el trabajo de grado pasa a revisión de evaluador
+              if (modalidad === 'INV' || modalidad === 'CRE' || modalidad === 'MONO') {
+                data_tg.EstadoTrabajoGrado.Id = 23;
+              }
+
+              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion === 'PACAD') {
                 var detalles_trabajo_grado = {};
 
                 //RESTABLECIMIENTO DE ID DEL PARAMETRO ASOCIADO A LA CLASIFICACION DE REVISTA
@@ -1327,7 +1333,7 @@ angular.module('poluxClienteApp')
                     });
                   }
                 });
-                
+
                 angular.forEach(ctrl.detallesSolicitud, function (detalle) {
                   if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Revista"){
                     detalles_trabajo_grado.NombreRevista = detalle.Descripcion;
@@ -1361,11 +1367,7 @@ angular.module('poluxClienteApp')
                   }
                 }]
               }
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
-                // Si la modalidad es creación o interpretación el trabajo de grado de una vez pasa a listo para sustentar
-                //KB 26100
-                data_tg.EstadoTrabajoGrado.Id = 17;
-              }
+
               //Vinculaciones del tg
               var data_vinculaciones = [];
               //Si se escogio cambiar la vinculación
