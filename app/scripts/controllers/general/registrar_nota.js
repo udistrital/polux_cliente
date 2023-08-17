@@ -420,8 +420,8 @@ angular.module('poluxClienteApp')
           RolTrabajoGrado: fila.entity.RolTrabajoGrado,
         };
 
-        if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Nombre === 'Revisión docente evaluador' ||
-          ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 'Sustentado') {
+        if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'RDE' ||
+          ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'STN') {
           ctrl.trabajoSeleccionado.estadoValido = true;
         }
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
@@ -435,10 +435,9 @@ angular.module('poluxClienteApp')
         $q.all(promesasTrabajo)
           .then(function() {
             ctrl.cargandoTrabajo = false;
-            
           })
           .catch(function(error) {
-            
+
             ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
             ctrl.errorCargandoTrabajo = true;
             ctrl.cargandoTrabajo = false;
