@@ -84,6 +84,8 @@
  * @property {Number} userId Valor que carga el código de identificación para el usuario
  * @property {Boolean} loadDocumento Indicador que maneja la carga del documento para la solicitud
  * @property {String} ObjetivoNuevo Texto que carga el contenido del nuevo objetivo para el trabajo de grado
+ * @property {Object} modalidad Modalidad a la que pertenece la solicitud del trabajo de grado
+ * @property {Object} documentoSolicitud Documentos asociados a la solicitud
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
@@ -146,7 +148,7 @@ angular.module('poluxClienteApp')
         ctrl.Docente = 1;
       }
 
-      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS")) {
+      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
         ctrl.UnidadExtPasantia = 1;
       }
       ctrl.carrerasCoordinador = [];
@@ -191,8 +193,14 @@ angular.module('poluxClienteApp')
        * se consueme el servicio {@link academicaService.service:academicaRequest academicaRequest}
        */
       ctrl.getCarrerasCoordinador = function () {
+        var rol = ""
         var defer = $q.defer();
-        academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function (response) {
+        if (token_service.getAppPayload().appUserRole.includes("COORDINADOR_PREGRADO")) {
+          rol = "PREGRADO"
+        } else {
+          rol = "POSGRADO"
+        }
+        academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
           //
           if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
             ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
@@ -201,8 +209,7 @@ angular.module('poluxClienteApp')
             ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
             defer.reject("Carreras no definidas");
           }
-        })
-          .catch(function (error) {
+        }).catch(function (error) {
             ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
             defer.reject(error);
           });
@@ -226,7 +233,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("respuesta_solicitud", parametros).then(function (responseRespuesta) {
           if (Object.keys(responseRespuesta.data[0]).length > 0) {
             ctrl.respuestaActual = responseRespuesta.data[0];
-            if (ctrl.respuestaActual.EstadoSolicitud.Id != 1 && ctrl.respuestaActual.EstadoSolicitud.Id != 17 && ctrl.respuestaActual.EstadoSolicitud.Id != 21) {
+            if (ctrl.respuestaActual.EstadoSolicitud.Id != 1 && ctrl.respuestaActual.EstadoSolicitud.Id != 17 && ctrl.respuestaActual.EstadoSolicitud.Id != 21 && ctrl.respuestaActual.EstadoSolicitud.Id != 23) {
               ctrl.mensajeNoAprobar += ' ' + $translate.instant('SOLICITUD_CON_RESPUESTA');
               ctrl.noAprobar = true;
             }
@@ -340,7 +347,19 @@ angular.module('poluxClienteApp')
         var promise = defered.promise;
         poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
           poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(function (responseEstudiantes) {
-
+            poluxRequest.get("documento_solicitud", parametrosDetallesSolicitud).then(function (responseDocumentoSolicitud){
+              ctrl.documentoSolicitud = [];
+              angular.forEach(responseDocumentoSolicitud.data, function (documentoSol) {
+                var parametrosDocumentoEscrito = $.param({
+                  query: "Id:" + documentoSol.DocumentoEscrito.Id,
+                  limit: 0
+                });
+                poluxRequest.get("documento_escrito", parametrosDocumentoEscrito).then(function (responseDocumentoEscrito){
+                  ctrl.documentoSolicitud.push(responseDocumentoEscrito.data[0]);
+                });
+              })
+            });
+            ctrl.modalidad = responseEstudiantes.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
             if (Object.keys(responseDetalles.data[0]).length === 0) {
               ctrl.detallesSolicitud = [];
 
@@ -362,7 +381,6 @@ angular.module('poluxClienteApp')
 
             //PARA EJECUTAR LA FUNCION DE PARAMETROS
             promises.push(ctrl.getParametros());
-            
             var getDocente = function (id, detalle) {
 
               var defer = $q.defer();
@@ -840,7 +858,8 @@ angular.module('poluxClienteApp')
             SolicitudTrabajoGrado: null,
             EspaciosAcademicos: null,
             DetallesPasantia: null,
-            TrRevision: null
+            TrRevision: null,
+            EspaciosAcademicosInscritos: null,
           };
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == 3) {
@@ -916,7 +935,7 @@ angular.module('poluxClienteApp')
               //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 16) {
                 //La solicitud solo se aprueba para que siga el curso
-                /*var data_trabajo_grado = {};
+                var data_trabajo_grado = {};
                 var data_estudiantes = [];
                 var otro = {};
                 var estudiante = {};
@@ -926,6 +945,58 @@ angular.module('poluxClienteApp')
                         otro.Estudiantes = detalle.Descripcion;
                     }
                 });
+
+                var data_asignaturasTrabajoGrado = [];
+                //Para asignatura tg1
+                data_asignaturasTrabajoGrado.push({
+                  "CodigoAsignatura": 1,
+                  "Periodo": parseInt(periodo),
+                  "Anio": parseInt(anio),
+                  "Calificacion": 0,
+                  "TrabajoGrado": {
+                    "Id": 0
+                  },
+                  "EstadoAsignaturaTrabajoGrado": {
+                    "Id": 1,
+                  }
+                });
+                //Para asignatura tg2
+                data_asignaturasTrabajoGrado.push({
+                  "CodigoAsignatura": 2,
+                  "Periodo": parseInt(periodo),
+                  "Anio": parseInt(anio),
+                  "Calificacion": 0,
+                  "TrabajoGrado": {
+                    "Id": 0
+                  },
+                  "EstadoAsignaturaTrabajoGrado": {
+                    "Id": 1,
+                  }
+                });
+                angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+                  if (detalle.Descripcion.includes("JSON-")) {
+                    if (detalle.DetalleTipoSolicitud.Detalle.Id === 22) {
+                      var datosMaterias = detalle.Descripcion.split("-");
+                      datosMaterias.splice(0, 2);
+                      var materiasAux = []
+                      angular.forEach(datosMaterias, function (materia) {
+                        var aux = JSON.parse(materia)
+                        materiasAux.push({
+                          "TrabajoGrado": {
+                            "Id": null
+                          },
+                          "EspaciosAcademicosElegibles": {
+                            "Id": aux.Id
+                          },
+                          "EstadoEspacioAcademicoInscrito": {
+                            "Id": 1
+                          }
+                        })
+                      });
+                      ctrl.dataRespuesta.EspaciosAcademicosInscritos = materiasAux
+                    }
+                  }
+                })
                 data_trabajo_grado = {
                     "Titulo": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Nombre,
                     "Modalidad": {
@@ -934,7 +1005,8 @@ angular.module('poluxClienteApp')
                     "EstadoTrabajoGrado": {
                         "Id": 1
                     },
-                    "DistincionTrabajoGrado": null
+                    "DistincionTrabajoGrado": null,
+                    "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico
                 }
                 estudiante = {
                     "Estudiante": otro.Estudiantes,
@@ -945,29 +1017,55 @@ angular.module('poluxClienteApp')
                         "Id": 1
                     }
                 }
-                
+                vinculacion = {
+                  "Usuario": $scope.userId,
+                  "Activo": true,
+                  "FechaInicio": fechaRespuesta,
+                  //"FechaFin": null,
+                  "RolTrabajoGrado": {
+                    "Id": 5
+                  },
+                  "TrabajoGrado": {
+                    "Id": 0
+                  }
+                };
+                var data_vinculacion = [];
+                data_vinculacion.push(vinculacion)
                 data_estudiantes.push(estudiante);
-                
                 ctrl.trabajo_grado = {
                     TrabajoGrado: data_trabajo_grado,
                     EstudianteTrabajoGrado: data_estudiantes,
                     DocumentoEscrito: null,
                     DocumentoTrabajoGrado: null,
                     AreasTrabajoGrado: null,
-                    VinculacionTrabajoGrado: null
+                    VinculacionTrabajoGrado: data_vinculacion,
+                    AsignaturasTrabajoGrado: data_asignaturasTrabajoGrado
                 }
-                
+                if (objRtaNueva.EstadoSolicitud.Id == 3 && this.roles.includes("COORDINADOR_PREGRADO")) {
+                  objRtaNueva.EstadoSolicitud.Id = 23
+                }
                 ctrl.rtaSol = {
                     RespuestaAnterior: objRtaAnterior,
                     RespuestaNueva: objRtaNueva,
                     DocumentoSolicitud: data_documento,
-                    TipoSolicitud: ctrl.respuestaActual.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                    TipoSolicitud: ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
                     Vinculaciones: null,
                     EstudianteTrabajoGrado: null,
                     TrTrabajoGrado: ctrl.trabajo_grado,
-                    ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
+                    ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
+                    SolicitudTrabajoGrado: ctrl.respuestaActual.SolicitudTrabajoGrado
                 };
-                */
+                ctrl.rtaSol.SolicitudTrabajoGrado.TrabajoGrado = {
+                  "Id": 0
+                }
+
+                ctrl.dataRespuesta.RespuestaAnterior = ctrl.rtaSol.RespuestaAnterior
+                ctrl.dataRespuesta.RespuestaNueva = ctrl.rtaSol.RespuestaNueva
+                ctrl.dataRespuesta.DocumentoSolicitud = ctrl.rtaSol.DocumentoSolicitud
+                ctrl.dataRespuesta.TipoSolicitud = ctrl.rtaSol.TipoSolicitud
+                ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
+                ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
+                ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
               } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
                 //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                 //se obtienen datos para crear el trabajo
@@ -1465,8 +1563,6 @@ angular.module('poluxClienteApp')
             }
           }
           if (!errorDocente) {
-            //
-
             poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
               ctrl.mostrarRespuesta(response);
             })
@@ -2218,7 +2314,7 @@ angular.module('poluxClienteApp')
                   TrabajoGrado: null,
 
                 };
-                //console.log(ctrl.dataRespuesta);
+                console.log(ctrl.dataRespuesta);
 
                 poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
                   ctrl.mostrarRespuesta(response);

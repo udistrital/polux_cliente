@@ -75,7 +75,19 @@
 
       </div>
     </div>
+  </div>
 
+  <div class="panel panel-default" ngIf="aprobarSolicitud.modalidad.CodigoAbreviacion == 'EAPOS">
+    <div class="panel-heading">
+      {{'DOCUMENTOS_SOLICITUD' | translate}}
+    </div>
+    <div class="panel-body">
+      <div class="row" ng-repeat="documento in aprobarSolicitud.documentoSolicitud" >
+        <label class="col-sm-4 control-label"> {{documento.Resumen}}:  </label>
+        <label ng-click="aprobarSolicitud.getDocumento(documento.Enlace)" class="col-sm-8 control-label" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                            
+      </div>
+    </div>
   </div>
 
   <div class="panel panel-default" >
@@ -115,7 +127,7 @@
     </form>
     </div>
 
-    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS') && !aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR_PREGRADO')">
+    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS') && !aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR_PREGRADO') && !aprobarSolicitud.roles.includes('COORDINADOR_POSGRADO')">
       <form name="formularioAprobacionExtensionPasantia" ng-submit="aprobarSolicitud.RespuestaExtensionPasantia()">
       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
       <div class="col-sm-8">
@@ -365,7 +377,7 @@
                
               </div>
             </div>
-          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
+          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta" modalidad="aprobarSolicitud.modalidad"> </cargar-documento>
         </div>
       </div>
     </div>
