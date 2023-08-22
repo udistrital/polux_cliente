@@ -108,7 +108,6 @@ angular.module('poluxClienteApp')
       ctrl.gridOptions = {
         enableSorting: false,
       };
-
       ctrl.gridOptions.columnDefs = [{
         name: 'solicitud',
         displayName: $translate.instant('SOLICITUD'),
@@ -444,14 +443,13 @@ angular.module('poluxClienteApp')
                                 //"respuesta": ""+value.Id,
                                 "respuestaSolicitud": value
                               };
-                              
                               if (solicitud.estado.Id == 7 || solicitud.estado.Id == 8 || solicitud.estado.Id == 9 || solicitud.estado.Id == 10) {
                                 solicitud.aprobado = true;
                                 ctrl.numeroAdmitidos += 1;
                               } else {
                                 solicitud.aprobado = false;
                               }
-                              if (solicitud.estado.Id == 3 || solicitud.estado.Id == 5) {
+                              if (solicitud.estado.Id == 3 || solicitud.estado.Id == 5 || solicitud.estado.Id == 23) {
                                 solicitud.permitirAprobar = true;
                               } else {
                                 solicitud.permitirAprobar = false;
@@ -507,7 +505,7 @@ angular.module('poluxClienteApp')
         if (carrera) {
           $scope.sols = [];
           var parametros = $.param({
-            query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8|9|10|11,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
+            query: "Activo:true,EstadoSolicitud.Id.in:3|5|6|7|8|9|10|11|23,SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:13",
             limit: 0
           });
           poluxRequest.get("respuesta_solicitud", parametros).then(function(respuestaSolicitud) {
@@ -524,14 +522,12 @@ angular.module('poluxClienteApp')
                   $scope.mensajeErrorSolicitudes = $translate.instant(error);
                   $scope.errorCargarSolicitudes = true;
                   $scope.loadSolicitudes = false;
-                  
                 });
             })
             .catch(function() {
               $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
               $scope.errorCargarSolicitudes = true;
               $scope.loadSolicitudes = false;
-              
             });
           ctrl.gridOptions.data = $scope.sols;
         }
@@ -541,7 +537,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name admitirPrimeraFecha
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
-       * @description 
+       * @description
        * Muestra el modal para admitir en primera fecha si no se encuentra ningún error.
        * @param {undefined} undefined No recibe ningún parámetro
        * @returns {undefined} No retorna nada

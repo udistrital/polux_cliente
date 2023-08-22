@@ -1761,7 +1761,6 @@ angular.module('poluxClienteApp')
                 "Error ingrese una opcion valida.",
                 'warning'
               );
-              
               ctrl.erroresFormulario = true;
             }
           }
@@ -1772,14 +1771,12 @@ angular.module('poluxClienteApp')
                 "Error ingrese una opcion valida. (Documento)",
                 'warning'
               );
-              
               ctrl.erroresFormulario = true;
             }
           }
         });
         if (!ctrl.erroresFormulario) {
           //ctrl.cargarSolicitudes();
-          
           ctrl.cargarDocumentos();
         }
       }
@@ -1788,7 +1785,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name cargarDocumentos
        * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
-       * @description 
+       * @description
        * Si los detalles de la solicitud tienen asociados documentos conecta el cliente de nuxeoClient y llama a la función cargarDocumento para cargar todos 
        * los documentos a {@link services/poluxService.service:nuxeoClient nuxeoClient}, en caso de que no los tenga o que haya terminado de cargarlos llama a la función cargarSolicitudes.
        * @param {undefined} undefined No requiere parámetros
@@ -1817,20 +1814,19 @@ angular.module('poluxClienteApp')
                 var data = [];
                   descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
                   utils.getBase64(detalle.fileModel).then(
-                    function (base64) {                   
+                    function (base64) {
                       fileBase64 = base64;
                       data = [{
                       IdTipoDocumento: 5, //id tipo documento de documentos_crud
                       nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
-                      
                       metadatos: {
                         NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
                         Tipo: "Archivo",
                         Observaciones: "Solicitud inicial"
-                      }, 
+                      },
                       descripcion:descripcion,
                       file:  fileBase64,
-                      }] 
+                      }]
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                         URL =  response.data.res.Enlace
                         detalle.respuesta = URL
@@ -1902,32 +1898,32 @@ angular.module('poluxClienteApp')
           };
         } else {
           if(ctrl.ModalidadTipoSolicitud === 2){
-            ctrl.ModalidadTipoSolicitud = 70;   
+            ctrl.ModalidadTipoSolicitud = 70;
           }
-          if(ctrl.ModalidadTipoSolicitud === 13){
-            ctrl.ModalidadTipoSolicitud = 71; 
-          }
+          /*if(ctrl.ModalidadTipoSolicitud === 13){
+            ctrl.ModalidadTipoSolicitud = 71;
+          }*/
           if(ctrl.ModalidadTipoSolicitud === 16){
-            ctrl.ModalidadTipoSolicitud = 72; 
+            ctrl.ModalidadTipoSolicitud = 72;
           }
           if(ctrl.ModalidadTipoSolicitud === 20){
-            ctrl.ModalidadTipoSolicitud = 73; 
+            ctrl.ModalidadTipoSolicitud = 73;
           }
           if(ctrl.ModalidadTipoSolicitud === 28){
-            ctrl.ModalidadTipoSolicitud = 74; 
+            ctrl.ModalidadTipoSolicitud = 74;
           }
           if(ctrl.ModalidadTipoSolicitud === 38){
-            ctrl.ModalidadTipoSolicitud = 75; 
+            ctrl.ModalidadTipoSolicitud = 75;
           }
           if(ctrl.ModalidadTipoSolicitud === 46){
-            ctrl.ModalidadTipoSolicitud = 76; 
+            ctrl.ModalidadTipoSolicitud = 76;
           }
           if(ctrl.ModalidadTipoSolicitud === 55){
-            ctrl.ModalidadTipoSolicitud = 77; 
+            ctrl.ModalidadTipoSolicitud = 77;
           }if(ctrl.ModalidadTipoSolicitud === 82){
             ctrl.ModalidadTipoSolicitud = 83;
           }
-          
+
           data_solicitud = {
             "Fecha": fecha,
             "ModalidadTipoSolicitud": {
