@@ -41,6 +41,8 @@
  * @property {Boolean} errorCargandoEspaciosAcademicos Indicador que maneja la aparición del algún error durante la carga de los espacios académicos cursados por el estudiante seleccionado
  * @property {String} mensajeErrorCargandoEspaciosAcademicos Mensaje que aparece en caso de que ocurra un error durante la carga de los espacios académicos cursados por el estudiante seleccionado
  * @property {Object} estudianteSeleccionado Es el trabajo de grado que el coordinador seleccionó desde la lista de trabajos de grado cursados
+ * @property {Object} vinculacionTrabajoGrado Evaluadores vinculados al trabajo de grado
+ * @property {Number} notaTrabajoGrado Nota promedio del trabajo de grado
  */
 angular.module('poluxClienteApp')
   .controller('MateriasPosgradoRegistrarNotaCtrl',
@@ -450,6 +452,13 @@ angular.module('poluxClienteApp')
               angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(estudianteConTrabajoDeGrado));
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado));
+                var parametros = $.param({
+                  query: "TrabajoGrado:" + estudianteConTrabajoDeGrado.TrabajoGrado.Id
+                });
+                poluxRequest.get("vinculacion_trabajo_grado", parametros)
+                  .then(function(vinculacion_trabajo_grado) {
+                    ctrl.vinculacionTrabajoGrado = vinculacion_trabajo_grado
+                  });
               });
               $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
                 .then(function(resultadoEstudiantesProcesados) {
@@ -697,10 +706,10 @@ angular.module('poluxClienteApp')
                         var Atributos={
                           rol:'ESTUDIANTE',
                       }
-                      notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+                      //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
 
                       //  notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              
-       swal(
+                        swal(
                           $translate.instant("REGISTRAR_NOTA.AVISO"),
                           $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
                           'success'
@@ -780,6 +789,7 @@ angular.module('poluxClienteApp')
               angular.forEach(asignaturasDeTrabajoDeGrado, function(asignaturaTrabajoGrado) {
                 // Se establece el valor promedio de los espacios académicos
                 asignaturaTrabajoGrado.Calificacion = calificacionTrabajoGrado/ctrl.cuadriculaEspaciosAcademicosInscritos.data.length;
+                ctrl.notaTrabajoGrado = asignaturaTrabajoGrado.Calificacion
                 asignaturaTrabajoGrado.EstadoAsignaturaTrabajoGrado = {
                   Id: 2
                 };
@@ -799,11 +809,20 @@ angular.module('poluxClienteApp')
               };
               trabajoDeGrado.Titulo = "Reprobada la modalidad de cursar espacios académicos de posgrado";
             }
+            var evaluacionTrabajoGrado = {
+              "Nota": parseFloat((ctrl.notaTrabajoGrado).toFixed(1)),
+              "VinculacionTrabajoGrado": {
+                "Id": ctrl.vinculacionTrabajoGrado.data[0].Id,
+              },
+              "FormatoEvaluacionCarrera": null,
+              "Socializacion":null
+            };
             // Se define el objeto para enviar como información para actualizar
             var informacionParaActualizar = {
               "EspaciosAcademicosCalificados": espaciosAcademicosCalificados,
               "AsignaturasDeTrabajoDeGrado": asignaturasDeTrabajoDeGrado,
-              "TrabajoDeGradoTerminado": trabajoDeGrado
+              "TrabajoDeGradoTerminado": trabajoDeGrado,
+              "EvaluacionTrabajoGrado": evaluacionTrabajoGrado
             };
             // Se realiza la petición post hacia la transacción con la información para registrar la modalidad
             poluxRequest

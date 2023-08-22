@@ -733,11 +733,130 @@ angular.module('poluxClienteApp')
             }
             })
             .catch(function(error) {
-              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             });
+        } else if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+          $scope.botones.push({
+            clase_color: "ver",
+            clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
+            titulo: $translate.instant('BTN.RESPONDER_SOLICITUD'),
+            operacion: 'responder',
+            estado: true
+          });
+          academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"]).then(function(responseCoordinador) {
+            ctrl.carrerasCoordinador = [];
+            var carreras = [];
+            console.log("roles ", lista_roles)
+            if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+              parametrosSolicitudes = $.param({
+                query: "ESTADOSOLICITUD.Id.in:23,Activo:true",
+                limit: 0
+              });
+              poluxRequest.get("respuesta_solicitud", parametrosSolicitudes). then(function(responseSolicitudes) {
+                console.log(responseSolicitudes)
+                if (Object.keys(responseSolicitudes.data[0]).length > 0) {
+                  ctrl.conSolicitudes = true;
+                }
+                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
+                  console.log("ENTRA")
+                  responseSolicitudes.data = [];
+
+                  ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
+                  ctrl.errorCargarParametros = true;
+                }
+                var verificarSolicitud = function(solicitud) {
+                  var defer = $q.defer();
+                  solicitud.data = {
+                    'Id': solicitud.SolicitudTrabajoGrado.Id,
+                    'Modalidad': solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.Nombre,
+                    'ModalidadTipoSolicitud': solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+                    'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
+                  }
+
+                  var parametrosUsuario = $.param({
+                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
+                    sortby: "Usuario",
+                    order: "asc",
+                    limit: 1
+                  });
+
+                  poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+                    ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                      academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
+                        if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+                          var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                          if(lista_roles.includes("COORDINADOR_POSGRADO")) {
+                            solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
+                            solicitud.data.Respuesta = solicitud;
+                            // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
+                            solicitud.data.Carrera = carreraEstudiante;
+                            ctrl.solicitudes.push(solicitud.data);
+                            defer.resolve(solicitud.data);
+                            ctrl.gridOptions.data = ctrl.solicitudes;
+                          }
+                          if (carreras.includes(carreraEstudiante)) {
+                            solicitud.data.Estado = solicitud.EstadoSolicitud.Nombre;
+                            solicitud.data.Respuesta = solicitud;
+                            // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
+                            solicitud.data.Carrera = carreraEstudiante;
+                            ctrl.solicitudes.push(solicitud.data);
+                            defer.resolve(solicitud.data);
+                            ctrl.gridOptions.data = ctrl.solicitudes;
+                          }else {
+                            defer.resolve(carreraEstudiante);
+                          }
+                        }
+                      })
+                    })
+                  })
+                }
+
+                angular.forEach(responseSolicitudes.data, function(solicitud) {
+                  var parametrosDetallesSolicitud = $.param({
+                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id,
+                    limit: 0
+                  });
+                  poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function(responseDetalles) {
+                    if (Object.keys(responseDetalles.data[0]).length === 0) {
+                      ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
+                        ctrl.errorCargarParametros = true;
+                    } else {
+                      var UserExiste = false;
+                      if (solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id == 14) {
+                        for (var i = 0; i < responseDetalles.data.length; i++) {
+                          if (responseDetalles.data[i].Descripcion === ctrl.userId) {
+                            promiseArr.push(verificarSolicitud(solicitud));
+                            UserExiste = true;
+                          }
+                        }
+                      } else {
+                        promiseArr.push(verificarSolicitud(solicitud));
+                        UserExiste = true;
+                      }
+                      if (UserExiste == false) {
+                        ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
+                          ctrl.errorCargarParametros = true;
+                      }
+                    }
+                  });
+                });
+                $q.all(promiseArr).then(function() {
+                  if (ctrl.solicitudes.length != 0) {
+                    ctrl.conSolicitudes = true;
+                  }
+                  ctrl.gridOptions.data = ctrl.solicitudes;
+                  $scope.load = false;
+                })
+              })
+              .catch(function(error) {
+                ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
+                ctrl.errorCargarParametros = true;
+                $scope.load = false;
+              })
+            }
+          })
         } else if (lista_roles.includes("EXTENSION_PASANTIAS")){
           //opcion para consultar las solicitudes para la oficina de pasantias
           $scope.botones.push({
@@ -844,7 +963,6 @@ angular.module('poluxClienteApp')
                 $scope.load = false;
               })
               .catch(function(error) {
-                
                 ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                 ctrl.errorCargarParametros = true;
                 $scope.load = false;
