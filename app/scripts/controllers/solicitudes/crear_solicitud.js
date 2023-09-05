@@ -326,7 +326,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
 
           var parametrosSolicitudesActuales = $.param({
-            query: "EstadoSolicitud.in:1|3|4|5|7|9|10,activo:TRUE,SolicitudTrabajoGrado:" + id,
+            query: "EstadoSolicitud.in:1|3|4|5|7|9|10|23,activo:TRUE,SolicitudTrabajoGrado:" + id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
@@ -366,7 +366,7 @@ angular.module('poluxClienteApp')
                   //
                   defer.resolve(true);
                   //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
-                } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
+                }/* else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
                   //
                   //
                   ctrl.restringirModalidadesPosgrado = true;
@@ -375,7 +375,7 @@ angular.module('poluxClienteApp')
                   //
                   ctrl.restringirModalidadesProfundizacion = true;
                   defer.resolve(true);
-                } else {
+                } */else {
                   //
                   defer.resolve(false);
                 }
@@ -896,7 +896,6 @@ angular.module('poluxClienteApp')
                     }
                   }
                 });
-               
               }
               else{
                 promises.push(getModalidades());
@@ -927,7 +926,6 @@ angular.module('poluxClienteApp')
             promises.push(ctrl.getPeriodoSiguiente());
             promises.push(ctrl.obtenerAreas());
             promises.push(ctrl.getTrabajoGrado());
-            
             $q.all(promises).then(function() {
                 ctrl.obtenerDatosEstudiante().then(function() {
                     $scope.loadParametros = false;
@@ -1827,7 +1825,7 @@ angular.module('poluxClienteApp')
                       descripcion:descripcion,
                       file:  fileBase64,
                       }]
-                      /*gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                         URL =  response.data.res.Enlace
                         detalle.respuesta = URL
                         ctrl.url=response.data.res.Enlace
@@ -1836,7 +1834,7 @@ angular.module('poluxClienteApp')
                         if(response.data.res.Enlace){
                           resolve("Posted");
                         }
-                      })*/
+                      })
                       resolve("Posted");
                     })
                 }))
