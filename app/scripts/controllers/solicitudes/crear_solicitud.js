@@ -133,7 +133,6 @@ angular.module('poluxClienteApp')
       if(ctrl.rol!=null && ctrl.rol.includes('DOCENTE'))
       {
         ctrl.Docente = 1;
-        
       }
       ctrl.Docente_trabajos=false;
       ctrl.tipoSolicitud_Docente=null;
@@ -761,7 +760,8 @@ angular.module('poluxClienteApp')
             .then(function(responseModalidad) {
               if (Object.keys(responseModalidad.data[0]).length > 0) {
                 ctrl.modalidades = [];
-                if (ctrl.restringirModalidadesPosgrado) {
+                ctrl.modalidades = responseModalidad.data;
+                /*if (ctrl.restringirModalidadesPosgrado) {
                   angular.forEach(responseModalidad.data, function(modalidad) {
                     if (modalidad.Id == 2) {
                       ctrl.modalidades.push(modalidad);
@@ -775,7 +775,7 @@ angular.module('poluxClienteApp')
                   });
                 } else {
                   ctrl.modalidades = responseModalidad.data;
-                }
+                }*/
                 defer.resolve();
               } else {
                 ctrl.mensajeErrorCarga = $translate.instant("ERROR.SIN_MODALIDADES");
@@ -900,9 +900,9 @@ angular.module('poluxClienteApp')
               }
               else{
                 promises.push(getModalidades());
-              //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
-              promises.push(getSolicitudesAnteriores());
-            }
+                //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
+                //promises.push(getSolicitudesAnteriores());
+              }
             }
 
             $q.all(promises).then(function() {
@@ -1827,7 +1827,7 @@ angular.module('poluxClienteApp')
                       descripcion:descripcion,
                       file:  fileBase64,
                       }]
-                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                      /*gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                         URL =  response.data.res.Enlace
                         detalle.respuesta = URL
                         ctrl.url=response.data.res.Enlace
@@ -1836,7 +1836,8 @@ angular.module('poluxClienteApp')
                         if(response.data.res.Enlace){
                           resolve("Posted");
                         }
-                      })
+                      })*/
+                      resolve("Posted");
                     })
                 }))
             });
@@ -1983,7 +1984,7 @@ angular.module('poluxClienteApp')
           data_respuesta = {
             "Fecha": fecha,
             "Justificacion": "Su solicitud esta pendiente a la revision del docente",
-            "EnteResponsable": ctrl.Trabajo.directorInterno.Usuario,
+            "EnteResponsable": 0,
             "Usuario": 0,
             "EstadoSolicitud": {
               "Id": 19
@@ -1992,6 +1993,11 @@ angular.module('poluxClienteApp')
               "Id": 0
             },
             "Activo": true
+          }
+          if (ctrl.Trabajo.TrabajoGrado.Modalidad.CodigoAbreviacion != "EAPOS") {
+            data_respuesta.EnteResponsable = ctrl.Trabajo.directorInterno.Usuario
+          } else {
+            data_respuesta.EstadoSolicitud.Id = 1
           }
         }else{
           //Respuesta de la solicitud
