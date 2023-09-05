@@ -350,13 +350,15 @@ angular.module('poluxClienteApp')
             poluxRequest.get("documento_solicitud", parametrosDetallesSolicitud).then(function (responseDocumentoSolicitud){
               ctrl.documentoSolicitud = [];
               angular.forEach(responseDocumentoSolicitud.data, function (documentoSol) {
-                var parametrosDocumentoEscrito = $.param({
-                  query: "Id:" + documentoSol.DocumentoEscrito.Id,
-                  limit: 0
-                });
-                poluxRequest.get("documento_escrito", parametrosDocumentoEscrito).then(function (responseDocumentoEscrito){
-                  ctrl.documentoSolicitud.push(responseDocumentoEscrito.data[0]);
-                });
+                if (documentoSol.DocumentoEscrito){
+                  var parametrosDocumentoEscrito = $.param({
+                    query: "Id:" + documentoSol.DocumentoEscrito.Id,
+                    limit: 0
+                  });
+                  poluxRequest.get("documento_escrito", parametrosDocumentoEscrito).then(function (responseDocumentoEscrito){
+                    ctrl.documentoSolicitud.push(responseDocumentoEscrito.data[0]);
+                  });
+                }
               })
             });
             ctrl.modalidad = responseEstudiantes.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
