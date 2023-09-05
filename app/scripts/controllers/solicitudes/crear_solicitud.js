@@ -133,7 +133,6 @@ angular.module('poluxClienteApp')
       if(ctrl.rol!=null && ctrl.rol.includes('DOCENTE'))
       {
         ctrl.Docente = 1;
-        
       }
       ctrl.Docente_trabajos=false;
       ctrl.tipoSolicitud_Docente=null;
@@ -327,7 +326,7 @@ angular.module('poluxClienteApp')
           var defer = $q.defer();
 
           var parametrosSolicitudesActuales = $.param({
-            query: "EstadoSolicitud.in:1|3|4|5|7|9|10,activo:TRUE,SolicitudTrabajoGrado:" + id,
+            query: "EstadoSolicitud.in:1|4|5|7|9|10|23,activo:TRUE,SolicitudTrabajoGrado:" + id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
@@ -367,7 +366,7 @@ angular.module('poluxClienteApp')
                   //
                   defer.resolve(true);
                   //}else if(actuales.length == 1 && actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13 ){
-                } else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
+                }/* else if (actuales[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id === 13) {
                   //
                   //
                   ctrl.restringirModalidadesPosgrado = true;
@@ -376,7 +375,7 @@ angular.module('poluxClienteApp')
                   //
                   ctrl.restringirModalidadesProfundizacion = true;
                   defer.resolve(true);
-                } else {
+                } */else {
                   //
                   defer.resolve(false);
                 }
@@ -761,7 +760,8 @@ angular.module('poluxClienteApp')
             .then(function(responseModalidad) {
               if (Object.keys(responseModalidad.data[0]).length > 0) {
                 ctrl.modalidades = [];
-                if (ctrl.restringirModalidadesPosgrado) {
+                ctrl.modalidades = responseModalidad.data;
+                /*if (ctrl.restringirModalidadesPosgrado) {
                   angular.forEach(responseModalidad.data, function(modalidad) {
                     if (modalidad.Id == 2) {
                       ctrl.modalidades.push(modalidad);
@@ -775,7 +775,7 @@ angular.module('poluxClienteApp')
                   });
                 } else {
                   ctrl.modalidades = responseModalidad.data;
-                }
+                }*/
                 defer.resolve();
               } else {
                 ctrl.mensajeErrorCarga = $translate.instant("ERROR.SIN_MODALIDADES");
@@ -896,13 +896,12 @@ angular.module('poluxClienteApp')
                     }
                   }
                 });
-               
               }
               else{
                 promises.push(getModalidades());
-              //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
-              promises.push(getSolicitudesAnteriores());
-            }
+                //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
+                //promises.push(getSolicitudesAnteriores());
+              }
             }
 
             $q.all(promises).then(function() {
@@ -927,7 +926,6 @@ angular.module('poluxClienteApp')
             promises.push(ctrl.getPeriodoSiguiente());
             promises.push(ctrl.obtenerAreas());
             promises.push(ctrl.getTrabajoGrado());
-            
             $q.all(promises).then(function() {
                 ctrl.obtenerDatosEstudiante().then(function() {
                     $scope.loadParametros = false;
@@ -1983,7 +1981,7 @@ angular.module('poluxClienteApp')
           data_respuesta = {
             "Fecha": fecha,
             "Justificacion": "Su solicitud esta pendiente a la revision del docente",
-            "EnteResponsable": ctrl.Trabajo.directorInterno.Usuario,
+            "EnteResponsable": 0,
             "Usuario": 0,
             "EstadoSolicitud": {
               "Id": 19
@@ -1992,6 +1990,11 @@ angular.module('poluxClienteApp')
               "Id": 0
             },
             "Activo": true
+          }
+          if (ctrl.Trabajo.TrabajoGrado.Modalidad.CodigoAbreviacion != "EAPOS") {
+            data_respuesta.EnteResponsable = ctrl.Trabajo.directorInterno.Usuario
+          } else {
+            data_respuesta.EstadoSolicitud.Id = 1
           }
         }else{
           //Respuesta de la solicitud
