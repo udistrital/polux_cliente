@@ -421,7 +421,7 @@ angular.module('poluxClienteApp')
         };
 
         if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Nombre === 'Revisión docente evaluador' ||
-          ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 'Sustentado') {
+          ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'STN') {
           ctrl.trabajoSeleccionado.estadoValido = true;
         }
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
