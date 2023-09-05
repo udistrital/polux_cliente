@@ -75,6 +75,11 @@
             </div>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'" class="row">
+            <div class="panel-body">
+              <div class="alert-warning">
+                <b>{{'AVISO_PDF' | translate}}</b>
+              </div>
+            </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
               <div class="col-sm-9 ">
                 <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>

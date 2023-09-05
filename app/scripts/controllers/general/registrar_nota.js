@@ -420,7 +420,8 @@ angular.module('poluxClienteApp')
           RolTrabajoGrado: fila.entity.RolTrabajoGrado,
         };
 
-        if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Nombre === 'Revisión docente evaluador' ||
+
+        if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'RDE' ||
           ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'STN') {
           ctrl.trabajoSeleccionado.estadoValido = true;
         }
@@ -435,10 +436,9 @@ angular.module('poluxClienteApp')
         $q.all(promesasTrabajo)
           .then(function() {
             ctrl.cargandoTrabajo = false;
-            
           })
           .catch(function(error) {
-            
+
             ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
             ctrl.errorCargandoTrabajo = true;
             ctrl.cargandoTrabajo = false;

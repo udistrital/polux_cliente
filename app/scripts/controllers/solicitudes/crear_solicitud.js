@@ -1593,6 +1593,18 @@ angular.module('poluxClienteApp')
                       });
                     }
                   }
+                  //CAMBIO EN PASANTÍA INTERNA RÁPIDO
+                  if(modalidad_seleccionada == 9){
+                    if(detalle.Detalle.CodigoAbreviacion == "INDE"){
+                      detalle.label = "Ingrese el nombre del director interno:";
+                    }
+                    if(detalle.Detalle.CodigoAbreviacion == "IDDE"){
+                      detalle.label = "Ingrese el número de documento del director interno:";
+                    }
+                    if(detalle.Detalle.CodigoAbreviacion == "CCDP"){
+                      detalle.label = "Cargue la carta de la unidad académico administrativa responsable del acompañamiento:";
+                    }
+                  }
                 });
                 $q.all(promises).then(function() {
                     $scope.loadDetalles = false;
