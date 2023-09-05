@@ -1835,7 +1835,6 @@ angular.module('poluxClienteApp')
                           resolve("Posted");
                         }
                       })
-                      resolve("Posted");
                     })
                 }))
             });
