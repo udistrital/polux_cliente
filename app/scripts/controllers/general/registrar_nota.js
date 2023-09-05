@@ -420,6 +420,7 @@ angular.module('poluxClienteApp')
           RolTrabajoGrado: fila.entity.RolTrabajoGrado,
         };
 
+
         if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'RDE' ||
           ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'STN') {
           ctrl.trabajoSeleccionado.estadoValido = true;
