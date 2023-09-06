@@ -1415,8 +1415,8 @@ angular.module('poluxClienteApp')
                 Id: 17,
               };
 
-              // Para las modalidades innovación, monografía o interpretación el trabajo de grado pasa a revisión de evaluador
-              if (modalidad === 'INV' || modalidad === 'CRE' || modalidad === 'MONO') {
+              // Para las modalidades innovación, monografía y emprendimiento: el trabajo de grado pasa a revisión de evaluador
+              if (modalidad === 'INV' || modalidad === 'PEMP' || modalidad === 'MONO') {
                 data_tg.EstadoTrabajoGrado.Id = 23;
               }
 

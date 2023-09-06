@@ -151,10 +151,14 @@ angular.module('poluxClienteApp')
                 trabajo.permitirDevolver = false;
                 var rol = trabajo.RolTrabajoGrado.CodigoAbreviacion;
                 var estado = trabajo.TrabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion;
-                if (estado === 'RDE' && rol === 'EVALUADOR') {
-                  trabajo.permitirRegistrar = true;
-                  trabajo.permitirDevolver = true;
+                if (rol === 'EVALUADOR') {
+                  trabajo.permitirDevolver = estado === 'RDE';
+                  if (estado === 'RDE' || estado === 'EC') {
+                    trabajo.permitirRegistrar = true;
+                  }
                 } else if (estado === 'STN' && rol.includes('DIRECTOR')) {
+                  trabajo.permitirRegistrar = true;
+                } else if (estado === 'LPS' && rol.includes('DIRECTOR')) {
                   trabajo.permitirRegistrar = true;
                 }
                 // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
@@ -420,11 +424,6 @@ angular.module('poluxClienteApp')
           RolTrabajoGrado: fila.entity.RolTrabajoGrado,
         };
 
-
-        if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'RDE' ||
-          ctrl.trabajoSeleccionado.EstadoTrabajoGrado.CodigoAbreviacion === 'STN') {
-          ctrl.trabajoSeleccionado.estadoValido = true;
-        }
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
         ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1);
         //Promesas del tg
@@ -672,11 +671,37 @@ angular.module('poluxClienteApp')
             //$('#modalVerSolicitud').modal('show');
             break;
           case "registrarNota":
-            ctrl.registrarNota = true;
             ctrl.devolver = false;
-            ctrl.cargarTrabajo(row);
-            //ctrl.cargarDetalles(row)
-            //$('#modalVerSolicitud').modal('show');
+            if (row.entity.TrabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion !== 'EC') {
+              ctrl.registrarNota = true;
+              ctrl.cargarTrabajo(row);
+              break;
+            }
+
+            // Varifica si pesar de haber solicitado correcciones, puede registrar la nota
+            var parametrosCheckCorreccion = $.param({
+              limit: 0,
+              query: 'VinculacionTrabajoGrado__Id:' + row.entity.Id,
+            });
+            poluxRequest.get('revision_trabajo_grado', parametrosCheckCorreccion)
+              .then(function (responseRevisiones) {
+                if (Object.keys(responseRevisiones.data[0]).length > 0) {
+                  ctrl.registrarNota = true;
+                  ctrl.cargarTrabajo(row);
+                } else {
+                  ctrl.registrarNota = false;
+                  swal(
+                    $translate.instant('ERROR.ESTADO_TRABAJO_GRADO_NO_PERMITE_REGISTRAR_NOTA'),
+                    '',
+                    'warning'
+                  );
+                }
+              })
+              .catch(function(error) {
+                ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
+                ctrl.errorCargandoTrabajo = true;
+                ctrl.cargandoTrabajo = false;
+              });
             break;
           case 'devolver':
             ctrl.registrarNota = false;
