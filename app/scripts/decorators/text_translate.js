@@ -8,6 +8,7 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
+    AVISO_PDF: "Aviso: El sistema solo permite subir documentos en formato PDF y con un tamaño máximo de 20Mb.",
     OBJETIVO_NUEVO: "Escriba los nuevos objetivos de la propuesta",
     OBJETIVO_ACTUAL: "Objetivos actuales de la propuesta",
     INGRESAR_OBJETIVO: "Ingrese los objetivos de la propuesta",
@@ -183,7 +184,7 @@ var text_es = {
         "<li>Ser estudiante con estado Activo.</li>" +
         "<li>Haber aprobado el 70% de los créditos de su plan de estudios.</li>" +
         "<li>Para la modalidad de Espacios Académicos de Posgrado debe tener un promedio acumulado igual o superior a tres punto ocho (3.8).</li>" +
-        "</ul",
+        "</ul>",
     ESTUDIANTE_TRABAJO_GRADO: "Error: El estudiante solicitado actualmente esta realizando un trabajo de grado.",
     FALTAN_DATOS_ESTUDIANTE: "Error: No se encontraron datos del estudiante.",
     CANTIDAD_EXCEDIDA: "Error: Se excede la cantidad de estudiantes para la modalidad solicitada.",
@@ -387,12 +388,12 @@ var text_es = {
     CARGUE_PROPUESTA: "Cargue su propuesta",
     CARGUE_HOJA_VIDA_EXTERNO: "Cargue la hoja de vida del director externo",
     DOCENTE_AVALA_PROPUESTA: "Seleccione el nombre del docente que avala su propuesta de trabajo de grado.",
-    SELECCIONE_DOCENTE_CODIRECTOR: "Seleccione el docente co-director (Si no tiene uno por favor no seleccione ninguno)",
+    SELECCIONE_DOCENTE_CODIRECTOR: "Seleccione el docente codirector (Si no cuenta con uno por favor no seleccione ninguno)",
     ESPACIOS_ACADEMICOS: "Espacios académicos",
     CARGUE_CERTIFICACION_ARL: "Cargue la certificación de afiliación a la ARL",
     CARGUE_ACUERDO_VOLUNTAD: "Cargue el acuerdo de voluntad, convenio o contrato avalado por la unidad de extensión de la facultad",
     CARGUE_CARTA_DESIGNANDO_PROFESIONAL: "Cargue la carta de la entidad que designa al profesional responsable del acompañamiento",
-    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "De acuerdo con lo establecido en el acuerdo N° 038 de 2015, seleccione este campo indicando si desea la inscripción de los espacios académicos correspondientes a Trabajo de Grado I y II en el mismo periodo académico. Tenga en cuenta que: La decisión sobre dicha inscripción es tomada por su proyecto curricular, examinando el contenido de esta solicitud y su situación académica actual; además, el coordinador de su proyecto curricular será el encargado de registrar el(los) espacio(s) académico(s) durante las fechas asignadas en el calendario académico.",
+    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "De acuerdo con lo establecido en el acuerdo N.°012 de 2022, seleccione este campo indicando si desea la inscripción de los espacios académicos correspondientes a Trabajo de Grado I y II en el mismo período académico. Tenga en cuenta que: La decisión sobre dicha inscripción es tomada por su proyecto curricular, examinando el contenido de esta solicitud y su situación académica actual; además, la coordinación de su proyecto curricular será quien se encargue de registrar él(los) espacio(s) académico(s) durante las fechas asignadas en el calendario académico.",
     JUSTIFICACION_SOLICITUD: "Escriba la causa con la que justifica la solicitud",
     DIRECTOR_ACTUAL: "Nombre del director actual",
     CODIRECTOR_ACTUAL: "Nombre del codirector actual",
@@ -1328,7 +1329,7 @@ var text_en = {
     CARGUE_CERTIFICACION_ARL: "Upload the certification of the affiliation to the ARL",
     CARGUE_ACUERDO_VOLUNTAD: "Upload the agreement of will, covenant or contract endorsed by the extension unit of the faculty",
     CARGUE_CARTA_DESIGNANDO_PROFESIONAL: "Upload the letter from the entity that designates the professional responsible for the accompaniment",
-    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "In accordance with the provisions of agreement No. 038 of 2015, select this field indicating if you wish to register the academic spaces corresponding to Degree Work I and II in the same academic period. Keep in mind that: The decision on this registration is made by the career council of your curricular project, examining the content of this request and your current academic situation; in addition, the coordinator of your curricular project will be responsible for registering the academic space(s) during the dates assigned in the academic calendar.",
+    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "In accordance with the provisions of the agreement N.°012 of 2022, select this field indicating if you wish to register the academic spaces corresponding to Degree Work I and II in the same academic period. Please note that: The decision on such enrollment is made by your curricular project, examining the content of this application and your current academic situation; in addition, the coordination of your curricular project will be in charge of registering the academic space(s) during the dates assigned in the academic calendar.",
     JUSTIFICACION_SOLICITUD: "Write the cause that justifies the request",
     DIRECTOR_ACTUAL: "Name of current director",
     CODIRECTOR_ACTUAL: "Name of current codirector",
