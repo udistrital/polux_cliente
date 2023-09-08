@@ -1089,6 +1089,10 @@ angular.module('poluxClienteApp')
                     tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director externo") {
                     tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director interno") {
+                    tempTrabajo.NombreDirectorInterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director interno") {
+                    tempTrabajo.DocumentoDirectorInterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
                     tempTrabajo.Objetivo = detalle.Descripcion;
                   }
@@ -1266,7 +1270,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2) {
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1279,6 +1283,31 @@ angular.module('poluxClienteApp')
                   //Docente director
                   data_vinculacion.push({
                     "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
+                    "Activo": true,
+                    "FechaInicio": fechaRespuesta,
+                    //"FechaFin": null,
+                    "RolTrabajoGrado": {
+                      "Id": 2
+                    },
+                    "TrabajoGrado": {
+                      "Id": 0
+                    }
+                  });
+                }
+                if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82){
+                  console.log("INGRESÓ AQUÍ EN DONDE SE DIVIDE LOS IF");
+                  ctrl.dataRespuesta.DetallesPasantia = {
+                    Empresa: 0,
+                    Horas: 0,
+                    ObjetoContrato: "Contrato de aprendizaje",
+                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorInterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorInterno,
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  }
+                  //Docente director
+                  data_vinculacion.push({
+                    "Usuario": Number(tempTrabajo.DocumentoDirectorInterno),
                     "Activo": true,
                     "FechaInicio": fechaRespuesta,
                     //"FechaFin": null,
@@ -1967,6 +1996,7 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
                   angular.forEach(respuestaSolicitud.data, function (value) {
                     if (Object.keys(value).length > 0) {
+                      console.log("INGRESÓ A LA PRIMER BANDERA");
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
@@ -2075,6 +2105,10 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
                   angular.forEach(respuestaSolicitud.data, function (value) {
                     if (Object.keys(value).length > 0) {
+                      console.log("INGRESÓ A LA SEGUNDA BANDERA");
+                      console.log("VALUE ID:", value.Id);
+                      console.log("USER ID:", $scope.userId);
+                      console.log("TRABAJO GRADO ID:", Number(ctrl.solicitud));
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
@@ -2091,6 +2125,7 @@ angular.module('poluxClienteApp')
                         }
 
                       };
+                      console.log("PARAMETROS PARA RESPUESTA SOLICITUD: ", parametrosRespuestaSolicitud);
                       poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
 
                         if (responsesolicitudsolicitud.data !== undefined) {
@@ -2189,6 +2224,7 @@ angular.module('poluxClienteApp')
 
                     // Validacion de solicitud final para pasantia externa o interna
                     if (parametro.ModalidadTipoSolicitud.Id == 64 || parametro.ModalidadTipoSolicitud.Id == 92) {
+                      console.log("INGRESÓ A LA TERCER BANDERA");
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
