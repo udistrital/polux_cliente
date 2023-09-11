@@ -1295,7 +1295,6 @@ angular.module('poluxClienteApp')
                   });
                 }
                 if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82){
-                  console.log("INGRESÓ AQUÍ EN DONDE SE DIVIDE LOS IF");
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1996,7 +1995,6 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
                   angular.forEach(respuestaSolicitud.data, function (value) {
                     if (Object.keys(value).length > 0) {
-                      console.log("INGRESÓ A LA PRIMER BANDERA");
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
@@ -2105,14 +2103,10 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
                   angular.forEach(respuestaSolicitud.data, function (value) {
                     if (Object.keys(value).length > 0) {
-                      console.log("INGRESÓ A LA SEGUNDA BANDERA");
-                      console.log("VALUE ID:", value.Id);
-                      console.log("USER ID:", $scope.userId);
-                      console.log("TRABAJO GRADO ID:", Number(ctrl.solicitud));
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
-                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud[0].TipoSolicitud.Nombre,
 
                         "EnteResponsable": 0,
                         "Usuario": $scope.userId,
@@ -2125,7 +2119,6 @@ angular.module('poluxClienteApp')
                         }
 
                       };
-                      console.log("PARAMETROS PARA RESPUESTA SOLICITUD: ", parametrosRespuestaSolicitud);
                       poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
 
                         if (responsesolicitudsolicitud.data !== undefined) {
@@ -2224,7 +2217,6 @@ angular.module('poluxClienteApp')
 
                     // Validacion de solicitud final para pasantia externa o interna
                     if (parametro.ModalidadTipoSolicitud.Id == 64 || parametro.ModalidadTipoSolicitud.Id == 92) {
-                      console.log("INGRESÓ A LA TERCER BANDERA");
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
@@ -2300,7 +2292,7 @@ angular.module('poluxClienteApp')
 
           });
 
-        } else {
+        }else if(ctrl.respuestaSolicitud == 2){
           //Rechazar solicitud
           var fechaRespuesta = new Date();
           var parametrosSolicitudes = $.param({
@@ -2350,7 +2342,7 @@ angular.module('poluxClienteApp')
                   TrabajoGrado: null,
 
                 };
-                console.log(ctrl.dataRespuesta);
+                //console.log(ctrl.dataRespuesta);
 
                 poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
                   ctrl.mostrarRespuesta(response);
@@ -2440,6 +2432,12 @@ angular.module('poluxClienteApp')
             $scope.loadSolicitudes = false;
           });
 
+        }else if(ctrl.respuestaSolicitud != 3 || ctrl.respuestaSolicitud != 2){
+          swal(
+            $translate.instant("MENSAJE_ERROR"),
+            $translate.instant("DEBE_SELECCIONAR_UNA_RESPUESTA"),
+            'warning'
+          );
         }
       }
 

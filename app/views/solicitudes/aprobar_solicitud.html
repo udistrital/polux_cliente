@@ -77,7 +77,7 @@
     </div>
   </div>
 
-  <div class="panel panel-default" ngIf="aprobarSolicitud.modalidad.CodigoAbreviacion == 'EAPOS">
+  <!--<div class="panel panel-default" ngIf="aprobarSolicitud.modalidad.CodigoAbreviacion == 'ZZZ'">
     <div class="panel-heading">
       {{'DOCUMENTOS_SOLICITUD' | translate}}
     </div>
@@ -88,7 +88,7 @@
                             
       </div>
     </div>
-  </div>
+  </div>-->
 
   <div class="panel panel-default" >
     <div class="panel-heading">
@@ -107,7 +107,7 @@
       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
       <div class="col-sm-8">
         <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
-          <option></option>
+          <option selected></option>
           <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
           <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
