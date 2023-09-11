@@ -8,6 +8,10 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
+    DEBE_SELECCIONAR_UNA_RESPUESTA:"Debe seleccionar una opción de respuesta (Aprobar o Rechazar)",
+    INGRESE_NOMBRE_DIRECTOR_INTERNO: "Ingrese el nombre del director interno:",
+    INGRESE_DOCUMENTO_DIRECTOR_INTERNO: "Ingrese el número de documento del director interno:",
+    CARGUE_CARTA_UNIDAD_ACADEMICO_ADMINISTRATIVA:"Cargue la carta de la unidad académico administrativa responsable del acompañamiento:",
     AVISO_PDF: "Aviso: El sistema solo permite subir documentos en formato PDF y con un tamaño máximo de 20Mb.",
     OBJETIVO_NUEVO: "Escriba los nuevos objetivos de la propuesta",
     OBJETIVO_ACTUAL: "Objetivos actuales de la propuesta",

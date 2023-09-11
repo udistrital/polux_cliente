@@ -1089,6 +1089,10 @@ angular.module('poluxClienteApp')
                     tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director externo") {
                     tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director interno") {
+                    tempTrabajo.NombreDirectorInterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director interno") {
+                    tempTrabajo.DocumentoDirectorInterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
                     tempTrabajo.Objetivo = detalle.Descripcion;
                   }
@@ -1266,7 +1270,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2) {
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1279,6 +1283,30 @@ angular.module('poluxClienteApp')
                   //Docente director
                   data_vinculacion.push({
                     "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
+                    "Activo": true,
+                    "FechaInicio": fechaRespuesta,
+                    //"FechaFin": null,
+                    "RolTrabajoGrado": {
+                      "Id": 2
+                    },
+                    "TrabajoGrado": {
+                      "Id": 0
+                    }
+                  });
+                }
+                if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82){
+                  ctrl.dataRespuesta.DetallesPasantia = {
+                    Empresa: 0,
+                    Horas: 0,
+                    ObjetoContrato: "Contrato de aprendizaje",
+                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorInterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorInterno,
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  }
+                  //Docente director
+                  data_vinculacion.push({
+                    "Usuario": Number(tempTrabajo.DocumentoDirectorInterno),
                     "Activo": true,
                     "FechaInicio": fechaRespuesta,
                     //"FechaFin": null,
@@ -2078,7 +2106,7 @@ angular.module('poluxClienteApp')
                       var parametrosRespuestaSolicitud = {
                         "Id": value.Id,
                         "Fecha": new Date(),
-                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud[0].TipoSolicitud.Nombre,
 
                         "EnteResponsable": 0,
                         "Usuario": $scope.userId,
@@ -2264,7 +2292,7 @@ angular.module('poluxClienteApp')
 
           });
 
-        } else {
+        }else if(ctrl.respuestaSolicitud == 2){
           //Rechazar solicitud
           var fechaRespuesta = new Date();
           var parametrosSolicitudes = $.param({
@@ -2314,7 +2342,7 @@ angular.module('poluxClienteApp')
                   TrabajoGrado: null,
 
                 };
-                console.log(ctrl.dataRespuesta);
+                //console.log(ctrl.dataRespuesta);
 
                 poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
                   ctrl.mostrarRespuesta(response);
@@ -2404,6 +2432,12 @@ angular.module('poluxClienteApp')
             $scope.loadSolicitudes = false;
           });
 
+        }else if(ctrl.respuestaSolicitud != 3 || ctrl.respuestaSolicitud != 2){
+          swal(
+            $translate.instant("MENSAJE_ERROR"),
+            $translate.instant("DEBE_SELECCIONAR_UNA_RESPUESTA"),
+            'warning'
+          );
         }
       }
 
