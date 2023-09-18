@@ -1245,7 +1245,7 @@ angular.module('poluxClienteApp')
 
                 var filtereddetalles = responseDetalles.data;
                 angular.forEach(filtereddetalles, function(detalle){
-                  if(detalle.Detalle.Id !==69){
+                  if((detalle.Detalle.Id !==69) && (detalle.Detalle.Activo)){
                     ctrl.detalles.push(detalle);
                   }
                 });                
@@ -1593,6 +1593,33 @@ angular.module('poluxClienteApp')
                       });
                     }
                   }
+                  // FILTRO SEGÚN MODALIDAD PARA EL CAMPO DE ACEPTACIÓN DE TERMINOS
+                  if(detalle.Detalle.CodigoAbreviacion == "ACTERM"){
+                    // PARA MODALIDAD DE MONOGRAFIA
+                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "MONO"){
+                      detalle.label = $translate.instant("TERMINOS.MONOGRAFIA")
+                    }
+                    // PARA MODALIDAD DE MONOGRAFIA
+                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PAS" || detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PASIN"){
+                      detalle.label = $translate.instant("TERMINOS.PASANTIA")
+                    }
+                    // PARA MODALIDAD DE EMPRENDIMIENTO
+                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PEMP"){
+                      detalle.label = $translate.instant("TERMINOS.EMPRENDIMIENTO")
+                    }
+                    // PARA MODALIDAD DE MATERIAS DE POSGRADO
+                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "EAPOS"){
+                      detalle.label = $translate.instant("TERMINOS.POSGRADO")
+                    }
+                    // PARA MODALIDAD DE MATERIAS DE INVESTIGACION E INNOVACION
+                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "INV"){
+                      detalle.label = $translate.instant("TERMINOS.INVESTIGACION")
+                    }
+                    // PARA MODALIDAD DE MATERIAS DE ARTICULO ACADEMICO
+                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PACAD"){
+                      detalle.label = $translate.instant("TERMINOS.ARTICULO")
+                    }
+                  }
                 });
                 $q.all(promises).then(function() {
                     $scope.loadDetalles = false;
@@ -1767,6 +1794,16 @@ angular.module('poluxClienteApp')
               swal(
                 'Validación del formulario',
                 "Error ingrese una opcion valida. (Documento)",
+                'warning'
+              );
+              ctrl.erroresFormulario = true;
+            }
+          }
+          if(detalle.Detalle.TipoDetalle.Nombre === 'Checkbox'){
+            if(detalle.respuesta == "NO"){
+              swal(
+                'Validación del formulario',
+                "Debe aceptar los terminos y condiciones de la modalidad.",
                 'warning'
               );
               ctrl.erroresFormulario = true;
@@ -1976,7 +2013,7 @@ angular.module('poluxClienteApp')
             }
           });
         });
-        if(this.siModalidad && [3,4,5,8,10,12,13,15].includes(ctrl.TipoSolicitud.TipoSolicitud.Id)){
+        if(this.siModalidad && [3,4,5,7,8,10,12,13,15].includes(ctrl.TipoSolicitud.TipoSolicitud.Id)){
           //Respuesta de la solicitud
           data_respuesta = {
             "Fecha": fecha,
