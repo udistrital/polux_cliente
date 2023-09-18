@@ -8,11 +8,61 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
+    TERMINOS: {
+        MONOGRAFIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+        PASANTIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le asignará a cada estudiante un docente director. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>La pasantía dará inicio una vez se dé aprobación por parte del Consejo Curricular y se verifique por la unidad de extensión la afiliación a ARL.</li>" +
+            "</ul>",
+        EMPRENDIMIENTO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+        POSGRADO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>En caso que el estudiante repruebe un espacio académico de los correspondientes a la modalidad de grado, deberá optar por otra modalidad de grado.</li>" +
+            "<li>La duración es de un periodo académico para cursar y aprobar la modalidad de espacios académicos de posgrado.</li>" +
+            "<li>La aprobación de esta modalidad está sujeta a que el estudiante cuente con las renovaciones de matrícula mínimas para su desarrollo.</li>" +
+            "</ul>",
+        INVESTIGACION: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+        ARTICULO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para la evaluación de esta modalidad, el estudiante debe ser autor principal del artículo.</li>" +
+            "<li>El artículo científico debe dar crédito a la filiación con la Universidad Distrital Francisco José de Caldas.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>La remisión del artículo a la revista debe ser posterior a la fecha de aprobación de la modalidad.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para esta modalidad se aceptan dos estudiantes como autores principales (autor 1 y autor 2) y máximo un (1) o dos (2) coautores, según el número de directores en la modalidad.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+    },
     DEBE_SELECCIONAR_UNA_RESPUESTA:"Debe seleccionar una opción de respuesta (Aprobar o Rechazar)",
     INGRESE_NOMBRE_DIRECTOR_INTERNO: "Ingrese el nombre del director interno:",
     INGRESE_DOCUMENTO_DIRECTOR_INTERNO: "Ingrese el número de documento del director interno:",
     CARGUE_CARTA_UNIDAD_ACADEMICO_ADMINISTRATIVA:"Cargue la carta de la unidad académico administrativa responsable del acompañamiento:",
-    AVISO_PDF: "Aviso: El sistema solo permite subir documentos en formato PDF y con un tamaño máximo de 20Mb.",
+    AVISO_PDF: "Aviso: El sistema solo permite subir documentos en formato PDF y con un tamaño máximo de 20Mb,  por favor tener en cuenta que el sistema no almancena los documentos de las versiones, solo el último documento subido.",
     OBJETIVO_NUEVO: "Escriba los nuevos objetivos de la propuesta",
     OBJETIVO_ACTUAL: "Objetivos actuales de la propuesta",
     INGRESAR_OBJETIVO: "Ingrese los objetivos de la propuesta",
@@ -385,7 +435,9 @@ var text_es = {
     INGRESE_DOCUMENTO_DIRECTOR_EXTERNO: "Ingrese el número de documento del director externo",
     INGRESE_DOCUMENTO_NUEVO_DIRECTOR_EXTERNO: "Ingrese el número de documento del nuevo director externo",
     INGRESAR_PROPUESTA: "Ingrese el nombre de la propuesta",
-    INGRESE_EMPRESA: "Ingrese el nombre de la empresa",
+    INGRESE_EMPRESA: "Ingrese el nombre de la empresa o razón social",
+    INGRESE_NIT: "Ingrese el NIT de la empresa",
+    INGRESE_CIIU: "Ingrese el código CIIU (código de actividad económica cámara y comercio)",
     CARTA_DIRIGIDA: "Ingrese el nombre de la persona a la cual va dirigida la carta",
     CARGO_DIRIGIDO: "Ingrese el cargo de la persona a la cual se dirige la carta",
     INGRESAR_RESUMEN_PROPUESTA: "Escriba un resumen de su propuesta",
@@ -544,7 +596,7 @@ var text_es = {
     SOLICITUD_CARTA_APROBADA_PASANTIA: "La solicitud de la carta de presentación fue aprobada por favor vaya a la oficina de pasantias para recogerla.",
     SOLICITUD_CARTA_RECHAZADA_PASANTIA: "La solicitud de la carta fue rechazada, si tiene alguna inquietud por favor vaya a la oficina de pasantias.",
     INFORMACION_PRORROGA: "Información importante sobre la prórroga",
-    MENSAJE_PRORROGA: "Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a una prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
+    MENSAJE_PRORROGA: "La solicitud se puede realizar por un máximo de 6 meses, en dado caso de ser aprobada, contará con ese tiempo para culminar el curso de la modalidad de grado.",
     APROBADO: {
         CURSAR_MODALIDAD: "El estudiante puede cursar la modalidad de {{modalidad}}",
         CANCELAR_MODALIDAD: "El estudiante ya no cursa la modalidad de {{modalidad}}",
