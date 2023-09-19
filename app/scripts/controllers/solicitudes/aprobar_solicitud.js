@@ -163,22 +163,51 @@ angular.module('poluxClienteApp')
        * se consueme el servicio {@link parametrosService.service:parametrosRequest parametrosRequest}
        */
       ctrl.getParametros = function() {
-        var parametrosConsulta = $.param({
-          query:"CodigoAbreviacion.in:NRVS_PLX|LRVS_PLX|CRVS_PLX"
-        });
+        //SOLICITUD INICIAL
+        if(ctrl.dataSolicitud.TipoSolicitud == 2){
 
-        //CONSULTA A PARAMETROS
-        parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
-          ctrl.parametro = parametros;
-        });
+          // MODALIDAD DE PASANTÍA EXTERNA
+          if(ctrl.dataSolicitud.modalidad == 1){
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
+            });
 
-        var parametrosConsulta = $.param({
-          query:"CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
-        });
+            //CONSULTA A PARAMETROS
+          parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+            ctrl.parametro = parametros;
+          });
 
-        parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
-          ctrl.parametro_revista = parametros;
-        });
+          // MODALIDAD DE ARTICULO ACADEMICO
+          } else if (ctrl.dataSolicitud.modalidad == 8) {
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:NRVS_PLX|LRVS_PLX|CRVS_PLX"
+            });
+
+            //CONSULTA A PARAMETROS
+            parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+              ctrl.parametro = parametros;
+            });
+
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+            });
+
+            parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+              ctrl.parametro_revista = parametros;
+            });
+          }
+
+        //SOLICITUD DE PRORROGA
+        }else if(ctrl.dataSolicitud.TipoSolicitud == 7){
+          var parametrosConsulta = $.param({
+            query:"CodigoAbreviacion.in:JPR_PLX"
+          });
+
+          //CONSULTA A PARAMETROS
+          parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+            ctrl.parametro = parametros;
+          });
+        }
       }
 
 
@@ -908,6 +937,8 @@ angular.module('poluxClienteApp')
                 ctrl.docPropuestaFinal = detalle.Descripcion;
               } else if (detalle.DetalleTipoSolicitud.Detalle.Enunciado == "OBJETIVO_NUEVO") {
                 ctrl.ObjetivoNuevo = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == 'Causa'){
+                ctrl.CausaSolicitud = detalle.Descripcion;
               }
             });
 
@@ -1085,7 +1116,7 @@ angular.module('poluxClienteApp')
                     tempTrabajo.Resumen = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Áreas de conocimiento") {
                     tempTrabajo.Areas = ctrl.areas;
-                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Empresa") {
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre empresa o razón social") {
                     tempTrabajo.Empresa = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director externo") {
                     tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
@@ -1097,6 +1128,10 @@ angular.module('poluxClienteApp')
                     tempTrabajo.DocumentoDirectorInterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
                     tempTrabajo.Objetivo = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Código CIIU (cámara y comercio)") {
+                    tempTrabajo.CIIU = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "NIT") {
+                    tempTrabajo.NIT = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -1282,6 +1317,29 @@ angular.module('poluxClienteApp')
                       Id: 0,
                     }
                   }
+                  //SE AGREGAN LOS DETALLES DE PASANTÍA EXTERNA
+                  ctrl.dataRespuesta.DetallesPasantiaExterna = [{
+                    "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                    "Valor": String(tempTrabajo.Empresa),
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  },
+                  {
+                    "Parametro": String(ctrl.parametro.data.Data[1].Id),
+                    "Valor": String(tempTrabajo.CIIU),
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  },
+                  {
+                    "Parametro": String(ctrl.parametro.data.Data[2].Id),
+                    "Valor": String(tempTrabajo.NIT),
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  }]
+
                   //Docente director
                   data_vinculacion.push({
                     "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
@@ -1584,6 +1642,16 @@ angular.module('poluxClienteApp')
                 dataVinculaciones = null;
               }
               ctrl.dataRespuesta.Vinculaciones = dataVinculaciones;
+            //SOLICITUD DE PRORROGA
+            }else if(ctrl.dataSolicitud.TipoSolicitud == 7){
+              //GUARDA LOS VALORES
+              ctrl.dataRespuesta.CausaProrroga = [{
+                "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                "Valor": String(ctrl.CausaSolicitud),
+                TrabajoGrado: {
+                  Id: ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado.Id,
+                }
+              }]
             } else if (ctrl.dataSolicitud.TipoSolicitud == 15) {
               // SOLICITUD DE CAMBIOS DE OBJETIVOS DEL TRABAJO DE GRADO
               var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
