@@ -156,9 +156,9 @@ angular.module('poluxClienteApp')
                   if (estado === 'RDE' || estado === 'EC') {
                     trabajo.permitirRegistrar = true;
                   }
-                } else if (estado === 'STN' && rol.includes('DIRECTOR')) {
+                } else if (estado === 'STN' && rol.includes('DIRECTOR') && !rol.includes('CODIRECTOR')) {
                   trabajo.permitirRegistrar = true;
-                } else if (estado === 'LPS' && rol.includes('DIRECTOR')) {
+                } else if (estado === 'LPS' && rol.includes('DIRECTOR') && !rol.includes('CODIRECTOR')) {
                   trabajo.permitirRegistrar = true;
                 }
                 // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
