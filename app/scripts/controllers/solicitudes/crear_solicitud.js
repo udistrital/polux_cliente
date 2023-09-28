@@ -1245,7 +1245,7 @@ angular.module('poluxClienteApp')
 
                 var filtereddetalles = responseDetalles.data;
                 angular.forEach(filtereddetalles, function(detalle){
-                  if((detalle.Detalle.Id !==69) && (detalle.Detalle.Activo)){
+                  if((detalle.Detalle.Id !==69) && (detalle.Detalle.Activo)  && (detalle.Activo)){
                     ctrl.detalles.push(detalle);
                   }
                 });                
@@ -1681,7 +1681,6 @@ angular.module('poluxClienteApp')
         //
 
         ctrl.detallesConDocumento = [];
-
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle.Nombre === 'Numerico') {
             detalle.respuesta = detalle.respuestaNumerica + "";
