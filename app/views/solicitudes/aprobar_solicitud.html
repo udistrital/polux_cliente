@@ -115,7 +115,7 @@
       <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 2">
         <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
         <div class="col-sm-8">
-          <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
+          <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
         </div>
       </div>
       <div class="row" ng-if="formularioAprobacionDocente.$valid  ">
