@@ -45,7 +45,6 @@ angular
         //'blueimp.fileupload',
         'poluxMidService',
         'gestorDocumentalMidService',
-        'notificacionService',
         'pdf',
         'nuxeoMidService',
         'pascalprecht.translate',
@@ -55,7 +54,6 @@ angular
         'uiSwitch',
         'configuracionService',
         'nuxeoService',
-        // 'implicitToken',
         'autenticacionMidService',
         'core',
     ])

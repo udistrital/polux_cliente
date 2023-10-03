@@ -3,28 +3,28 @@
 
 /**
  * @ngdoc overview
- * @name notificacionServiceCore
+ * @name notificacionService
  * @description
- * # notificacionServiceCore
+ * # notificacionService
  * Service in the core.
  */
 
-angular.module('notificacionServiceCore', [])
+angular.module('notificacionService', [])
 
-/**
- * @ngdoc service
- * @name notificacionServiceCore.service:notificacionRequest
- * @requires $http
- * @param {injector} $http componente http de angular
- * @requires $websocket
- * @param {injector} $websocket componente websocket de angular-websocket
- * @param {injector} $websocket componente websocket de angular-websocket
- * @description
- * # notificacion
- * Permite gestionar workflow de notificaciones
- */
+    /**
+     * @ngdoc service
+     * @name notificacionService.service:notificacionRequest
+     * @requires $http
+     * @param {injector} $http componente http de angular
+     * @requires $websocket
+     * @param {injector} $websocket componente websocket de angular-websocket
+     * @param {injector} $websocket componente websocket de angular-websocket
+     * @description
+     * # notificacionRequest
+     * Permite gestionar workflow de notificaciones
+     */
 
-.factory('notificacion', function( CONF, configuracionRequest, token_service, $websocket, $interval) {
+    .factory('notificacionRequest', function (CONF, configuracionRequest, token_service, $websocket, $interval) {
         var TIME_PING = 50000;
 
         var log = [];
@@ -151,7 +151,24 @@ angular.module('notificacionServiceCore', [])
                         });
                 }
             },
+            enviarCorreo: function (asunto, atributos, destinatarios, idDuplicacion, idGrupoMensaje, mensaje) {
+                const payload = token_service.getAppPayload();
+                if (!payload || !payload.appUserDocument) {
+                    return;
+                }
+                var elemento = {
+                    ArnTopic: arm,
+                    Asunto: asunto,
+                    Atributos: atributos, // objeto
+                    DestinatarioId: destinatarios, // arreglo de strings
+                    IdDeduplicacion: idDuplicacion,
+                    IdGrupoMensaje: idGrupoMensaje,
+                    Mensaje: mensaje,
+                    RemitenteId: payload.appUserDocument,
+                }
+                return $http.post(path + 'notificaciones/enviar', elemento, token_service.getHeader());
+            },
 
         };
         return methods;
-});
+    });

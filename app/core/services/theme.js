@@ -3,9 +3,9 @@
 
 /**
  * @ngdoc overview
- * @name notificacionServiceCore
+ * @name notificacionService
  * @description
- * # notificacionServiceCore
+ * # notificacionService
  * Service in the core.
  */
 
@@ -112,7 +112,7 @@ angular.module('themeService', [])
             },
 
             closeAllMenu: function (menu) {
-                if(typeof menu !== 'undefined') {
+                if (typeof menu !== 'undefined') {
                     methods.menu = menu.map(function (n) {
                         var node = {};
                         node = {
@@ -123,7 +123,7 @@ angular.module('themeService', [])
                         if (n.hasOwnProperty('Opciones')) {
                             if (n.Opciones !== null) {
                                 var children = { Opciones: methods.closeAllMenu(n.Opciones) };
-    
+
                                 node = Object.assign(n, node, children);
                             } else {
                                 var children = { Opciones: null }
@@ -131,7 +131,7 @@ angular.module('themeService', [])
                             }
                             return node;
                         } else {
-    
+
                             return node;
                         }
                     });

@@ -15,13 +15,13 @@ angular.module('core')
 
             $scope.token_service = token_service;
 
-            $scope.app = (CONF.APP.toLowerCase()).trim() + "-isotipo";
-            $scope.app_large = (CONF.APP.toLowerCase()).trim() + "-header";
+            $scope.app = (CONF.APP_MENU.toLowerCase()).trim() + "-isotipo";
+            $scope.app_large = (CONF.APP_MENU.toLowerCase()).trim() + "-header";
 
             token_service.getPayload2()
-            .then(function(response){
-                $scope.token = response;
-            })
+                .then(function (response) {
+                    $scope.token = response;
+                })
             if (token_service.logginned) {
                 $scope.isLogin = true;
 

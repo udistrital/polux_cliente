@@ -6,7 +6,7 @@
     </div>
     <br>
     <div class="notifications-container">
-        <div class="notification-item" ng-repeat="m in notificacion.log | filter:{ $: buscador}"
+        <div class="notification-item" ng-repeat="m in notificacionRequest.log | filter:{ $: buscador}"
          id="{{m.Estado}}" ng-click="redirect_url(m)">
             <div class="notifications-image-container">
                 <div class="menu-app" id="{{m.EstiloIcono}}"></div>
