@@ -7,7 +7,7 @@
  * # listaAvances
  */
 angular.module('core')
-    .directive('opciones', function (CONF, $window, $location,behaviorTheme) {
+    .directive('opciones', function (CONF, $window, $location, behaviorTheme) {
         return {
             restrict: 'E',
             scope: {
@@ -26,46 +26,46 @@ angular.module('core')
                 $scope.redirect_url = function (path) {
                     var path_sub = path.substring(0, 4);
                     switch (path_sub.toUpperCase()) {
-                        case "HTTP":          
+                        case "HTTP":
                             $window.open(path, "_blank")
                             break;
                         default:
                             behaviorTheme.toogleCloseSideBar();
-                             $location.path(path)
-                            
-                            
+                            $location.path(path)
+
+
                             break;
                     }
                 };
                 $scope.toogle = function (nivel) {
-                    
 
-                    if(nivel.open==="null" || nivel.open===undefined){
-                        nivel.open=false;
+
+                    if (nivel.open === "null" || nivel.open === undefined) {
+                        nivel.open = false;
                     }
 
                     var sidebar = document.getElementById('menu-sidebar')
-                    if(sidebar.className.includes("sidebar_off")){
-                        behaviorTheme.toogleOpenSideBar();                        
+                    if (sidebar.className.includes("sidebar_off")) {
+                        behaviorTheme.toogleOpenSideBar();
                     }
-                    if (nivel.Opciones !== null) {   
+                    if (nivel.Opciones !== null) {
                         var opcionAbierta = nivel.Opciones.filter(function (data) {
                             return data.open
                         });
-                        if (opcionAbierta.length > 0 && nivel.open) {    
-                        }else {
+                        if (opcionAbierta.length > 0 && nivel.open) {
+                        } else {
                             nivel.open = !nivel.open;
                         }
-                        if (!nivel.open ) {
+                        if (!nivel.open) {
                             nivel.clase = 'content-menu-off';
                             nivel.style_icon = 'opcion-down';
-                            
+
                         } else {
                             nivel.clase = 'content-menu';
                             nivel.style_icon = 'opcion-up';
                         }
                     }
-                    
+
                 };
 
             }

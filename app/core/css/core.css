@@ -45,26 +45,32 @@ body {
   0% {
     transform: rotate(0);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
+
 @-moz-keyframes spin {
   0% {
     -moz-transform: rotate(0);
   }
+
   100% {
     -moz-transform: rotate(360deg);
   }
 }
+
 @keyframes spin {
   0% {
     transform: rotate(0);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
+
 .spinner {
   position: fixed;
   top: 0;
@@ -79,6 +85,7 @@ body {
   background-repeat: no-repeat;
   overflow: hidden;
 }
+
 .spinner div:first-child {
   display: block;
   position: relative;
@@ -92,12 +99,14 @@ body {
   transform: translate3d(0, 0, 0);
   animation: spin 2s linear infinite;
 }
+
 .spinner div:first-child:after,
 .spinner div:first-child:before {
   content: "";
   position: absolute;
   border-radius: 50%;
 }
+
 .spinner div:first-child:before {
   top: 5px;
   left: 5px;
@@ -107,6 +116,7 @@ body {
   -webkit-animation: spin 3s linear infinite;
   animation: spin 3s linear infinite;
 }
+
 .spinner div:first-child:after {
   top: 15px;
   left: 15px;
@@ -162,7 +172,7 @@ textarea {
 
 .btn-primary:active,
 .btn-primary.active,
-.open > .dropdown-toggle.btn-primary {
+.open>.dropdown-toggle.btn-primary {
   color: #fff;
   background-color: var(--color3);
   border-color: var(--color5);
@@ -179,7 +189,7 @@ textarea {
   margin: 2px;
 }
 
-div:focus{
+div:focus {
   outline: 0px ridge var(--primary);
 }
 

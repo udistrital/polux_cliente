@@ -61,12 +61,12 @@ i {
   align-items: center;
 }
 
-.header-button-user-container > p {
+.header-button-user-container>p {
   margin: 8px;
   color: var(--primary);
 }
 
-.header-button-cerrarsesion-container > p {
+.header-button-cerrarsesion-container>p {
   color: var(--primary);
 }
 
@@ -107,6 +107,7 @@ i {
   .user-info {
     display: none;
   }
+
   .button-header {
     font-size: 20px;
   }
@@ -126,6 +127,7 @@ i {
   .user-info {
     display: none;
   }
+
   .button-header {
     font-size: 20px;
   }

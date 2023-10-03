@@ -144,7 +144,7 @@ angular.module('implicitToken', [])
         var id_token = window.localStorage.getItem('id_token').split('.');
         return JSON.parse(atob(id_token[1]));
       },
-      getAppPayload: function() {
+      getAppPayload: function () {
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');

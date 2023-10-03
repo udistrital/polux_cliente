@@ -49,7 +49,7 @@
   font-size: 12px;
 }
 
-.notificacion-input > .form-control {
+.notificacion-input>.form-control {
   margin: 0px 23px;
   font-family: "Open Sans", sans-serif;
   width: 86%;

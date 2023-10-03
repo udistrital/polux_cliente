@@ -1,4 +1,4 @@
-.aplicaciones_menu_container p{
+.aplicaciones_menu_container p {
   margin-bottom: 11px;
   margin-top: 0;
 }
@@ -10,26 +10,26 @@
   box-shadow: 0px 0px 8px #888888;
 }
 
-.container-aplicativos{
+.container-aplicativos {
   height: 88%;
 }
 
-.container-aplicativos-scroll{
+.container-aplicativos-scroll {
   height: none;
 }
 
-.catalogo-button-container{
+.catalogo-button-container {
   justify-content: center;
   display: flex;
   width: 100%;
   align-items: flex-end;
 }
 
-#catalogo-button-icon{
+#catalogo-button-icon {
   font-size: 40px;
 }
 
-.title-app-menu-div{
+.title-app-menu-div {
   text-align: center;
   margin-bottom: 5px;
   font-size: 21px;
@@ -58,19 +58,22 @@
 .menu_is_active {
   right: 0;
 }
-.app-image-container{
+
+.app-image-container {
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
   align-items: center;
 }
-.image-application{
+
+.image-application {
   width: 30%;
   margin-bottom: 10px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
+
 .categoria-title {
   color: white;
 }
