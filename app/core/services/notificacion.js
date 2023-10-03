@@ -24,10 +24,12 @@ angular.module('notificacionService', [])
      * Permite gestionar workflow de notificaciones
      */
 
-    .factory('notificacionRequest', function (CONF, configuracionRequest, token_service, $websocket, $interval) {
+    .factory('notificacionRequest', function (CONF, configuracionRequest, token_service, $websocket, $interval, $http) {
         var TIME_PING = 50000;
 
         var log = [];
+        var path = CONF.GENERAL.NOTIFICACION_MID_SERVICE;
+        var arm = CONF.GENERAL.ARM_AWS_NOTIFICACIONES;
         var payload = {};
         var notificacion_estado_usuario = [];
         var no_vistos = 0;
@@ -167,6 +169,25 @@ angular.module('notificacionService', [])
                     RemitenteId: payload.appUserDocument,
                 }
                 return $http.post(path + 'notificaciones/enviar', elemento, token_service.getHeader());
+            },
+            enviarNotificacion: function (asunto, destinatarioId, mensaje) {
+                const payload = token_service.getAppPayload();
+                if (!payload || !payload.appUserDocument) {
+                    return;
+                }
+                var elemento = {
+                    ArnTopic: arm,
+                    Asunto: asunto,
+                    Atributos: {
+                    }, // objeto
+                    DestinatarioId: [destinatarioId], // arreglo de strings
+                    IdDeduplicacion: '',
+                    IdGrupoMensaje: '',
+                    Mensaje: mensaje,
+                    RemitenteId: payload.appUserDocument,
+                }
+                return $http.post(path + 'notificaciones/enviar', elemento, token_service.getHeader());
+
             },
 
         };
