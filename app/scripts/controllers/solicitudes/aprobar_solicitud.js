@@ -2246,6 +2246,36 @@ angular.module('poluxClienteApp')
                     "PeriodoAcademico": parametro.PeriodoAcademico,
 
                   };
+                  var parametrosConsulta = $.param({
+                    query: "CodigoAbreviacion.in:ADD"
+                  });
+      
+                  poluxRequest.get("estado_solicitud/", parametrosConsulta).then(function (parametros) {
+                    ctrl.parametro = parametros.data[0];
+                  });
+                  ctrl.getRespuestaSolicitud().then(function () {
+                    var rtaActual = ctrl.respuestaActual;
+                    rtaActual.Activo = false
+                    poluxRequest.put("respuesta_solicitud", ctrl.respuesta_solicitud, rtaActual).then(function (responseSolicitud) {
+                      if (responseSolicitud.data !== undefined) {
+                        rtaActual.Id = null;
+                        rtaActual.Activo = true;
+                        rtaActual.Fecha = new Date();
+                        rtaActual.Justificacion = "El Director aprobó la " + parametro.ModalidadTipoSolicitud[0].TipoSolicitud.Nombre
+                        rtaActual.Usuario = rtaActual.EnteResponsable
+                        rtaActual.EnteResponsable = 0;
+                        rtaActual.EstadoSolicitud.Id = ctrl.parametro.Id
+                        poluxRequest.post("respuesta_solicitud", rtaActual).then(function (response) {
+                        }).catch(function (error) {
+                          swal(
+                            $translate.instant("MENSAJE_ERROR"),
+                            $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                            'warning'
+                          )
+                        });
+                      }
+                    });
+                  });
                   poluxRequest.put("solicitud_trabajo_grado", ctrl.solicitud, parametrosSolicitud1).then(function (responsesolicitudsolicitud) {
 
                     if (responsesolicitudsolicitud.data !== undefined) {
