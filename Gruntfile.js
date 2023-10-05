@@ -60,7 +60,11 @@ module.exports = function(grunt) {
     tasks: ['newer:copy:styles', 'postcss']
 },
 gruntfile: {
-    files: ['Gruntfile.js']
+    files: ['Gruntfile.js'],
+    expand: true,
+    cwd: '<%= yeoman.app %>/core',
+    src: '**/*.*',
+    dest: '<%= yeoman.dist %>/core'
 },
 livereload: {
     options: {
