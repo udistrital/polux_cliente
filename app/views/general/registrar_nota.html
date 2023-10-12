@@ -56,6 +56,10 @@
                         <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{registrarNotaVinculado.trabajoSeleccionado.EstadoTrabajoGrado.Nombre}} </label>
                     </div>
+                    <div class="row">
+                        <label class="control-label col-sm-2"> {{'DOCUMENTO_REVISION' | translate}}: </label>
+                        <label ng-click="registrarNotaVinculado.getDocumento()" class="col-sm-10" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                    </div>
                     <div ng-repeat="estudiante in registrarNotaVinculado.trabajoSeleccionado.estudiantes">
                         <div class="row">
                             <label class="control-label col-sm-2"> {{'CODIGO' | translate}}: </label>
@@ -74,15 +78,8 @@
             <div class="panel-body">
                 <div ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
                     <div ng-if="!registrarNotaVinculado.trabajoSeleccionado.notaRegistrada">
-                        <div ng-if="!registrarNotaVinculado.trabajoSeleccionado.estadoValido">
-                            <div class="panel-body">
-                                <div class="alert alert-danger">
-                                    {{'ERROR' | translate}}: {{'ERROR.ESTADO_TRABAJO_GRADO_NO_PERMITE_REGISTRAR_NOTA'|translate}}
-                                </div>
-                            </div>
-                        </div>
-                        <loading tam="4" load="registrarNotaVinculado.trabajoSeleccionado.estadoValido && registrarNotaVinculado.registrandoNotaTG" message="registrarNotaVinculado.mensajeRegistrandoNota"> </loading>
-                        <div ng-if="registrarNotaVinculado.trabajoSeleccionado.estadoValido && !registrarNotaVinculado.registrandoNotaTG">
+                        <loading tam="4" load="registrarNotaVinculado.registrandoNotaTG" message="registrarNotaVinculado.mensajeRegistrandoNota"> </loading>
+                        <div ng-if="!registrarNotaVinculado.registrandoNotaTG">
                             <form  method="post" name="formularioNota" ng-submit="registrarNotaVinculado.registrarNotaTG()">
                                 <div class="row">
                                     <label class="control-label col-sm-12"> {{'REGISTRAR_NOTA.INSTRUCCIONES' | translate}} </label>
@@ -114,6 +111,35 @@
                         <div class="row">
                             <label class="control-label col-sm-4"> {{'REGISTRAR_NOTA.NOTA_REGISTRADA_DOCENTE' | translate}}: </label>
                             <label class="control-label col-sm-8"> {{registrarNotaVinculado.trabajoSeleccionado.evaluacion.Nota}} </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-if="registrarNotaVinculado.devolver && !registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
+            <div class="panel-heading">
+                {{'SOLICITAR_CORRECCIONES.PANEL' | translate}}
+            </div>
+            <div class="panel-body">
+                <div ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
+                    <div ng-if="!registrarNotaVinculado.trabajoSeleccionado.notaRegistrada">
+                        <loading tam="4" load="registrarNotaVinculado.registrandoNotaTG" message="registrarNotaVinculado.mensajeRegistrandoNota"> </loading>
+                        <div ng-if="!registrarNotaVinculado.registrandoNotaTG">
+                            <form method="post" name="formularioCorrecciones" ng-submit="registrarNotaVinculado.registrarCorrecciones()">
+                                <label class="control-label col-sm-3"> {{'SOLICITAR_CORRECCIONES.LABEL' | translate}}: </label>
+                                <div class="col-sm-9">
+                                    <textarea type="text" class="form-control" ng-model="registrarNotaVinculado.observaciones"
+                                        placeholder="{{'SOLICITAR_CORRECCIONES.PLACEHOLDER' | translate}}" ng-required="true">
+                                    </textarea>
+                                </div>
+                                <br><br><br>
+                                <div class="row row-centered" style="padding-top: 1rem">
+                                    <div class="col-sm-3 col-centered">
+                                        <input ng-disabled="!formularioCorrecciones.$valid" class="btn btn-success" type="submit"
+                                            value="{{'SOLICITAR_CORRECCIONES.SUBMIT' | translate}}"></input>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -10,6 +10,7 @@
  * @param {string} name nombre del documento que se va a subir
  * @param {object} carreras carreras asociadas al coordinador que va a subir el documento
  * @param {number} acta Número del acta que se va a cargar
+ * @param {object} modalidad Modalidad a la que pertenece el trabajo de grado
  */
 angular.module('poluxClienteApp')
   .directive('cargarDocumento', function () {
@@ -19,6 +20,7 @@ angular.module('poluxClienteApp')
         name: '@',
         carreras: '=',
         acta: '=',
+        modalidad: '='
       },
       templateUrl: 'views/directives/cargar_documento.html',
       /**
@@ -41,9 +43,7 @@ angular.module('poluxClienteApp')
         var url;
         ctrl.documento = [];
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
-
         if ($scope.carreras !== []) {
-          
           if ($scope.carreras.length === 1) {
             $scope.carrera = $scope.carreras[0];
           }
@@ -82,6 +82,7 @@ angular.module('poluxClienteApp')
               gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
                 URL = response.data.res.Enlace;
                 url = URL;
+                ctrl.enviarDocumento();
               })
 
             })
@@ -103,7 +104,6 @@ angular.module('poluxClienteApp')
          * lo registra en {@link services/poluxService.service:poluxRequest poluxRequest}
          */
         ctrl.enviarDocumento = function () {
-          
           /*if ($scope.carreras.length === 1) {
             ctrl.carrera = $scope.carreras[0].CODIGO_CARRERA;
           }*/
@@ -114,7 +114,7 @@ angular.module('poluxClienteApp')
             var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
             ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.codigo_proyecto_curricular + " Fecha: " + date;
             //Se comienza a usar la subida de actas al gestor 
-           ctrl.cargarDocumento();
+           // ctrl.cargarDocumento();
             var documento = {
               "Titulo": ctrl.documento.nombre,
               "Enlace": url ,
@@ -122,6 +122,11 @@ angular.module('poluxClienteApp')
               "Resumen": "Acta de consejo de carrera del proyecto curricular",
               "TipoDocumentoEscrito": 1,
             };
+            if ($scope.modalidad.CodigoAbreviacion == "EAPOS") {
+              documento.TipoDocumentoEscrito = 8
+              documento.Resumen = "Certificado de cumplimiento"
+            }
+            console.log("DOC ", documento)
             $scope.acta = [];
             $scope.acta.nombre = ctrl.documento.nombre;
             //$scope.acta.url = ctrl.documento.url;
@@ -139,7 +144,6 @@ angular.module('poluxClienteApp')
                 ctrl.consecutivo = null;
               })
               .catch(function (error) {
-                
                 $scope.loadDocumento = false;
                 swal(
                   $translate.instant("MENSAJE_ERROR"),
@@ -147,11 +151,8 @@ angular.module('poluxClienteApp')
                   'warning'
                 );
               });
-            
             ctrl.documento = [];
             $scope.loadDocumento = true;
-           
-            
             /*})
             .catch(function(error){
               

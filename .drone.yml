@@ -59,7 +59,6 @@ steps:
   image: node:12.22.1
   commands:
   - npm install -g grunt-cli bower
-  - npm install natives
   - npm install
   - bower install --allow-root
   - cp -f app/scripts/environment/environment_test.js app/scripts/environment/environment.js

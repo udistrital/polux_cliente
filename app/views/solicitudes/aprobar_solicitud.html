@@ -75,8 +75,20 @@
 
       </div>
     </div>
-
   </div>
+
+  <!--<div class="panel panel-default" ngIf="aprobarSolicitud.modalidad.CodigoAbreviacion == 'ZZZ'">
+    <div class="panel-heading">
+      {{'DOCUMENTOS_SOLICITUD' | translate}}
+    </div>
+    <div class="panel-body">
+      <div class="row" ng-repeat="documento in aprobarSolicitud.documentoSolicitud" >
+        <label class="col-sm-4 control-label"> {{documento.Resumen}}:  </label>
+        <label ng-click="aprobarSolicitud.getDocumento(documento.Enlace)" class="col-sm-8 control-label" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
+                            
+      </div>
+    </div>
+  </div>-->
 
   <div class="panel panel-default" >
     <div class="panel-heading">
@@ -84,7 +96,7 @@
     </div>
     <loading tam="4" load="loadFormulario" message="msgEnviandFormulario"> </loading>
     <div class="panel-body" ng-if="!loadFormulario && aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 ">
-      <div class="rowr">
+      <div class="row">
         <div class="col-sm-12 alert alert-danger"> 
             {{aprobarSolicitud.mensajeNoAprobar}}
         </div>
@@ -95,20 +107,51 @@
       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
       <div class="col-sm-8">
         <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
+          <option selected></option>
+          <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
+          <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+        </select>
+      </div>
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 2">
+        <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
+        <div class="col-sm-8">
+          <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
+        </div>
+      </div>
+      <div class="row" ng-if="formularioAprobacionDocente.$valid  ">
+        <label class="col-sm-5 control-label"> </label>
+        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} docente "  class="col-sm-2 btn btn-success"></input>
+        <label class="col-sm-5 control-label"> </label>
+      </div>
+
+    </form>
+    </div>
+
+    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS') && !aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR_PREGRADO') && !aprobarSolicitud.roles.includes('COORDINADOR_POSGRADO')">
+      <form name="formularioAprobacionExtensionPasantia" ng-submit="aprobarSolicitud.RespuestaExtensionPasantia()">
+      <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
+      <div class="col-sm-8">
+        <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
           <option></option>
           <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
           <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud === 2">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 2">
         <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
         <div class="col-sm-8">
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
         </div>
       </div>
-      <div class="row" ng-if="formularioAprobacionDocente.$valid  ">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 3 && (aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==64  || aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==92)">
+        <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
+       <div class="col-sm-9">
+        <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>
+       </div>
+      </div>
+      <div class="row" ng-if="formularioAprobacionExtensionPasantia.$valid  ">
         <label class="col-sm-5 control-label"> </label>
-        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} docente " docente  class="col-sm-2 btn btn-success"></input>
+        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} "  class="col-sm-2 btn btn-success"></input>
         <label class="col-sm-5 control-label"> </label>
       </div>
 
@@ -116,7 +159,7 @@
     </div>
     
 
-    <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 ">
+    <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 && aprobarSolicitud.UnidadExtPasantia !== 1">
       <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
         <div class="row">
           <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
@@ -270,8 +313,6 @@
           </div>
 
 
-        </div>
-      </div>
     </div>
 
 
@@ -336,7 +377,8 @@
                
               </div>
             </div>
-          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta"> </cargar-documento>
+          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta" modalidad="aprobarSolicitud.modalidad"> </cargar-documento>
         </div>
       </div>
     </div>
+</div>

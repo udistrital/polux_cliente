@@ -65,16 +65,16 @@ angular.module('implicitToken', [])
             var appUserInfo = JSON.parse(atob(window.localStorage.getItem('id_token').split('.')[1]));
             var appUserDocument;
             var appUserRole;
-            /*var emailInfo = {
-              //Email: "karianov@correo.udistrital.edu.co"
-              //Email: appUserInfo.sub,
-              Email: appUserInfo.email,
-              Rol: appUserInfo.role,
-              Documento: appUserInfo.documento
-            };*/
+            //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
+            /*var userRol = {
+              Email: appUserInfo.email
+            }*/
+
             var userRol= {
               user: appUserInfo.email
             };
+            //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
+            //autenticacionMidRequest.post("token/emailToken", userRol, {
             autenticacionMidRequest.post("token/userRol", userRol, {
                 headers: {
                   'Accept': 'application/json',
@@ -82,22 +82,29 @@ angular.module('implicitToken', [])
                 }
               })
               .then(function(respuestaAutenticacion) {
-                
-                //appUserDocument = respuestaAutenticacion.data.documento;
-       
+                console.log(respuestaAutenticacion)
+                //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
+                /*if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.rol.includes("ESTUDIANTE")){
+                  appUserDocument = respuestaAutenticacion.data.Codigo;
+                }else{
+                  appUserDocument = respuestaAutenticacion.data.documento;
+                }
+                appUserRole = respuestaAutenticacion.data.rol;
+                window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
+                window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));*/
+
                 if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
                 }
-                appUserRole = respuestaAutenticacion.data.role;            
+                appUserRole = respuestaAutenticacion.data.role;
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
                 //
                 deferred.resolve(true);
               })
               .catch(function(excepcionAutenticacion) {
-                
                 //service.logout();
               });
           } else {

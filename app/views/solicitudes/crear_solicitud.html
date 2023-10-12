@@ -41,7 +41,7 @@
 <div class="panel-body alert alert-danger" ng-if="crearSolicitud.errorParametros">
   <p class="col-sm-12 control-label" translate="{{crearSolicitud.mensajeError}}"></p>
 </div>
-<div class="panel panel-default" ng-if="!crearSolicitud.errorParametros && crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario">
+<div class="panel panel-default" ng-if="!crearSolicitud.errorParametros && crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario && !crearSolicitud.Nota && !crearSolicitud.Cancelacion">
     <div class="panel-heading">
         {{'FORMULARIO_SOLICITUD' | translate}}
     </div>
@@ -75,6 +75,11 @@
             </div>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'" class="row">
+            <div class="panel-body">
+              <div class="alert-warning">
+                <b>{{'AVISO_PDF' | translate}}</b>
+              </div>
+            </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
               <div class="col-sm-9 ">
                 <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>
@@ -85,7 +90,7 @@
             <div class="panel-body">
               <!--<input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>-->
               <div class="row">
-                <label class="col-sm-12 control-label">{{detalle.label}}</label>
+                <label class="col-sm-12 control-label" translate="{{detalle.label}}"></label>
               </div>
               <br>
               <div class="row row-centered">
@@ -98,6 +103,14 @@
           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox' && detalle.Detalle.Enunciado=='AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>0" class="panel-body alert alert-warning">
              <label class="col-sm-12 control-label" translate="AUTORIZACION_DERECHOS_AUTOR"  translate-values='{ nombre: "{{crearSolicitud.estudiante.Nombre}}", codigo: {{crearSolicitud.estudiante.Codigo}}, tg: "{{crearSolicitud.trabajo_grado_completo.Titulo}}" }'>  </label>
              <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}" required><b>AUTORIZAR</b></input>
+          </div>
+
+          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">
+            <div class="panel-body">
+              <div class="row">
+                <label class="col-sm-12 control-label" translate="MENSAJE_REVISTA"></label>
+              </div>
+            </div>
           </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
@@ -163,9 +176,8 @@
        </div>
      </form>
     </div>
-
 </div>
-<div class="panel panel-default" ng-if="crearSolicitud.errorCarga && !loadParametros">
+<div class="panel panel-default" ng-if="(crearSolicitud.errorCarga && !loadParametros)">
     <div class="panel-heading">
         {{'ERROR' | translate}}
     </div>
@@ -174,4 +186,26 @@
         {{crearSolicitud.mensajeErrorCarga}}
       </div>
     </div>
+</div>
+
+<div class="panel panel-default" ng-if="crearSolicitud.Nota">
+  <div class="panel-heading">
+      {{'ERROR' | translate}}
+  </div>
+  <div class="panel-body">
+    <div class="alert alert-danger">
+      {{crearSolicitud.mensajeCalificado}}
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" ng-if="crearSolicitud.Cancelacion">
+  <div class="panel-heading">
+      {{'ERROR' | translate}}
+  </div>
+  <div class="panel-body">
+    <div class="alert alert-danger">
+      {{crearSolicitud.mensajeCancelacion}}
+    </div>
+  </div>
 </div>

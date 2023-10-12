@@ -8,6 +8,64 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
+    TERMINOS: {
+        MONOGRAFIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+        PASANTIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le asignará a cada estudiante un docente director. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>La pasantía dará inicio una vez se dé aprobación por parte del Consejo Curricular y se verifique por la unidad de extensión la afiliación a ARL.</li>" +
+            "</ul>",
+        EMPRENDIMIENTO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+        POSGRADO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>En caso que el estudiante repruebe un espacio académico de los correspondientes a la modalidad de grado, deberá optar por otra modalidad de grado.</li>" +
+            "<li>La duración es de un periodo académico para cursar y aprobar la modalidad de espacios académicos de posgrado.</li>" +
+            "<li>La aprobación de esta modalidad está sujeta a que el estudiante cuente con las renovaciones de matrícula mínimas para su desarrollo.</li>" +
+            "</ul>",
+        INVESTIGACION: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+        ARTICULO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
+            "<li>Para la evaluación de esta modalidad, el estudiante debe ser autor principal del artículo.</li>" +
+            "<li>El artículo científico debe dar crédito a la filiación con la Universidad Distrital Francisco José de Caldas.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+            "<li>La remisión del artículo a la revista debe ser posterior a la fecha de aprobación de la modalidad.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para esta modalidad se aceptan dos estudiantes como autores principales (autor 1 y autor 2) y máximo un (1) o dos (2) coautores, según el número de directores en la modalidad.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "</ul>",
+    },
+    DEBE_SELECCIONAR_UNA_RESPUESTA:"Debe seleccionar una opción de respuesta (Aprobar o Rechazar)",
+    INGRESE_NOMBRE_DIRECTOR_INTERNO: "Ingrese el nombre del director interno:",
+    INGRESE_DOCUMENTO_DIRECTOR_INTERNO: "Ingrese el número de documento del director interno:",
+    CARGUE_CARTA_UNIDAD_ACADEMICO_ADMINISTRATIVA:"Cargue la carta de la unidad académico administrativa responsable del acompañamiento:",
+    AVISO_PDF: "Aviso: El sistema solo permite subir documentos en formato PDF y con un tamaño máximo de 20Mb,  por favor tener en cuenta que el sistema no almancena los documentos de las versiones, solo el último documento subido.",
+    OBJETIVO_NUEVO: "Escriba los nuevos objetivos de la propuesta",
+    OBJETIVO_ACTUAL: "Objetivos actuales de la propuesta",
+    INGRESAR_OBJETIVO: "Ingrese los objetivos de la propuesta",
     TITULO: "Sistema de gestión de trabajos de grado Polux",
     MENSAJE_INICIAL: "Sistema de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     EVALUAR_PROYECTO: "Evaluación de Proyecto de Grado",
@@ -154,6 +212,7 @@ var text_es = {
     SEL_FECHA: "Seleccione una fecha",
     ENVIAR_EVALUACION_BOTON: "Enviar calificación",
     SOLICITAR_REVISION: "Solicitar revisión",
+    DOCUMENTO_REVISION: "Documento para revisión",
     SELECCIONAR: "Seleccionar",
     SELECCIONAR_ACTA: "Seleccionar acta",
     NUEVA_SOLICITUD: "Crear nueva solicitud",
@@ -177,9 +236,9 @@ var text_es = {
         "Recuerde que según el acuerdo 038 de 2015 los requisitos mínimos para cursar una modalidad de trabajo de grado son:" +
         "<ul>" +
         "<li>Ser estudiante con estado Activo.</li>" +
-        "<li>Haber aprobado el 80% de los créditos de su plan de estudios.</li>" +
+        "<li>Haber aprobado el 70% de los créditos de su plan de estudios.</li>" +
         "<li>Para la modalidad de Espacios Académicos de Posgrado debe tener un promedio acumulado igual o superior a tres punto ocho (3.8).</li>" +
-        "</ul",
+        "</ul>",
     ESTUDIANTE_TRABAJO_GRADO: "Error: El estudiante solicitado actualmente esta realizando un trabajo de grado.",
     FALTAN_DATOS_ESTUDIANTE: "Error: No se encontraron datos del estudiante.",
     CANTIDAD_EXCEDIDA: "Error: Se excede la cantidad de estudiantes para la modalidad solicitada.",
@@ -195,6 +254,7 @@ var text_es = {
     REGISTRO_PAGO: "Registro del pago",
     REGISTRO_NOTA: "Registro de las notas",
     SOLICITUD_REGISTRADA: "El formulario se registro correctamente",
+    APROBACION: "Aprobación",
     ERROR_CARGAR_SOLICITUDES: "Ocurrio un error al intentar cargar la solicitud",
     ERROR_SOLICITUDES_1: "Ocurrió un error al insertar los detalles de la solicitud",
     ERROR_SOLICITUDES_2: "Ocurrió un error al insertar los usuarios de la solicitud.",
@@ -217,6 +277,8 @@ var text_es = {
     ERROR_RTA_SOLICITUD_16: "Ocurrió un error al actualizar el detalle de la pasantia.",
     ERROR_RTA_SOLICITUD_17: "Ocurrió un error al actualizar el estado del trabajo de grado.",
     ERROR_RTA_SOLICITUD_18: "Ocurrió un error al registrar el docuento final del trabajo de grado.",
+    ERROR_RTA_SOLICITUD_19: "Ocurrió un error al actualizar los objetivos del trabajo de grado.",
+    ERROR_RTA_SOLICITUD_20: "Ocurrió un error al registrar los detalles del trabajo de grado.",
     ERROR: {
         SUBIR_DOCUMENTO: "Error al intentar subir un documento.",
         CARGAR_DOCUMENTO: "Ocurrió un error al cargar los documentos, por favor verifique su conexión e intente de nuevo.",
@@ -341,12 +403,16 @@ var text_es = {
         SIN_REVISIONES: "No se han podido encontrar revisiones asociadas al trabajo de grado, verifique que se haya realizado alguna anteriormente",
         CARGANDO_REVISIONES: "Ocurrió un error al intentar consultar las revisiones asociadas al trabajo de grado. Comuníquese con el administrador.",
         INSERTANDO_REVISIONES: "Ocurrió un error al registrar las revisiones del trabajo de grado",
+        SIN_CALIFICACION: "Sin Calificación",
         VINCULADO_NO_NOTA: "No ha registrado nota en el sistema",
         VINCULADO_NO_PUEDE_NOTA: "No puede registrar nota en el sistema",
         CARGAR_ACTA_SOCIALIZACION: "Ocurrió un error al cargar el acta de socialización, por favor verifique su conexión e intente de nuevo.",
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
-        NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación"
+        NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
+        CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones.",
+        CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez.",
+        DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación."
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
@@ -356,31 +422,34 @@ var text_es = {
         VER_DETALLES: "Ver Detalles",
         RESPONDER_SOLICITUD: "Responder solicitud",
         REGISTRAR_TRABAJO_GRADO: "Registrar trabajo de grado",
-        REGISTRAR_NOTA: "Registrar calificaciones ingresadas",
+        REGISTRAR_NOTA: "Registrar calificaciones",
         REVISAR_ANTEPROYECTO: "Revisar anteproyecto",
         REVISAR_PROYECTO: "Revisar proyecto",
         EDITAR: "Editar",
         ACTIVAR: "Activar",
         DESACTIVAR: "Desactivar",
+        DEVOLVER: 'Solicitar correcciones'
     },
     ENVIAR_SOLICITUD: "Enviar Solicitud",
     INGRESE_NOMBRE_DIRECTOR_EXTERNO: "Ingrese el nombre del director externo",
     INGRESE_DOCUMENTO_DIRECTOR_EXTERNO: "Ingrese el número de documento del director externo",
     INGRESE_DOCUMENTO_NUEVO_DIRECTOR_EXTERNO: "Ingrese el número de documento del nuevo director externo",
     INGRESAR_PROPUESTA: "Ingrese el nombre de la propuesta",
-    INGRESE_EMPRESA: "Ingrese el nombre de la empresa",
+    INGRESE_EMPRESA: "Ingrese el nombre de la empresa o razón social",
+    INGRESE_NIT: "Ingrese el NIT de la empresa",
+    INGRESE_CIIU: "Ingrese el código CIIU (código de actividad económica cámara y comercio)",
     CARTA_DIRIGIDA: "Ingrese el nombre de la persona a la cual va dirigida la carta",
     CARGO_DIRIGIDO: "Ingrese el cargo de la persona a la cual se dirige la carta",
     INGRESAR_RESUMEN_PROPUESTA: "Escriba un resumen de su propuesta",
     CARGUE_PROPUESTA: "Cargue su propuesta",
     CARGUE_HOJA_VIDA_EXTERNO: "Cargue la hoja de vida del director externo",
-    DOCENTE_AVALA_PROPUESTA: "Seleccione el docente que avala la propuesta",
-    SELECCIONE_DOCENTE_CODIRECTOR: "Seleccione el docente co-director (Si no tiene uno por favor no seleccione ninguno)",
+    DOCENTE_AVALA_PROPUESTA: "Seleccione el nombre del docente que avala su propuesta de trabajo de grado.",
+    SELECCIONE_DOCENTE_CODIRECTOR: "Seleccione el docente codirector (Si no cuenta con uno por favor no seleccione ninguno)",
     ESPACIOS_ACADEMICOS: "Espacios académicos",
     CARGUE_CERTIFICACION_ARL: "Cargue la certificación de afiliación a la ARL",
     CARGUE_ACUERDO_VOLUNTAD: "Cargue el acuerdo de voluntad, convenio o contrato avalado por la unidad de extensión de la facultad",
     CARGUE_CARTA_DESIGNANDO_PROFESIONAL: "Cargue la carta de la entidad que designa al profesional responsable del acompañamiento",
-    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "De acuerdo con lo establecido en el acuerdo N° 038 de 2015, seleccione este campo indicando si desea la inscripción de los espacios académicos correspondientes a Trabajo de Grado I y II en el mismo periodo académico. Tenga en cuenta que: La decisión sobre dicha inscripción es tomada por su proyecto curricular, examinando el contenido de esta solicitud y su situación académica actual; además, el coordinador de su proyecto curricular será el encargado de registrar el(los) espacio(s) académico(s) durante las fechas asignadas en el calendario académico.",
+    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "De acuerdo con lo establecido en el acuerdo N.°012 de 2022, seleccione este campo indicando si desea la inscripción de los espacios académicos correspondientes a Trabajo de Grado I y II en el mismo período académico. Tenga en cuenta que: La decisión sobre dicha inscripción es tomada por su proyecto curricular, examinando el contenido de esta solicitud y su situación académica actual; además, la coordinación de su proyecto curricular será quien se encargue de registrar él(los) espacio(s) académico(s) durante las fechas asignadas en el calendario académico.",
     JUSTIFICACION_SOLICITUD: "Escriba la causa con la que justifica la solicitud",
     DIRECTOR_ACTUAL: "Nombre del director actual",
     CODIRECTOR_ACTUAL: "Nombre del codirector actual",
@@ -401,14 +470,14 @@ var text_es = {
     CARGUE_NUEVA_PROPUESTA: "Cargue la nueva propuesta",
     ANTERIORES_AREAS_CONOCIMIENTO: "Areas de conocimiento actuales",
     SELECCIONE_NUEVAS_AREAS_CONOCIMIENTO: "Seleccione las nuevas áreas de conocimiento que abarca su proyecto",
-    CARGUE_PLAN_INVESTIGACION: "Cargue el plan de actividades de investigación",
+    CARGUE_PLAN_INVESTIGACION: "Cargue la propuesta de investigación",
     INGRESE_ESTRUCTURA_INVESTIGACION_AVALA: "Ingrese la Estructura de investigación que avala la propuesta",
     SELECCIONE_DOCENTE_DESIGNADO_INVESTIGACION: "Seleccione el Docente director designado por la estructura de investigación",
     CARGUE_PLAN_NEGOCIOS: "Cargue el plan o el modelo de negocios",
     ANTERIOR_DIRECTOR_EXTERNO: "Director externo actual",
     ESCRIBA_DIRECTOR_EXTERNO_NUEVO: "Escriba el nombre del nuevo director externo",
-    PLAN_INVESTIGACION_ANTERIOR: "Plan de actividades de investigación actual",
-    CARGUE_PLAN_INVESTIGACION_NUEVO: "Cargue Plan de actividades de investigación nuevo",
+    PLAN_INVESTIGACION_ANTERIOR: "Propuesta de investigación actual",
+    CARGUE_PLAN_INVESTIGACION_NUEVO: "Cargue Propuesta de investigación nueva",
     CREACION_INDIVIDUAL_COLECTIVA: "Seleccione si su creación es individual o colectiva",
     ANTERIOR_PLAN_NEGOCIOS: "Plan o modelo de negocios actual",
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Cargue el Plan o modelo de negocios nuevo",
@@ -527,7 +596,7 @@ var text_es = {
     SOLICITUD_CARTA_APROBADA_PASANTIA: "La solicitud de la carta de presentación fue aprobada por favor vaya a la oficina de pasantias para recogerla.",
     SOLICITUD_CARTA_RECHAZADA_PASANTIA: "La solicitud de la carta fue rechazada, si tiene alguna inquietud por favor vaya a la oficina de pasantias.",
     INFORMACION_PRORROGA: "Información importante sobre la prórroga",
-    MENSAJE_PRORROGA: "Señor estudiante, se le informa que según lo estipulado en el Acuerdo 038 de Julio de 2015  expedido por el consejo académico de la Universidad Distrital Francisco José de Caldas, usted solo tiene derecho a una prórroga, es decir, una vez usted realice esta solicitud sin importar su naturaleza (prórroga para socializar o radicar) y está sea aprobada no podrá volver a solicitarla.",
+    MENSAJE_PRORROGA: "La solicitud se puede realizar por un máximo de 6 meses, en dado caso de ser aprobada, contará con ese tiempo para culminar el curso de la modalidad de grado.",
     APROBADO: {
         CURSAR_MODALIDAD: "El estudiante puede cursar la modalidad de {{modalidad}}",
         CANCELAR_MODALIDAD: "El estudiante ya no cursa la modalidad de {{modalidad}}",
@@ -543,7 +612,9 @@ var text_es = {
         DIRECTOR_EXTERNO: "Se cambia el director externo por el solicitado.",
         SOCIALIZACION: "Lea los detalles de la respuesta para saber más sobre la socialización.",
         REVISION: "El trabajo de grado ahora se encuentra en revisión por parte del evaluador asignado.",
+        ASIGNATURA: "Aprobado"
     },
+    REPROBADO: "Reprobado",
     AREAS: {
         INGRESE_NOMBRE_AREA: "Ingrese el nombre de la nueva subárea",
         INGRESE_DESCRIPCION_AREA: "Ingrese una descripción de la nueva subárea",
@@ -840,7 +911,7 @@ var text_es = {
         INSTRUCCIONES_PREVIAS: "Presionando el siguiente botón podrá subir el certificado de la ARL. El estado de su pasantia cambiara a En curso pero sin documento inicial.",
         CONFIRMACION: "Subir certificado de ARL",
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
-        TG_ACTUALIZADO: "El trabajo de grado ha sido actualizado satisfactoriamente",
+        TG_ACTUALIZADO: "La ARL se ha subido satisfactoriamente satisfactoriamente",
         SUBIR: "Subir certificado de ARL",
         WARNING:"Su trabajo de grado no puede comenzar hasta que haya cargado su certificado de afiliación a ARL. Por favor, cargue su certificado de afiliación a ARL en el módulo de revisiones.",
     },
@@ -868,6 +939,20 @@ var text_es = {
         REGISTRADA: "La revisión ha sido registrada exitosamente",
         ERROR: "Ocurrió un error al intentar registrar la revisión",
         AGREGAR_COMENTARIO: "Debe agregar al menos un comentario sobre la revisión",
+    },
+    SOLICITAR_CORRECCIONES: {
+        AVISO: 'Solicitar Corrección',
+        CONFIRMACION: 'Enviar Correcciones',
+        CORRECCION_REGISTRADA: 'Las corrección ha sido ingresada con éxito',
+        ERROR: {
+            REGISTRANDO_CORRECCION: 'Ocurrió un error registrando la corrección, por favor intente de nuevo',
+        },
+        PANEL: 'Correcciones',
+        LABEL: 'Correcciones y recomendaciones al trabajo de grado',
+        MENSAJE_CONFIRMACION: '¿Está seguro de devolver el proyecto de grado con las correcciones indicadas?',
+        PLACEHOLDER: 'Ingrese los cambios o solicitudes que deben realizarse al proyecto de grado',
+        SUBMIT: 'Enviar Correcciones',
+        TITULO: 'Solicitar correcciones a trabajo de grado'
     },
     REVISION_SOLICITADA_OTRO: "está solicitada a otro docente",
     AGREGAR_COMENTARIO: "Agregar comentario",
@@ -913,6 +998,16 @@ var text_es = {
     NOTIFICACIONES_ELIMINADA: "Eliminación correcta de la notificación",
     NOTIFICACIONES_REALIZADA: "Se completo la petición",
     SIN_NOTIFICACIONES: "No se encuentran notificaciones en espera",
+    NOMBRE_REVISTA: "Nombre de la revista",
+    LINK_REVISTA: "Link de la revista de aceptación del artículo",
+    CLASIFICACION_REVISTA: "Clasificación de la revista dónde fue aceptado el artículo",
+    MENSAJE_REVISTA: "Seleccione la categoría del artículo aceptado con base en la clasificación dispuesta por Publindex." +
+        "<ul>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>Revistas Nacionales</a></li>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
+        "</ul>",
+    CERTIFICADO_UNIDAD_EXT_PASANTIA:"Certificado de la unidad de extension de pasantias",
+    DOCUMENTOS_SOLICITUD: "Documentos asociados a la solicitud"
 };
 
 /**
@@ -923,6 +1018,9 @@ var text_es = {
  * Contiene las variables del servicio de internacionalización en ingles
  */
 var text_en = {
+    OBJETIVO_NUEVO: "Enter the new proposal objectives",
+    OBJETIVO_ACTUAL: "Current objectives of the proposal",
+    INGRESAR_OBJETIVO: "Enter the objectives of the proposal",
     TITULO: "Sistema de gestión de trabajos de grado Polux",
     MENSAJE_INICIAL: "Sistema de gestión de trabajos de grado de Pregrado en la Universidad Distrital",
     LISTADO_SOLICITUD: "List of Requests",
@@ -1082,7 +1180,7 @@ var text_en = {
         "Remember that according to agreement 038 of 2015 the minimum requirements to apply for a work degree modality are:" +
         "<ul>" +
         "<li>Be an active studend.</li>" +
-        "<li>Have approved 80% of the credits of your curriculum.</li>" +
+        "<li>Have approved 70% of the credits of your curriculum.</li>" +
         "<li>For the modality of Postgraduate Academic Spaces, you must have an accumulated average equal to or greater than three point eight (3.8).</li>" +
         "</ul",
     ESTUDIANTE_TRABAJO_GRADO: "Error: The currently requested student is performing a degree assignment.",
@@ -1122,6 +1220,7 @@ var text_en = {
     ERROR_RTA_SOLICITUD_16: "There was an error updating the  internship's details",
     ERROR_RTA_SOLICITUD_17: "There was an error updating the degree work's state",
     ERROR_RTA_SOLICITUD_18: "There was an error inserting the degree wokr's final document",
+    ERROR_RTA_SOLICITUD_19: "An error occurred while updating the objectives of the degree project.",
     ERROR: {
         SUBIR_DOCUMENTO: "Error attempting to load a document.",
         CARGAR_DOCUMENTO: "An error occurred loading the documents, please verify your connection and try again.",
@@ -1245,11 +1344,14 @@ var text_en = {
         SIN_REVISIONES: "It has not been possible to find revisions associated to the work of degree, verify that it has been done previously",
         CARGANDO_REVISIONES: "An error occurred when trying to query the revisions associated with the degree work. Contact the administrator.",
         INSERTANDO_REVISIONES: "An error ocurred when trying to register the degree work corrections",
+        SIN_CALIFICACION: "Unrated",
         VINCULADO_NO_NOTA: "The teacher have not registered a grade in the system",
         VINCULADO_NO_PUEDE_NOTA: "The teacher is not able to register a grade in the system",
         CARGAR_ACTA_SOCIALIZACION: "There was an error occurred loading the socialization certificate, please check your connection and try again.",
         SIN_MODALIDADES: "There are no modalities registered at the moment",
         CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
+        CALIFICADO:"The degree work is already graded, so you cannot make any further changes.",
+        DIFERENCIA_NIVEL: "Students have to be at the same training level."
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1258,12 +1360,13 @@ var text_en = {
         VER_DETALLES: "View details",
         RESPONDER_SOLICITUD: "Reply request",
         REGISTRAR_TRABAJO_GRADO: "Submit degree work",
-        REGISTRAR_NOTA: "Submit entered grades",
+        REGISTRAR_NOTA: "Submit grades",
         REVISAR_ANTEPROYECTO: "Review degree work proposal",
         REVISAR_PROYECTO: "Review degree work",
         EDITAR: "Edit",
         ACTIVAR: "Activate",
         DESACTIVAR: "Deactivate",
+        DEVOLVER: 'Solicitar correcciones'
     },
     ENVIAR_SOLICITUD: "Send Form",
     INGRESE_NOMBRE_DIRECTOR_EXTERNO: "Enter the external director's name",
@@ -1282,7 +1385,7 @@ var text_en = {
     CARGUE_CERTIFICACION_ARL: "Upload the certification of the affiliation to the ARL",
     CARGUE_ACUERDO_VOLUNTAD: "Upload the agreement of will, covenant or contract endorsed by the extension unit of the faculty",
     CARGUE_CARTA_DESIGNANDO_PROFESIONAL: "Upload the letter from the entity that designates the professional responsible for the accompaniment",
-    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "In accordance with the provisions of agreement No. 038 of 2015, select this field indicating if you wish to register the academic spaces corresponding to Degree Work I and II in the same academic period. Keep in mind that: The decision on this registration is made by the career council of your curricular project, examining the content of this request and your current academic situation; in addition, the coordinator of your curricular project will be responsible for registering the academic space(s) during the dates assigned in the academic calendar.",
+    ESPACIOS_ACADEMICOS_MISMO_PERIODO: "In accordance with the provisions of the agreement N.°012 of 2022, select this field indicating if you wish to register the academic spaces corresponding to Degree Work I and II in the same academic period. Please note that: The decision on such enrollment is made by your curricular project, examining the content of this application and your current academic situation; in addition, the coordination of your curricular project will be in charge of registering the academic space(s) during the dates assigned in the academic calendar.",
     JUSTIFICACION_SOLICITUD: "Write the cause that justifies the request",
     DIRECTOR_ACTUAL: "Name of current director",
     CODIRECTOR_ACTUAL: "Name of current codirector",
@@ -1445,7 +1548,9 @@ var text_en = {
         DIRECTOR_EXTERNO: "The external director was changed by the requested",
         SOCIALIZACION: "Read the details of the answer to know more about the socialization.",
         REVISION: "The degree work is now under review by the assigned evaluator.",
+        ASIGNATURA: "Approved"
     },
+    REPROBADO: "Reproached",
     AREAS: {
         INGRESE_NOMBRE_AREA: "Enter the name of the new sub-area",
         INGRESE_DESCRIPCION_AREA: "Enter a description of the new sub-area",
@@ -1770,6 +1875,20 @@ var text_en = {
         ERROR: "An error ocurred when trying to register the review",
         AGREGAR_COMENTARIO: "You must add at least a comment about the review",
     },
+    SOLICITAR_CORRECCIONES: {
+        AVISO: 'Solicitar Corrección',
+        CONFIRMACION: 'Enviar Correcciones',
+        CORRECCION_REGISTRADA: 'Las corrección ha sido ingresada con éxito',
+        ERROR: {
+            REGISTRANDO_CORRECCION: 'Ocurrió un error registrando la corrección, por favor intente de nuevo',
+        },
+        PANEL: 'Correcciones',
+        LABEL: 'Correcciones y recomendaciones al trabajo de grado',
+        MENSAJE_CONFIRMACION: '¿Está seguro de devolver el proyecto de grado con las correcciones indicadas?',
+        PLACEHOLDER: 'Ingrese los cambios o solicitudes que deben realizarse al proyecto de grado',
+        SUBMIT: 'Enviar Correcciones',
+        TITULO: 'Solicitar correcciones a trabajo de grado'
+    },
     REVISION_SOLICITADA_OTRO: "is requested to another teacher",
     AGREGAR_COMENTARIO: "Add comment",
     GUARDAR_REVISION: "Save review",
@@ -1811,6 +1930,14 @@ var text_en = {
     ACUERDO_INFO: "Below is agreement 038 of 2015 of the Academic Council of the District University Francisco Jósé de Caldas by means of which the degree work  for the " +
         "undergraduate students are regulated of the University and other guidelines are dictated.",
     REPORTE_GENERAL_DOCENTES: "General report by teachers",
+    NOMBRE_REVISTA: "Magazine name",
+    LINK_REVISTA: "Link of the article acceptance journal",
+    CLASIFICACION_REVISTA: "Journal classification where the article was accepted",
+    MENSAJE_REVISTA: "Select the category of the accepted article based on the classification provided by Publindex." +
+        "<ul>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
+        "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +
+        "</ul>"
 };
 
 /**

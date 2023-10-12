@@ -38,7 +38,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('EstudianteRevisionDocumentoCtrl',
-    function($q, $scope, $translate, notificacionRequest,academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($q, $scope, $window, $translate, notificacionRequest,academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
       var ctrl = this;
 
       //ctrl.estudiante = $routeParams.idEstudiante;
@@ -207,7 +207,7 @@ angular.module('poluxClienteApp')
           trabajoGrado.EstadoTrabajoGrado.Id == 11 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 21 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 22) {
-          ctrl.tipoDocumento = 3;
+          ctrl.tipoDocumento = 4;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
           ctrl.tipoDocumento = 4;
@@ -533,7 +533,6 @@ angular.module('poluxClienteApp')
                 var file = new Blob([varia], {type: 'application/pdf'});
                 var fileURL = URL.createObjectURL(file);
                 $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-              
              })
             .catch(function(error) {
               ctrl.loadingVersion = false;
@@ -550,7 +549,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name subirDocumentoTg
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Ordena el llamado de funciones para subir documentos de acuerdo al estado del trabajo de grado.
        * Funciona con: subirNuevoDocumento y subirDocumento
        * @param {undefined} undefined No requiere parámetros
@@ -943,37 +942,40 @@ angular.module('poluxClienteApp')
                 }
                 //Si es primera versión crea el documento
                 if (estadoTg == 5 || estadoTg == 10 || estadoTg == 21 || estadoTg == 22) {
-                  //Se carga el documento con el gestor documental        
+                  //Se carga el documento con el gestor documental
                   var fileBase64 ;
                   var data = [];
                   var URL;
                     utils.getBase64(fileModel).then(
-                      function (base64) {                   
+                      function (base64) {
                        fileBase64 = base64;
                     data = [{
                      IdTipoDocumento: 18, //id tipo documento de documentos_crud
                      nombre: titulo ,// nombre formado por el titulo
-                    
                      metadatos: {
                        NombreArchivo: titulo,
                        Tipo: "Archivo",
                        Observaciones: workspace
-                     }, 
+                     },
                      descripcion:descripcion,
                      file:  fileBase64,
-                    }] 
-                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){                     
-                       URL = response;                                     
-                      nuxeoMidRequest.post('workflow?docID=' + URL.data[0].DocumentoEscrito.Enlace, null)
-                         .then(function (response) {
-                          //console.log('nuxeoMid response: ',response) 
-                      }).catch(function (error) {
-                        //console.log('nuxeoMid error:',error)
-                      })
-                      return URL  
+                    }]
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                        URL = response;
+                        ctrl.actualizarDocumentoTrabajoGrado(response.data.res.Enlace).then(function() {
+                          swal(
+                            $translate.instant(titleConfirmacion),
+                            $translate.instant(mensajeSuccess),
+                            'success'
+                          ).then((result) => {
+                            if (result) {
+                              $window.location.reload();
+                            }
+                          });
+                        })
+                      return URL
                      })
-    
-                  })    
+                  })
                  // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
                 }
               }

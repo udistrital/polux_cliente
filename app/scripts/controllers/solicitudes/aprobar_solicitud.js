@@ -14,6 +14,7 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires $window
+ * @requires services/parametrosService.service:parametrosRequest
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
@@ -82,15 +83,25 @@
  * @property {Object} infiniteScroll Objeto que configura las propiedades para la barra de desplazamiento en la visualización
  * @property {Number} userId Valor que carga el código de identificación para el usuario
  * @property {Boolean} loadDocumento Indicador que maneja la carga del documento para la solicitud
+ * @property {String} ObjetivoNuevo Texto que carga el contenido del nuevo objetivo para el trabajo de grado
+ * @property {Object} modalidad Modalidad a la que pertenece la solicitud del trabajo de grado
+ * @property {Object} documentoSolicitud Documentos asociados a la solicitud
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = 0;
       ctrl.justificacion = "";
       ctrl.solicitud = $routeParams.idSolicitud;
+      var parametrosSolicitudes = $.param({
+        query: "Id:" + ctrl.solicitud,
+      });
+      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
+        ctrl.SolicitudTrabajoGrado = responsesolicitud.data[0];
+      }).catch(function (error) {
+      })
       ctrl.Noaprobardescripcion = "";
       $scope.msgCargandoSolicitud = $translate.instant("LOADING.CARGANDO_DETALLES_SOLICITUD");
       $scope.msgEnviandFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
@@ -120,6 +131,7 @@ angular.module('poluxClienteApp')
         $scope.infiniteScroll.currentItems += $scope.infiniteScroll.numToAdd;
       };
       ctrl.Docente = 0;
+      ctrl.UnidadExtPasantia = 0;
 
       //carreras del coordinador
       /*  var parametrosCoordinador = {
@@ -135,7 +147,69 @@ angular.module('poluxClienteApp')
       if (token_service.getAppPayload().appUserRole.includes("DOCENTE")) {
         ctrl.Docente = 1;
       }
+
+      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+        ctrl.UnidadExtPasantia = 1;
+      }
       ctrl.carrerasCoordinador = [];
+
+      /**
+       * @ngdoc method
+       * @name getParametros
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No recibe ningún parámetro
+       * @returns {Promise} Objeto de tipo promesa que consuta los parametros requeridos
+       * @description 
+       * se consueme el servicio {@link parametrosService.service:parametrosRequest parametrosRequest}
+       */
+      ctrl.getParametros = function() {
+        //SOLICITUD INICIAL
+        if(ctrl.dataSolicitud.TipoSolicitud == 2){
+
+          // MODALIDAD DE PASANTÍA EXTERNA
+          if(ctrl.dataSolicitud.modalidad == 1){
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
+            });
+
+            //CONSULTA A PARAMETROS
+          parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+            ctrl.parametro = parametros;
+          });
+
+          // MODALIDAD DE ARTICULO ACADEMICO
+          } else if (ctrl.dataSolicitud.modalidad == 8) {
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:NRVS_PLX|LRVS_PLX|CRVS_PLX"
+            });
+
+            //CONSULTA A PARAMETROS
+            parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+              ctrl.parametro = parametros;
+            });
+
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+            });
+
+            parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+              ctrl.parametro_revista = parametros;
+            });
+          }
+
+        //SOLICITUD DE PRORROGA
+        }else if(ctrl.dataSolicitud.TipoSolicitud == 7){
+          var parametrosConsulta = $.param({
+            query:"CodigoAbreviacion.in:JPR_PLX"
+          });
+
+          //CONSULTA A PARAMETROS
+          parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+            ctrl.parametro = parametros;
+          });
+        }
+      }
+
 
       /**
        * @ngdoc method
@@ -148,8 +222,14 @@ angular.module('poluxClienteApp')
        * se consueme el servicio {@link academicaService.service:academicaRequest academicaRequest}
        */
       ctrl.getCarrerasCoordinador = function () {
+        var rol = ""
         var defer = $q.defer();
-        academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function (response) {
+        if (token_service.getAppPayload().appUserRole.includes("COORDINADOR_PREGRADO")) {
+          rol = "PREGRADO"
+        } else {
+          rol = "POSGRADO"
+        }
+        academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
           //
           if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
             ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
@@ -158,8 +238,7 @@ angular.module('poluxClienteApp')
             ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
             defer.reject("Carreras no definidas");
           }
-        })
-          .catch(function (error) {
+        }).catch(function (error) {
             ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
             defer.reject(error);
           });
@@ -183,7 +262,7 @@ angular.module('poluxClienteApp')
         poluxRequest.get("respuesta_solicitud", parametros).then(function (responseRespuesta) {
           if (Object.keys(responseRespuesta.data[0]).length > 0) {
             ctrl.respuestaActual = responseRespuesta.data[0];
-            if (responseRespuesta.data[0].EstadoSolicitud.Id != 1) {
+            if (ctrl.respuestaActual.EstadoSolicitud.Id != 1 && ctrl.respuestaActual.EstadoSolicitud.Id != 17 && ctrl.respuestaActual.EstadoSolicitud.Id != 21 && ctrl.respuestaActual.EstadoSolicitud.Id != 23) {
               ctrl.mensajeNoAprobar += ' ' + $translate.instant('SOLICITUD_CON_RESPUESTA');
               ctrl.noAprobar = true;
             }
@@ -297,7 +376,21 @@ angular.module('poluxClienteApp')
         var promise = defered.promise;
         poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
           poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(function (responseEstudiantes) {
-
+            poluxRequest.get("documento_solicitud", parametrosDetallesSolicitud).then(function (responseDocumentoSolicitud){
+              ctrl.documentoSolicitud = [];
+              angular.forEach(responseDocumentoSolicitud.data, function (documentoSol) {
+                if (documentoSol.DocumentoEscrito){
+                  var parametrosDocumentoEscrito = $.param({
+                    query: "Id:" + documentoSol.DocumentoEscrito.Id,
+                    limit: 0
+                  });
+                  poluxRequest.get("documento_escrito", parametrosDocumentoEscrito).then(function (responseDocumentoEscrito){
+                    ctrl.documentoSolicitud.push(responseDocumentoEscrito.data[0]);
+                  });
+                }
+              })
+            });
+            ctrl.modalidad = responseEstudiantes.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
             if (Object.keys(responseDetalles.data[0]).length === 0) {
               ctrl.detallesSolicitud = [];
 
@@ -317,6 +410,8 @@ angular.module('poluxClienteApp')
             ctrl.todoDetalles = [];
             var promises = [];
 
+            //PARA EJECUTAR LA FUNCION DE PARAMETROS
+            promises.push(ctrl.getParametros());
             var getDocente = function (id, detalle) {
 
               var defer = $q.defer();
@@ -499,7 +594,17 @@ angular.module('poluxClienteApp')
               }
             });
             $q.all(promises).then(function () {
-
+              //CAMBIO DE VISUALIZACIÓN DE PARAMETRO
+              angular.forEach(ctrl.detallesSolicitud, function(data_detalle){
+                if(data_detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
+                  angular.forEach(ctrl.parametro_revista.data.Data, function(PR){
+                    if(data_detalle.Descripcion == String(PR.Id)){
+                      data_detalle.Descripcion = PR.Nombre;
+                    }
+                  });
+                }
+              });
+              
               ctrl.detallesSolicitud.solicitantes = solicitantes.substring(2);
               defered.resolve(ctrl.detallesSolicitud);
             })
@@ -552,7 +657,7 @@ angular.module('poluxClienteApp')
                 ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
                 defer.reject(error);
               });
-            if (ctrl.dataSolicitud.modalidad === 1) {
+            if (ctrl.dataSolicitud.modalidad === 1 || ctrl.dataSolicitud.modalidad === 9) {
               ctrl.isPasantia = true;
             }
           } else {
@@ -661,11 +766,12 @@ angular.module('poluxClienteApp')
           promises.push(ctrl.getDetallesSolicitud(parametrosDetallesSolicitud));
           promises.push(ctrl.evaluarSolicitud());
           promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id));
-          if (ctrl.Docente === 1) {
+          if (ctrl.Docente === 1 || ctrl.UnidadExtPasantia === 1) {
             var parametro = ({
               "modalidad_tipo_solicitud": responseSolicitud.data[0].ModalidadTipoSolicitud,
             });
-          } else {
+          }
+          else {
             promises.push(ctrl.getCarrerasCoordinador());
             promises.push(ctrl.getRespuestaSolicitud());
           }
@@ -784,6 +890,7 @@ angular.module('poluxClienteApp')
             EspaciosAcademicos: null,
             DetallesPasantia: null,
             TrRevision: null,
+            EspaciosAcademicosInscritos: null,
           };
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == 3) {
@@ -828,6 +935,10 @@ angular.module('poluxClienteApp')
               } else if (detalle.DetalleTipoSolicitud.Detalle.Id == 59 || detalle.DetalleTipoSolicitud.Detalle.Id == 60) {
                 //Documento de propuesta final si el detalle es documennto fila o evidencias de publicación
                 ctrl.docPropuestaFinal = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.Enunciado == "OBJETIVO_NUEVO") {
+                ctrl.ObjetivoNuevo = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == 'Causa'){
+                ctrl.CausaSolicitud = detalle.Descripcion;
               }
             });
 
@@ -857,7 +968,7 @@ angular.module('poluxClienteApp')
               //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
               if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 16) {
                 //La solicitud solo se aprueba para que siga el curso
-                /*var data_trabajo_grado = {};
+                var data_trabajo_grado = {};
                 var data_estudiantes = [];
                 var otro = {};
                 var estudiante = {};
@@ -867,6 +978,58 @@ angular.module('poluxClienteApp')
                         otro.Estudiantes = detalle.Descripcion;
                     }
                 });
+
+                var data_asignaturasTrabajoGrado = [];
+                //Para asignatura tg1
+                data_asignaturasTrabajoGrado.push({
+                  "CodigoAsignatura": 1,
+                  "Periodo": parseInt(periodo),
+                  "Anio": parseInt(anio),
+                  "Calificacion": 0,
+                  "TrabajoGrado": {
+                    "Id": 0
+                  },
+                  "EstadoAsignaturaTrabajoGrado": {
+                    "Id": 1,
+                  }
+                });
+                //Para asignatura tg2
+                data_asignaturasTrabajoGrado.push({
+                  "CodigoAsignatura": 2,
+                  "Periodo": parseInt(periodo),
+                  "Anio": parseInt(anio),
+                  "Calificacion": 0,
+                  "TrabajoGrado": {
+                    "Id": 0
+                  },
+                  "EstadoAsignaturaTrabajoGrado": {
+                    "Id": 1,
+                  }
+                });
+                angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+                  if (detalle.Descripcion.includes("JSON-")) {
+                    if (detalle.DetalleTipoSolicitud.Detalle.Id === 22) {
+                      var datosMaterias = detalle.Descripcion.split("-");
+                      datosMaterias.splice(0, 2);
+                      var materiasAux = []
+                      angular.forEach(datosMaterias, function (materia) {
+                        var aux = JSON.parse(materia)
+                        materiasAux.push({
+                          "TrabajoGrado": {
+                            "Id": null
+                          },
+                          "EspaciosAcademicosElegibles": {
+                            "Id": aux.Id
+                          },
+                          "EstadoEspacioAcademicoInscrito": {
+                            "Id": 1
+                          }
+                        })
+                      });
+                      ctrl.dataRespuesta.EspaciosAcademicosInscritos = materiasAux
+                    }
+                  }
+                })
                 data_trabajo_grado = {
                     "Titulo": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Nombre,
                     "Modalidad": {
@@ -875,7 +1038,8 @@ angular.module('poluxClienteApp')
                     "EstadoTrabajoGrado": {
                         "Id": 1
                     },
-                    "DistincionTrabajoGrado": null
+                    "DistincionTrabajoGrado": null,
+                    "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico
                 }
                 estudiante = {
                     "Estudiante": otro.Estudiantes,
@@ -886,30 +1050,56 @@ angular.module('poluxClienteApp')
                         "Id": 1
                     }
                 }
-                
+                vinculacion = {
+                  "Usuario": $scope.userId,
+                  "Activo": true,
+                  "FechaInicio": fechaRespuesta,
+                  //"FechaFin": null,
+                  "RolTrabajoGrado": {
+                    "Id": 5
+                  },
+                  "TrabajoGrado": {
+                    "Id": 0
+                  }
+                };
+                var data_vinculacion = [];
+                data_vinculacion.push(vinculacion)
                 data_estudiantes.push(estudiante);
-                
                 ctrl.trabajo_grado = {
                     TrabajoGrado: data_trabajo_grado,
                     EstudianteTrabajoGrado: data_estudiantes,
                     DocumentoEscrito: null,
                     DocumentoTrabajoGrado: null,
                     AreasTrabajoGrado: null,
-                    VinculacionTrabajoGrado: null
+                    VinculacionTrabajoGrado: data_vinculacion,
+                    AsignaturasTrabajoGrado: data_asignaturasTrabajoGrado
                 }
-                
+                if (objRtaNueva.EstadoSolicitud.Id == 3 && this.roles.includes("COORDINADOR_PREGRADO")) {
+                  objRtaNueva.EstadoSolicitud.Id = 23
+                }
                 ctrl.rtaSol = {
                     RespuestaAnterior: objRtaAnterior,
                     RespuestaNueva: objRtaNueva,
                     DocumentoSolicitud: data_documento,
-                    TipoSolicitud: ctrl.respuestaActual.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                    TipoSolicitud: ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
                     Vinculaciones: null,
                     EstudianteTrabajoGrado: null,
                     TrTrabajoGrado: ctrl.trabajo_grado,
-                    ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud
+                    ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
+                    SolicitudTrabajoGrado: ctrl.respuestaActual.SolicitudTrabajoGrado
                 };
-                */
-              } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28) {
+                ctrl.rtaSol.SolicitudTrabajoGrado.TrabajoGrado = {
+                  "Id": 0
+                }
+
+                ctrl.dataRespuesta.RespuestaAnterior = ctrl.rtaSol.RespuestaAnterior
+                ctrl.dataRespuesta.RespuestaNueva = ctrl.rtaSol.RespuestaNueva
+                ctrl.dataRespuesta.DocumentoSolicitud = ctrl.rtaSol.DocumentoSolicitud
+                ctrl.dataRespuesta.TipoSolicitud = ctrl.rtaSol.TipoSolicitud
+                ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
+                ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
+                ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
+              } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
                 //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                 //se obtienen datos para crear el trabajo
                 var tempTrabajo = {};
@@ -926,12 +1116,22 @@ angular.module('poluxClienteApp')
                     tempTrabajo.Resumen = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Áreas de conocimiento") {
                     tempTrabajo.Areas = ctrl.areas;
-                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Empresa") {
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre empresa o razón social") {
                     tempTrabajo.Empresa = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director externo") {
                     tempTrabajo.NombreDirectorExterno = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director externo") {
                     tempTrabajo.DocumentoDirectorExterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre del director interno") {
+                    tempTrabajo.NombreDirectorInterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Documento del director interno") {
+                    tempTrabajo.DocumentoDirectorInterno = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Objetivo") {
+                    tempTrabajo.Objetivo = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Código CIIU (cámara y comercio)") {
+                    tempTrabajo.CIIU = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "NIT") {
+                    tempTrabajo.NIT = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -941,7 +1141,7 @@ angular.module('poluxClienteApp')
                   estadoTrabajoGrado = 13;
                 }
                 // si la modalidad es de pasantia se crea en estado de espera de ARL id 21
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1) {
+                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 9) {
                   //estadoTrabajoGrado = 5;
                   estadoTrabajoGrado = 21;
                 }
@@ -961,7 +1161,9 @@ angular.module('poluxClienteApp')
                   },
                   "DistincionTrabajoGrado": null,
                   "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico,
+                  "Objetivo": tempTrabajo.Objetivo,
                 }
+
                 //se agregan estudiantes
                 var estudiante = {};
                 var data_estudiantes = [];
@@ -1115,9 +1317,56 @@ angular.module('poluxClienteApp')
                       Id: 0,
                     }
                   }
+                  //SE AGREGAN LOS DETALLES DE PASANTÍA EXTERNA
+                  ctrl.dataRespuesta.DetallesPasantiaExterna = [{
+                    "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                    "Valor": String(tempTrabajo.Empresa),
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  },
+                  {
+                    "Parametro": String(ctrl.parametro.data.Data[1].Id),
+                    "Valor": String(tempTrabajo.CIIU),
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  },
+                  {
+                    "Parametro": String(ctrl.parametro.data.Data[2].Id),
+                    "Valor": String(tempTrabajo.NIT),
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  }]
+
                   //Docente director
                   data_vinculacion.push({
                     "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
+                    "Activo": true,
+                    "FechaInicio": fechaRespuesta,
+                    //"FechaFin": null,
+                    "RolTrabajoGrado": {
+                      "Id": 2
+                    },
+                    "TrabajoGrado": {
+                      "Id": 0
+                    }
+                  });
+                }
+                if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82){
+                  ctrl.dataRespuesta.DetallesPasantia = {
+                    Empresa: 0,
+                    Horas: 0,
+                    ObjetoContrato: "Contrato de aprendizaje",
+                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorInterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorInterno,
+                    TrabajoGrado: {
+                      Id: 0,
+                    }
+                  }
+                  //Docente director
+                  data_vinculacion.push({
+                    "Usuario": Number(tempTrabajo.DocumentoDirectorInterno),
                     "Activo": true,
                     "FechaInicio": fechaRespuesta,
                     //"FechaFin": null,
@@ -1244,19 +1493,67 @@ angular.module('poluxClienteApp')
             } else if (ctrl.dataSolicitud.TipoSolicitud == 13) {
               //Solicitud de revisión de tg
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
+              var data_ttg = null;
               //trabajo de grado en revisión id 15
+              const modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion;
+              // Por defecto el trabajo de grado pasa a listo para sustentar
               data_tg.EstadoTrabajoGrado = {
-                Id: 17
+                Id: 17,
               };
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
-                // Si la modalidad es producción academica el trabajo de grado de una vez pasa a listo para sustentar
-                data_tg.EstadoTrabajoGrado.Id = 17;
+
+              // Para las modalidades innovación, monografía y emprendimiento: el trabajo de grado pasa a revisión de evaluador
+              if (modalidad === 'INV' || modalidad === 'PEMP' || modalidad === 'MONO') {
+                data_tg.EstadoTrabajoGrado.Id = 23;
               }
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
-                // Si la modalidad es creación o interpretación el trabajo de grado de una vez pasa a listo para sustentar
-                //KB 26100
-                data_tg.EstadoTrabajoGrado.Id = 17;
+
+              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion === 'PACAD') {
+                var detalles_trabajo_grado = {};
+
+                //RESTABLECIMIENTO DE ID DEL PARAMETRO ASOCIADO A LA CLASIFICACION DE REVISTA
+                angular.forEach(ctrl.detallesSolicitud, function(detalles_finales){
+                  if(detalles_finales.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
+                    angular.forEach(ctrl.parametro_revista.data.Data, function(data_parametro){
+                      if(detalles_finales.Descripcion == data_parametro.Nombre){
+                        detalles_finales.Descripcion = data_parametro.Id;
+                      }
+                    });
+                  }
+                });
+
+                angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+                  if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre Revista"){
+                    detalles_trabajo_grado.NombreRevista = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Link Revista"){
+                    detalles_trabajo_grado.LinkRevista = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Clasificación Revista"){
+                    detalles_trabajo_grado.ClasificacionRevista = detalle.Descripcion;
+                  }
+                });
+
+                //GUARDA LOS VALORES
+                data_ttg = [{
+                  "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                  "Valor": String(detalles_trabajo_grado.NombreRevista),
+                  TrabajoGrado: {
+                    Id: data_tg.Id,
+                  }
+                },
+                {
+                  "Parametro": String(ctrl.parametro.data.Data[1].Id),
+                  "Valor": String(detalles_trabajo_grado.LinkRevista),
+                  TrabajoGrado: {
+                    Id: data_tg.Id,
+                  }
+                },
+                {
+                  "Parametro": String(ctrl.parametro.data.Data[2].Id),
+                  "Valor": String(detalles_trabajo_grado.ClasificacionRevista),
+                  TrabajoGrado: {
+                    Id: data_tg.Id,
+                  }
+                }]
               }
+
               //Vinculaciones del tg
               var data_vinculaciones = [];
               //Si se escogio cambiar la vinculación
@@ -1309,7 +1606,8 @@ angular.module('poluxClienteApp')
                     Id: 0,
                   },
                   TrabajoGrado: data_tg,
-                }
+                },
+                DetalleTrabajoGrado: data_ttg
               }
               ctrl.dataRespuesta.TrRevision = data_revision;
             } else if (ctrl.dataSolicitud.TipoSolicitud == 6) {
@@ -1344,12 +1642,25 @@ angular.module('poluxClienteApp')
                 dataVinculaciones = null;
               }
               ctrl.dataRespuesta.Vinculaciones = dataVinculaciones;
+            //SOLICITUD DE PRORROGA
+            }else if(ctrl.dataSolicitud.TipoSolicitud == 7){
+              //GUARDA LOS VALORES
+              ctrl.dataRespuesta.CausaProrroga = [{
+                "Parametro": String(ctrl.parametro.data.Data[0].Id),
+                "Valor": String(ctrl.CausaSolicitud),
+                TrabajoGrado: {
+                  Id: ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado.Id,
+                }
+              }]
+            } else if (ctrl.dataSolicitud.TipoSolicitud == 15) {
+              // SOLICITUD DE CAMBIOS DE OBJETIVOS DEL TRABAJO DE GRADO
+              var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
+              // SE CAMBIAN LOS OBJETIVOS
+              tgTemp.Objetivo = ctrl.ObjetivoNuevo;
+              ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             }
           }
           if (!errorDocente) {
-            //
-
-            console.log(ctrl.dataRespuesta);
             poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
               ctrl.mostrarRespuesta(response);
             })
@@ -1733,6 +2044,7 @@ angular.module('poluxClienteApp')
        * Función que se encarga de cargar la solicitud cambiando el estado de la misma para continuar con el flujo del proyecto de grado
        */
       ctrl.RespuestaDocente = function () {
+        //Aprobar
         if (ctrl.respuestaSolicitud == 3) {
           var parametrosSolicitudes = $.param({
             query: "Id:" + ctrl.solicitud,
@@ -1740,53 +2052,719 @@ angular.module('poluxClienteApp')
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
             var parametro = responsesolicitud.data[0];
             var modalidad = 0;
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 1) {
-              modalidad = 2;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 2) {
-              modalidad = 13;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 3) {
-              modalidad = 16;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 4) {
-              modalidad = 20;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 5) {
-              modalidad = 28;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 6) {
-              modalidad = 38;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 7) {
-              modalidad = 46;
-            }
-            if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 8) {
-              modalidad = 55;
-            }
-            var parametrosSolicitud = $.param({
-              query: "Id:" + 70,
-            });
-            poluxRequest.get("modalidad_tipo_solicitud", parametrosSolicitud).then(function (responsesolicitud) {
+            if (parametro.ModalidadTipoSolicitud.TipoSolicitud.Id == 14) {
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 1) {
+                modalidad = 2;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 70,
+                });
+                var parametros = $.param({
+                  query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                  limit: 0
+                });
+                poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+                  angular.forEach(respuestaSolicitud.data, function (value) {
+                    if (Object.keys(value).length > 0) {
+                      var parametrosRespuestaSolicitud = {
+                        "Id": value.Id,
+                        "Fecha": new Date(),
+                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
 
-              if (responsesolicitud.data !== undefined) {
-                parametro.ModalidadTipoSolicitud = responsesolicitud.data;
+                        "EnteResponsable": 0,
+                        "Usuario": $scope.userId,
+                        "Activo": true,
+                        "EstadoSolicitud": {
+                          "Id": 20,
+                        },
+                        "SolicitudTrabajoGrado": {
+                          "Id": Number(ctrl.solicitud)
+                        }
 
-               // console.log(parametro);
+                      };
+                      poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
 
-                var parametrosSolicitud1 = {
-                  "Id": parametro.Id,
-                  "Fecha": parametro.Fecha,
-                  "ModalidadTipoSolicitud": {
-                    "Id": modalidad,
-                    "TipoSolicitud": null,
-                    "Modalidad": null
-                  },
-                  "TrabajoGrado": null,
-                  "PeriodoAcademico": parametro.PeriodoAcademico,
+                        if (responsesolicitudsolicitud.data !== undefined) {
+
+                          var Atributos = {
+                            rol: 'ESTUDIANTE',
+                          }
+                          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                          // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                          swal(
+                            $translate.instant("RESPUESTA_SOLICITUD"),
+                            $translate.instant("SOLICITUD_APROBADA"),
+                            'success'
+                          );
+                          $location.path("/solicitudes/listar_solicitudes");
+
+                        } else {
+                          swal(
+                            $translate.instant("RESPUESTA_SOLICITUD"),
+                            $translate.instant(responsesolicitudsolicitud),
+                            'warning'
+                          );
+                        }
+
+
+                      });
+                    }
+                  });
+                })
+                  .catch(function () {
+                    $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+                    $scope.errorCargarSolicitudes = true;
+                    $scope.loadSolicitudes = false;
+
+                  });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 2) {
+                modalidad = 13;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 71,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 3) {
+                modalidad = 16;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 72,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 4) {
+                modalidad = 20;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 73,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 5) {
+                modalidad = 28;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 74,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 6) {
+                modalidad = 38;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 75,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 7) {
+                modalidad = 46;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 76,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 8) {
+                modalidad = 55;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 77,
+                });
+              }
+              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 9) {
+                modalidad = 82;
+                var parametrosSolicitud = $.param({
+                  query: "Id:" + 83,
+                });
+                var parametros = $.param({
+                  query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                  limit: 0
+                });
+                poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+                  angular.forEach(respuestaSolicitud.data, function (value) {
+                    if (Object.keys(value).length > 0) {
+                      var parametrosRespuestaSolicitud = {
+                        "Id": value.Id,
+                        "Fecha": new Date(),
+                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud[0].TipoSolicitud.Nombre,
+
+                        "EnteResponsable": 0,
+                        "Usuario": $scope.userId,
+                        "Activo": true,
+                        "EstadoSolicitud": {
+                          "Id": 20,
+                        },
+                        "SolicitudTrabajoGrado": {
+                          "Id": Number(ctrl.solicitud)
+                        }
+
+                      };
+                      poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
+
+                        if (responsesolicitudsolicitud.data !== undefined) {
+
+                          var Atributos = {
+                            rol: 'ESTUDIANTE',
+                          }
+                          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                          // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                          swal(
+                            $translate.instant("RESPUESTA_SOLICITUD"),
+                            $translate.instant("SOLICITUD_APROBADA"),
+                            'success'
+                          );
+                          $location.path("/solicitudes/listar_solicitudes");
+
+                        } else {
+                          swal(
+                            $translate.instant("RESPUESTA_SOLICITUD"),
+                            $translate.instant(responsesolicitudsolicitud),
+                            'warning'
+                          );
+                        }
+
+
+                      });
+                    }
+                  });
+                })
+                  .catch(function () {
+                    $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+                    $scope.errorCargarSolicitudes = true;
+                    $scope.loadSolicitudes = false;
+
+                  });
+              }
+              poluxRequest.get("modalidad_tipo_solicitud", parametrosSolicitud).then(function (responsesolicitud) {
+
+                if (responsesolicitud.data !== undefined) {
+                  parametro.ModalidadTipoSolicitud = responsesolicitud.data;
+
+                  // console.log(parametro);
+
+                  var parametrosSolicitud1 = {
+                    "Id": parametro.Id,
+                    "Fecha": parametro.Fecha,
+                    "ModalidadTipoSolicitud": {
+                      "Id": modalidad,
+                      "TipoSolicitud": null,
+                      "Modalidad": null
+                    },
+                    "TrabajoGrado": null,
+                    "PeriodoAcademico": parametro.PeriodoAcademico,
+
+                  };
+                  var parametrosConsulta = $.param({
+                    query: "CodigoAbreviacion.in:ADD"
+                  });
+
+                  poluxRequest.get("estado_solicitud/", parametrosConsulta).then(function (parametros) {
+                    ctrl.parametro = parametros.data[0];
+                  });
+                  ctrl.getRespuestaSolicitud().then(function () {
+                    var rtaActual = ctrl.respuestaActual;
+                    rtaActual.Activo = false
+                    poluxRequest.put("respuesta_solicitud", ctrl.respuesta_solicitud, rtaActual).then(function (responseSolicitud) {
+                      if (responseSolicitud.data !== undefined) {
+                        rtaActual.Id = null;
+                        rtaActual.Activo = true;
+                        rtaActual.Fecha = new Date();
+                        rtaActual.Justificacion = "El Director aprobó la " + parametro.ModalidadTipoSolicitud[0].TipoSolicitud.Nombre
+                        rtaActual.Usuario = rtaActual.EnteResponsable
+                        rtaActual.EnteResponsable = 0;
+                        rtaActual.EstadoSolicitud.Id = ctrl.parametro.Id
+                        poluxRequest.post("respuesta_solicitud", rtaActual).then(function (response) {
+                        }).catch(function (error) {
+                          swal(
+                            $translate.instant("MENSAJE_ERROR"),
+                            $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                            'warning'
+                          )
+                        });
+                      }
+                    });
+                  });
+                  poluxRequest.put("solicitud_trabajo_grado", ctrl.solicitud, parametrosSolicitud1).then(function (responsesolicitudsolicitud) {
+
+                    if (responsesolicitudsolicitud.data !== undefined) {
+
+                      var Atributos = {
+                        rol: 'ESTUDIANTE',
+                      }
+                      notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                      // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                      swal(
+                        $translate.instant("RESPUESTA_SOLICITUD"),
+                        $translate.instant("SOLICITUD_APROBADA"),
+                        'success'
+                      );
+                      $location.path("/solicitudes/listar_solicitudes");
+
+                    } else {
+                      swal(
+                        $translate.instant("RESPUESTA_SOLICITUD"),
+                        $translate.instant(responsesolicitudsolicitud),
+                        'warning'
+                      );
+                    }
+
+
+                  });
+                }
+              });
+            } else {
+              var parametros = $.param({
+                query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                limit: 0
+              });
+              poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+                angular.forEach(respuestaSolicitud.data, function (value) {
+                  if (Object.keys(value).length > 0) {
+
+                    // Validacion de solicitud final para pasantia externa o interna
+                    if (parametro.ModalidadTipoSolicitud.Id == 64 || parametro.ModalidadTipoSolicitud.Id == 92) {
+                      var parametrosRespuestaSolicitud = {
+                        "Id": value.Id,
+                        "Fecha": new Date(),
+                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+
+                        "EnteResponsable": 0,
+                        "Usuario": $scope.userId,
+                        "Activo": true,
+                        "EstadoSolicitud": {
+                          "Id": 20,
+                        },
+                        "SolicitudTrabajoGrado": {
+                          "Id": Number(ctrl.solicitud)
+                        }
+
+                      };
+                    } else {
+                      var parametrosRespuestaSolicitud = {
+                        "Id": value.Id,
+                        "Fecha": new Date(),
+                        "Justificacion": "El Director aprobo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+
+                        "EnteResponsable": 0,
+                        "Usuario": $scope.userId,
+                        "Activo": true,
+                        "EstadoSolicitud": {
+                          "Id": 17,
+                        },
+                        "SolicitudTrabajoGrado": {
+                          "Id": Number(ctrl.solicitud)
+                        }
+
+                      };
+                    }
+                    poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
+
+                      if (responsesolicitudsolicitud.data !== undefined) {
+
+                        var Atributos = {
+                          rol: 'ESTUDIANTE',
+                        }
+                        notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                        // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                        swal(
+                          $translate.instant("RESPUESTA_SOLICITUD"),
+                          $translate.instant("SOLICITUD_APROBADA"),
+                          'success'
+                        );
+                        $location.path("/solicitudes/listar_solicitudes");
+
+                      } else {
+                        swal(
+                          $translate.instant("RESPUESTA_SOLICITUD"),
+                          $translate.instant(responsesolicitudsolicitud),
+                          'warning'
+                        );
+                      }
+
+
+                    });
+                  }
+                });
+              })
+                .catch(function () {
+                  $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+                  $scope.errorCargarSolicitudes = true;
+                  $scope.loadSolicitudes = false;
+
+                });
+            }
+
+          });
+
+        }else if(ctrl.respuestaSolicitud == 2){
+          //Rechazar solicitud
+          var fechaRespuesta = new Date();
+          var parametrosSolicitudes = $.param({
+            query: "Id:" + ctrl.solicitud,
+          });
+          poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
+            var parametro = responsesolicitud.data[0];
+            //Solicitud inicial
+            if (parametro.ModalidadTipoSolicitud.TipoSolicitud.Id == 2) {
+              var data_documento = {
+                //PENDIENTE POR VERIFICAR EL DOCUMENTO CORRECTO
+                "DocumentoEscrito": {
+                  "Id": 49,
+                },
+                "SolicitudTrabajoGrado": {
+                  "Id": Number(ctrl.solicitud)
+                }
+              };
+              var objRtaNueva = {
+                "Id": null,
+                "Fecha": fechaRespuesta,
+
+                "Justificacion": "El director no aprobo ser el Docente del proyecto",
+
+                "EnteResponsable": 0,
+                "Usuario": $scope.userId,
+                "Activo": true,
+                "EstadoSolicitud": {
+                  "Id": Number(ctrl.respuestaSolicitud),
+                },
+                "SolicitudTrabajoGrado": {
+                  "Id": Number(ctrl.solicitud)
+                }
+              };
+              ctrl.getRespuestaSolicitud().then(function () {
+                var objRtaAnterior = ctrl.respuestaActual;
+                objRtaAnterior.Activo = false;
+                ctrl.dataRespuesta = {
+                  DocumentoSolicitud: data_documento,
+                  EstudianteTrabajoGrado: null,
+                  ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
+                  RespuestaAnterior: objRtaAnterior,
+                  RespuestaNueva: objRtaNueva,
+                  SolicitudTrabajoGrado: null,
+                  TipoSolicitud: ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
+                  TrTrabajoGrado: null,
+                  TrabajoGrado: null,
 
                 };
-                poluxRequest.put("solicitud_trabajo_grado", ctrl.solicitud, parametrosSolicitud1).then(function (responsesolicitudsolicitud) {
+                //console.log(ctrl.dataRespuesta);
+
+                poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
+                  ctrl.mostrarRespuesta(response);
+                })
+                  .catch(function (error) {
+
+                    swal(
+                      $translate.instant("MENSAJE_ERROR"),
+                      $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                      'warning'
+                    );
+                  });
+              }
+              ).catch(function (error) {
+
+                ctrl.errorCargarSolicitud = true;
+                $scope.loadSolicitud = false;
+              });
+            } else {
+              //Solicitud de novedad
+
+              var parametros = $.param({
+                query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                limit: 0
+              });
+              poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+                angular.forEach(respuestaSolicitud.data, function (value) {
+                  if (Object.keys(value).length > 0) {
+                    var parametrosRespuestaSolicitud = {
+                      "Id": value.Id,
+                      "Fecha": new Date(),
+                      "Justificacion": "El Director rechazo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+
+                      "EnteResponsable": 0,
+                      "Usuario": $scope.userId,
+                      "Activo": true,
+                      "EstadoSolicitud": {
+                        "Id": 18,
+                      },
+                      "SolicitudTrabajoGrado": {
+                        "Id": Number(ctrl.solicitud)
+                      }
+
+                    };
+                    poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
+
+                      if (responsesolicitudsolicitud.data !== undefined) {
+
+                        var Atributos = {
+                          rol: 'ESTUDIANTE',
+                        }
+                        notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                        // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                        swal(
+                          $translate.instant("RESPUESTA_SOLICITUD"),
+                          $translate.instant("SOLICITUD_RECHAZADA"),
+                          'success'
+                        );
+                        $location.path("/solicitudes/listar_solicitudes");
+
+                      } else {
+                        swal(
+                          $translate.instant("RESPUESTA_SOLICITUD"),
+                          $translate.instant(responsesolicitudsolicitud),
+                          'warning'
+                        );
+                      }
+
+
+                    });
+                  }
+                });
+              })
+                .catch(function () {
+                  $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+                  $scope.errorCargarSolicitudes = true;
+                  $scope.loadSolicitudes = false;
+
+                });
+
+            }
+          }).catch(function (error) {
+            $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+            $scope.errorCargarSolicitudes = true;
+            $scope.loadSolicitudes = false;
+          });
+
+        }else if(ctrl.respuestaSolicitud != 3 || ctrl.respuestaSolicitud != 2){
+          swal(
+            $translate.instant("MENSAJE_ERROR"),
+            $translate.instant("DEBE_SELECCIONAR_UNA_RESPUESTA"),
+            'warning'
+          );
+        }
+      }
+
+      /**
+       * @ngdoc method
+       * @name RespuestaExtensionPasantia
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Función que se encarga de tramitar las respuesta por parte de la unidad de extension de pasantia
+       */
+      ctrl.RespuestaExtensionPasantia = function () {
+        if (ctrl.respuestaSolicitud == 3) {
+          //aprobar
+          if (ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id == 64 || ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id == 92) {
+            var fileBase64;
+            var data = [];
+            var URL = "";
+            utils.getBase64(ctrl.docCertificadoUnidadExt.fileModel).then(
+              function (base64) {
+
+                fileBase64 = base64;
+                data = [{
+                  IdTipoDocumento: 18, //id tipo documento de documentos_crud
+                  nombre: "Certificado Unidad Extension solicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
+
+                  metadatos: {
+                    NombreArchivo: "Certificado Unidad Extension solicitud" + ctrl.solicitud,
+                    Tipo: "Archivo",
+                    Observaciones: "certificado"
+                  },
+                  descripcion: "Certificado Unidad Extension solicitud " + ctrl.solicitud,
+                  file: fileBase64,
+                }]
+
+                gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                  URL = response.data.res.Enlace;
+                  ctrl.urlCertUniExt = URL
+                  var detalle_documento_certi = {
+                    "Descripcion": ctrl.urlCertUniExt,
+                    "SolicitudTrabajoGrado": {
+                      "Id": Number(ctrl.solicitud)
+                    },
+                    "DetalleTipoSolicitud": {
+                      "Id": ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id == 64 ? 301 : 302
+                    }
+                  }
+
+                  poluxRequest.post("detalle_solicitud", detalle_documento_certi).then(function (response) {
+                    var parametros = $.param({
+                      query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                      limit: 0
+                    });
+                    poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+                      angular.forEach(respuestaSolicitud.data, function (value) {
+                        if (Object.keys(value).length > 0) {
+                          var parametrosRespuestaSolicitud = {
+                            "Id": value.Id,
+                            "Fecha": new Date(),
+                            "Justificacion": "La oficina de extension de pasantias aprobó la " + value.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+
+                            "EnteResponsable": 0,
+                            "Usuario": $scope.userId,
+                            "Activo": true,
+                            "EstadoSolicitud": {
+                              "Id": 21,
+                            },
+                            "SolicitudTrabajoGrado": {
+                              "Id": Number(ctrl.solicitud)
+                            }
+
+                          };
+                          poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
+
+                            if (responsesolicitudsolicitud.data !== undefined) {
+
+                              var Atributos = {
+                                rol: 'ESTUDIANTE',
+                              }
+                              notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                              // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                              swal(
+                                $translate.instant("RESPUESTA_SOLICITUD"),
+                                $translate.instant("SOLICITUD_ES_APROBADA"),
+                                'success'
+                              );
+                              $location.path("/solicitudes/listar_solicitudes");
+
+                            } else {
+                              swal(
+                                $translate.instant("RESPUESTA_SOLICITUD"),
+                                $translate.instant(responsesolicitudsolicitud),
+                                'warning'
+                              );
+                            }
+
+
+                          });
+                        } else {
+                        }
+                      });
+                    })
+                      .catch(function () {
+                        swal(
+                          $translate.instant("RESPUESTA_SOLICITUD"),
+                          $translate.instant(responsesolicitudsolicitud),
+                          'warning'
+                        );
+                      });
+                  }).catch(function (error) {
+                    swal(
+                      $translate.instant("RESPUESTA_SOLICITUD"),
+                      $translate.instant(responsesolicitudsolicitud),
+                      'warning'
+                    );
+                  })
+                }).catch(function () {
+                  swal(
+                    $translate.instant("RESPUESTA_SOLICITUD"),
+                    $translate.instant(responsesolicitudsolicitud),
+                    'warning'
+                  );
+                })
+
+              })
+              .catch(function (error) {
+                swal(
+                  $translate.instant("MENSAJE_ERROR"),
+                  $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                  'warning'
+                );
+                $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+                $scope.errorCargarSolicitudes = true;
+                $scope.loadSolicitudes = false;
+              });
+          } else {
+            var parametros = $.param({
+              query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+              limit: 0
+            });
+            poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+              angular.forEach(respuestaSolicitud.data, function (value) {
+                if (Object.keys(value).length > 0) {
+                  var parametrosRespuestaSolicitud = {
+                    "Id": value.Id,
+                    "Fecha": new Date(),
+                    "Justificacion": "La oficina de extension de pasantias aprobó la " + value.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+
+                    "EnteResponsable": 0,
+                    "Usuario": $scope.userId,
+                    "Activo": true,
+                    "EstadoSolicitud": {
+                      "Id": 21,
+                    },
+                    "SolicitudTrabajoGrado": {
+                      "Id": Number(ctrl.solicitud)
+                    }
+
+                  };
+                  poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
+
+                    if (responsesolicitudsolicitud.data !== undefined) {
+
+                      var Atributos = {
+                        rol: 'ESTUDIANTE',
+                      }
+                      notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                      // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+
+                      swal(
+                        $translate.instant("RESPUESTA_SOLICITUD"),
+                        $translate.instant("SOLICITUD_RECHAZADA"),
+                        'success'
+                      );
+                      $location.path("/solicitudes/listar_solicitudes");
+
+                    } else {
+                      swal(
+                        $translate.instant("RESPUESTA_SOLICITUD"),
+                        $translate.instant(responsesolicitudsolicitud),
+                        'warning'
+                      );
+                    }
+
+
+                  });
+                } else {
+                }
+              });
+            })
+              .catch(function () {
+                $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+                $scope.errorCargarSolicitudes = true;
+                $scope.loadSolicitudes = false;
+              });
+          }
+
+        } else {
+          //rechazar
+          var parametros = $.param({
+            query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+            limit: 0
+          });
+          poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
+            angular.forEach(respuestaSolicitud.data, function (value) {
+              if (Object.keys(value).length > 0) {
+                var parametrosRespuestaSolicitud = {
+                  "Id": value.Id,
+                  "Fecha": new Date(),
+                  "Justificacion": "La oficina de extension de pasantias rechazo la " + value.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
+
+                  "EnteResponsable": 0,
+                  "Usuario": $scope.userId,
+                  "Activo": true,
+                  "EstadoSolicitud": {
+                    "Id": 22,
+                  },
+                  "SolicitudTrabajoGrado": {
+                    "Id": Number(ctrl.solicitud)
+                  }
+
+                };
+                poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
 
                   if (responsesolicitudsolicitud.data !== undefined) {
 
@@ -1799,7 +2777,7 @@ angular.module('poluxClienteApp')
 
                     swal(
                       $translate.instant("RESPUESTA_SOLICITUD"),
-                      $translate.instant("SOLICITUD_APROBADA"),
+                      $translate.instant("SOLICITUD_RECHAZADA"),
                       'success'
                     );
                     $location.path("/solicitudes/listar_solicitudes");
@@ -1816,69 +2794,14 @@ angular.module('poluxClienteApp')
                 });
               }
             });
-
-          });
-
-        } else {
-          var fechaRespuesta = new Date();
-          var data_documento = {
-            "DocumentoEscrito": {
-              "Id": 1,
-            },
-            "SolicitudTrabajoGrado": {
-              "Id": Number(ctrl.solicitud)
-            }
-          };
-          var objRtaNueva = {
-            "Id": null,
-            "Fecha": fechaRespuesta,
-
-            "Justificacion": "El director no aprobo ser el Docente del proyecto",
-
-            "EnteResponsable": 0,
-            "Usuario": $scope.userId,
-            "Activo": true,
-            "EstadoSolicitud": {
-              "Id": Number(ctrl.respuestaSolicitud),
-            },
-            "SolicitudTrabajoGrado": {
-              "Id": Number(ctrl.solicitud)
-            }
-          };
-          ctrl.getRespuestaSolicitud().then(function () {
-            var objRtaAnterior = ctrl.respuestaActual;
-            objRtaAnterior.Activo = false;
-            ctrl.dataRespuesta = {
-              DocumentoSolicitud: data_documento,
-              EstudianteTrabajoGrado: null,
-              ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
-              RespuestaAnterior: objRtaAnterior,
-              RespuestaNueva: objRtaNueva,
-              SolicitudTrabajoGrado: null,
-              TipoSolicitud: ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
-              TrTrabajoGrado: null,
-              TrabajoGrado: null,
-              
-            };
-            //console.log(ctrl.dataRespuesta);
-
-          poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
-            ctrl.mostrarRespuesta(response);
           })
-            .catch(function (error) {
+            .catch(function () {
+              $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
+              $scope.errorCargarSolicitudes = true;
+              $scope.loadSolicitudes = false;
 
-              swal(
-                $translate.instant("MENSAJE_ERROR"),
-                $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                'warning'
-              );
             });
-          }
-          ).catch(function (error) {
-
-            ctrl.errorCargarSolicitud = true;
-            $scope.loadSolicitud = false;
-          });
         }
       }
+
     });

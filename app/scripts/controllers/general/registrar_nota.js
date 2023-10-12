@@ -29,14 +29,18 @@
  * @property {Object} gridOptions Opciones del ui-grid que muestra los trabajos de grado a los cuales se vincula el usuario
  * @property {Boolean} registrarNota Bandera que permite identificar la acción que se quiere realizar
  * @property {Object} trabajoSeleccionado Trabajo seleccionado en un ui-grid
+ * @property {Object} docTrabajoGrado Enlace del documento de trabajo de grado
  * @property {Object} trabajosGrado Objeto que carga la información de los trabajos de grado asociados
  * @property {Object} registrandoNotaTG Indicador que opera durante el registro de la nota hacia el trabajo de grado
  * @property {Array} botonesNota Colección que maneja la configuración de los botones para registrar la nota
  * @property {Array} botonesVer Colección que maneja la configuración de los botones para ver los detalles
+ * @property {Array} botonesDevolver Colección de la configuración del botón para devolver el trabajo de grado
+ * @property {String} observaciones Cambios solicitados por el revisor
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient,
+            $window ,poluxRequest, token_service) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -58,17 +62,19 @@ angular.module('poluxClienteApp')
 
       $scope.botonesNota = [{
         clase_color: "ver",
-        clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
-        titulo: $translate.instant('BTN.VER_DETALLES'),
-        operacion: 'ver',
-        estado: true
-      }, {
-        clase_color: "ver",
         clase_css: "fa fa-pencil-square-o fa-lg  faa-shake animated-hover",
         titulo: $translate.instant('BTN.REGISTRAR_NOTA'),
         operacion: 'registrarNota',
         estado: true
       }, ];
+
+      $scope.botonesDevolver = [{
+        clase_color: "ver",
+        clase_css: "fa fa-ban fa-lg  faa-shake animated-hover",
+        titulo: $translate.instant('BTN.DEVOLVER'),
+        operacion: 'devolver',
+        estado: true
+      },];
 
       $scope.botonesVer = [{
         clase_color: "ver",
@@ -108,12 +114,12 @@ angular.module('poluxClienteApp')
         displayName: $translate.instant('ACCIONES'),
         width: '15%',
         type: 'boolean',
-        cellTemplate: '<div ng-if="row.entity.permitirRegistrar">' +
-          '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesNota" fila="row"></btn-registro>' +
-          '</div>' +
-          '<div ng-if="!row.entity.permitirRegistrar">' +
-          '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesVer" fila="row"></btn-registro>' +
-          '</div>'
+        cellTemplate: `
+          <div>
+            <btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesVer" fila="row"></btn-registro>
+            <btn-registro ng-if="row.entity.permitirRegistrar" funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesNota" fila="row"></btn-registro>
+            <btn-registro ng-if="row.entity.permitirDevolver" funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesDevolver" fila="row"></btn-registro>
+          </div>`
       }];
 
       /**
@@ -137,27 +143,39 @@ angular.module('poluxClienteApp')
           .then(function(dataTrabajos) {
             if (Object.keys(dataTrabajos.data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data;
-              //Se decide que trabajos puede ver y en cuales puede registrar nota
+              // Se decide qué trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
-                //Por defecto de false
+                // Si el rol es director o evaluador
+                // Por ahora se ignora la modalidad
                 trabajo.permitirRegistrar = false;
-                //Si el rol es director
-                var rol = trabajo.RolTrabajoGrado.Id;
+                trabajo.permitirDevolver = false;
+                var rol = trabajo.RolTrabajoGrado.CodigoAbreviacion;
+                var estado = trabajo.TrabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion;
+                if (rol === 'EVALUADOR') {
+                  trabajo.permitirDevolver = estado === 'RDE';
+                  if (estado === 'RDE' || estado === 'EC') {
+                    trabajo.permitirRegistrar = true;
+                  }
+                } else if (estado === 'STN' && rol.includes('DIRECTOR') && !rol.includes('CODIRECTOR')) {
+                  trabajo.permitirRegistrar = true;
+                } else if (estado === 'LPS' && rol.includes('DIRECTOR') && !rol.includes('CODIRECTOR')) {
+                  trabajo.permitirRegistrar = true;
+                }
                 // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
                 /*if( rol === 1 ){
                   //Si la modalidad es pasantia o articulo se permite sino no
                   if( modalidad === 1 || modalidad === 8){
                     trabajo.permitirRegistrar = true;
-                  } 
+                  }
                 }
                 //Si el rol es evaluador puede registrar la nota sin importar la modalidad
                 if( rol === 3 ){
                   trabajo.permitirRegistrar = true;
                 }*/
                 //Si el rol es evaluador o director puede registrar la nota sin importar la modalidad
-                if (rol == 1 || rol == 3) {
-                  trabajo.permitirRegistrar = true;
-                }
+                // if (rol == 1 || rol == 3) {
+                //   trabajo.permitirRegistrar = true;
+                // }
                 //Si es otro rol
                 // codirector o externo
                 /*if( rol === 4 || rol === 2){
@@ -309,6 +327,80 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name getDocumento
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+       */
+    ctrl.getDocumento = function() {
+      /*nuxeoClient.getDocument(docid)
+        .then(function(document) {
+          $window.open(document.url);
+        })*/
+        // Muestra de documento con gestor documental
+      gestorDocumentalMidRequest.get('/document/' + ctrl.docTrabajoGrado.DocumentoEscrito.Enlace).then(function (response) {
+          var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+          var fileURL = URL.createObjectURL(file);
+          $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+         })
+        .catch(function(error) {
+          swal(
+            $translate.instant("MENSAJE_ERROR"),
+            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+            'warning'
+          );
+        });
+    }
+
+      /**
+       * @ngdoc method
+       * @name obtenerParametrosDocumentoTrabajoGrado
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @description
+       * Función que define los parámetros para consultar en la tabla documento_trabajo_grado.
+       * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
+       * @returns {String} La sentencia para la consulta correspondiente
+       */
+      ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+        return $.param({
+          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+            "TrabajoGrado.Id:" +
+            idTrabajoGrado,
+          limit: 1
+        });
+      }
+
+      /**
+      * @ngdoc method
+      * @name consultarDocTrabajoGrado
+      * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+      * @description
+      * Función que recorre la base de datos de acuerdo al trabajo de grado vinculado y trae el documento asociado.
+      * Llama a la función: obtenerParametrosDocumentoTrabajoGrado.
+      * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para operar sobre la base de datos del proyecto.
+      * @param {Object} vinculacionTrabajoGrado La vinculación hacia el trabajo de grado seleccionado
+      * @returns {Promise} La información sobre el documento, el mensaje en caso de no corresponder la información, o la excepción generada
+      */
+    ctrl.consultarDocTrabajoGrado = function(vinculacionTrabajoGrado) {
+      var deferred = $q.defer();
+      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
+        .then(function(respuestaDocumentoTrabajoGrado) {
+          if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
+            deferred.resolve(respuestaDocumentoTrabajoGrado.data[0]);
+          } else {
+            deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
+          }
+        })
+        .catch(function(excepcionDocumentoTrabajoGrado) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
+        });
+      return deferred.promise;
+    }
+
+      /**
+       * @ngdoc method
        * @name cargarTrabajo
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
@@ -319,6 +411,9 @@ angular.module('poluxClienteApp')
       ctrl.cargarTrabajo = function(fila) {
         ctrl.cargandoTrabajo = true;
         ctrl.trabajoSeleccionado = fila.entity.TrabajoGrado;
+        ctrl.consultarDocTrabajoGrado(fila.entity).then(function(resultadoDocTrabajoGrado) {
+          ctrl.docTrabajoGrado = resultadoDocTrabajoGrado;
+        })
         //Se guarda la vinculación al tg
         ctrl.trabajoSeleccionado.vinculacion = {
           Id: fila.entity.Id,
@@ -328,10 +423,7 @@ angular.module('poluxClienteApp')
           },
           RolTrabajoGrado: fila.entity.RolTrabajoGrado,
         };
-        //Se verifica que el estado del trabajo de grado sea listo para sustentar 17 o sustentado 18
-        if (ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 17 || ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id === 18) {
-          ctrl.trabajoSeleccionado.estadoValido = true;
-        }
+
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
         ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1);
         //Promesas del tg
@@ -343,10 +435,9 @@ angular.module('poluxClienteApp')
         $q.all(promesasTrabajo)
           .then(function() {
             ctrl.cargandoTrabajo = false;
-            
           })
           .catch(function(error) {
-            
+
             ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
             ctrl.errorCargandoTrabajo = true;
             ctrl.cargandoTrabajo = false;
@@ -496,6 +587,73 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name registrarCorrecciones
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @description
+       * Función que permite guardar la nota que se registra en un trabajo de grado, guarda el acta de sustentación y la asocia a un documento escrito.
+       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * @param {undefined} undefined No recibe ningún parametro
+       * @returns {undefined} No hace retorno de resultados
+       */
+      ctrl.registrarCorrecciones = function () {
+        // Envía transacción para rechazar
+        var transaccionRechazo = {
+          Comentarios: [
+            {
+              Comentario: ctrl.observaciones,
+            }
+          ],
+          RevisionTrabajoGrado: {
+            DocumentoTrabajoGrado: ctrl.docTrabajoGrado,
+            VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
+          },
+        };
+
+        poluxRequest.post("tr_registrar_revision_tg", transaccionRechazo)
+          .then(function (response) {
+            if (response.data[0] === "Success") {
+              var Atributos = {
+                rol: 'ESTUDIANTE',
+              }
+              notificacionRequest.enviarCorreo('Mensaje de solicitud de correcciones de TRABAJO DE GRADO ' + ctrl.trabajoSeleccionado.Titulo, Atributos, ['101850341'], '', '', 'Se ha registrado la nota de parte de ' + token_service.getAppPayload().email + ' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+              //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');
+              swal(
+                $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
+                $translate.instant("SOLICITAR_CORRECCIONES.CORRECCION_REGISTRADA"),
+                'success'
+              );
+              $('#modalRegistrarNota').modal('hide');
+              ctrl.registrandoNotaTG = false;
+              ctrl.cargarTrabajos()
+                .then(function () {
+                  ctrl.cargandoTrabajos = false;
+                })
+                .catch(function (error) {
+                  ctrl.errorCargando = true;
+                  ctrl.cargandoTrabajos = false;
+                })
+            } else {
+              swal(
+                $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
+                $translate.instant(response.data[1]),
+                'warning'
+              );
+            }
+            ctrl.registrandoNotaTG = false;
+          })
+          .catch(function (error) {
+            swal(
+              $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
+              $translate.instant("SOLICITAR_CORRECCIONES.ERROR.REGISTRANDO_CORRECCION"),
+              'warning'
+            );
+            ctrl.registrandoNotaTG = false;
+          });
+      }
+
+      /**
+       * @ngdoc method
        * @name loadrow
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description 
@@ -508,14 +666,47 @@ angular.module('poluxClienteApp')
         switch (operacion) {
           case "ver":
             ctrl.registrarNota = false;
+            ctrl.devolver = false;
             ctrl.cargarTrabajo(row)
             //$('#modalVerSolicitud').modal('show');
             break;
           case "registrarNota":
-            ctrl.registrarNota = true;
+            ctrl.devolver = false;
+            if (row.entity.TrabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion !== 'EC') {
+              ctrl.registrarNota = true;
+              ctrl.cargarTrabajo(row);
+              break;
+            }
+
+            // Varifica si pesar de haber solicitado correcciones, puede registrar la nota
+            var parametrosCheckCorreccion = $.param({
+              limit: 0,
+              query: 'VinculacionTrabajoGrado__Id:' + row.entity.Id,
+            });
+            poluxRequest.get('revision_trabajo_grado', parametrosCheckCorreccion)
+              .then(function (responseRevisiones) {
+                if (Object.keys(responseRevisiones.data[0]).length > 0) {
+                  ctrl.registrarNota = true;
+                  ctrl.cargarTrabajo(row);
+                } else {
+                  ctrl.registrarNota = false;
+                  swal(
+                    $translate.instant('ERROR.ESTADO_TRABAJO_GRADO_NO_PERMITE_REGISTRAR_NOTA'),
+                    '',
+                    'warning'
+                  );
+                }
+              })
+              .catch(function(error) {
+                ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
+                ctrl.errorCargandoTrabajo = true;
+                ctrl.cargandoTrabajo = false;
+              });
+            break;
+          case 'devolver':
+            ctrl.registrarNota = false;
+            ctrl.devolver = true;
             ctrl.cargarTrabajo(row);
-            //ctrl.cargarDetalles(row)
-            //$('#modalVerSolicitud').modal('show');
             break;
           default:
             break;

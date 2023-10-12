@@ -3,6 +3,7 @@
   "private": true,
   "devDependencies": {
     "autoprefixer-core": "^6.0.1",
+    "coverage": "^0.4.1",
     "grunt": "^1.5.2",
     "grunt-angular-templates": "^1.2.0",
     "grunt-concurrent": "^1.0.0",
@@ -29,6 +30,7 @@
     "jit-grunt": "^0.10.0",
     "jshint-stylish": "^1.0.0",
     "karma": "^6.3.4",
+    "karma-coverage": "^2.2.0",
     "karma-jasmine": "^4.0.1",
     "karma-junit-reporter": "^1.2.0",
     "karma-phantomjs-launcher": "^1.0.4",
