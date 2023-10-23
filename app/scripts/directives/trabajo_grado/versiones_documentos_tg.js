@@ -79,25 +79,27 @@ angular.module('poluxClienteApp')
           poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
             .then(function (responseDocumento) {
               if (Object.keys(responseDocumento.data[0]).length > 0) {
-                ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
+                var nombreNodo = "";
+                var nombreHijo = "";
+                  switch (tipoDocumento) {
+                    case 3:
+                      nombreNodo = $translate.instant('ANTEPROYECTO');
+                      nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO');
+                      break;
+                    case 4:
+                      nombreNodo = $translate.instant('TRABAJO_GRADO');
+                      nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
+                      break;
+                    case 5:
+                      nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
+                      nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
+                      break;
+                  }
+                /*ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
                   .then(function (versiones) {
-                    var nombreNodo = "";
-                    var nombreHijo = "";
-                    switch (tipoDocumento) {
-                      case 3:
-                        nombreNodo = $translate.instant('ANTEPROYECTO');
-                        nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO');
-                        break;
-                      case 4:
-                        nombreNodo = $translate.instant('TRABAJO_GRADO');
-                        nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
-                        break;
-                      case 5:
-                        nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
-                        nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
-                        break;
-                    }
+                    console.log(versiones)
                     angular.forEach(versiones, function (version) {   
+                      console.log("ENTRA ", version)
                       version.name = nombreHijo + version.get('uid:major_version')
                       
                     });
@@ -109,7 +111,12 @@ angular.module('poluxClienteApp')
                   })
                   .catch(function (error) {
                     defer.reject(error);
+                  });*/
+                  ctrl.dataForTree.push({
+                    name: nombreNodo,
+                    children: responseDocumento.data[0].DocumentoEscrito.Enlace,
                   });
+                  defer.resolve();
               } else {
                 defer.resolve();
               }
