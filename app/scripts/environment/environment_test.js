@@ -39,9 +39,11 @@ angular.module("poluxClienteApp").constant("CONF", {
         SIGN_OUT_URL: "https://autenticacion.portaloas.udistrital.edu.co/oidc/logout",
         SIGN_OUT_REDIRECT_URL: "https://pruebaspolux.portaloas.udistrital.edu.co",
         SIGN_OUT_APPEND_TOKEN: "true",
-    },
-    AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
-    AUTENTICACION_MID : 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol' ,
-    LOGOUT_REDIRECT : "https://pruebascatalogo.portaloas.udistrital.edu.co"
+        AUTENTICACION_MID : 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol' ,
+      },
+      AUTENTICATION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/",
+      AUTENTICACION_MID : 'https://autenticacion.portaloas.udistrital.edu.co/apioas/autenticacion_mid/v1/token/userRol' ,
+      NOTIFICACION_WS: "wss://pruebasapi.portaloas.udistrital.edu.co:8116/ws/join",
+      LOGOUT_REDIRECT : "https://pruebascatalogo.portaloas.udistrital.edu.co"
   }
 });

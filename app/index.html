@@ -31,34 +31,60 @@
     <link rel="stylesheet" href="https://s3.amazonaws.com/assets-oas/table-demo.css">
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/polux.css">
+
+    <!-- endbuild -->
+    <link rel="stylesheet" href="core/css/steeper.css">
+    <link rel="stylesheet" href="core/css/core.css">
+    <link rel="stylesheet" href="core/footer/footer.css">
+    <link rel="stylesheet" href="core/header/header.css">
+    <link rel="stylesheet" href="core/menu-lateral/menu-lateral.css">
+    <link rel="stylesheet" href="core/menu-aplicaciones/menu-aplicaciones.css">
+    <link rel="stylesheet" href="core/notificaciones/notificaciones.css">
+    <link rel="stylesheet" href="core/css/ui-grid.css">
+    <link rel="stylesheet" href="https://pruebasassets.portaloas.udistrital.edu.co/urano-style.css">
+    <!-- nix-style.css, gaia-style.css, athenea-style.css y urano-style.css -->
+    <link rel="stylesheet" href="https://pruebasassets.portaloas.udistrital.edu.co/oas-style.css">
+    <link rel="stylesheet" href="https://pruebasassets.portaloas.udistrital.edu.co/logo-stylus.css">
+    <link rel="stylesheet" href="https://pruebasassets.portaloas.udistrital.edu.co/logo-info.css">
+    <link rel="stylesheet" href="https://pruebasassets.portaloas.udistrital.edu.co/isotipo-header.css">
+    <link rel="stylesheet" href="https://pruebasassets.portaloas.udistrital.edu.co/logo-header.css">
     <!-- endbuild -->
 </head>
 
 <body ng-app="poluxClienteApp">
-    <div ng-include="'views/menu.html'" ng-controller="menuCtrl" ></div>
-    <!--[if lte IE 8]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-    <div class="container-fluid">
-        <div ng-view=""></div>
+
+    <div ng-controller="headerCtrl">
+        <div ng-if="!isLogin" id="nb-global-spinner" class="spinner">
+            <div class="blob blob-0"></div>
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="blob blob-4"></div>
+            <div class="blob blob-5"></div>
+        </div>
+        <div ng-if="isLogin" ng-include="'core/header/header.html'" ng-controller="headerCtrl">
+        </div>
+        <div ng-if="isLogin" class="body-container-menuaplicaciones"
+            ng-include="'core/menu-aplicaciones/menu-aplicaciones.html'" ng-controller="menuaplicacionesCtrl">
+        </div>
+        <div ng-if="isLogin" class="body-container-notificaciones"
+            ng-include="'core/notificaciones/notificaciones.html'" ng-controller="notificacionesCtrl">
+        </div>
+        <div ng-if="isLogin" class="container-app">
+            <div id="menu-sidebar-container" ng-class="sidebarClases.sidebarContainerClase" ng-controller="headerCtrl">
+                <div id="menu-sidebar" ng-include="'core/menu-lateral/menu-lateral.html'"
+                    ng-controller="menuLateralCtrl" ng-class="sidebarClases.sidebarDivClase">
+                </div>
+            </div>
+            <div ng-class="sidebarClases.containerBodyClase" ng-controller="headerCtrl">
+                <div ng-view="" ng-class="sidebarClases.containerDivClase" ng-controller="headerCtrl">
+                </div>
+            </div>
+        </div>
+        <div ng-if="isLogin" class="container-footer" ng-include="'core/footer/footer.html'" ng-controller="footerCtrl">
+        </div>
     </div>
-    <div ng-include="'views/footer.html'" ng-controller="footerCtrl"></div>
 
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-    <script>
-        ! function(A, n, g, u, l, a, r) {
-            A.GoogleAnalyticsObject = l, A[l] = A[l] || function() {
-                    (A[l].q = A[l].q || []).push(arguments)
-                }, A[l].l = +new Date, a = n.createElement(g),
-                r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
-        }(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-        ga('create', 'UA-XXXXX-X');
-        ga('send', 'pageview');
-    </script>
-
-    <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -100,50 +126,29 @@
     <script src="bower_components/angular-tree-control/angular-tree-control.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-    <!-- script src="bower_components/bootstrap-fileinput/js/locales/es.js"></script -->
-    <!-- <script src="scripts/es.js"></script>-->
 
-    <!--  <script src="bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
-        <script src="bower_components/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
-        <script src="bower_components/blueimp-file-upload/js/jquery.fileupload.js"></script>
-
-        <script>-
-        /* global window, $ */
-        window.testBasicWidget = $.blueimp.fileupload;
-        -->
-    <!--
-        </script>
-
-        <script src="bower_components/blueimp-file-upload/js/jquery.fileupload-process.js"></script>
-
-        <script src="bower_components/blueimp-file-upload/js/jquery.fileupload-validate.js"></script>
-
-        <script src="bower_components/blueimp-file-upload/js/jquery.fileupload-angular.js"></script>
-        <script src="bower_components/blueimp-file-upload/js/jquery.fileupload-ui.js"></script>
-        <script>
-        /* global window, $ */
-        window.testUIWidget = $.blueimp.fileupload;
-        </script>
-      -->
-
-
-    <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
-    <!-- endbuild -->
+    <script src="core/core.module.js"></script>
+    <script src="core/header/header.js"></script>
+    <script src="core/footer/footer.js"></script>
+    <script src="core/menu-lateral/menu-lateral.js"></script>
+    <script src="core/menu-lateral/opciones-component/opciones-directive.js"></script>
+    <script src="core/menu-aplicaciones/menu-aplicaciones.js"></script>
+    <script src="core/notificaciones/notificaciones.js"></script>
+    <script src="core/services/notificacion.js"></script>
+    <script src="core/services/theme.js"></script>
+    <script src="core/services/implicit_token.js"></script>
 </body>
+
 
 <!-- build:js({.tmp,app}) scripts/extras.js -->
 <script src="scripts/environment/environment.js"></script>
 <script src="scripts/services/token.js"></script>
-<script src="scripts/services/notificacion.js"></script>
 <script src="scripts/services/polux_service.js"></script>
 <script src="scripts/services/polux_mid_service.js"></script>
 <script src="scripts/services/documento_crud_services.js"></script>
 <script src="scripts/services/cadena_service.js"></script>
-<script src="scripts/controllers/menu.js"></script>
-<script src="scripts/controllers/footer.js"></script>
-<script src="scripts/controllers/notificaciones.js"></script>
 <script src="bower_components/moment/locale/es.js"></script>
 <script src="scripts/controllers/about.js"></script>
 <script src="scripts/controllers/formato/formato_nuevo.js"></script>
@@ -201,7 +206,6 @@
 <script src="scripts/controllers/solicitudes/aprobar_solicitud.js"></script>
 <script src="scripts/directives/cargar_documento.js"></script>
 <script src="scripts/controllers/formato/evaluar.js"></script>
-<!-- <script src="scripts/services/config.js"></script> -->
 <script src="scripts/controllers/administracion/areas.js"></script>
 <script src="scripts/controllers/administracion/parametrizacion.js"></script>
 <script src="scripts/services/coreservice.js"></script>
@@ -222,7 +226,7 @@
 <script src="scripts/directives/trabajo_grado/versiones_documentos_tg.js"></script>
 <script src="scripts/controllers/general/concepto_tg.js"></script>
 <script src="scripts/directives/solicitudes/listar_solicitudes.js"></script>
-<script src="scripts/services/implicit_token.js"></script>
+<!-- <script src="scripts/services/implicit_token.js"></script> -->
 <script src="scripts/services/autenticacion_mid_service.js"></script>
 <script src="scripts/services/core_amazon_crud_service.js"></script>
 <script src="scripts/controllers/materias_profundizacion/seleccion_admitidos.js"></script>
@@ -237,8 +241,10 @@
 <script src="scripts/services/utilidades.js"></script>
 <script src="scripts/services/nuxeo_mid_service.js"></script>
 
-<script src = "scripts/services/autenticacion_mid_service.js"> </script>
+<script src="scripts/services/autenticacion_mid_service.js"> </script>
 
 <!-- endbuild -->
 <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+<script src="bower_components/bootstrap-fileinput/js/locales/es.js"></script>
+
 </html>

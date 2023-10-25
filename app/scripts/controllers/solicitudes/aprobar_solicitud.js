@@ -2249,7 +2249,11 @@ angular.module('poluxClienteApp')
                   var parametrosConsulta = $.param({
                     query: "CodigoAbreviacion.in:ADD"
                   });
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> a56d2a656c5ab97731f1a7e6506ab47abb9304de
                   poluxRequest.get("estado_solicitud/", parametrosConsulta).then(function (parametros) {
                     ctrl.parametro = parametros.data[0];
                   });
