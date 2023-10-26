@@ -49,6 +49,9 @@
   "dependencies": {
     "angular-async-await": "^1.1.2",
     "angular-pdf": "^1.5.1",
+    "decode-uri-component": "^0.2.2",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.8",
     "natives": "^1.1.6"
   }
 }
