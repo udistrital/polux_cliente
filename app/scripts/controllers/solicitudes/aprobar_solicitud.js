@@ -561,7 +561,7 @@ angular.module('poluxClienteApp')
                     detalle.Descripcion = detalle.Descripcion + ", " + JSON.parse(area).Nombre;
                   });
                   detalle.Descripcion = detalle.Descripcion.substring(2);
-                } else if (detalle.DetalleTipoSolicitud.Detalle.Id === 22) {
+                } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                   //materias
                   var datosMaterias = detalle.Descripcion.split("-");
                   detalle.carrera = JSON.parse(datosMaterias[1]);

@@ -820,6 +820,7 @@ var text_es = {
         NO_ADMITIDOS: "Los siguientes estudiantes no se admitirán:",
         PROCESO_ADMISION_COMPLETO: "Proceso de admisión completado",
         RESPUESTAS_SOLICITUD: "Se han registrado los datos del proceso de admisión exitosamente",
+        DOBLE_SOLICITUD: "Realizar solicitud a dos proyectos curriculares"
     },
     MATERIAS_PROFUNDIZACION: {
         CONFIRMACION_ADMITIR: "Confirmación de admitidos",

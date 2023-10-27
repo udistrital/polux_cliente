@@ -38,14 +38,26 @@ angular.module('poluxClienteApp')
              * @property {object} carreras Listado de carreras elegibles para el estudiante
              * @property {object} asignaturas Listado de asignaturas elegibles asociadas a una carrera elegible para el estudiante
              * @property {object} gridOptions Opciones del ui-grid donde se muestran las asignaturas
+             * @property {object} gridOptions2 Opciones del ui-grid donde se muestran las asignaturas de la opción 2
              */
             controller: function ($scope, $route, $translate) {
                 var ctrl = this;
+                ctrl.dobleSolicitud = true
                 ctrl.cargando = $translate.instant("LOADING.CARGANDO_ASIGNATURAS");
                 ctrl.loading = true;
                 ctrl.maxCreditos = 0;
                 ctrl.carreras = [];
+                ctrl.selected = [];
+                ctrl.selected2 = [];
                 ctrl.gridOptions = {
+                    paginationPageSizes: [5, 10, 15, 20, 25],
+                    paginationPageSize: 10,
+                    enableFiltering: true,
+                    enableSorting: true,
+                    enableSelectAll: false,
+                    useExternalPagination: false,
+                };
+                ctrl.gridOptions2 = {
                     paginationPageSizes: [5, 10, 15, 20, 25],
                     paginationPageSize: 10,
                     enableFiltering: true,
@@ -69,7 +81,25 @@ angular.module('poluxClienteApp')
                     displayName: $translate.instant('SELECCIONAR'),
                     width: 200,
                     type: 'boolean',
-                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
+                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected, 1)">'
+                }];
+                ctrl.gridOptions2.columnDefs = [{
+                    name: 'CodigoAsignatura',
+                    displayName: $translate.instant('CODIGO'),
+                    width: 200
+                }, {
+                    name: 'Nombre',
+                    displayName: $translate.instant('NOMBRE'),
+                }, {
+                    name: 'Creditos',
+                    displayName: $translate.instant('CREDITOS'),
+                    width: 200
+                }, {
+                    name: 'Check',
+                    displayName: $translate.instant('SELECCIONAR'),
+                    width: 200,
+                    type: 'boolean',
+                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected2, 2)">'
                 }];
                 ctrl.estudiante = $scope.estudiante;
                 if ($scope.estudiante.Modalidad === 3) {
@@ -195,20 +225,30 @@ angular.module('poluxClienteApp')
                  * @name cargarMaterias
                  * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
                  * @param {number} carreraSeleccionada Identificador de la carrera seleccionada.
+                 * @param {number} numeroMateria Identificador para numero de carrera seleccionada
                  * @returns {undefined} No retorna ningún valor
                  * @description 
                  * Carga las materias publicadas con la carrera elegible del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y los datos de la misma (nombre y créditos) de 
                  * {@link services/academicaService.service:academicaRequest academicaRequest}.
                  */
-                ctrl.cargarMaterias = function (carreraSeleccionada) {
+                ctrl.cargarMaterias = function (carreraSeleccionada, numeroCarrera) {
                     ctrl.creditos = 0;
+                    ctrl.creditos2 = 0;
                     $scope.estudiante.minimoCreditos = false;
-                    ctrl.loadingAsignaturas = true;
-                    ctrl.selected = [];
-                    ctrl.selected.push(carreraSeleccionada);
-                    $scope.estudiante.asignaturas_elegidas = ctrl.selected;
+                    if (numeroCarrera == 1) {
+                        ctrl.loadingAsignaturas = true;
+                    } else if (numeroCarrera == 2) {
+                        ctrl.loadingAsignaturas2 = true;
+                    }
+                    if (numeroCarrera == 1) {
+                        ctrl.selected.push(carreraSeleccionada);
+                        $scope.estudiante.asignaturas_elegidas = ctrl.selected;
+                    } else if (numeroCarrera == 2) {
+                        ctrl.selected2.push(carreraSeleccionada);
+                        $scope.estudiante.asignaturas_elegidas2 = ctrl.selected2;
+                    }
                     ctrl.asignaturas = [];
-
+                    ctrl.asignaturas2 = [];
                     ctrl.carrera = carreraSeleccionada.Codigo;
 
                     //buscar la carrera en: carrera_elegible
@@ -231,15 +271,20 @@ angular.module('poluxClienteApp')
                                 academicaRequest.get("asignatura_pensum", [value.CodigoAsignatura, value.CarreraElegible.CodigoPensum]).then(function (responseAsignatura) {
                                     var data = {
                                         "Id": value.Id,
-                                        "Anio": value.Anio,
+                                        "Anio": value.CarreraElegible.Anio,
                                         "CodigoAsignatura": value.CodigoAsignatura,
-                                        "CodigoCarrera": value.CodigoCarrera,
-                                        "CodigoPensum": value.CodigoPensum,
-                                        "Periodo": value.Periodo,
+                                        "CodigoCarrera": value.CarreraElegible.CodigoCarrera,
+                                        "CodigoPensum": value.CarreraElegible.CodigoPensum,
+                                        "Periodo": value.CarreraElegible.Periodo,
                                         "Nombre": responseAsignatura.data.asignatura.datosAsignatura[0].nombre,
                                         "Creditos": responseAsignatura.data.asignatura.datosAsignatura[0].creditos
                                     };
-                                    ctrl.asignaturas.push(data);
+                                    if (numeroCarrera == 1) {
+                                        ctrl.asignaturas.push(data);
+                                    } else if (numeroCarrera == 2) {
+                                        ctrl.asignaturas2.push(data);
+                                    }
+                                    
                                     defer.resolve();
                                 })
                                     .catch(function (error) {
@@ -251,23 +296,35 @@ angular.module('poluxClienteApp')
                             angular.forEach(response.data, function (value) {
                                 //buscar asignaturas
                                 promises.push(getAsignatura(value));
-                            });                               
+                            });
 
                             $q.all(promises).then(function () {
-                                
-                                ctrl.gridOptions.data = ctrl.asignaturas;
-                                ctrl.loadingAsignaturas = false;
+                                if (numeroCarrera == 1) {
+                                    ctrl.gridOptions.data = ctrl.asignaturas;
+                                    ctrl.loadingAsignaturas = false;
+                                } else if (numeroCarrera == 2) {
+                                    ctrl.gridOptions2.data = ctrl.asignaturas2;
+                                    ctrl.loadingAsignaturas2 = false;
+                                }
                             })
                                 .catch(function (error) {
-                                    
-                                    ctrl.errorCargandoAsignaturas = true;
-                                    ctrl.loadingAsignaturas = false;
+                                    if (numeroCarrera == 1) {
+                                        ctrl.loadingAsignaturas = false;
+                                        ctrl.errorCargandoAsignaturas = true;
+                                    } else if (numeroCarrera == 2) {
+                                        ctrl.loadingAsignaturas2 = false
+                                        ctrl.errorCargandoAsignaturas2 = true;
+                                    }
                                 });
                         })
                             .catch(function (error) {
-                                
-                                ctrl.errorCargandoAsignaturas = true;
-                                ctrl.loadingAsignaturas = false;
+                                if (numeroCarrera == 1) {
+                                    ctrl.loadingAsignaturas = false;
+                                    ctrl.errorCargandoAsignaturas = true;
+                                } else if (numeroCarrera == 2) {
+                                    ctrl.loadingAsignaturas2 = false
+                                    ctrl.errorCargandoAsignaturas2 = true;
+                                }
                             });
 
                     })
@@ -279,7 +336,9 @@ angular.module('poluxClienteApp')
                 };
 
                 ctrl.selected = [];
+                ctrl.selected2 = [];
                 ctrl.creditos = 0;
+                ctrl.creditos2 = 0;
 
                 /**
                  * @ngdoc method
@@ -290,9 +349,12 @@ angular.module('poluxClienteApp')
                  * @description 
                  * Agrega y elimina los elementos de la lista de asignaturas elegidas, y suma y resta el valor de los ccreditos.
                  */
-                ctrl.toggle = function (item, list) {
+                ctrl.toggle = function (item, list, numeroCarrera) {
                     if (ctrl.selected.length == 0) {
                         ctrl.creditos = 0;
+                    }
+                    if (ctrl.selected2.length == 0) {
+                        ctrl.creditos2 = 0;
                     }
                     if (item.isSelected === undefined) {
                         item.isSelected = false;
@@ -303,14 +365,28 @@ angular.module('poluxClienteApp')
                     if (idx > -1) {
                         list.splice(idx, 1);
                         c = parseInt(item.Creditos, 10);
-                        ctrl.creditos = ctrl.creditos - c;
+                        if (numeroCarrera == 1) {
+                            ctrl.creditos = ctrl.creditos - c;
+                        } else if (numeroCarrera == 2) {
+                            ctrl.creditos2 = ctrl.creditos2 - c;
+                        }
                     } else {
                         list.push(item);
                         c = parseInt(item.Creditos, 10);
-                        ctrl.creditos = ctrl.creditos + c;
+                        if (numeroCarrera == 1) {
+                            ctrl.creditos = ctrl.creditos + c;
+                        } else if (numeroCarrera == 2) {
+                            ctrl.creditos2 = ctrl.creditos2 + c;
+                        }
                     }
                     if (ctrl.creditos >= ctrl.creditosMinimos) {
-                        ctrl.minimoCreditos = true;
+                        if (ctrl.dobleSolicitud && (ctrl.creditos2 >= ctrl.creditosMinimos)) {
+                            ctrl.minimoCreditos = true;
+                        } else if (!ctrl.dobleSolicitud) {
+                            ctrl.minimoCreditos = true;
+                        } else {
+                            ctrl.minimoCreditos = false;
+                        }
                     } else {
                         ctrl.minimoCreditos = false;
                     }
