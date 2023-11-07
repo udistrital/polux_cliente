@@ -62,6 +62,11 @@
           <div ng-repeat="revision in docenterevision.revisionesTrabajoGrado">
             <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
+                <div class="panel-body">
+                  <div class="alert-warning">
+                    <b>{{'AVISO_PDF' | translate}}</b>
+                  </div>
+                </div>
                 <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" docdocente="docenterevision.documentoDocente"/>
               </div>
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">

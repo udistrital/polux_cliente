@@ -140,6 +140,11 @@
       <div class="panel-body" ng-if="!estudianteRevisionDoc.cargandoActualizarTg">
         <form method="post" name="formularioSubirDocumento" ng-submit="estudianteRevisionDoc.subirDocumentoTg()">
           <div class="row">
+            <div class="panel-body">
+              <div class="alert-warning">
+                <b>{{'AVISO_PDF' | translate}}</b>
+              </div>
+            </div>
             <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
             <div class="col-sm-9 ">
                 <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 20000}" file-model="estudianteRevisionDoc.nuevaVersionTrabajoGrado" required></input>
