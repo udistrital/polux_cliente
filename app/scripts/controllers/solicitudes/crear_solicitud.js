@@ -424,6 +424,7 @@ angular.module('poluxClienteApp')
                 defer.reject("datos del estudiante invalidos");
               } else {
                 ctrl.estudiante.asignaturas_elegidas = [];
+                ctrl.estudiante.asignaturas_elegidas2 = [];
                 ctrl.estudiante.areas_elegidas = [];
                 ctrl.estudiante.minimoCreditos = false;
                 defer.resolve(ctrl.estudiante);
@@ -1666,6 +1667,15 @@ angular.module('poluxClienteApp')
       }
     };
 
+    function getValueRadio() {
+      var ele = document.getElementsByName('opcion');
+        for (var i = 0; i < ele.length; i++) {
+          if (ele[i].checked) {
+            return ele[i].value
+          }
+        }
+    }
+
       /**
        * @ngdoc method
        * @name validarFormularioSolicitud
@@ -1701,6 +1711,13 @@ angular.module('poluxClienteApp')
               });
               //detalle.respuesta = detalle.respuesta.substring(1);
             }
+            if (detalle.Detalle.Descripcion == 'solicitar-asignaturas-2') {
+              detalle.respuesta = "JSON";
+              angular.forEach(ctrl.estudiante.asignaturas_elegidas2, function(asignatura) {
+                asignatura.$$hashKey = undefined;
+                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(asignatura);
+              });
+            }
             if (detalle.Detalle.Descripcion == 'asignar-estudiantes') {
               detalle.respuesta = (ctrl.estudiantes.length === 0) ? ctrl.codigo : ctrl.codigo + "," + ctrl.estudiantes.toString();
             }
@@ -1715,14 +1732,18 @@ angular.module('poluxClienteApp')
             }
           }
           if (detalle.Detalle.TipoDetalle.Nombre === 'Checkbox' || detalle.Detalle.TipoDetalle.Nombre === 'Radio') {
-
-            if (detalle.bool === undefined) {
-              detalle.bool = false;
-            }
-            if (detalle.bool) {
-              detalle.respuesta = "SI";
+            if (detalle.Detalle.CodigoAbreviacion == "PEAP") {
+              var valueRadio = getValueRadio();
+              detalle.respuesta = valueRadio
             } else {
-              detalle.respuesta = "NO";
+              if (detalle.bool === undefined) {
+                detalle.bool = false;
+              }
+              if (detalle.bool) {
+                detalle.respuesta = "SI";
+              } else {
+                detalle.respuesta = "NO";
+              }
             }
 
             //detalle.respuesta = detalle.bool.toString();
@@ -2058,6 +2079,7 @@ angular.module('poluxClienteApp')
           DetallesSolicitud: data_detalles,
           UsuariosSolicitud: data_usuarios
         }
+        console.log(ctrl.solicitud)
         poluxRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
           if (response.data[0] === "Success") {
             academicaRequest.get("datos_basicos_estudiante", [ctrl.codigo])
@@ -2090,7 +2112,6 @@ angular.module('poluxClienteApp')
           }
           $scope.loadFormulario = false;
         });
-
       }
 
       ctrl.getDocumento = function(docid) {
@@ -2209,6 +2230,7 @@ angular.module('poluxClienteApp')
                               ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                             } else {
                               ctrl.estudiante.asignaturas_elegidas = [];
+                              ctrl.estudiante.asignaturas_elegidas2 = [];
                               ctrl.estudiante.areas_elegidas = [];
                               ctrl.estudiante.minimoCreditos = false;
                             }
