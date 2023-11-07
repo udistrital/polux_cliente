@@ -1745,17 +1745,20 @@ angular.module('poluxClienteApp')
                 var index = 0;
                 var cambioMateriasPosgrado = false;
                 var respuestas = [];
+                var actual = 0;
                 for (let i = 0; i < ctrl.detallesSolicitud.length; i++){
                   if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                     var tipoAux, respuestaAprobado, respuestaRechazo = "";
                     if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
-                      tipoAux = "ESPELE2"
-                      respuestaAprobado = "ACPO2"
-                      respuestaRechazo = "RCPO2"
+                      tipoAux = "ESPELE2";
+                      actual = 1;
+                      respuestaAprobado = "ACPO2";
+                      respuestaRechazo = "RCPO2";
                     } else {
-                      tipoAux = "ESPELE"
-                      respuestaAprobado = "ACPO1"
-                      respuestaRechazo = "RCPO1"
+                      tipoAux = "ESPELE";
+                      actual = 2;
+                      respuestaAprobado = "ACPO1";
+                      respuestaRechazo = "RCPO1";
                     }
                     var parametrosRespuestaSol = $.param({
                       query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
@@ -1783,12 +1786,12 @@ angular.module('poluxClienteApp')
                 }
                 if (cambioMateriasPosgrado) {
                   var detalleActual, detalleNuevo = "";
-                  if (ctrl.prioridad == 1) {
-                    detalleActual = "ESPELE2";
-                    detalleNuevo = "ESPELE";
-                  } else if (ctrl.prioridad == 2) {
-                    detalleActual = "ESPELE";
+                  if (actual == 1) {
+                    detalleActual = "ESPELE1";
                     detalleNuevo = "ESPELE2";
+                  } else if (actual == 2) {
+                      detalleActual = "ESPEL2";
+                      detalleNuevo = "ESPELE";
                   }
                   for (let i = 0; i < ctrl.detallesOriginal.length; i++) {
                     var detalleAux;
@@ -1856,7 +1859,6 @@ angular.module('poluxClienteApp')
                         }
                       });
                       if (!cambioMateriasPosgrado) {
-                        await enviarTransaccion();
                         resolve();
                       }
                     });
