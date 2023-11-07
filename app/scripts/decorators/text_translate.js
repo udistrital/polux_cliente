@@ -243,6 +243,7 @@ var text_es = {
     FALTAN_DATOS_ESTUDIANTE: "Error: No se encontraron datos del estudiante.",
     CANTIDAD_EXCEDIDA: "Error: Se excede la cantidad de estudiantes para la modalidad solicitada.",
     SOLICITAR_ASIGNATURAS: "Solicitar Asignaturas",
+    PRIORIDAD_ESPACIOS_ACADEMICOS: "Prioridad de espacios academicos.",
     CONFIRMAR: "¿Confirmar?",
     MENSAJE_ERROR: "ERROR",
     NO_CARRERAS_POSGRADO: "Señor Coordinador, no tiene asignados proyectos curriculares con nivel de POSGRADO",

@@ -1667,6 +1667,15 @@ angular.module('poluxClienteApp')
       }
     };
 
+    function getValueRadio() {
+      var ele = document.getElementsByName('opcion');
+        for (var i = 0; i < ele.length; i++) {
+          if (ele[i].checked) {
+            return ele[i].value
+          }
+        }
+    }
+
       /**
        * @ngdoc method
        * @name validarFormularioSolicitud
@@ -1723,14 +1732,18 @@ angular.module('poluxClienteApp')
             }
           }
           if (detalle.Detalle.TipoDetalle.Nombre === 'Checkbox' || detalle.Detalle.TipoDetalle.Nombre === 'Radio') {
-
-            if (detalle.bool === undefined) {
-              detalle.bool = false;
-            }
-            if (detalle.bool) {
-              detalle.respuesta = "SI";
+            if (detalle.Detalle.CodigoAbreviacion == "PEAP") {
+              var valueRadio = getValueRadio();
+              detalle.respuesta = valueRadio
             } else {
-              detalle.respuesta = "NO";
+              if (detalle.bool === undefined) {
+                detalle.bool = false;
+              }
+              if (detalle.bool) {
+                detalle.respuesta = "SI";
+              } else {
+                detalle.respuesta = "NO";
+              }
             }
 
             //detalle.respuesta = detalle.bool.toString();

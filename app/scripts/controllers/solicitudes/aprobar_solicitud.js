@@ -30,6 +30,7 @@
  * @property {Object} fechaInicio Contiene la fecha de inicio del proceso de aprobación de solicitudes de materias de posgrado
  * @property {Object} fechaFin Contiene la fecha de fin del proceso de aprobación de solicitudes de materias de posgrado
  * @property {Object} detallesSolicitud Contiene los detalles asociados a la solicitud
+ * @property {Object} detallesOriginal Contiene los detalles asociados a la solicitud originalmente
  * @property {Object} dataSolicitud Contiene los datos principales de la solicitud
  * @property {Object} docentes Contiene los docientes que pueden ser elegidos como evaluadores o directores de trabajo de grado que no estan asociados al trabajo de grado actual
  * @property {Object} docentesVinculadosTg Contiene los docenes vinculados al trabajo de grado
@@ -95,6 +96,7 @@ angular.module('poluxClienteApp')
       ctrl.respuestaSolicitud = 0;
       ctrl.justificacion = "";
       ctrl.solicitud = $routeParams.idSolicitud;
+      ctrl.prioridad = 0;
       var parametrosSolicitudes = $.param({
         query: "Id:" + ctrl.solicitud,
       });
@@ -262,7 +264,8 @@ angular.module('poluxClienteApp')
         poluxRequest.get("respuesta_solicitud", parametros).then(function (responseRespuesta) {
           if (Object.keys(responseRespuesta.data[0]).length > 0) {
             ctrl.respuestaActual = responseRespuesta.data[0];
-            if (ctrl.respuestaActual.EstadoSolicitud.Id != 1 && ctrl.respuestaActual.EstadoSolicitud.Id != 17 && ctrl.respuestaActual.EstadoSolicitud.Id != 21 && ctrl.respuestaActual.EstadoSolicitud.Id != 23) {
+            var respuestas = ["RDC", "ADD", "APEP", "ACPR", "ACPO1", "ACPO2", "RCPO1", "RCPO2"]
+            if (!respuestas.includes(ctrl.respuestaActual.EstadoSolicitud.CodigoAbreviacion))  {
               ctrl.mensajeNoAprobar += ' ' + $translate.instant('SOLICITUD_CON_RESPUESTA');
               ctrl.noAprobar = true;
             }
@@ -374,6 +377,15 @@ angular.module('poluxClienteApp')
       ctrl.getDetallesSolicitud = function (parametrosDetallesSolicitud) {
         var defered = $q.defer();
         var promise = defered.promise;
+        var carrerasAux = [];
+        var parametrosEstadoSolicitud = $.param({
+          limit: 0
+        });
+        poluxRequest.get("estado_solicitud", parametrosEstadoSolicitud).then(function (responseEstadoSolicitud) {
+          if (Object.keys(responseEstadoSolicitud.data[0]).length > 0) {
+            ctrl.estadoSolicitud = responseEstadoSolicitud.data;
+          }
+        });
         poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
           poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(function (responseEstudiantes) {
             poluxRequest.get("documento_solicitud", parametrosDetallesSolicitud).then(function (responseDocumentoSolicitud){
@@ -395,10 +407,26 @@ angular.module('poluxClienteApp')
               ctrl.detallesSolicitud = [];
 
             } else {
-
               ctrl.detallesSolicitud = responseDetalles.data;
             }
             var solicitantes = "";
+            angular.forEach(ctrl.carrerasCoordinador, function (carreraCoord) {
+              carrerasAux.push(parseInt(carreraCoord.codigo_proyecto_curricular));
+            })
+            angular.forEach(ctrl.detallesSolicitud, function(detalleAux) {
+              if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                var datosMaterias = detalleAux.Descripcion.split("-");
+                var carrera = JSON.parse(datosMaterias[1]);
+                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+                  var index = ctrl.detallesSolicitud.indexOf(detalleAux)
+                  ctrl.detallesSolicitud.splice(index, 1)
+                }
+              }
+              if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "PEAP") {
+                ctrl.prioridad = parseInt(detalleAux.Descripcion)
+              }
+            });
+
             ctrl.detallesSolicitud.id = ctrl.solicitud;
             ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
             ctrl.detallesSolicitud.fechaSolicitud = ctrl.dataSolicitud.Fecha.toString().substring(0, 10);
@@ -532,7 +560,6 @@ angular.module('poluxClienteApp')
                 });
               return defer.promise;
             }
-
             angular.forEach(ctrl.detallesSolicitud, function (detalle) {
               ctrl.todoDetalles.push(detalle);
 
@@ -763,9 +790,6 @@ angular.module('poluxClienteApp')
           ctrl.dataSolicitud = responseSolicitud.data[0];
 
           var promises = [];
-          promises.push(ctrl.getDetallesSolicitud(parametrosDetallesSolicitud));
-          promises.push(ctrl.evaluarSolicitud());
-          promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id));
           if (ctrl.Docente === 1 || ctrl.UnidadExtPasantia === 1) {
             var parametro = ({
               "modalidad_tipo_solicitud": responseSolicitud.data[0].ModalidadTipoSolicitud,
@@ -775,6 +799,9 @@ angular.module('poluxClienteApp')
             promises.push(ctrl.getCarrerasCoordinador());
             promises.push(ctrl.getRespuestaSolicitud());
           }
+          promises.push(ctrl.getDetallesSolicitud(parametrosDetallesSolicitud));
+          promises.push(ctrl.evaluarSolicitud());
+          promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id));
           //obtener fechas de aprobación para la solicitud
           promises.push(ctrl.getFechasAprobacion(responseSolicitud.data[0].ModalidadTipoSolicitud.Id));
           $q.all(promises).then(function () {
@@ -840,12 +867,14 @@ angular.module('poluxClienteApp')
        * Crea la data necesaria para responder la solicitud y la envía al servicio post de 
        * {@link services/poluxMidService.service/poluxMidRequest poluxMidRequest} para realizar la transacción correspondiente.
        */
-      ctrl.responder = function () {
+      ctrl.responder = async function () {
         var fechaRespuesta = new Date();
         var errorDocente = false;
         //se desactiva respuesta anterior
         var objRtaAnterior = ctrl.respuestaActual;
+        var numeroOpcionPosgrado = 0;
         objRtaAnterior.Activo = false;
+        var resOriginal = ctrl.respuestaSolicitud
         //data respuesta nueva
         var objRtaNueva = {
           "Id": null,
@@ -864,6 +893,17 @@ angular.module('poluxClienteApp')
 
         var anio = ctrl.detallesSolicitud.PeriodoAcademico.split('-')[0];
         var periodo = ctrl.detallesSolicitud.PeriodoAcademico.split('-')[1];
+
+        async function ModificarRespuestas(respuestas) {
+          return new Promise((resolve, reject) => {
+            angular.forEach(respuestas, function(resp) {
+              resp.Activo = false
+              poluxRequest.put("respuesta_solicitud", resp.Id, resp).then(function (responseRespuestaPut) {
+              });
+            });
+            resolve();
+          })
+        }
 
         if (ctrl.acta.id != null) {
           var data_documento = {
@@ -892,6 +932,10 @@ angular.module('poluxClienteApp')
             TrRevision: null,
             EspaciosAcademicosInscritos: null,
           };
+          if (ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "EAPOS" && ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.CodigoAbreviacion == "SI"
+          && this.roles.includes("COORDINADOR_POSGRADO")) {
+            await aprobarPosgrado();
+          }
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == 3) {
             //solicitud aprobada
@@ -1008,7 +1052,7 @@ angular.module('poluxClienteApp')
                 });
                 angular.forEach(ctrl.detallesSolicitud, function (detalle) {
                   if (detalle.Descripcion.includes("JSON-")) {
-                    if (detalle.DetalleTipoSolicitud.Detalle.Id === 22) {
+                    if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESPELE2") {
                       var datosMaterias = detalle.Descripcion.split("-");
                       datosMaterias.splice(0, 2);
                       var materiasAux = []
@@ -1354,6 +1398,7 @@ angular.module('poluxClienteApp')
                     }
                   });
                 }
+                // Solicitud inicial pasantia
                 if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82){
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
@@ -1659,28 +1704,222 @@ angular.module('poluxClienteApp')
               tgTemp.Objetivo = ctrl.ObjetivoNuevo;
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             }
+            enviarTransaccion();
           }
-          if (!errorDocente) {
-            poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
-              ctrl.mostrarRespuesta(response);
-            })
-              .catch(function (error) {
 
+          async function aprobarPosgrado() {
+            return new Promise(async (resolve, reject) => {
+              //Aprobación individual materias posgrado 
+              var strCodAbr = "";
+              if (ctrl.respuestaSolicitud == 3) {
+                strCodAbr += "ACPO"
+              } else if (ctrl.respuestaSolicitud == 2) {
+                strCodAbr += "RCPO"
+              }
+
+              angular.forEach(ctrl.detallesSolicitud, function(detalleAux) {
+                if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                  numeroOpcionPosgrado = 1;
+                  strCodAbr += "1"
+                } else if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                  numeroOpcionPosgrado = 2;
+                  strCodAbr += "2"
+                }
+              });
+    
+              for (let i = 0; i < ctrl.estadoSolicitud.length; i++) {
+                if(ctrl.estadoSolicitud[i].CodigoAbreviacion == strCodAbr) {
+                  ctrl.respuestaSolicitud = ctrl.estadoSolicitud[i].Id;
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = ctrl.respuestaSolicitud;
+                  ctrl.dataRespuesta.RespuestaAnterior.Activo = true;
+                }
+              }
+              if (strCodAbr.includes("RCPO")) {
+                var parametrosDetallesSolicitud = $.param({
+                  query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                  limit: 0
+                });
+                await poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
+                  ctrl.detallesOriginal = responseDetalles.data
+                });
+                var index = 0;
+                var cambioMateriasPosgrado = false;
+                var respuestas = [];
+                for (let i = 0; i < ctrl.detallesSolicitud.length; i++){
+                  if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                    var tipoAux, respuestaAprobado, respuestaRechazo = "";
+                    if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                      tipoAux = "ESPELE2"
+                      respuestaAprobado = "ACPO2"
+                      respuestaRechazo = "RCPO2"
+                    } else {
+                      tipoAux = "ESPELE"
+                      respuestaAprobado = "ACPO1"
+                      respuestaRechazo = "RCPO1"
+                    }
+                    var parametrosRespuestaSol = $.param({
+                      query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
+                      limit: 0
+                    });
+                    var respuestas = [];
+                    await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
+                      respuestas = responseRespuestaSolicitud.data;
+                      angular.forEach(respuestas, async function(respuesta) {
+                        if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
+                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                          await ModificarRespuestas(respuestas);
+                        } else if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
+                          cambioMateriasPosgrado = true;
+                          index = ctrl.detallesSolicitud.indexOf(ctrl.detallesSolicitud[i])
+                        }
+                      })
+                      if (!cambioMateriasPosgrado) {
+                        await enviarTransaccion();
+                        resolve();
+                      }
+                    });
+                  }
+                }
+                if (cambioMateriasPosgrado) {
+                  var detalleActual, detalleNuevo = "";
+                  if (ctrl.prioridad == 1) {
+                    detalleActual = "ESPELE2";
+                    detalleNuevo = "ESPELE";
+                  } else if (ctrl.prioridad == 2) {
+                    detalleActual = "ESPELE";
+                    detalleNuevo = "ESPELE2";
+                  }
+                  for (let i = 0; i < ctrl.detallesOriginal.length; i++) {
+                    var detalleAux;
+                    if (ctrl.detallesOriginal[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == detalleNuevo) {
+                      detalleAux = ctrl.detallesOriginal[i]
+                      break;
+                    }
+                  }
+                  ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                  resOriginal = 3;
+                  ctrl.respuestaSolicitud = resOriginal;
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                  ctrl.detallesSolicitud.splice(index, 1);
+                  ctrl.detallesSolicitud.push(detalleAux);
+                  await ModificarRespuestas(respuestas);
+                  resolve();
+                }
+              } else if (strCodAbr.includes("ACPO")) {
+                var parametrosDetallesSolicitud = $.param({
+                  query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
+                  limit: 0
+                });
+                await poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
+                  ctrl.detallesOriginal = responseDetalles.data
+                });
+
+                var index = 0;
+                var cambioMateriasPosgrado = false;
+                var respuestas = [];
+                for (let i = 0; i < ctrl.detallesSolicitud.length; i++){
+                  if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                    var tipoAux, respuestaAprobado, respuestaRechazo = "";
+                    if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                      tipoAux = "ESPELE2"
+                      respuestaAprobado = "ACPO2"
+                      respuestaRechazo = "RCPO2"
+                    } else {
+                      tipoAux = "ESPELE"
+                      respuestaAprobado = "ACPO1"
+                      respuestaRechazo = "RCPO1"
+                    }
+                    var parametrosRespuestaSol = $.param({
+                      query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
+                      limit: 0
+                    });
+                    await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
+                      respuestas = responseRespuestaSolicitud.data;
+                      angular.forEach(respuestas, async function(respuesta) {
+                        if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
+                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                          ctrl.respuestaSolicitud = resOriginal;
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                          await ModificarRespuestas(respuestas);
+                        } else if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
+                          if ((ctrl.prioridad == 1 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") ||
+                          (ctrl.prioridad ==2 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2")) {
+                            ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                            ctrl.respuestaSolicitud = resOriginal;
+                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                            await ModificarRespuestas(respuestas);
+                          } else {
+                            cambioMateriasPosgrado = true;
+                            index = ctrl.detallesSolicitud.indexOf(ctrl.detallesSolicitud[i])
+                          }
+                        }
+                      });
+                      if (!cambioMateriasPosgrado) {
+                        await enviarTransaccion();
+                        resolve();
+                      }
+                    });
+                  }
+                }
+                // Prioridad contraria a la revisión actual (Ejemplo revisión materia 2, prioridad 1)
+                if (cambioMateriasPosgrado) {
+                  var detalleActual, detalleNuevo = ""
+                  if (ctrl.prioridad == 1) {
+                    detalleActual = "ESPELE2"
+                    detalleNuevo = "ESPELE"
+                  } else if (ctrl.prioridad == 2) {
+                    detalleActual = "ESPELE"
+                    detalleNuevo = "ESPELE2"
+                  }
+                  for (let i = 0; i < ctrl.detallesOriginal.length; i++) {
+                    console.log(ctrl.detallesOriginal[i])
+                    var detalleAux;
+                    if (ctrl.detallesOriginal[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == detalleNuevo) {
+                      detalleAux = ctrl.detallesOriginal[i]
+                      break;
+                    }
+                  }
+                  ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                  ctrl.respuestaSolicitud = resOriginal;
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                  ctrl.detallesSolicitud.splice(index, 1);
+                  ctrl.detallesSolicitud.push(detalleAux);
+                  await ModificarRespuestas(respuestas);
+                  resolve();
+                }
+              }
+            })
+          }
+
+          async function enviarTransaccion() {
+            return new Promise((resolve, reject) => {
+              if (!errorDocente) {
+                poluxRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
+                  ctrl.mostrarRespuesta(response);
+                  resolve();
+                })
+                  .catch(function (error) {
+                    swal(
+                      $translate.instant("MENSAJE_ERROR"),
+                      $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                      'warning'
+                    );
+                    resolve();
+                  });
+              } else {
                 swal(
                   $translate.instant("MENSAJE_ERROR"),
-                  $translate.instant("ERROR.ENVIO_SOLICITUD"),
+                  $translate.instant("ERROR.DOCENTE_DUPLICADO"),
                   'warning'
                 );
-              });
-          } else {
-            swal(
-              $translate.instant("MENSAJE_ERROR"),
-              $translate.instant("ERROR.DOCENTE_DUPLICADO"),
-              'warning'
-            );
+                resolve();
+              }
+            })
           }
         } else {
           ctrl.mostrarRespuesta("SELECCIONE_ACTA");
+          resolve();
         }
       }
 
