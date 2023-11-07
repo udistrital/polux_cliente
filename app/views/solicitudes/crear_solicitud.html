@@ -123,10 +123,21 @@
            </div>
          </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio'" class = "row">
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio' && detalle.Detalle.CodigoAbreviacion != 'PEAP'" class = "row">
             <input type="radio" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>
             <label class="col-sm-9 control-label"> {{detalle.label}}</label>
          </div>
+
+         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio' && detalle.Detalle.CodigoAbreviacion == 'PEAP'" class="panel panel-default">
+          <div class="panel-heading">
+            {{detalle.label | translate}}
+          </div>
+          <div class="panel-body">
+            <input class="col-sm-3" type="radio" name="opcion" value="1">Opción 1<br>
+            <input class="col-sm-3" type="radio" name="opcion" value="2">Opción 2<br>
+          </div>
+          
+       </div>
 
          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" class = "row">
             <label class="col-sm-3 control-label">{{detalle.label}}</label>

@@ -243,6 +243,7 @@ var text_es = {
     FALTAN_DATOS_ESTUDIANTE: "Error: No se encontraron datos del estudiante.",
     CANTIDAD_EXCEDIDA: "Error: Se excede la cantidad de estudiantes para la modalidad solicitada.",
     SOLICITAR_ASIGNATURAS: "Solicitar Asignaturas",
+    PRIORIDAD_ESPACIOS_ACADEMICOS: "Prioridad de espacios academicos.",
     CONFIRMAR: "¿Confirmar?",
     MENSAJE_ERROR: "ERROR",
     NO_CARRERAS_POSGRADO: "Señor Coordinador, no tiene asignados proyectos curriculares con nivel de POSGRADO",
@@ -820,6 +821,7 @@ var text_es = {
         NO_ADMITIDOS: "Los siguientes estudiantes no se admitirán:",
         PROCESO_ADMISION_COMPLETO: "Proceso de admisión completado",
         RESPUESTAS_SOLICITUD: "Se han registrado los datos del proceso de admisión exitosamente",
+        DOBLE_SOLICITUD: "Realizar solicitud a dos proyectos curriculares"
     },
     MATERIAS_PROFUNDIZACION: {
         CONFIRMACION_ADMITIR: "Confirmación de admitidos",
