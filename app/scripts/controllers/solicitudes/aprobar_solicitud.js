@@ -97,6 +97,10 @@ angular.module('poluxClienteApp')
       ctrl.justificacion = "";
       ctrl.solicitud = $routeParams.idSolicitud;
       ctrl.prioridad = 0;
+      ctrl.TipoSolicitud = [];
+      ctrl.Modalidad = [];
+      ctrl.tipoSolicitudTemp;
+      ctrl.modalidadTemp;
       var parametrosSolicitudes = $.param({
         query: "Id:" + ctrl.solicitud,
       });
@@ -164,10 +168,9 @@ angular.module('poluxClienteApp')
        * @description 
        * se consueme el servicio {@link parametrosService.service:parametrosRequest parametrosRequest}
        */
-      ctrl.getParametros = function() {
-        //SOLICITUD INICIAL
-        if(ctrl.dataSolicitud.TipoSolicitud == 2){
-
+      ctrl.getParametros = async function() {
+        //Solicitud inicial
+        if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX"){
           // MODALIDAD DE PASANTÍA EXTERNA
           if(ctrl.dataSolicitud.modalidad == 1){
             var parametrosConsulta = $.param({
@@ -439,7 +442,7 @@ angular.module('poluxClienteApp')
             var promises = [];
 
             //PARA EJECUTAR LA FUNCION DE PARAMETROS
-            promises.push(ctrl.getParametros());
+            //promises.push(ctrl.getParametros());
             var getDocente = function (id, detalle) {
 
               var defer = $q.defer();
@@ -469,7 +472,6 @@ angular.module('poluxClienteApp')
                       "NOMBRE": docente.data.docenteTg.docente[0].nombre,
                       "id": docente.data.docenteTg.docente[0].id,
                     };
-                    //  
                   }
 
                   //docente en solicitud de socialización o de director
@@ -508,7 +510,6 @@ angular.module('poluxClienteApp')
                   id: docDocente,
                 }
                 detallesTemporales.push(detalleTemp);
-
                 promesasDocentes.push(getDocente(0, detalleTemp));
               })
               $q.all(promesasDocentes)
@@ -652,6 +653,39 @@ angular.module('poluxClienteApp')
         return promise;
       };
 
+      async function asignarParametros() {
+        return new Promise(async (resolve, reject) => {
+          var parametroModalidad = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
+            limit: 0
+          });
+          await parametrosRequest.get("parametro/?", parametroModalidad).then(function (responseModalidad) {
+            console.log("Modalidad ", responseModalidad)
+            ctrl.Modalidad = responseModalidad.data.Data;
+          })
+          var tipoSolicitud = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:TIP_SOL",
+            limit: 0
+          });
+          await parametrosRequest.get("parametro/?", tipoSolicitud).then(function (responseTipoSolicitud) {
+            console.log("Tipo Solicitud ", responseTipoSolicitud)
+            ctrl.TipoSolicitud = responseTipoSolicitud.data.Data;
+            console.log(ctrl.TipoSolicitud);
+          })
+          //SOLICITUD INICIAL
+          let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipo => {
+            return tipo.Id == ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud
+          })
+          console.log(ctrl.Modalidad)
+          let modalidadTemp = ctrl.Modalidad.find(mod => {
+            return mod.Id == ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad
+          })
+          ctrl.tipoSolicitudTemp = tipoSolicitudTemp
+          ctrl.modalidadTemp = modalidadTemp
+          resolve();
+        });
+      }
+
       /**
        * @ngdoc method
        * @name evaluarSolicitud
@@ -662,15 +696,16 @@ angular.module('poluxClienteApp')
        * Verifica el tipo de solicitud y guarda sus datos, si la solicitud no es de tipo de materias de posgrado consulta los docentes disponibles 
        * para dirigir trabajos de grado del servicio docentes_tg de {@link services/academicaService.service:academicaRequest academicaRequest}.
        */
-      ctrl.evaluarSolicitud = function () {
+      ctrl.evaluarSolicitud = async function () {
         var defer = $q.defer();
         var promise = defer.promise;
-        ctrl.dataSolicitud.TipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id;
-        ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Nombre;
-        ctrl.dataSolicitud.NombreModalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Nombre;
-        ctrl.dataSolicitud.modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id;
-
-        if (ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 2) {
+        await asignarParametros();
+        ctrl.getParametros();
+        ctrl.dataSolicitud.TipoSolicitud = ctrl.tipoSolicitudTemp.Id;
+        ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.tipoSolicitudTemp.Nombre
+        ctrl.dataSolicitud.NombreModalidad = ctrl.modalidadTemp.Nombre;
+        ctrl.dataSolicitud.modalidad = ctrl.modalidadTemp.Id;
+        if (ctrl.tipoSolicitudTemp.CodigoAbreviacion === "SI_PLX") {
           if (ctrl.dataSolicitud.modalidad !== 2 && ctrl.dataSolicitud.modalidad !== 3) {
             ctrl.isInicial = true;
             //Si no es de materias de posgrado y profundización trae los docentes
@@ -690,7 +725,7 @@ angular.module('poluxClienteApp')
           } else {
             defer.resolve(ctrl.dataSolicitud.modalidad);
           }
-        } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 4 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 10 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 12) {
+        } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCDI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCE_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCCI_PLX") {
           ctrl.isCambio = true;
           academicaRequest.get("docentes_tg").then(function (docentes) {
             if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
@@ -702,7 +737,7 @@ angular.module('poluxClienteApp')
               ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
               defer.reject(error);
             });
-        } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud.Id === 6) {
+        } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SSO_PLX") {
           ctrl.isRevision = true;
           academicaRequest.get("docentes_tg").then(function (docentes) {
             if (!angular.isUndefined(docentes.data.docentesTg.docente)) {
@@ -732,6 +767,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.getEvaluadores = function (solicitud) {
         var defer = $q.defer();
+        console.log("SOLICItUD ", solicitud)
         poluxMidRequest.post("evaluadores/ObtenerEvaluadores", {
           "Modalidad": solicitud
         }).then(function (response) {
@@ -749,6 +785,7 @@ angular.module('poluxClienteApp')
           defer.resolve(ctrl.evaluadoresInicial);
         })
           .catch(function (error) {
+            console.log(error)
             ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_EVALUADORES");
             defer.reject(error);
           });
@@ -780,7 +817,7 @@ angular.module('poluxClienteApp')
         limit: 1
       });
 
-      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitud).then(function (responseSolicitud) {
+      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitud).then(async function (responseSolicitud) {
         if (Object.keys(responseSolicitud.data[0]).length > 0) {
           var parametrosDetallesSolicitud = $.param({
             query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
@@ -801,7 +838,7 @@ angular.module('poluxClienteApp')
           }
           promises.push(ctrl.getDetallesSolicitud(parametrosDetallesSolicitud));
           promises.push(ctrl.evaluarSolicitud());
-          promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id));
+          promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad));
           //obtener fechas de aprobación para la solicitud
           promises.push(ctrl.getFechasAprobacion(responseSolicitud.data[0].ModalidadTipoSolicitud.Id));
           $q.all(promises).then(function () {
@@ -840,7 +877,7 @@ angular.module('poluxClienteApp')
             }
           })
             .catch(function (error) {
-
+              console.log("FALLA ", error)
               ctrl.errorCargarSolicitud = true;
               $scope.loadSolicitud = false;
             });
@@ -935,6 +972,8 @@ angular.module('poluxClienteApp')
           if (ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "EAPOS" && ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.CodigoAbreviacion == "SI"
           && this.roles.includes("COORDINADOR_POSGRADO")) {
             await aprobarPosgrado();
+          } else if (ctrl.respuestaSolicitud == 2) {
+            enviarTransaccion();
           }
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == 3) {
@@ -1007,10 +1046,10 @@ angular.module('poluxClienteApp')
               vinculaciones.push(nuevaVinculacion);
             }
             //Se verifica por tipo de solicitud
-            if (ctrl.dataSolicitud.TipoSolicitud == 2) {
+            if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
               //solicitud inicial
               //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 13 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 16) {
+              if (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
                 //La solicitud solo se aprueba para que siga el curso
                 var data_trabajo_grado = {};
                 var data_estudiantes = [];
@@ -1143,9 +1182,10 @@ angular.module('poluxClienteApp')
                 ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
                 ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
                 ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
-              } else if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 2 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 20 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 46 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 38 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 55 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 28 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82) {
+              } else if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "MONO_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PEMP_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "INV_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
                 //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                 //se obtienen datos para crear el trabajo
+                console.log("ENTRA MONOGRAFIA")
                 var tempTrabajo = {};
                 angular.forEach(ctrl.detallesSolicitud, function (detalle) {
                   if (detalle.DetalleTipoSolicitud.Detalle.Nombre == "Nombre propuesta") {
@@ -1181,24 +1221,25 @@ angular.module('poluxClienteApp')
                 // por defecto el estado es En evaluación por revisor
                 var estadoTrabajoGrado = 13;
                 // si  la modalidad es de producción academica de una se vez se crea en estado listo para sustentar
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX") {
                   estadoTrabajoGrado = 13;
                 }
                 // si la modalidad es de pasantia se crea en estado de espera de ARL id 21
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 1 || ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 9) {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
                   //estadoTrabajoGrado = 5;
                   estadoTrabajoGrado = 21;
                 }
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX") {
                   // Si la modalidad es creación o interpretación el trabajo de grado  se crea en estado en curso
                   //KB 26100
                   estadoTrabajoGrado = 13;
                 }
+                console.log(ctrl.detallesSolicitud)
                 //data para crear el trabajo de grado
                 var data_trabajo_grado = {
                   "Titulo": tempTrabajo.Titulo,
                   "Modalidad": {
-                    "Id": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Id
+                    "Id": ctrl.detallesSolicitud.tipoSolicitud.Modalidad
                   },
                   "EstadoTrabajoGrado": {
                     "Id": estadoTrabajoGrado,
@@ -1207,6 +1248,7 @@ angular.module('poluxClienteApp')
                   "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico,
                   "Objetivo": tempTrabajo.Objetivo,
                 }
+                console.log("data trabajo ", data_trabajo_grado)
 
                 //se agregan estudiantes
                 var estudiante = {};
@@ -1231,11 +1273,11 @@ angular.module('poluxClienteApp')
                   "TipoDocumentoEscrito": 4
                 }
                 //SI la modalidad es la de producción academica se sube de una vez como propuesta el documento
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX") {
                   data_propuesta.TipoDocumentoEscrito = 4;
                 }
                 //SI la modalidad es la de creación sube de una vez como propuesta el documento
-                if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX") {
                   data_propuesta.TipoDocumentoEscrito = 4;
                 }
                 var data_documento_tg = {
@@ -1398,7 +1440,7 @@ angular.module('poluxClienteApp')
                     }
                   });
                 }
-                // Solicitud inicial pasantia
+                // Solicitud inicial pasantia interna
                 if(ctrl.dataSolicitud.ModalidadTipoSolicitud.Id == 82){
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
@@ -1440,7 +1482,7 @@ angular.module('poluxClienteApp')
                 ctrl.dataRespuesta.TrTrabajoGrado = ctrl.trabajo_grado;
                 ctrl.dataRespuesta.SolicitudTrabajoGrado = solicitudInicial;
               }
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 4 || ctrl.dataSolicitud.TipoSolicitud == 10 || ctrl.dataSolicitud.TipoSolicitud == 5 || ctrl.dataSolicitud.TipoSolicitud == 12) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCDI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCE_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCDE_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCCI_PLX") {
               //cambio de director interno, codirector o evaluadores
               // 5 cambio de director externo
               var vinculaciones = [];
@@ -1472,7 +1514,7 @@ angular.module('poluxClienteApp')
               //Se escribe la data de las vinculaciones
               ctrl.dataRespuesta.Vinculaciones = vinculaciones;
               //Si la solicitud es de cambio de director externo se envia el detalle de la pasantia para actualizarlo
-              if (ctrl.dataSolicitud.TipoSolicitud == 5) {
+              if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCDE_PLX") {
                 ctrl.dataRespuesta.DetallesPasantia = {
                   Empresa: 0,
                   Horas: 0,
@@ -1483,7 +1525,7 @@ angular.module('poluxClienteApp')
                   }
                 }
               }
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 3) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
               //solicitud de cancelacion de modalidad
               //se crea data del estudiante
               var dataEstudianteTg = {
@@ -1500,13 +1542,13 @@ angular.module('poluxClienteApp')
 
               ctrl.dataRespuesta.VinculacionesCancelacion = ctrl.docentesVinculadosTg;
               ctrl.dataRespuesta.EstudianteTrabajoGrado = dataEstudianteTg;
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 8) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SMDTG_PLX") {
               //solicitud de cambio titulo de trabajo de grado
               var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
               //Se cambia el titulo
               tgTemp.Titulo = ctrl.tituloNuevo;
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 9) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") {
               //solicitud de cambio de materia
               var espacios = [];
               //Asignatura vieja
@@ -1535,23 +1577,23 @@ angular.module('poluxClienteApp')
               });
               ctrl.dataRespuesta.EspaciosAcademicos = espacios;
 
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 13) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX") {
               //Solicitud de revisión de tg
               var data_tg = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
               var data_ttg = null;
               //trabajo de grado en revisión id 15
-              const modalidad = ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion;
+              const modalidad = ctrl.modalidadTemp.CodigoAbreviacion;
               // Por defecto el trabajo de grado pasa a listo para sustentar
               data_tg.EstadoTrabajoGrado = {
                 Id: 17,
               };
 
               // Para las modalidades innovación, monografía y emprendimiento: el trabajo de grado pasa a revisión de evaluador
-              if (modalidad === 'INV' || modalidad === 'PEMP' || modalidad === 'MONO') {
+              if (modalidad === 'INV_PLX' || modalidad === 'PEMP_PLX' || modalidad === 'MONO_PLX') {
                 data_tg.EstadoTrabajoGrado.Id = 23;
               }
 
-              if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion === 'PACAD') {
+              if (ctrl.modalidadTemp.CodigoAbreviacion === 'PACAD_PLX') {
                 var detalles_trabajo_grado = {};
 
                 //RESTABLECIMIENTO DE ID DEL PARAMETRO ASOCIADO A LA CLASIFICACION DE REVISTA
@@ -1655,7 +1697,7 @@ angular.module('poluxClienteApp')
                 DetalleTrabajoGrado: data_ttg
               }
               ctrl.dataRespuesta.TrRevision = data_revision;
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 6) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SSO_PLX") {
               //Solicitud de socialización
               //Vinculaciones del tg
               var dataVinculaciones = [];
@@ -1688,7 +1730,7 @@ angular.module('poluxClienteApp')
               }
               ctrl.dataRespuesta.Vinculaciones = dataVinculaciones;
             //SOLICITUD DE PRORROGA
-            }else if(ctrl.dataSolicitud.TipoSolicitud == 7){
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SPR_PLX"){
               //GUARDA LOS VALORES
               ctrl.dataRespuesta.CausaProrroga = [{
                 "Parametro": String(ctrl.parametro.data.Data[0].Id),
@@ -1697,13 +1739,14 @@ angular.module('poluxClienteApp')
                   Id: ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado.Id,
                 }
               }]
-            } else if (ctrl.dataSolicitud.TipoSolicitud == 15) {
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCO_PLX") {
               // SOLICITUD DE CAMBIOS DE OBJETIVOS DEL TRABAJO DE GRADO
               var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
               // SE CAMBIAN LOS OBJETIVOS
               tgTemp.Objetivo = ctrl.ObjetivoNuevo;
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             }
+            console.log(ctrl.dataRespuesta)
             enviarTransaccion();
           }
 
@@ -2285,20 +2328,20 @@ angular.module('poluxClienteApp')
        * Función que se encarga de cargar la solicitud cambiando el estado de la misma para continuar con el flujo del proyecto de grado
        */
       ctrl.RespuestaDocente = function () {
+        console.log("RESPUESTA DOCENTE")
         //Aprobar
         if (ctrl.respuestaSolicitud == 3) {
           var parametrosSolicitudes = $.param({
             query: "Id:" + ctrl.solicitud,
           });
-          poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
+          poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(async function (responsesolicitud) {
             var parametro = responsesolicitud.data[0];
             var modalidad = 0;
-            if (parametro.ModalidadTipoSolicitud.TipoSolicitud.Id == 14) {
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 1) {
-                modalidad = 2;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 70,
-                });
+            console.log(parametro)
+            console.log("TIPO SOLICITUD ", ctrl.tipoSolicitudTemp)
+            if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX") {
+              console.log("MODALIDAD ", ctrl.modalidadTemp)
+              if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX") {
                 var parametros = $.param({
                   query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
                   limit: 0
@@ -2360,53 +2403,7 @@ angular.module('poluxClienteApp')
 
                   });
               }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 2) {
-                modalidad = 13;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 71,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 3) {
-                modalidad = 16;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 72,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 4) {
-                modalidad = 20;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 73,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 5) {
-                modalidad = 28;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 74,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 6) {
-                modalidad = 38;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 75,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 7) {
-                modalidad = 46;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 76,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 8) {
-                modalidad = 55;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 77,
-                });
-              }
-              if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 9) {
-                modalidad = 82;
-                var parametrosSolicitud = $.param({
-                  query: "Id:" + 83,
-                });
+              if (ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
                 var parametros = $.param({
                   query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
                   limit: 0
@@ -2468,6 +2465,19 @@ angular.module('poluxClienteApp')
 
                   });
               }
+              let idTipoSolTemp = ctrl.TipoSolicitud.find(tipo => {
+                return tipo.CodigoAbreviacion == "SI_PLX";
+              });
+              var parametrosSolicitudModalidad = $.param({
+                query: "Modalidad:" + ctrl.modalidadTemp.Id + ",TipoSolicitud:" + idTipoSolTemp.Id,
+              });
+              await poluxRequest.get("modalidad_tipo_solicitud", parametrosSolicitudModalidad).then(function (responseSolicitudModalidad) {
+                console.log(responseSolicitudModalidad)
+                modalidad = responseSolicitudModalidad.data[0].Id
+              });
+              var parametrosSolicitud = $.param({
+                query: "Modalidad:" + ctrl.modalidadTemp.Id + ",TipoSolicitud:" + ctrl.tipoSolicitudTemp.Id,
+              });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosSolicitud).then(function (responsesolicitud) {
 
                 if (responsesolicitud.data !== undefined) {
@@ -2502,8 +2512,8 @@ angular.module('poluxClienteApp')
                         rtaActual.Id = null;
                         rtaActual.Activo = true;
                         rtaActual.Fecha = new Date();
-                        rtaActual.Justificacion = "El Director aprobó la " + parametro.ModalidadTipoSolicitud[0].TipoSolicitud.Nombre
-                        rtaActual.Usuario = rtaActual.EnteResponsable
+                        rtaActual.Justificacion = "El Director aprobó la " + ctrl.tipoSolicitudTemp.Nombre;
+                        rtaActual.Usuario = rtaActual.EnteResponsable;
                         rtaActual.EnteResponsable = 0;
                         rtaActual.EstadoSolicitud.Id = ctrl.parametro.Id
                         poluxRequest.post("respuesta_solicitud", rtaActual).then(function (response) {
@@ -2642,7 +2652,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
             var parametro = responsesolicitud.data[0];
             //Solicitud inicial
-            if (parametro.ModalidadTipoSolicitud.TipoSolicitud.Id == 2) {
+            if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
               var data_documento = {
                 //PENDIENTE POR VERIFICAR EL DOCUMENTO CORRECTO
                 "DocumentoEscrito": {
@@ -2704,7 +2714,6 @@ angular.module('poluxClienteApp')
               });
             } else {
               //Solicitud de novedad
-
               var parametros = $.param({
                 query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
                 limit: 0
@@ -2715,8 +2724,7 @@ angular.module('poluxClienteApp')
                     var parametrosRespuestaSolicitud = {
                       "Id": value.Id,
                       "Fecha": new Date(),
-                      "Justificacion": "El Director rechazo la " + parametro.ModalidadTipoSolicitud.TipoSolicitud.Nombre,
-
+                      "Justificacion": "El Director rechazo la " + ctrl.tipoSolicitudTemp.Nombre,
                       "EnteResponsable": 0,
                       "Usuario": $scope.userId,
                       "Activo": true,

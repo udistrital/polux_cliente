@@ -41,20 +41,26 @@ angular.module('poluxClienteApp')
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
       ctrl.carrerasCoordinador = [];
-      //token_service.token.documento = "79647592";
-      //token_service.token.role.push("COORDINADOR_PREGRADO");
-      //token_service.token.documento = "20131020002";
-      //token_service.token.role.push("ESTUDIANTE");
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      //$scope.$watch("userId",function() {
-      //ctrl.conSolicitudes = false;
-      //ctrl.actualizarSolicitudes($scope.userId, ctrl.userRole);
-      //$scope.load = true;
-      //});
-      
-       
+
+      var parametroModalidad = $.param({
+        query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
+      });
+      parametrosRequest.get("parametro/?", parametroModalidad).then(function (responseModalidad) {
+        console.log("Modalidad ", responseModalidad)
+        ctrl.Modalidad = responseModalidad.data[0];
+      })
+      var tipoSolicitud = $.param({
+        query: "TipoParametroId__CodigoAbreviacion:TIP_SOL",
+      });
+      parametrosRequest.get("parametro/?", tipoSolicitud).then(function (responseTipoSolicitud) {
+        console.log("Tipo Solicitud ", responseTipoSolicitud)
+        ctrl.TipoSolicitud = responseTipoSolicitud.data[0];
+      })
+
+
       /**
        * @ngdoc method
        * @name mostrarResultado
@@ -516,11 +522,7 @@ angular.module('poluxClienteApp')
               if(lista_roles.includes("DOCENTE"))
               {
                 parametrosSolicitudes = $.param({
-                  //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
-                 //query: "ESTADOSOLICITUD.ID:1,Activo:true",
-                  //Para traer la solicitud inicial del proyecto a ser director
-                  query: "ESTADOSOLICITUD.Id.in:1|19,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.Id.in:3|4|5|6|7|8|9|10|12|13|14|15,EnteResponsable:" + ctrl.userId,
-                 // exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id:1",
+                  query: "ESTADOSOLICITUD.Id.in:1|19,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:4635|4636|4637|4638|4639|4640|4641|4642|4643|4644|4645|4646,EnteResponsable:" + ctrl.userId,
                   limit: 0
                 });
                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
