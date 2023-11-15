@@ -27,9 +27,10 @@
         </a>
         <ul class="dropdown-menu">
           <li ng-repeat="nivel_2 in nivel_1.Opciones">
-            <a ng-href="{{'#/' + nivel_2.Url}}" ng-if="nivel_2.Opciones === null">
+            <a ng-href="{{'#/' + nivel_2.Url}}" ng-if="nivel_2.Opciones === null && !nivel_2.Url.includes('https')">
               {{nivel_2.Nombre}}
             </a>
+            <a href="{{nivel_2.Url}}" target="_blank" ng-if="nivel_2.Url.includes('https')">{{nivel_2.Nombre}}</a>
           </li>
           <li class="dropdown dropdown-submenu"  aria-haspopup="true" aria-expanded="false" ng-repeat="nivel_2 in nivel_1.Opciones">
             <a ng-href="{{actual}}" class="dropdown-toggle" data-toggle="dropdown" ng-if="nivel_2.Opciones !== null">
