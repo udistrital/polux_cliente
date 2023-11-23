@@ -65,10 +65,10 @@
           </div>
         </div>
         <div ng-if="detalle.carrera===undefined">
-          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='linkNuxeo'">
+          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
             <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
           </div>
-          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='linkNuxeo'">
+          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='DOC_PLX' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='LNUX_PLX'">
             <label ng-click="aprobarSolicitud.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
           </div>
         </div>
@@ -108,8 +108,8 @@
       <div class="col-sm-8">
         <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
           <option selected></option>
-          <option value="ACC_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
-          <option value="RCC_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+          <option value="ADD_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
+          <option value="RDD_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
       </div>
       <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'RCC_PLX'">
@@ -143,7 +143,7 @@
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
         </div>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && (aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==64  || aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==92)">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && aprobarSolicitud.tipoSolicitudTemp.CodigoAbreviacion=='SRTG_PLX' && (aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PASEX_PLX' || aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PASIN_PLX')">
         <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
        <div class="col-sm-9">
         <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>

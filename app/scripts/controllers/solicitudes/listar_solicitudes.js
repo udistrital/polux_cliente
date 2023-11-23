@@ -511,7 +511,7 @@ angular.module('poluxClienteApp')
 
           parametrosSolicitudes = $.param({
             //query:"usuario:"+identificador+",ESTADOSOLICITUD.ID:1",
-            query: "ESTADOSOLICITUD.Id.in:1|17|21,Activo:true",
+            query: "ESTADOSOLICITUD.in:4610|4626|4632,Activo:true",
             // excluye las solicitudes de tipo carta de presentacion
             exclude: "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:1|70|71|72|73|74|75|76|77|83",
             limit: 0
@@ -522,7 +522,7 @@ angular.module('poluxClienteApp')
               if(lista_roles.includes("DOCENTE"))
               {
                 parametrosSolicitudes = $.param({
-                  query: "ESTADOSOLICITUD.Id.in:1|19,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:4635|4636|4637|4638|4639|4640|4641|4642|4643|4644|4645|4646,EnteResponsable:" + ctrl.userId,
+                  query: "ESTADOSOLICITUD.in:4610|4628,Activo:true,SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:4635|4636|4637|4638|4639|4640|4641|4642|4643|4644|4645|4646,EnteResponsable:" + ctrl.userId,
                   limit: 0
                 });
                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
