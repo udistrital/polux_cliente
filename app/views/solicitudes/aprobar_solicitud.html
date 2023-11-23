@@ -108,11 +108,11 @@
       <div class="col-sm-8">
         <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
           <option selected></option>
-          <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
-          <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+          <option value="ACC_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
+          <option value="RCC_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 2">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'RCC_PLX'">
         <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
         <div class="col-sm-8">
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
@@ -133,17 +133,17 @@
       <div class="col-sm-8">
         <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
           <option></option>
-          <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
-          <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+          <option value="ACC_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
+          <option value="RCC_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 2">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == ">
         <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
         <div class="col-sm-8">
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
         </div>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 3 && (aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==64  || aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==92)">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && (aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==64  || aprobarSolicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id==92)">
         <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
        <div class="col-sm-9">
         <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>
@@ -166,8 +166,8 @@
           <div class="col-sm-8">
             <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
               <option></option>
-              <option value=3> {{'APROBAR_SOLICITUD' | translate}} </option>
-              <option value=2> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+              <option value="ACC_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
+              <option value="RCC_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
             </select>
           </div>
         </div>
@@ -190,7 +190,7 @@
         </div>
         <br>
         <!--Docente que avala la propuesta -->
-        <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3">
+        <div class="row" ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
           <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
           <div class="col-sm-8">
             <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteDirector" theme="bootstrap" reset-search-input="false" style="width:100%;" required>
@@ -202,7 +202,7 @@
          </div>
        </div>
        <!--Docente co-director-->
-       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3 && aprobarSolicitud.tieneCoDirector">
+       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud=='ACC_PLX' && aprobarSolicitud.tieneCoDirector">
           <br>
           <div class="row">
               <label class="col-sm-4 control-label">{{'SELECT.INCLUIR_CODIRECTOR' | translate}} </label>
@@ -222,9 +222,9 @@
             </div>
           </div>      
        </div>
-       <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud==3">
+       <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
        <!--Docente que evalua la propuesta -->
-       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud==3">
+       <div ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.hasRevisor && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
         <div ng-repeat="evaluador in aprobarSolicitud.evaluadoresInicial">
           <div class="row">
             <label class="col-sm-4 control-label"> {{evaluador.label}} </label>
@@ -242,7 +242,7 @@
       </div>
 
       <!-- para seleccionar a los jurados y si se desea cmabiar director y codirector-->
-      <div ng-if="aprobarSolicitud.respuestaSolicitud == 3 && aprobarSolicitud.isRevision">
+      <div ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && aprobarSolicitud.isRevision">
         <div class="row">
             <label class="col-sm-4 control-label">{{'SELECT.DESEA_CAMBIAR_VINCULADO' | translate}} </label>
           <div class="col-sm-8">
@@ -287,7 +287,7 @@
                     </div>-->
 
                     <!--para el cambio de docente evaluador, codirector o director-->
-                    <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud==3">
+                    <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
                       <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
                       <div class="col-sm-8">
                         <ui-select refresh-delay="500" on-select="aprobarSolicitud.reloadScroll()" ng-model="aprobarSolicitud.docenteCambio"  theme="bootstrap" reset-search-input="false" style="width:100s%;" required>
