@@ -1430,7 +1430,7 @@ angular.module('poluxClienteApp')
           let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
             return data.CodigoAbreviacion == "SI_PLX"
           });
-          var tipo_solicitud = TipoSolicitudTemp.Id;
+          var tipo_solicitud = tipoSolicitudSeleccionada.Id;
           if(ctrl.Docente==1){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SSO_PLX"
@@ -1453,6 +1453,7 @@ angular.module('poluxClienteApp')
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
+
                 ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0];
                   defer.resolve();
                 })
