@@ -578,7 +578,7 @@ angular.module('poluxClienteApp')
                     query += estado.Id.toString()
                   }
                 });
-                var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:"
+                var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:"
                 guardaPrimero = false;
                 modalidadTipoSol.forEach(modTipo => {
                   let modalidadTemp = ctrl.Modalidad.find(modalidad => {
