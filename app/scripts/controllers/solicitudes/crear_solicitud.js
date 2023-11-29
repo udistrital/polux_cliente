@@ -1101,7 +1101,7 @@ angular.module('poluxClienteApp')
                 });
               }
               else{
-                promises.push(getModalidades());
+                promises.push(ctrl.Modalidades);
                 //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
                 //promises.push(getSolicitudesAnteriores());
               }
@@ -1173,7 +1173,10 @@ angular.module('poluxClienteApp')
         var verificarRequisitosModalidad = function() {
           var defer = $q.defer();
           if(ctrl.estudiante.Modalidad == null){
-            ctrl.estudiante.Modalidad = ctrl.modalidad;
+            let ModalidadTemp = ctrl.Modalidades.find(data => {
+              return data.Id == ctrl.modalidad
+            });
+            ctrl.estudiante.Modalidad = ModalidadTemp.CodigoAbreviacion;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
             ctrl.estudiante.Modalidad = null;
@@ -1203,7 +1206,7 @@ angular.module('poluxClienteApp')
         var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
           var defer = $q.defer();
           //si la solicitud es de materias de posgrado e inicial
-          let TipoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+          let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
             return data.CodigoAbreviacion == "SI_PLX"
           });
           let ModalidadTemp1 = ctrl.Modalidades.find(data => {
@@ -1430,7 +1433,7 @@ angular.module('poluxClienteApp')
           let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
             return data.CodigoAbreviacion == "SI_PLX"
           });
-          var tipo_solicitud = tipoSolicitudSeleccionada.Id;
+          var tipo_solicitud = TipoSolicitudTemp.Id;
           if(ctrl.Docente==1){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SSO_PLX"
@@ -1453,7 +1456,6 @@ angular.module('poluxClienteApp')
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
-
                 ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0];
                   defer.resolve();
                 })
@@ -1494,6 +1496,7 @@ angular.module('poluxClienteApp')
                 var filtereddetalles = responseDetalles.data;
                 angular.forEach(filtereddetalles, function(detalle){
                   if((detalle.Detalle.CodigoAbreviacion !=="CUEP") && (detalle.Detalle.Activo)  && (detalle.Activo)){
+
                     ctrl.detalles.push(detalle);
                   }
                 });                
@@ -2213,7 +2216,6 @@ angular.module('poluxClienteApp')
         var data_usuarios = [];
         var data_respuesta = {};
         var fecha = new Date();
-        console.log("CTRL:",ctrl);
         if (ctrl.trabajo_grado !== undefined) {
           data_solicitud = {
             "Fecha": fecha,
@@ -2339,9 +2341,7 @@ angular.module('poluxClienteApp')
 
           data_solicitud = {
             "Fecha": fecha,
-            "ModalidadTipoSolicitud": {
-              "Id": ctrl.ModalidadTipoSolicitud
-            },
+            "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
             "PeriodoAcademico": ctrl.periodo
           };
         }
