@@ -2733,7 +2733,7 @@ angular.module('poluxClienteApp')
 
           });
 
-        }else if(estadoSolRtaNueva.CodigoAbreviacion == "RCC_PLX"){
+        }else if(estadoSolRtaNueva.CodigoAbreviacion == "RDD_PLX"){
           //Rechazar solicitud
           var fechaRespuesta = new Date();
           var parametrosSolicitudes = $.param({
