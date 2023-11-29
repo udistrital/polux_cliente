@@ -498,6 +498,10 @@ angular.module('poluxClienteApp')
 
         poluxRequest.get("usuario_solicitud", parametrosUser).then(async function(responseUser) {
             await getconsultarParametros();
+            let TipoSolicitudIniTemp = ctrl.TiposSolicitudes.find(data => {
+              return data.CodigoAbreviacion == "SI_PLX"
+            });
+            ctrl.INICIAL = TipoSolicitudIniTemp;
             if (Object.keys(responseUser.data[0]).length == 0) {
               responseUser.data = [];
             }
@@ -2228,6 +2232,8 @@ angular.module('poluxClienteApp')
             "PeriodoAcademico": ctrl.periodo
           };
         } else {
+          console.log("TipoSolicitud:", ctrl.TipoSolicitud.Id);
+          console.log("Modalidad:", ctrl.modalidad);
           let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
             return data.CodigoAbreviacion == "SI_PLX"
           });
