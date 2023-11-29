@@ -19,7 +19,6 @@
  */
 angular.module('poluxClienteApp')
     .controller('menuCtrl', function($location, $http, $window, $q, $scope, $rootScope, token_service, configuracionRequest, notificacionRequest, $translate, $route, $mdSidenav) {
-        //var paths = [];
         $scope.language = {
             es: "btn btn-primary btn-circle btn-outline active",
             en: "btn btn-primary btn-circle btn-outline"
@@ -66,106 +65,6 @@ angular.module('poluxClienteApp')
         $scope.token_service = token_service;
         $scope.breadcrumb = [];
         $scope.menu_service = [];
-        /*$scope.menu_service = [{ //aqui va el servicio de el app de configuracion
-                "Id": 3,
-                "Nombre": "Seguimiento y control",
-                "Url": "url_nivel_1",
-                "Opciones": [{
-                        "Id": 1,
-                        "Nombre": "Segumiento Financiero",
-                        "Url": "seguimientoycontrol/financiero",
-                        "Opciones": null
-                    },
-                    {
-                        "Id": 2,
-                        "Nombre": "Segumiento Legal",
-                        "Url": "",
-                        "Opciones": null
-                    },
-                    {
-                        "Id": 3,
-                        "Nombre": "Segumiento Tecnico",
-                        "Url": "",
-                        "Opciones": null
-                    }
-                ]
-            },
-            { //aqui va el servicio de el app de configuracion
-                "Id": 2,
-                "Nombre": "Necesidad",
-                "Url": "url_nivel_1",
-                "Opciones": [{
-                        "Id": 3,
-                        "Nombre": "Gestion de Necesidades",
-                        "Url": "necesidades",
-                        "Opciones": null
-                    },
-                    {
-                        "Id": 4,
-                        "Nombre": "Generación de solicitudes de necesidad",
-                        "Url": "necesidad/necesidad_externa",
-                        "Opciones": null
-                    }
-                ]
-            },
-            { //RP
-                "Id": 1,
-                "Nombre": "RP",
-                "Url": "",
-                "Opciones": [{ //Consulta de solicitud de RP
-                    "Id": 1,
-                    "Nombre": "Solicitar registro presupuestal",
-                    "Url": "rp_solicitud_personas",
-                    "Opciones": null
-                }]
-            },
-            {
-                "Id": 6,
-                "Nombre": "Vinculación especial",
-                "Url": "",
-                "Opciones": [{
-                        "Id": 6,
-                        "Nombre": "Gestión de resoluciones",
-                        "Url": "vinculacionespecial/resolucion_gestion",
-                        "Opciones": null
-                    },
-                    {
-                        "Id": 6,
-                        "Nombre": "Aprobación de resoluciones",
-                        "Url": "vinculacionespecial/resolucion_aprobacion",
-                        "Opciones": null
-                    },
-                    {
-                        "Id": 6,
-                        "Nombre": "Administración de resoluciones",
-                        "Url": "vinculacionespecial/resolucion_administracion",
-                        "Opciones": null
-                    }
-                ]
-            },
-            {
-                "Id": 5,
-                "Nombre": "Plantillas",
-                "Url": "plantillas/lista_plantillas",
-                "Opciones": null
-            }
-        ];*/
-        /*var recorrerArbol = function(item, padre) {
-            var padres = "";
-            for (var i = 0; i < item.length; i++) {
-                if (item[i].Opciones === null) {
-                    padres = padre + " , " + item[i].Nombre;
-                    paths.push({
-                        'path': item[i].Url,
-                        'padre': padres.split(",")
-                    });
-                } else {
-                    recorrerArbol(item[i].Opciones, padre + "," + item[i].Nombre);
-                }
-            }
-            return padres;
-        };
-        */
         $scope.logout = function() {
             token_service.logout();
         };
@@ -173,8 +72,8 @@ angular.module('poluxClienteApp')
             token_service.getLoginData()
                 .then(function() {
                     $scope.token = token_service.getAppPayload();
-                    if (!angular.isUndefined($scope.token.appUserRole)) {                      
-                        var roles = "";                     
+                    if (!angular.isUndefined($scope.token.appUserRole)) {
+                        var roles = "";
                         if (typeof $scope.token.appUserRole === "object") {
                             var rl = [];
                             $scope.token.appUserRole = $scope.token.appUserRole.concat( $scope.token.role);
@@ -186,12 +85,9 @@ angular.module('poluxClienteApp')
                             }
                             }
                             // Confirmar la subcripcion de notificaciones
-                            
                  notificacionRequest.verificarSuscripcion().then(function(respuestasub)
                 {
-                    if(respuestasub.data.Data!=false)
-                    {
-                                      
+                    if(respuestasub.data.Data!=false){
                     }
                     else
                     {
@@ -206,10 +102,8 @@ angular.module('poluxClienteApp')
                                     console.log(error)
                                 }
                             );
-                    
                     }
                   }
-                  
                 );
                             roles = rl.toString();
                         } else {
@@ -218,7 +112,6 @@ angular.module('poluxClienteApp')
                         roles = roles.replace(/,/g, '%2C');
                         configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '').then(function(response) {
                                 $rootScope.my_menu = response.data;
-
                             })
                             .catch(
                                 function(response) {
@@ -228,55 +121,12 @@ angular.module('poluxClienteApp')
                     }
                 });
         }
-        /*
-        configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + "ADMINISTRADOR_ARGO" + '/Argo', '').then(function(response) {
-            $rootScope.my_menu = response.data;
-          });
-            /*configuracionRequest.update_menu(https://10.20.0.162:9443/store/apis/authenticate response.data);
-            $scope.menu_service = configuracionRequest.get_menu();*/
 
-
-
-        var update_url = function() {  
+        var update_url = function() {
         };
-
-       /* 
-       $scope.redirect_url = function(path) {
-            var path_sub = path.substring(0, 4);
-            if (path_sub.toUpperCase() === "HTTP") {
-                $window.open(path, "_blank");
-            } else {
-                $location.path(path);
-            }
-        };
-        */
-        //recorrerArbol($scope.menu_service, "");
-        /*
-        paths.push({
-            padre: ["", "Notificaciones", "Ver Notificaciones"],
-            path: "notificaciones"
-        });
-        */
 
         $scope.$on('$routeChangeStart', function(scope, next, current) {
-            //$scope.actual = $location.path();
             update_url();
-            /*
-            var waitForMenu = function () {
-                if ($rootScope.my_menu !== undefined) {
-                    if (($scope.token_service.live_token() && current !== undefined) || current === undefined) {
-
-                        if (!$scope.havePermission(next.templateUrl, $rootScope.my_menu)) {             
-                          //  $location.path("/no_permission");
-
-                        }
-                    }                 
-                } else {
-                    setTimeout(waitForMenu, 250);
-                }
-            }; 
-            waitForMenu();
-            */
         });
 
         $scope.havePermission = function (viewPath, menu) {
@@ -328,7 +178,6 @@ angular.module('poluxClienteApp')
             }
             $route.reload();
         };
-      
 
         function buildToggler(componentId) {
             return function() {
