@@ -2152,7 +2152,7 @@ angular.module('poluxClienteApp')
               if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 7) {
                 modalidad = 46;
                 var parametrosSolicitud = $.param({
-                  query: "Id:" + 68,
+                  query: "Id:" + 76,
                 });
               }
               if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 8) {

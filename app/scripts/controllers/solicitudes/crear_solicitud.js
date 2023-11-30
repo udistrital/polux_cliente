@@ -1948,7 +1948,7 @@ angular.module('poluxClienteApp')
             ctrl.ModalidadTipoSolicitud = 75;
           }
           if(ctrl.ModalidadTipoSolicitud === 46){
-            ctrl.ModalidadTipoSolicitud = 68;
+            ctrl.ModalidadTipoSolicitud = 76;
           }
           if(ctrl.ModalidadTipoSolicitud === 55){
             ctrl.ModalidadTipoSolicitud = 77;
