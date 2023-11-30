@@ -1971,7 +1971,7 @@ angular.module('poluxClienteApp')
           sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
 
           var parametrosDocumentos = $.param({
-            query: "TipoDocumentoEscrito:68" + sql,
+            query: "TipoDocumentoEscrito:67" + sql,
             //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
             limit: 0
           });
