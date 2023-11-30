@@ -271,7 +271,7 @@ angular.module('poluxClienteApp')
                                                 function (base64) {                   
                                                  fileBase64 = base64;
                                               data = [{
-                                               IdTipoDocumento: 5, //id tipo documento de documentos_crud
+                                               IdTipoDocumento: 77, //id tipo documento de documentos_crud
                                                nombre:ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,// nombre formado el titulo y correccion
                                                file:  fileBase64,
 
