@@ -12,11 +12,10 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
+ * @requires services/parametrosService.service:parametrosRequest
  * @property {Boolean} mindoc Indicador que maneja la minimización del documento en la vista
  * @property {String} codigoEstudiante Valor que carga el documento del estudiante en sesión
  * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
@@ -38,22 +37,19 @@
  */
 angular.module('poluxClienteApp')
   .controller('EstudianteRevisionDocumentoCtrl',
-    function($q, $scope, $window, $translate, notificacionRequest,academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($q, $scope, $window, $translate, notificacionRequest,academicaRequest,utils,gestorDocumentalMidRequest, parametrosRequest, poluxRequest, token_service) {
       var ctrl = this;
 
-      //ctrl.estudiante = $routeParams.idEstudiante;
-      //token_service.token.documento = "20131020002";
-      //token_service.token.role.push("ESTUDIANTE");
-      //ctrl.codigoEstudiante = token_service.token.documento;
-
+      ctrl.EstadoTrabajoGrado = [];
+      ctrl.EstadoEstudianteTrabajoGrado = [];
+      ctrl.EstadoRevisionTrabajoGrado = [];
       ctrl.codigoEstudiante = token_service.getAppPayload().appUserDocument;
-
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
       ctrl.mensajeCargandoActualizarTg = $translate.instant("LOADING.ACTUALIZANDO_TRABAJO_GRADO");
+      ctrl.revisionSolicitada = false;
 
       $scope.mindoc = false;
-     
-        
+
       /**
        * @ngdoc method
        * @name obtenerParametrosDirectorExterno
@@ -196,28 +192,18 @@ angular.module('poluxClienteApp')
         //El tipo de documento que se busca 
         ctrl.tipoDocumento = 0;
         //Si el estado del trabajo es
-      
-        if (trabajoGrado.EstadoTrabajoGrado.Id == 1 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 4 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 8 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 9 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 11 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 21 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 22) {
+        let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          return estTrGr.Id == trabajoGrado.EstadoTrabajoGrado
+        })
+        var estadoTrabajoGradoAceptada = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "PAEA_PLX", "PECSPR_PLX"]
+        if (estadoTrabajoGradoAceptada.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
           ctrl.tipoDocumento = 4;
         }
-        if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "EC_PLX") {
           ctrl.tipoDocumento = 4;
         }
-        if (trabajoGrado.EstadoTrabajoGrado.Id == 14 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 15 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 16 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 17 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 18 ||
-          trabajoGrado.EstadoTrabajoGrado.Id == 19) {
+        estadoTrabajoGradoAceptada = ["PR_PLX", "ER_PLX", "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX"]
+        if (estadoTrabajoGradoAceptada.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
           ctrl.tipoDocumento = 5;
         }
         return $.param({
@@ -327,10 +313,26 @@ angular.module('poluxClienteApp')
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
+        var estadosValidos = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "ASNV_PLX", "EC_PLX", "PR_PLX", "ER_PLX",
+                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX"]
+        var query = "TrabajoGrado.EstadoTrabajoGrado.in:"
+        var guardaPrimero = false;
+        ctrl.EstadoTrabajoGrado.forEach(estadoTrGt => {
+          if (estadosValidos.includes(estadoTrGt.CodigoAbreviacion)) {
+            if (guardaPrimero) {
+              query += "|";
+            } else {
+              guardaPrimero = true;
+            }
+            query += estadoTrGt.Id.toString();
+          }
+        });
+        let estadoEstudianteTrabajoGrado = ctrl.EstadoEstudianteTrabajoGrado.find(estEstTrGr => {
+          return estEstTrGr.CodigoAbreviacion == "EST_ACT_PLX"
+        })
+        query += ",EstadoEstudianteTrabajoGrado:" + estadoEstudianteTrabajoGrado.Id.toString() + ",Estudiante:" + ctrl.codigoEstudiante;
         return $.param({
-          query: "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|4|5|6|8|9|10|11|12|13|14|15|16|17|18|19|21|22," +
-            "EstadoEstudianteTrabajoGrado.Id:1," +
-            "Estudiante:" + ctrl.codigoEstudiante,
+          query: query,
           limit: 1
         });
       }
@@ -346,11 +348,34 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} El mensaje en caso de no corresponder la información, o la excepción generada
        */
-      ctrl.consultarEstudianteTrabajoGrado = function() {
+      ctrl.consultarEstudianteTrabajoGrado = async function() {
         var deferred = $q.defer();
         var conjuntoProcesamientoEstudianteTrabajoGrado = [];
+
+        var parametroEstadoTrabajoGrado = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroEstadoTrabajoGrado).then(function (responseEstadoTrabajoGrado) {
+          ctrl.EstadoTrabajoGrado = responseEstadoTrabajoGrado.data.Data;
+        })
+        var parametroEstadoEstudianteTrabajoGrado = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:EST_ESTU_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroEstadoEstudianteTrabajoGrado).then(function (responseEstadoEstudTrGr) {
+          ctrl.EstadoEstudianteTrabajoGrado = responseEstadoEstudTrGr.data.Data;
+        })
+        var parametroEstadoRevisionTrabajoGrado = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:ESTREV_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroEstadoRevisionTrabajoGrado).then(function (responseEstRevTrGr) {
+          ctrl.EstadoRevisionTrabajoGrado = responseEstRevTrGr.data.Data;
+        })
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
+            console.log("ESTUDIANMTE ", estudianteConTrabajoDeGrado)
             if (Object.keys(estudianteConTrabajoDeGrado.data[0]).length > 0) {
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));     
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
@@ -401,6 +426,10 @@ angular.module('poluxClienteApp')
               ctrl.informacionAcademica) {
               ctrl.cargandoTrabajoGrado = false;
               ctrl.trabajoGrado = trabajoDeGradoConsultado;
+              ctrl.trabajoGrado.EstadoTrabajoGradoAux = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+                return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
+              })
+              console.log(ctrl.trabajoGrado)
               ctrl.consultarRevisionesTrabajoGrado()
                 .then(function(respuestaRevisionesTrabajoGrado) {
                   ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
@@ -457,7 +486,10 @@ angular.module('poluxClienteApp')
             //console.log(respuestaRevisionesTrabajoGrado);
             if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
-                if (revision.EstadoRevisionTrabajoGrado.Id == 1) {
+                let estadoRevisionTrabajoGrado = ctrl.EstadoRevisionTrabajoGrado.find(estRevTrGr => {
+                  return estRevTrGr.Id == revision.EstadoRevisionTrabajoGrado
+                })
+                if (estadoRevisionTrabajoGrado.CodigoAbreviacion == "PENDIENTE_PLX") {
                   ctrl.revisionSolicitada = true;
                 }
               });
@@ -556,7 +588,10 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No hace retorno de resultados
        */
       ctrl.subirDocumentoTg = function() {
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 13) {
+        let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
+        })
+        if (estadoTrabajoGrado.CodigoAbreviacion == "EC_PLX") {
           ctrl.subirNuevoDocumento();
         } else {
           ctrl.subirDocumento();
@@ -792,31 +827,35 @@ angular.module('poluxClienteApp')
        */
       ctrl.actualizarDocumentoTrabajoGrado = function(respuestaCargarDocumento) {
         var deferred = $q.defer();
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
-          ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) {
-          ctrl.trabajoGrado.EstadoTrabajoGrado = {
-            Id: 4
-          };
+        let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
+        })
+        if (estadoTrabajoGrado.CodigoAbreviacion == "AMO_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASMO_PLX") {
+          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+            return estTrGr.CodigoAbreviacion == "RVS_PLX"
+          })
+          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
         }
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
-          ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
-          ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 22) {
-          ctrl.trabajoGrado.EstadoTrabajoGrado = {
-            Id: 13
-          };
+        if (estadoTrabajoGrado.CodigoAbreviacion == "AVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "PECSPR_PLX") {
+          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+            return estTrGr.CodigoAbreviacion == "EC_PLX"
+          })
+          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
         }
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16) {
-          ctrl.trabajoGrado.EstadoTrabajoGrado = {
-            Id: 15
-          };
+        if (estadoTrabajoGrado.CodigoAbreviacion == "MOD_PLX") {
+          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+            return estTrGr.CodigoAbreviacion == "ER_PLX"
+          })
+          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 5;
         }
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
-          ctrl.trabajoGrado.EstadoTrabajoGrado = {
-            Id: 22
-          };
+        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
+          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+            return estTrGr.CodigoAbreviacion == "PECSPR_PLX"
+          })
+          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 7;
         }
         //delete ctrl.trabajoGrado.documentoEscrito.Id
@@ -863,31 +902,31 @@ angular.module('poluxClienteApp')
         var mensajeConfirmacion;
         var mensajeSuccess;
         var workspace;
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
-          ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) {
+        let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
+        })
+        if (estadoTrabajoGrado.CodigoAbreviacion == "AMO_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASMO_PLX") {
           descripcionDocumento = "Versión nueva del anteproyecto";
           titleConfirmacion = "CORREGIR_ANTEPROYECTO.CONFIRMACION";
           mensajeConfirmacion = "CORREGIR_ANTEPROYECTO.MENSAJE_CONFIRMACION";
           mensajeSuccess = "CORREGIR_ANTEPROYECTO.ANTEPROYECTO_ACTUALIZADO";
           workspace = 'Anteproyectos';
         }
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
-          ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
-          ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 22) {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "AVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "PECSPR_PLX") {
           descripcionDocumento = "Primera versión del trabajo de grado";
           titleConfirmacion = "PRIMERA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "PRIMERA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "PRIMERA_VERSION.TG_ACTUALIZADO";
           workspace = 'versiones_TG';
         }
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16) {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "MOD_PLX") {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
           mensajeSuccess = "NUEVA_VERSION.TG_ACTUALIZADO";
           workspace = 'versiones_TG';
         }
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 13) {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "EC_PLX") {
           descripcionDocumento = "Versión del trabajo de grado";
           titleConfirmacion = "NUEVA_VERSION.CONFIRMACION";
           mensajeConfirmacion = "NUEVA_VERSION.MENSAJE_CONFIRMACION";
@@ -895,7 +934,7 @@ angular.module('poluxClienteApp')
           workspace = 'versiones_TG';
         }
         // Para certificado de ARL
-        if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
           descripcionDocumento = "Certifiado de ARL de la pasantia";
           titleConfirmacion = "ARL.CONFIRMACION";
           mensajeConfirmacion = "ARL.MENSAJE_CONFIRMACION";
@@ -916,7 +955,11 @@ angular.module('poluxClienteApp')
               ctrl.cargandoActualizarTg = true;
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {
                 //Actualiza el documento
-                if (estadoTg == 6 || estadoTg == 11 || estadoTg == 13 || estadoTg == 16) {
+                let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+                  return estTrGr.Id == estadoTg
+                })
+                var estadosValidos = ["AMO_PLX", "ASMO_PLX", "EC_PLX", "MOD_PLX"]
+                if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)     
                   var descripcion;
                   var fileBase64 ;
@@ -941,7 +984,8 @@ angular.module('poluxClienteApp')
                   })  
                 }
                 //Si es primera versión crea el documento
-                if (estadoTg == 5 || estadoTg == 10 || estadoTg == 21 || estadoTg == 22) {
+                estadosValidos = ["AVI_PLX", "ASVI_PLX", "PAEA_PLX", "PECSPR_PLX"]
+                if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //Se carga el documento con el gestor documental
                   var fileBase64 ;
                   var data = [];
@@ -979,7 +1023,7 @@ angular.module('poluxClienteApp')
                  // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
                 }
               }
-              functionDocument(ctrl.trabajoGrado.EstadoTrabajoGrado.Id, ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace)
+              functionDocument(ctrl.trabajoGrado.EstadoTrabajoGrado, ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace)
                 //nuxeoClient.createDocument(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace, undefined)
                 .then(function(respuestaCargarDocumento) {
                   ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
