@@ -336,7 +336,7 @@ angular.module('poluxClienteApp')
                         "Resumen": resumen,
                         "Enlace": enlace,
                         "IdTipoDocumento": {
-                            "Id": 76,
+                            "Id": 68,
                             "IdCategoria": { //puede ser nulo
                                 "Id": 1
                             }

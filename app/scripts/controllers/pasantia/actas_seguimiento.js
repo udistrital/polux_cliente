@@ -160,7 +160,7 @@ angular.module('poluxClienteApp')
         //Se buscan los documentos de tipo acta de seguimiento
         var defer = $q.defer();
         var parametrosActas = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:75,TrabajoGrado:" + trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:67,TrabajoGrado:" + trabajoGrado.Id,
           limit: 0
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
@@ -259,7 +259,7 @@ angular.module('poluxClienteApp')
             function (base64) {                   
              fileBase64 = base64;
           data = [{
-           IdTipoDocumento: 75, //id tipo documento de documentos_crud
+           IdTipoDocumento: 67, //id tipo documento de documentos_crud
            nombre: nombreDoc,// nombre formado por el nombre de documento
 
            metadatos: {
@@ -282,7 +282,7 @@ angular.module('poluxClienteApp')
                 Enlace: URL,
                 Resumen: nombreDoc,
                 //Tipo de documento 2, que es el que corresponde a acta de seguimiento
-                TipoDocumentoEscrito: 75
+                TipoDocumentoEscrito: 67
               }
             }
             poluxRequest.post("tr_registrar_acta_seguimiento", {
