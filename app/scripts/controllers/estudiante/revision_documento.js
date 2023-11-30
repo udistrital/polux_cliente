@@ -207,10 +207,10 @@ angular.module('poluxClienteApp')
           trabajoGrado.EstadoTrabajoGrado.Id == 11 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 21 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 22) {
-          ctrl.tipoDocumento = 76;
+          ctrl.tipoDocumento = 68;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 13) {
-          ctrl.tipoDocumento = 76;
+          ctrl.tipoDocumento = 68;
         }
         if (trabajoGrado.EstadoTrabajoGrado.Id == 14 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 15 ||
@@ -218,7 +218,7 @@ angular.module('poluxClienteApp')
           trabajoGrado.EstadoTrabajoGrado.Id == 17 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 18 ||
           trabajoGrado.EstadoTrabajoGrado.Id == 19) {
-          ctrl.tipoDocumento = 76;
+          ctrl.tipoDocumento = 68;
         }
         return $.param({
           query: "DocumentoEscrito.TipoDocumentoEscritod:" + ctrl.tipoDocumento + "," +
@@ -600,7 +600,7 @@ angular.module('poluxClienteApp')
                       function (base64) {                 
                        fileBase64 = base64;
                     data = [{
-                     IdTipoDocumento: 76, //id tipo documento de documentos_crud
+                     IdTipoDocumento: 68, //id tipo documento de documentos_crud
                      nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
                      metadatos: {
                        NombreArchivo: ctrl.trabajoGrado.Titulo+": "+ctrl.codigoEstudiante,
@@ -797,7 +797,7 @@ angular.module('poluxClienteApp')
           ctrl.trabajoGrado.EstadoTrabajoGrado = {
             Id: 4
           };
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 76;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 68;
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
           ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10 ||
@@ -805,19 +805,19 @@ angular.module('poluxClienteApp')
           ctrl.trabajoGrado.EstadoTrabajoGrado = {
             Id: 13
           };
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 76;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 68;
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16) {
           ctrl.trabajoGrado.EstadoTrabajoGrado = {
             Id: 15
           };
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 76;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 68;
         }
         if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21) {
           ctrl.trabajoGrado.EstadoTrabajoGrado = {
             Id: 22
           };
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 76;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 68;
         }
         //delete ctrl.trabajoGrado.documentoEscrito.Id
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
@@ -927,7 +927,7 @@ angular.module('poluxClienteApp')
                       function (base64) {                   
                        fileBase64 = base64;
                     data = [{
-                     IdTipoDocumento: 76, //id tipo documento de documentos_crud
+                     IdTipoDocumento: 68, //id tipo documento de documentos_crud
                      nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
                      file:  fileBase64,
                      metadatos: {
@@ -950,7 +950,7 @@ angular.module('poluxClienteApp')
                       function (base64) {
                        fileBase64 = base64;
                     data = [{
-                     IdTipoDocumento: 76, //id tipo documento de documentos_crud
+                     IdTipoDocumento: 68, //id tipo documento de documentos_crud
                      nombre: titulo ,// nombre formado por el titulo
                      metadatos: {
                        NombreArchivo: titulo,

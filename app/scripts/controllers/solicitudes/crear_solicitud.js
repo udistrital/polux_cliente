@@ -1849,7 +1849,7 @@ angular.module('poluxClienteApp')
                     function (base64) {
                       fileBase64 = base64;
                       data = [{
-                      IdTipoDocumento: 76, //id tipo documento de documentos_crud
+                      IdTipoDocumento: 68, //id tipo documento de documentos_crud
                       nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
                       metadatos: {
                         NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
@@ -1948,7 +1948,7 @@ angular.module('poluxClienteApp')
             ctrl.ModalidadTipoSolicitud = 75;
           }
           if(ctrl.ModalidadTipoSolicitud === 46){
-            ctrl.ModalidadTipoSolicitud = 76;
+            ctrl.ModalidadTipoSolicitud = 68;
           }
           if(ctrl.ModalidadTipoSolicitud === 55){
             ctrl.ModalidadTipoSolicitud = 77;

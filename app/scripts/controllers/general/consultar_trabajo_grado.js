@@ -234,7 +234,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         //Se consulta el tipo de documento 6 que es acta de socialización
         var parametrosActaSocializacion = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:75,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:67,TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 1,
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
@@ -264,7 +264,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         //Se consulta el tipo de documento 6 que es acta de socialización
         var parametrosActaSocializacion = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:78,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:70,TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 1,
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
@@ -390,7 +390,7 @@ angular.module('poluxClienteApp')
         //Se buscan los documentos de tipo acta de seguimiento
         var defer = $q.defer();
         var parametrosActas = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:75,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:67,TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 0
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)

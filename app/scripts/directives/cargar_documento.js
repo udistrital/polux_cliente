@@ -67,7 +67,7 @@ angular.module('poluxClienteApp')
             function (base64) {
               fileBase64 = base64;
               data = [{
-                IdTipoDocumento: 75, //id tipo documento de documentos_crud
+                IdTipoDocumento: 67, //id tipo documento de documentos_crud
                 nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
 
                 metadatos: {
@@ -120,10 +120,10 @@ angular.module('poluxClienteApp')
               "Enlace": url ,
               //"Resumen":ctrl.documento.resumen,
               "Resumen": "Acta de consejo de carrera del proyecto curricular",
-              "TipoDocumentoEscrito": 75,
+              "TipoDocumentoEscrito": 67,
             };
             if ($scope.modalidad.CodigoAbreviacion == "EAPOS") {
-              documento.TipoDocumentoEscrito = 75
+              documento.TipoDocumentoEscrito = 67
               documento.Resumen = "Certificado de cumplimiento"
             }
             console.log("DOC ", documento)

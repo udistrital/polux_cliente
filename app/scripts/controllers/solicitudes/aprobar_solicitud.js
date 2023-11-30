@@ -1184,15 +1184,15 @@ angular.module('poluxClienteApp')
                   "Titulo": tempTrabajo.Titulo,
                   "Enlace": tempTrabajo.Enlace,
                   "Resumen": tempTrabajo.Resumen,
-                  "TipoDocumentoEscrito": 76
+                  "TipoDocumentoEscrito": 68
                 }
                 //SI la modalidad es la de producción academica se sube de una vez como propuesta el documento
                 if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 8) {
-                  data_propuesta.TipoDocumentoEscrito = 76;
+                  data_propuesta.TipoDocumentoEscrito = 68;
                 }
                 //SI la modalidad es la de creación sube de una vez como propuesta el documento
                 if (ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad.Id == 6) {
-                  data_propuesta.TipoDocumentoEscrito = 76;
+                  data_propuesta.TipoDocumentoEscrito = 68;
                 }
                 var data_documento_tg = {
                   "TrabajoGrado": {
@@ -1593,7 +1593,7 @@ angular.module('poluxClienteApp')
                 Enlace: ctrl.docPropuestaFinal,
                 Resumen: "Documento para revisión final del trabajo de grado",
                 //Tipo documento 5 para revisión final
-                TipoDocumentoEscrito: 76
+                TipoDocumentoEscrito: 68
               };
 
               var data_revision = {
@@ -1758,7 +1758,7 @@ angular.module('poluxClienteApp')
             function (base64) {
               fileBase64 = base64;
               data = [{
-                IdTipoDocumento: 75, //id tipo documento de documentos_crud
+                IdTipoDocumento: 67, //id tipo documento de documentos_crud
                 nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
 
                 metadatos: {
@@ -1971,7 +1971,7 @@ angular.module('poluxClienteApp')
           sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
 
           var parametrosDocumentos = $.param({
-            query: "TipoDocumentoEscrito:76" + sql,
+            query: "TipoDocumentoEscrito:68" + sql,
             //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
             limit: 0
           });
@@ -2152,7 +2152,7 @@ angular.module('poluxClienteApp')
               if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 7) {
                 modalidad = 46;
                 var parametrosSolicitud = $.param({
-                  query: "Id:" + 76,
+                  query: "Id:" + 68,
                 });
               }
               if (parametro.ModalidadTipoSolicitud.Modalidad.Id === 8) {
@@ -2562,7 +2562,7 @@ angular.module('poluxClienteApp')
 
                 fileBase64 = base64;
                 data = [{
-                  IdTipoDocumento: 78, //id tipo documento de documentos_crud
+                  IdTipoDocumento: 70, //id tipo documento de documentos_crud
                   nombre: "Certificado Unidad Extension solicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
 
                   metadatos: {
