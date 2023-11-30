@@ -82,15 +82,15 @@ angular.module('poluxClienteApp')
                 var nombreNodo = "";
                 var nombreHijo = "";
                   switch (tipoDocumento) {
-                    case 3:
+                    case 76:
                       nombreNodo = $translate.instant('ANTEPROYECTO');
                       nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO');
                       break;
-                    case 4:
+                    case 76:
                       nombreNodo = $translate.instant('TRABAJO_GRADO');
                       nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
                       break;
-                    case 5:
+                    case 76:
                       nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
                       nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                       break;
@@ -142,15 +142,15 @@ angular.module('poluxClienteApp')
           var promesasDocumentos = [];
           if ($scope.veranteproyecto) {
             //Tipo de documento 3
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 3));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 76));
           }
           if ($scope.verproyecto) {
             //Tipo de documento 4
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 4));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 76));
           }
           if ($scope.verproyectorevision) {
             //Tipo de documento 5
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 5));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 76));
           }
           $q.all(promesasDocumentos)
             .then(function () {

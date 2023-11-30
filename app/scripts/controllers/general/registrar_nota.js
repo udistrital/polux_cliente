@@ -365,7 +365,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+          query: "DocumentoEscrito.TipoDocumentoEscrito:76," +
             "TrabajoGrado.Id:" +
             idTrabajoGrado,
           limit: 1
@@ -484,7 +484,7 @@ angular.module('poluxClienteApp')
                   function (base64) {                   
                    fileBase64 = base64;
                 data = [{
-                 IdTipoDocumento: 18, //id tipo documento de documentos_crud
+                 IdTipoDocumento: 75, //id tipo documento de documentos_crud
                  nombre: nombreDocumento ,// nombre formado por el acta del trabajo y el id de trabajo
                
                  metadatos: {
@@ -503,7 +503,7 @@ angular.module('poluxClienteApp')
                     Titulo: nombreDocumento,
                     Resumen: descripcionDocumento,
                     Enlace: URL,
-                    TipoDocumentoEscrito: 6, //Para acta de sustentación
+                    TipoDocumentoEscrito: 75, //Para acta de sustentación
                   };
                   defer.resolve(dataRegistrarNota);                                         
                   nuxeoMidRequest.post('workflow?docID=' + URL, null)
