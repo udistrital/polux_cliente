@@ -221,7 +221,7 @@ angular.module('poluxClienteApp')
           ctrl.tipoDocumento = 68;
         }
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscritod:" + ctrl.tipoDocumento + "," +
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + ctrl.tipoDocumento + "," +
             "TrabajoGrado.Id:" +
             trabajoGrado.Id,
           limit: 1
