@@ -151,22 +151,12 @@ angular.module('poluxClienteApp')
                  */
                 ctrl.getDocument = function (uid) {
                     if (uid) {
-                         //  obtener un documento por la id 
-                        //gestorDocumentalMidRequest.get('/document/'+uid).then(function (response) {
-                        /* nuxeoClient.getDocument(uid)
-                            .then(function (documento) {
-                                ctrl.loadingVersion = false;
-                                window.open(documento.url);
-                            })
-                            */
                             gestorDocumentalMidRequest.get('/document/'+uid).then(function (response) {  
-                               
                                 ctrl.loadingVersion = false;
                                   var varia = utils.base64ToArrayBuffer(response.data.file);
                                   var file = new Blob([varia], {type: 'application/pdf'});
                                   var fileURL = URL.createObjectURL(file);
                                   window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-                                
                            })
                             .catch(function (error) {
                                 ctrl.loadingVersion = false;
@@ -178,24 +168,6 @@ angular.module('poluxClienteApp')
                             });
                     }
                 }
-
-
-                /*ctrl.postrev=function(){
-                  var revisionp ={
-                    "IdDocumentoTg": {Id: 1},
-                    "IdVinculacionDocente":{Id: 2},
-                    "NumeroRevision": 2,
-                    "Estado": "pendiente",
-                    "FechaRecepcion": "2016-10-17T19:00:00-05:00",
-                    "FechaRevision": "0001-01-01T00:00:00Z"
-                  };
-                  poluxRequest.postRevision(revisionp);
-
-                };*/
-
-                //ctrl.correcciones=[];
-                //ctrl.fecha= new Date();
-                //ctrl.agregarpag=false;
                 ctrl.verpag = function (pag) {
                     $scope.paginaset = pag;
                 };

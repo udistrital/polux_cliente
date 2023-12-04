@@ -14,6 +14,7 @@
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/parametrosService.service:parametrosRequest
  * @property {String} documentoDocente Valor que carga el documento del docente en sesión
  * @property {String} mensajeCargandoProyectos Mensaje que aparece durante la carga de los proyectos de grado
  * @property {Boolean} cargandoProyectos Indicador que maneja el periodo de consulta de los proyectos de grado
@@ -31,7 +32,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('DocenteTgsRevisionDocumentoCtrl',
-    function($q, $scope, $translate, academicaRequest, notificacionRequest,poluxRequest, token_service) {
+    function($q, $scope, $translate, academicaRequest, notificacionRequest,poluxRequest, token_service, parametrosRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "51551021";
@@ -40,6 +41,10 @@ angular.module('poluxClienteApp')
       //token_service.token.role.push("DOCENTE");
       //ctrl.documentoDocente = token_service.token.documento;
 
+      ctrl.EstadoTrabajoGrado = [];
+      ctrl.RolTrabajoGrado = [];
+      ctrl.Modalidad = [];
+      ctrl.EstadoRevision = [];
       ctrl.documentoDocente = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
@@ -83,11 +88,37 @@ angular.module('poluxClienteApp')
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosVinculacionTrabajoGrado = function() {
+
+        var estadosValidos = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "ASNV_PLX", "EC_PLX", "PR_PLX", "ER_PLX",
+                            "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX", "PAEA_PLX", "PECSPR_PLX"];
+        var query = "TrabajoGrado.EstadoTrabajoGrado.in:";
+        var guardaPrimero = false;
+        ctrl.EstadoTrabajoGrado.forEach(estadoTrGr => {
+          if (estadosValidos.includes(estadoTrGr.CodigoAbreviacion)) {
+            if (guardaPrimero) {
+              query += "|";
+            } else {
+              guardaPrimero = true;
+            }
+            query += estadoTrGr.Id.toString();
+          }
+        })
+        var rolesValidos = ["DIRECTOR_PLX", "CODIRECTOR_PLX"]
+        query += ",RolTrabajoGrado.in:"
+        var guardaSegundo = false;
+        ctrl.RolTrabajoGrado.forEach(rolTrGr => {
+          if (rolesValidos.includes(rolTrGr.CodigoAbreviacion)) {
+            if (guardaSegundo) {
+              query += "|";
+            } else {
+              guardaSegundo = true;
+            }
+            query += rolTrGr.Id.toString();
+          }
+        })
+        query += ",Activo:true,Usuario:" + ctrl.documentoDocente
         return $.param({
-          query: "TrabajoGrado.EstadoTrabajoGrado.Id.in:1|4|5|6|8|9|10|11|12|13|14|15|16|17|18|19|21|22," +
-            "RolTrabajoGrado.Id.in:1|4," +
-            "Activo:True,Usuario:" +
-            ctrl.documentoDocente,
+          query: query,
           limit: 0
         });
       }
@@ -129,7 +160,36 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.efectuarConsultasIniciales = function() {
+      ctrl.efectuarConsultasIniciales = async function() {
+
+        var parametroEstadoTrabajoGrado = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroEstadoTrabajoGrado).then(function (responseEstadoTrabajoGrado) {
+          ctrl.EstadoTrabajoGrado = responseEstadoTrabajoGrado.data.Data;
+        })
+        var parametroRolTrabajoGrado = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:ROL_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroRolTrabajoGrado).then(function (responseRolTrGr) {
+          ctrl.RolTrabajoGrado = responseRolTrGr.data.Data;
+        })
+        var parametroModalidad = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroModalidad).then(function (responseModalidad) {
+          ctrl.Modalidad = responseModalidad.data.Data;
+        })
+        var parametroEstadoRevision = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:ESTREV_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroEstadoRevision).then(function (responseEstadoRevision) {
+          ctrl.EstadoRevision = responseEstadoRevision.data.Data;
+        })
         ctrl.cargandoProyectos = true;
         ctrl.errorCargandoProyectos = false;
         ctrl.consultarDocenteTrabajoGrado()
@@ -139,6 +199,14 @@ angular.module('poluxClienteApp')
               .then(function(respuestaVinculaciones) {
                 ctrl.cargandoProyectos = false;
                 ctrl.vinculaciones = respuestaVinculaciones;
+                ctrl.vinculaciones.forEach(vinculacion => {
+                  vinculacion.TrabajoGrado.NombreModalidad = ctrl.Modalidad.find(mod => {
+                    return mod.Id == vinculacion.TrabajoGrado.Modalidad
+                  });
+                  vinculacion.NombreRolTrabajoGrado = ctrl.RolTrabajoGrado.find(rolTrGr => {
+                    return rolTrGr.Id == vinculacion.RolTrabajoGrado
+                  });
+                });
               })
               .catch(function(excepcionVinculaciones) {
                 ctrl.cargandoProyectos = false;
@@ -232,6 +300,11 @@ angular.module('poluxClienteApp')
           .then(function(respuestaRevisionesTrabajoGrado) {
             if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado.data;
+              ctrl.revisionesTrabajoGrado.forEach(revision => {
+                revision.EstadoRevisionNombre = ctrl.EstadoRevision.find(estRev => {
+                  return estRev.Id == revision.EstadoRevisionTrabajoGrado
+                });
+              });
             }
             deferred.resolve($translate.instant("ERROR.SIN_REVISIONES"));
           })

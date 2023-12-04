@@ -43,6 +43,7 @@ angular.module('poluxClienteApp')
       ctrl.EstadoTrabajoGrado = [];
       ctrl.EstadoEstudianteTrabajoGrado = [];
       ctrl.EstadoRevisionTrabajoGrado = [];
+      ctrl.RolTrabajoGrado = [];
       ctrl.codigoEstudiante = token_service.getAppPayload().appUserDocument;
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
       ctrl.mensajeCargandoActualizarTg = $translate.instant("LOADING.ACTUALIZANDO_TRABAJO_GRADO");
@@ -155,7 +156,11 @@ angular.module('poluxClienteApp')
           .then(function(respuestaVinculaciones) {
             if (Object.keys(respuestaVinculaciones.data[0]).length > 0) {
               angular.forEach(respuestaVinculaciones.data, function(vinculacionTrabajoGrado) {
-                if (vinculacionTrabajoGrado.RolTrabajoGrado.Id == 2) {
+                let rolTrabajoGrado = ctrl.RolTrabajoGrado.find(rolTrGr => {
+                  return rolTrGr.Id == vinculacionTrabajoGrado.RolTrabajoGrado
+                })
+                vinculacionTrabajoGrado.rolAux = rolTrabajoGrado
+                if (rolTrabajoGrado.CodigoAbreviacion == "DIR_EXTERNO_PLX") {
                   conjuntoProcesamientoDocentes.push(ctrl.consultarDirectorExterno(vinculacionTrabajoGrado));
                 } else {
                   conjuntoProcesamientoDocentes.push(ctrl.consultarDocenteTrabajoGrado(vinculacionTrabajoGrado));
@@ -164,6 +169,7 @@ angular.module('poluxClienteApp')
               $q.all(conjuntoProcesamientoDocentes)
                 .then(function(resultadoDelProcesamiento) {
                   trabajoGrado.vinculaciones = respuestaVinculaciones.data.filter(function(vinculacion) { return vinculacion.Nombre });
+                  console.log(trabajoGrado.vinculaciones)
                   deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDelProcesamiento) {
@@ -373,6 +379,13 @@ angular.module('poluxClienteApp')
         await parametrosRequest.get("parametro/?", parametroEstadoRevisionTrabajoGrado).then(function (responseEstRevTrGr) {
           ctrl.EstadoRevisionTrabajoGrado = responseEstRevTrGr.data.Data;
         })
+        var parametroRolTrabajoGrado = $.param({
+          query: "TipoParametroId__CodigoAbreviacion:ROL_TRG",
+          limit: 0
+        });
+        await parametrosRequest.get("parametro/?", parametroRolTrabajoGrado).then(function (responseRolTrGr) {
+          ctrl.RolTrabajoGrado = responseRolTrGr.data.Data;
+        })
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
             console.log("ESTUDIANMTE ", estudianteConTrabajoDeGrado)
@@ -433,6 +446,12 @@ angular.module('poluxClienteApp')
               ctrl.consultarRevisionesTrabajoGrado()
                 .then(function(respuestaRevisionesTrabajoGrado) {
                   ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
+                  ctrl.revisionesTrabajoGrado.forEach(revision => {
+                    revision.EstadoRevisionNombre = ctrl.EstadoRevisionTrabajoGrado.find(estRevTrGr => {
+                      return estRevTrGr.Id == revision.EstadoRevisionTrabajoGrado
+                    });
+                  });
+                  console.log(ctrl.revisionesTrabajoGrado)
                 })
                 .catch(function(excepcionRevisionesTrabajoGrado) {
                   ctrl.errorRevisionesTrabajoGrado = true;
@@ -489,6 +508,7 @@ angular.module('poluxClienteApp')
                 let estadoRevisionTrabajoGrado = ctrl.EstadoRevisionTrabajoGrado.find(estRevTrGr => {
                   return estRevTrGr.Id == revision.EstadoRevisionTrabajoGrado
                 })
+                console.log(ctrl.EstadoRevisionTrabajoGrado)
                 if (estadoRevisionTrabajoGrado.CodigoAbreviacion == "PENDIENTE_PLX") {
                   ctrl.revisionSolicitada = true;
                 }
@@ -546,7 +566,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name verDocumento
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Permite ver un documento que sea versión de un trabajo de grado.
        * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para realizar gestión documental.
        * @param {Object} doc Documento que se va a descargar
@@ -602,7 +622,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name subirNuevoDocumento
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal.
        * Funciona con: actualizarTrabajoGrado y actualizarContenidoRevisiones
        * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para realizar gestión documental.
@@ -625,14 +645,14 @@ angular.module('poluxClienteApp')
               //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
              // nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, ctrl.nuevaVersionTrabajoGrado)
              //   .then(function(respuestaCargarDocumento) {
-                  // Upload de nueva version 
+                  // Upload de nueva version
                   var descripcion;
                   var fileBase64 ;
                   var data = [];
                   var URL = "";
                     descripcion = "Versión nueva del trabajo de grado";
                     utils.getBase64(ctrl.nuevaVersionTrabajoGrado).then(
-                      function (base64) {                 
+                      function (base64) {
                        fileBase64 = base64;
                     data = [{
                      IdTipoDocumento: 5, //id tipo documento de documentos_crud
@@ -641,12 +661,12 @@ angular.module('poluxClienteApp')
                        NombreArchivo: ctrl.trabajoGrado.Titulo+": "+ctrl.codigoEstudiante,
                        Tipo: "Archivo",
                        Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
-                     }, 
+                     },
                      descripcion:descripcion,
                      file:  fileBase64,
-                    }]  
+                    }]
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
-                      URL =  response.data.res.Enlace 
+                      URL =  response.data.res.Enlace
                       ctrl.actualizarTrabajoGrado(URL).then(function(respuestaActualizarTg) {
                         console.log(respuestaActualizarTg.statusText)
                         if (respuestaActualizarTg.statusText === "OK") {
@@ -692,7 +712,7 @@ angular.module('poluxClienteApp')
                         );
                       });
                   })
-                })  
+                })
                 .catch(function(excepcionCargarDocumento) {
                   ctrl.cargandoTrabajoGrado = false;
                   swal(
@@ -709,7 +729,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name solicitarRevision
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Enseña la ventana emergente que le permite al estudiante solicitar una nueva revisión.
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
@@ -722,7 +742,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name registrarRevision
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Pide la confirmación para el registro de la revisión y registra la revisión solicitada en la base de datos.
        * Funciona con: consultarRevisionesTrabajoGrado.
        * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para operar sobre la base de datos del proyecto.
@@ -743,12 +763,13 @@ angular.module('poluxClienteApp')
           })
           .then(function(confirmacionDelUsuario) {
             if (confirmacionDelUsuario) {
+              let estadoRevisionTrabajoGrado = ctrl.EstadoRevisionTrabajoGrado.find(estRevTrGr => {
+                return estRevTrGr.CodigoAbreviacion == "PENDIENTE_PLX"
+              })
               var nuevaRevision = {
                 NumeroRevision: (angular.isUndefined(ctrl.revisionesTrabajoGrado)) ? 1 : ctrl.revisionesTrabajoGrado.length + 1,
                 FechaRecepcion: new Date(),
-                EstadoRevisionTrabajoGrado: {
-                  Id: 1
-                },
+                EstadoRevisionTrabajoGrado: estadoRevisionTrabajoGrado.Id,
                 DocumentoTrabajoGrado: {
                   Id: ctrl.trabajoGrado.documentoTrabajoGrado
                 },
@@ -768,10 +789,8 @@ angular.module('poluxClienteApp')
                         var Atributos={
                           rol:'DOCENTE',
                       }
-                      notificacionRequest.enviarCorreo('Petición de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
-
+                      notificacionRequest.enviarCorreo('Petición de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
                       //  notificacionRequest.enviarCorreo('Petición de revisión',Atributos,[ctrl.docenteRevision.Id],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud');                      		
-           
                       });
                     });
                   swal(
@@ -806,7 +825,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name actualizarDocumentoTg
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
-       * @description 
+       * @description
        * Permite mostrar el contenido del modal que habilita subir el documento nuevo y actualizar el trabajo de grado
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
@@ -967,7 +986,7 @@ angular.module('poluxClienteApp')
                   var URL = "";
                     descripcion = "Versión nueva del trabajo de grado";
                     utils.getBase64(fileModel).then(
-                      function (base64) {                   
+                      function (base64) {
                        fileBase64 = base64;
                     data = [{
                      IdTipoDocumento: 19, //id tipo documento de documentos_crud

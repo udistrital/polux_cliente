@@ -12,9 +12,10 @@
  * @param {number} paginaset Página del documento que se visualiza en directiva {@link poluxClienteApp.directive:verDocumento verDocumento}.
  * @param {number} revisionestado Estado de la revisión que se muestra.
  * @param {string} docdocente Documento del docente que revisan el documento.
+ * @param {Object} estadorev Arreglo de estados de revisión de los trabajos de grado.
  */
 angular.module('poluxClienteApp')
-    .directive('revisionDocumento', function (poluxRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient,notificacionRequest) {
+    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient,notificacionRequest) {
         return {
             restrict: "E",
             scope: {
@@ -22,7 +23,8 @@ angular.module('poluxClienteApp')
                 paginadoc: '=?',
                 paginaset: '=?',
                 revisionestado: '=?',
-                docdocente: '='
+                docdocente: '=',
+                estadorev: '=?'
             },
             templateUrl: "views/directives/documento/revision_documento.html",
             /**
@@ -61,7 +63,6 @@ angular.module('poluxClienteApp')
                     $scope.paginadoc = $scope.paginadoc;
                 });
 
-                
                 ctrl.correcciones = [];
 
                 /**
@@ -70,13 +71,12 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {undefined} undefined No recibe ningún parametro.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite la data de la revisión y las correcciones.
                      */
                 poluxRequest.get("revision_trabajo_grado", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function (response) {
-                    
                     ctrl.revision = response.data[0];
                 });
                 poluxRequest.get("correccion", $.param({
@@ -97,7 +97,7 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {undefined} undefined No recibe ningún parametro.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite clonar un objeto.
                      */
                 ctrl.copyObject = function (Obj) {
@@ -111,11 +111,10 @@ angular.module('poluxClienteApp')
                      * @param {object} correc Corrección que se va a editar.
                      * @param {object} temp Corrección temporal editada.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite clonar un objeto.
                      */
                 ctrl.editar = function (correc, temp) {
-                    
                     for (var key in correc) {
                         correc[key] = temp[key];
                     }
@@ -153,7 +152,7 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {undefined} undefined No recibe ningún parametro.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite agregar una correción al arreglo de correcciones.
                      */
                 ctrl.agregar_correccion = function () {
@@ -173,9 +172,9 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {object} correccion Corrección que se va a eliminar.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite eliminar correcciones.
-                     */                
+                     */
                 ctrl.eliminar_correccion = function (correccion) {
                     if (correccion.Id != null) {
                         ctrl.correcciones_eliminadas.push(correccion);
@@ -189,7 +188,7 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {undefined} undefined No recibe ningún parametro.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Cancela la revisión actual del documento.
                      */
                 ctrl.cancelar_revisado = function () {
@@ -213,38 +212,11 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {undefined} undefined No recibe ningún parametro.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite guardar la corrección y los comentarios llamando la función registrarRevisión, si es necesario carga
                      * el documento de revisiones en {@link services/poluxService.service:nuxeoClient nuxeoClient}.
                      */
                 ctrl.guardar_revision = function (accion) {
-                    /*switch (accion) {
-                        case "borrador":
-                            
-                            if (ctrl.revision.EstadoRevisionTrabajoGrado.Id != 2) {
-                                ctrl.revision.EstadoRevisionTrabajoGrado.Id=2;
-                                poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
-                            }
-                            break;
-                        case "finalizar":
-                            ctrl.revision.EstadoRevisionTrabajoGrado.Id = 3;
-                            ctrl.revision.FechaRevision = new Date();
-                            poluxRequest.put("revision_trabajo_grado", ctrl.revision.Id, ctrl.revision);
-                            $scope.revisionestado = ctrl.revision.Estado;
-                            break;
-                    }
-                    for (var i = 0; i < ctrl.correcciones.length; i++) {
-                        if (ctrl.correcciones[i].Cambio == "nuevo") {
-                            
-                            poluxRequest.post("correccion", ctrl.correcciones[i]);
-                        }
-                        if (ctrl.correcciones[i].Cambio == "editado") {
-                            poluxRequest.put("correccion", ctrl.correcciones[i].Id, ctrl.correcciones[i]);
-                        }
-                    }
-                    for (var j = 0; j < ctrl.correcciones_eliminadas.length; j++) {
-                        poluxRequest.delete("correccion", ctrl.correcciones_eliminadas[j].Id);
-                    }*/
                     switch (accion) {
                         case "borrador":
                             break;
@@ -266,9 +238,9 @@ angular.module('poluxClienteApp')
                                             var descripcion;
                                             var fileBase64 ;
                                             var data = [];
-                                            var URL = "";    
+                                            var URL = "";
                                             utils.getBase64(ctrl.documentModel).then(
-                                                function (base64) {                   
+                                                function (base64) {
                                                  fileBase64 = base64;
                                               data = [{
                                                IdTipoDocumento: 5, //id tipo documento de documentos_crud
@@ -279,11 +251,10 @@ angular.module('poluxClienteApp')
                                                  NombreArchivo: ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,
                                                  Tipo: "Archivo",
                                                  Observaciones: "correciones"
-                                               }, 
+                                               },
                                                descripcion:"Correcciones sobre el proyecto",
                                                file:  fileBase64,
-                                              }] 
-                              
+                                              }]
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
                                                 ctrl.correcciones.push({
                                                         Observacion: response.data.res.Enlace,
@@ -293,22 +264,19 @@ angular.module('poluxClienteApp')
                                                             Id: $scope.revisionid
                                                         },
                                                         Documento: true
-                                                })  
-                                                ctrl.registrarRevision();                                                                  
+                                                })
+                                                ctrl.registrarRevision();
                                                 nuxeoMidRequest.post('workflow?docID=' + URL, null)
                                                    .then(function (response) {
-                                                    console.log('nuxeoMid response: ',response) 
+                                                    console.log('nuxeoMid response: ',response)
                                                 }).catch(function (error) {
                                                   console.log('nuxeoMid error:',error)
                                                 })
                                                })
                                                 //  nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correciones", undefined)
                                                 //.then(function (respuestaCrearDocumento) {
-                                                
-                                                    
                                                // })
                                                 .catch(function (excepcionCrearDocumento) {
-                                                    
                                                     ctrl.cargandoRevision = false;
                                                     swal(
                                                         $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -317,9 +285,7 @@ angular.module('poluxClienteApp')
                                                     );
                                                 });
                                             //
-                                            })    
-
-                                         
+                                            })
                                         } else {
                                             ctrl.registrarRevision();
                                         }
@@ -335,7 +301,7 @@ angular.module('poluxClienteApp')
                      * @methodOf poluxClienteApp.directive:revisionDocumento.controller:revisionDocumentoCtrl
                      * @param {undefined} undefined No recibe ningún parametro.
                      * @returns {undefined} No retorna ningún valor.
-                     * @description 
+                     * @description
                      * Permite registrar la revisión con el servicio {@link services/poluxService.service:poluxRequest poluxRequest}.
                      */
                 ctrl.registrarRevision = function () {
@@ -344,7 +310,10 @@ angular.module('poluxClienteApp')
                         .then(function (informacionDocente) {
                             if (!angular.isUndefined(informacionDocente.data.docenteTg.docente)) {
                                 var nombreDocente = informacionDocente.data.docenteTg.docente[0].nombre;
-                                ctrl.revision.EstadoRevisionTrabajoGrado.Id = 3;
+                                let estadoRevTemp = $scope.estadorev.find(estRev => {
+                                    return estRev.CodigoAbreviacion == "FINALIZADA_PLX"
+                                  });
+                                ctrl.revision.EstadoRevisionTrabajoGrado = estadoRevTemp.Id;
                                 var fecha = new Date();
                                 ctrl.revision.FechaRevision = fecha;
                                 var comentarios = [];
@@ -361,7 +330,7 @@ angular.module('poluxClienteApp')
                                     Comentarios: comentarios
                                 }
                                 
-                                poluxRequest.post("tr_registrar_revision_tg", data_transaccion)
+                                poluxMidRequest.post("tr_registrar_revision_tg", data_transaccion)
                                     .then(function (respuestaRegistrarRevisionTg) {
                                         if (respuestaRegistrarRevisionTg.data[0] === "Success") {
                                             var Atributos={
@@ -395,6 +364,7 @@ angular.module('poluxClienteApp')
                                         ctrl.cargandoRevision = false;
                                     })
                             } else {
+                                console.log("FALLA 2")
                                 swal(
                                     $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                     $translate.instant("REGISTRAR_REVISION.ERROR"),
@@ -404,6 +374,7 @@ angular.module('poluxClienteApp')
                             }
                         })
                         .catch(function (excepcionInformacionDocente) {
+                            console.log("FALLA 1 ", excepcionInformacionDocente)
                             swal(
                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                 $translate.instant("REGISTRAR_REVISION.ERROR"),
@@ -411,39 +382,6 @@ angular.module('poluxClienteApp')
                             );
                             ctrl.cargandoRevision = false;
                         })
-                    /*
-                    if (ctrl.correcciones.length > 0) {
-                        poluxRequest.post("tr_registrar_revision_tg", data_transaccion)
-                            .then(function(respuestaRegistrarRevisionTg) {
-                                if (respuestaRegistrarRevisionTg.data[0] === "Success") {
-                                    swal(
-                                        $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
-                                        $translate.instant("REGISTRAR_REVISION.REGISTRADA"),
-                                        'success'
-                                    );
-                                    $route.reload();
-                                } else {
-                                    swal(
-                                        $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
-                                        $translate.instant(respuestaRegistrarRevisionTg.data[1]),
-                                        'warning'
-                                    );
-                                }
-                            })
-                            .catch(function(excepcionRegistrarRevisionTg) {
-                                swal(
-                                    $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
-                                    $translate.instant("REGISTRAR_REVISION.ERROR"),
-                                    'warning'
-                                );
-                            })
-                    } else {
-                        swal(
-                            $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
-                            $translate.instant("REGISTRAR_REVISION.AGREGAR_COMENTARIO"),
-                            'warning'
-                        );
-                    }*/
                 }
             },
             controllerAs: "d_revisionDocumento"
