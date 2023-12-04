@@ -16,6 +16,7 @@
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/parametrosService.service:parametrosRequest
+ * @requires services/documentoService.service:documentoRequest
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
  * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
@@ -36,7 +37,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConsultarTrabajoGradoCtrl',
-    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service, parametrosRequest) {
+    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service, parametrosRequest, documentoRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "79647592";
@@ -165,6 +166,16 @@ angular.module('poluxClienteApp')
             ctrl.Modalidades = responseModalidades.data.Data;
           });
 
+          var parametrosConsulta = $.param({
+            query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
+            limit: 0,
+          });
+    
+          await documentoRequest.get("tipo_documento", parametrosConsulta).then(function (responseTiposDocumento){
+            console.log("Tipos Documento:", responseTiposDocumento.data);
+            ctrl.TiposDocumento = responseTiposDocumento.data;
+          });
+
           resolve();
         });
       }
@@ -289,8 +300,12 @@ angular.module('poluxClienteApp')
       ctrl.cargarActaSocializacion = function() {
         var defer = $q.defer();
         //Se consulta el tipo de documento 6 que es acta de socialización
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "ACT_PLX"
+        });
+
         var parametrosActaSocializacion = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:6,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 1,
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
@@ -318,9 +333,13 @@ angular.module('poluxClienteApp')
        */
       ctrl.cargarCertificadoARL = function() {
         var defer = $q.defer();
+
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "DPAS_PLX"
+        });
         //Se consulta el tipo de documento 6 que es acta de socialización
         var parametrosActaSocializacion = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:7,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 1,
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActaSocializacion)
@@ -445,8 +464,13 @@ angular.module('poluxClienteApp')
       ctrl.getActas = function() {
         //Se buscan los documentos de tipo acta de seguimiento
         var defer = $q.defer();
+
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "ACT_PLX"
+        });
+
         var parametrosActas = $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:2,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 0
         });
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
