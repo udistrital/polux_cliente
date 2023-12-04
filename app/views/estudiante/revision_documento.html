@@ -46,8 +46,8 @@
 
         <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
           <div ng-repeat="revision in estudianteRevisionDoc.revisionesTrabajoGrado">
-            <ver-revision revisionid="revision.Id" autor="estudianteRevisionDoc.informacionAcademica.nombre" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente'"></ver-revision>
-            <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador' || revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente'">
+            <ver-revision revisionid="revision.Id" autor="estudianteRevisionDoc.informacionAcademica.nombre" paginaset="estudianteRevisionDoc.pagina2" ng-if="revision.EstadoRevisionNombre.CodigoAbreviacion != 'PENDIENTE_PLX'"></ver-revision>
+            <div ng-if="revision.EstadoRevisionNombre.CodigoAbreviacion == 'BORRADOR_PLX' || revision.EstadoRevisionNombre.CodigoAbreviacion == 'PENDIENTE_PLX'">
               <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'LA_REVISION_SE_ENCUENTRA' | translate}}</p>
             </div>
           </div>
@@ -59,7 +59,7 @@
       </div>
 
       <div class="panel panel-default">
-        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'AMO_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ASMO_PLX'">
           <div class="row row-centered">
             <label class="col-sm-12 control-label"> {{'CORREGIR_ANTEPROYECTO.INSTRUCCIONES_PREVIAS' | translate}} </label>
           </div>
@@ -69,7 +69,7 @@
           </div>
         </div>
 
-        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion =='MOD_PLX'">
           <div class="row row-centered">
             <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES_PREVIAS' | translate}} </label>
           </div>
@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'AVI_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ASVI_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PECSPR_PLX'">
           <div class="row row-centered">
             <label class="col-sm-12 control-label"> {{'PRIMERA_VERSION.INSTRUCCIONES_PREVIAS' | translate}} </label>
           </div>
@@ -89,7 +89,7 @@
           </div>
         </div>
 
-        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX'">
           <div class="row row-centered">
             <label class="col-sm-12 control-label"> {{'ARL.INSTRUCCIONES_PREVIAS' | translate}} </label>
           </div>
@@ -99,7 +99,7 @@
           </div>
         </div>
 
-        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 13">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'EC_PLX'">
           <div class="row row-centered">
             <label class="col-sm-12 control-label"> {{'NUEVA_VERSION.INSTRUCCIONES_PREVIAS' | translate}} </label>
           </div>
@@ -180,7 +180,7 @@
             <label class="col-sm-4 control-label"> {{'FORMULARIO_SOLICITAR_REVISION.SELECCIONAR_VINCULADO' | translate}} </label>
             <div class="col-sm-8">
               <select class="form-control" ng-model="estudianteRevisionDoc.docenteRevision" required>
-                <option ng-if="docente.RolTrabajoGrado.Id != 2 && docente.RolTrabajoGrado.Id != 3" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-value="docente"> {{docente.Nombre}} </option>
+                <option ng-if="docente.rolAux.CodigoAbreviacion != 'DIR_EXTERNO_PLX' && docente.rolAux.CodigoAbreviacion != 'EVALUADOR_PLX'" ng-repeat="docente in estudianteRevisionDoc.trabajoGrado.vinculaciones" ng-value="docente"> {{docente.Nombre}} </option>
               </select>
             </div>
           </div>
@@ -203,7 +203,7 @@
       <br>
     </div>
     <!--Para anteproyecto modificable-->
-    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'AMO_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ASMO_PLX'">
       <div class="panel-heading">
         {{'REVISAR_ANTEPROYECTO.OBSERVACIONES' | translate}}
       </div>
@@ -214,7 +214,7 @@
       </div>
     </div>
     <!--Para proyecto modificable-->
-    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'MOD_PLX'">
       <div class="panel-heading">
         {{'NUEVA_VERSION.OBSERVACIONES' | translate}}
       </div>
@@ -225,7 +225,7 @@
       </div>
     </div>
     <!--Para certificado de ARL-->
-    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX'">
       <div class="panel-heading">
         {{'ARL.OBSERVACIONES' | translate}}
       </div>
@@ -236,7 +236,7 @@
       </div>
     </div>
     <!--Para primera versión del documento-->
-    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'AVI_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ASVI_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PECSPR_PLX'">
       <div class="panel-heading">
         {{'PRIMERA_VERSION.OBSERVACIONES' | translate}}
       </div>
@@ -267,19 +267,19 @@
           <div class="row row-centered" ng-if="formularioSubirDocumento.$valid">
             <div class="col-sm-3 col-centered">
               <!--Para anteproyecto modificable-->
-              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 6 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 11">
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'AMO_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ASMO_PLX'">
                 <input type="submit" class="btn btn-success" value="{{'SUBIR_CORRECCIONES_ANTEPROYECTO'|translate}}">
               </div>
               <!--Para proyecto modificable-->
-              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 16">
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'MOD_PLX'">
                 <input type="submit" class="btn btn-success" value="{{'SUBIR_CORRECCIONES_PROYECTO'|translate}}">
               </div>
               <!--Para certificado ARL-->
-              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 21">
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX'">
                 <input type="submit" class="btn btn-success" value="{{'ARL.SUBIR'|translate}}">
               </div>
               <!--Para primera versión del documento-->
-              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 5 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 10 || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGrado.Id == 22">
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'AVI_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ASVI_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PECSPR_PLX'">
                 <input type="submit" class="btn btn-success" value="{{'PRIMERA_VERSION.SUBIR'|translate}}">
               </div>
             </div>
