@@ -2024,7 +2024,7 @@ angular.module('poluxClienteApp')
               detalle.respuesta = "JSON";
               angular.forEach(ctrl.estudiante.areas_elegidas, function(area) {
                 area.$$hashKey = undefined;
-                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(area);
+                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify({"Id":area.Id});
                 //detalle.respuesta = detalle.respuesta +"," + (area.Id+"-"+area.Nombre);
               });
               //detalle.respuesta = detalle.respuesta.substring(1);
