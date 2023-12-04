@@ -20,9 +20,9 @@
             <ui-select-match placeholder="{{'SELECCION_PROYECTO' | translate}}...">{{$select.selected.TrabajoGrado.Titulo}}</ui-select-match>
             <ui-select-choices repeat="proyecto in docenterevision.vinculaciones | filter: $select.search">
               <span ng-bind-html="proyecto.TrabajoGrado.Titulo | highlight: $select.search"></span>
-              (<span ng-bind-html="proyecto.TrabajoGrado.Modalidad.Nombre | highlight: $select.search"></span>)
+              (<span ng-bind-html="proyecto.TrabajoGrado.NombreModalidad.Nombre | highlight: $select.search"></span>)
                - {{'ROL' | translate}}:
-              <span ng-bind-html="proyecto.RolTrabajoGrado.Nombre | highlight: $select.search"></span>
+              <span ng-bind-html="proyecto.NombreRolTrabajoGrado.Nombre | highlight: $select.search"></span>
             </ui-select-choices>
           </ui-select>
         </div>
@@ -60,20 +60,20 @@
 
         <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">
           <div ng-repeat="revision in docenterevision.revisionesTrabajoGrado">
-            <div ng-if="revision.EstadoRevisionTrabajoGrado.Nombre == 'pendiente' || revision.EstadoRevisionTrabajoGrado.Nombre == 'borrador'">
+            <div ng-if="revision.EstadoRevisionNombre.CodigoAbreviacion == 'PENDIENTE_PLX' || revision.EstadoRevisionTrabajoGrado.Nombre == 'BORRADOR_PLX'">
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario == docenterevision.documentoDocente">
                 <div class="panel-body">
                   <div class="alert-warning">
                     <b>{{'AVISO_PDF' | translate}}</b>
                   </div>
                 </div>
-                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" docdocente="docenterevision.documentoDocente"/>
+                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" docdocente="docenterevision.documentoDocente" estadorev="docenterevision.EstadoRevision"/>
               </div>
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
                 <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>
               </div>
             </div>
-            <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionTrabajoGrado.Nombre != 'pendiente' && revision.EstadoRevisionTrabajoGrado.Nombre != 'borrador'"/>
+            <ver-revision revisionid="revision.Id" autor="docenterevision.nombreDelDocente" paginaset="docenterevision.pagina2" ng-if="revision.EstadoRevisionNombre.CodigoAbreviacion != 'PENDIENTE_PLX' && revision.EstadoRevisionNombre.CodigoAbreviacion != 'BORRADOR_PLX'"/>
           </div>
         </div>
       </div>
