@@ -15,6 +15,7 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/parametrosService.service:parametrosRequest
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
  * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
@@ -35,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConsultarTrabajoGradoCtrl',
-    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service) {
+    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service, parametrosRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "79647592";
@@ -112,6 +113,61 @@ angular.module('poluxClienteApp')
         displayName: $translate.instant('NOTA'),
         width: '30%',
       }];
+
+      //SE CONSULTAN LOS PARAMETROS USADOS
+      /**
+       * @ngdoc method
+       * @name getconsultarParametros
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta el servicio de {@link services/poluxService.service:parametrosRequest parametrosRequest} para extraer los datos necesarios
+       * @param {undefined} undefined No requiere parámetros
+       */
+      async function getconsultarParametros(){
+        return new Promise (async (resolve, reject) => {
+          var parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:ROL_TRG",
+            limit: 0,
+          });
+
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseRolesTrabajoGrado){
+            console.log("Rol trabajo Grado:", responseRolesTrabajoGrado.data.Data);
+            ctrl.RolesTrabajoGrado = responseRolesTrabajoGrado.data.Data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:EST_ESTU_TRG",
+            limit: 0,
+          });
+    
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
+            console.log("Estados Estudiante Trabajo Grado:", responseEstadosEstudianteTrabajoGrado.data.Data);
+            ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
+            limit: 0,
+          });
+    
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosTrabajoGrado){
+            console.log("Estados Trabajo Grado:", responseEstadosTrabajoGrado.data.Data);
+            ctrl.EstadosTrabajoGrado = responseEstadosTrabajoGrado.data.Data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
+            limit: 0,
+          });
+    
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseModalidades){
+            console.log("Modalidades:", responseModalidades.data.Data);
+            ctrl.Modalidades = responseModalidades.data.Data;
+          });
+
+          resolve();
+        });
+      }
 
       /**
        * @ngdoc method
@@ -461,12 +517,16 @@ angular.module('poluxClienteApp')
         var getNota = function(vinculado) {
           var defer = $q.defer();
           //SI es director externo o codirector
-          if (vinculado.RolTrabajoGrado.Id == 2 || vinculado.RolTrabajoGrado.Id == 4) {
+          let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
+            return data.Id == vinculado.RolTrabajoGrado
+          });
+
+          if (TipoSolicitudTemp.CodigoAbreviacion == "DIR_EXTERNO_PLX" || TipoSolicitudTemp.CodigoAbreviacion  == "CODIRECTOR_PLX") {
             vinculado.notaRegistrada = $translate.instant("ERROR.VINCULADO_NO_PUEDE_NOTA");
             defer.resolve();
           }
           //Si es director interno o evaluador
-          if (vinculado.RolTrabajoGrado.Id == 1 || vinculado.RolTrabajoGrado.Id == 3) {
+          if (TipoSolicitudTemp.CodigoAbreviacion  == "DIRECTOR_PLX" || TipoSolicitudTemp.CodigoAbreviacion  == "EVALUADOR_PLX") {
             var parametrosEvaluaciones = $.param({
               limit: 1,
               query: "VinculacionTrabajoGrado:" + vinculado.Id,
@@ -504,7 +564,10 @@ angular.module('poluxClienteApp')
               ctrl.trabajoGrado.Vinculados = responseVinculados.data;
               var promises = [];
               angular.forEach(ctrl.trabajoGrado.Vinculados, function(vinculado) {
-                if (vinculado.RolTrabajoGrado.Id === 2) {
+                let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
+                  return data.Id == vinculado.RolTrabajoGrado
+                });
+                if (TipoSolicitudTemp.CodigoAbreviacion  === "DIR_EXTERNO_PLX") {
                   //director externo
                   promises.push(getExterno(vinculado));
                 } else {
@@ -579,8 +642,11 @@ angular.module('poluxClienteApp')
       ctrl.getEstudiantesTg = function() {
         var defer = $q.defer();
         //Se buscan los estuidiantes activos
+        let EstadoEstudianteTrabajoGradoTemp = ctrl.EstadosEstudianteTrabajoGrado.find(data => {
+          return data.CodigoAbreviacion == "EST_ACT_PLX"
+        });
         var parametrosEstudiantes = $.param({
-          query: "EstadoEstudianteTrabajoGrado:1,TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          query: "EstadoEstudianteTrabajoGrado:" + EstadoEstudianteTrabajoGradoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 0
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
@@ -622,39 +688,41 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined no requiere parametros
        * @returns {undefined} No retorna ningún parámetro
        */
-      ctrl.consultarTrabajoGrado = function() {
+      ctrl.consultarTrabajoGrado = async function() {
+        await getconsultarParametros();
         ctrl.errorCargandoTrabajoGrado = false;
         //Verifica que lo ingresado sea un codigo
         if (/^\d+$/.test(ctrl.codigoEstudiante)) {
           //consultar trabajo de grado del estudiante
           ctrl.loadTrabajoGrado = true;
+          let EstadoEstudianteTrabajoGradoTemp = ctrl.EstadosEstudianteTrabajoGrado.find(data => {
+            return data.CodigoAbreviacion == "EST_ACT_PLX"
+          });
           var parametrosTrabajoGrago = $.param({
-            query: "EstadoEstudianteTrabajoGrado.Id:1,Estudiante:" + ctrl.codigoEstudiante,
+            query: "EstadoEstudianteTrabajoGrado:" + EstadoEstudianteTrabajoGradoTemp.Id + ",Estudiante:" + ctrl.codigoEstudiante,
             limit: 1,
           });
-          poluxRequest.get('estudiante_trabajo_grado', parametrosTrabajoGrago)
-            .then(function(response_trabajoGrado) {
+          poluxRequest.get('estudiante_trabajo_grado', parametrosTrabajoGrago).then(function(response_trabajoGrado) {
               if (Object.keys(response_trabajoGrado.data[0]).length > 0) {
                 ctrl.trabajoGrado = response_trabajoGrado.data[0].TrabajoGrado;
-                if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 6 ||
-                    ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 11) &&
-                  ctrl.userRole.includes('ESTUDIANTE')) {
+
+                let EstadoTrabajoGradoTemp = ctrl.EstadosEstudianteTrabajoGrado.find(data => {
+                  return data.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
+                });
+
+                if ((EstadoTrabajoGradoTemp.CodigoAbreviacion == "AMO_PLX" || EstadoTrabajoGradoTemp.CodigoAbreviacion == "ASMO_PLX") && ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.esAnteproyectoModificable = true;
                 }
                 //Si el anteproyecto es viable se puede subir la primera versión del proyecto
-                if ((ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 5 ||
-                    ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 10) &&
-                  ctrl.userRole.includes('ESTUDIANTE')) {
+                if ((EstadoTrabajoGradoTemp.CodigoAbreviacion == "AVI_PLX" || EstadoTrabajoGradoTemp.CodigoAbreviacion == "ASVI_PLX") && ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.esPrimeraVersion = true;
                 }
                 //Si el proyecto es modificable
-                if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 16 &&
-                  ctrl.userRole.includes('ESTUDIANTE')) {
+                if (EstadoTrabajoGradoTemp.CodigoAbreviacion == "MOD_PLX" && ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.esProyectoModificable = true;
                 }
                 //Si es pasantia y esta en espera de ARL
-                if (ctrl.trabajoGrado.EstadoTrabajoGrado.Id == 21 &&
-                  ctrl.userRole.includes('ESTUDIANTE')) {
+                if (EstadoTrabajoGradoTemp.CodigoAbreviacion == "PAEA_PLX" && ctrl.userRole.includes('ESTUDIANTE')) {
                   ctrl.pasantiaEnEsperaArl = true;
                 }
                 var promises = [];
@@ -668,18 +736,22 @@ angular.module('poluxClienteApp')
                 promises.push(ctrl.getEstudiantesTg());
 
                 //Consulta las vinculaciones y las áreas de conocimiento
-                if (ctrl.trabajoGrado.Modalidad.Id != 2 && ctrl.trabajoGrado.Modalidad.Id != 3) {
+                let ModalidadTemp = ctrl.Modalidades.find(data => {
+                  return data.Id == ctrl.trabajoGrado.Modalidad
+                });
+
+                if (ModalidadTemp.CodigoAbreviacion != "EAPOS_PLX" && ModalidadTemp.CodigoAbreviacion != "EAPRO_PLX") {
                   promises.push(ctrl.getVinculaciones());
                   promises.push(ctrl.cargarAreasConocimiento());
                 }
 
                 //si la modalidad es 2 trae los espacios academicos
-                if (ctrl.trabajoGrado.Modalidad.Id === 2 || ctrl.trabajoGrado.Modalidad.Id === 3) {
+                if (ModalidadTemp.CodigoAbreviacion === "EAPOS_PLX" || ModalidadTemp.CodigoAbreviacion === "EAPRO_PLX") {
                   promises.push(ctrl.getEspaciosAcademicosInscritos());
                 }
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
                 // y el detalel de la pasantia
-                if (ctrl.trabajoGrado.Modalidad.Id === 1) {
+                if (ModalidadTemp.CodigoAbreviacion === "PASEX_PLX" || ModalidadTemp.CodigoAbreviacion === "PASIN_PLX") {
                   promises.push(ctrl.getActas());
                   promises.push(ctrl.getDetallePasantia());
                 }

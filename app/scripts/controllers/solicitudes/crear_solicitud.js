@@ -27,6 +27,7 @@
  * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/documentoService.service:documentoRequest
  * @property {Array} modalidades Modalidades disponibles para la elección del estudiante.
  * @property {Object} estudiante Datos del estudiante que esta realizando la solicitud.
  * @property {Object} periodoAnterior Periodo academico anterior.
@@ -85,7 +86,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service, documentoRequest) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -230,6 +231,26 @@ angular.module('poluxClienteApp')
           await poluxRequest.get("modalidad_tipo_solicitud", parametrosConsulta).then(function (responseModalidadesTiposSolicitudes){
             console.log("MODALIDAD TIPO SOLICITUD:", responseModalidadesTiposSolicitudes.data);
             ctrl.ModalidadesTiposSolicitudes = responseModalidadesTiposSolicitudes.data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:AC",
+            limit: 0,
+          });
+
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseAreasConocimiento){
+            console.log("Areas Conocimiento: ", responseAreasConocimiento.data.Data);
+            ctrl.AreasConocimiento = responseAreasConocimiento.data.Data;
+          });
+
+          var parametrosConsulta = $.param({
+            query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
+            limit: 0,
+          });
+    
+          await documentoRequest.get("tipo_documento", parametrosConsulta).then(function (responseTiposDocumento){
+            console.log("Tipos Documento:", responseTiposDocumento.data);
+            ctrl.TiposDocumento = responseTiposDocumento.data;
           });
 
           resolve();
@@ -498,6 +519,10 @@ angular.module('poluxClienteApp')
 
         poluxRequest.get("usuario_solicitud", parametrosUser).then(async function(responseUser) {
             await getconsultarParametros();
+            let TipoSolicitudIniTemp = ctrl.TiposSolicitudes.find(data => {
+              return data.CodigoAbreviacion == "SI_PLX"
+            });
+            ctrl.INICIAL = TipoSolicitudIniTemp;
             if (Object.keys(responseUser.data[0]).length == 0) {
               responseUser.data = [];
             }
@@ -701,57 +726,45 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve sin retornar ningún objeto
        */
-      ctrl.obtenerAreas = function() {
+      ctrl.obtenerAreas = function () {
         var defer = $q.defer();
-        var parametrosAreas = $.param({
-          query: "Activo:TRUE",
-          limit: 0,
-        });
-        poluxRequest.get("area_conocimiento", parametrosAreas).then(function(responseAreas) {
-            ctrl.areas = responseAreas.data;
-            if (Object.keys(ctrl.areas[0]).length > 0) {
-              var areasSnies = [
-                {Id:1,estado:true,Nombre:'AGRONOMIA VETERINARIA Y AFINES'},
-                {Id:2,estado:true,Nombre:'BELLAS ARTES'},
-                {Id:3,estado:true,Nombre:'CIENCIAS DE LA EDUCACION'},
-                {Id:4,estado:true,Nombre:'CIENCIAS DE LA SALUD'},
-                {Id:5,estado:true,Nombre:'CIENCIAS SOCIALES Y HUMANAS'},
-                {Id:6,estado:true,Nombre:'ECONOMIA, ADMINISTRACION, CONTADURIA Y AFINES'},
-                {Id:7,estado:true,Nombre:'INGENIERIA, ARQUITECTURA, URBANISMO Y AFINES'},
-                {Id:8,estado:true,Nombre:'MATEMATICAS Y CIENCIAS NATURALES'},      
-                {Id:9,estado:true,Nombre:'SIN CLASIFICAR'}
-                ];
-            //  coreAmazonCrudService.get("snies_area").then(function(responseAreas) {
-            //      var areasSnies = responseAreas.data;
-                  if (Object.keys(areasSnies[0]).length > 0) {
-                    angular.forEach(ctrl.areas, function(area) {
-                      angular.forEach(areasSnies, function(areaSnies) {
-                        if (area.SniesArea === areaSnies.Id) {
-                          area.Snies = areaSnies.Nombre;
-                        }
-                      });
-                    });
-                    //
-                    defer.resolve();
-                  } else {
-                    ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
-                    defer.reject("no hay areas");
-                  }
-              /*  })
-                .catch(function(error) {
-                  ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
-                  defer.reject(error);
-                });
-                */
-            } else {
-              ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
-              defer.reject("no hay areas");
-            }
-          })
-          .catch(function(error) {
-            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
-            defer.reject(error);
+
+        if (Object.keys(ctrl.AreasConocimiento).length > 0) {
+          ctrl.areas = [];
+
+          const data = ctrl.AreasConocimiento.filter(function(area_filter){
+            return area_filter.ParametroPadreId == null
+          }).map(function(areaSnies) {
+            return areaSnies
           });
+
+          var areasSnies = data;
+          if (Object.keys(areasSnies).length > 0) {
+            angular.forEach(ctrl.AreasConocimiento, function(area) {
+              angular.forEach(areasSnies, function(snies){
+                if (area.ParametroPadreId != null && area.ParametroPadreId.Id == snies.Id && area.Descripcion == "") {
+                  area.Snies = snies.Nombre;
+                  ctrl.areas.push(area)
+                }
+              });
+            });
+
+            defer.resolve();
+
+          } else {
+            ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
+            defer.reject("no hay areas");
+          }
+          /*  })
+            .catch(function(error) {
+              ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
+              defer.reject(error);
+            });
+            */
+        } else {
+          ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_AREAS");
+          defer.reject("no hay areas");
+        }
         return defer.promise;
       }
 
@@ -1101,7 +1114,7 @@ angular.module('poluxClienteApp')
                 });
               }
               else{
-                promises.push(getModalidades());
+                promises.push(ctrl.Modalidades);
                 //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
                 //promises.push(getSolicitudesAnteriores());
               }
@@ -1173,7 +1186,10 @@ angular.module('poluxClienteApp')
         var verificarRequisitosModalidad = function() {
           var defer = $q.defer();
           if(ctrl.estudiante.Modalidad == null){
-            ctrl.estudiante.Modalidad = ctrl.modalidad;
+            let ModalidadTemp = ctrl.Modalidades.find(data => {
+              return data.Id == ctrl.modalidad
+            });
+            ctrl.estudiante.Modalidad = ModalidadTemp.CodigoAbreviacion;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
             ctrl.estudiante.Modalidad = null;
@@ -1203,7 +1219,7 @@ angular.module('poluxClienteApp')
         var verificarFechas = function(tipoSolicitud, modalidad, periodo) {
           var defer = $q.defer();
           //si la solicitud es de materias de posgrado e inicial
-          let TipoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+          let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
             return data.CodigoAbreviacion == "SI_PLX"
           });
           let ModalidadTemp1 = ctrl.Modalidades.find(data => {
@@ -1402,11 +1418,14 @@ angular.module('poluxClienteApp')
         ctrl.detallesCargados = false;
         ctrl.estudiantes = [];
         ctrl.TipoSolicitud = tipoSolicitudSeleccionada;
-        var tipoSolicitud = tipoSolicitudSeleccionada.Id;
         //ctrl.ModalidadTipoSolicitud = tipoSolicitud;
 
         if (modalidad_seleccionada !== undefined) {
           ctrl.modalidad = modalidad_seleccionada;
+          let ModalidadSeleccionadaTemp = ctrl.Modalidades.find(data => {
+            return data.Id == ctrl.Modalidad
+          });
+          ctrl.ModalidadTemp = ModalidadSeleccionadaTemp
         }
         if(tipoSolicitudSeleccionada.CodigoAbreviacion != "SI_PLX"  && tipoSolicitudSeleccionada.CodigoAbreviacion == "SCM_PLX"){
           // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
@@ -1430,7 +1449,7 @@ angular.module('poluxClienteApp')
           let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
             return data.CodigoAbreviacion == "SI_PLX"
           });
-          var tipo_solicitud = tipoSolicitudSeleccionada.Id;
+          var tipo_solicitud = TipoSolicitudTemp.Id;
           if(ctrl.Docente==1){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SSO_PLX"
@@ -1441,7 +1460,7 @@ angular.module('poluxClienteApp')
           var parametrosDetalles;
             if (modalidad_seleccionada === undefined) {
             parametrosDetalles = $.param({
-              query: "ModalidadTipoSolicitud__TipoSolicitud:" + tipoSolicitud + ",ModalidadTipoSolicitud__Modalidad:" + ctrl.Trabajo.TrabajoGrado.Modalidad,
+              query: "ModalidadTipoSolicitud__TipoSolicitud:" + ctrl.TipoSolicitud.Id + ",ModalidadTipoSolicitud__Modalidad:" + ctrl.Trabajo.TrabajoGrado.Modalidad,
               limit: 0,
               sortby: "NumeroOrden",
               order: "asc"
@@ -1453,7 +1472,6 @@ angular.module('poluxClienteApp')
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
-
                 ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0];
                   defer.resolve();
                 })
@@ -1494,6 +1512,10 @@ angular.module('poluxClienteApp')
                 var filtereddetalles = responseDetalles.data;
                 angular.forEach(filtereddetalles, function(detalle){
                   if((detalle.Detalle.CodigoAbreviacion !=="CUEP") && (detalle.Detalle.Activo)  && (detalle.Activo)){
+                    let TipoDetalleTemp = ctrl.TiposDetalle.find(data => {
+                      return data.Id == detalle.Detalle.TipoDetalle
+                    });
+                    detalle.Detalle.TipoDetalleAux = TipoDetalleTemp;
                     ctrl.detalles.push(detalle);
                   }
                 });                
@@ -1846,28 +1868,31 @@ angular.module('poluxClienteApp')
                   }
                   // FILTRO SEGÚN MODALIDAD PARA EL CAMPO DE ACEPTACIÓN DE TERMINOS
                   if(detalle.Detalle.CodigoAbreviacion == "ACTERM"){
+                    let ModalidadTemp = ctrl.Modalidades.find(data => {
+                      return data.Id == ctrl.modalidad
+                    });
                     // PARA MODALIDAD DE MONOGRAFIA
-                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "MONO"){
+                    if(ModalidadTemp.CodigoAbreviacion == "MONO_PLX"){
                       detalle.label = $translate.instant("TERMINOS.MONOGRAFIA")
                     }
                     // PARA MODALIDAD DE MONOGRAFIA
-                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PAS" || detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PASIN"){
+                    if(ModalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ModalidadTemp.CodigoAbreviacion == "PASIN_PLX"){
                       detalle.label = $translate.instant("TERMINOS.PASANTIA")
                     }
                     // PARA MODALIDAD DE EMPRENDIMIENTO
-                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PEMP"){
+                    if(ModalidadTemp.CodigoAbreviacion == "PEMP_PLX"){
                       detalle.label = $translate.instant("TERMINOS.EMPRENDIMIENTO")
                     }
                     // PARA MODALIDAD DE MATERIAS DE POSGRADO
-                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "EAPOS"){
+                    if(ModalidadTemp.CodigoAbreviacion == "EAPOS_PLX"){
                       detalle.label = $translate.instant("TERMINOS.POSGRADO")
                     }
                     // PARA MODALIDAD DE MATERIAS DE INVESTIGACION E INNOVACION
-                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "INV"){
+                    if(ModalidadTemp.CodigoAbreviacion == "INV_PLX"){
                       detalle.label = $translate.instant("TERMINOS.INVESTIGACION")
                     }
                     // PARA MODALIDAD DE MATERIAS DE ARTICULO ACADEMICO
-                    if(detalle.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "PACAD"){
+                    if(ModalidadTemp.CodigoAbreviacion == "PACAD_PLX"){
                       detalle.label = $translate.instant("TERMINOS.ARTICULO")
                     }
                   }
@@ -2124,7 +2149,7 @@ angular.module('poluxClienteApp')
         if (ctrl.detallesConDocumento.length > 0) {
           // OK, the returned client is connected
           var fileTypeError = false;
-          angular.forEach(ctrl.detallesConDocumento, function(detalle) {
+          angular.forEach(ctrl.detallesConDocumento, function (detalle) {
             var documento = detalle.fileModel;
             var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");
             if (documento.type !== "application/pdf" || documento.size > tam) {
@@ -2134,45 +2159,47 @@ angular.module('poluxClienteApp')
           $scope.loadFormulario = true;
           if (!fileTypeError) {
             var promiseArray = []
-            ctrl.detallesConDocumento.map((detalle)=>{
+            ctrl.detallesConDocumento.map((detalle) => {
               //carga de documentos por el Gestor documental
-              promiseArray.push(new Promise((resolve,reject) => {
+              promiseArray.push(new Promise((resolve, reject) => {
                 var URL = "";
                 var descripcion;
-                var fileBase64 ;
+                var fileBase64;
                 var data = [];
-                  descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
-                  utils.getBase64(detalle.fileModel).then(
-                    function (base64) {
-                      fileBase64 = base64;
-                      data = [{
-                      IdTipoDocumento: 5, //id tipo documento de documentos_crud
+                let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+                  return data.CodigoAbreviacion == "DTR_PLX"
+                });
+                descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
+                utils.getBase64(detalle.fileModel).then(
+                  function (base64) {
+                    fileBase64 = base64;
+                    data = [{
+                      IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
                       nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
                       metadatos: {
-                        NombreArchivo: detalle.Detalle.Nombre +": "+ctrl.codigo,
+                        NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
                         Tipo: "Archivo",
                         Observaciones: "Solicitud inicial"
                       },
-                      descripcion:descripcion,
-                      file:  fileBase64,
-                      }]
-                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
-                        URL =  response.data.res.Enlace
-                        detalle.respuesta = URL
-                        ctrl.url=response.data.res.Enlace
+                      descripcion: descripcion,
+                      file: fileBase64,
+                    }]
+                    gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                      URL = response.data.res.Enlace
+                      detalle.respuesta = URL
+                      ctrl.url = response.data.res.Enlace
 
-                        //nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                        if(response.data.res.Enlace){
-                          resolve("Posted");
-                        }
-                      })
+                      //nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                      if (response.data.res.Enlace) {
+                        resolve("Posted");
+                      }
                     })
-                }))
+                  })
+              }))
             });
-            Promise.all(promiseArray).then(function(resultado) {
+            Promise.all(promiseArray).then(function (resultado) {
               ctrl.cargarSolicitudes();
-            }).catch(function(error)
-            {
+            }).catch(function (error) {
               console.log(error)
               swal(
                 $translate.instant("ERROR.CARGA_SOLICITUDES"),
@@ -2213,7 +2240,6 @@ angular.module('poluxClienteApp')
         var data_usuarios = [];
         var data_respuesta = {};
         var fecha = new Date();
-        console.log("CTRL:",ctrl);
         if (ctrl.trabajo_grado !== undefined) {
           data_solicitud = {
             "Fecha": fecha,
@@ -2240,7 +2266,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
           /*if(ctrl.ModalidadTipoSolicitud === 13){
             ctrl.ModalidadTipoSolicitud = 71;
@@ -2256,7 +2282,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -2269,7 +2295,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -2282,7 +2308,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -2295,7 +2321,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -2308,7 +2334,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -2321,7 +2347,7 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -2334,14 +2360,12 @@ angular.module('poluxClienteApp')
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp.Id;
+            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
           data_solicitud = {
             "Fecha": fecha,
-            "ModalidadTipoSolicitud": {
-              "Id": ctrl.ModalidadTipoSolicitud
-            },
+            "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
             "PeriodoAcademico": ctrl.periodo
           };
         }
