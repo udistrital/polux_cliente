@@ -225,7 +225,7 @@ angular.module('poluxClienteApp')
               promises.push(poluxRequest.get("respuesta_solicitud", parametros).then(function (respuesta_solicitud) {
 
                 if (respuesta_solicitud.data[0].EstadoSolicitud.Id == 3) {
-                  return true;
+                  return false;
                 }
                 return false;
               }));
