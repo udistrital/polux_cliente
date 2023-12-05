@@ -1670,9 +1670,8 @@ angular.module('poluxClienteApp')
               if (modalidad === 'INV_PLX' || modalidad === 'PEMP_PLX' || modalidad === 'MONO_PLX') {
                 codigoEstadoTrabajoGrado = "RDE_PLX"
               }
-
               var parametrosConsulta = $.param({
-                query: "CodigoAbreviacion.in:" + estadoTrabajoGrado
+                query: "CodigoAbreviacion.in:" + codigoEstadoTrabajoGrado
               });
                var estadoTrabajoGradoParametro
               await parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
