@@ -1271,8 +1271,15 @@ angular.module('poluxClienteApp')
                       var datosAreas = detalle.Descripcion.split("-");
                       datosAreas.splice(0, 1);
                       detalle.Descripcion = "";
-                      angular.forEach(datosAreas, function(area) {
-                        detalle.Descripcion = detalle.Descripcion + ", " + JSON.parse(area).Nombre;
+                      angular.forEach(datosAreas, async function(area) {
+                        var areaConocimiento
+                        var parametroAreaConocimiento = $.param({
+                          limit: 0
+                        });
+                        await parametrosRequest.get("parametro/" + JSON.parse(area).Id + "?", parametroAreaConocimiento).then(function (responseArea) {
+                          areaConocimiento = responseArea.data.Data;
+                        })
+                        detalle.Descripcion = areaConocimiento.Nombre
                       });
                       detalle.Descripcion = detalle.Descripcion.substring(2);
                     } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
