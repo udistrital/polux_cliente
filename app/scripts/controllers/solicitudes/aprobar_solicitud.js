@@ -1593,7 +1593,7 @@ angular.module('poluxClienteApp')
                 Enlace: ctrl.docPropuestaFinal,
                 Resumen: "Documento para revisión final del trabajo de grado",
                 //Tipo documento 5 para revisión final
-                TipoDocumentoEscrito: 68
+                TipoDocumentoEscrito: 71
               };
 
               var data_revision = {
