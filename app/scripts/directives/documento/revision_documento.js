@@ -13,6 +13,7 @@
  * @param {number} revisionestado Estado de la revisión que se muestra.
  * @param {string} docdocente Documento del docente que revisan el documento.
  * @param {Object} estadorev Arreglo de estados de revisión de los trabajos de grado.
+ * @param {Object} tipodocumento Arreglo de los tipos de documentos.
  */
 angular.module('poluxClienteApp')
     .directive('revisionDocumento', function (poluxRequest, poluxMidRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient,notificacionRequest) {
@@ -24,7 +25,8 @@ angular.module('poluxClienteApp')
                 paginaset: '=?',
                 revisionestado: '=?',
                 docdocente: '=',
-                estadorev: '=?'
+                estadorev: '=?',
+                tipodocumento: '='
             },
             templateUrl: "views/directives/documento/revision_documento.html",
             /**
@@ -239,22 +241,24 @@ angular.module('poluxClienteApp')
                                             var fileBase64 ;
                                             var data = [];
                                             var URL = "";
+                                            let tipoDocumentoAux = $scope.tipodocumento.find(tipoDoc => {
+                                                return tipoDoc.CodigoAbreviacion == "DREV_PLX"
+                                            })
                                             utils.getBase64(ctrl.documentModel).then(
                                                 function (base64) {
-                                                 fileBase64 = base64;
-                                              data = [{
-                                               IdTipoDocumento: 5, //id tipo documento de documentos_crud
-                                               nombre:ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,// nombre formado el titulo y correccion
-                                               file:  fileBase64,
-
-                                               metadatos: {
-                                                 NombreArchivo: ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,
-                                                 Tipo: "Archivo",
-                                                 Observaciones: "correciones"
-                                               },
-                                               descripcion:"Correcciones sobre el proyecto",
-                                               file:  fileBase64,
-                                              }]
+                                                fileBase64 = base64;
+                                                data = [{
+                                                    IdTipoDocumento: tipoDocumentoAux.Id, //id tipo documento de documentos_crud
+                                                    nombre:ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,// nombre formado el titulo y correccion
+                                                    file:  fileBase64,
+                                                    metadatos: {
+                                                        NombreArchivo: ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones" ,
+                                                        Tipo: "Archivo",
+                                                        Observaciones: "correciones"
+                                                    },
+                                                    descripcion:"Correcciones sobre el proyecto",
+                                                    file:  fileBase64,
+                                                }]
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
                                                 ctrl.correcciones.push({
                                                         Observacion: response.data.res.Enlace,

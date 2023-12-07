@@ -15,6 +15,7 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/parametrosService.service:parametrosRequest
+ * @requires services/documentoService.service:documentoRequest
  * @property {String} documentoDocente Valor que carga el documento del docente en sesión
  * @property {String} mensajeCargandoProyectos Mensaje que aparece durante la carga de los proyectos de grado
  * @property {Boolean} cargandoProyectos Indicador que maneja el periodo de consulta de los proyectos de grado
@@ -32,7 +33,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('DocenteTgsRevisionDocumentoCtrl',
-    function($q, $scope, $translate, academicaRequest, notificacionRequest,poluxRequest, token_service, parametrosRequest) {
+    function($q, $scope, $translate, academicaRequest, documentoRequest, poluxRequest, token_service, parametrosRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "51551021";
@@ -45,6 +46,7 @@ angular.module('poluxClienteApp')
       ctrl.RolTrabajoGrado = [];
       ctrl.Modalidad = [];
       ctrl.EstadoRevision = [];
+      ctrl.TipoDocumento = [];
       ctrl.documentoDocente = token_service.getAppPayload().appUserDocument;
 
       ctrl.mensajeCargandoProyectos = $translate.instant("LOADING.CARGANDO_PROYECTOS");
@@ -231,9 +233,12 @@ angular.module('poluxClienteApp')
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+        let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+          return tipoDoc.CodigoAbreviacion == "DTR_PLX"
+        })
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
-            "TrabajoGrado.Id:" +
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumento.Id +
+            ",TrabajoGrado.Id:" +
             idTrabajoGrado,
           limit: 1
         });
@@ -250,8 +255,15 @@ angular.module('poluxClienteApp')
        * @param {Object} vinculacionTrabajoGrado La vinculación hacia el trabajo de grado seleccionado
        * @returns {Promise} La información sobre el documento, el mensaje en caso de no corresponder la información, o la excepción generada
        */
-      ctrl.consultarDocumentoTrabajoGrado = function(vinculacionTrabajoGrado) {
+      ctrl.consultarDocumentoTrabajoGrado = async function(vinculacionTrabajoGrado) {
         var deferred = $q.defer();
+        var parametroTipoDocumento = $.param({
+          query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
+          limit: 0
+        });
+        await documentoRequest.get("tipo_documento", parametroTipoDocumento).then(function (responseTipoDocumento) {
+          ctrl.TipoDocumento = responseTipoDocumento.data;
+        })
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
           .then(function(respuestaDocumentoTrabajoGrado) {
             if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
