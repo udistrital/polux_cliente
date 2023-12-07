@@ -24,6 +24,7 @@
  * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
+ * @requires services/documentoService.service:documentoRequest
  * @property {Object} carrerasCoordinador Objeto que contiene las carreras asociadas al coordinador que aprueba la solicitud
  * @property {Object} respuestaActual Objeto que contiene la respuesta actual de la solicitud, que se encuentra en estado radicada.
  * @property {Boolean} noAprobar booleano que permite saber si se puede permitir o no aprobar a solicitud
@@ -86,11 +87,12 @@
  * @property {Boolean} loadDocumento Indicador que maneja la carga del documento para la solicitud
  * @property {String} ObjetivoNuevo Texto que carga el contenido del nuevo objetivo para el trabajo de grado
  * @property {Object} modalidad Modalidad a la que pertenece la solicitud del trabajo de grado
+ * @property {Objecto} tipoDocumento Tipos de documento
  * @property {Object} documentoSolicitud Documentos asociados a la solicitud
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, nuxeoClient, sesionesRequest, token_service) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, documentoRequest, sesionesRequest, token_service) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = 0;
@@ -103,6 +105,7 @@ angular.module('poluxClienteApp')
       ctrl.EstadoAsignaturaTrabajoGrado = [];
       ctrl.EstadoEstudianteTrabajoGrado = [];
       ctrl.EstadoEspacioAcademicoInscrito = [];
+      ctrl.TipoDocumento = [];
       ctrl.TipoDetalle = [];
       ctrl.RolTrabajoGrado = [];
       ctrl.tipoSolicitudTemp;
@@ -739,6 +742,13 @@ angular.module('poluxClienteApp')
           await parametrosRequest.get("parametro/?", rolTrabajoGrado).then(function (responseRolTrabajoGrado) {
             ctrl.RolTrabajoGrado = responseRolTrabajoGrado.data.Data;
           })
+          var parametroTipoDocumento = $.param({
+            query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
+            limit: 0
+          });
+          await documentoRequest.get("tipo_documento", parametroTipoDocumento).then(function (responseTipoDocumento) {
+            ctrl.TipoDocumento = responseTipoDocumento.data;
+          })
           //SOLICITUD INICIAL
           let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipo => {
             return tipo.Id == ctrl.dataSolicitud.ModalidadTipoSolicitud.TipoSolicitud
@@ -1350,19 +1360,22 @@ angular.module('poluxClienteApp')
                   data_estudiantes.push(estudiante);
                 });
                 //Se crea la data para el documento de propuesta
+                let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+                  return tipoDoc.CodigoAbreviacion == "DTR_PLX"
+                })
                 var data_propuesta = {
                   "Titulo": tempTrabajo.Titulo,
                   "Enlace": tempTrabajo.Enlace,
                   "Resumen": tempTrabajo.Resumen,
-                  "TipoDocumentoEscrito": 4
+                  "TipoDocumentoEscrito": tipoDocumento.Id
                 }
                 //SI la modalidad es la de producción academica se sube de una vez como propuesta el documento
                 if (ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX") {
-                  data_propuesta.TipoDocumentoEscrito = 4;
+                  data_propuesta.TipoDocumentoEscrito = tipoDocumento.Id;
                 }
                 //SI la modalidad es la de creación sube de una vez como propuesta el documento
                 if (ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX") {
-                  data_propuesta.TipoDocumentoEscrito = 4;
+                  data_propuesta.TipoDocumentoEscrito = tipoDocumento.Id;
                 }
                 var data_documento_tg = {
                   "TrabajoGrado": {
@@ -1766,14 +1779,16 @@ angular.module('poluxClienteApp')
                 }
               }
               //Documento escrito
-
+              let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+                return tipoDoc.CodigoAbreviacion == "DGRREV_PLX"
+              })
               var data_documentoEscrito = {
                 Id: 0,
                 Titulo: data_tg.Titulo,
                 Enlace: ctrl.docPropuestaFinal,
                 Resumen: "Documento para revisión final del trabajo de grado",
                 //Tipo documento 5 para revisión final
-                TipoDocumentoEscrito: 5
+                TipoDocumentoEscrito: tipoDocumento.Id
               };
 
               var data_revision = {
@@ -2133,11 +2148,14 @@ angular.module('poluxClienteApp')
           var fileBase64;
           var data = [];
           var URL = "";
+          let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+            return tipoDoc.CodigoAbreviacion == "ACT_PLX"
+          })
           utils.getBase64(documento).then(
             function (base64) {
               fileBase64 = base64;
               data = [{
-                IdTipoDocumento: 18, //id tipo documento de documentos_crud
+                IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
                 nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
 
                 metadatos: {
@@ -2344,12 +2362,14 @@ angular.module('poluxClienteApp')
             });
           */
         var sql = "";
+        let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+          return tipoDoc.CodigoAbreviacion == "ACT_PLX"
+        })
         angular.forEach(ctrl.carrerasCoordinador, function (carrera) {
           sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
 
           var parametrosDocumentos = $.param({
-            query: "TipoDocumentoEscrito:1" + sql,
-            //query:"TipoDocumentoEscrito:1,Titulo.contains:Acta 12,Titulo.contains:Acta undefined",
+            query: "TipoDocumentoEscrito:" + tipoDocumento.Id + sql,
             limit: 0
           });
           $scope.loadDocumento = true;
@@ -2908,8 +2928,11 @@ angular.module('poluxClienteApp')
               function (base64) {
 
                 fileBase64 = base64;
+                let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+                  return tipoDoc.CodigoAbreviacion == "DPAS_PLX"
+                })
                 data = [{
-                  IdTipoDocumento: 18, //id tipo documento de documentos_crud
+                  IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
                   nombre: "Certificado Unidad Extension solicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
 
                   metadatos: {

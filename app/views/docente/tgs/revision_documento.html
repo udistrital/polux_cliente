@@ -40,7 +40,7 @@
   </div>
 
   <div ng-if="!docenterevision.cargandoProyectos && docenterevision.documentoEscrito">
-    <versiones-documentos-tg tg="docenterevision.proyectoSeleccionado.TrabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
+    <versiones-documentos-tg tg="docenterevision.proyectoSeleccionado.TrabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"  tipodocumento="docenterevision.TipoDocumento"></versiones-documentos-tg>
   </div>
 
   <div class="row" ng-if="!docenterevision.cargandoProyectos && docenterevision.documentoEscrito">
@@ -67,7 +67,7 @@
                     <b>{{'AVISO_PDF' | translate}}</b>
                   </div>
                 </div>
-                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" docdocente="docenterevision.documentoDocente" estadorev="docenterevision.EstadoRevision"/>
+                <revision-documento revisionid="revision.Id" revisionestado="revision.EstadoRevisionTrabajoGrado" paginadoc="docenterevision.pagina" paginaset="docenterevision.pagina" docdocente="docenterevision.documentoDocente" estadorev="docenterevision.EstadoRevision" tipodocumento="docenterevision.TipoDocumento"/>
               </div>
               <div ng-if="revision.VinculacionTrabajoGrado.Usuario != docenterevision.documentoDocente">
                 <p class="text-danger"> {{'LA_REVISION' | translate}} {{revision.NumeroRevision}} {{'REVISION_SOLICITADA_OTRO' | translate}}</p>

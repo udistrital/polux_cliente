@@ -24,7 +24,7 @@
     </div>
   </div>
   <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones">
-    <versiones-documentos-tg tg="estudianteRevisionDoc.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
+    <versiones-documentos-tg tg="estudianteRevisionDoc.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true" tipodocumento="estudianteRevisionDoc.TipoDocumento"></versiones-documentos-tg>
   </div>
   <div class="panel-body alert alert-danger" ng-if="estudianteRevisionDoc.errorCargandoTrabajoGrado">
     <span ng-bind="estudianteRevisionDoc.mensajeErrorCargandoTrabajoGrado"></span>

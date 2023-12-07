@@ -16,6 +16,7 @@
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires services/parametrosService.service:parametrosRequest
+ * @requires services/documentoService.service:documentoRequest
  * @property {Boolean} mindoc Indicador que maneja la minimización del documento en la vista
  * @property {String} codigoEstudiante Valor que carga el documento del estudiante en sesión
  * @property {String} mensajeCargandoTrabajoGrado Mensaje que aparece durante la carga del trabajo de grado
@@ -37,13 +38,14 @@
  */
 angular.module('poluxClienteApp')
   .controller('EstudianteRevisionDocumentoCtrl',
-    function($q, $scope, $window, $translate, notificacionRequest,academicaRequest,utils,gestorDocumentalMidRequest, parametrosRequest, poluxRequest, token_service) {
+    function($q, $scope, $window, $translate, notificacionRequest, documentoRequest, academicaRequest,utils,gestorDocumentalMidRequest, parametrosRequest, poluxRequest, token_service) {
       var ctrl = this;
 
       ctrl.EstadoTrabajoGrado = [];
       ctrl.EstadoEstudianteTrabajoGrado = [];
       ctrl.EstadoRevisionTrabajoGrado = [];
       ctrl.RolTrabajoGrado = [];
+      ctrl.TipoDocumento = [];
       ctrl.codigoEstudiante = token_service.getAppPayload().appUserDocument;
       ctrl.mensajeCargandoTrabajoGrado = $translate.instant("LOADING.CARGANDO_DATOS_TRABAJO_GRADO");
       ctrl.mensajeCargandoActualizarTg = $translate.instant("LOADING.ACTUALIZANDO_TRABAJO_GRADO");
@@ -202,15 +204,18 @@ angular.module('poluxClienteApp')
           return estTrGr.Id == trabajoGrado.EstadoTrabajoGrado
         })
         var estadoTrabajoGradoAceptada = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "PAEA_PLX", "PECSPR_PLX"]
+        let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+          return tipoDoc.CodigoAbreviacion == "DTR_PLX"
+        })
         if (estadoTrabajoGradoAceptada.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
-          ctrl.tipoDocumento = 4;
+          ctrl.tipoDocumento = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "EC_PLX") {
-          ctrl.tipoDocumento = 4;
+          ctrl.tipoDocumento = tipoDocumento.Id;
         }
         estadoTrabajoGradoAceptada = ["PR_PLX", "ER_PLX", "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX"]
         if (estadoTrabajoGradoAceptada.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
-          ctrl.tipoDocumento = 5;
+          ctrl.tipoDocumento = tipoDocumento.Id;
         }
         return $.param({
           query: "DocumentoEscrito.TipoDocumentoEscrito:" + ctrl.tipoDocumento + "," +
@@ -385,6 +390,13 @@ angular.module('poluxClienteApp')
         });
         await parametrosRequest.get("parametro/?", parametroRolTrabajoGrado).then(function (responseRolTrGr) {
           ctrl.RolTrabajoGrado = responseRolTrGr.data.Data;
+        })
+        var parametroTipoDocumento = $.param({
+          query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
+          limit: 0
+        });
+        await documentoRequest.get("tipo_documento", parametroTipoDocumento).then(function (responseTipoDocumento) {
+          ctrl.TipoDocumento = responseTipoDocumento.data;
         })
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
@@ -650,21 +662,24 @@ angular.module('poluxClienteApp')
                   var fileBase64 ;
                   var data = [];
                   var URL = "";
-                    descripcion = "Versión nueva del trabajo de grado";
-                    utils.getBase64(ctrl.nuevaVersionTrabajoGrado).then(
-                      function (base64) {
-                       fileBase64 = base64;
-                    data = [{
-                     IdTipoDocumento: 5, //id tipo documento de documentos_crud
-                     nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
-                     metadatos: {
-                       NombreArchivo: ctrl.trabajoGrado.Titulo+": "+ctrl.codigoEstudiante,
-                       Tipo: "Archivo",
-                       Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
-                     },
-                     descripcion:descripcion,
-                     file:  fileBase64,
-                    }]
+                  descripcion = "Versión nueva del trabajo de grado";
+                  let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+                    return tipoDoc.CodigoAbreviacion == "DTR_PLX"
+                  })
+                  utils.getBase64(ctrl.nuevaVersionTrabajoGrado).then(
+                    function (base64) {
+                      fileBase64 = base64;
+                      data = [{
+                        IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
+                        nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
+                        metadatos: {
+                          NombreArchivo: ctrl.trabajoGrado.Titulo+": "+ctrl.codigoEstudiante,
+                          Tipo: "Archivo",
+                          Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
+                        },
+                        descripcion:descripcion,
+                        file:  fileBase64,
+                      }]
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                       URL =  response.data.res.Enlace
                       ctrl.actualizarTrabajoGrado(URL).then(function(respuestaActualizarTg) {
@@ -849,33 +864,36 @@ angular.module('poluxClienteApp')
         let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
           return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
         })
+        let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+          return tipoDoc.CodigoAbreviacion == "DTR_PLX"
+        })
         if (estadoTrabajoGrado.CodigoAbreviacion == "AMO_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASMO_PLX") {
           let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "RVS_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 3;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "AVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "PECSPR_PLX") {
           let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "EC_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 4;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "MOD_PLX") {
           let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "ER_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 5;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
           let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "PECSPR_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = 7;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         //delete ctrl.trabajoGrado.documentoEscrito.Id
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
@@ -978,29 +996,32 @@ angular.module('poluxClienteApp')
                   return estTrGr.Id == estadoTg
                 })
                 var estadosValidos = ["AMO_PLX", "ASMO_PLX", "EC_PLX", "MOD_PLX"]
+                let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+                  return tipoDoc.CodigoAbreviacion == "DTR_PLX"
+                })
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)     
                   var descripcion;
                   var fileBase64 ;
                   var data = [];
                   var URL = "";
-                    descripcion = "Versión nueva del trabajo de grado";
-                    utils.getBase64(fileModel).then(
-                      function (base64) {
-                       fileBase64 = base64;
-                    data = [{
-                     IdTipoDocumento: 19, //id tipo documento de documentos_crud
-                     nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
-                     file:  fileBase64,
-                     metadatos: {
-                       NombreArchivo: ctrl.trabajoGrado.Titulo  +": "+ctrl.codigoEstudiante,
-                       Tipo: "Archivo",
-                       Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
-                     }, 
-                     descripcion:descripcion,
-                    }] 
-                    return gestorDocumentalMidRequest.post('/document/upload',data)
-                  })  
+                  descripcion = "Versión nueva del trabajo de grado";
+                  utils.getBase64(fileModel).then(
+                    function (base64) {
+                      fileBase64 = base64;
+                      data = [{
+                        IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
+                        nombre: ctrl.trabajoGrado.Titulo ,// nombre formado por nombre de la solicitud
+                        file:  fileBase64,
+                        metadatos: {
+                          NombreArchivo: ctrl.trabajoGrado.Titulo  +": "+ctrl.codigoEstudiante,
+                          Tipo: "Archivo",
+                          Observaciones: "Nueva version trabajo "+ctrl.trabajoGrado.Titulo
+                        },
+                        descripcion:descripcion,
+                      }]
+                      return gestorDocumentalMidRequest.post('/document/upload',data)
+                  })
                 }
                 //Si es primera versión crea el documento
                 estadosValidos = ["AVI_PLX", "ASVI_PLX", "PAEA_PLX", "PECSPR_PLX"]
@@ -1013,7 +1034,7 @@ angular.module('poluxClienteApp')
                       function (base64) {
                        fileBase64 = base64;
                     data = [{
-                     IdTipoDocumento: 18, //id tipo documento de documentos_crud
+                     IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
                      nombre: titulo ,// nombre formado por el titulo
                      metadatos: {
                        NombreArchivo: titulo,
