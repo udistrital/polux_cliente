@@ -157,7 +157,7 @@
 
     </form>
     </div>
-    
+
 
     <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 && aprobarSolicitud.UnidadExtPasantia !== 1">
       <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
@@ -182,8 +182,6 @@
         <div class="row">
           <label class="col-sm-4 control-label"> {{'ACTA_RESPUESTA_SOLICITUD' |translate}} </label>
           <div class="col-sm-8">
-          
-           
             <label class="col-sm-9 control-label">{{aprobarSolicitud.acta.nombre}}</label>
             <input type="button" class="col-sm-3 btn btn-success" value="{{'SELECCIONAR_ACTA' | translate}}" ng-click="aprobarSolicitud.modalDocumento()">
           </div>
@@ -209,7 +207,7 @@
             <div class="col-sm-8">
               <switch id="enabled" name="enabled" ng-model="aprobarSolicitud.switchCodirector" class="green" on="{{'SWITCH.SI' | translate}}" off="{{'SWITCH.NO' | translate}}"></switch>
             </div>
-          </div>  
+          </div> 
           <div class="row" ng-if="aprobarSolicitud.switchCodirector">
               <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CODIRECTOR' | translate}} </label>
               <div class="col-sm-8">
@@ -220,7 +218,7 @@
                 </ui-select-choices>
               </ui-select>
             </div>
-          </div>      
+          </div>
        </div>
        <br ng-if="aprobarSolicitud.isInicial && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
        <!--Docente que evalua la propuesta -->
@@ -248,7 +246,7 @@
           <div class="col-sm-8">
             <switch id="enabled" name="enabled" ng-model="aprobarSolicitud.switchRevision" class="green" on="{{'SWITCH.SI' | translate}}" off="{{'SWITCH.NO' | translate}}"></switch>
           </div>
-        </div>  
+        </div>
         <div ng-if="aprobarSolicitud.switchRevision">
             <div class="row" ng-if="aprobarSolicitud.directorOpcionTg != undefined">
               <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_DIRECTOR' | translate}} </label>
@@ -278,7 +276,7 @@
                   <br>
                 </div>
             </div>
-        </div>      
+        </div>
      </div>
                   <!--<div class="row">
                       <label class="col-sm-5 control-label"> </label>
@@ -318,7 +316,7 @@
 
 
     <div id="modalSeleccionarDocumento" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
-      <style> 
+      <style>
       .md-datepicker-calendar-pane {
         z-index: 1200;
         !important;
@@ -357,27 +355,13 @@
                       </ui-select-choices>
                     </ui-select>
                   </div>
-                  <!--
-                  Dada la ateneción al requerimiento sobre no cargar las actas de respuesta a las solicitudes, se inhabilita la visualización del acta ya cargada que se selecciona desde el modal, y se muestra el título que contiene consecutivo y fecha del acta
-
-                  <div class="col-sm-3">
-                  <button  class="btn btn-success" class="col-md-12" ng-click="aprobarSolicitud.getDocumento(aprobarSolicitud.acta.url)">{{'DOCUMENTO.VER_DOCUMENTO' | translate}}</button>
-                  </div>
-
-                  Carga de acta
-                   <input type="file" class="form-control" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.acta" required> </input>
-            
-                  -->
-                  
-
                   <div class="col-sm-2" ng-if="aprobarSolicitud.acta != null">
                     <button class="btn btn-success" ng-click="aprobarSolicitud.seleccionarDocumento()">{{'SELECCIONAR' | translate}}</button>
                   </div>
                 </div>
-               
               </div>
             </div>
-          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta" modalidad="aprobarSolicitud.modalidad"> </cargar-documento>
+          <cargar-documento name="Acta" carreras="aprobarSolicitud.carrerasCoordinador" acta="aprobarSolicitud.acta" modalidad="aprobarSolicitud.modalidad" tipodocumento="aprobarSolicitud.TipoDocumento"> </cargar-documento>
         </div>
       </div>
     </div>

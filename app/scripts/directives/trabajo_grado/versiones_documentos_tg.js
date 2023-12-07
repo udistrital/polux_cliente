@@ -11,6 +11,7 @@
  * @param {Boolean} veranteproyecto Booleano para indicar si se consultan los anteproyectos
  * @param {Boolean} verproyecto Booleano para indicar si se consultan los proyectos
  * @param {Boolean} verproyectorevision Booleano para indicar si se consultan los proyectos listos para revisión
+ * @param {object} tipodocumento Arreglo con los tipos de documento
  */
 angular.module('poluxClienteApp')
   .directive('versionesDocumentosTg', function () {
@@ -20,7 +21,8 @@ angular.module('poluxClienteApp')
         tg: '=',
         veranteproyecto: '=',
         verproyecto: '=',
-        verproyectorevision: '='
+        verproyectorevision: '=',
+        tipodocumento: '='
       },
       templateUrl: 'views/directives/trabajo_grado/versiones_documentos_tg.html',
       /**
@@ -71,9 +73,12 @@ angular.module('poluxClienteApp')
 
         ctrl.getDocumentos = function (trabajoGrado, tipoDocumento) {
           var defer = $q.defer();
+          let tipoDocumentoAux = $scope.tipodocumento.find(tipoDoc => {
+            return tipoDoc.CodigoAbreviacion == tipoDocumento
+          })
           var parametrosDocumento = $.param({
             query: "TrabajoGrado.Id:" + trabajoGrado.Id
-              + ",DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumento,
+              + ",DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoAux.Id,
             limit: 1
           });
           poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
@@ -81,37 +86,16 @@ angular.module('poluxClienteApp')
               if (Object.keys(responseDocumento.data[0]).length > 0) {
                 var nombreNodo = "";
                 var nombreHijo = "";
-                  switch (tipoDocumento) {
-                    case 3:
-                      nombreNodo = $translate.instant('ANTEPROYECTO');
-                      nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO');
-                      break;
-                    case 4:
-                      nombreNodo = $translate.instant('TRABAJO_GRADO');
-                      nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
-                      break;
-                    case 5:
-                      nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
-                      nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
-                      break;
-                  }
-                /*ctrl.getVersiones(responseDocumento.data[0].DocumentoEscrito.Enlace)
-                  .then(function (versiones) {
-                    console.log(versiones)
-                    angular.forEach(versiones, function (version) {   
-                      console.log("ENTRA ", version)
-                      version.name = nombreHijo + version.get('uid:major_version')
-                      
-                    });
-                    ctrl.dataForTree.push({
-                      name: nombreNodo,
-                      children: responseDocumento.data[0].DocumentoEscrito.Enlace,
-                    });
-                    defer.resolve();
-                  })
-                  .catch(function (error) {
-                    defer.reject(error);
-                  });*/
+                switch (tipoDocumento) {
+                  case "DTR_PLX":
+                    nombreNodo = $translate.instant('TRABAJO_GRADO');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
+                    break;
+                  case "DGRREV_PLX":
+                    nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
+                    break;
+                }
                   ctrl.dataForTree.push({
                     name: nombreNodo,
                     children: responseDocumento.data[0].DocumentoEscrito.Enlace,
@@ -140,21 +124,16 @@ angular.module('poluxClienteApp')
           ctrl.dataForTree = [];
           ctrl.loadingVersion = true;
           var promesasDocumentos = [];
-          if ($scope.veranteproyecto) {
-            //Tipo de documento 3
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 3));
-          }
           if ($scope.verproyecto) {
-            //Tipo de documento 4
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 4));
+            //Tipo de documento trabajo de grado
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "DTR_PLX"));
           }
           if ($scope.verproyectorevision) {
-            //Tipo de documento 5
-            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, 5));
+            //Tipo de documento revisión
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "DGRREV_PLX"));
           }
           $q.all(promesasDocumentos)
             .then(function () {
-              
               if (ctrl.dataForTree.length == 0) {
                 ctrl.mensajeError = $translate.instant("NO_HAY_DOCUMENTOS");
                 ctrl.errorCargando = true;
@@ -162,7 +141,6 @@ angular.module('poluxClienteApp')
               ctrl.loadingVersion = false;
             })
             .catch(function (error) {
-              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO");
               ctrl.errorCargando = true;
               ctrl.loadingVersion = false;
@@ -173,7 +151,7 @@ angular.module('poluxClienteApp')
          * @ngdoc method
          * @name getVersiones
          * @methodOf poluxClienteApp.directive:versionesDocumentosTg.controller:versionesDocumentosTgCtrl
-         * @description 
+         * @description
          * Permite ver las versiones asociadas a un documento
          * @param {Object} uid Uid del documento que se consultara
          * @returns {Promise} Objeto de tipo Promise que se resuelve con las versioens del documento
@@ -195,7 +173,7 @@ angular.module('poluxClienteApp')
          * @ngdoc method
          * @name verDocumento
          * @methodOf poluxClienteApp.directive:versionesDocumentosTg.controller:versionesDocumentosTgCtrl
-         * @description 
+         * @description
          * Permite ver un documento que sea versión de un trabajo de grado
          * @param {Object} doc Documento que se va a descargar
          * @returns {undefined} No hace retorno de resultados
@@ -203,7 +181,7 @@ angular.module('poluxClienteApp')
         ctrl.verDocumento = function (doc) {
           if (doc.children) {
             ctrl.loadingVersion = true;
-            //  obtener un documento por la id 
+            //  obtener un documento por la id
             gestorDocumentalMidRequest.get('/document/'+doc.children).then(function (response) {
             //nuxeoClient.getDocument(doc.uid)
             //  .then(function (documento) {
