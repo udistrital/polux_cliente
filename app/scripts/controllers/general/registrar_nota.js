@@ -16,6 +16,8 @@
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires services/poluxService.service:nuxeoMidService
+ * @requires services/poluxService.service:documentoService
+ * @requires services/poluxService.service:parametrosService
  * @property {String} documento Documento del docente que entra al modulo y que va a registrar las notas
  * @property {Boolean} cargandoTrabajos Bandera que muestra el loading y permite identificar cuando se cargaron todos los trabajos
  * @property {String} mensajeTrabajos Mensaje que se muestra mientras se cargan lso trabajos
@@ -39,8 +41,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient,
-            $window ,poluxRequest, token_service) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -122,6 +123,72 @@ angular.module('poluxClienteApp')
           </div>`
       }];
 
+       //SE CONSULTAN LOS PARAMETROS USADOS
+      /**
+       * @ngdoc method
+       * @name getconsultarParametros
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta el servicio de {@link services/poluxService.service:parametrosRequest parametrosRequest} para extraer los datos necesarios
+       * @param {undefined} undefined No requiere parámetros
+       */
+      async function getconsultarParametros(){
+        return new Promise (async (resolve, reject) => {
+
+          var parametrosConsulta = $.param({
+            query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
+            limit: 0,
+          });
+    
+          await documentoRequest.get("tipo_documento", parametrosConsulta).then(function (responseTiposDocumento){
+            console.log("Tipos Documento:", responseTiposDocumento.data);
+            ctrl.TiposDocumento = responseTiposDocumento.data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
+            limit: 0,
+          });
+    
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseModalidades){
+            console.log("Modalidades:", responseModalidades.data.Data);
+            ctrl.Modalidades = responseModalidades.data.Data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
+            limit: 0,
+          });
+    
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosTrabajoGrado){
+            console.log("Estados Trabajo Grado:", responseEstadosTrabajoGrado.data.Data);
+            ctrl.EstadosTrabajoGrado = responseEstadosTrabajoGrado.data.Data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:ROL_TRG",
+            limit: 0,
+          });
+
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseRolesTrabajoGrado){
+            console.log("Rol trabajo Grado:", responseRolesTrabajoGrado.data.Data);
+            ctrl.RolesTrabajoGrado = responseRolesTrabajoGrado.data.Data;
+          });
+
+          parametrosConsulta = $.param({
+            query: "TipoParametroId__CodigoAbreviacion:EST_ESTU_TRG",
+            limit: 0,
+          });
+    
+          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
+            console.log("Estados Estudiante Trabajo Grado:", responseEstadosEstudianteTrabajoGrado.data.Data);
+            ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
+          });
+
+          resolve();
+        });
+      }
+
       /**
        * @ngdoc method
        * @name cargarTrabajos
@@ -132,7 +199,8 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Retorna una promesa que se soluciona sin regresar ningún parametro
        */
-      ctrl.cargarTrabajos = function() {
+      ctrl.cargarTrabajos = async function() {
+        await getconsultarParametros();
         var defer = $q.defer();
         ctrl.cargandoTrabajos = true;
         var parametrosTrabajoGrado = $.param({
@@ -143,22 +211,38 @@ angular.module('poluxClienteApp')
           .then(function(dataTrabajos) {
             if (Object.keys(dataTrabajos.data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data;
+              console.log("TRABAJOS:", ctrl.trabajosGrado);
               // Se decide qué trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
+                let ModalidadTemp = ctrl.Modalidades.find(data => {
+                  return data.Id == trabajo.TrabajoGrado.Modalidad;
+                });
+                trabajo.TrabajoGrado.Modalidad = ModalidadTemp;
+
+                let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(data => {
+                  return data.Id == trabajo.TrabajoGrado.EstadoTrabajoGrado;
+                });
+                trabajo.TrabajoGrado.EstadoTrabajoGrado = EstadoTrabajoGradoTemp;
+
+                let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(data => {
+                  return data.Id == trabajo.RolTrabajoGrado;
+                });
+                trabajo.RolTrabajoGrado = RolTrabajoGradoTemp;
+
                 // Si el rol es director o evaluador
                 // Por ahora se ignora la modalidad
                 trabajo.permitirRegistrar = false;
                 trabajo.permitirDevolver = false;
                 var rol = trabajo.RolTrabajoGrado.CodigoAbreviacion;
                 var estado = trabajo.TrabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion;
-                if (rol === 'EVALUADOR') {
-                  trabajo.permitirDevolver = estado === 'RDE';
-                  if (estado === 'RDE' || estado === 'EC') {
+                if (rol == "EVALUADOR_PLX") {
+                  trabajo.permitirDevolver = estado == "RDE_PLX";
+                  if (estado == "RDE_PLX" || estado == "EC_PLX") {
                     trabajo.permitirRegistrar = true;
                   }
-                } else if (estado === 'STN' && rol.includes('DIRECTOR') && !rol.includes('CODIRECTOR')) {
+                } else if (estado == "STN_PLX" && rol.includes("DIRECTOR_PLX") && !rol.includes("CODIRECTOR_PLX")) {
                   trabajo.permitirRegistrar = true;
-                } else if (estado === 'LPS' && rol.includes('DIRECTOR') && !rol.includes('CODIRECTOR')) {
+                } else if (estado == "LPS_PLX" && rol.includes("DIRECTOR_PLX") && !rol.includes("CODIRECTOR_PLX")) {
                   trabajo.permitirRegistrar = true;
                 }
                 // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
@@ -261,9 +345,12 @@ angular.module('poluxClienteApp')
       ctrl.getEstudiantes = function(trabajoGrado) {
         var defer = $q.defer();
         //Se consultan los estudiantes activos en el trabajo de grado y sus datos
+        let EstadoEstudianteTrabajoGradoTemp = ctrl.EstadosEstudianteTrabajoGrado.find(data => {
+          return data.CodigoAbreviacion == "EST_ACT_PLX";
+        });
         var parametrosEstudiantes = $.param({
           limit: 0,
-          query: "EstadoEstudianteTrabajoGrado.Id:1,TrabajoGrado.Id:" + trabajoGrado.Id,
+          query: "EstadoEstudianteTrabajoGrado:" + EstadoEstudianteTrabajoGradoTemp.Id + ",TrabajoGrado.Id:" + trabajoGrado.Id,
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function(responseEstudiantes) {
@@ -301,6 +388,7 @@ angular.module('poluxClienteApp')
        * @returns {Promise} Retorna una promesa que se soluciona sin regresar ningún parametro.
        */
       ctrl.getEvaluacionesRegistradas = function(trabajoGrado) {
+        console.log("TRABAJO GRADO SELECCIONADO:", trabajoGrado);
         var defer = $q.defer();
         //Se consulatan las evaluaciones
         var parametrosEvaluaciones = $.param({
@@ -364,8 +452,11 @@ angular.module('poluxClienteApp')
        * @returns {String} La sentencia para la consulta correspondiente
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "DTR_PLX"
+        });
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:4," +
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + "," +
             "TrabajoGrado.Id:" +
             idTrabajoGrado,
           limit: 1
