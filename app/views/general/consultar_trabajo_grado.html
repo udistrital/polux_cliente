@@ -135,7 +135,7 @@
                         </div>
                     </div>
                     <!-- Modalidad de pasantia -->
-                    <div ng-if="consultarTrabajoGrado.trabajoGrado.Modalidad.Id === 1">
+                    <div ng-if="consultarTrabajoGrado.trabajoGrado.Modalidad.CodigoAbreviacion === 'PASEX_PLX' || consultarTrabajoGrado.trabajoGrado.Modalidad.CodigoAbreviacion === 'PASIN_PLX'">
                         <div class="row">
                             <label class="control-label col-sm-2"> {{'PASANTIA.DETALLE_PASANTIA' | translate}}:  </label>
                             <label class="control-label col-sm-10"> {{consultarTrabajoGrado.trabajoGrado.DetallePasantia}} </label>
@@ -191,7 +191,7 @@
             </div>
         </div>
         <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado">
-            <versiones-documentos-tg tg="consultarTrabajoGrado.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
+            <versiones-documentos-tg tipodocumento = "consultarTrabajoGrado.TiposDocumento" tg="consultarTrabajoGrado.trabajoGrado" veranteproyecto="true" verproyecto="true" verproyectorevision="true"></versiones-documentos-tg>
         </div>
         <div ng-if="!consultarTrabajoGrado.loadTrabajoGrado && !consultarTrabajoGrado.errorCargandoTrabajoGrado && consultarTrabajoGrado.trabajoCargado">
             <listar-solicitudes tg="consultarTrabajoGrado.trabajoGrado"></listar-solicitudes>

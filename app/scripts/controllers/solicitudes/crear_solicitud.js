@@ -352,7 +352,7 @@ angular.module('poluxClienteApp')
               promises.push(poluxRequest.get("respuesta_solicitud", parametrosConsulta).then(function (respuesta_solicitud) {
                 if (respuesta_solicitud.data[0].EstadoSolicitud == ctrl.EstadosSolicitudes[2].Id) {
                   //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
-                  return true;
+                  return false;
                 }
                 return false;
               }));
@@ -997,7 +997,7 @@ angular.module('poluxClienteApp')
                   //
                   var defer = $q.defer();
                   var parametrosSolicitud = $.param({
-                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud.Detalle.CodigoAbreviacion:ESPELE,DetalleTipoSolicitud.ModalidadTipoSolicitud.TipoSolicitud:" + ctrl.TiposSolicitudes[0].Id + ",DetalleTipoSolicitud.ModalidadTipoSolicitud.Modalidad.in:" + ctrl.Modalidades[1].Id + "|" + ctrl.Modalidades[2].Id,
+                    query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id + ",DetalleTipoSolicitud.Detalle.CodigoAbreviacion:ESPELE,DetalleTipoSolicitud.ModalidadTipoSolicitud.TipoSolicitud:" + TipoSolicitudTemp.Id + ",DetalleTipoSolicitud.ModalidadTipoSolicitud.Modalidad.in:" + ModalidadTemp1.Id + "|" + ModalidadTemp2.Id,
                     limit: 1,
                   });
                   poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseSolicitud) {
@@ -1422,10 +1422,7 @@ angular.module('poluxClienteApp')
 
         if (modalidad_seleccionada !== undefined) {
           ctrl.modalidad = modalidad_seleccionada;
-          let ModalidadSeleccionadaTemp = ctrl.Modalidades.find(data => {
-            return data.Id == ctrl.Modalidad
-          });
-          ctrl.ModalidadTemp = ModalidadSeleccionadaTemp
+          
         }
         if(tipoSolicitudSeleccionada.CodigoAbreviacion != "SI_PLX"  && tipoSolicitudSeleccionada.CodigoAbreviacion == "SCM_PLX"){
           // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
@@ -1446,15 +1443,14 @@ angular.module('poluxClienteApp')
         ctrl.verificarRequisitos(tipoSolicitudSeleccionada, modalidad_seleccionada).then(function() {
           ctrl.soliciudConDetalles = true;
           ctrl.detalles = [];
-          let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
-            return data.CodigoAbreviacion == "SI_PLX"
-          });
-          var tipo_solicitud = TipoSolicitudTemp.Id;
+
+          //var tipo_solicitud = ctrl.TipoSolicitud.Id;
+
           if(ctrl.Docente==1){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SSO_PLX"
             });
-            tipo_solicitud = TipoSolicitudTemp.Id;
+            ctrl.TipoSolicitud = TipoSolicitudTemp;
           }
           var promises = []
           var parametrosDetalles;
@@ -1468,7 +1464,7 @@ angular.module('poluxClienteApp')
             var getModalidadTipoSolicitud = function(modalidad_seleccionada) {
               var defer = $q.defer();
               var parametrosModalidadTipoSolicitud = $.param({
-                query: "TipoSolicitud:"+tipo_solicitud+",Modalidad:" + ctrl.Trabajo.TrabajoGrado.Modalidad,
+                query: "TipoSolicitud:"+ ctrl.TipoSolicitud.Id +",Modalidad:" + ctrl.Trabajo.TrabajoGrado.Modalidad,
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
@@ -1483,7 +1479,7 @@ angular.module('poluxClienteApp')
             promises.push(getModalidadTipoSolicitud(modalidad_seleccionada));
           } else {
             parametrosDetalles = $.param({
-              query: "Activo:TRUE,ModalidadTipoSolicitud__TipoSolicitud:"+tipo_solicitud+",ModalidadTipoSolicitud__Modalidad:" + modalidad_seleccionada,
+              query: "Activo:TRUE,ModalidadTipoSolicitud__TipoSolicitud:"+ ctrl.TipoSolicitud.Id +",ModalidadTipoSolicitud__Modalidad:" + modalidad_seleccionada,
               limit: 0,
               sortby: "NumeroOrden",
               order: "asc"
@@ -1491,7 +1487,7 @@ angular.module('poluxClienteApp')
             var getModalidadTipoSolicitud = function(modalidad_seleccionada) {
               var defer = $q.defer();
               var parametrosModalidadTipoSolicitud = $.param({
-                query: "TipoSolicitud:"+tipo_solicitud+",Modalidad:" + modalidad_seleccionada,
+                query: "TipoSolicitud:"+ ctrl.TipoSolicitud.Id +",Modalidad:" + modalidad_seleccionada,
                 limit: 1,
               });
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
