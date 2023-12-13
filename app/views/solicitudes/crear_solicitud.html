@@ -136,7 +136,6 @@
             <input class="col-sm-3" type="radio" name="opcion" value="1">Opción 1<br>
             <input class="col-sm-3" type="radio" name="opcion" value="2">Opción 2<br>
           </div>
-          
        </div>
 
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
@@ -149,7 +148,7 @@
          </div>
 
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DRT_PLX'">
-            <solicitar-asignaturas e="crearSolicitud.carrerasElegidas" estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
+            <solicitar-asignaturas e="crearSolicitud.carrerasElegidas" modalidades="crearSolicitud.Modalidades" estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
             <asignar-estudiantes estudiante="crearSolicitud.codigo" estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPOS' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPRO'"></asignar-estudiantes><div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">
                     {{'AREAS_CONOCIMIENTO' | translate}}

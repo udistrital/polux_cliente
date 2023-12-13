@@ -1051,7 +1051,14 @@ angular.module('poluxClienteApp')
             TrRevision: null,
             EspaciosAcademicosInscritos: null,
           };
-          if (ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad.CodigoAbreviacion == "EAPOS" && ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.CodigoAbreviacion == "SI"
+          let modalidad = ctrl.Modalidad.find(mod => {
+            return mod.Id == ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
+          })
+          let tipoSolicitud = ctrl.TipoSolicitud.find(tipSol => {
+            return tipSol.Id == ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+          })
+          console
+          if (modalidad.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitud.CodigoAbreviacion == "SI_PLX"
           && this.roles.includes("COORDINADOR_POSGRADO")) {
             await aprobarPosgrado();
           } else if (ctrl.respuestaSolicitud == "RCC_PLX") {
@@ -1205,9 +1212,12 @@ angular.module('poluxClienteApp')
                 let rolTrabajoGradoTemp = ctrl.RolTrabajoGrado.find(rolTrGr => {
                   return rolTrGr.CodigoAbreviacion == "COR_POSGRADO_PLX"
                 })
+                let modalidad = ctrl.Modalidad.find(mod => {
+                  return mod.Id == ctrl.detallesSolicitud.tipoSolicitud.Modalidad
+                })
                 data_trabajo_grado = {
-                    "Titulo": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Nombre,
-                    "Modalidad": ctrl.detallesSolicitud.tipoSolicitud.Modalidad.Id,
+                    "Titulo": modalidad.Nombre,
+                    "Modalidad": ctrl.detallesSolicitud.tipoSolicitud.Modalidad,
                     "EstadoTrabajoGrado": estadoTrabajoGradoParametro.data.Data[0].Id,
                     "DistincionTrabajoGrado": null,
                     "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico
@@ -1241,7 +1251,10 @@ angular.module('poluxClienteApp')
                     VinculacionTrabajoGrado: data_vinculacion,
                     AsignaturasTrabajoGrado: data_asignaturasTrabajoGrado
                 }
-                if (estadoSolicitudTemp.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR_PREGRADO")) {
+                let estadoRtaNueva = ctrl.EstadoSolicitud.find(estSol => {
+                  return estSol.Id == objRtaNueva.EstadoSolicitud
+                })
+                if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR_PREGRADO")) {
                   let estadoAux = ctrl.EstadoSolicitud.find(est => {
                     return est.CodigoAbreviacion == "ACPR_PLX"
                   })
@@ -1855,7 +1868,6 @@ angular.module('poluxClienteApp')
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             }
             console.log(ctrl.dataRespuesta)
-
             enviarTransaccion();
           }
 
@@ -1868,21 +1880,21 @@ angular.module('poluxClienteApp')
               } else if (ctrl.respuestaSolicitud == "RCC_PLX") {
                 strCodAbr += "RCPO"
               }
-
               angular.forEach(ctrl.detallesSolicitud, function(detalleAux) {
                 if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
                   numeroOpcionPosgrado = 1;
-                  strCodAbr += "1"
+                  strCodAbr += "1_PLX"
                 } else if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                   numeroOpcionPosgrado = 2;
-                  strCodAbr += "2"
+                  strCodAbr += "2_PLX"
                 }
               });
-    
-              for (let i = 0; i < ctrl.estadoSolicitud.length; i++) {
-                if(ctrl.estadoSolicitud[i].CodigoAbreviacion == strCodAbr) {
-                  ctrl.respuestaSolicitud = ctrl.estadoSolicitud[i].Id;
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = ctrl.respuestaSolicitud;
+
+              for (let i = 0; i < ctrl.EstadoSolicitud.length; i++) {
+                if(ctrl.EstadoSolicitud[i].CodigoAbreviacion == strCodAbr) {
+                  ctrl.respuestaSolicitud = ctrl.EstadoSolicitud[i].CodigoAbreviacion;
+                  console.log(ctrl.EstadoSolicitud[i])
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = ctrl.EstadoSolicitud[i].Id;
                   ctrl.dataRespuesta.RespuestaAnterior.Activo = true;
                 }
               }
@@ -1904,13 +1916,13 @@ angular.module('poluxClienteApp')
                     if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
                       tipoAux = "ESPELE2";
                       actual = 1;
-                      respuestaAprobado = "ACPO2";
-                      respuestaRechazo = "RCPO2";
+                      respuestaAprobado = "ACPO2_PLX";
+                      respuestaRechazo = "RCPO2_PLX";
                     } else {
                       tipoAux = "ESPELE";
                       actual = 2;
-                      respuestaAprobado = "ACPO1";
-                      respuestaRechazo = "RCPO1";
+                      respuestaAprobado = "ACPO1_PLX";
+                      respuestaRechazo = "RCPO1_PLX";
                     }
                     var parametrosRespuestaSol = $.param({
                       query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
@@ -1922,7 +1934,10 @@ angular.module('poluxClienteApp')
                       angular.forEach(respuestas, async function(respuesta) {
                         if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
                           ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                          let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == resOriginal
+                          })
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
                           await ModificarRespuestas(respuestas);
                         } else if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
                           cambioMateriasPosgrado = true;
@@ -1955,7 +1970,10 @@ angular.module('poluxClienteApp')
                   ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
                   resOriginal = 3;
                   ctrl.respuestaSolicitud = resOriginal;
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                  let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                    return estSol.CodigoAbreviacion == resOriginal
+                  })
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
                   ctrl.detallesSolicitud.splice(index, 1);
                   ctrl.detallesSolicitud.push(detalleAux);
                   await ModificarRespuestas(respuestas);
@@ -1978,12 +1996,12 @@ angular.module('poluxClienteApp')
                     var tipoAux, respuestaAprobado, respuestaRechazo = "";
                     if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
                       tipoAux = "ESPELE2"
-                      respuestaAprobado = "ACPO2"
-                      respuestaRechazo = "RCPO2"
+                      respuestaAprobado = "ACPO2_PLX"
+                      respuestaRechazo = "RCPO2_PLX"
                     } else {
                       tipoAux = "ESPELE"
-                      respuestaAprobado = "ACPO1"
-                      respuestaRechazo = "RCPO1"
+                      respuestaAprobado = "ACPO1_PLX"
+                      respuestaRechazo = "RCPO1_PLX"
                     }
                     var parametrosRespuestaSol = $.param({
                       query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
@@ -1992,17 +2010,26 @@ angular.module('poluxClienteApp')
                     await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
                       respuestas = responseRespuestaSolicitud.data;
                       angular.forEach(respuestas, async function(respuesta) {
-                        if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
+                        let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.Id == respuesta.EstadoSolicitud
+                        })
+                        if (estadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
                           ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
                           ctrl.respuestaSolicitud = resOriginal;
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                          let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == resOriginal
+                          })
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
                           await ModificarRespuestas(respuestas);
-                        } else if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
+                        } else if (estadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
                           if ((ctrl.prioridad == 1 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") ||
                           (ctrl.prioridad ==2 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2")) {
                             ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
                             ctrl.respuestaSolicitud = resOriginal;
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                            let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                              return estSol.CodigoAbreviacion == resOriginal
+                            })
+                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                             await ModificarRespuestas(respuestas);
                           } else {
                             cambioMateriasPosgrado = true;
@@ -2036,7 +2063,10 @@ angular.module('poluxClienteApp')
                   }
                   ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
                   ctrl.respuestaSolicitud = resOriginal;
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = parseInt(resOriginal);
+                  let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                    return estSol.CodigoAbreviacion == resOriginal
+                  })
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
                   ctrl.detallesSolicitud.splice(index, 1);
                   ctrl.detallesSolicitud.push(detalleAux);
                   await ModificarRespuestas(respuestas);
