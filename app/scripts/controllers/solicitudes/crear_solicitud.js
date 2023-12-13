@@ -108,8 +108,9 @@ angular.module('poluxClienteApp')
       ctrl.solicitudes = [];
       ctrl.detalles = [];
       ctrl.areas = [];
-      ctrl.modalidad=null;
+      ctrl.modalidad = "";
       ctrl.espaciosElegidos = [];
+      ctrl.Modalidades = [];
       ctrl.siModalidad = false;
       ctrl.modalidad_select = false;
       ctrl.detallesCargados = false;
@@ -1114,7 +1115,7 @@ angular.module('poluxClienteApp')
                 });
               }
               else{
-                promises.push(ctrl.Modalidades);
+                promises.push(getModalidades());
                 //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
                 //promises.push(getSolicitudesAnteriores());
               }
@@ -1134,6 +1135,13 @@ angular.module('poluxClienteApp')
         return defer.promise;
       }
 
+      var getModalidades = function() {
+        let mod = ctrl.Modalidades.find(modalidad => {
+          return modalidad.CodigoAbreviacion == "EAPOS_PLX"
+        });
+        ctrl.modalidad = mod.CodigoAbreviacion
+      }
+
       ctrl.verificarSolicitudes().then(function(puede) {
           if (puede) {
             var promises = [];
@@ -1147,13 +1155,11 @@ angular.module('poluxClienteApp')
                     $scope.loadParametros = false;
                   })
                   .catch(function(error) {
-                    
                     ctrl.errorCarga = true;
                     $scope.loadParametros = false
                   });
               })
               .catch(function(error) {
-                
                 ctrl.errorCarga = true;
                 $scope.loadParametros = false
               });
@@ -1164,7 +1170,6 @@ angular.module('poluxClienteApp')
           }
         })
         .catch(function(error) {
-          
           ctrl.errorCarga = true;
           $scope.loadParametros = false;
         });
@@ -1174,7 +1179,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name verificarRequisitos
        * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
-       * @description 
+       * @description
        * Con los datos del estudiante y el tipo de solicitud verifica por medio del servicio {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} si el estudiante cumple o no con los requisitos para realizar la solicitud,
        * en caso de que la solicitud sea de tipo inicial en la modalidad de materias de posgrado consulta en el servicio {@link services/poluxClienteApp.service:sesionesService sesionesService} si las fechas coinciden con las fechas del proceso
        * de modalidad de materias de posgrado para el periodo correspondiente.
@@ -1192,11 +1197,10 @@ angular.module('poluxClienteApp')
             ctrl.estudiante.Modalidad = ModalidadTemp.CodigoAbreviacion;
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
-            ctrl.estudiante.Modalidad = null;
+            //ctrl.estudiante.Modalidad = null;
               if (responseModalidad.data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
-                
                 if(ctrl.Docente == 1){
                   defer.resolve(true);
                 }
@@ -1422,7 +1426,6 @@ angular.module('poluxClienteApp')
 
         if (modalidad_seleccionada !== undefined) {
           ctrl.modalidad = modalidad_seleccionada;
-          
         }
         if(tipoSolicitudSeleccionada.CodigoAbreviacion != "SI_PLX"  && tipoSolicitudSeleccionada.CodigoAbreviacion == "SCM_PLX"){
           // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
