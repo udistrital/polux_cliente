@@ -316,7 +316,6 @@ angular.module('poluxClienteApp')
         })
 
         if (lista_roles.includes("ESTUDIANTE")) {
-          
           parametrosSolicitudes = $.param({
             query: "usuario:" + identificador,
             limit: 0
@@ -360,7 +359,6 @@ angular.module('poluxClienteApp')
                     defer.resolve(solicitud.data);
                   })
                   .catch(function(error) {
-                    
                     defer.reject(error);
                   })
                 return defer.promise;
@@ -708,8 +706,11 @@ angular.module('poluxClienteApp')
             var carreras = [];
             console.log("roles ", lista_roles)
             if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+              let estSol = ctrl.EstadoSolicitud.find(estadoSol => {
+                return estadoSol.CodigoAbreviacion == "ACPR_PLX"
+              })
               parametrosSolicitudes = $.param({
-                query: "EstadoSolicitud__CodigoAbreviacion:ACPR,Activo:true",
+                query: "EstadoSolicitud:" + estSol.Id + ",Activo:true",
                 limit: 0
               });
               if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
@@ -756,16 +757,17 @@ angular.module('poluxClienteApp')
                         academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                           if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                             var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                            let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
+                              return estadoSol.Id == solicitud.EstadoSolicitud
+                            })
                             if(lista_roles.includes("COORDINADOR_POSGRADO")) {
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
+                              solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                               ctrl.solicitudes.push(solicitud.data);
                               ctrl.gridOptions.data = ctrl.solicitudes;
                             }
                             if (carreras.includes(carreraEstudiante)) {
-                              let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
-                                return estadoSol.Id == solicitud.EstadoSolicitud
-                              })
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                               solicitud.data.Respuesta = solicitud;
                               // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
@@ -821,14 +823,37 @@ angular.module('poluxClienteApp')
                               await verificarSolicitud(solicitud)
                               if (solPosgrado) {
                                 var parametrosRespuesta = "";
+                                var query = ",EstadoSolicitud.in:"
                                 if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                                  var guardaPrimero = false;
+                                  ctrl.EstadoSolicitud.forEach(estado => {
+                                    if (estado.CodigoAbreviacion == "ACPO1_PLX" || estado.CodigoAbreviacion == "RCPO1_PLX") {
+                                      if (guardaPrimero) {
+                                        query += "|"
+                                      } else {
+                                        guardaPrimero = true
+                                      }
+                                      query += estado.Id.toString()
+                                    }
+                                  });
                                   parametrosRespuesta = $.param({
-                                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + ",EstadoSolicitud.CodigoAbreviacion.in:ACPO1|RCPO1",
+                                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + query,
                                     limit: 0
                                   });
                                 } else if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                                  var guardaPrimero = false;
+                                  ctrl.EstadoSolicitud.forEach(estado => {
+                                    if (estado.CodigoAbreviacion == "ACPO2_PLX" || estado.CodigoAbreviacion == "RCPO2_PLX") {
+                                      if (guardaPrimero) {
+                                        query += "|"
+                                      } else {
+                                        guardaPrimero = true
+                                      }
+                                      query += estado.Id.toString()
+                                    }
+                                  });
                                   parametrosRespuesta = $.param({
-                                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + ",EstadoSolicitud.CodigoAbreviacion.in:ACPO2|RCPO2",
+                                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + query,
                                     limit: 0
                                   });
                                 }
@@ -1282,7 +1307,7 @@ angular.module('poluxClienteApp')
                         detalle.Descripcion = areaConocimiento.Nombre
                       });
                       detalle.Descripcion = detalle.Descripcion.substring(2);
-                    } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                    } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                       //materias
                       var datosMaterias = detalle.Descripcion.split("-");
                       detalle.carrera = JSON.parse(datosMaterias[1]);

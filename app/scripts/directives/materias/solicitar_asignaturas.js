@@ -10,6 +10,7 @@
  * @param {object} estudiante Estudiante que esta realizando la solicitud
  * @param {number} modalidad Identificador de la modalidad que cursará el estudiante
  * @param {object} carrerasElegidas Contiene las carreras que el estudiante escogio si ha realizado solicitudes inicales de materias de posgrado antes para el mismo periodo.
+ * @param {object} modalidades Arreglo de modalidades
  */
 angular.module('poluxClienteApp')
     .directive('solicitarAsignaturas', function ($q, poluxRequest, academicaRequest, $route, poluxMidRequest) {
@@ -18,6 +19,7 @@ angular.module('poluxClienteApp')
             scope: {
                 estudiante: '=',
                 modalidad: '=',
+                modalidades: '=',
                 e: '=?',
             },
             templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
@@ -102,34 +104,26 @@ angular.module('poluxClienteApp')
                     cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected2, 2)">'
                 }];
                 ctrl.estudiante = $scope.estudiante;
-                if ($scope.estudiante.Modalidad === 3) {
+                if ($scope.estudiante.Modalidad == "EAPRO_PLX") {
                     $scope.estudiante.Tipo = "PREGRADO";
                 }
                 ctrl.tipo = $scope.estudiante.Tipo;
                 $scope.sols = [];
                 if ($scope.e === undefined) {
                     $scope.e = [];
-                    // $scope.e = {
-                    //"Codigo": "null",
-                    // };
                 }
-                
+
                 /*número de créditos mínimos, según la modalidad
                   modalidad de espacios académicos de posgrado: 8 créditos,
                   modalidad de espacios académicos de profundización: 6 créditos*/
                 ctrl.creditosMinimos = 0;
-                //if ($scope.modalidad == 2) {
-                // ctrl.creditosMinimos = 8;
-                //} else {
-                // ctrl.creditosMinimos = 6;
-                //}
                 /**
                  * @ngdoc method
                  * @name cargarDatos
                  * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
                  * @param {undefined} undefined No recibe parametros
                  * @returns {undefined} No retorna ningún valor
-                 * @description 
+                 * @description
                  * Permite obtener los datos de las carreras y las asignaturas, primero busa el periodo academeco actual del servicio 
                  * {@link services/academicaService.service:academicaRequest academicaRequest}, consulta en {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} la cantidad de ccreditos que debe cursarse en la modalidad,
                  *  con esto busca las carreras elegibles  del servicio {@link services/poluxService.service:poluxRequest poluxRequest} y los nombres de {@link services/academicaService.service:academicaRequest academicaRequest}.
@@ -140,10 +134,12 @@ angular.module('poluxClienteApp')
                     }
                     //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
                     var nivelAsignaturas = '';
-                    if ($scope.modalidad === 2) {
+                    let mod = $scope.modalidades.find(modalidad => {
+                        return modalidad.Id == $scope.modalidad
+                      });
+                    if (mod.CodigoAbreviacion == "EAPOS_PLX") {
                         nivelAsignaturas = 'POSGRADO';
                     } else {
-                        //$scope.modalidad === 3
                         nivelAsignaturas = 'PREGRADO';
                     }
                     var parametros = $.param({
@@ -155,7 +151,7 @@ angular.module('poluxClienteApp')
                         var getCreditos = function () {
                             var defer = $q.defer();
                             poluxMidRequest.get("creditos_materias/ObtenerCreditos").then(function (responseCreditos) {
-                                if ($scope.modalidad == 2) {
+                                if (mod.CodigoAbreviacion == "EAPOS_PLX") {
                                     ctrl.creditosMinimos = responseCreditos.data.MateriasPosgrado;
                                 } else {
                                     ctrl.creditosMinimos = responseCreditos.data.MateriasProfundizacion;
@@ -203,19 +199,16 @@ angular.module('poluxClienteApp')
                             ctrl.loading = false;
                         })
                             .catch(function (error) {
-                                
                                 ctrl.errorCargando = true;
                                 ctrl.loading = false;
                             });
                     })
                         .catch(function (error) {
-                            
                             ctrl.errorCargando = true;
                             ctrl.loading = false;
                         });
                 })
                     .catch(function (error) {
-                        
                         ctrl.errorCargando = true;
                         ctrl.loading = false;
                     });
@@ -227,7 +220,7 @@ angular.module('poluxClienteApp')
                  * @param {number} carreraSeleccionada Identificador de la carrera seleccionada.
                  * @param {number} numeroMateria Identificador para numero de carrera seleccionada
                  * @returns {undefined} No retorna ningún valor
-                 * @description 
+                 * @description
                  * Carga las materias publicadas con la carrera elegible del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y los datos de la misma (nombre y créditos) de 
                  * {@link services/academicaService.service:academicaRequest academicaRequest}.
                  */
@@ -284,7 +277,6 @@ angular.module('poluxClienteApp')
                                     } else if (numeroCarrera == 2) {
                                         ctrl.asignaturas2.push(data);
                                     }
-                                    
                                     defer.resolve();
                                 })
                                     .catch(function (error) {
@@ -329,7 +321,7 @@ angular.module('poluxClienteApp')
 
                     })
                         .catch(function (error) {
-                            
+
                             ctrl.errorCargandoAsignaturas = true;
                             ctrl.loadingAsignaturas = false;
                         });
