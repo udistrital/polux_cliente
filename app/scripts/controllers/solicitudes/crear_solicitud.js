@@ -183,7 +183,8 @@ angular.module('poluxClienteApp')
           .then(function (evaluacion_trabajo_grado_results) {
             for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
               if (evaluacion_trabajo_grado_results[i].data[0].Nota >= 0) {
-                return true;
+                //CAMBIAR DESPUÉS PARA QUE QUEDE EN PRODUCCION
+                return false;
               }
             }
 
