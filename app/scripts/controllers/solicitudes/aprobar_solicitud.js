@@ -1402,9 +1402,7 @@ angular.module('poluxClienteApp')
                 var data_areas = [];
                 angular.forEach(ctrl.areas, function (area) {
                   data_areas.push({
-                    "AreaConocimiento": {
-                      "Id": Number(area)
-                    },
+                    "AreaConocimiento": Number(area),
                     "TrabajoGrado": {
                       "Id": 0
                     },
