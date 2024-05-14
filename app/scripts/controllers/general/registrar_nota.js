@@ -720,6 +720,12 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No hace retorno de resultados
        */
       ctrl.registrarCorrecciones = function () {
+        // Crear una copia del objeto VinculacionTrabajoGrado para modificar su campo RolTrabajoGrado y que solo se envié el Id, para luego asignarlo al campo RolTrabajoGrado del modelo VinculacionTrabajoGrado de polux_mid
+        var vinculacionModificada = Object.assign({}, ctrl.trabajoSeleccionado.vinculacion)
+
+        // Extraer el campo Id de RolTrabajoGrado y asignarlo a la copia del objeto original
+        vinculacionModificada.RolTrabajoGrado = ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
+
         // Envía transacción para rechazar
         var transaccionRechazo = {
           Comentarios: [
@@ -729,7 +735,7 @@ angular.module('poluxClienteApp')
           ],
           RevisionTrabajoGrado: {
             DocumentoTrabajoGrado: ctrl.docTrabajoGrado,
-            VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
+            VinculacionTrabajoGrado: vinculacionModificada,
           },
         };
 
