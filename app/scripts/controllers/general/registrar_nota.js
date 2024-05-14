@@ -18,6 +18,7 @@
  * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxService.service:documentoService
  * @requires services/poluxService.service:parametrosService
+ * @requires services/poluxMidService.service:poluxMidRequest
  * @property {String} documento Documento del docente que entra al modulo y que va a registrar las notas
  * @property {Boolean} cargandoTrabajos Bandera que muestra el loading y permite identificar cuando se cargaron todos los trabajos
  * @property {String} mensajeTrabajos Mensaje que se muestra mientras se cargan lso trabajos
@@ -41,7 +42,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -515,8 +516,12 @@ angular.module('poluxClienteApp')
           RolTrabajoGrado: fila.entity.RolTrabajoGrado,
         };
 
+        let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(data => {
+          return data.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
+        });
+
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
-        ctrl.trabajoSeleccionado.pedirActaSustentacion = (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1);
+        ctrl.trabajoSeleccionado.pedirActaSustentacion = (RolTrabajoGradoTemp.CodigoAbreviacion == "DIRECTOR_PLX");
         //Promesas del tg
         var promesasTrabajo = [];
         promesasTrabajo.push(ctrl.getEstudiantes(ctrl.trabajoSeleccionado));
@@ -545,10 +550,23 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No recibe ningún parametro
        * @returns {undefined} No hace retorno de resultados
        */
-      ctrl.registrarNotaTG = function() {
+      ctrl.registrarNotaTG = function () {
 
-        var crearData = function() {
+        var crearData = function () {
           var defer = $q.defer()
+
+          let ModalidadTemp = ctrl.Modalidades.find(data => {
+            return data.Id == ctrl.trabajoSeleccionado.Modalidad.Id;
+          });
+
+          ctrl.trabajoSeleccionado.Modalidad = ModalidadTemp.Id;
+
+          let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(data => {
+            return data.Id == ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id;
+          });
+
+          ctrl.trabajoSeleccionado.EstadoTrabajoGrado = EstadoTrabajoGradoTemp.Id;
+
           //Se crea la data para la transacción
           var dataRegistrarNota = {
             TrabajoGrado: ctrl.trabajoSeleccionado,
@@ -561,103 +579,118 @@ angular.module('poluxClienteApp')
             }
           }
           //Si es director se debe subir el acta
-          if (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 1) {
+          let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(data => {
+            return data.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
+          });
+          if (RolTrabajoGradoTemp.CodigoAbreviacion == "DIRECTOR_PLX") {
             var nombreDocumento = "Acta de sustentación de trabajo id: " + ctrl.trabajoSeleccionado.Id;
-            var descripcionDocumento = "Acta de sustentación de el trabajo con id: "+ctrl.trabajoSeleccionado.Id+", nombre:"+ctrl.trabajoSeleccionado.Titulo+".";
+            var descripcionDocumento = "Acta de sustentación de el trabajo con id: " + ctrl.trabajoSeleccionado.Id + ", nombre:" + ctrl.trabajoSeleccionado.Titulo + ".";
             //Se carga el documento
             // Se carga el documento por medio del gestor documental
             var descripcion;
-              var fileBase64 ;
-              var data = [];
-              var URL = "";
-                descripcion = descripcionDocumento;
-                utils.getBase64(ctrl.trabajoSeleccionado.actaSustentacion).then(
-                  function (base64) {                   
-                   fileBase64 = base64;
-                data = [{
-                 IdTipoDocumento: 18, //id tipo documento de documentos_crud
-                 nombre: nombreDocumento ,// nombre formado por el acta del trabajo y el id de trabajo
-               
-                 metadatos: {
-                   NombreArchivo: nombreDocumento,
-                   Tipo: "Archivo",
-                   Observaciones: "actas_sustentacion"
-                 }, 
-                 descripcion:descripcion,
-                 file:  fileBase64,
-                }] 
+            var fileBase64;
+            var data = [];
+            var URL = "";
+            descripcion = descripcionDocumento;
+            utils.getBase64(ctrl.trabajoSeleccionado.actaSustentacion).then(function (base64) {
+              fileBase64 = base64;
+              let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+                return data.CodigoAbreviacion == "ACT_PLX";
+              });
+              data = [{
+                IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
+                nombre: nombreDocumento,// nombre formado por el acta del trabajo y el id de trabajo
 
-                  gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
-                  URL =  response.data.res.Enlace 
-                  dataRegistrarNota.DocumentoEscrito = {
-                    Id: 0,
-                    Titulo: nombreDocumento,
-                    Resumen: descripcionDocumento,
-                    Enlace: URL,
-                    TipoDocumentoEscrito: 6, //Para acta de sustentación
-                  };
-                  defer.resolve(dataRegistrarNota);                                         
-                  nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                     .then(function (response) {
-                     // console.log('nuxeoMid response: ',response) 
+                metadatos: {
+                  NombreArchivo: nombreDocumento,
+                  Tipo: "Archivo",
+                  Observaciones: "actas_sustentacion"
+                },
+                descripcion: descripcion,
+                file: fileBase64,
+              }]
+
+              gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                URL = response.data.res.Enlace
+                dataRegistrarNota.DocumentoEscrito = {
+                  Id: 0,
+                  Titulo: nombreDocumento,
+                  Resumen: descripcionDocumento,
+                  Enlace: URL,
+                  TipoDocumentoEscrito: TipoDocumentoTemp.Id, //Para acta de sustentación
+                };
+                defer.resolve(dataRegistrarNota);
+                nuxeoMidRequest.post('workflow?docID=' + URL, null)
+                  .then(function (response) {
+                    // console.log('nuxeoMid response: ',response) 
                   }).catch(function (error) {
-                  //  console.log('nuxeoMid error:',error)
+                    //  console.log('nuxeoMid error:',error)
                   })
-                 })
+              })
 
-              })     
-            
-            //nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
-            //  .then(function(urlActa) {
-               
-            //  })
-              .catch(function(error) {
+            })
+
+              //nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
+              //  .then(function(urlActa) {
+
+              //  })
+              .catch(function (error) {
                 defer.reject(error);
               });
 
-          } else if (ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id === 3) {
+          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "EVALUADOR_PLX") {
             //Si no es director se registra la nota
             defer.resolve(dataRegistrarNota);
           }
+
+          let RolTemp = ctrl.RolesTrabajoGrado.find(data => {
+            return data.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;
+          });
+
+          dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado = RolTemp.Id;
+          dataRegistrarNota.VinculacionTrabajoGrado.RolTrabajoGrado = RolTemp.Id;
+
           return defer.promise;
         }
         ctrl.registrandoNotaTG = true;
         crearData()
-          .then(function(dataRegistrarNota) {
+          .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
-            poluxRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function(response) {
-                if (response.data[0] === "Success") {
-                  var Atributos={
-                    rol:'ESTUDIANTE',
-                }
-                notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
+            console.log("DATA REGISTRAR NOTA:", dataRegistrarNota);
 
-        //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              
-       swal(
-                    $translate.instant("REGISTRAR_NOTA.AVISO"),
-                    $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
-                    'success'
-                  );
-                  $('#modalRegistrarNota').modal('hide');
-                  ctrl.registrandoNotaTG = false;
-                  ctrl.cargarTrabajos()
-                    .then(function() {
-                      ctrl.cargandoTrabajos = false;
-                    })
-                    .catch(function(error) {
-                      ctrl.errorCargando = true;
-                      ctrl.cargandoTrabajos = false;
-                    })
-                } else {
-                  swal(
-                    $translate.instant("REGISTRAR_NOTA.AVISO"),
-                    $translate.instant(response.data[1]),
-                    'warning'
-                  );
+            poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function (response) {
+              if (response.data[0] === "Success") {
+                var Atributos = {
+                  rol: 'ESTUDIANTE',
                 }
+                notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO ' + ctrl.trabajoSeleccionado.Titulo, Atributos, ['101850341'], '', '', 'Se ha registrado la nota de parte de ' + token_service.getAppPayload().email + ' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+
+                //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              
+                swal(
+                  $translate.instant("REGISTRAR_NOTA.AVISO"),
+                  $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
+                  'success'
+                );
+                $('#modalRegistrarNota').modal('hide');
                 ctrl.registrandoNotaTG = false;
-              })
-              .catch(function(error) {                     
+                ctrl.cargarTrabajos()
+                  .then(function () {
+                    ctrl.cargandoTrabajos = false;
+                  })
+                  .catch(function (error) {
+                    ctrl.errorCargando = true;
+                    ctrl.cargandoTrabajos = false;
+                  })
+              } else {
+                swal(
+                  $translate.instant("REGISTRAR_NOTA.AVISO"),
+                  $translate.instant(response.data[1]),
+                  'warning'
+                );
+              }
+              ctrl.registrandoNotaTG = false;
+            })
+              .catch(function (error) {
                 swal(
                   $translate.instant("REGISTRAR_NOTA.AVISO"),
                   $translate.instant("REGISTRAR_NOTA.ERROR.REGISTRANDO_NOTA"),
@@ -666,7 +699,7 @@ angular.module('poluxClienteApp')
                 ctrl.registrandoNotaTG = false;
               });
           })
-          .catch(function(error) {
+          .catch(function (error) {
             ctrl.registrandoNotaTG = false;
             swal(
               $translate.instant("ERROR.SUBIR_DOCUMENTO"),
@@ -687,6 +720,12 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No hace retorno de resultados
        */
       ctrl.registrarCorrecciones = function () {
+        // Crear una copia del objeto VinculacionTrabajoGrado para modificar su campo RolTrabajoGrado y que solo se envié el Id, para luego asignarlo al campo RolTrabajoGrado del modelo VinculacionTrabajoGrado de polux_mid
+        var vinculacionModificada = Object.assign({}, ctrl.trabajoSeleccionado.vinculacion)
+
+        // Extraer el campo Id de RolTrabajoGrado y asignarlo a la copia del objeto original
+        vinculacionModificada.RolTrabajoGrado = ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
+
         // Envía transacción para rechazar
         var transaccionRechazo = {
           Comentarios: [
@@ -696,11 +735,11 @@ angular.module('poluxClienteApp')
           ],
           RevisionTrabajoGrado: {
             DocumentoTrabajoGrado: ctrl.docTrabajoGrado,
-            VinculacionTrabajoGrado: ctrl.trabajoSeleccionado.vinculacion,
+            VinculacionTrabajoGrado: vinculacionModificada,
           },
         };
 
-        poluxRequest.post("tr_registrar_revision_tg", transaccionRechazo)
+        poluxMidRequest.post("tr_registrar_revision_tg", transaccionRechazo)
           .then(function (response) {
             if (response.data[0] === "Success") {
               var Atributos = {

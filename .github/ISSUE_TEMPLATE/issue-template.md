@@ -23,11 +23,11 @@ No aplica
 
 **Definition of Ready - DoR**
 
-- [] Está refinada y estimada en puntos de historia por el equipo.
-- [] Incluye la descripción y criterios de aceptación, con el detalle funcional y especificaciones técnicas, de forma entendible por cualquier miembro del equipo.
-- [] No tiene bloqueos que impidan su ejecución.
-- [] Las dependencias están identificadas y resueltas.
-- [] Puede ser probada dentro del Sprint. 
+- [ ] Está refinada y estimada en puntos de historia por el equipo.
+- [ ] Incluye la descripción y criterios de aceptación, con el detalle funcional y especificaciones técnicas, de forma entendible por cualquier miembro del equipo.
+- [ ] No tiene bloqueos que impidan su ejecución.
+- [ ] Las dependencias están identificadas y resueltas.
+- [ ] Puede ser probada dentro del Sprint. 
 
 **Definition of Done - DoD - Desarrollo**
 
