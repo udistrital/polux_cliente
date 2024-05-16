@@ -726,6 +726,9 @@ angular.module('poluxClienteApp')
         // Extraer el campo Id de RolTrabajoGrado y asignarlo a la copia del objeto original
         vinculacionModificada.RolTrabajoGrado = ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
 
+        // Extraer el subobjeto TrabajoGrado de DocumentoTrabajoGrado y asignarlo a la copia del objeto original VinculacionTrabajoGrado en su campo TrabajoGrado
+        vinculacionModificada.TrabajoGrado = ctrl.docTrabajoGrado.TrabajoGrado;
+
         // Envía transacción para rechazar
         var transaccionRechazo = {
           Comentarios: [
