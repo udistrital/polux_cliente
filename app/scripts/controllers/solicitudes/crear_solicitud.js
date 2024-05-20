@@ -304,7 +304,7 @@ angular.module('poluxClienteApp')
           for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
             if (evaluacion_trabajo_grado_results[i].data[0].Nota >= 0) {
               //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
-              return true;
+              return false;
             }
           }
           return false;
@@ -1115,7 +1115,8 @@ angular.module('poluxClienteApp')
                 });
               }
               else{
-                promises.push(getModalidades());
+                // SE DEBE REVISAR CUANDO SE TRABAJO MODALIDAD DE
+                // promises.push(getModalidades());
                 //obtener solicitudes iniciales anteriores hechas por el usuario modalidad de posgrado
                 //promises.push(getSolicitudesAnteriores());
               }
@@ -1135,11 +1136,14 @@ angular.module('poluxClienteApp')
         return defer.promise;
       }
 
-      var getModalidades = function() {
-        let mod = ctrl.Modalidades.find(modalidad => {
-          return modalidad.CodigoAbreviacion == "EAPOS_PLX"
-        });
-        ctrl.modalidad = mod.CodigoAbreviacion
+      async function getModalidades(modalidad) {
+        return new Promise(async (resolve, reject) => {
+          let mod = ctrl.Modalidades.find(modal => {
+            return modal.Id == modalidad
+          });
+          ctrl.modalidad = mod.CodigoAbreviacion
+          resolve()
+        })
       }
 
       ctrl.verificarSolicitudes().then(function(puede) {
@@ -1188,8 +1192,10 @@ angular.module('poluxClienteApp')
        */
       ctrl.verificarRequisitos = function(tipoSolicitud, modalidad) {
         var defer = $q.defer();
-        var verificarRequisitosModalidad = function() {
+        var verificarRequisitosModalidad = async function() {
           var defer = $q.defer();
+          await getModalidades(modalidad)
+          ctrl.estudiante.Modalidad = ctrl.modalidad
           if(ctrl.estudiante.Modalidad == null){
             let ModalidadTemp = ctrl.Modalidades.find(data => {
               return data.Id == ctrl.modalidad
@@ -1868,7 +1874,7 @@ angular.module('poluxClienteApp')
                   // FILTRO SEGÚN MODALIDAD PARA EL CAMPO DE ACEPTACIÓN DE TERMINOS
                   if(detalle.Detalle.CodigoAbreviacion == "ACTERM"){
                     let ModalidadTemp = ctrl.Modalidades.find(data => {
-                      return data.Id == ctrl.modalidad
+                      return data.CodigoAbreviacion == ctrl.modalidad
                     });
                     // PARA MODALIDAD DE MONOGRAFIA
                     if(ModalidadTemp.CodigoAbreviacion == "MONO_PLX"){
@@ -1911,7 +1917,6 @@ angular.module('poluxClienteApp')
                     ctrl.errorParametros = true;
                     $scope.loadDetalles = false;
                     ctrl.detalles = [];
-                    
                   });
               } else {
                 ctrl.mensajeError = $translate.instant("ERROR.SIN_DETALLE_SOLICITUD");
@@ -1925,7 +1930,6 @@ angular.module('poluxClienteApp')
               ctrl.errorParametros = true;
               $scope.loadDetalles = false;
               ctrl.detalles = [];
-              
             });
           //}else {
           //$scope.loadDetalles = false;
@@ -1936,7 +1940,6 @@ angular.module('poluxClienteApp')
           ctrl.errorParametros = true;
           $scope.loadDetalles = false;
           ctrl.detalles = [];
-          
         });
       }
     };
@@ -2642,27 +2645,21 @@ angular.module('poluxClienteApp')
                             }
                             ctrl.cargarDetalles(ctrl.tipoSolicitud_Docente,ctrl.modalidad);
                           } else {
-                           
                             ctrl.mensajeErrorCarga = $translate.instant("ERROR.ESTUDIANTE_NO_ENCONTRADO");
-                           
                           }
                         })
                         .catch(function(error) {
                           ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
-                          
                         });
                       })
                       .catch(function(error) {
                         ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_TRABAJOS");
                       });
                   }
-                  
                 });
               })
               .catch(function(error) {
                 ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_TRABAJOS");
               });
-              
       }
-   
     });
