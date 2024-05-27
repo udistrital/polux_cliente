@@ -368,7 +368,6 @@ angular.module('poluxClienteApp')
                                         ctrl.cargandoRevision = false;
                                     })
                             } else {
-                                console.log("FALLA 2")
                                 swal(
                                     $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                     $translate.instant("REGISTRAR_REVISION.ERROR"),

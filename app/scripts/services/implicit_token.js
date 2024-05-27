@@ -82,7 +82,6 @@ angular.module('implicitToken', [])
                 }
               })
               .then(function(respuestaAutenticacion) {
-                console.log(respuestaAutenticacion)
                 //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
                 /*if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.rol.includes("ESTUDIANTE")){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
