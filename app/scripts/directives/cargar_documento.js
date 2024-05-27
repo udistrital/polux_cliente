@@ -11,6 +11,7 @@
  * @param {object} carreras carreras asociadas al coordinador que va a subir el documento
  * @param {number} acta Número del acta que se va a cargar
  * @param {object} modalidad Modalidad a la que pertenece el trabajo de grado
+ * @param {object} tipodocumento Arreglo de tipos de documentos
  */
 angular.module('poluxClienteApp')
   .directive('cargarDocumento', function () {
@@ -20,7 +21,8 @@ angular.module('poluxClienteApp')
         name: '@',
         carreras: '=',
         acta: '=',
-        modalidad: '='
+        modalidad: '=',
+        tipodocumento: '='
       },
       templateUrl: 'views/directives/cargar_documento.html',
       /**
@@ -58,18 +60,19 @@ angular.module('poluxClienteApp')
          * @description 
          * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
          */
-        
         ctrl.cargarDocumento = function(){
           var fileBase64;
           var data = [];
           var URL = "";
+          let tipoDocumento = $scope.tipodocumento.find(tipoDoc => {
+            return tipoDoc.CodigoAbreviacion == "ACT_PLX"
+          })
           utils.getBase64(ctrl.documento.fileModel).then(
             function (base64) {
               fileBase64 = base64;
               data = [{
-                IdTipoDocumento: 67, //id tipo documento de documentos_crud
+                IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
                 nombre: "ActaSolicitud" + ctrl.solicitud,// nombre formado por el acta de solicitud y la solicitud
-
                 metadatos: {
                   NombreArchivo: "ActaSolicitud" + ctrl.solicitud,
                   Tipo: "Archivo",
@@ -78,7 +81,6 @@ angular.module('poluxClienteApp')
                 descripcion: "Acta de respuesta de la solicitud " + ctrl.solicitud,
                 file: fileBase64,
               }]
-
               gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
                 URL = response.data.res.Enlace;
                 url = URL;
@@ -114,16 +116,19 @@ angular.module('poluxClienteApp')
             var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
             ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.codigo_proyecto_curricular + " Fecha: " + date;
             //Se comienza a usar la subida de actas al gestor 
-           // ctrl.cargarDocumento();
+            // ctrl.cargarDocumento();
+            let tipoDocumento = $scope.tipodocumento.find(tipoDoc => {
+              return tipoDoc.CodigoAbreviacion == "ACT_PLX"
+            });
             var documento = {
               "Titulo": ctrl.documento.nombre,
               "Enlace": url ,
               //"Resumen":ctrl.documento.resumen,
               "Resumen": "Acta de consejo de carrera del proyecto curricular",
-              "TipoDocumentoEscrito": 67,
+              "TipoDocumentoEscrito": tipoDocumento.Id,
             };
             if ($scope.modalidad.CodigoAbreviacion == "EAPOS") {
-              documento.TipoDocumentoEscrito = 67
+              documento.TipoDocumentoEscrito = tipoDocumento.Id
               documento.Resumen = "Certificado de cumplimiento"
             }
             console.log("DOC ", documento)

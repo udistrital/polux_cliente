@@ -10,6 +10,7 @@
  * @param {object} estudiante Estudiante que esta realizando la solicitud
  * @param {number} modalidad Identificador de la modalidad que cursará el estudiante
  * @param {object} carrerasElegidas Contiene las carreras que el estudiante escogio si ha realizado solicitudes inicales de materias de posgrado antes para el mismo periodo.
+ * @param {object} modalidades Arreglo de modalidades
  */
 angular.module('poluxClienteApp')
     .directive('solicitarAsignaturas', function ($q, poluxRequest, academicaRequest, $route, poluxMidRequest) {
@@ -18,6 +19,7 @@ angular.module('poluxClienteApp')
             scope: {
                 estudiante: '=',
                 modalidad: '=',
+                modalidades: '=',
                 e: '=?',
             },
             templateUrl: 'views/directives/materias/solicitar_asignaturas.html',
@@ -38,14 +40,26 @@ angular.module('poluxClienteApp')
              * @property {object} carreras Listado de carreras elegibles para el estudiante
              * @property {object} asignaturas Listado de asignaturas elegibles asociadas a una carrera elegible para el estudiante
              * @property {object} gridOptions Opciones del ui-grid donde se muestran las asignaturas
+             * @property {object} gridOptions2 Opciones del ui-grid donde se muestran las asignaturas de la opción 2
              */
             controller: function ($scope, $route, $translate) {
                 var ctrl = this;
+                ctrl.dobleSolicitud = true
                 ctrl.cargando = $translate.instant("LOADING.CARGANDO_ASIGNATURAS");
                 ctrl.loading = true;
                 ctrl.maxCreditos = 0;
                 ctrl.carreras = [];
+                ctrl.selected = [];
+                ctrl.selected2 = [];
                 ctrl.gridOptions = {
+                    paginationPageSizes: [5, 10, 15, 20, 25],
+                    paginationPageSize: 10,
+                    enableFiltering: true,
+                    enableSorting: true,
+                    enableSelectAll: false,
+                    useExternalPagination: false,
+                };
+                ctrl.gridOptions2 = {
                     paginationPageSizes: [5, 10, 15, 20, 25],
                     paginationPageSize: 10,
                     enableFiltering: true,
@@ -69,37 +83,47 @@ angular.module('poluxClienteApp')
                     displayName: $translate.instant('SELECCIONAR'),
                     width: 200,
                     type: 'boolean',
-                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected)">'
+                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected, 1)">'
+                }];
+                ctrl.gridOptions2.columnDefs = [{
+                    name: 'CodigoAsignatura',
+                    displayName: $translate.instant('CODIGO'),
+                    width: 200
+                }, {
+                    name: 'Nombre',
+                    displayName: $translate.instant('NOMBRE'),
+                }, {
+                    name: 'Creditos',
+                    displayName: $translate.instant('CREDITOS'),
+                    width: 200
+                }, {
+                    name: 'Check',
+                    displayName: $translate.instant('SELECCIONAR'),
+                    width: 200,
+                    type: 'boolean',
+                    cellTemplate: '<input type="checkbox" ng-model="row.entity.isSelected" ng-click="grid.appScope.d_solicitarAsignaturas.toggle(row.entity, grid.appScope.d_solicitarAsignaturas.selected2, 2)">'
                 }];
                 ctrl.estudiante = $scope.estudiante;
-                if ($scope.estudiante.Modalidad === 3) {
+                if ($scope.estudiante.Modalidad == "EAPRO_PLX") {
                     $scope.estudiante.Tipo = "PREGRADO";
                 }
                 ctrl.tipo = $scope.estudiante.Tipo;
                 $scope.sols = [];
                 if ($scope.e === undefined) {
                     $scope.e = [];
-                    // $scope.e = {
-                    //"Codigo": "null",
-                    // };
                 }
-                
+
                 /*número de créditos mínimos, según la modalidad
                   modalidad de espacios académicos de posgrado: 8 créditos,
                   modalidad de espacios académicos de profundización: 6 créditos*/
                 ctrl.creditosMinimos = 0;
-                //if ($scope.modalidad == 2) {
-                // ctrl.creditosMinimos = 8;
-                //} else {
-                // ctrl.creditosMinimos = 6;
-                //}
                 /**
                  * @ngdoc method
                  * @name cargarDatos
                  * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
                  * @param {undefined} undefined No recibe parametros
                  * @returns {undefined} No retorna ningún valor
-                 * @description 
+                 * @description
                  * Permite obtener los datos de las carreras y las asignaturas, primero busa el periodo academeco actual del servicio 
                  * {@link services/academicaService.service:academicaRequest academicaRequest}, consulta en {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} la cantidad de ccreditos que debe cursarse en la modalidad,
                  *  con esto busca las carreras elegibles  del servicio {@link services/poluxService.service:poluxRequest poluxRequest} y los nombres de {@link services/academicaService.service:academicaRequest academicaRequest}.
@@ -110,10 +134,12 @@ angular.module('poluxClienteApp')
                     }
                     //buscar las carreras q tengan asignaturas en asignaturas_elegibles para el año y el periodo
                     var nivelAsignaturas = '';
-                    if ($scope.modalidad === 2) {
+                    let mod = $scope.modalidades.find(modalidad => {
+                        return modalidad.Id == $scope.modalidad
+                      });
+                    if (mod.CodigoAbreviacion == "EAPOS_PLX") {
                         nivelAsignaturas = 'POSGRADO';
                     } else {
-                        //$scope.modalidad === 3
                         nivelAsignaturas = 'PREGRADO';
                     }
                     var parametros = $.param({
@@ -125,7 +151,7 @@ angular.module('poluxClienteApp')
                         var getCreditos = function () {
                             var defer = $q.defer();
                             poluxMidRequest.get("creditos_materias/ObtenerCreditos").then(function (responseCreditos) {
-                                if ($scope.modalidad == 2) {
+                                if (mod.CodigoAbreviacion == "EAPOS_PLX") {
                                     ctrl.creditosMinimos = responseCreditos.data.MateriasPosgrado;
                                 } else {
                                     ctrl.creditosMinimos = responseCreditos.data.MateriasProfundizacion;
@@ -173,19 +199,16 @@ angular.module('poluxClienteApp')
                             ctrl.loading = false;
                         })
                             .catch(function (error) {
-                                
                                 ctrl.errorCargando = true;
                                 ctrl.loading = false;
                             });
                     })
                         .catch(function (error) {
-                            
                             ctrl.errorCargando = true;
                             ctrl.loading = false;
                         });
                 })
                     .catch(function (error) {
-                        
                         ctrl.errorCargando = true;
                         ctrl.loading = false;
                     });
@@ -195,20 +218,30 @@ angular.module('poluxClienteApp')
                  * @name cargarMaterias
                  * @methodOf poluxClienteApp.directive:solicitarAsignaturas.controller:solicitarAsignaturasCtrl
                  * @param {number} carreraSeleccionada Identificador de la carrera seleccionada.
+                 * @param {number} numeroMateria Identificador para numero de carrera seleccionada
                  * @returns {undefined} No retorna ningún valor
-                 * @description 
+                 * @description
                  * Carga las materias publicadas con la carrera elegible del servicio de {@link services/poluxService.service:poluxRequest poluxRequest} y los datos de la misma (nombre y créditos) de 
                  * {@link services/academicaService.service:academicaRequest academicaRequest}.
                  */
-                ctrl.cargarMaterias = function (carreraSeleccionada) {
+                ctrl.cargarMaterias = function (carreraSeleccionada, numeroCarrera) {
                     ctrl.creditos = 0;
+                    ctrl.creditos2 = 0;
                     $scope.estudiante.minimoCreditos = false;
-                    ctrl.loadingAsignaturas = true;
-                    ctrl.selected = [];
-                    ctrl.selected.push(carreraSeleccionada);
-                    $scope.estudiante.asignaturas_elegidas = ctrl.selected;
+                    if (numeroCarrera == 1) {
+                        ctrl.loadingAsignaturas = true;
+                    } else if (numeroCarrera == 2) {
+                        ctrl.loadingAsignaturas2 = true;
+                    }
+                    if (numeroCarrera == 1) {
+                        ctrl.selected.push(carreraSeleccionada);
+                        $scope.estudiante.asignaturas_elegidas = ctrl.selected;
+                    } else if (numeroCarrera == 2) {
+                        ctrl.selected2.push(carreraSeleccionada);
+                        $scope.estudiante.asignaturas_elegidas2 = ctrl.selected2;
+                    }
                     ctrl.asignaturas = [];
-
+                    ctrl.asignaturas2 = [];
                     ctrl.carrera = carreraSeleccionada.Codigo;
 
                     //buscar la carrera en: carrera_elegible
@@ -231,15 +264,19 @@ angular.module('poluxClienteApp')
                                 academicaRequest.get("asignatura_pensum", [value.CodigoAsignatura, value.CarreraElegible.CodigoPensum]).then(function (responseAsignatura) {
                                     var data = {
                                         "Id": value.Id,
-                                        "Anio": value.Anio,
+                                        "Anio": value.CarreraElegible.Anio,
                                         "CodigoAsignatura": value.CodigoAsignatura,
-                                        "CodigoCarrera": value.CodigoCarrera,
-                                        "CodigoPensum": value.CodigoPensum,
-                                        "Periodo": value.Periodo,
+                                        "CodigoCarrera": value.CarreraElegible.CodigoCarrera,
+                                        "CodigoPensum": value.CarreraElegible.CodigoPensum,
+                                        "Periodo": value.CarreraElegible.Periodo,
                                         "Nombre": responseAsignatura.data.asignatura.datosAsignatura[0].nombre,
                                         "Creditos": responseAsignatura.data.asignatura.datosAsignatura[0].creditos
                                     };
-                                    ctrl.asignaturas.push(data);
+                                    if (numeroCarrera == 1) {
+                                        ctrl.asignaturas.push(data);
+                                    } else if (numeroCarrera == 2) {
+                                        ctrl.asignaturas2.push(data);
+                                    }
                                     defer.resolve();
                                 })
                                     .catch(function (error) {
@@ -251,35 +288,49 @@ angular.module('poluxClienteApp')
                             angular.forEach(response.data, function (value) {
                                 //buscar asignaturas
                                 promises.push(getAsignatura(value));
-                            });                               
+                            });
 
                             $q.all(promises).then(function () {
-                                
-                                ctrl.gridOptions.data = ctrl.asignaturas;
-                                ctrl.loadingAsignaturas = false;
+                                if (numeroCarrera == 1) {
+                                    ctrl.gridOptions.data = ctrl.asignaturas;
+                                    ctrl.loadingAsignaturas = false;
+                                } else if (numeroCarrera == 2) {
+                                    ctrl.gridOptions2.data = ctrl.asignaturas2;
+                                    ctrl.loadingAsignaturas2 = false;
+                                }
                             })
                                 .catch(function (error) {
-                                    
-                                    ctrl.errorCargandoAsignaturas = true;
-                                    ctrl.loadingAsignaturas = false;
+                                    if (numeroCarrera == 1) {
+                                        ctrl.loadingAsignaturas = false;
+                                        ctrl.errorCargandoAsignaturas = true;
+                                    } else if (numeroCarrera == 2) {
+                                        ctrl.loadingAsignaturas2 = false
+                                        ctrl.errorCargandoAsignaturas2 = true;
+                                    }
                                 });
                         })
                             .catch(function (error) {
-                                
-                                ctrl.errorCargandoAsignaturas = true;
-                                ctrl.loadingAsignaturas = false;
+                                if (numeroCarrera == 1) {
+                                    ctrl.loadingAsignaturas = false;
+                                    ctrl.errorCargandoAsignaturas = true;
+                                } else if (numeroCarrera == 2) {
+                                    ctrl.loadingAsignaturas2 = false
+                                    ctrl.errorCargandoAsignaturas2 = true;
+                                }
                             });
 
                     })
                         .catch(function (error) {
-                            
+
                             ctrl.errorCargandoAsignaturas = true;
                             ctrl.loadingAsignaturas = false;
                         });
                 };
 
                 ctrl.selected = [];
+                ctrl.selected2 = [];
                 ctrl.creditos = 0;
+                ctrl.creditos2 = 0;
 
                 /**
                  * @ngdoc method
@@ -290,9 +341,12 @@ angular.module('poluxClienteApp')
                  * @description 
                  * Agrega y elimina los elementos de la lista de asignaturas elegidas, y suma y resta el valor de los ccreditos.
                  */
-                ctrl.toggle = function (item, list) {
+                ctrl.toggle = function (item, list, numeroCarrera) {
                     if (ctrl.selected.length == 0) {
                         ctrl.creditos = 0;
+                    }
+                    if (ctrl.selected2.length == 0) {
+                        ctrl.creditos2 = 0;
                     }
                     if (item.isSelected === undefined) {
                         item.isSelected = false;
@@ -303,14 +357,28 @@ angular.module('poluxClienteApp')
                     if (idx > -1) {
                         list.splice(idx, 1);
                         c = parseInt(item.Creditos, 10);
-                        ctrl.creditos = ctrl.creditos - c;
+                        if (numeroCarrera == 1) {
+                            ctrl.creditos = ctrl.creditos - c;
+                        } else if (numeroCarrera == 2) {
+                            ctrl.creditos2 = ctrl.creditos2 - c;
+                        }
                     } else {
                         list.push(item);
                         c = parseInt(item.Creditos, 10);
-                        ctrl.creditos = ctrl.creditos + c;
+                        if (numeroCarrera == 1) {
+                            ctrl.creditos = ctrl.creditos + c;
+                        } else if (numeroCarrera == 2) {
+                            ctrl.creditos2 = ctrl.creditos2 + c;
+                        }
                     }
                     if (ctrl.creditos >= ctrl.creditosMinimos) {
-                        ctrl.minimoCreditos = true;
+                        if (ctrl.dobleSolicitud && (ctrl.creditos2 >= ctrl.creditosMinimos)) {
+                            ctrl.minimoCreditos = true;
+                        } else if (!ctrl.dobleSolicitud) {
+                            ctrl.minimoCreditos = true;
+                        } else {
+                            ctrl.minimoCreditos = false;
+                        }
                     } else {
                         ctrl.minimoCreditos = false;
                     }

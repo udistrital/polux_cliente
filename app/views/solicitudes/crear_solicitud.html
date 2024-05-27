@@ -11,8 +11,8 @@
     <div class="row" ng-if="!crearSolicitud.siModalidad">
       <label class="col-sm-2 control-label"> {{'SELECCIONAR_MODALIDAD' | translate}}</label>
       <div class="col-sm-10">
-        <select class="form-control" ng-model="modalidad_seleccionada" ng-change="crearSolicitud.cargarDetalles(2,modalidad_seleccionada)">
-          <option ng-repeat="modalidad in crearSolicitud.modalidades" ng-value="modalidad.Id" > {{modalidad.Nombre}} </option>
+        <select class="form-control" ng-model="modalidad_seleccionada" ng-change="crearSolicitud.cargarDetalles(crearSolicitud.INICIAL,modalidad_seleccionada)">
+          <option ng-repeat="modalidad in crearSolicitud.Modalidades" ng-value="modalidad.Id" > {{modalidad.Nombre}} </option>
         </select>
       </div>
     </div>
@@ -20,7 +20,7 @@
       <label class="col-sm-2 control-label"> {{'SELECCIONAR_SOLICITUD' | translate}} </label>
       <div class="col-sm-10">
         <select class="form-control" ng-model="solicitud_seleccionada" ng-change="crearSolicitud.cargarDetalles(solicitud_seleccionada)">
-          <option ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud" ng-if="solicitud.TipoSolicitud.Id != 2 && solicitud.TipoSolicitud.Id!=11 "> {{solicitud.TipoSolicitud.Nombre}} </option>
+          <option ng-repeat="solicitud in crearSolicitud.solicitudes" ng-value="solicitud" ng-if="solicitud.CodigoAbreviacion != 'SI_PLX' && solicitud.CodigoAbreviacion != 'SDTG_PLX' "> {{solicitud.Nombre}} </option>
         </select>
       </div>
     </div>
@@ -56,25 +56,25 @@
        <!-- detalles de la solicitud -->
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
-           <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Label'" class="row" >
+           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LBL_PLX'" class="row" >
               <label class="col-sm-3 control-label"> {{ detalle.label}}</label>
               <div class="col-sm-9 ">
-                <label class="control-label"> {{detalle.opciones[0].NOMBRE}}</label>
+                <label class="control-label">{{detalle.opciones[0].NOMBRE}}</label>
             </div>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Texto'" class="row">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXT_PLX'" class="row">
             <label class="col-sm-3 control-label"> {{detalle.label}}</label>
             <div class="col-sm-9 ">
                 <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
             </div>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Numerico'" class="row">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX'" class="row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
              <div class="col-sm-9 ">
                 <input type="number" class="form-control" ng-model="detalle.respuestaNumerica" required></input>
             </div>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Documento'" class="row">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DOC_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
                 <b>{{'AVISO_PDF' | translate}}</b>
@@ -86,7 +86,7 @@
               </div>
             <br>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">
             <div class="panel-body">
               <!--<input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>-->
               <div class="row">
@@ -100,12 +100,12 @@
             </div>
           </div>
 
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Checkbox' && detalle.Detalle.Enunciado=='AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>0" class="panel-body alert alert-warning">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado == 'AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>0" class="panel-body alert alert-warning">
              <label class="col-sm-12 control-label" translate="AUTORIZACION_DERECHOS_AUTOR"  translate-values='{ nombre: "{{crearSolicitud.estudiante.Nombre}}", codigo: {{crearSolicitud.estudiante.Codigo}}, tg: "{{crearSolicitud.trabajo_grado_completo.Titulo}}" }'>  </label>
-             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}" required><b>AUTORIZAR</b></input>
+             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><b>AUTORIZAR</b></input>
           </div>
 
-          <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">
             <div class="panel-body">
               <div class="row">
                 <label class="col-sm-12 control-label" translate="MENSAJE_REVISTA"></label>
@@ -113,7 +113,7 @@
             </div>
           </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Lista'" class = "row">
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
                <select class="form-control" ng-model="detalle.respuesta" required>
@@ -123,12 +123,22 @@
            </div>
          </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Radio'" class = "row">
-            <input type="radio" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion != 'PEAP'" class = "row">
+            <input type="radio" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}"></input>
             <label class="col-sm-9 control-label"> {{detalle.label}}</label>
          </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='TextArea'" class = "row">
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion == 'PEAP'" class="panel panel-default">
+          <div class="panel-heading">
+            {{detalle.label | translate}}
+          </div>
+          <div class="panel-body">
+            <input class="col-sm-3" type="radio" name="opcion" value="1">Opción 1<br>
+            <input class="col-sm-3" type="radio" name="opcion" value="2">Opción 2<br>
+          </div>
+       </div>
+
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <!--<textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
             -->
@@ -137,9 +147,9 @@
             </div>
          </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Directiva'">
-            <solicitar-asignaturas e="crearSolicitud.carrerasElegidas" estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
-            <asignar-estudiantes estudiante="crearSolicitud.codigo" estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.modalidad!=2 && crearSolicitud.modalidad!=3"></asignar-estudiantes><div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DRT_PLX'">
+            <solicitar-asignaturas e="crearSolicitud.carrerasElegidas" modalidades="crearSolicitud.Modalidades" estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
+            <asignar-estudiantes estudiante="crearSolicitud.codigo" estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPOS' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPRO'"></asignar-estudiantes><div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
                 <div class="panel-heading">
                     {{'AREAS_CONOCIMIENTO' | translate}}
                 </div>
@@ -149,11 +159,11 @@
                 </div>
             </div>
          </div>
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='linkNuxeo'" class="row">
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LNUX_PLX'" class="row">
              <label class="col-sm-3 control-label"> {{detalle.label}}</label>
              <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
          </div>
-         <div ng-if="detalle.Detalle.TipoDetalle.Nombre=='Selector'" class = "row">
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
             <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
