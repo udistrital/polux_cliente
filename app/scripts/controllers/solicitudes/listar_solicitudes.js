@@ -410,7 +410,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 query += ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:"
-                var tiposSolicitud = ["SCM_PLX", "SCDI_PLX", "SCDE_PLX", "SSO_PLX", "SPR_PLX", "SMDTG_PLX", "SCMA_PLX", "SCE_PLX", "SDTG_PLX", "SCCI_PLX", "SRTG_PLX", "SAD_PLX"]
+                var tiposSolicitud = ["SCM_PLX", "SCDI_PLX", "SCDE_PLX", "SSO_PLX", "SPR_PLX", "SMDTG_PLX", "SCMA_PLX", "SCE_PLX", "SDTG_PLX", "SCCI_PLX", "SRTG_PLX", "SAD_PLX","SCO_PLX"]
                 ctrl.TipoSolicitud.forEach(tipoSolicitud => {
                   if (tiposSolicitud.includes(tipoSolicitud.CodigoAbreviacion)) {
                     if (guardaSegundo) {
