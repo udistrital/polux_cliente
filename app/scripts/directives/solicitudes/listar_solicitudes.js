@@ -98,9 +98,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseModalidades){
-            console.log("Modalidades:", responseModalidades.data.Data);
             ctrl.Modalidades = responseModalidades.data.Data;
           });
 
@@ -108,9 +107,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:TIP_SOL",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseTiposSolicitudes){
-            console.log("Tipos de Solicitud:", responseTiposSolicitudes.data.Data);
             ctrl.TiposSolicitudes = responseTiposSolicitudes.data.Data;
           });
 
@@ -118,9 +116,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_SOL",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosSolicitudes){
-            console.log("Estados Solicitudes:", responseEstadosSolicitudes.data.Data);
             ctrl.EstadosSolicitudes = responseEstadosSolicitudes.data.Data;
           });
 
@@ -130,7 +127,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseAreasConocimiento){
-            console.log("Areas Conocimiento:", responseAreasConocimiento.data.Data);
             ctrl.AreasConocimiento = responseAreasConocimiento.data.Data;
           });
 
@@ -161,7 +157,6 @@ angular.module('poluxClienteApp')
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function (solicitud) {
                 var defer = $q.defer();
-                
                 let ModalidadTemp = ctrl.Modalidades.find(data => {
                   return data.Id == solicitud.ModalidadTipoSolicitud.Modalidad
                 });
@@ -251,7 +246,7 @@ angular.module('poluxClienteApp')
           var resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
           var nuevo = "";
           var anterior = "";
-          
+
           let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
             return data.Id == estadoSolicitud
           });
@@ -463,7 +458,6 @@ angular.module('poluxClienteApp')
 
           poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseDetalles) {
               poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
-                  console.log("DETALLES:", responseDetalles);
                   if (Object.keys(responseDetalles.data[0]).length === 0) {
                     ctrl.solicitudSeleccionada.detallesSolicitud = [];
                   } else {

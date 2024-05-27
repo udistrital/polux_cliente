@@ -171,7 +171,6 @@ angular.module('poluxClienteApp')
               $q.all(conjuntoProcesamientoDocentes)
                 .then(function(resultadoDelProcesamiento) {
                   trabajoGrado.vinculaciones = respuestaVinculaciones.data.filter(function(vinculacion) { return vinculacion.Nombre });
-                  console.log(trabajoGrado.vinculaciones)
                   deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDelProcesamiento) {
@@ -400,7 +399,6 @@ angular.module('poluxClienteApp')
         })
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
-            console.log("ESTUDIANMTE ", estudianteConTrabajoDeGrado)
             if (Object.keys(estudianteConTrabajoDeGrado.data[0]).length > 0) {
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));     
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
@@ -454,7 +452,6 @@ angular.module('poluxClienteApp')
               ctrl.trabajoGrado.EstadoTrabajoGradoAux = ctrl.EstadoTrabajoGrado.find(estTrGr => {
                 return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
               })
-              console.log(ctrl.trabajoGrado)
               ctrl.consultarRevisionesTrabajoGrado()
                 .then(function(respuestaRevisionesTrabajoGrado) {
                   ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado;
@@ -463,7 +460,6 @@ angular.module('poluxClienteApp')
                       return estRevTrGr.Id == revision.EstadoRevisionTrabajoGrado
                     });
                   });
-                  console.log(ctrl.revisionesTrabajoGrado)
                 })
                 .catch(function(excepcionRevisionesTrabajoGrado) {
                   ctrl.errorRevisionesTrabajoGrado = true;
@@ -514,13 +510,11 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())        
           .then(function(respuestaRevisionesTrabajoGrado) {
-            //console.log(respuestaRevisionesTrabajoGrado);
             if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
               angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
                 let estadoRevisionTrabajoGrado = ctrl.EstadoRevisionTrabajoGrado.find(estRevTrGr => {
                   return estRevTrGr.Id == revision.EstadoRevisionTrabajoGrado
                 })
-                console.log(ctrl.EstadoRevisionTrabajoGrado)
                 if (estadoRevisionTrabajoGrado.CodigoAbreviacion == "PENDIENTE_PLX") {
                   ctrl.revisionSolicitada = true;
                 }
@@ -561,7 +555,6 @@ angular.module('poluxClienteApp')
        */
       ctrl.actualizarTrabajoGrado = function(respuestaCargarDocumento) {
         var deferred = $q.defer();
-        //console.log(respuestaCargarDocumento);
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
         poluxRequest
           .put("documento_escrito", ctrl.trabajoGrado.documentoEscrito.Id, ctrl.trabajoGrado.documentoEscrito)
@@ -684,13 +677,11 @@ angular.module('poluxClienteApp')
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                       URL =  response.data.res.Enlace
                       ctrl.actualizarTrabajoGrado(URL).then(function(respuestaActualizarTg) {
-                        console.log(respuestaActualizarTg.statusText)
                         if (respuestaActualizarTg.statusText === "OK") {
                           ctrl.cargandoTrabajoGrado = false;
                           var nick = token_service.getAppPayload().email.split("@").slice(0);
                           academicaRequest.get("datos_basicos_estudiante", [token_service.getAppPayload().appUserDocument])
                           .then(function(responseDatosBasicos) {
-                            console.log(responseDatosBasicos)
                               var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
                               academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
                                 carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;

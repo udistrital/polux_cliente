@@ -132,7 +132,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseRolesTrabajoGrado){
-            console.log("Rol trabajo Grado:", responseRolesTrabajoGrado.data.Data);
             ctrl.RolesTrabajoGrado = responseRolesTrabajoGrado.data.Data;
           });
 
@@ -140,9 +139,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_ESTU_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
-            console.log("Estados Estudiante Trabajo Grado:", responseEstadosEstudianteTrabajoGrado.data.Data);
             ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
           });
 
@@ -150,9 +148,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosTrabajoGrado){
-            console.log("Estados Trabajo Grado:", responseEstadosTrabajoGrado.data.Data);
             ctrl.EstadosTrabajoGrado = responseEstadosTrabajoGrado.data.Data;
           });
 
@@ -160,9 +157,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseModalidades){
-            console.log("Modalidades:", responseModalidades.data.Data);
             ctrl.Modalidades = responseModalidades.data.Data;
           });
 
@@ -170,9 +166,8 @@ angular.module('poluxClienteApp')
             query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
             limit: 0,
           });
-    
+
           await documentoRequest.get("tipo_documento", parametrosConsulta).then(function (responseTiposDocumento){
-            console.log("Tipos Documento:", responseTiposDocumento.data);
             ctrl.TiposDocumento = responseTiposDocumento.data;
           });
 
@@ -182,7 +177,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosAsignaturaGrado){
-            console.log("Estados Asignatura Grado:", responseEstadosAsignaturaGrado.data.Data);
             ctrl.EstadosAsignaturaGrado = responseEstadosAsignaturaGrado.data.Data;
           });
 
@@ -192,7 +186,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseAreasConocimiento){
-            console.log("Areas Conocimiento:", responseAreasConocimiento.data.Data);
             ctrl.AreasConocimiento = responseAreasConocimiento.data.Data;
           });
 

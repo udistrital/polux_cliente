@@ -1351,7 +1351,6 @@ angular.module('poluxClienteApp')
                   "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico,
                   "Objetivo": tempTrabajo.Objetivo,
                 }
-                console.log("data trabajo ", data_trabajo_grado)
 
                 //se agregan estudiantes
                 var estudiante = {};
@@ -1497,8 +1496,6 @@ angular.module('poluxClienteApp')
                   "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
                 });
                 //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
-                console.log("MOD ", ctrl.modalidadTemp)
-                console.log("TIP ", ctrl.tipoSolicitudTemp)
                 if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
@@ -1831,7 +1828,7 @@ angular.module('poluxClienteApp')
                 if (ctrl.evaluadoresActualesTg != undefined) {
                   for (var item = 0; item < ctrl.evaluadoresActualesTg.length; item++) {
                     if (ctrl.evaluadoresActualesTg[item].docente.id != ctrl.evaluadoresOpcionesTg[item].docente.id) {
-                      //Cambiar vinculaciones                  
+                      //Cambiar vinculaciones
                       addVinculacion(dataVinculaciones, ctrl.evaluadoresActualesTg[item].docente.id, ctrl.evaluadoresOpcionesTg[item].docente.id);
                     }
                   }
@@ -1865,7 +1862,6 @@ angular.module('poluxClienteApp')
               tgTemp.Objetivo = ctrl.ObjetivoNuevo;
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             }
-            console.log(ctrl.dataRespuesta)
             enviarTransaccion();
           }
 
@@ -1891,7 +1887,6 @@ angular.module('poluxClienteApp')
               for (let i = 0; i < ctrl.EstadoSolicitud.length; i++) {
                 if(ctrl.EstadoSolicitud[i].CodigoAbreviacion == strCodAbr) {
                   ctrl.respuestaSolicitud = ctrl.EstadoSolicitud[i].CodigoAbreviacion;
-                  console.log(ctrl.EstadoSolicitud[i])
                   ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = ctrl.EstadoSolicitud[i].Id;
                   ctrl.dataRespuesta.RespuestaAnterior.Activo = true;
                 }
@@ -2052,7 +2047,6 @@ angular.module('poluxClienteApp')
                     detalleNuevo = "ESPELE2"
                   }
                   for (let i = 0; i < ctrl.detallesOriginal.length; i++) {
-                    console.log(ctrl.detallesOriginal[i])
                     var detalleAux;
                     if (ctrl.detallesOriginal[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == detalleNuevo) {
                       detalleAux = ctrl.detallesOriginal[i]
@@ -2078,7 +2072,6 @@ angular.module('poluxClienteApp')
             return new Promise((resolve, reject) => {
               if (!errorDocente) {
                 poluxMidRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
-                  console.log(response)
                   ctrl.mostrarRespuesta(response);
                   resolve();
                 })
@@ -2472,7 +2465,6 @@ angular.module('poluxClienteApp')
         console.log("RESPUESTA DOCENTE")
         //Aprobar
         var resOriginal = ctrl.respuestaSolicitud
-        console.log(ctrl.EstadoSolicitud)
         var estadoSolicitud = $.param({
           query: "TipoParametroId__CodigoAbreviacion:EST_SOL",
           limit: 0
@@ -2490,10 +2482,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(async function (responsesolicitud) {
             var parametro = responsesolicitud.data[0];
             var modalidad = 0;
-            console.log(parametro)
-            console.log("TIPO SOLICITUD ", ctrl.tipoSolicitudTemp)
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX") {
-              console.log("MODALIDAD ", ctrl.modalidadTemp)
               if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX") {
                 var parametros = $.param({
                   query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
