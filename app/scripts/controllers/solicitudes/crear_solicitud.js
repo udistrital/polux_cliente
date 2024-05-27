@@ -159,9 +159,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_SOL",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosSolicitudes){
-            console.log("Estados Solicitudes:", responseEstadosSolicitudes.data.Data);
             ctrl.EstadosSolicitudes = responseEstadosSolicitudes.data.Data;
           });
 
@@ -169,39 +168,35 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosTrabajoGrado){
-            console.log("Estados Trabajo Grado:", responseEstadosTrabajoGrado.data.Data);
             ctrl.EstadosTrabajoGrado = responseEstadosTrabajoGrado.data.Data;
           });
-    
+
           parametrosConsulta = $.param({
             query: "TipoParametroId__CodigoAbreviacion:EST_ESTU_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
-            console.log("Estados Estudiante Trabajo Grado:", responseEstadosEstudianteTrabajoGrado.data.Data);
             ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
           });
-    
+
           parametrosConsulta = $.param({
             query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseModalidades){
-            console.log("Modalidades:", responseModalidades.data.Data);
             ctrl.Modalidades = responseModalidades.data.Data;
           });
-    
+
           parametrosConsulta = $.param({
             query: "TipoParametroId__CodigoAbreviacion:TIP_SOL",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseTiposSolicitudes){
-            console.log("Tipos de Solicitud:", responseTiposSolicitudes.data.Data);
             ctrl.TiposSolicitudes = responseTiposSolicitudes.data.Data;
           });
 
@@ -211,7 +206,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseTiposDetalle){
-            console.log("Tipos de Detalle:", responseTiposDetalle.data.Data);
             ctrl.TiposDetalle = responseTiposDetalle.data.Data;
           });
 
@@ -221,7 +215,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseRolesTrabajoGrado){
-            console.log("Rol trabajo Grado:", responseRolesTrabajoGrado.data.Data);
             ctrl.RolesTrabajoGrado = responseRolesTrabajoGrado.data.Data;
           });
 
@@ -230,7 +223,6 @@ angular.module('poluxClienteApp')
           });
 
           await poluxRequest.get("modalidad_tipo_solicitud", parametrosConsulta).then(function (responseModalidadesTiposSolicitudes){
-            console.log("MODALIDAD TIPO SOLICITUD:", responseModalidadesTiposSolicitudes.data);
             ctrl.ModalidadesTiposSolicitudes = responseModalidadesTiposSolicitudes.data;
           });
 
@@ -240,7 +232,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseAreasConocimiento){
-            console.log("Areas Conocimiento: ", responseAreasConocimiento.data.Data);
             ctrl.AreasConocimiento = responseAreasConocimiento.data.Data;
           });
 
@@ -248,9 +239,8 @@ angular.module('poluxClienteApp')
             query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
             limit: 0,
           });
-    
+
           await documentoRequest.get("tipo_documento", parametrosConsulta).then(function (responseTiposDocumento){
-            console.log("Tipos Documento:", responseTiposDocumento.data);
             ctrl.TiposDocumento = responseTiposDocumento.data;
           });
 
@@ -1340,12 +1330,10 @@ angular.module('poluxClienteApp')
         }
         var promesas = [];
         if(!ctrl.siModalidad){
-          //console.log("INGRESÓ EN EL PRIMER IF");
           promesas.push(verificarRequisitosModalidad());
           promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
         }
         if (!angular.isUndefined(tipoSolicitud.TipoSolicitud)) {
-          //console.log("INGRESÓ EN EL SEGUNDO IF", verificarRequisitosModalidad());
           promesas.push(verificarRequisitosModalidad());
           promesas.push(verificarTipoSolicitud(tipoSolicitud));
         }
@@ -2476,8 +2464,6 @@ angular.module('poluxClienteApp')
           }
         }
 
-       
-
         //se crea objeto con las solicitudes
         ctrl.solicitud = {
           Solicitud: data_solicitud,
@@ -2485,7 +2471,6 @@ angular.module('poluxClienteApp')
           DetallesSolicitud: data_detalles,
           UsuariosSolicitud: data_usuarios
         }
-        console.log("Solicitud:", ctrl.solicitud)
         poluxMidRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
           if (response.data[0] === "Success") {
             academicaRequest.get("datos_basicos_estudiante", [ctrl.codigo])

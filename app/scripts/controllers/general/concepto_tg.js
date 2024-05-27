@@ -465,16 +465,13 @@ swal(
                           );
                         }
                       })
-                                                                 
                     nuxeoMidRequest.post('workflow?docID=' + URL, null)
                        .then(function (response) {
-                        //console.log('nuxeoMid response: ',response) 
                     }).catch(function (error) {
-                     // console.log('nuxeoMid error:',error)
                     })
                    })
-  
-                })  
+
+                })
 
 
 

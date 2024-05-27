@@ -140,9 +140,8 @@ angular.module('poluxClienteApp')
             query: "DominioTipoDocumento__CodigoAbreviacion:DOC_PLX",
             limit: 0,
           });
-    
+
           await documentoRequest.get("tipo_documento", parametrosConsulta).then(function (responseTiposDocumento){
-            console.log("Tipos Documento:", responseTiposDocumento.data);
             ctrl.TiposDocumento = responseTiposDocumento.data;
           });
 
@@ -150,9 +149,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:MOD_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseModalidades){
-            console.log("Modalidades:", responseModalidades.data.Data);
             ctrl.Modalidades = responseModalidades.data.Data;
           });
 
@@ -160,9 +158,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosTrabajoGrado){
-            console.log("Estados Trabajo Grado:", responseEstadosTrabajoGrado.data.Data);
             ctrl.EstadosTrabajoGrado = responseEstadosTrabajoGrado.data.Data;
           });
 
@@ -172,7 +169,6 @@ angular.module('poluxClienteApp')
           });
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseRolesTrabajoGrado){
-            console.log("Rol trabajo Grado:", responseRolesTrabajoGrado.data.Data);
             ctrl.RolesTrabajoGrado = responseRolesTrabajoGrado.data.Data;
           });
 
@@ -180,9 +176,8 @@ angular.module('poluxClienteApp')
             query: "TipoParametroId__CodigoAbreviacion:EST_ESTU_TRG",
             limit: 0,
           });
-    
+
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
-            console.log("Estados Estudiante Trabajo Grado:", responseEstadosEstudianteTrabajoGrado.data.Data);
             ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
           });
 
@@ -212,7 +207,6 @@ angular.module('poluxClienteApp')
           .then(function(dataTrabajos) {
             if (Object.keys(dataTrabajos.data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data;
-              console.log("TRABAJOS:", ctrl.trabajosGrado);
               // Se decide qué trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
                 let ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -287,7 +281,6 @@ angular.module('poluxClienteApp')
           ctrl.cargandoTrabajos = false;
         })
         .catch(function(error) {
-          
           ctrl.errorCargando = true;
           ctrl.cargandoTrabajos = false;
         })
@@ -389,7 +382,6 @@ angular.module('poluxClienteApp')
        * @returns {Promise} Retorna una promesa que se soluciona sin regresar ningún parametro.
        */
       ctrl.getEvaluacionesRegistradas = function(trabajoGrado) {
-        console.log("TRABAJO GRADO SELECCIONADO:", trabajoGrado);
         var defer = $q.defer();
         //Se consulatan las evaluaciones
         var parametrosEvaluaciones = $.param({
@@ -657,8 +649,6 @@ angular.module('poluxClienteApp')
         crearData()
           .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
-            console.log("DATA REGISTRAR NOTA:", dataRegistrarNota);
-
             poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function (response) {
               if (response.data[0] === "Success") {
                 var Atributos = {

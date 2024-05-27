@@ -131,7 +131,6 @@ angular.module('poluxClienteApp')
               documento.TipoDocumentoEscrito = tipoDocumento.Id
               documento.Resumen = "Certificado de cumplimiento"
             }
-            console.log("DOC ", documento)
             $scope.acta = [];
             $scope.acta.nombre = ctrl.documento.nombre;
             //$scope.acta.url = ctrl.documento.url;
