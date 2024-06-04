@@ -2656,7 +2656,7 @@ angular.module('poluxClienteApp')
                         rtaActual.Id = null;
                         rtaActual.Activo = true;
                         rtaActual.Fecha = new Date();
-                        rtaActual.Justificacion = "El Director aprobó la " + ctrl.tipoSolicitudTemp.Nombre;
+                        rtaActual.Justificacion = ctrl.justificacion;
                         rtaActual.Usuario = rtaActual.EnteResponsable;
                         rtaActual.EnteResponsable = 0;
                         rtaActual.EstadoSolicitud = estadoSolRtaNueva.Id
@@ -2869,7 +2869,7 @@ angular.module('poluxClienteApp')
                     var parametrosRespuestaSolicitud = {
                       "Id": value.Id,
                       "Fecha": new Date(),
-                      "Justificacion": "El Director rechazo la " + ctrl.tipoSolicitudTemp.Nombre,
+                      "Justificacion": ctrl.justificacion,
                       "EnteResponsable": 0,
                       "Usuario": $scope.userId,
                       "Activo": true,
