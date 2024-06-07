@@ -87,6 +87,10 @@ angular.module('poluxClienteApp')
                 var nombreNodo = "";
                 var nombreHijo = "";
                 switch (tipoDocumento) {
+                  case "ANP_PLX":
+                    nombreNodo = $translate.instant('ANTEPROYECTO');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.ANTEPROYECTO')
+                    break;
                   case "DTR_PLX":
                     nombreNodo = $translate.instant('TRABAJO_GRADO');
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO');
@@ -96,11 +100,11 @@ angular.module('poluxClienteApp')
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                     break;
                 }
-                  ctrl.dataForTree.push({
-                    name: nombreNodo,
-                    children: responseDocumento.data[0].DocumentoEscrito.Enlace,
-                  });
-                  defer.resolve();
+                ctrl.dataForTree.push({
+                  name: nombreNodo,
+                  children: responseDocumento.data[0].DocumentoEscrito.Enlace,
+                });
+                defer.resolve();
               } else {
                 defer.resolve();
               }
@@ -124,6 +128,11 @@ angular.module('poluxClienteApp')
           ctrl.dataForTree = [];
           ctrl.loadingVersion = true;
           var promesasDocumentos = [];
+          if($scope.veranteproyecto){
+            //Tipo de documento anteproyecto
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "ANP_PLX"));
+            console.log(trabajoGrado)
+          }
           if ($scope.verproyecto) {
             //Tipo de documento trabajo de grado
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "DTR_PLX"));
@@ -183,16 +192,16 @@ angular.module('poluxClienteApp')
             ctrl.loadingVersion = true;
             //  obtener un documento por la id
             gestorDocumentalMidRequest.get('/document/'+doc.children).then(function (response) {
-            //nuxeoClient.getDocument(doc.uid)
-            //  .then(function (documento) {
-            //    ctrl.loadingVersion = false;
-            //    window.open(documento.data.res.Enlace);
+              //nuxeoClient.getDocument(doc.uid)
+              //  .then(function (documento) {
+              //    ctrl.loadingVersion = false;
+              //    window.open(documento.data.res.Enlace);
             var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
-            var fileURL = URL.createObjectURL(file);
-            ctrl.loadingVersion = false;
-            window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-        
-           })
+              var fileURL = URL.createObjectURL(file);
+              ctrl.loadingVersion = false;
+              window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+
+            })
               .catch(function (error) {
                 ctrl.loadingVersion = false;
                 swal(
