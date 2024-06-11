@@ -1564,7 +1564,7 @@ angular.module('poluxClienteApp')
                     "Activo": true,
                     "FechaInicio": fechaRespuesta,
                     //"FechaFin": null,
-                    "RolTrabajoGrado": rolTrabajoGradoTemp,
+                    "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
                     "TrabajoGrado": {
                       "Id": 0
                     }
