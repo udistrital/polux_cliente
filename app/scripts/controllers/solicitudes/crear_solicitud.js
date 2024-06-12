@@ -1048,6 +1048,7 @@ angular.module('poluxClienteApp')
             if (Object.keys(responseTrabajoEstudiante.data[0]).length > 0) {
               ctrl.Trabajo = responseTrabajoEstudiante.data[0];
               ctrl.modalidad = responseTrabajoEstudiante.data[0].TrabajoGrado.Modalidad;
+              console.log("MODALIDAD 1", ctrl.modalidad)
               ctrl.trabajo_grado_completo = responseTrabajoEstudiante.data[0].TrabajoGrado;
               ctrl.trabajo_grado = responseTrabajoEstudiante.data[0].TrabajoGrado.Id;
               ctrl.trabajoGrado = responseTrabajoEstudiante.data[0].TrabajoGrado;
@@ -1089,6 +1090,7 @@ angular.module('poluxClienteApp')
                   if (Object.keys(responseVinculacion.data[0]).length > 0) {
                     ctrl.Trabajo = responseVinculacion.data[0];
                     ctrl.modalidad = responseVinculacion.data[0].TrabajoGrado.Modalidad;
+                    console.log("MODALIDAD 2", ctrl.modalidad)
                     ctrl.trabajo_grado_completo = responseVinculacion.data[0].TrabajoGrado;
                     ctrl.trabajo_grado = responseVinculacion.data[0].TrabajoGrado.Id;
                     ctrl.trabajoGrado = responseVinculacion.data[0].TrabajoGrado;
@@ -1136,6 +1138,7 @@ angular.module('poluxClienteApp')
             }
           });
           ctrl.modalidad = mod.CodigoAbreviacion
+          console.log("MODALIDAD 3", ctrl.modalidad)
           resolve()
         })
       }
@@ -1424,6 +1427,7 @@ angular.module('poluxClienteApp')
 
         if (modalidad_seleccionada !== undefined) {
           ctrl.modalidad = modalidad_seleccionada;
+          console.log("MODALIDAD 4", ctrl.modalidad)
         }
         if(tipoSolicitudSeleccionada.CodigoAbreviacion != "SI_PLX"  && tipoSolicitudSeleccionada.CodigoAbreviacion == "SCM_PLX"){
           // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
@@ -2291,7 +2295,9 @@ angular.module('poluxClienteApp')
           ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "MONO_PLX"
           });
+          console.log("MODALIDAD ASD ", ctrl.modalidad)
           if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
+            console.log("entra a modalidad")
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SAD_PLX"
             });
@@ -2310,7 +2316,7 @@ angular.module('poluxClienteApp')
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
+              return data.Modalidad == ModalidadTemp.Id && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
@@ -2323,7 +2329,7 @@ angular.module('poluxClienteApp')
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
+              return data.Modalidad == ModalidadTemp.Id && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
@@ -2336,7 +2342,7 @@ angular.module('poluxClienteApp')
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
+              return data.Modalidad == ModalidadTemp.Id && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
@@ -2344,12 +2350,14 @@ angular.module('poluxClienteApp')
           ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "PACAD_PLX"
           });
+          console.log("MODALIDAD ", ctrl.modalidad)
+          console.log("TIPO SOL ", ctrl.TipoSolicitud)
           if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
+              return data.Modalidad == ModalidadTemp.Id && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
@@ -2362,7 +2370,7 @@ angular.module('poluxClienteApp')
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
+              return data.Modalidad == ModalidadTemp.Id && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
@@ -2372,6 +2380,7 @@ angular.module('poluxClienteApp')
             "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
             "PeriodoAcademico": ctrl.periodo
           };
+          console.log("DATA ", data_solicitud)
         }
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Id == ctrl.posDocente) {
@@ -2563,6 +2572,7 @@ angular.module('poluxClienteApp')
        ctrl.getdatasolicitudDocente = function(responseTrabajoEstudiante) {
               ctrl.Trabajo = responseTrabajoEstudiante;
               ctrl.modalidad = responseTrabajoEstudiante.TrabajoGrado.Modalidad.Id;
+              console.log("MODALIDAD 6", ctrl.modalidad)
               ctrl.trabajo_grado_completo = responseTrabajoEstudiante.TrabajoGrado;
               ctrl.trabajo_grado = responseTrabajoEstudiante.TrabajoGrado.Id;
               ctrl.trabajoGrado = responseTrabajoEstudiante.TrabajoGrado;

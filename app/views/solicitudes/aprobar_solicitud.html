@@ -112,18 +112,23 @@
           <option value="RDD_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'RCC_PLX'">
-        <label class="col-sm-4 control-label">{{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
+      <br>
+      <br>
+      <br>
+      <div class="row">
+        <label class="col-sm-4 control-label"> {{'JUSTIFICACION_RESPUESTA_SOLICITUD' | translate}} </label>
         <div class="col-sm-8">
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" required></textarea>
         </div>
       </div>
-      <div class="row" ng-if="formularioAprobacionDocente.$valid  ">
-        <label class="col-sm-5 control-label"> </label>
-        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} docente "  class="col-sm-2 btn btn-success"></input>
-        <label class="col-sm-5 control-label"> </label>
+      <br>
+      <div class="row" ng-if="formularioAprobacionDocente.$valid">
+        <label class="col-sm-4 control-label"> </label>
+        <div class="col-sm-8">
+          <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}} docente "  class="col-sm-3 btn btn-success"></input>
+          <label class="col-sm-9 control-label"> </label>
+        </div>
       </div>
-
     </form>
     </div>
 
