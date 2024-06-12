@@ -180,51 +180,53 @@ angular.module('poluxClienteApp')
        * @description 
        * se consueme el servicio {@link parametrosService.service:parametrosRequest parametrosRequest}
        */
-      ctrl.getParametros = async function() {
-        //Solicitud inicial
-        if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX"){
-          // MODALIDAD DE PASANTÍA EXTERNA
-          if(ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX"){
+      
+      async function getParametros () {
+        return new Promise(async (resolve, reject) => {
+          //Solicitud inicial
+          if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX"){
+            // MODALIDAD DE PASANTÍA EXTERNA
+            if(ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX") {
+              var parametrosConsulta = $.param({
+                query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
+              });
+              //CONSULTA A PARAMETROS
+              await parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+                ctrl.parametro = parametros;
+              });
+
+            // MODALIDAD DE ARTICULO ACADEMICO
+            } else if (ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX") {
+              var parametrosConsultaArticulo = $.param({
+                query: "CodigoAbreviacion.in:NRVS_PLX|LRVS_PLX|CRVS_PLX"
+              });
+
+              //CONSULTA A PARAMETROS
+              const responseArticulo = await parametrosRequest.get("parametro/?", parametrosConsultaArticulo);
+              ctrl.parametro = responseArticulo;
+
+              var parametrosConsultaRevista = $.param({
+                query: "CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+              });
+
+              const responseRevista = await parametrosRequest.get("parametro/?", parametrosConsultaRevista);
+              ctrl.parametro_revista = responseRevista;
+            }
+
+          //SOLICITUD DE PRORROGA
+          } else if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SPR_PLX") {
             var parametrosConsulta = $.param({
-              query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
+              query:"CodigoAbreviacion.in:JPR_PLX"
             });
 
             //CONSULTA A PARAMETROS
-            parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+            await parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
               ctrl.parametro = parametros;
-            });
-
-          // MODALIDAD DE ARTICULO ACADEMICO
-          } else if (ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX") {
-            var parametrosConsulta = $.param({
-              query: "CodigoAbreviacion.in:NRVS_PLX|LRVS_PLX|CRVS_PLX"
-            });
-
-            //CONSULTA A PARAMETROS
-            parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-              ctrl.parametro = parametros;
-            });
-
-            var parametrosConsulta = $.param({
-              query: "CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
-            });
-
-            parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-              ctrl.parametro_revista = parametros;
             });
           }
 
-        //SOLICITUD DE PRORROGA
-        }else if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SPR_PLX"){
-          var parametrosConsulta = $.param({
-            query:"CodigoAbreviacion.in:JPR_PLX"
-          });
-
-          //CONSULTA A PARAMETROS
-          parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
-            ctrl.parametro = parametros;
-          });
-        }
+          resolve();
+        })
       }
 
 
@@ -400,13 +402,17 @@ angular.module('poluxClienteApp')
        * En caso de que la descripción del dellate tenga el documento de un docente se usa el servicio {@link services/academicaService.service:academicaRequest academicaRequest}
        * para consultar los datos del docente, por último si el detalle es un JSON lo divide y formatea como correspoda.
        */
-      ctrl.getDetallesSolicitud = function (parametrosDetallesSolicitud) {
+      ctrl.getDetallesSolicitud = async function (parametrosDetallesSolicitud) {
         var defered = $q.defer();
         var promise = defered.promise;
         var carrerasAux = [];
         var parametrosEstadoSolicitud = $.param({
           limit: 0
         });
+
+        await asignarParametros();
+        await getParametros();
+
         poluxRequest.get("estado_solicitud", parametrosEstadoSolicitud).then(function (responseEstadoSolicitud) {
           if (Object.keys(responseEstadoSolicitud.data[0]).length > 0) {
             ctrl.estadoSolicitud = responseEstadoSolicitud.data;
@@ -780,7 +786,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         var promise = defer.promise;
         await asignarParametros();
-        ctrl.getParametros();
+        await getParametros();
         ctrl.dataSolicitud.TipoSolicitud = ctrl.tipoSolicitudTemp.Id;
         ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.tipoSolicitudTemp.Nombre
         ctrl.dataSolicitud.NombreModalidad = ctrl.modalidadTemp.Nombre;
