@@ -400,7 +400,7 @@ angular.module('poluxClienteApp')
                 var guardaPrimero = false;
                 var guardaSegundo = false;
                 ctrl.EstadoSolicitud.forEach(estado => {
-                  if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "PRDI_PLX") {
+                  if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "PRDI_PLX"  || estado.CodigoAbreviacion == "APEP_PLX") {
                     if (guardaPrimero) {
                       query += "|"
                     } else {
@@ -910,7 +910,7 @@ angular.module('poluxClienteApp')
 
 
           parametrosSolicitudes = $.param({
-            query: "ESTADOSOLICITUD.Id:" + estadoSolTemp.Id + ",Activo:true",
+            query: "ESTADOSOLICITUD:" + estadoSolTemp.Id + ",Activo:true",
             limit: 0
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
@@ -986,20 +986,24 @@ angular.module('poluxClienteApp')
                 } else {
                   var UserExiste = false;
 
-                  let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
-                    return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
-                  })
-                  if(tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX"){
-                    for(var i=0;i<responseDetalles.data.length;i++){
-                      if(responseDetalles.data[i].Descripcion === ctrl.userId){
-                        promiseArr.push(verificarSolicitud(solicitud));
-                        UserExiste = true;
-                      }
-                    }
-                  }else{
-                    promiseArr.push(verificarSolicitud(solicitud));
-                    UserExiste = true;
-                  }
+                 // let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
+                 //   return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                 // })
+                 // if(tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX"){
+                 //   console.log("soy SAD")
+                 //   for(var i=0;i<responseDetalles.data.length;i++){
+                 //     console.log(ctrl.userId)
+                 //     if(responseDetalles.data[i].Descripcion === ctrl.userId){
+                 //       promiseArr.push(verificarSolicitud(solicitud));
+                 //       UserExiste = true;
+                 //     }
+                 //   }
+                 // }else{
+                 //   promiseArr.push(verificarSolicitud(solicitud));
+                 //   UserExiste = true;
+                 // }
+                  promiseArr.push(verificarSolicitud(solicitud));
+                  UserExiste = true;
                   if(UserExiste == false){
                     ctrl.mensajeError = $translate.instant("No tiene solicitudes pendientes");
                     ctrl.errorCargarParametros = true;
