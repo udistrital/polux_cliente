@@ -786,7 +786,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         var promise = defer.promise;
         await asignarParametros();
-        await getParametros();
+        //await getParametros();
         ctrl.dataSolicitud.TipoSolicitud = ctrl.tipoSolicitudTemp.Id;
         ctrl.dataSolicitud.NombreTipoSolicitud = ctrl.tipoSolicitudTemp.Nombre
         ctrl.dataSolicitud.NombreModalidad = ctrl.modalidadTemp.Nombre;
