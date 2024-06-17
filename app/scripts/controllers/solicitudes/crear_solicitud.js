@@ -2456,20 +2456,39 @@ angular.module('poluxClienteApp')
             data_respuesta.EstadoSolicitud = EstadoSolicitudTemp.Id
           }
         }else{
-          let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
-            return data.CodigoAbreviacion == "RDC_PLX"
-          });
-          //Respuesta de la solicitud
-          data_respuesta = {
-            "Fecha": fecha,
-            "Justificacion": "Su solicitud fue radicada",
-            "EnteResponsable": parseInt(ctrl.docDocenteDir),
-            "Usuario": 0,
-            "EstadoSolicitud": EstadoSolicitudTemp.Id,
-            "SolicitudTrabajoGrado": {
-              "Id": 0
-            },
-            "Activo": true
+          if(ctrl.modalidad == "PASIN_PLX"){ //Si la modalidad seleccionada es pasantia interna, entonces se envia a la oficina externa de pasantias
+            let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+              return data.CodigoAbreviacion == "PREP_PLX"
+            });
+            //Respuesta de la solicitud
+            data_respuesta = {
+              "Fecha": fecha,
+              "Justificacion": "Su solicitud esta Pendiente por la revisión por parte de la oficina de extension de pasantias",
+              "EnteResponsable": 0,
+              "Usuario": 0,
+              "EstadoSolicitud": EstadoSolicitudTemp.Id,
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              },
+              "Activo": true
+            }
+          }
+          else{
+            let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+              return data.CodigoAbreviacion == "RDC_PLX"
+            });
+            //Respuesta de la solicitud
+            data_respuesta = {
+              "Fecha": fecha,
+              "Justificacion": "Su solicitud fue radicada",
+              "EnteResponsable": parseInt(ctrl.docDocenteDir),
+              "Usuario": 0,
+              "EstadoSolicitud": EstadoSolicitudTemp.Id,
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              },
+              "Activo": true
+            }
           }
         }
 
