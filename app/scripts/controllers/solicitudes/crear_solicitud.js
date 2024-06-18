@@ -439,8 +439,12 @@ angular.module('poluxClienteApp')
             return data.CodigoAbreviacion == "PRDI_PLX"
           });
 
+          let EstadoSolicitudTemp3 = ctrl.EstadosSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "ADD_PLX"
+          });
+
           var parametrosSolicitudesActuales = $.param({
-            query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
+            query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + "|" + EstadoSolicitudTemp3.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
