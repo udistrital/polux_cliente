@@ -1324,6 +1324,10 @@ angular.module('poluxClienteApp')
                     tempTrabajo.CIIU = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NIT") {
                     tempTrabajo.NIT = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CCUAA") {
+                    tempTrabajo.Carta = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CAV") {
+                    tempTrabajo.Contrato = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -1552,6 +1556,30 @@ angular.module('poluxClienteApp')
                 }
                 // Solicitud inicial pasantia interna
                 if(ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX"){
+
+                  //Se preparan los documentos de Contrato y Carta de la Unidad Académica
+
+                  //Se busca el tipo de documento "Acuerdo de Voluntad, Convenio o Contrato"
+                  let tipoDocumento1 = ctrl.TipoDocumento.find(tipoDoc => {
+                    return tipoDoc.CodigoAbreviacion == "AVCC_PLX"
+                  })
+                  var data_contrato = {
+                    "Titulo": "Acuerdo de Voluntad, Convenio o Contrato",
+                    "Enlace": tempTrabajo.Contrato, 
+                    "Resumen": "Acuerdo de Voluntad, Convenio o Contrato de la Empresa " + tempTrabajo.Empresa,
+                    "TipoDocumentoEscrito": tipoDocumento1.Id
+                  }
+                  //Se busca el tipo de documento "Carta de la Unidad Académica"
+                  let tipoDocumento2 = ctrl.TipoDocumento.find(tipoDoc => {
+                    return tipoDoc.CodigoAbreviacion == "CUA_PLX"
+                  })
+                  var data_carta = {
+                    "Titulo": "Carta de la Unidad Académica",
+                    "Enlace": tempTrabajo.Carta,
+                    "Resumen": "Carta de la Unidad Académica encargada",
+                    "TipoDocumentoEscrito": tipoDocumento2.Id
+                  }
+
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1559,7 +1587,11 @@ angular.module('poluxClienteApp')
                     Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorInterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorInterno,
                     TrabajoGrado: {
                       Id: 0,
-                    }
+                    },
+                    Contrato: data_contrato,
+                    Carta: data_carta,
+                    DTG_Contrato: data_documento_tg,
+                    DTG_Carta: data_documento_tg
                   }
                   //Docente director
                   let rolTrabajoGradoTemp = ctrl.RolTrabajoGrado.find(rolTrGr => {
