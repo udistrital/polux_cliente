@@ -122,7 +122,14 @@
 
                   <div ng-if="detalle.carrera===undefined">
                     <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
-                        <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
+                        <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
+                        <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === 'LR'">
+                            <a class="col-sm-8" ng-href="{{detalle.Descripcion}}" target="_blank">{{detalle.Descripcion}}</a>
+                        </div>
+
+                        <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion !== 'LR'">
+                            <label class="col-sm-8">{{detalle.Descripcion}}</label>
+                        </div>
                     </div>
                     <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='DOC_PLX' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='LNUX_PLX'">
                         <label ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
