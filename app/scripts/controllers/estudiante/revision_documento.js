@@ -324,7 +324,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
         var estadosValidos = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "ASNV_PLX", "EC_PLX", "PR_PLX", "ER_PLX",
-                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX"]
+                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX","PAEA_PLX"]
         var query = "TrabajoGrado.EstadoTrabajoGrado.in:"
         var guardaPrimero = false;
         ctrl.EstadoTrabajoGrado.forEach(estadoTrGt => {

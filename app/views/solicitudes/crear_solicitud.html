@@ -81,9 +81,9 @@
               </div>
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
-              <div class="col-sm-9 ">
-                <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>
-              </div>
+            <div class="col-sm-9">
+              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>
+            </div>
             <br>
           </div>
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">

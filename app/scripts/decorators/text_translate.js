@@ -484,7 +484,7 @@ var text_es = {
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Cargue el Plan o modelo de negocios nuevo",
     SELECCIONE_ESTUDIANTES_PROYECTO: "Seleccione los estudiantes que pertenecen al proyecto",
     SELECCIONE_DOCUMENTO_FINAL_PARA_REVISION: "Seleccione el documento final para la revisión",
-    INGRESE_EVIDENCIA_DE_PUBLICACION: "Ingrese la carta de aceptación del artículo o el artículo publicado",
+    INGRESE_EVIDENCIA_DE_PUBLICACION: "Adjunte en un solo PDF: Certificación oficial de la revista, documento final del artículo académico, prueba de indexación u homologación de la revista por PUBLINDEX y la propuesta que fue aprobada en su momento.",
     NOMBRE_EVALUADORES_ACTUALES: "Evaluadores actuales",
     SOLICITUD_SIN_FORMULARIO: "Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla?",
     NUMERO_RADICADO: "Número de radicado",
@@ -1003,7 +1003,7 @@ var text_es = {
     NOMBRE_REVISTA: "Nombre de la revista",
     LINK_REVISTA: "Link de la revista de aceptación del artículo",
     CLASIFICACION_REVISTA: "Clasificación de la revista dónde fue aceptado el artículo",
-    MENSAJE_REVISTA: "Seleccione la categoría del artículo aceptado con base en la clasificación dispuesta por Publindex." +
+    MENSAJE_REVISTA: "Teniendo en cuenta las clasificaciones dispuestas por Publindex, ubique su revista y su respectivo código de clasificación:" +
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>Revistas Nacionales</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
@@ -1421,7 +1421,7 @@ var text_en = {
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Upload the new business plan or model",
     SELECCIONE_ESTUDIANTES_PROYECTO: "Select the students that belong to the project",
     SELECCIONE_DOCUMENTO_FINAL_PARA_REVISION: "Select the final document for the review",
-    INGRESE_EVIDENCIA_DE_PUBLICACION: "Input the aceptation letter or the published paper",
+    INGRESE_EVIDENCIA_DE_PUBLICACION: "Attach in a single PDF: Official certification of the journal, final document of the academic article, proof of indexing or approval of the journal by PUBLINDEX and the proposal that was approved at the time.",
     NOMBRE_EVALUADORES_ACTUALES: "Current evaluator(s)",
     SOLICITUD_SIN_FORMULARIO: "This request does not require completing any form. Are you sure you want to send it?",
     NUMERO_RADICADO: "Roaming number",
@@ -1935,7 +1935,7 @@ var text_en = {
     NOMBRE_REVISTA: "Magazine name",
     LINK_REVISTA: "Link of the article acceptance journal",
     CLASIFICACION_REVISTA: "Journal classification where the article was accepted",
-    MENSAJE_REVISTA: "Select the category of the accepted article based on the classification provided by Publindex." +
+    MENSAJE_REVISTA: "Taking into account the classifications provided by Publindex, locate your journal and its respective classification code:" +
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +
