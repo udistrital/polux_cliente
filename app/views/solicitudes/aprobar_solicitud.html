@@ -164,6 +164,7 @@
     </div>
 
 
+
     <div class="panel-body" ng-if="!loadFormulario && !aprobarSolicitud.noAprobar && aprobarSolicitud.Docente !== 1 && aprobarSolicitud.UnidadExtPasantia !== 1">
       <form method="post" name="formularioAprobacion" ng-submit="aprobarSolicitud.responder()">
         <div class="row">
@@ -289,6 +290,7 @@
                       <label class="col-sm-5 control-label"> </label>
                     </div>-->
 
+                    
                     <!--para el cambio de docente evaluador, codirector o director-->
                     <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
                       <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>

@@ -2082,6 +2082,7 @@ angular.module('poluxClienteApp')
                   resolve();
                 })
                   .catch(function (error) {
+
                     swal(
                       $translate.instant("MENSAJE_ERROR"),
                       $translate.instant("ERROR.ENVIO_SOLICITUD"),
@@ -2090,6 +2091,7 @@ angular.module('poluxClienteApp')
                     resolve();
                   });
               } else {
+                
                 swal(
                   $translate.instant("MENSAJE_ERROR"),
                   $translate.instant("ERROR.DOCENTE_DUPLICADO"),
