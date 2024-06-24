@@ -38,7 +38,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('EstudianteRevisionDocumentoCtrl',
-    function($q, $scope, $window, $translate, notificacionRequest, documentoRequest, academicaRequest,utils,gestorDocumentalMidRequest, parametrosRequest, poluxRequest, token_service) {
+    function($q, $scope, $window, $translate, notificacionRequest, documentoRequest, academicaRequest,utils,gestorDocumentalMidRequest, parametrosRequest, poluxRequest, token_service,poluxMidRequest) {
       var ctrl = this;
 
       ctrl.EstadoTrabajoGrado = [];
@@ -202,7 +202,7 @@ angular.module('poluxClienteApp')
         let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
           return estTrGr.Id == trabajoGrado.EstadoTrabajoGrado
         })
-        var estadoTrabajoGradoAceptada = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "PAEA_PLX", "PECSPR_PLX"]
+        var estadoTrabajoGradoAceptada = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "PAEA_PLX", "PECSPR_PLX","ACEA_PLX"]
         let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
           return tipoDoc.CodigoAbreviacion == "DTR_PLX"
         })
@@ -324,7 +324,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
         var estadosValidos = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "ASNV_PLX", "EC_PLX", "PR_PLX", "ER_PLX",
-                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX","PAEA_PLX"]
+                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX","PAEA_PLX","ACEA_PLX"]
         var query = "TrabajoGrado.EstadoTrabajoGrado.in:"
         var guardaPrimero = false;
         ctrl.EstadoTrabajoGrado.forEach(estadoTrGt => {
@@ -843,6 +843,57 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name cargarARL
+       * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
+       * @description
+       * Función que prepara el contenido de la información para cargar la ARL de la modalidad de grado de pasantia.
+       * Efectúa el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para registrar la actualización del trabajo de grado.
+       * @param {String} respuestaCargarDocumento El enlace generado luego de subir el documento
+       * @returns {Promise} La respuesta de operar el registro en la base de datos
+       */
+      ctrl.cargarARL = function(respuestaCargarDocumento) {
+        var deferred = $q.defer();
+        let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          return estTrGr.Id == ctrl.trabajoGrado.EstadoTrabajoGrado
+        })
+        let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+          return tipoDoc.CodigoAbreviacion == "DPAS_PLX"
+        })
+        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
+          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+            return estTrGr.CodigoAbreviacion == "ACEA_PLX"
+          })
+          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
+        }
+        ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
+        var documentoTrabajoGrado = {
+          Id: ctrl.trabajoGrado.documentoTrabajoGrado,
+          TrabajoGrado: {
+            Id: ctrl.trabajoGrado.Id
+          },
+          DocumentoEscrito: {
+            Id: 0,
+          }
+        }
+        var informacionParaActualizar = {
+          "DocumentoEscrito": ctrl.trabajoGrado.documentoEscrito,
+          "DocumentoTrabajoGrado": documentoTrabajoGrado,
+          "TrabajoGrado": ctrl.trabajoGrado
+        };
+        poluxMidRequest
+          .post("tr_subir_arl", informacionParaActualizar)
+          .then(function(respuestaActualizarAnteproyecto) {
+            deferred.resolve(respuestaActualizarAnteproyecto);
+          })
+          .catch(function(excepcionActualizarAnteproyecto) {
+            deferred.reject(excepcionActualizarAnteproyecto);
+          });
+        return deferred.promise;
+      }
+
+      /**
+       * @ngdoc method
        * @name actualizarDocumentoTrabajoGrado
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
        * @description
@@ -880,13 +931,7 @@ angular.module('poluxClienteApp')
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
-        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
-            return estTrGr.CodigoAbreviacion == "PECSPR_PLX"
-          })
-          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-          ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
-        }
+        
         //delete ctrl.trabajoGrado.documentoEscrito.Id
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
         var documentoTrabajoGrado = {
@@ -1016,7 +1061,7 @@ angular.module('poluxClienteApp')
                   })
                 }
                 //Si es primera versión crea el documento
-                estadosValidos = ["AVI_PLX", "ASVI_PLX", "PAEA_PLX", "PECSPR_PLX"]
+                estadosValidos = ["AVI_PLX", "ASVI_PLX", "PECSPR_PLX"]
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //Se carga el documento con el gestor documental
                   var fileBase64 ;
@@ -1039,6 +1084,48 @@ angular.module('poluxClienteApp')
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                         URL = response;
                         ctrl.actualizarDocumentoTrabajoGrado(response.data.res.Enlace).then(function() {
+                          swal(
+                            $translate.instant(titleConfirmacion),
+                            $translate.instant(mensajeSuccess),
+                            'success'
+                          ).then((result) => {
+                            if (result) {
+                              $window.location.reload();
+                            }
+                          });
+                        })
+                      return URL
+                     })
+                  })
+                 // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
+                }
+                //Si se cargó la ARL
+                estadosValidos = ["PAEA_PLX"]
+                tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+                  return tipoDoc.CodigoAbreviacion == "DPAS_PLX"
+                })
+                if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
+                  //Se carga el documento con el gestor documental
+                  var fileBase64 ;
+                  var data = [];
+                  var URL;
+                    utils.getBase64(fileModel).then(
+                      function (base64) {
+                       fileBase64 = base64;
+                    data = [{
+                     IdTipoDocumento: tipoDocumento.Id, //id tipo documento de documentos_crud
+                     nombre: titulo ,// nombre formado por el titulo
+                     metadatos: {
+                       NombreArchivo: titulo,
+                       Tipo: "Archivo",
+                       Observaciones: workspace
+                     },
+                     descripcion:descripcion,
+                     file:  fileBase64,
+                    }]
+                      gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
+                        URL = response;
+                        ctrl.cargarARL(response.data.res.Enlace).then(function() {
                           swal(
                             $translate.instant(titleConfirmacion),
                             $translate.instant(mensajeSuccess),
