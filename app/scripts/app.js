@@ -265,6 +265,11 @@ angular
               controller: 'PasantiaActasSeguimientoCtrl',
               controllerAs: 'actasSeguimiento'
             })
+            .when('/pasantia/revision_arl', {
+              templateUrl: 'views/pasantia/revision_arl.html',
+              controller: 'RevisionArlCtrl',
+              controllerAs: 'revisionArl'
+            })
             .when('/general/registrar_nota', {
               templateUrl: 'views/general/registrar_nota.html',
               controller: 'GeneralRegistrarNotaCtrl',

@@ -1,0 +1,112 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'REVISION_ARL.PANEL' | translate}}
+    </div>
+    <div class="panel-body">
+        <loading tam="4" load="revisionArl.cargandoTrabajos" message="revisionArl.mensajeTrabajos"> </loading>
+        <div ng-if="revisionArl.errorCargando && !revisionArl.cargandoTrabajos">
+            <div class="panel-body">
+                <div class="alert alert-danger">
+                    {{'ERROR' | translate}}: {{revisionArl.mensajeError}}
+                </div>
+            </div>
+        </div>
+        <div ng-if="!revisionArl.errorCargando && !revisionArl.cargandoTrabajos">
+            <div class="panel col-md-12">
+                <div ui-grid="revisionArl.gridOptions" ui-grid-cellNav ui-grid-pagination class="mi-grid" id="mi-grid"
+                    ui-grid-auto-resize></div>
+                <!--<div ui-grid="revisionArl.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(revisionArl.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalRevisarARL" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+    <div class="modal-content col-md-offset-2 col-md-8">
+        <div class="modal-header">
+            {{'REVISION_ARL.PANEL' | translate}}
+            <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal"
+                ng-click="">&times</button><br>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{'DATOS_TRABAJO_GRADO' | translate}}
+            </div>
+            <div class="panel-body">
+                <loading tam="4" load="revisionArl.cargandoTrabajo" message="revisionArl.mensajeTrabajo"> </loading>
+                <div ng-if="revisionArl.errorCargandoTrabajo && !revisionArl.cargandoTrabajo">
+                    <div class="panel-body">
+                        <div class="alert alert-danger">
+                            {{'ERROR' | translate}}: {{revisionArl.mensajeErrorTrabajo}}
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="!revisionArl.errorCargandoTrabajo && !revisionArl.cargandoTrabajo">
+                    <div class="row">
+                        <label class="control-label col-sm-4"> {{'Nombre' | translate}}: </label>
+                        <label class="control-label col-sm-8"> {{revisionArl.trabajoSeleccionado.Titulo}} </label>
+                    </div>
+                    <div ng-repeat="estudiante in revisionArl.trabajoSeleccionado.estudiantes">
+                        <div class="row">
+                            <label class="control-label col-sm-4"> {{'NOMBRE_ESTUDIANTE' | translate}}: </label>
+                            <label class="control-label col-sm-8"> {{estudiante.datos.nombre}} </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-4"> {{'MODALIDAD' | translate}}: </label>
+                        <label class="control-label col-sm-8"> {{revisionArl.trabajoSeleccionado.Modalidad.Nombre}}
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-4"> {{'EMPRESA' | translate}}: </label>
+                        <label class="control-label col-sm-8"> {{revisionArl.trabajoSeleccionado.Empresa}} </label>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-4"> {{'NIT' | translate}}: </label>
+                        <label class="control-label col-sm-8"> {{revisionArl.trabajoSeleccionado.Nit}} </label>
+                    </div>
+                    <div ng-repeat="docente in revisionArl.trabajoSeleccionado.docente">
+                        <div class="row">
+                            <label class="control-label col-sm-4"> {{'DIRECTOR_INTERNO' | translate}}: </label>
+                            <label class="control-label col-sm-8"> {{docente.datos.nombre}} </label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="control-label col-sm-4"> {{'DOCUMENTO_ARL' | translate}}: </label>
+                        <label ng-click="revisionArl.getDocumento()" class="col-sm-8"
+                            style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}} </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" ng-if="revisionArl.revisarArl">
+            <div class="panel-heading">
+                {{'FORMULARIO_APROBACION' | translate}}
+            </div>
+            <loading tam="4" load="loadFormulario" message="msgEnviandFormulario"> </loading>
+            
+            <div class="panel-body" ng-if="!loadFormulario">
+                <form method="post" name="formularioAprobacion" ng-submit="revisionArl.responder()">
+                    <div class="row">
+                        <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="revisionArl.respuestaRevision" required>
+                                <option></option>
+                                <option value="ACC_PLX"> {{'REVISION_ARL.APROBAR' | translate}} </option>
+                                <option value="RCC_PLX"> {{'REVISION_ARL.RECHAZAR' | translate}} </option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" ng-if="formularioAprobacion.$valid">
+                        <label class="col-sm-5 control-label"> </label>
+                        <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"
+                            class="col-sm-2 btn btn-success"></input>
+                        <label class="col-sm-5 control-label"> </label>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
