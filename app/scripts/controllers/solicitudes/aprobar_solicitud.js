@@ -186,7 +186,7 @@ angular.module('poluxClienteApp')
           //Solicitud inicial
           if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX"){
             // MODALIDAD DE PASANTÍA EXTERNA
-            if(ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX") {
+            if(ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
               var parametrosConsulta = $.param({
                 query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
               });
@@ -1506,7 +1506,7 @@ angular.module('poluxClienteApp')
                   "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
                 });
                 //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
-                if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
