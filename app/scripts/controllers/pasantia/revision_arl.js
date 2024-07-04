@@ -639,7 +639,6 @@ angular.module('poluxClienteApp')
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
                                 .then(function (dataTrabajos) {
-                                    console.log(dataTrabajos)
                                     swal(
                                         $translate.instant("REGISTRO_EXITOSO"),
                                         $translate.instant("REVISION_ARL.ARL_APROBADA"),
@@ -681,13 +680,10 @@ angular.module('poluxClienteApp')
                         .then(function (dataTrabajos) {
                             ctrl.trabajoGrado = dataTrabajos.data[0]
 
-                            console.log(ctrl.trabajoGrado)
-
                             ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
                                 .then(function (dataTrabajos) {
-                                    console.log(dataTrabajos)
                                     swal(
                                         $translate.instant("REGISTRO_EXITOSO"),
                                         $translate.instant("REVISION_ARL.ARL_RECHAZADA"),
