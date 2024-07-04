@@ -202,7 +202,7 @@ angular.module('poluxClienteApp')
         let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
           return estTrGr.Id == trabajoGrado.EstadoTrabajoGrado
         })
-        var estadoTrabajoGradoAceptada = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "PAEA_PLX", "PECSPR_PLX","ACEA_PLX"]
+        var estadoTrabajoGradoAceptada = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "PAEA_PLX", "PECSPR_PLX","ACEA_PLX","ARC_PLX"]
         let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
           return tipoDoc.CodigoAbreviacion == "DTR_PLX"
         })
@@ -324,7 +324,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosEstudianteTrabajoGrado = function() {
         var estadosValidos = ["APR_PLX", "RVS_PLX", "AVI_PLX", "AMO_PLX", "SRV_PLX", "SRVS_PLX", "ASVI_PLX", "ASMO_PLX", "ASNV_PLX", "EC_PLX", "PR_PLX", "ER_PLX",
-                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX","PAEA_PLX","ACEA_PLX"]
+                              "MOD_PLX", "LPS_PLX", "STN_PLX", "NTF_PLX","PAEA_PLX","ACEA_PLX","ARC_PLX"]
         var query = "TrabajoGrado.EstadoTrabajoGrado.in:"
         var guardaPrimero = false;
         ctrl.EstadoTrabajoGrado.forEach(estadoTrGt => {
@@ -858,11 +858,11 @@ angular.module('poluxClienteApp')
         let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
           return tipoDoc.CodigoAbreviacion == "DPAS_PLX"
         })
-        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ARC_PLX") {
+          /*let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "ACEA_PLX"
           })
-          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+          ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         ctrl.trabajoGrado.documentoEscrito.Enlace = respuestaCargarDocumento;
@@ -1007,7 +1007,7 @@ angular.module('poluxClienteApp')
           workspace = 'versiones_TG';
         }
         // Para certificado de ARL
-        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX") {
+        if (estadoTrabajoGrado.CodigoAbreviacion == "PAEA_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ARC_PLX") {
           descripcionDocumento = "Certifiado de ARL de la pasantia";
           titleConfirmacion = "ARL.CONFIRMACION";
           mensajeConfirmacion = "ARL.MENSAJE_CONFIRMACION";
@@ -1099,7 +1099,7 @@ angular.module('poluxClienteApp')
                  // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
                 }
                 //Si se cargó la ARL
-                estadosValidos = ["PAEA_PLX"]
+                estadosValidos = ["PAEA_PLX","ARC_PLX"]
                 tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
                   return tipoDoc.CodigoAbreviacion == "DPAS_PLX"
                 })
