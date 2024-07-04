@@ -24,6 +24,7 @@ angular.module('poluxClienteApp')
        * # poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
        * # Controller of poluxClienteApp.directive:listarSolicitudes
        * Controlador de la directiva {@link poluxClienteApp.directive:listarSolicitudes  listarSolicitudes} que permite ver las solicitudes asociadas a un trabajo de grado
+       * @requires $window
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
@@ -37,7 +38,7 @@ angular.module('poluxClienteApp')
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        * @property {String} mensajeCargando Mensaje que se muestra cuando esta cargando
        */
-      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, nuxeoClient,gestorDocumentalMidRequest, parametrosRequest) {
+      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, nuxeoClient,gestorDocumentalMidRequest, $window, parametrosRequest) {
         var ctrl = this;
         ctrl.trabajoGrado = $scope.tg;
 
@@ -424,7 +425,7 @@ angular.module('poluxClienteApp')
          * @param {object} fila Fila seleccionada en el uigrid que contiene los detalles de la solicitud que se quiere consultar
          * @returns {undefined} No retorna ningún valor
          */
-        ctrl.cargarDetalles = function(fila) {
+        ctrl.cargarDetalles = async function(fila) {
           ctrl.solicitudSeleccionada = fila.entity;
           var parametrosSolicitud = $.param({
             query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitudSeleccionada.Id,
@@ -456,8 +457,27 @@ angular.module('poluxClienteApp')
             return defer.promise;
           }
 
-          poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(function(responseDetalles) {
-              poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
+          poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(async function(responseDetalles) {
+            
+            if (Object.keys(responseDetalles.data[0]).length > 0) {
+              var tipoDetalle = $.param({
+                query: "TipoParametroId__CodigoAbreviacion:TIP_DET", 
+                limit: 0
+              });
+              await parametrosRequest.get("parametro/?", tipoDetalle).then(function (responseTipoDetalle) {
+                ctrl.TipoDetalle = responseTipoDetalle.data.Data;
+              })
+              ctrl.detallesSolicitud = responseDetalles.data;
+              ctrl.detallesSolicitud.forEach(detalle => {
+                detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
+                  return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
+                })
+              });
+            } else {
+              ctrl.detallesSolicitud = [];
+            }
+
+            poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
                   if (Object.keys(responseDetalles.data[0]).length === 0) {
                     ctrl.solicitudSeleccionada.detallesSolicitud = [];
                   } else {
@@ -532,6 +552,20 @@ angular.module('poluxClienteApp')
                   }
 
                   angular.forEach(ctrl.solicitudSeleccionada.detallesSolicitud, function(detalle) {
+                    if(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
+                      var parametrosConsulta = $.param({
+                        query:"CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX" 
+                      });
+  
+                      parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
+                        angular.forEach(parametros.data.Data, function(parametro){
+                          if(detalle.Descripcion == String(parametro.Id)){
+                            detalle.Descripcion = parametro.Nombre;
+                          }
+                        });
+                      });
+                    }
+
                     detalle.filas = [];
                     var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                     if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TD") {
@@ -630,31 +664,22 @@ angular.module('poluxClienteApp')
          * @returns {undefined} No hace retorno de resultados
          */
         ctrl.getDocumento = function(uid) {
-          if (uid) {
-            ctrl.loadingDocument = true;
             //  obtener un documento por la id 
             gestorDocumentalMidRequest.get('/document/'+uid).then(function (response) {
-            //nuxeoClient.getDocument(uid)
-           //   .then(function(documento) {
-           //    ctrl.loadingDocument = false;
-           //     window.open(documento.data.res.Enlace);
-           //   })
-
-           var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
-           var fileURL = URL.createObjectURL(file);
-           $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-       
-          })
-              .catch(function(error) {
-                
-                ctrl.loadingVersion = false;
-                swal(
-                  $translate.instant("MENSAJE_ERROR"),
-                  $translate.instant("ERROR.CARGAR_DOCUMENTO"),
-                  'warning'
-                );
-              });
-          }
+              var varia = utils.base64ToArrayBuffer(response.data.file);   
+              var file = new Blob([varia], {type: 'application/pdf'});
+              var fileURL = URL.createObjectURL(file);
+              console.log("File URL: ", fileURL);
+              $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+            })
+            .catch(function(error) {
+              console.log(error);
+              swal(
+                $translate.instant("MENSAJE_ERROR"),
+                $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+                'warning'
+              );
+            });
         }
 
         /**
@@ -668,9 +693,13 @@ angular.module('poluxClienteApp')
          * @returns {undefined} No retorna ningún valor
          */
         $scope.loadrow = function(row, operacion) {
-          if (operacion == "ver") {
-            ctrl.cargarDetalles(row)
-            //$('#modalVerSolicitud').modal('show');
+          switch (operacion) {
+            case "ver":
+              ctrl.cargarDetalles(row)
+              //$('#modalVerSolicitud').modal('show');
+              break;
+            default:
+              break;
           }
         };
 
