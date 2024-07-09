@@ -620,11 +620,11 @@ angular.module('poluxClienteApp')
 
                 if (ctrl.respuestaRevision == "ACC_PLX") {//Se aprueba la ARL
 
-                    let EstadoTgTemp = ctrl.EstadosTrabajoGrado.find(data => {
-                        return data.CodigoAbreviacion == "PECSPR_PLX"
+                    let EstadoTgTemp = ctrl.EstadosTrabajoGrado.find(data => {//Se busca el estado trabajo grado "En Curso"
+                        return data.CodigoAbreviacion == "EC_PLX"
                     });
 
-                    var parametrosTrabajoGrado = $.param({
+                    var parametrosTrabajoGrado = $.param({//Se busca el trabajo de grado por su ID
                         limit: 1,
                         query: "Id:" + ctrl.trabajoSeleccionado.Id,
                     });
@@ -634,6 +634,8 @@ angular.module('poluxClienteApp')
                             ctrl.trabajoGrado = dataTrabajos.data[0]
 
                             console.log(ctrl.trabajoGrado)
+
+                            //Se actualiza el estado del trabajo de grado
 
                             ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
 
