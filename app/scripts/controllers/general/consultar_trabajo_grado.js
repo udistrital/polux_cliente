@@ -480,7 +480,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
 
         let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-          return data.CodigoAbreviacion == "ACT_PLX"
+          return data.CodigoAbreviacion == "ASP_PLX"
         });
 
         var parametrosActas = $.param({
