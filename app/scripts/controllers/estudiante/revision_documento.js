@@ -655,6 +655,7 @@ angular.module('poluxClienteApp')
                   var fileBase64 ;
                   var data = [];
                   var URL = "";
+
                   descripcion = "Versión nueva del trabajo de grado";
                   let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
                     return tipoDoc.CodigoAbreviacion == "DTR_PLX"

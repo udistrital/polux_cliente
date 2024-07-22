@@ -227,7 +227,7 @@ angular.module('poluxClienteApp')
 
                 //Si el trabajo de grado es anteproyecto
                 if (trabajoGrado.EstadoTrabajoGrado.Id == 4) {
-                  ctrl.tipoDocumento = 3;
+                  ctrl.tipoDocumento = 68;
                   ctrl.verAnteproyecto = true;
                   ctrl.paginaRedireccion = "/trabajo_grado/revisar_anteproyecto";
                   ctrl.coleccionRespuesta = [{
@@ -243,7 +243,7 @@ angular.module('poluxClienteApp')
                   }];
                 } else if (trabajoGrado.EstadoTrabajoGrado.Id == 15) {
                   // si el trabajo de grado esta en revisión para versión final
-                  ctrl.tipoDocumento = 5;
+                  ctrl.tipoDocumento = 68;
                   ctrl.verAnteproyecto = true;
                   ctrl.verProyectoRevision = true;
                   ctrl.paginaRedireccion = "/trabajo_grado/revisar_proyecto";
@@ -418,7 +418,7 @@ angular.module('poluxClienteApp')
                     function (base64) {                   
                      fileBase64 = base64;
                   data = [{
-                   IdTipoDocumento: 5, //id tipo documento de documentos_crud
+                   IdTipoDocumento: 68, //id tipo documento de documentos_crud
                    nombre: ctrl.vinculacion.TrabajoGrado.Titulo,// nombre formado por nombre de la solicitud
                   
                    metadatos: {

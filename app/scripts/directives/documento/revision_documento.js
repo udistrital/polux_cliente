@@ -259,6 +259,7 @@ angular.module('poluxClienteApp')
                                                     descripcion:"Correcciones sobre el proyecto",
                                                     file:  fileBase64,
                                                 }]
+
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
                                                 ctrl.correcciones.push({
                                                         Observacion: response.data.res.Enlace,

@@ -353,6 +353,7 @@ angular.module('poluxClienteApp')
         });
         //Se consulta el tipo de documento 6 que es acta de socialización
         var parametrosActaSocializacion = $.param({
+
           query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
           limit: 1,
         });

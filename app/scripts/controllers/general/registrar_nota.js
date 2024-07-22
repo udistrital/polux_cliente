@@ -456,6 +456,7 @@ angular.module('poluxClienteApp')
         });
         return $.param({
           query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + "," +
+
             "TrabajoGrado.Id:" +
             idTrabajoGrado,
           limit: 1

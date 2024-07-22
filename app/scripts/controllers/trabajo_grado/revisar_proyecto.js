@@ -247,7 +247,7 @@ angular.module('poluxClienteApp')
 			 */
 			ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
 				return $.param({
-					query: "DocumentoEscrito.TipoDocumentoEscrito:5," +
+					query: "DocumentoEscrito.TipoDocumentoEscrito:68," +
 						"TrabajoGrado.Id:" +
 						idTrabajoGrado,
 					limit: 1
