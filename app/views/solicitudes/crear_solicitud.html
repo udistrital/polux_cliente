@@ -94,7 +94,13 @@
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <div class="col-sm-9">
-              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['rar'],language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" accept="zip,application/zip,rar,application/x-rar-compressed"> </input>
+              <input type="file" 
+                ngf-select 
+                ng-model="detalle.fileModel" 
+                ngf-pattern="'.pdf,.zip,.rar,.xls,.xlsx,.doc,.docx'"
+                ngf-accept="'.pdf,.zip,.rar,.xls,.xlsx,.doc,.docx'"
+                ngf-max-size="20MB" 
+                required>
             </div>
             <br>
           </div>

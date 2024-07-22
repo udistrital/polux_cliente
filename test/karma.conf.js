@@ -57,6 +57,7 @@ module.exports = function(config) {
       'bower_components/angular-pdf/dist/angular-pdf.js',
       'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
       'bower_components/angular-ui-switch/angular-ui-switch.js',
+      'bower_components/ng-file-upload/ng-file-upload.js',
       'bower_components/angular-tree-control/angular-tree-control.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower

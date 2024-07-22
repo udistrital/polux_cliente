@@ -1999,11 +1999,13 @@ angular.module('poluxClienteApp')
             detalle.respuesta = detalle.opciones[0].bd;
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
+            console.log("DETALLE ", detalle)
             detalle.respuesta = ctrl.url;
             console.log("url", ctrl.url);
             ctrl.detallesConDocumento.push(detalle);
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
+            console.log("DETALLE ", detalle)
             detalle.respuesta = ctrl.url;
             ctrl.detallesConDocumento.push(detalle);
           }
@@ -2174,16 +2176,19 @@ angular.module('poluxClienteApp')
               console.log("documento type", documento.type);
               if (documento.type !== "application/pdf" || documento.size > tam) {
                 fileTypeError = true;
+                console.log("entra pdf ", fileTypeError)
               }
             } else if (detalle.Detalle.Id === 82) {
               console.log("entra a rar");
               console.log("documento type", documento.type);
-              if (documento.type !== "application/x-rar-compressed" || documento.size > tam) {
+              if (documento.type !== "application/x-zip-compressed" || documento.size > tam) {
                 fileTypeError = true;
+                console.log("entra zip ", fileTypeError)
               }
             }            
           });
           $scope.loadFormulario = true;
+          console.log("file ", fileTypeError)
           if (!fileTypeError) {
             var promiseArray = []
             ctrl.detallesConDocumento.map((detalle) => {
