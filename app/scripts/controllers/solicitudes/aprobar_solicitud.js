@@ -1328,6 +1328,8 @@ angular.module('poluxClienteApp')
                     tempTrabajo.Carta = detalle.Descripcion;
                   } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CAV") {
                     tempTrabajo.Contrato = detalle.Descripcion;
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "HVDE") {
+                    tempTrabajo.HojaVida = detalle.Descripcion;
                   }
                 });
                 // por defecto el estado es En evaluación por revisor
@@ -1580,6 +1582,17 @@ angular.module('poluxClienteApp')
                     "TipoDocumentoEscrito": tipoDocumento2.Id
                   }
 
+                  //Se busca el tipo de documento "Carta de la Unidad Académica"
+                  let tipoDocumento3 = ctrl.TipoDocumento.find(tipoDoc => {
+                    return tipoDoc.CodigoAbreviacion == "HVDE_PLX"
+                  })
+                  var data_hv = {
+                    "Titulo": "Hoja de Vida Director Externo",
+                    "Enlace": tempTrabajo.HojaVida,
+                    "Resumen": "Hoja de Vida del Director Externo de la pasantía",
+                    "TipoDocumentoEscrito": tipoDocumento3.Id
+                  }
+
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1590,8 +1603,10 @@ angular.module('poluxClienteApp')
                     },
                     Contrato: data_contrato,
                     Carta: data_carta,
+                    HojaVidaDE: data_hv,
                     DTG_Contrato: data_documento_tg,
-                    DTG_Carta: data_documento_tg
+                    DTG_Carta: data_documento_tg,
+                    DTG_HojaVida: data_documento_tg
                   }
                   //Docente director
                   let rolTrabajoGradoTemp = ctrl.RolTrabajoGrado.find(rolTrGr => {
