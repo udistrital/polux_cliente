@@ -1988,6 +1988,9 @@ angular.module('poluxClienteApp')
         let TipoDetalleTemp8 = ctrl.TiposDetalle.find(data => {
           return data.CodigoAbreviacion == "LIST_PLX"
         });
+        let TipoDetalleTemp9 = ctrl.TiposDetalle.find(data => {
+          return data.CodigoAbreviacion == "ACOM_PLX"
+        });
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp.Id) {
             detalle.respuesta = detalle.respuestaNumerica + "";
@@ -1996,6 +1999,11 @@ angular.module('poluxClienteApp')
             detalle.respuesta = detalle.opciones[0].bd;
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
+            detalle.respuesta = ctrl.url;
+            console.log("url", ctrl.url);
+            ctrl.detallesConDocumento.push(detalle);
+          }
+          if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
             detalle.respuesta = ctrl.url;
             ctrl.detallesConDocumento.push(detalle);
           }
@@ -2157,11 +2165,23 @@ angular.module('poluxClienteApp')
           // OK, the returned client is connected
           var fileTypeError = false;
           angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+            console.log("Detalles que entran", detalle);
+            console.log("fileModel", detalle.fileModel);
             var documento = detalle.fileModel;
             var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");
-            if (documento.type !== "application/pdf" || documento.size > tam) {
-              fileTypeError = true;
-            }
+            if (detalle.Detalle.Id === 59) {
+              console.log("entra a pdf");
+              console.log("documento type", documento.type);
+              if (documento.type !== "application/pdf" || documento.size > tam) {
+                fileTypeError = true;
+              }
+            } else if (detalle.Detalle.Id === 82) {
+              console.log("entra a rar");
+              console.log("documento type", documento.type);
+              if (documento.type !== "application/x-rar-compressed" || documento.size > tam) {
+                fileTypeError = true;
+              }
+            }            
           });
           $scope.loadFormulario = true;
           if (!fileTypeError) {
@@ -2191,6 +2211,7 @@ angular.module('poluxClienteApp')
                       descripcion: descripcion,
                       file: fileBase64,
                     }]
+                    console.log("Base64", fileBase64);
                     gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
                       URL = response.data.res.Enlace
                       detalle.respuesta = URL
