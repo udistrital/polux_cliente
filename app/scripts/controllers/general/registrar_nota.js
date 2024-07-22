@@ -98,7 +98,11 @@ angular.module('poluxClienteApp')
       ctrl.gridOptions.columnDefs = [{
         name: 'TrabajoGrado.Titulo',
         displayName: $translate.instant('NOMBRE'),
-        width: '35%',
+        width: '25%',
+      }, {
+        name: 'Estudiante',
+        displayName: $translate.instant('CODIGO_ESTUDIANTE'),
+        width: '15%',
       }, {
         name: 'TrabajoGrado.Modalidad.Nombre',
         displayName: $translate.instant('MODALIDAD'),
@@ -106,15 +110,15 @@ angular.module('poluxClienteApp')
       }, {
         name: 'TrabajoGrado.EstadoTrabajoGrado.Nombre',
         displayName: $translate.instant('ESTADO'),
-        width: '15%',
+        width: '20%',
       }, {
         name: 'RolTrabajoGrado.Nombre',
         displayName: $translate.instant('TIPO_VINCULACION'),
-        width: '15%',
+        width: '10%',
       }, {
         name: 'Acciones',
         displayName: $translate.instant('ACCIONES'),
-        width: '15%',
+        width: '10%',
         type: 'boolean',
         cellTemplate: `
           <div>
@@ -199,11 +203,12 @@ angular.module('poluxClienteApp')
         await getconsultarParametros();
         var defer = $q.defer();
         ctrl.cargandoTrabajos = true;
+
         var parametrosTrabajoGrado = $.param({
-          limit: 0,
-          query: "Activo:True,Usuario:" + ctrl.documento,
+          usuario: ctrl.documento,
         });
-        poluxRequest.get("vinculacion_trabajo_grado", parametrosTrabajoGrado)
+
+        poluxRequest.get("estudiante_vinculacion_trabajo_grado", parametrosTrabajoGrado)
           .then(function(dataTrabajos) {
             if (Object.keys(dataTrabajos.data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data;
@@ -281,6 +286,7 @@ angular.module('poluxClienteApp')
           ctrl.cargandoTrabajos = false;
         })
         .catch(function(error) {
+          console.log(error);
           ctrl.errorCargando = true;
           ctrl.cargandoTrabajos = false;
         })
