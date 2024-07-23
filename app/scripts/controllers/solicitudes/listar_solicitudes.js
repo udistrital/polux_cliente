@@ -1055,8 +1055,8 @@ angular.module('poluxClienteApp')
           var file = new Blob([varia], {type: 'application/pdf'});
 					var fileURL = URL.createObjectURL(file);
 					$window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-						 })
-          .catch(function(error) {
+				})
+        .catch(function(error) {
             swal(
               $translate.instant("MENSAJE_ERROR"),
               $translate.instant("ERROR.CARGAR_DOCUMENTO"),

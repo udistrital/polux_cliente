@@ -89,7 +89,7 @@
           </div>
         </div>
 
-        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX'">
+        <div class="panel-body" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ARC_PLX'">
           <div class="row row-centered">
             <label class="col-sm-12 control-label"> {{'ARL.INSTRUCCIONES_PREVIAS' | translate}} </label>
           </div>
@@ -225,7 +225,7 @@
       </div>
     </div>
     <!--Para certificado de ARL-->
-    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX'">
+    <div class="panel panel-default" ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ARC_PLX'">
       <div class="panel-heading">
         {{'ARL.OBSERVACIONES' | translate}}
       </div>
@@ -275,7 +275,7 @@
                 <input type="submit" class="btn btn-success" value="{{'SUBIR_CORRECCIONES_PROYECTO'|translate}}">
               </div>
               <!--Para certificado ARL-->
-              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX'">
+              <div ng-if="estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'PAEA_PLX' || estudianteRevisionDoc.trabajoGrado.EstadoTrabajoGradoAux.CodigoAbreviacion == 'ARC_PLX'">
                 <input type="submit" class="btn btn-success" value="{{'ARL.SUBIR'|translate}}">
               </div>
               <!--Para primera versión del documento-->

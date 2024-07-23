@@ -237,7 +237,7 @@ angular.module('poluxClienteApp')
                             ctrl.gridOptions.data = ctrl.trabajosGrado;
                             defer.resolve();
                         } else {
-                            ctrl.mensajeError = $translate.instant('ERROR.SIN_TRABAJOS_ASOCIADOS');
+                            ctrl.mensajeError = $translate.instant('ERROR.SIN_REVISIONES_ARL');
                             defer.reject("no hay trabajos de grado asociados");
                         }
                     })
@@ -620,11 +620,11 @@ angular.module('poluxClienteApp')
 
                 if (ctrl.respuestaRevision == "ACC_PLX") {//Se aprueba la ARL
 
-                    let EstadoTgTemp = ctrl.EstadosTrabajoGrado.find(data => {
-                        return data.CodigoAbreviacion == "PECSPR_PLX"
+                    let EstadoTgTemp = ctrl.EstadosTrabajoGrado.find(data => {//Se busca el estado trabajo grado "En Curso"
+                        return data.CodigoAbreviacion == "EC_PLX"
                     });
 
-                    var parametrosTrabajoGrado = $.param({
+                    var parametrosTrabajoGrado = $.param({//Se busca el trabajo de grado por su ID
                         limit: 1,
                         query: "Id:" + ctrl.trabajoSeleccionado.Id,
                     });
@@ -635,11 +635,12 @@ angular.module('poluxClienteApp')
 
                             console.log(ctrl.trabajoGrado)
 
+                            //Se actualiza el estado del trabajo de grado
+
                             ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
                                 .then(function (dataTrabajos) {
-                                    console.log(dataTrabajos)
                                     swal(
                                         $translate.instant("REGISTRO_EXITOSO"),
                                         $translate.instant("REVISION_ARL.ARL_APROBADA"),
@@ -668,7 +669,48 @@ angular.module('poluxClienteApp')
 
                 }
                 else {//Se rechaza la ARL
+                    let EstadoTgTemp = ctrl.EstadosTrabajoGrado.find(data => {//Se busca el estado de ARL Rechazada
+                        return data.CodigoAbreviacion == "ARC_PLX"
+                    });
 
+                    var parametrosTrabajoGrado = $.param({
+                        limit: 1,
+                        query: "Id:" + ctrl.trabajoSeleccionado.Id,
+                    });
+
+                    poluxRequest.get("trabajo_grado", parametrosTrabajoGrado)
+                        .then(function (dataTrabajos) {
+                            ctrl.trabajoGrado = dataTrabajos.data[0]
+
+                            ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
+
+                            poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
+                                .then(function (dataTrabajos) {
+                                    swal(
+                                        $translate.instant("REGISTRO_EXITOSO"),
+                                        $translate.instant("REVISION_ARL.ARL_RECHAZADA"),
+                                        'success'
+                                    ).then(function (responseSwal) {
+                                        if (responseSwal) {
+                                            location.reload();
+                                        }
+                                    });
+
+                                })
+                                .catch(function (error) {
+                                    swal(
+                                        $translate.instant("MENSAJE_ERROR"),
+                                        $translate.instant("REVISION_ARL.ARL_RECHAZADA"),
+                                        'warning'
+                                    );
+                                });
+
+                        })
+                        .catch(function (error) {
+                            ctrl.mensajeErrorTrabajo = $translate.instant('ERROR.CARGAR_TRABAJO_GRADO');
+                            ctrl.errorCargandoTrabajo = true;
+                            ctrl.cargandoTrabajo = false;
+                        });
                 }
             }
         });
