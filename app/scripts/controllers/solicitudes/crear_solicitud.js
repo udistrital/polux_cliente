@@ -778,7 +778,7 @@ angular.module('poluxClienteApp')
         ctrl.solicitudes = [];
         if(ctrl.Docente !=0 && modalidad == null){
           let ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.CodigoAbreviacion == "PASEX_PLX"
+            return data.CodigoAbreviacion == "PAS_PLX"//Se debe revisar si el código de abreviación debe ser el de Materias de Posgrado, se deja el de Pasantía por defecto
           });
 
           modalidad = ModalidadTemp.Id;
@@ -1880,8 +1880,8 @@ angular.module('poluxClienteApp')
                     if(ModalidadTemp.CodigoAbreviacion == "MONO_PLX"){
                       detalle.label = $translate.instant("TERMINOS.MONOGRAFIA")
                     }
-                    // PARA MODALIDAD DE MONOGRAFIA
-                    if(ModalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ModalidadTemp.CodigoAbreviacion == "PASIN_PLX"){
+                    // PARA MODALIDAD DE PASANTIA
+                    if(ModalidadTemp.CodigoAbreviacion == "PAS_PLX"){
                       detalle.label = $translate.instant("TERMINOS.PASANTIA")
                     }
                     // PARA MODALIDAD DE EMPRENDIMIENTO
@@ -2268,22 +2268,6 @@ angular.module('poluxClienteApp')
           });
 
           let ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.CodigoAbreviacion == "PASEX_PLX"
-          });
-          if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
-            let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
-              return data.CodigoAbreviacion == "SAD_PLX"
-            });
-            let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
-            });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
-          }
-          /*if(ctrl.ModalidadTipoSolicitud === 13){
-            ctrl.ModalidadTipoSolicitud = 71;
-          }*/
-
-          ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "EAPRO_PLX"
           });
           if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
@@ -2367,7 +2351,7 @@ angular.module('poluxClienteApp')
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.CodigoAbreviacion == "PASIN_PLX"
+            return data.CodigoAbreviacion == "PAS_PLX"
           });
           if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
@@ -2460,7 +2444,7 @@ angular.module('poluxClienteApp')
             data_respuesta.EstadoSolicitud = EstadoSolicitudTemp.Id
           }
         }else{
-          if(ctrl.modalidad == "PASIN_PLX"){ //Si la modalidad seleccionada es pasantia interna, entonces se envia a la oficina externa de pasantias
+          if(ctrl.modalidad == "PAS_PLX"){ //Si la modalidad seleccionada es pasantia, entonces se envia a la oficina externa de pasantias
             let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
               return data.CodigoAbreviacion == "PREP_PLX"
             });
