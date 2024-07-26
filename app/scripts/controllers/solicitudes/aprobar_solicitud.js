@@ -185,8 +185,8 @@ angular.module('poluxClienteApp')
         return new Promise(async (resolve, reject) => {
           //Solicitud inicial
           if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX") {
-            // MODALIDAD DE PASANTÍA EXTERNA
-            if (ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
+            // MODALIDAD DE PASANTÍA
+            if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
               var parametrosConsulta = $.param({
                 query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
               });
@@ -805,7 +805,7 @@ angular.module('poluxClienteApp')
                 ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_DOCENTES");
                 defer.reject(error);
               });
-            if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
+            if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
               ctrl.isPasantia = true;
             }
           } else {
@@ -1290,7 +1290,7 @@ angular.module('poluxClienteApp')
                 ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
                 ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
                 ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
-              } else if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "MONO_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PEMP_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "INV_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
+              } else if (ctrl.modalidadTemp.CodigoAbreviacion == "MONO_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PEMP_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "INV_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
                 //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                 //se obtienen datos para crear el trabajo
                 console.log("ENTRA MONOGRAFIA")
@@ -1339,7 +1339,7 @@ angular.module('poluxClienteApp')
                   estadoTrabajoGrado = "EC_PLX";
                 }
                 // si la modalidad es de pasantia se crea en estado de espera de ARL id 21
-                if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
                   estadoTrabajoGrado = "PAEA_PLX";
                 }
                 if (ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX") {
@@ -1507,8 +1507,11 @@ angular.module('poluxClienteApp')
                   },
                   "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
                 });
-                //Si la solicitud es de pasantia se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
-                if (ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
+                // Solicitud inicial pasantia
+                if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
+
+                  //se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
+
                   ctrl.dataRespuesta.DetallesPasantia = {
                     Empresa: 0,
                     Horas: 0,
@@ -1540,24 +1543,6 @@ angular.module('poluxClienteApp')
                       Id: 0,
                     }
                   }]
-
-                  //Docente director
-                  let rolTrabajoGradoTemp = ctrl.RolTrabajoGrado.find(rolTrGr => {
-                    return rolTrGr.CodigoAbreviacion == "DIR_EXTERNO_PLX"
-                  })
-                  data_vinculacion.push({
-                    "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
-                    "Activo": true,
-                    "FechaInicio": fechaRespuesta,
-                    //"FechaFin": null,
-                    "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
-                    "TrabajoGrado": {
-                      "Id": 0
-                    }
-                  });
-                }
-                // Solicitud inicial pasantia interna
-                if (ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
 
                   //Se preparan los documentos de Contrato y Carta de la Unidad Académica
 
@@ -2574,69 +2559,7 @@ angular.module('poluxClienteApp')
             var parametro = responsesolicitud.data[0];
             var modalidad = 0;
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX") {
-              if (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX") {
-                var parametros = $.param({
-                  query: "Activo:true,SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
-                  limit: 0
-                });
-                let estadoResAux = ctrl.EstadoSolicitud.find(est => {
-                  return est.CodigoAbreviacion == "PREP_PLX"
-                })
-                poluxRequest.get("respuesta_solicitud", parametros).then(function (respuestaSolicitud) {
-                  angular.forEach(respuestaSolicitud.data, function (value) {
-                    if (Object.keys(value).length > 0) {
-                      var parametrosRespuestaSolicitud = {
-                        "Id": value.Id,
-                        "Fecha": new Date(),
-                        "Justificacion": "El Director aprobo la " + ctrl.tipoSolicitudTemp.Nombre,
-                        "EnteResponsable": 0,
-                        "Usuario": $scope.userId,
-                        "Activo": true,
-                        "EstadoSolicitud": estadoResAux.Id,
-                        "SolicitudTrabajoGrado": {
-                          "Id": Number(ctrl.solicitud)
-                        }
-
-                      };
-                      poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
-
-                        if (responsesolicitudsolicitud.data !== undefined) {
-
-                          var Atributos = {
-                            rol: 'ESTUDIANTE',
-                          }
-                          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                          // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
-
-                          swal(
-                            $translate.instant("RESPUESTA_SOLICITUD"),
-                            $translate.instant("SOLICITUD_APROBADA"),
-                            'success'
-                          );
-                          $location.path("/solicitudes/listar_solicitudes");
-
-                        } else {
-                          swal(
-                            $translate.instant("RESPUESTA_SOLICITUD"),
-                            $translate.instant(responsesolicitudsolicitud),
-                            'warning'
-                          );
-                        }
-
-
-                      });
-                    }
-                  });
-                })
-                  .catch(function () {
-                    $scope.mensajeErrorSolicitudes = $translate.instant('ERROR.CARGA_SOLICITUDES');
-                    $scope.errorCargarSolicitudes = true;
-                    $scope.loadSolicitudes = false;
-
-                  });
-              }
-              if (ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX") {
+              if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
                 let estadoResAux = ctrl.EstadoSolicitud.find(est => {
                   return est.CodigoAbreviacion == "PREP_PLX"
                 })
@@ -2790,8 +2713,8 @@ angular.module('poluxClienteApp')
                 angular.forEach(respuestaSolicitud.data, function (value) {
                   if (Object.keys(value).length > 0) {
 
-                    // Validacion de solicitud final para pasantia externa o interna
-                    if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX")) {
+                    // Validacion de solicitud final para pasantia
+                    if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX")) {
                       let estadoResAux = ctrl.EstadoSolicitud.find(est => {
                         return est.CodigoAbreviacion == "PREP_PLX"
                       })
@@ -3042,7 +2965,7 @@ angular.module('poluxClienteApp')
 
         if (estadoSolRtaNueva.CodigoAbreviacion == "ACC_PLX") {
           //aprobar
-          if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PASIN_PLX")) {
+          if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX" && ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
             var fileBase64;
             var data = [];
             var URL = "";

@@ -155,7 +155,7 @@
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
         </div>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && aprobarSolicitud.tipoSolicitudTemp.CodigoAbreviacion=='SRTG_PLX' && (aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PASEX_PLX' || aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PASIN_PLX')">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && aprobarSolicitud.tipoSolicitudTemp.CodigoAbreviacion=='SRTG_PLX' && aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PAS_PLX'">
         <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
        <div class="col-sm-9">
         <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>
