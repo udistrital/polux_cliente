@@ -148,7 +148,7 @@ angular.module('poluxClienteApp')
             //Tipo de documento revisión
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "DGRREV_PLX"));
           }
-          if(trabajoGrado.Modalidad.CodigoAbreviacion == "PASIN_PLX"){
+          if(trabajoGrado.Modalidad.CodigoAbreviacion == "PAS_PLX"){
             //Tipo de documento Contrato y Carta Aval Pasantia
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "AVCC_PLX"));
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "CUA_PLX"));

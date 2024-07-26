@@ -254,7 +254,7 @@ angular.module('poluxClienteApp')
         await getconsultarParametros();
 
         let ModalidadTemp = ctrl.Modalidades.find(data => {
-          return data.CodigoAbreviacion == "PASIN_PLX";
+          return data.CodigoAbreviacion == "PAS_PLX";
         });
 
         let EstadoTemp = ctrl.EstadosTrabajoGrado.find(data => {

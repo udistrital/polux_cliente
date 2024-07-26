@@ -585,7 +585,7 @@ angular.module('poluxClienteApp')
                   let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                     return tipoSol.Id == modTipo.TipoSolicitud
                   })
-                  if (tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX" || (tipoSolicitudTemp.CodigoAbreviacion == "SCPAE_PLX" && modalidadTemp.CodigoAbreviacion == "PASEX_PLX")) {
+                  if (tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX" || (tipoSolicitudTemp.CodigoAbreviacion == "SCPAE_PLX" && modalidadTemp.CodigoAbreviacion == "PAS_PLX")) {
                     if (guardaPrimero) {
                       exclude += "|"
                     } else {

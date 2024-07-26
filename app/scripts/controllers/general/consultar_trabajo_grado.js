@@ -799,7 +799,7 @@ angular.module('poluxClienteApp')
                 }
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
                 // y el detalel de la pasantia
-                if (ModalidadTemp.CodigoAbreviacion === "PASEX_PLX" || ModalidadTemp.CodigoAbreviacion === "PASIN_PLX") {
+                if (ModalidadTemp.CodigoAbreviacion === "PAS_PLX") {
                   promises.push(ctrl.getActas());
                   promises.push(ctrl.getDetallePasantia());
                 }

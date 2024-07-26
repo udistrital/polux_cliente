@@ -186,7 +186,7 @@ angular.module('poluxClienteApp')
                 ctrl.cargandoTrabajos = true;
 
                 let ModalidadTemp = ctrl.Modalidades.find(data => {
-                    return data.CodigoAbreviacion == "PASIN_PLX";
+                    return data.CodigoAbreviacion == "PAS_PLX";
                 });
 
                 var estadosValidos = ["PECSPR_PLX", "ACEA_PLX", "EC_PLX"]
