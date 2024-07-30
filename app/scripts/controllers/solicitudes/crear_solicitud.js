@@ -1993,6 +1993,7 @@ angular.module('poluxClienteApp')
         });
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp.Id) {
+            console.log("DETALLENUM", detalle)
             detalle.respuesta = detalle.respuestaNumerica + "";
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp2.Id) {
@@ -2005,9 +2006,12 @@ angular.module('poluxClienteApp')
             ctrl.detallesConDocumento.push(detalle);
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
-            console.log("DETALLE ", detalle)
+            console.log("DETALLE 9 ", detalle)
+            //console.log("respuesta", detalle.respuesta)
             detalle.respuesta = ctrl.url;
-            ctrl.detallesConDocumento.push(detalle);
+            if(detalle.fileModel !== null) {
+              ctrl.detallesConDocumento.push(detalle);
+            }            
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp4.Id) {
             if (detalle.Detalle.Descripcion == 'solicitar-asignaturas') {
@@ -2068,7 +2072,7 @@ angular.module('poluxClienteApp')
             //
             ctrl.erroresFormulario = true;
           }
-          if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle !== TipoDetalleTemp4.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id) {
+          if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle !== TipoDetalleTemp4.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id) {
             swal(
               'Validación del formulario',
               "Debe completar todos los campos del formulario.",
@@ -2188,7 +2192,7 @@ angular.module('poluxClienteApp')
             }            
           });
           $scope.loadFormulario = true;
-          console.log("file ", fileTypeError)
+          //console.log("file ", fileTypeError)
           if (!fileTypeError) {
             var promiseArray = []
             ctrl.detallesConDocumento.map((detalle) => {
@@ -2216,7 +2220,7 @@ angular.module('poluxClienteApp')
                       descripcion: descripcion,
                       file: fileBase64,
                     }]
-                    console.log("Base64", fileBase64);
+                    //console.log("Base64", fileBase64);
                     gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
                       URL = response.data.res.Enlace
                       detalle.respuesta = URL
@@ -2404,9 +2408,16 @@ angular.module('poluxClienteApp')
           };
         }
         angular.forEach(ctrl.detalles, function(detalle) {
+          console.log("Detalle para la solicitud", detalle);
+          if (detalle.Detalle.CodigoAbreviacion === "DAR" && detalle.fileModel === null) {   
+            return;
+          }
+          if (detalle.Requerido === false && detalle.respuesta === undefined) {
+            return;
+          }
           if (detalle.Id == ctrl.posDocente) {
             ctrl.docDocenteDir = detalle.respuesta;
-          }
+          }          
           data_detalles.push({
             "Descripcion": detalle.respuesta,
             "SolicitudTrabajoGrado": {

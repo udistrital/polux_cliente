@@ -65,7 +65,7 @@
           </div>
         </div>
         <div ng-if="detalle.carrera===undefined">
-          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
+          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='ACOM_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
             <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
             <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === 'LR'">
               <a class="col-sm-8" ng-href="{{detalle.Descripcion}}" target="_blank">{{detalle.Descripcion}}</a>
@@ -75,9 +75,15 @@
               <label class="col-sm-8">{{detalle.Descripcion}}</label>
             </div>
           </div>
+          
           <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='DOC_PLX' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='LNUX_PLX'">
             <label ng-click="aprobarSolicitud.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
           </div>
+
+          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='ACOM_PLX'">
+            <label ng-click="aprobarSolicitud.getZip(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'DESCARGAR_DOCUMENTOS' | translate}} </label>
+          </div>
+          
         </div>
 
       </div>
