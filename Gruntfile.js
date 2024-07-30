@@ -183,7 +183,7 @@ livereload: {
         postcss: {
             options: {
                 processors: [
-                require('autoprefixer-core')({ browsers: ['last 1 version'] })
+                    require('autoprefixer')({ overrideBrowserslist: ['last 1 version'] })
                 ]
             },
             server: {
@@ -193,19 +193,19 @@ livereload: {
                 files: [{
                     expand: true,
                     cwd: '.tmp/styles/',
-                src: '{,*/}*.css',
-                dest: '.tmp/styles/'
-            }]
+                    src: '{,*/}*.css',
+                    dest: '.tmp/styles/'
+                }]
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/styles/',
+                    src: '{,*/}*.css',
+                    dest: '.tmp/styles/'
+                }]
+            }
         },
-        dist: {
-            files: [{
-                expand: true,
-                cwd: '.tmp/styles/',
-            src: '{,*/}*.css',
-            dest: '.tmp/styles/'
-        }]
-    }
-},
 
         // Automatically inject Bower components into the app
         wiredep: {

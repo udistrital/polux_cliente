@@ -68,12 +68,18 @@
                 <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
             </div>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX'" class="row">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX' && detalle.Requerido == true" class="row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
              <div class="col-sm-9 ">
                 <input type="number" class="form-control" ng-model="detalle.respuestaNumerica" required></input>
             </div>
           </div>
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX' && detalle.Requerido == false" class="row">
+            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+              <div class="col-sm-9 ">
+                 <input type="number" class="form-control" ng-model="detalle.respuestaNumerica"></input>
+             </div>
+           </div>
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DOC_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
@@ -83,6 +89,23 @@
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <div class="col-sm-9">
               <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>
+            </div>
+            <br>
+          </div>
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'ACOM_PLX'" class="row">
+            <div class="panel-body">
+              <div class="alert-warning">
+                <b>{{'AVISO_RAR' | translate}}</b>
+              </div>
+            </div>
+            <label class="col-sm-3 control-label">{{detalle.label}}</label>
+            <div class="col-sm-9">
+              <input type="file" 
+                ngf-select 
+                ng-model="detalle.fileModel" 
+                ngf-pattern="'.pdf,.zip,.rar,.xls,.xlsx,.doc,.docx'"
+                ngf-accept="'.pdf,.zip,.rar,.xls,.xlsx,.doc,.docx'"
+                ngf-max-size="20MB">
             </div>
             <br>
           </div>

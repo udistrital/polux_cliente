@@ -56,7 +56,8 @@ angular
         'configuracionService',
         'nuxeoService',
         'implicitToken',
-        'autenticacionMidService'
+        'autenticacionMidService',
+        'ngFileUpload'
         
     ])
     .run(function(amMoment) {

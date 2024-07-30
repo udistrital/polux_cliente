@@ -1992,16 +1992,30 @@ angular.module('poluxClienteApp')
         let TipoDetalleTemp8 = ctrl.TiposDetalle.find(data => {
           return data.CodigoAbreviacion == "LIST_PLX"
         });
+        let TipoDetalleTemp9 = ctrl.TiposDetalle.find(data => {
+          return data.CodigoAbreviacion == "ACOM_PLX"
+        });
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp.Id) {
+            console.log("DETALLENUM", detalle)
             detalle.respuesta = detalle.respuestaNumerica + "";
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp2.Id) {
             detalle.respuesta = detalle.opciones[0].bd;
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
+            console.log("DETALLE ", detalle)
             detalle.respuesta = ctrl.url;
+            console.log("url", ctrl.url);
             ctrl.detallesConDocumento.push(detalle);
+          }
+          if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
+            console.log("DETALLE 9 ", detalle)
+            //console.log("respuesta", detalle.respuesta)
+            detalle.respuesta = ctrl.url;
+            if(detalle.fileModel !== null) {
+              ctrl.detallesConDocumento.push(detalle);
+            }            
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp4.Id) {
             if (detalle.Detalle.Descripcion == 'solicitar-asignaturas') {
@@ -2062,7 +2076,7 @@ angular.module('poluxClienteApp')
             //
             ctrl.erroresFormulario = true;
           }
-          if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle !== TipoDetalleTemp4.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id) {
+          if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle !== TipoDetalleTemp4.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id) {
             swal(
               'Validación del formulario',
               "Debe completar todos los campos del formulario.",
@@ -2161,13 +2175,28 @@ angular.module('poluxClienteApp')
           // OK, the returned client is connected
           var fileTypeError = false;
           angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+            console.log("Detalles que entran", detalle);
+            console.log("fileModel", detalle.fileModel);
             var documento = detalle.fileModel;
             var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");
-            if (documento.type !== "application/pdf" || documento.size > tam) {
-              fileTypeError = true;
-            }
+            if (detalle.Detalle.Id === 59) {
+              console.log("entra a pdf");
+              console.log("documento type", documento.type);
+              if (documento.type !== "application/pdf" || documento.size > tam) {
+                fileTypeError = true;
+                console.log("entra pdf ", fileTypeError)
+              }
+            } else if (detalle.Detalle.Id === 82) {
+              console.log("entra a rar");
+              console.log("documento type", documento.type);
+              if (documento.type !== "application/x-zip-compressed" || documento.size > tam) {
+                fileTypeError = true;
+                console.log("entra zip ", fileTypeError)
+              }
+            }            
           });
           $scope.loadFormulario = true;
+          //console.log("file ", fileTypeError)
           if (!fileTypeError) {
             var promiseArray = []
             ctrl.detallesConDocumento.map((detalle) => {
@@ -2195,6 +2224,7 @@ angular.module('poluxClienteApp')
                       descripcion: descripcion,
                       file: fileBase64,
                     }]
+                    //console.log("Base64", fileBase64);
                     gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
                       URL = response.data.res.Enlace
                       detalle.respuesta = URL
@@ -2371,9 +2401,16 @@ angular.module('poluxClienteApp')
           console.log("DATA ", data_solicitud)
         }
         angular.forEach(ctrl.detalles, function(detalle) {
+          console.log("Detalle para la solicitud", detalle);
+          if (detalle.Detalle.CodigoAbreviacion === "DAR" && detalle.fileModel === null) {   
+            return;
+          }
+          if (detalle.Requerido === false && detalle.respuesta === undefined) {
+            return;
+          }
           if (detalle.Id == ctrl.posDocente) {
             ctrl.docDocenteDir = detalle.respuesta;
-          }
+          }          
           data_detalles.push({
             "Descripcion": detalle.respuesta,
             "SolicitudTrabajoGrado": {
