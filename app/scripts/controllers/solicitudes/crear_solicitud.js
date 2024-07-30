@@ -2412,7 +2412,7 @@ angular.module('poluxClienteApp')
           if (detalle.Detalle.CodigoAbreviacion === "DAR" && detalle.fileModel === null) {   
             return;
           }
-          if (detalle.Requerido === false && detalle.respuesta === undefined) {
+          if (detalle.Requerido === false && detalle.respuesta === "undefined") {
             return;
           }
           if (detalle.Id == ctrl.posDocente) {
