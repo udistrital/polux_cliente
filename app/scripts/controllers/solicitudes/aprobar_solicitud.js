@@ -2427,21 +2427,22 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
-       * @name getZip
+       * @name getDocAnyFormat
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo zip de nuxeo.
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
        */
-      ctrl.getZip = function (docid) {
+      ctrl.getDocAnyFormat = function (docid) {
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
-          var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], { type: 'application/zip' });
+          console.log("Response GET", response);
+          var file = new Blob([utils.base64ToArrayBuffer(response.data.file)]);
           var fileURL = URL.createObjectURL(file);
           
           var a = document.createElement('a');
           a.href = fileURL;
-          a.download = 'documento.zip'; // Nombre del archivo a descargar
+          a.download = response.data["dc:title"]; // Nombre del archivo a descargar
           document.body.appendChild(a);
           a.click();
           
