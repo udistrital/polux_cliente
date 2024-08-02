@@ -1993,20 +1993,19 @@ angular.module('poluxClienteApp')
           return data.CodigoAbreviacion == "LIST_PLX"
         });
         let TipoDetalleTemp9 = ctrl.TiposDetalle.find(data => {
-          return data.CodigoAbreviacion == "ACOM_PLX"
+          return data.CodigoAbreviacion == "DAN_PLX"
         });
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp.Id) {
-            console.log("DETALLENUM", detalle)
+            //console.log("DETALLENUM", detalle)
             detalle.respuesta = detalle.respuestaNumerica + "";
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp2.Id) {
             detalle.respuesta = detalle.opciones[0].bd;
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
-            console.log("DETALLE ", detalle)
-            detalle.respuesta = ctrl.url;
-            console.log("url", ctrl.url);
+            //console.log("DETALLE ", detalle)
+            detalle.respuesta = ctrl.url;            
             ctrl.detallesConDocumento.push(detalle);
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
@@ -2125,10 +2124,25 @@ angular.module('poluxClienteApp')
             }
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
-            if (detalle.fileModel == null) {
+            if (detalle.fileModel == null || detalle.fileModel.type !== "application/pdf") {
               swal(
                 'Validación del formulario',
-                "Error ingrese una opcion valida. (Documento)",
+                "Error, ingrese documento PDF en campo de documento final. (Documento)",
+                'warning'
+              );
+              ctrl.erroresFormulario = true;
+            }
+          }
+          if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {            
+            if(detalle.fileModel === null) {
+              return;
+            };
+            var archivo = detalle.fileModel.name;
+            var extension = archivo.split('.').pop().toLowerCase();
+            if (extension === 'rar' || extension === 'zip' || detalle.fileModel.type === "application/zip" || detalle.fileModel.type === "application/x-zip-compressed" || detalle.fileModel.type === "application/vnd.rar") {
+              swal(
+                'Validación del formulario',
+                "Error, no ingrese archivo comprimido (.rar, .zip) en campo de documento anexo.",
                 'warning'
               );
               ctrl.erroresFormulario = true;
@@ -2174,26 +2188,28 @@ angular.module('poluxClienteApp')
         if (ctrl.detallesConDocumento.length > 0) {
           // OK, the returned client is connected
           var fileTypeError = false;
-          angular.forEach(ctrl.detallesConDocumento, function (detalle) {
-            console.log("Detalles que entran", detalle);
-            console.log("fileModel", detalle.fileModel);
+          var validExtensions = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+          angular.forEach(ctrl.detallesConDocumento, function (detalle) {            
             var documento = detalle.fileModel;
-            var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");
-            if (detalle.Detalle.Id === 59) {
-              console.log("entra a pdf");
-              console.log("documento type", documento.type);
-              if (documento.type !== "application/pdf" || documento.size > tam) {
-                fileTypeError = true;
-                console.log("entra pdf ", fileTypeError)
-              }
-            } else if (detalle.Detalle.Id === 82) {
-              console.log("entra a rar");
-              console.log("documento type", documento.type);
-              if (documento.type !== "application/x-zip-compressed" || documento.size > tam) {
-                fileTypeError = true;
-                console.log("entra zip ", fileTypeError)
-              }
-            }            
+            var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");            
+            if (!validExtensions.includes(documento.type) || documento.size > tam) {             
+              fileTypeError = true;
+            }
+            // if (detalle.Detalle.Id === 59) {
+            //   console.log("entra a pdf");
+            //   console.log("documento type", documento.type);
+            //   if (documento.type !== "application/pdf" || documento.size > tam) {
+            //     fileTypeError = true;
+            //     console.log("entra pdf ", fileTypeError)
+            //   }
+            // } else if (detalle.Detalle.Id === 82) {
+            //   console.log("entra a rar");
+            //   console.log("documento type", documento.type);
+            //   if (documento.type !== "application/x-zip-compressed" || documento.size > tam) {
+            //     fileTypeError = true;
+            //     console.log("entra zip ", fileTypeError)
+            //   }
+            // }            
           });
           $scope.loadFormulario = true;
           //console.log("file ", fileTypeError)
@@ -2215,7 +2231,7 @@ angular.module('poluxClienteApp')
                     fileBase64 = base64;
                     data = [{
                       IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
-                      nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
+                      nombre: detalle.fileModel.name, // nombre formado por nombre de la solicitud
                       metadatos: {
                         NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
                         Tipo: "Archivo",
@@ -2225,7 +2241,7 @@ angular.module('poluxClienteApp')
                       file: fileBase64,
                     }]
                     //console.log("Base64", fileBase64);
-                    gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                    gestorDocumentalMidRequest.post('/document/uploadAnyFormat', data).then(function (response) {
                       URL = response.data.res.Enlace
                       detalle.respuesta = URL
                       ctrl.url = response.data.res.Enlace
@@ -2398,11 +2414,14 @@ angular.module('poluxClienteApp')
             "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
             "PeriodoAcademico": ctrl.periodo
           };
-          console.log("DATA ", data_solicitud)
+          //console.log("DATA ", data_solicitud)
         }
         angular.forEach(ctrl.detalles, function(detalle) {
-          console.log("Detalle para la solicitud", detalle);
-          if (detalle.Detalle.CodigoAbreviacion === "DAR" && detalle.fileModel === null) {   
+          //console.log("Detalle para la solicitud", detalle);
+          if (detalle.fileModel === null && 
+            (detalle.Detalle.CodigoAbreviacion === "DAR1" || 
+             detalle.Detalle.CodigoAbreviacion === "DAR2" || 
+             detalle.Detalle.CodigoAbreviacion === "DAR3")) {   
             return;
           }
           if (detalle.Requerido === false && detalle.respuesta === "undefined") {
