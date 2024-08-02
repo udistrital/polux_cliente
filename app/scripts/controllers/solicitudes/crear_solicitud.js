@@ -2009,7 +2009,7 @@ angular.module('poluxClienteApp')
             ctrl.detallesConDocumento.push(detalle);
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
-            //console.log("DETALLE 9 ", detalle)
+            console.log("DETALLE 9 ", detalle)
             //console.log("respuesta", detalle.respuesta)
             detalle.respuesta = ctrl.url;
             if(detalle.fileModel !== null) {
