@@ -1993,7 +1993,7 @@ angular.module('poluxClienteApp')
           return data.CodigoAbreviacion == "LIST_PLX"
         });
         let TipoDetalleTemp9 = ctrl.TiposDetalle.find(data => {
-          return data.CodigoAbreviacion == "ACOM_PLX"
+          return data.CodigoAbreviacion == "DAN_PLX"
         });
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp.Id) {
@@ -2418,7 +2418,10 @@ angular.module('poluxClienteApp')
         }
         angular.forEach(ctrl.detalles, function(detalle) {
           //console.log("Detalle para la solicitud", detalle);
-          if (detalle.Detalle.CodigoAbreviacion === "DAR" && detalle.fileModel === null) {   
+          if (detalle.fileModel === null && 
+            (detalle.Detalle.CodigoAbreviacion === "DAR1" || 
+             detalle.Detalle.CodigoAbreviacion === "DAR2" || 
+             detalle.Detalle.CodigoAbreviacion === "DAR3")) {   
             return;
           }
           if (detalle.Requerido === false && detalle.respuesta === "undefined") {
