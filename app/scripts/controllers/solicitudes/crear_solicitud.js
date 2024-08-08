@@ -2174,6 +2174,26 @@ angular.module('poluxClienteApp')
         }
       }
 
+      async function uploadDocument(data) {
+        return new Promise(async (resolve, reject) => {
+          await gestorDocumentalMidRequest.post('/document/uploadAnyFormat', data)
+          .then(function (response) {
+             if (response.data.res.Enlace) {
+              let URL = response.data.res.Enlace;
+              console.log("URL del documento:", URL);
+              resolve(URL);
+            } else {
+              reject("No se recibió un enlace en la respuesta.");
+            }
+          })
+          .catch(function (error) {
+            console.error("Error al subir el documento:", error);
+            reject(error);
+          });
+        });
+      }
+
+
       /**
        * @ngdoc method
        * @name cargarDocumentos
@@ -2214,6 +2234,51 @@ angular.module('poluxClienteApp')
           $scope.loadFormulario = true;
           //console.log("file ", fileTypeError)
           if (!fileTypeError) {
+
+            /*let cargueCorrecto = 0
+
+            for (const detalle of ctrl.detallesConDocumento) {
+              var descripcion;
+              var fileBase64;
+              var data = [];
+              let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+                return data.CodigoAbreviacion == "DTR_PLX"
+              });
+              descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
+              utils.getBase64(detalle.fileModel).then(
+                async function (base64) {
+                  fileBase64 = base64;
+                  data = [{
+                    IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
+                    nombre: detalle.fileModel.name, // nombre formado por nombre de la solicitud
+                    metadatos: {
+                      NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
+                      Tipo: "Archivo",
+                      Observaciones: "Solicitud inicial"
+                    },
+                    descripcion: descripcion,
+                    file: fileBase64,
+                  }]
+                  //console.log("Base64", fileBase64);
+                  await uploadDocument(data).then((res) => {
+                    console.log("Documento subido con éxito:", res);
+                    detalle.respuesta = res
+                    ctrl.url = res
+                    cargueCorrecto++
+                  })
+                    .catch((error) => {
+                      console.error("Error en la subida del documento:", error);
+                    });
+                })
+            }
+
+            console.log(cargueCorrecto)
+            console.log(ctrl.detallesConDocumento.length)
+
+            if(cargueCorrecto == ctrl.detallesConDocumento.length){
+              ctrl.cargarSolicitudes();
+            }*/
+
             var promiseArray = []
             ctrl.detallesConDocumento.map((detalle) => {
               //carga de documentos por el Gestor documental
@@ -2227,7 +2292,7 @@ angular.module('poluxClienteApp')
                 });
                 descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
                 utils.getBase64(detalle.fileModel).then(
-                  function (base64) {
+                  async function (base64) {
                     fileBase64 = base64;
                     data = [{
                       IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
@@ -2241,16 +2306,19 @@ angular.module('poluxClienteApp')
                       file: fileBase64,
                     }]
                     //console.log("Base64", fileBase64);
-                    gestorDocumentalMidRequest.post('/document/uploadAnyFormat', data).then(function (response) {
-                      URL = response.data.res.Enlace
-                      detalle.respuesta = URL
-                      ctrl.url = response.data.res.Enlace
 
-                      //nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                      if (response.data.res.Enlace) {
+                    await uploadDocument(data).then((res) => {
+                      console.log("Documento subido con éxito:", res);
+                      detalle.respuesta = res
+                      ctrl.url = res
+                      
+                      if (res) {
                         resolve("Posted");
                       }
-                    })
+                    }).catch((error) => {
+                        console.error("Error en la subida del documento:", error);
+                      });
+                    
                   })
               }))
             });
