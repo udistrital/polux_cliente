@@ -1512,15 +1512,6 @@ angular.module('poluxClienteApp')
 
                   //se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
 
-                  ctrl.dataRespuesta.DetallesPasantia = {
-                    Empresa: 0,
-                    Horas: 0,
-                    ObjetoContrato: "Contrato de aprendizaje",
-                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno,
-                    TrabajoGrado: {
-                      Id: 0,
-                    }
-                  }
                   //SE AGREGAN LOS DETALLES DE PASANTÍA EXTERNA
                   ctrl.dataRespuesta.DetallesPasantiaExterna = [{
                     "Parametro": String(ctrl.parametro.data.Data[0].Id),
@@ -1582,7 +1573,7 @@ angular.module('poluxClienteApp')
                     Empresa: 0,
                     Horas: 0,
                     ObjetoContrato: "Contrato de aprendizaje",
-                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorInterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorInterno,
+                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno,
                     TrabajoGrado: {
                       Id: 0,
                     },
@@ -1598,7 +1589,7 @@ angular.module('poluxClienteApp')
                     return rolTrGr.CodigoAbreviacion == "DIR_EXTERNO_PLX"
                   })
                   data_vinculacion.push({
-                    "Usuario": Number(tempTrabajo.DocumentoDirectorInterno),
+                    "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
                     "Activo": true,
                     "FechaInicio": fechaRespuesta,
                     //"FechaFin": null,

@@ -2174,6 +2174,58 @@ angular.module('poluxClienteApp')
         }
       }
 
+      function cargueDocumentos(docs) {//Función para el cargue de documentos al Gestor Documental
+
+        let detalle = docs.shift();//Se toma el primer documento del Array de documentos
+
+        var descripcion;
+        var fileBase64;
+        var data = [];
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "DTR_PLX"
+        });
+        descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
+        utils.getBase64(detalle.fileModel).then(
+          async function (base64) {
+            fileBase64 = base64;
+
+            //Se prepara la información a enviar a la API
+            data = [{
+              IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
+              nombre: detalle.fileModel.name, // nombre formado por nombre de la solicitud
+              metadatos: {
+                NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
+                Tipo: "Archivo",
+                Observaciones: "Solicitud inicial"
+              },
+              descripcion: descripcion,
+              file: fileBase64,
+            }]
+
+            await gestorDocumentalMidRequest.post('/document/uploadAnyFormat', data) //Se envía el documento al Gestor Documental
+              .then(function (response) {
+                if (response.data.res.Enlace) {//Si la respuesta fue correcta
+                  detalle.respuesta = response.data.res.Enlace;//Se almacena la URL del documento
+                  ctrl.url = response.data.res.Enlace;
+
+                  if (docs.length > 0) {//Si aún quedan documentos por cargar, se llama a esta misma función y se repite el proceso
+                    cargueDocumentos(docs)
+                  }
+                  else {//Si no quedan más documentos por cargar...
+                    ctrl.cargarSolicitudes();
+                  }
+
+                } else {//El API no retornó la URL del documento
+                  reject("No se recibió un enlace en la respuesta.");
+                }
+              })
+              .catch(function (error) {//El API no respondió de forma correcta
+                console.error("Error al subir el documento:", error);
+                reject(error);
+              });
+          })
+      }
+
       /**
        * @ngdoc method
        * @name cargarDocumentos
@@ -2194,76 +2246,12 @@ angular.module('poluxClienteApp')
             var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");            
             if (!validExtensions.includes(documento.type) || documento.size > tam) {             
               fileTypeError = true;
-            }
-            // if (detalle.Detalle.Id === 59) {
-            //   console.log("entra a pdf");
-            //   console.log("documento type", documento.type);
-            //   if (documento.type !== "application/pdf" || documento.size > tam) {
-            //     fileTypeError = true;
-            //     console.log("entra pdf ", fileTypeError)
-            //   }
-            // } else if (detalle.Detalle.Id === 82) {
-            //   console.log("entra a rar");
-            //   console.log("documento type", documento.type);
-            //   if (documento.type !== "application/x-zip-compressed" || documento.size > tam) {
-            //     fileTypeError = true;
-            //     console.log("entra zip ", fileTypeError)
-            //   }
-            // }            
+            }            
           });
           $scope.loadFormulario = true;
-          //console.log("file ", fileTypeError)
           if (!fileTypeError) {
-            var promiseArray = []
-            ctrl.detallesConDocumento.map((detalle) => {
-              //carga de documentos por el Gestor documental
-              promiseArray.push(new Promise((resolve, reject) => {
-                var URL = "";
-                var descripcion;
-                var fileBase64;
-                var data = [];
-                let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-                  return data.CodigoAbreviacion == "DTR_PLX"
-                });
-                descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
-                utils.getBase64(detalle.fileModel).then(
-                  function (base64) {
-                    fileBase64 = base64;
-                    data = [{
-                      IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
-                      nombre: detalle.fileModel.name, // nombre formado por nombre de la solicitud
-                      metadatos: {
-                        NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
-                        Tipo: "Archivo",
-                        Observaciones: "Solicitud inicial"
-                      },
-                      descripcion: descripcion,
-                      file: fileBase64,
-                    }]
-                    //console.log("Base64", fileBase64);
-                    gestorDocumentalMidRequest.post('/document/uploadAnyFormat', data).then(function (response) {
-                      URL = response.data.res.Enlace
-                      detalle.respuesta = URL
-                      ctrl.url = response.data.res.Enlace
 
-                      //nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                      if (response.data.res.Enlace) {
-                        resolve("Posted");
-                      }
-                    })
-                  })
-              }))
-            });
-            Promise.all(promiseArray).then(function (resultado) {
-              ctrl.cargarSolicitudes();
-            }).catch(function (error) {
-              console.log(error)
-              swal(
-                $translate.instant("ERROR.CARGA_SOLICITUDES"),
-                $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                'warning'
-              )
-            })
+            cargueDocumentos(ctrl.detallesConDocumento)
 
           } else {
             swal(
