@@ -79,7 +79,7 @@
             <div class="panel-heading">
                 {{'DETALLES_SOLICITUD' | translate}}
             </div>
-              <div class="panel-body">
+            <div class="panel-body">
                 <loading tam="4" load="d_listarSolicitudes.loadingDocument"></loading> 
                 <div ng-if="!d_listarSolicitudes.loadingDocument">
                     <div  class="row" ng-repeat="detalle in d_listarSolicitudes.solicitudSeleccionada.detallesSolicitud">
@@ -96,19 +96,23 @@
       
       
                         <div ng-if="detalle.carrera===undefined">
-                          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='Documento' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre!=='linkNuxeo'">
-                              <label class="col-sm-8 "> {{detalle.Descripcion}} </label>
+                            <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
+                              <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
+                              <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === 'LR'">
+                                <a class="col-sm-8" ng-href="{{detalle.Descripcion}}" target="_blank">{{detalle.Descripcion}}</a>
+                              </div>
+                              
+                              <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion !== 'LR'">
+                                <label class="col-sm-8">{{detalle.Descripcion}}</label>
+                              </div>
                           </div>
-                          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='Documento' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalle.Nombre==='linkNuxeo'">
+                          <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='DOC_PLX' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='LNUX_PLX'">
                               <label ng-click="d_listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
                           </div>
                         </div>
-      
                     </div>
                 </div>
-              </div>
-
-              </div>
+            </div>
         </div>
     </div>
 </div>

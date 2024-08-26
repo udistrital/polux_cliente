@@ -99,6 +99,14 @@ angular.module('poluxClienteApp')
                     nombreNodo = $translate.instant('TRABAJO_GRADO_REVISION');
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                     break;
+                  case "AVCC_PLX":
+                    nombreNodo = $translate.instant('Acuerdo de Voluntad, Convenio o Contrato');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.PASANTIA')
+                    break;
+                  case "CUA_PLX":
+                    nombreNodo = $translate.instant('Carta de la Unidad Académica');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.PASANTIA')
+                    break;
                 }
                 ctrl.dataForTree.push({
                   name: nombreNodo,
@@ -131,7 +139,6 @@ angular.module('poluxClienteApp')
           if($scope.veranteproyecto){
             //Tipo de documento anteproyecto
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "ANP_PLX"));
-            console.log(trabajoGrado)
           }
           if ($scope.verproyecto) {
             //Tipo de documento trabajo de grado
@@ -140,6 +147,12 @@ angular.module('poluxClienteApp')
           if ($scope.verproyectorevision) {
             //Tipo de documento revisión
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "DGRREV_PLX"));
+          }
+          if(trabajoGrado.Modalidad.CodigoAbreviacion == "PAS_PLX"){
+            //Tipo de documento Contrato y Carta Aval Pasantia
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "AVCC_PLX"));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "CUA_PLX"));
+            
           }
           $q.all(promesasDocumentos)
             .then(function () {

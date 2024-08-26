@@ -2,7 +2,7 @@
   "name": "poluxcliente",
   "private": true,
   "devDependencies": {
-    "autoprefixer-core": "^6.0.1",
+    "autoprefixer": "^10.0.0",
     "coverage": "^0.4.1",
     "grunt": "^1.5.2",
     "grunt-angular-templates": "^1.2.0",
@@ -36,6 +36,7 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-spec-reporter": "0.0.30",
     "phantomjs-prebuilt": "^2.1.16",
+    "postcss": "^8.4.40",
     "time-grunt": "^1.0.0"
   },
   "engines": {
@@ -52,6 +53,7 @@
     "decode-uri-component": "^0.2.2",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
-    "natives": "^1.1.6"
+    "natives": "^1.1.6",
+    "ng-file-upload": "^12.2.13"
   }
 }

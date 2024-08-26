@@ -183,7 +183,7 @@ livereload: {
         postcss: {
             options: {
                 processors: [
-                require('autoprefixer-core')({ browsers: ['last 1 version'] })
+                    require('autoprefixer')({ overrideBrowserslist: ['last 1 version'] })
                 ]
             },
             server: {
@@ -193,30 +193,30 @@ livereload: {
                 files: [{
                     expand: true,
                     cwd: '.tmp/styles/',
-                src: '{,*/}*.css',
-                dest: '.tmp/styles/'
-            }]
+                    src: '{,*/}*.css',
+                    dest: '.tmp/styles/'
+                }]
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: '.tmp/styles/',
+                    src: '{,*/}*.css',
+                    dest: '.tmp/styles/'
+                }]
+            }
         },
-        dist: {
-            files: [{
-                expand: true,
-                cwd: '.tmp/styles/',
-            src: '{,*/}*.css',
-            dest: '.tmp/styles/'
-        }]
-    }
-},
 
         // Automatically inject Bower components into the app
         wiredep: {
             app: {
                 src: ['<%= yeoman.app %>/index.html'],
-                ignorePath: /\.\.\//
+                ignorePath:  /\.\.\//
             },
             test: {
                 devDependencies: true,
                 src: '<%= karma.unit.configFile %>',
-                ignorePath: /\.\.\//,
+                ignorePath:  /\.\.\//,
                 fileTypes: {
                     js: {
                         block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,

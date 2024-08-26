@@ -439,8 +439,12 @@ angular.module('poluxClienteApp')
             return data.CodigoAbreviacion == "PRDI_PLX"
           });
 
+          let EstadoSolicitudTemp3 = ctrl.EstadosSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "ADD_PLX"
+          });
+
           var parametrosSolicitudesActuales = $.param({
-            query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
+            query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + "|" + EstadoSolicitudTemp3.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
             limit: 1,
           });
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
@@ -774,7 +778,7 @@ angular.module('poluxClienteApp')
         ctrl.solicitudes = [];
         if(ctrl.Docente !=0 && modalidad == null){
           let ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.CodigoAbreviacion == "PASEX_PLX"
+            return data.CodigoAbreviacion == "PAS_PLX"//Se debe revisar si el código de abreviación debe ser el de Materias de Posgrado, se deja el de Pasantía por defecto
           });
 
           modalidad = ModalidadTemp.Id;
@@ -1876,8 +1880,8 @@ angular.module('poluxClienteApp')
                     if(ModalidadTemp.CodigoAbreviacion == "MONO_PLX"){
                       detalle.label = $translate.instant("TERMINOS.MONOGRAFIA")
                     }
-                    // PARA MODALIDAD DE MONOGRAFIA
-                    if(ModalidadTemp.CodigoAbreviacion == "PASEX_PLX" || ModalidadTemp.CodigoAbreviacion == "PASIN_PLX"){
+                    // PARA MODALIDAD DE PASANTIA
+                    if(ModalidadTemp.CodigoAbreviacion == "PAS_PLX"){
                       detalle.label = $translate.instant("TERMINOS.PASANTIA")
                     }
                     // PARA MODALIDAD DE EMPRENDIMIENTO
@@ -1988,16 +1992,29 @@ angular.module('poluxClienteApp')
         let TipoDetalleTemp8 = ctrl.TiposDetalle.find(data => {
           return data.CodigoAbreviacion == "LIST_PLX"
         });
+        let TipoDetalleTemp9 = ctrl.TiposDetalle.find(data => {
+          return data.CodigoAbreviacion == "DAN_PLX"
+        });
         angular.forEach(ctrl.detalles, function(detalle) {
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp.Id) {
+            //console.log("DETALLENUM", detalle)
             detalle.respuesta = detalle.respuestaNumerica + "";
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp2.Id) {
             detalle.respuesta = detalle.opciones[0].bd;
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
-            detalle.respuesta = ctrl.url;
+            //console.log("DETALLE ", detalle)
+            detalle.respuesta = ctrl.url;            
             ctrl.detallesConDocumento.push(detalle);
+          }
+          if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {
+            console.log("DETALLE 9 ", detalle)
+            //console.log("respuesta", detalle.respuesta)
+            detalle.respuesta = ctrl.url;
+            if(detalle.fileModel !== null) {
+              ctrl.detallesConDocumento.push(detalle);
+            }            
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp4.Id) {
             if (detalle.Detalle.Descripcion == 'solicitar-asignaturas') {
@@ -2058,7 +2075,7 @@ angular.module('poluxClienteApp')
             //
             ctrl.erroresFormulario = true;
           }
-          if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle !== TipoDetalleTemp4.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id) {
+          if (detalle.respuesta === "" && detalle.Detalle.TipoDetalle !== TipoDetalleTemp4.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id && detalle.Detalle.TipoDetalle !== TipoDetalleTemp7.Id) {
             swal(
               'Validación del formulario',
               "Debe completar todos los campos del formulario.",
@@ -2107,10 +2124,25 @@ angular.module('poluxClienteApp')
             }
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp3.Id) {
-            if (detalle.fileModel == null) {
+            if (detalle.fileModel == null || detalle.fileModel.type !== "application/pdf") {
               swal(
                 'Validación del formulario',
-                "Error ingrese una opcion valida. (Documento)",
+                "Error, ingrese documento PDF en campo de documento final. (Documento)",
+                'warning'
+              );
+              ctrl.erroresFormulario = true;
+            }
+          }
+          if (detalle.Detalle.TipoDetalle === TipoDetalleTemp9.Id) {            
+            if(detalle.fileModel === null) {
+              return;
+            };
+            var archivo = detalle.fileModel.name;
+            var extension = archivo.split('.').pop().toLowerCase();
+            if (extension === 'rar' || extension === 'zip' || detalle.fileModel.type === "application/zip" || detalle.fileModel.type === "application/x-zip-compressed" || detalle.fileModel.type === "application/vnd.rar") {
+              swal(
+                'Validación del formulario',
+                "Error, no ingrese archivo comprimido (.rar, .zip) en campo de documento anexo.",
                 'warning'
               );
               ctrl.erroresFormulario = true;
@@ -2142,6 +2174,58 @@ angular.module('poluxClienteApp')
         }
       }
 
+      function cargueDocumentos(docs) {//Función para el cargue de documentos al Gestor Documental
+
+        let detalle = docs.shift();//Se toma el primer documento del Array de documentos
+
+        var descripcion;
+        var fileBase64;
+        var data = [];
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "DTR_PLX"
+        });
+        descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
+        utils.getBase64(detalle.fileModel).then(
+          async function (base64) {
+            fileBase64 = base64;
+
+            //Se prepara la información a enviar a la API
+            data = [{
+              IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
+              nombre: detalle.fileModel.name, // nombre formado por nombre de la solicitud
+              metadatos: {
+                NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
+                Tipo: "Archivo",
+                Observaciones: "Solicitud inicial"
+              },
+              descripcion: descripcion,
+              file: fileBase64,
+            }]
+
+            await gestorDocumentalMidRequest.post('/document/uploadAnyFormat', data) //Se envía el documento al Gestor Documental
+              .then(function (response) {
+                if (response.data.res.Enlace) {//Si la respuesta fue correcta
+                  detalle.respuesta = response.data.res.Enlace;//Se almacena la URL del documento
+                  ctrl.url = response.data.res.Enlace;
+
+                  if (docs.length > 0) {//Si aún quedan documentos por cargar, se llama a esta misma función y se repite el proceso
+                    cargueDocumentos(docs)
+                  }
+                  else {//Si no quedan más documentos por cargar...
+                    ctrl.cargarSolicitudes();
+                  }
+
+                } else {//El API no retornó la URL del documento
+                  reject("No se recibió un enlace en la respuesta.");
+                }
+              })
+              .catch(function (error) {//El API no respondió de forma correcta
+                console.error("Error al subir el documento:", error);
+                reject(error);
+              });
+          })
+      }
+
       /**
        * @ngdoc method
        * @name cargarDocumentos
@@ -2156,64 +2240,18 @@ angular.module('poluxClienteApp')
         if (ctrl.detallesConDocumento.length > 0) {
           // OK, the returned client is connected
           var fileTypeError = false;
-          angular.forEach(ctrl.detallesConDocumento, function (detalle) {
+          var validExtensions = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+          angular.forEach(ctrl.detallesConDocumento, function (detalle) {            
             var documento = detalle.fileModel;
-            var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");
-            if (documento.type !== "application/pdf" || documento.size > tam) {
+            var tam = parseInt(detalle.Detalle.Descripcion.split(";")[1] + "000");            
+            if (!validExtensions.includes(documento.type) || documento.size > tam) {             
               fileTypeError = true;
-            }
+            }            
           });
           $scope.loadFormulario = true;
           if (!fileTypeError) {
-            var promiseArray = []
-            ctrl.detallesConDocumento.map((detalle) => {
-              //carga de documentos por el Gestor documental
-              promiseArray.push(new Promise((resolve, reject) => {
-                var URL = "";
-                var descripcion;
-                var fileBase64;
-                var data = [];
-                let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-                  return data.CodigoAbreviacion == "DTR_PLX"
-                });
-                descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
-                utils.getBase64(detalle.fileModel).then(
-                  function (base64) {
-                    fileBase64 = base64;
-                    data = [{
-                      IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
-                      nombre: detalle.Detalle.Nombre, // nombre formado por nombre de la solicitud
-                      metadatos: {
-                        NombreArchivo: detalle.Detalle.Nombre + ": " + ctrl.codigo,
-                        Tipo: "Archivo",
-                        Observaciones: "Solicitud inicial"
-                      },
-                      descripcion: descripcion,
-                      file: fileBase64,
-                    }]
-                    gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
-                      URL = response.data.res.Enlace
-                      detalle.respuesta = URL
-                      ctrl.url = response.data.res.Enlace
 
-                      //nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                      if (response.data.res.Enlace) {
-                        resolve("Posted");
-                      }
-                    })
-                  })
-              }))
-            });
-            Promise.all(promiseArray).then(function (resultado) {
-              ctrl.cargarSolicitudes();
-            }).catch(function (error) {
-              console.log(error)
-              swal(
-                $translate.instant("ERROR.CARGA_SOLICITUDES"),
-                $translate.instant("ERROR.ENVIO_SOLICITUD"),
-                'warning'
-              )
-            })
+            cargueDocumentos(ctrl.detallesConDocumento)
 
           } else {
             swal(
@@ -2264,22 +2302,6 @@ angular.module('poluxClienteApp')
           });
 
           let ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.CodigoAbreviacion == "PASEX_PLX"
-          });
-          if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
-            let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
-              return data.CodigoAbreviacion == "SAD_PLX"
-            });
-            let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
-              return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
-            });
-            ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
-          }
-          /*if(ctrl.ModalidadTipoSolicitud === 13){
-            ctrl.ModalidadTipoSolicitud = 71;
-          }*/
-
-          ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "EAPRO_PLX"
           });
           if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
@@ -2363,7 +2385,7 @@ angular.module('poluxClienteApp')
           }
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.CodigoAbreviacion == "PASIN_PLX"
+            return data.CodigoAbreviacion == "PAS_PLX"
           });
           if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
             let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
@@ -2380,12 +2402,22 @@ angular.module('poluxClienteApp')
             "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
             "PeriodoAcademico": ctrl.periodo
           };
-          console.log("DATA ", data_solicitud)
+          //console.log("DATA ", data_solicitud)
         }
         angular.forEach(ctrl.detalles, function(detalle) {
+          //console.log("Detalle para la solicitud", detalle);
+          if (detalle.fileModel === null && 
+            (detalle.Detalle.CodigoAbreviacion === "DAR1" || 
+             detalle.Detalle.CodigoAbreviacion === "DAR2" || 
+             detalle.Detalle.CodigoAbreviacion === "DAR3")) {   
+            return;
+          }
+          if (detalle.Requerido === false && detalle.respuesta === "undefined") {
+            return;
+          }
           if (detalle.Id == ctrl.posDocente) {
             ctrl.docDocenteDir = detalle.respuesta;
-          }
+          }          
           data_detalles.push({
             "Descripcion": detalle.respuesta,
             "SolicitudTrabajoGrado": {
@@ -2456,20 +2488,39 @@ angular.module('poluxClienteApp')
             data_respuesta.EstadoSolicitud = EstadoSolicitudTemp.Id
           }
         }else{
-          let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
-            return data.CodigoAbreviacion == "RDC_PLX"
-          });
-          //Respuesta de la solicitud
-          data_respuesta = {
-            "Fecha": fecha,
-            "Justificacion": "Su solicitud fue radicada",
-            "EnteResponsable": parseInt(ctrl.docDocenteDir),
-            "Usuario": 0,
-            "EstadoSolicitud": EstadoSolicitudTemp.Id,
-            "SolicitudTrabajoGrado": {
-              "Id": 0
-            },
-            "Activo": true
+          if(ctrl.modalidad == "PAS_PLX"){ //Si la modalidad seleccionada es pasantia, entonces se envia a la oficina externa de pasantias
+            let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+              return data.CodigoAbreviacion == "PREP_PLX"
+            });
+            //Respuesta de la solicitud
+            data_respuesta = {
+              "Fecha": fecha,
+              "Justificacion": "Su solicitud esta Pendiente por la revisión por parte de la oficina de extension de pasantias",
+              "EnteResponsable": 0,
+              "Usuario": 0,
+              "EstadoSolicitud": EstadoSolicitudTemp.Id,
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              },
+              "Activo": true
+            }
+          }
+          else{
+            let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+              return data.CodigoAbreviacion == "RDC_PLX"
+            });
+            //Respuesta de la solicitud
+            data_respuesta = {
+              "Fecha": fecha,
+              "Justificacion": "Su solicitud fue radicada",
+              "EnteResponsable": parseInt(ctrl.docDocenteDir),
+              "Usuario": 0,
+              "EstadoSolicitud": EstadoSolicitudTemp.Id,
+              "SolicitudTrabajoGrado": {
+                "Id": 0
+              },
+              "Activo": true
+            }
           }
         }
 

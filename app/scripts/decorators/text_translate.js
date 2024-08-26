@@ -63,6 +63,9 @@ var text_es = {
     INGRESE_DOCUMENTO_DIRECTOR_INTERNO: "Ingrese el número de documento del director interno:",
     CARGUE_CARTA_UNIDAD_ACADEMICO_ADMINISTRATIVA:"Cargue la carta de la unidad académico administrativa responsable del acompañamiento:",
     AVISO_PDF: "Aviso: El sistema solo permite subir documentos en formato PDF y con un tamaño máximo de 20Mb,  por favor tener en cuenta que el sistema no almancena los documentos de las versiones, solo el último documento subido.",
+    AVISO_RAR: "Aviso: En este ítem solo se permiten subir archivos comprimidos .rar o .zip y con un tamaño máximo de 20 Mb.",
+    AVISO_NIT: "Aviso: Ingrese el NIT únicamente si la empresa donde realizará la Pasantía es Externa a la universidad",
+    AVISO_CIIU: "Aviso: Ingrese el código de actividad económica únicamente si la empresa donde realizará la Pasantía es Externa a la universidad",
     OBJETIVO_NUEVO: "Escriba los nuevos objetivos de la propuesta",
     OBJETIVO_ACTUAL: "Objetivos actuales de la propuesta",
     INGRESAR_OBJETIVO: "Ingrese los objetivos de la propuesta",
@@ -73,6 +76,7 @@ var text_es = {
     MODALIDAD: "Modalidad",
     TITULO_PROPUESTA: "Título de la propuesta",
     VER_DOCUMENTO: "Ver documento",
+    DESCARGAR_DOCUMENTOS: "Descargar archivo anexo",
     DOCUMENTO_TG: "Documento del trabajo de grado",
     ESTADO_DOCUMENTO: "Estado Documento",
     RESUMEN: "Resumen",
@@ -112,6 +116,11 @@ var text_es = {
     SELECCIONAR_PENSUM: "*Seleccione un pensum",
     CODIGO: "Código",
     NOMBRE: "Nombre",
+    NOMBRE_ESTUDIANTE: "Nombre Estudiante",
+    CODIGO_ESTUDIANTE: "Código del Estudiante",
+    EMPRESA: "Nombre de la Empresa",
+    NIT: "NIT de la empresa",
+    DOCUMENTO_ARL: "Documento de la ARL",
     NOMBRE_ESP_ACADEMICO: "Nombre del espacio académico",
     ESP_ACADEMICOS: "Espacios académicos",
     MODALIDAD_ESP_POS: "Modalidad: Espacios académicos de posgrado",
@@ -413,10 +422,11 @@ var text_es = {
         NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
         CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones.",
         CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez.",
-        DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación."
+        DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación.",
+        SIN_REVISIONES_ARL: "No existen revisiones de ARL pendientes o activas"
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
-    VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión y el tipo de documento ('.pdf') y el tamaño.",
+    VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión o el tipo de documento y tamaño en cada campo requerido .",
     BTN: {
         GUARDAR_ESPACIOS_ACADEMICOS: "Guardar Espacios Académicos",
         CAMBIAR_ESPACIOS_ACADEMICOS: "Cambiar Espacios Académicos",
@@ -426,6 +436,7 @@ var text_es = {
         REGISTRAR_NOTA: "Registrar calificaciones",
         REVISAR_ANTEPROYECTO: "Revisar anteproyecto",
         REVISAR_PROYECTO: "Revisar proyecto",
+        REVISAR_ARL: "Revisar ARL",
         EDITAR: "Editar",
         ACTIVAR: "Activar",
         DESACTIVAR: "Desactivar",
@@ -484,7 +495,8 @@ var text_es = {
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Cargue el Plan o modelo de negocios nuevo",
     SELECCIONE_ESTUDIANTES_PROYECTO: "Seleccione los estudiantes que pertenecen al proyecto",
     SELECCIONE_DOCUMENTO_FINAL_PARA_REVISION: "Seleccione el documento final para la revisión",
-    INGRESE_EVIDENCIA_DE_PUBLICACION: "Ingrese la carta de aceptación del artículo o el artículo publicado",
+    SELECCIONE_DOCUMENTOS_PARA_REVISION_PROYECTO: "Seleccione un archivo anexo para revisión final (word, excel, power point, pdf)",
+    INGRESE_EVIDENCIA_DE_PUBLICACION: "Adjunte en un solo PDF: Certificación oficial de la revista, documento final del artículo académico, prueba de indexación u homologación de la revista por PUBLINDEX y la propuesta que fue aprobada en su momento.",
     NOMBRE_EVALUADORES_ACTUALES: "Evaluadores actuales",
     SOLICITUD_SIN_FORMULARIO: "Esta solicitud no requiere diligenciar ningún formulario. ¿Está seguro de querer enviarla?",
     NUMERO_RADICADO: "Número de radicado",
@@ -558,6 +570,7 @@ var text_es = {
         SIN_DOCUMENTO: "No hay ningún documento seleccionado",
         SELECCIONAR_DOCUMENTO: "Seleccionar documento",
         VER_DOCUMENTO: "Ver documento",
+        DESCARGAR_DOCUMENTOS: "Descargar anexos",
         CARGADO: "Documento Cargado",
         INGRESE_CONSECUTIVO: "Ingrese el consecutivo del documento",
         NO_EXISTE_DOCUMENTO: "No existe documento alguno con relación a sus vinculaciones de trabajo de grado",
@@ -811,6 +824,13 @@ var text_es = {
         },
         NOTA_REGISTRADA_DOCENTE: "Nota registrada por el docente",
     },
+    REVISION_ARL: {
+        PANEL: 'Revisión de ARL',
+        APROBAR: 'Aprobar ARL',
+        RECHAZAR: 'Rechazar ARL',
+        ARL_APROBADA: 'ARL aprobada correctamente',
+        ARL_RECHAZADA: 'ARL rechazada correctamente'
+    },
     PERIODO_ACADEMICO: "Período académico",
     SOLICITUD_NO_PUEDE_APROBARSE: "La solicitud no puede ser aprobada",
     MATERIAS_POSGRADO: {
@@ -915,7 +935,7 @@ var text_es = {
         MENSAJE_CONFIRMACION: "¿Está seguro de subir el archivo seleccionado como el certificado de la ARL?",
         TG_ACTUALIZADO: "La ARL se ha subido satisfactoriamente satisfactoriamente",
         SUBIR: "Subir certificado de ARL",
-        WARNING:"Su trabajo de grado no puede comenzar hasta que haya cargado su certificado de afiliación a ARL. Por favor, cargue su certificado de afiliación a ARL en el módulo de revisiones.",
+        WARNING:"Su trabajo de grado no puede comenzar hasta que haya cargado su certificado de afiliación a ARL. Por favor, cargue su certificado de afiliación a ARL en el módulo de Revisión de Documentos.",
     },
     NUEVA_VERSION: {
         MENSAJE: "Actualización del documento",
@@ -1003,7 +1023,7 @@ var text_es = {
     NOMBRE_REVISTA: "Nombre de la revista",
     LINK_REVISTA: "Link de la revista de aceptación del artículo",
     CLASIFICACION_REVISTA: "Clasificación de la revista dónde fue aceptado el artículo",
-    MENSAJE_REVISTA: "Seleccione la categoría del artículo aceptado con base en la clasificación dispuesta por Publindex." +
+    MENSAJE_REVISTA: "Teniendo en cuenta las clasificaciones dispuestas por Publindex, ubique su revista y su respectivo código de clasificación:" +
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>Revistas Nacionales</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
@@ -1057,6 +1077,11 @@ var text_en = {
     SELECCIONAR_PENSUM: "*Select a list of subjects",
     CODIGO: "Code",
     NOMBRE: "Name",
+    NOMBRE_ESTUDIANTE: "Student Name",
+    CODIGO_ESTUDIANTE: "Student Code",
+    EMPRESA: "Comany Name",
+    NIT: "Comany NIT",
+    DOCUMENTO_ARL: "Documento de la ARL",
     NOMBRE_ESP_ACADEMICO: "Subject's name",
     ESP_ACADEMICOS: "Subjects",
     MODALIDAD_ESP_POS: "Modality: Postgraduate subjects",
@@ -1102,6 +1127,8 @@ var text_en = {
     VISTA_PREVIA: "Preview",
     ASIGNAR_FORMATO_A_PC: "Asign format to a curricular project:",
     ASOCIAR_FORMATO_A_PC: "Asociate format to a curricular project:",
+    AVISO_NIT: "Note: Enter the NIT only if the company where the internship will take place is external to the university.",
+    AVISO_CIIU: "Note: Enter the economic activity code only if the company where the internship will be performed is external to the university.",
     SELECCIONAR_PC: "Select a curricular project",
     CREACION_EVALUACION: "Creation of the test",
     REVISION_DOCUMENTOS: "Documents review",
@@ -1353,7 +1380,8 @@ var text_en = {
         SIN_MODALIDADES: "There are no modalities registered at the moment",
         CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
         CALIFICADO:"The degree work is already graded, so you cannot make any further changes.",
-        DIFERENCIA_NIVEL: "Students have to be at the same training level."
+        DIFERENCIA_NIVEL: "Students have to be at the same training level.",
+        SIN_REVISIONES_ARL: "There are no pending or active ARL reviews"
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
@@ -1365,6 +1393,7 @@ var text_en = {
         REGISTRAR_NOTA: "Submit grades",
         REVISAR_ANTEPROYECTO: "Review degree work proposal",
         REVISAR_PROYECTO: "Review degree work",
+        REVISAR_ARL: "Review ARL",
         EDITAR: "Edit",
         ACTIVAR: "Activate",
         DESACTIVAR: "Deactivate",
@@ -1421,7 +1450,7 @@ var text_en = {
     CARGUE_NUEVO_PLAN_NEGOCIOS: "Upload the new business plan or model",
     SELECCIONE_ESTUDIANTES_PROYECTO: "Select the students that belong to the project",
     SELECCIONE_DOCUMENTO_FINAL_PARA_REVISION: "Select the final document for the review",
-    INGRESE_EVIDENCIA_DE_PUBLICACION: "Input the aceptation letter or the published paper",
+    INGRESE_EVIDENCIA_DE_PUBLICACION: "Attach in a single PDF: Official certification of the journal, final document of the academic article, proof of indexing or approval of the journal by PUBLINDEX and the proposal that was approved at the time.",
     NOMBRE_EVALUADORES_ACTUALES: "Current evaluator(s)",
     SOLICITUD_SIN_FORMULARIO: "This request does not require completing any form. Are you sure you want to send it?",
     NUMERO_RADICADO: "Roaming number",
@@ -1748,6 +1777,13 @@ var text_en = {
         },
         NOTA_REGISTRADA_DOCENTE: "Grade registered by the teacher",
     },
+    REVISION_ARL: {
+        PANEL: 'ARL Review',
+        APROBAR: 'Approve ARL',
+        RECHAZAR: 'Reject  ARL',
+        ARL_APROBADA: 'ARL properly approved',
+        ARL_RECHAZADA: 'ARL correctly rejected'
+    },
     PERIODO_ACADEMICO: "Academic period",
     SOLICITUD_NO_PUEDE_APROBARSE: "The request can not be approved",
     MATERIAS_POSGRADO: {
@@ -1935,7 +1971,7 @@ var text_en = {
     NOMBRE_REVISTA: "Magazine name",
     LINK_REVISTA: "Link of the article acceptance journal",
     CLASIFICACION_REVISTA: "Journal classification where the article was accepted",
-    MENSAJE_REVISTA: "Select the category of the accepted article based on the classification provided by Publindex." +
+    MENSAJE_REVISTA: "Taking into account the classifications provided by Publindex, locate your journal and its respective classification code:" +
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +

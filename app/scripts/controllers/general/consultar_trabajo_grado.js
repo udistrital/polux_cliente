@@ -481,7 +481,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
 
         let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-          return data.CodigoAbreviacion == "ACT_PLX"
+          return data.CodigoAbreviacion == "ASP_PLX"
         });
 
         var parametrosActas = $.param({
@@ -799,7 +799,7 @@ angular.module('poluxClienteApp')
                 }
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
                 // y el detalel de la pasantia
-                if (ModalidadTemp.CodigoAbreviacion === "PASEX_PLX" || ModalidadTemp.CodigoAbreviacion === "PASIN_PLX") {
+                if (ModalidadTemp.CodigoAbreviacion === "PAS_PLX") {
                   promises.push(ctrl.getActas());
                   promises.push(ctrl.getDetallePasantia());
                 }

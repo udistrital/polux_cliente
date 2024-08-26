@@ -62,7 +62,7 @@ steps:
   - npm install
   - bower install --allow-root
   - cp -f app/scripts/environment/environment_test.js app/scripts/environment/environment.js
-  - grunt build
+  - grunt build --force
   when:
     branch:
     - release/*
@@ -77,7 +77,7 @@ steps:
   - npm install
   - bower install --allow-root
   - cp -f app/scripts/environment/environment_prod.js app/scripts/environment/environment.js
-  - grunt build
+  - grunt build --force
   when:
     branch:
     - master
