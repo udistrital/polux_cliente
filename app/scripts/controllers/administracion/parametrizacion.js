@@ -120,9 +120,9 @@ angular.module('poluxClienteApp')
         $scope.loadATablasColección = true;
         poluxRequest.get(tabla.name,'limit=100')
           .then(function(responsetabla) {
-            if (Object.keys(responsetabla.data[0]).length > 0) {
+            if (Object.keys(responsetabla.data.Data[0]).length > 0) {
                   ctrl.nombretabla = "";           
-                  ctrl.TablasColeccion = responsetabla.data;
+                  ctrl.TablasColeccion = responsetabla.data.Data;
                   ctrl.gridOptions2.data = ctrl.TablasColeccion;
                   ctrl.nombretabla = tabla.name;                            
             }

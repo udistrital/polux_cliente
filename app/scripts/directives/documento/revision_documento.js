@@ -79,15 +79,15 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("revision_trabajo_grado", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function (response) {
-                    ctrl.revision = response.data[0];
+                    ctrl.revision = response.data.Data[0];
                 });
                 poluxRequest.get("correccion", $.param({
                     query: "RevisionTrabajoGrado.Id:" + $scope.revisionid,
                     sortby: "Id",
                     order: "asc"
                 })).then(function (response) {
-                    if (Object.keys(response.data[0]).length > 0) {
-                        ctrl.correcciones = response.data;
+                    if (Object.keys(response.data.Data[0]).length > 0) {
+                        ctrl.correcciones = response.data.Data;
                     } else {
                         ctrl.correcciones = [];
                     }
@@ -199,8 +199,8 @@ angular.module('poluxClienteApp')
                         sortby: "Id",
                         order: "asc"
                     })).then(function (response) {
-                        if (response.data != null) {
-                            ctrl.correcciones = response.data;
+                        if (response.data.Data != null) {
+                            ctrl.correcciones = response.data.Data;
                         } else {
                             ctrl.correcciones = [];
                         }

@@ -87,14 +87,14 @@ angular.module('poluxClienteApp')
                         limit: 1,
                       });
                       poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajo).then(function(responseTrabajo) {
-                          if (Object.keys(responseTrabajo.data[0]).length > 0) {
+                          if (Object.keys(responseTrabajo.data.Data[0]).length > 0) {
                             // se verifica que no tenga solicitudes pendientes
                             var parametrosUsuario = $.param({
                               query: "usuario:" + ctrl.codigo,
                               limit: 0,
                             });
                             poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(responseSolicitudes) {
-                                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
+                                if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
                                   //no ha hecho solicitudes
                                   $scope.loadEstudiante = false;
                                 } else {
@@ -106,11 +106,11 @@ angular.module('poluxClienteApp')
                                       limit: 1,
                                     });
                                     poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
-                                        if (Object.keys(responseSolicitudesActuales.data[0]).length > 0) {
-                                          defered.resolve(responseSolicitudesActuales.data);
-                                          solicitudesActuales.push(responseSolicitudesActuales.data[0]);
+                                        if (Object.keys(responseSolicitudesActuales.data.Data[0]).length > 0) {
+                                          defered.resolve(responseSolicitudesActuales.data.Data);
+                                          solicitudesActuales.push(responseSolicitudesActuales.data.Data[0]);
                                         } else {
-                                          defered.resolve(responseSolicitudesActuales.data);
+                                          defered.resolve(responseSolicitudesActuales.data.Data);
                                         }
                                       })
                                       .catch(function(error) {
@@ -120,7 +120,7 @@ angular.module('poluxClienteApp')
                                   }
                                   var actuales = [];
                                   var promesas = [];
-                                  angular.forEach(responseSolicitudes.data, function(solicitud) {
+                                  angular.forEach(responseSolicitudes.data.Data, function(solicitud) {
                                     promesas.push(requestRespuesta(actuales, solicitud.SolicitudTrabajoGrado.Id));
                                   });
                                   $q.all(promesas).then(function() {
@@ -313,7 +313,7 @@ angular.module('poluxClienteApp')
                 carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
                 notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');               
               });
-              });  defer.resolve(response);
+              });  defer.resolve(response.data.Data);
           })
           .catch(function(error) {
             defer.reject(error);

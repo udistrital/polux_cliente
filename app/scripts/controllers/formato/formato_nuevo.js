@@ -28,11 +28,11 @@ angular.module('poluxClienteApp')
         poluxRequest.get("pregunta", $.param({
             limit: "0"
         })).then(function (response) {
-            $scope.preguntas = response.data;
+            $scope.preguntas = response.data.Data;
         });
 
         poluxRequest.get("respuesta", "").then(function (response) {
-            $scope.respuestas = response.data;
+            $scope.respuestas = response.data.Data;
         });
 
         //Gestion de ui-grid
@@ -305,7 +305,7 @@ angular.module('poluxClienteApp')
                 swal({
                     title: 'Ok',
                     text: 'Se ha creado formato: <br> ' +
-                        response.data.Formato.Nombre,
+                        response.data.Data.Formato.Nombre,
                     type: 'success',
                     showCancelButton: false,
                     confirmButtonText: 'Aceptar'

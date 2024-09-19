@@ -226,8 +226,8 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
-							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
+						if (Object.keys(estudiantesAsociados.data.Data[0]).length > 0) {
+							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data.Data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -271,9 +271,9 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (Object.keys(documentoAsociado.data[0]).length > 0) {
-							anteproyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
-							anteproyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
+						if (Object.keys(documentoAsociado.data.Data[0]).length > 0) {
+							anteproyecto.documentoTrabajoGrado = documentoAsociado.data.Data[0].Id;
+							anteproyecto.documentoEscrito = documentoAsociado.data.Data[0].DocumentoEscrito;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -322,14 +322,14 @@ angular.module('poluxClienteApp')
 				ctrl.coleccionAnteproyectos = [];
 				poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
 					.then(function(anteproyectosPendientes) {
-						if (Object.keys(anteproyectosPendientes.data[0]).length > 0) {
-							angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
+						if (Object.keys(anteproyectosPendientes.data.Data[0]).length > 0) {
+							angular.forEach(anteproyectosPendientes.data.Data, function(anteproyecto) {
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarEstudiantesAsociados(anteproyecto));
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarDocumentoTrabajoGrado(anteproyecto));
 							});
 							$q.all(conjuntoProcesamientoDeAnteproyectos)
 								.then(function(resultadoDelProcesamiento) {
-									angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
+									angular.forEach(anteproyectosPendientes.data.Data, function(anteproyecto) {
 										if (anteproyecto.EstudiantesTrabajoGrado &&
 											anteproyecto.documentoTrabajoGrado &&
 											anteproyecto.documentoEscrito) {
@@ -591,7 +591,7 @@ angular.module('poluxClienteApp')
 				poluxRequest
 					.post("tr_revisar_anteproyecto", informacionParaActualizar)
 					.then(function(respuestaRevisarAnteproyecto) {
-						deferred.resolve(respuestaRevisarAnteproyecto);
+						deferred.resolve(respuestaRevisarAnteproyecto.data.Data);
 					})
 					.catch(function(excepcionRevisarAnteproyecto) {
 						deferred.reject(excepcionRevisarAnteproyecto);

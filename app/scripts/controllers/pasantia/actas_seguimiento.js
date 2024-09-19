@@ -166,9 +166,9 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function (responseEstudiantes) {
-            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
+            if (Object.keys(responseEstudiantes.data.Data[0]).length > 0) {
               var promises = [];
-              angular.forEach(responseEstudiantes.data, function (estudiante) {
+              angular.forEach(responseEstudiantes.data.Data, function (estudiante) {
                 promises.push(getDatosEstudiante(estudiante.Estudiante));
               });
               $q.all(promises)
@@ -222,8 +222,8 @@ angular.module('poluxClienteApp')
 
         poluxRequest.get("documento_trabajo_grado", parametrosActas)
           .then(function (responseActas) {
-            if (Object.keys(responseActas.data[0]).length > 0) {
-              trabajoGrado.Actas = responseActas.data;
+            if (Object.keys(responseActas.data.Data[0]).length > 0) {
+              trabajoGrado.Actas = responseActas.data.Data;
             } else {
               trabajoGrado.Actas = [];
             }
@@ -271,8 +271,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("vinculacion_trabajo_grado", parametrosDirector)
           .then(function (responsePasantias) {
-            if (Object.keys(responsePasantias.data[0]).length > 0) {
-              ctrl.trabajosPasantia = responsePasantias.data;
+            if (Object.keys(responsePasantias.data.Data[0]).length > 0) {
+              ctrl.trabajosPasantia = responsePasantias.data.Data;
               var promises = [];
               angular.forEach(ctrl.trabajosPasantia, function (pasantia) {
                 promises.push(ctrl.getEstudiantesPasantia(pasantia.TrabajoGrado));

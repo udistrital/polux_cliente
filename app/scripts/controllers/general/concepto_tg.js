@@ -95,8 +95,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosDocumentoEscrito)
           .then(function(responseDocumento) {
-            if (Object.keys(responseDocumento.data[0]).length > 0) {
-              defer.resolve(responseDocumento.data[0]);
+            if (Object.keys(responseDocumento.data.Data[0]).length > 0) {
+              defer.resolve(responseDocumento.data.Data[0]);
             } else {
               ctrl.mensajeError = $translate.instant("DOCUMENTO.NO_EXISTE_DOCUMENTO");
               defer.reject(ctrl.mensajeError);
@@ -127,8 +127,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("revision_trabajo_grado", parametrosRevisionesTrabajoGrado)
           .then(function(responseRevisiones) {
-            if (Object.keys(responseRevisiones.data[0]).length > 0) {
-              defer.resolve(responseRevisiones.data);
+            if (Object.keys(responseRevisiones.data.Data[0]).length > 0) {
+              defer.resolve(responseRevisiones.data.Data);
             } else {
               defer.resolve([]);
             }
@@ -219,8 +219,8 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("vinculacion_trabajo_grado", parametrosTg)
             .then(function(responseVinculacion) {
-              if (Object.keys(responseVinculacion.data[0]).length > 0) {
-                ctrl.vinculacion = responseVinculacion.data[0];
+              if (Object.keys(responseVinculacion.data.Data[0]).length > 0) {
+                ctrl.vinculacion = responseVinculacion.data.Data[0];
 
                 ctrl.tipoDocumento = 0;
                 var trabajoGrado = ctrl.vinculacion.TrabajoGrado;
@@ -375,7 +375,7 @@ angular.module('poluxClienteApp')
         poluxRequest
           .post("tr_revisar_tg", informacionParaActualizar)
           .then(function(respuestaRevisarTg) {
-            deferred.resolve(respuestaRevisarTg);
+            deferred.resolve(respuestaRevisarTg.data);
           })
           .catch(function(excepcionRevisarTg) {
             
