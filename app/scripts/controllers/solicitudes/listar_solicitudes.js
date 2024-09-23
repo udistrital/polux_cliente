@@ -382,7 +382,7 @@ angular.module('poluxClienteApp')
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             });
-        } else if (lista_roles.includes("COORDINADOR_PREGRADO")||lista_roles.includes("DOCENTE")) {
+        } else if (lista_roles.includes("COORDINADOR")||lista_roles.includes("DOCENTE")) {
           $scope.botones.push({
             clase_color: "ver",
             clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",

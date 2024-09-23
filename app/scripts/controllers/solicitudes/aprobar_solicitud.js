@@ -243,7 +243,7 @@ angular.module('poluxClienteApp')
       ctrl.getCarrerasCoordinador = function () {
         var rol = ""
         var defer = $q.defer();
-        if (token_service.getAppPayload().appUserRole.includes("COORDINADOR_PREGRADO")) {
+        if (token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
           rol = "PREGRADO"
         } else {
           rol = "POSGRADO"
@@ -1260,7 +1260,7 @@ angular.module('poluxClienteApp')
                 let estadoRtaNueva = ctrl.EstadoSolicitud.find(estSol => {
                   return estSol.Id == objRtaNueva.EstadoSolicitud
                 })
-                if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR_PREGRADO")) {
+                if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR")) {
                   let estadoAux = ctrl.EstadoSolicitud.find(est => {
                     return est.CodigoAbreviacion == "ACPR_PLX"
                   })
