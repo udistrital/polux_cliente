@@ -33,6 +33,7 @@
  * @property {Boolean} registrarNota Bandera que permite identificar la acción que se quiere realizar
  * @property {Object} trabajoSeleccionado Trabajo seleccionado en un ui-grid
  * @property {Object} docTrabajoGrado Enlace del documento de trabajo de grado
+ * @property {Array} anexosTrabajoGrado Enlaces de los anexos de trabajo de grado
  * @property {Object} trabajosGrado Objeto que carga la información de los trabajos de grado asociados
  * @property {Object} registrandoNotaTG Indicador que opera durante el registro de la nota hacia el trabajo de grado
  * @property {Array} botonesNota Colección que maneja la configuración de los botones para registrar la nota
@@ -443,6 +444,42 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name getDocAnyFormat
+       * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       */
+      ctrl.getDocAnyFormat = function (docid) {
+        gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+          console.log("Response GET", response);
+          var file = new Blob([utils.base64ToArrayBuffer(response.data.file)]);
+          var fileURL = URL.createObjectURL(file);
+          
+          var a = document.createElement('a');
+          a.href = fileURL;
+          a.download = response.data["dc:title"]; // Nombre del archivo a descargar
+          document.body.appendChild(a);
+          a.click();
+          
+          // Limpieza
+          setTimeout(function() {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(fileURL);
+          }, 100);
+        })
+        .catch(function (error) {
+          swal(
+            $translate.instant("MENSAJE_ERROR"),
+            $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+            'warning'
+          );
+        });
+      }
+
+      /**
+       * @ngdoc method
        * @name obtenerParametrosDocumentoTrabajoGrado
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
@@ -450,16 +487,12 @@ angular.module('poluxClienteApp')
        * @param {Number} idTrabajoGrado El identificador del trabajo de grado a consultar
        * @returns {String} La sentencia para la consulta correspondiente
        */
-      ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado) {
-        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-          return data.CodigoAbreviacion == "DTR_PLX"
-        });
+      ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado, tipoDocumentoId, limit) {
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + "," +
-
-            "TrabajoGrado.Id:" +
-            idTrabajoGrado,
-          limit: 1
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado,
+          sortby: 'id',  // Ordenar por id
+          order: 'desc', // Orden descendente
+          limit: limit // Ajusta el límite según el código de abreviación
         });
       }
 
@@ -474,21 +507,60 @@ angular.module('poluxClienteApp')
       * @param {Object} vinculacionTrabajoGrado La vinculación hacia el trabajo de grado seleccionado
       * @returns {Promise} La información sobre el documento, el mensaje en caso de no corresponder la información, o la excepción generada
       */
-    ctrl.consultarDocTrabajoGrado = function(vinculacionTrabajoGrado) {
-      var deferred = $q.defer();
-      poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
-        .then(function(respuestaDocumentoTrabajoGrado) {
+      ctrl.consultarDocTrabajoGrado = function(vinculacionTrabajoGrado) {
+        var deferred = $q.defer();
+
+        // Filtrar el tipo de documento con el código de abreviación "DGRREV_PLX"
+        // DGRREV_PLX: Documentos de grado revision
+        let tipoDocumentoDGRREV = ctrl.TiposDocumento.find(data => data.CodigoAbreviacion === "DGRREV_PLX");
+
+        // Consultar el documento con el limit 1
+        poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id, tipoDocumentoDGRREV.Id, 1))
+        .then(function(respuestaDocumento) {
           if (Object.keys(respuestaDocumentoTrabajoGrado.data.Data[0]).length > 0) {
-            deferred.resolve(respuestaDocumentoTrabajoGrado.data.Data[0]);
+            deferred.resolve(respuestaDocumentoTrabajoGrado.data.Data[0]); // Devuelve el documento
           } else {
             deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           }
         })
-        .catch(function(excepcionDocumentoTrabajoGrado) {
+        .catch(function(excepcionDocumento) {
           deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
         });
-      return deferred.promise;
-    }
+
+        return deferred.promise;
+      }
+
+      /**
+      * @ngdoc method
+      * @name consultarAnexosTrabajoGrado
+      * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
+      * @description
+      * Función que consulta los documentos con el código de abreviación "ANX_PLX" (Anexos).
+      * @param {Object} vinculacionTrabajoGrado La vinculación hacia el trabajo de grado seleccionado
+      * @returns {Promise} La información sobre los anexos, el mensaje en caso de no corresponder la información, o la excepción generada
+      */
+      ctrl.consultarAnexosTrabajoGrado = function(vinculacionTrabajoGrado) {
+        var deferred = $q.defer();
+        
+        // Filtrar el tipo de documento con el código de abreviación "ANX_PLX"
+        // ANX_PLX: Anexos
+        let tipoDocumentoANX = ctrl.TiposDocumento.find(data => data.CodigoAbreviacion === "ANX_PLX");
+
+        // Consultar el documento con el limit 3
+        poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id, tipoDocumentoANX.Id, 3))
+        .then(function(respuestaDocumento) {
+          if (respuestaDocumento.data && respuestaDocumento.data.length > 0) {
+            deferred.resolve(respuestaDocumento.data); // Devuelve los anexos
+          } else {
+            deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
+          }
+        })
+        .catch(function(excepcionDocumento) {
+          deferred.reject($translate.instant("ERROR.CARGANDO_TRABAJO_GRADO"));
+        });
+
+        return deferred.promise;
+      };
 
       /**
        * @ngdoc method
@@ -505,6 +577,11 @@ angular.module('poluxClienteApp')
         ctrl.consultarDocTrabajoGrado(fila.entity).then(function(resultadoDocTrabajoGrado) {
           ctrl.docTrabajoGrado = resultadoDocTrabajoGrado;
         })
+
+        ctrl.consultarAnexosTrabajoGrado(fila.entity).then(function(resultadoAnexosTrabajoGrado) {
+          ctrl.anexosTrabajoGrado = resultadoAnexosTrabajoGrado;
+        })
+
         //Se guarda la vinculación al tg
         ctrl.trabajoSeleccionado.vinculacion = {
           Id: fila.entity.Id,

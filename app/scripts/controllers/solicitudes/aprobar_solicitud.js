@@ -1512,15 +1512,6 @@ angular.module('poluxClienteApp')
 
                   //se crea el detalle y se almacena en la data y se agregan a las vinculaciones el docente director externo
 
-                  ctrl.dataRespuesta.DetallesPasantia = {
-                    Empresa: 0,
-                    Horas: 0,
-                    ObjetoContrato: "Contrato de aprendizaje",
-                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno,
-                    TrabajoGrado: {
-                      Id: 0,
-                    }
-                  }
                   //SE AGREGAN LOS DETALLES DE PASANTÍA EXTERNA
                   ctrl.dataRespuesta.DetallesPasantiaExterna = [{
                     "Parametro": String(ctrl.parametro.data.Data[0].Id),
@@ -1582,7 +1573,7 @@ angular.module('poluxClienteApp')
                     Empresa: 0,
                     Horas: 0,
                     ObjetoContrato: "Contrato de aprendizaje",
-                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorInterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorInterno,
+                    Observaciones: "Pasantia realizada en " + tempTrabajo.Empresa + " y dirigida por " + tempTrabajo.NombreDirectorExterno + " con número de identificacion " + tempTrabajo.DocumentoDirectorExterno,
                     TrabajoGrado: {
                       Id: 0,
                     },
@@ -1598,7 +1589,7 @@ angular.module('poluxClienteApp')
                     return rolTrGr.CodigoAbreviacion == "DIR_EXTERNO_PLX"
                   })
                   data_vinculacion.push({
-                    "Usuario": Number(tempTrabajo.DocumentoDirectorInterno),
+                    "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
                     "Activo": true,
                     "FechaInicio": fechaRespuesta,
                     //"FechaFin": null,
@@ -1860,18 +1851,37 @@ angular.module('poluxClienteApp')
                   });
                 }
               }
+
               //Documento escrito
-              let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
-                return tipoDoc.CodigoAbreviacion == "DGRREV_PLX"
-              })
-              var data_documentoEscrito = {
-                Id: 0,
-                Titulo: data_tg.Titulo,
-                Enlace: ctrl.docPropuestaFinal,
-                Resumen: "Documento para revisión final del trabajo de grado",
-                //Tipo documento 5 para revisión final
-                TipoDocumentoEscrito: tipoDocumento.Id
-              };
+              let tipoDocumentoGradoRevision = ctrl.TipoDocumento.find(tipoDoc => {
+                return tipoDoc.CodigoAbreviacion == "DGRREV_PLX";
+              });
+
+              let tipoAnexos = ctrl.TipoDocumento.find(tipoDoc => {
+                return tipoDoc.CodigoAbreviacion == "ANX_PLX";
+              });
+
+              let data_documentoEscrito = [];
+
+              ctrl.detallesSolicitud.forEach(detalle => {
+                if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "DFR") {
+                  data_documentoEscrito.push({
+                    Id: 0,
+                    Titulo: data_tg.Titulo,
+                    Enlace: ctrl.docPropuestaFinal,
+                    Resumen: "Documento para revisión final del trabajo de grado",
+                    TipoDocumentoEscrito: tipoDocumentoGradoRevision.Id
+                  });
+                } else if (["DAR1", "DAR2", "DAR3"].includes(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion)) {
+                  data_documentoEscrito.push({
+                    Id: 0,
+                    Titulo: data_tg.Titulo,
+                    Enlace: detalle.Descripcion,
+                    Resumen: "Documento Anexo",
+                    TipoDocumentoEscrito: tipoAnexos.Id
+                  });
+                }
+              });
 
               var data_revision = {
                 TrabajoGrado: data_tg,
@@ -1885,7 +1895,8 @@ angular.module('poluxClienteApp')
                   TrabajoGrado: data_tg,
                 },
                 DetalleTrabajoGrado: data_ttg
-              }
+              };
+
               ctrl.dataRespuesta.TrRevision = data_revision;
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SSO_PLX") {
               //Solicitud de socialización

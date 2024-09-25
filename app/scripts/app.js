@@ -316,6 +316,11 @@ angular
               controller: 'MateriasProfundizacionRegistrarNotaCtrl',
               controllerAs: 'profundizacionRegistrarNota'
             })
+            .when('/reportes/generar_reportes', {
+              templateUrl: 'views/reportes/generar_reportes.html',
+              controller: 'GenerarReporteCtrl',
+              controllerAs: 'generarReporte'
+            })
             .when('/reportes/reporte_general', {
               templateUrl: 'views/reportes/reporte_general.html',
               controller: 'ReportesReporteGeneralCtrl',

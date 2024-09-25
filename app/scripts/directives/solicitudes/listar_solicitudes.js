@@ -702,6 +702,42 @@ angular.module('poluxClienteApp')
               break;
           }
         };
+        
+        /**
+       * @ngdoc method
+       * @name getDocAnyFormat
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       */
+        ctrl.getDocAnyFormat = function (docid) {
+          gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+            console.log("Response GET", response);
+            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)]);
+            var fileURL = URL.createObjectURL(file);
+            
+            var a = document.createElement('a');
+            a.href = fileURL;
+            a.download = response.data["dc:title"]; // Nombre del archivo a descargar
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpieza
+            setTimeout(function() {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(fileURL);
+            }, 100);
+          })
+          .catch(function (error) {
+            swal(
+              $translate.instant("MENSAJE_ERROR"),
+              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+              'warning'
+            );
+          });
+        }
 
         ctrl.consultarSolicitudes(ctrl.trabajoGrado);
 
