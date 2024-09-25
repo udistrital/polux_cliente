@@ -109,8 +109,6 @@ angular.module('poluxClienteApp')
                         } else {
                             roles = $scope.token.appUserRole;
                         }
-                        console.log("Roles rl: ", rl);
-                        console.log("Roles: ", roles);
                         roles = roles.replace(/,/g, '%2C');
                         configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '').then(function(response) {
                                 $rootScope.my_menu = response.data;
