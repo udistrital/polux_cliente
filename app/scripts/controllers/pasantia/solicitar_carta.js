@@ -80,7 +80,7 @@ angular.module('poluxClienteApp')
               if (ctrl.estudiante.Nombre != undefined) {
                 poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(verificacion) {
                   
-                    if (verificacion.data.RequisitosModalidades) {
+                    if (verificacion.data.Data.RequisitosModalidades) {
                       // se verifica que no tenga trabajos de grado actualmente
                       var parametrosTrabajo = $.param({
                         query: "EstadoEstudianteTrabajoGrado:1,Estudiante:" + ctrl.codigo,

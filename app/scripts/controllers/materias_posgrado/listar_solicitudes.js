@@ -323,7 +323,7 @@ angular.module('poluxClienteApp')
         poluxMidRequest.get("cupos/Obtener").then(function(responseCupos) {
             //$scope.cupos_excelencia = response.data.Cupos_excelencia;
             //$scope.cupos_adicionales = response.data.Cupos_adicionales;
-            ctrl.cuposDisponibles = responseCupos.data.Cupos_excelencia + responseCupos.data.Cupos_adicionales;
+            ctrl.cuposDisponibles = responseCupos.data.Data.Cupos_excelencia + responseCupos.data.Data.Cupos_adicionales;
             ctrl.numeroAdmitidos = 0;
             defer.resolve(ctrl.cuposDisponibles);
           })

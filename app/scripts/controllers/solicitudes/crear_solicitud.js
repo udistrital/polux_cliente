@@ -1205,7 +1205,7 @@ angular.module('poluxClienteApp')
           }
           poluxMidRequest.post("verificarRequisitos/Registrar", ctrl.estudiante).then(function(responseModalidad) {  
             //ctrl.estudiante.Modalidad = null;
-              if (responseModalidad.data.RequisitosModalidades) {
+              if (responseModalidad.data.Data.RequisitosModalidades) {
                 defer.resolve(true);
               } else {
                 if(ctrl.Docente == 1){
@@ -2544,7 +2544,8 @@ angular.module('poluxClienteApp')
           UsuariosSolicitud: data_usuarios
         }
         poluxMidRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-          if (response.data[0] === "Success") {
+          console.log("Comparación Success")
+          if (response.data.Success === true) {
             academicaRequest.get("datos_basicos_estudiante", [ctrl.codigo])
             .then(function(responseDatosBasicos) {
                 var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
@@ -2569,7 +2570,7 @@ angular.module('poluxClienteApp')
           } else {
             swal(
               $translate.instant("FORMULARIO_SOLICITUD"),
-              $translate.instant(response.data[1]),
+              $translate.instant(response.data.Data[1]),
               'warning'
             );
           }

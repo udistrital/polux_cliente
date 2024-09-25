@@ -364,8 +364,8 @@ angular.module('poluxClienteApp')
         ctrl.add = function() {
           poluxMidRequest.get('creditos/ObtenerMinimo').then(function(response) {
               
-              $scope.creditosMinimosPosgrado = response.data['minimo_creditos_posgrado'];
-              $scope.creditosMinimosProfundizacion = response.data['minimo_creditos_profundizacion'];
+              $scope.creditosMinimosPosgrado = response.data.Data['minimo_creditos_posgrado'];
+              $scope.creditosMinimosProfundizacion = response.data.Data['minimo_creditos_profundizacion'];
               if ($scope.modalidad == 'POSGRADO') {
                 /*     ctrl.creditosMinimos=8;
                  */

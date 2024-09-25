@@ -422,19 +422,19 @@ angular.module('poluxClienteApp')
           poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(async function (responseEstudiantes) {
             poluxRequest.get("documento_solicitud", parametrosDetallesSolicitud).then(function (responseDocumentoSolicitud) {
               ctrl.documentoSolicitud = [];
-              angular.forEach(responseDocumentoSolicitud.data, function (documentoSol) {
+              angular.forEach(responseDocumentoSolicitud.data.Data, function (documentoSol) {
                 if (documentoSol.DocumentoEscrito) {
                   var parametrosDocumentoEscrito = $.param({
                     query: "Id:" + documentoSol.DocumentoEscrito.Id,
                     limit: 0
                   });
                   poluxRequest.get("documento_escrito", parametrosDocumentoEscrito).then(function (responseDocumentoEscrito) {
-                    ctrl.documentoSolicitud.push(responseDocumentoEscrito.data[0]);
+                    ctrl.documentoSolicitud.push(responseDocumentoEscrito.data.Data[0]);
                   });
                 }
               })
             });
-            ctrl.modalidad = responseEstudiantes.data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
+            ctrl.modalidad = responseEstudiantes.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
             if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
               ctrl.detallesSolicitud = [];
             } else {
@@ -474,7 +474,7 @@ angular.module('poluxClienteApp')
             ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
             ctrl.detallesSolicitud.fechaSolicitud = ctrl.dataSolicitud.Fecha.toString().substring(0, 10);
             ctrl.detallesSolicitud.PeriodoAcademico = ctrl.dataSolicitud.PeriodoAcademico;
-            angular.forEach(responseEstudiantes.data, function (estudiante) {
+            angular.forEach(responseEstudiantes.data.Data, function (estudiante) {
               solicitantes += (", " + estudiante.Usuario);
             });
 
@@ -856,7 +856,7 @@ angular.module('poluxClienteApp')
         poluxMidRequest.post("evaluadores/ObtenerEvaluadores", {
           "Modalidad": solicitud
         }).then(function (response) {
-          ctrl.evaluadoresInicial = new Array(parseInt(response.data.cantidad_evaluadores));
+          ctrl.evaluadoresInicial = new Array(parseInt(response.data.Data.cantidad_evaluadores));
           for (var i = 0; i < ctrl.evaluadoresInicial.length; i++) {
             var label = (ctrl.evaluadoresInicial.length > 1) ? $translate.instant('SELECT.EVALUADOR_NUMERO', {
               numero: (i + 1)

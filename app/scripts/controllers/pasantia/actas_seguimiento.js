@@ -371,7 +371,8 @@ angular.module('poluxClienteApp')
               }
               poluxMidRequest.post("tr_registrar_acta_seguimiento", Acta)
                 .then(function (response) {
-                  if (response.data[0] === "Success") {
+                  console.log("Comparación Success")
+                  if (response.data.Success === true) {
                     swal(
                       $translate.instant("PASANTIA.ACTA_REGISTRADA"),
                       $translate.instant("PASANTIA.ACTA_REGISTRADA_CORRECTAMENTE"),

@@ -178,7 +178,7 @@ angular.module('poluxClienteApp')
                                     self.modalidad = "MATERIAS POSGRADO";
                                     poluxMidRequest.post("verificarRequisitos/Registrar", self.estudiante).then(function (response) {
                                         
-                                        self.validar = response.data;
+                                        self.validar = response.data.Data;
                                     });
                                 });
                             }

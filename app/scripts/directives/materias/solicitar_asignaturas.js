@@ -152,9 +152,9 @@ angular.module('poluxClienteApp')
                             var defer = $q.defer();
                             poluxMidRequest.get("creditos_materias/ObtenerCreditos").then(function (responseCreditos) {
                                 if (mod.CodigoAbreviacion == "EAPOS_PLX") {
-                                    ctrl.creditosMinimos = responseCreditos.data.MateriasPosgrado;
+                                    ctrl.creditosMinimos = responseCreditos.data.Data.MateriasPosgrado;
                                 } else {
-                                    ctrl.creditosMinimos = responseCreditos.data.MateriasProfundizacion;
+                                    ctrl.creditosMinimos = responseCreditos.data.Data.MateriasProfundizacion;
                                 }
                                 defer.resolve()
                             })

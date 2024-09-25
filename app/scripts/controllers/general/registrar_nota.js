@@ -656,7 +656,8 @@ angular.module('poluxClienteApp')
           .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
             poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function (response) {
-              if (response.data[0] === "Success") {
+              console.log("Comparación Success")
+              if (response.data.Success === true) {
                 var Atributos = {
                   rol: 'ESTUDIANTE',
                 }
@@ -681,7 +682,7 @@ angular.module('poluxClienteApp')
               } else {
                 swal(
                   $translate.instant("REGISTRAR_NOTA.AVISO"),
-                  $translate.instant(response.data[1]),
+                  $translate.instant(response.data.Data[1]),
                   'warning'
                 );
               }
@@ -741,7 +742,8 @@ angular.module('poluxClienteApp')
 
         poluxMidRequest.post("tr_registrar_revision_tg", transaccionRechazo)
           .then(function (response) {
-            if (response.data[0] === "Success") {
+            console.log("Comparación Success")
+            if (response.data.Success === true) {
               var Atributos = {
                 rol: 'ESTUDIANTE',
               }
@@ -766,7 +768,7 @@ angular.module('poluxClienteApp')
             } else {
               swal(
                 $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
-                $translate.instant(response.data[1]),
+                $translate.instant(response.data.Data[1]),
                 'warning'
               );
             }

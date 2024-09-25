@@ -391,7 +391,7 @@ angular.module('poluxClienteApp')
             estado: true
           });
 
-          academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(async function(responseCoordinador) {
+          academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(async function(responseCoordinador) {            
               ctrl.carrerasCoordinador = [];
               var carreras = [];
               if(lista_roles.includes("DOCENTE"))
@@ -400,6 +400,7 @@ angular.module('poluxClienteApp')
                 var guardaPrimero = false;
                 var guardaSegundo = false;
                 ctrl.EstadoSolicitud.forEach(estado => {
+                  
                   if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "PRDI_PLX"  || estado.CodigoAbreviacion == "APEP_PLX") {
                     if (guardaPrimero) {
                       query += "|"
@@ -457,7 +458,9 @@ angular.module('poluxClienteApp')
                       limit: 1,
                     });
                     poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+                      console.log("Consulta Usuario Solicitud", usuario)
                         ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                          console.log("Obtener Datos Estudiante 1", codigo_estudiante)
                             academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                 if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                   var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
@@ -551,10 +554,9 @@ angular.module('poluxClienteApp')
                 });
               }
               else{
-              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
-
+              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {                
                 ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
-                angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {
+                angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {                  
                   carreras.push(carrera.codigo_proyecto_curricular);
                 });
                 var parametrosModalidadTipo = $.param({
@@ -562,11 +564,14 @@ angular.module('poluxClienteApp')
                 });
                 var modalidadTipoSol
                 await poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipo).then(function (responseModalidadTipo) {
+                  console.log("Modalidad Tipo Solicitud", responseModalidadTipo.data.Data)
                   modalidadTipoSol = responseModalidadTipo.data.Data;
                 })
+                console.log("ESTADOSOLICITUD")
                 var query = "ESTADOSOLICITUD.in:"
                 var guardaPrimero = false;
                 ctrl.EstadoSolicitud.forEach(estado => {
+                  console.log("ESTADOSOLICITUD", estado.CodigoAbreviacion)
                   if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX") {
                     if (guardaPrimero) {
                       query += "|"
@@ -578,6 +583,7 @@ angular.module('poluxClienteApp')
                 });
                 var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:"
                 guardaPrimero = false;
+                console.log("modalidadTipoSol", modalidadTipoSol)
                 modalidadTipoSol.forEach(modTipo => {
                   let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                     return modalidad.Id == modTipo.Modalidad
@@ -585,20 +591,23 @@ angular.module('poluxClienteApp')
                   let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                     return tipoSol.Id == modTipo.TipoSolicitud
                   })
+                  console.log("TIPOSOLICITUDTEMP", tipoSolicitudTemp, modalidadTemp)
                   if (tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX" || (tipoSolicitudTemp.CodigoAbreviacion == "SCPAE_PLX" && modalidadTemp.CodigoAbreviacion == "PAS_PLX")) {
                     if (guardaPrimero) {
                       exclude += "|"
                     } else {
                       guardaPrimero = true
                     }
-                    exclude += modTipo.Id
+                    exclude += modTipo.Id                    
                   }
                 });
+                console.log("EXCLUDE", exclude)
                 var parametrosSolicitudes = $.param({
                   query: query + ",Activo:true",
                   exclude: exclude,
                   limit: 0
                 });
+                console.log("PARAMETROSSOLICITUDES", parametrosSolicitudes)
                 poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function(responseSolicitudes) {
                     if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
                       ctrl.conSolicitudes = true;
@@ -628,6 +637,7 @@ angular.module('poluxClienteApp')
                       });
                       poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) { 
                           ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                            console.log("Obtener Datos Estudiante 2", codigo_estudiante)
                               academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                   if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                     var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
@@ -754,6 +764,7 @@ angular.module('poluxClienteApp')
 
                     poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
                       ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                        console.log("Obtener Datos Estudiante 3", codigo_estudiante)
                         academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                           if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                             var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
@@ -944,8 +955,9 @@ angular.module('poluxClienteApp')
                 order: "asc",
                 limit: 1,
               });
-              poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+              poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {                
                   ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                    console.log("Obtener Datos Estudiante 4", codigo_estudiante)
                       academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                           if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                             let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
@@ -1096,14 +1108,17 @@ angular.module('poluxClienteApp')
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuleve con los estudiantes que pertenecen a la solicitud
        */
       ctrl.obtenerEstudiantes = async function(solicitud, usuario) {
+        console.log("Entra a obtener Estudiantes", usuario)
         let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
-          return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+          console.log("Está en Tipo Solicitud", solicitud)
+          return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud                                              
         })
         if (tipoSolicitudTemp.CodigoAbreviacion == "SDTG_PLX") { //sols de distincion
           var parametros = $.param({
             query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id
           });
           poluxRequest.get("detalle_solicitud", parametros).then(function(detalles) {
+            console.log("Entra detalle_solicitud", detalles)
             angular.forEach(detalles.data.Data, function(detalle) {
               if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TG") { //buscar el detalle asociado al TG
                 var parametros = $.param({
@@ -1250,6 +1265,7 @@ angular.module('poluxClienteApp')
                   });
                   poluxRequest.get("detalle_pasantia", parametrosVinculado)
                     .then(function(dataExterno) {
+                      console.log("Data Externo", dataExterno)
                       if (Object.keys(dataExterno.data.Data[0]).length > 0) {
                         var temp = dataExterno.data.Data[0].Observaciones.split(" y dirigida por ");
                         temp = temp[1].split(" con número de identificacion ");
