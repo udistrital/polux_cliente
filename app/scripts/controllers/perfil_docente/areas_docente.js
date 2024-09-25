@@ -35,7 +35,7 @@ angular.module('poluxClienteApp')
         });
         //necesario para cargar las peticiones de áreas en el primer intento
         poluxRequest.get("area_conocimiento", "").then(function (response) {
-            self.areas = response.data;
+            self.areas = response.data.Data;
         });
 
     });

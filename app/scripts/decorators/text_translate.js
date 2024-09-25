@@ -1025,6 +1025,7 @@ var text_es = {
     NOTIFICACIONES_REALIZADA: "Se completo la petición",
     SIN_NOTIFICACIONES: "No se encuentran notificaciones en espera",
     NOMBRE_REVISTA: "Nombre de la revista",
+    PAIS_REVISTA: "País de la revista",
     LINK_REVISTA: "Link de la revista de aceptación del artículo",
     CLASIFICACION_REVISTA: "Clasificación de la revista dónde fue aceptado el artículo",
     MENSAJE_REVISTA: "Teniendo en cuenta las clasificaciones dispuestas por Publindex, ubique su revista y su respectivo código de clasificación:" +

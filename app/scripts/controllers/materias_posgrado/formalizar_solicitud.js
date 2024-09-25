@@ -401,11 +401,11 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosSolicitudRespondida(usuarioAsociado.SolicitudTrabajoGrado.Id))
 					.then(function(respuestaDeSolicitud) {
 						// Se comprueba que se trajeron datos no vacíos
-						if (Object.keys(respuestaDeSolicitud.data[0]).length > 0) {
+						if (Object.keys(respuestaDeSolicitud.data.Data[0]).length > 0) {
 							// Se elimina la información redundante
-							delete respuestaDeSolicitud.data[0].SolicitudTrabajoGrado;
+							delete respuestaDeSolicitud.data.Data[0].SolicitudTrabajoGrado;
 							// Se adquieren los datos de la respuesta de la solicitud dentro de la misma solicitud
-							usuarioAsociado.respuestaDeSolicitud = respuestaDeSolicitud.data[0];
+							usuarioAsociado.respuestaDeSolicitud = respuestaDeSolicitud.data.Data[0];
 						}
 						// Se resuelve el mensaje correspondiente
 						deferred.resolve($translate.instant("ERROR.SIN_RESPUESTA_SOLICITUD"));
@@ -455,9 +455,9 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleDeSolicitud(usuarioAsociado.SolicitudTrabajoGrado.Id))
 					.then(function(detalleDeSolicitud) {
 						// Se comprueba que se trajeron datos no vacíos
-						if (Object.keys(detalleDeSolicitud.data[0]).length > 0) {
+						if (Object.keys(detalleDeSolicitud.data.Data[0]).length > 0) {
 							// Se adquieren los datos del detalle de la solicitud dentro de la misma solicitud
-							usuarioAsociado.detalleDeSolicitud = detalleDeSolicitud.data[0].Descripcion;
+							usuarioAsociado.detalleDeSolicitud = detalleDeSolicitud.data.Data[0].Descripcion;
 						}
 						// Se resuelve el mensaje correspondiente
 						deferred.resolve($translate.instant("ERROR.SIN_DETALLE_SOLICITUD"));
@@ -511,9 +511,9 @@ angular.module('poluxClienteApp')
 				poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuariosConSolicitudes())
 					.then(function(usuariosConSolicitudes) {
 						// Se comprueba que existen registros
-						if (Object.keys(usuariosConSolicitudes.data[0]).length > 0) {
+						if (Object.keys(usuariosConSolicitudes.data.Data[0]).length > 0) {
 							// Se recorre la colección de usuarios con solicitudes
-							angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
+							angular.forEach(usuariosConSolicitudes.data.Data, function(usuarioConSolicitud) {
 								// Se agrega el proceso de consulta hacia la respuesta de la solicitud
 								conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarRespuestaSolicitud(usuarioConSolicitud));
 								// Se agrega el proceso de consulta hacia el detalle de la solicitud
@@ -523,7 +523,7 @@ angular.module('poluxClienteApp')
 							$q.all(conjuntoProcesamientoDeSolicitudes)
 								.then(function(resultadoDelProcesamiento) {
 									// Se realiza el filtrado de las solicitudes que correspondan a la operación
-									angular.forEach(usuariosConSolicitudes.data, function(usuarioConSolicitud) {
+									angular.forEach(usuariosConSolicitudes.data.Data, function(usuarioConSolicitud) {
 										if (usuarioConSolicitud.respuestaDeSolicitud &&
 											usuarioConSolicitud.detalleDeSolicitud) {
 											ctrl.coleccionSolicitudesParaFormalizar.push(usuarioConSolicitud);
@@ -799,7 +799,7 @@ angular.module('poluxClienteApp')
 				poluxRequest.post("tr_registrar_respuestas_solicitudes", informacionParaActualizar)
 					.then(function(respuestaFormalizarSolicitud) {
 						// Se resuelve la respuesta de realizar la formalización de la solicitud
-						deferred.resolve(respuestaFormalizarSolicitud);
+						deferred.resolve(respuestaFormalizarSolicitud.data);
 					})
 					.catch(function(excepcionFormalizarSolicitud) {
 						// Se rechaza la excepción que ocurrió durante la transacción

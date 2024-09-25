@@ -212,8 +212,8 @@ angular.module('poluxClienteApp')
 
                 poluxRequest.get("estudiante_trabajo_grado", parametrosTrabajoGrado)
                     .then(function (dataTrabajos) {
-                        if (Object.keys(dataTrabajos.data[0]).length > 0) {
-                            ctrl.trabajosGrado = dataTrabajos.data;
+                        if (Object.keys(dataTrabajos.data.Data[0]).length > 0) {
+                            ctrl.trabajosGrado = dataTrabajos.data.Data;
 
                             angular.forEach(ctrl.trabajosGrado, function (trabajo) {
 
@@ -307,8 +307,8 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
                     .then(function (responseEstudiantes) {
-                        if (Object.keys(responseEstudiantes.data[0]).length > 0) {
-                            trabajoGrado.estudiantes = responseEstudiantes.data;
+                        if (Object.keys(responseEstudiantes.data.Data[0]).length > 0) {
+                            trabajoGrado.estudiantes = responseEstudiantes.data.Data;
                             var promesasEstudiante = [];
                             angular.forEach(trabajoGrado.estudiantes, function (estudiante) {
                                 promesasEstudiante.push(ctrl.getEstudiante(estudiante));
@@ -381,8 +381,8 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("vinculacion_trabajo_grado", parametrosDocente)
                     .then(function (responseDocente) {
-                        if (Object.keys(responseDocente.data[0]).length > 0) {
-                            trabajoGrado.docente = responseDocente.data;
+                        if (Object.keys(responseDocente.data.Data[0]).length > 0) {
+                            trabajoGrado.docente = responseDocente.data.Data;
 
                             var promesasDocente = [];
                             promesasDocente.push(ctrl.getDocente(trabajoGrado.docente[0]));
@@ -464,8 +464,8 @@ angular.module('poluxClienteApp')
                 var deferred = $q.defer();
                 poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
                     .then(function (respuestaDocumentoTrabajoGrado) {
-                        if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
-                            deferred.resolve(respuestaDocumentoTrabajoGrado.data[0]);
+                        if (Object.keys(respuestaDocumentoTrabajoGrado.data.Data[0]).length > 0) {
+                            deferred.resolve(respuestaDocumentoTrabajoGrado.data.Data[0]);
                         } else {
                             deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
                         }
@@ -507,8 +507,8 @@ angular.module('poluxClienteApp')
                 var deferred = $q.defer();
                 poluxRequest.get("detalle_trabajo_grado", ctrl.obtenerParametrosDetalleTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
                     .then(function (respuestaDetalleTrabajoGrado) {
-                        if (Object.keys(respuestaDetalleTrabajoGrado.data).length > 0) {
-                            deferred.resolve(respuestaDetalleTrabajoGrado.data);
+                        if (Object.keys(respuestaDetalleTrabajoGrado.data.Data).length > 0) {
+                            deferred.resolve(respuestaDetalleTrabajoGrado.data.Data);
                         } else {
                             deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
                         }
@@ -631,7 +631,7 @@ angular.module('poluxClienteApp')
 
                     poluxRequest.get("trabajo_grado", parametrosTrabajoGrado)
                         .then(function (dataTrabajos) {
-                            ctrl.trabajoGrado = dataTrabajos.data[0]
+                            ctrl.trabajoGrado = dataTrabajos.data.Data[0]
 
                             console.log(ctrl.trabajoGrado)
 
@@ -680,7 +680,7 @@ angular.module('poluxClienteApp')
 
                     poluxRequest.get("trabajo_grado", parametrosTrabajoGrado)
                         .then(function (dataTrabajos) {
-                            ctrl.trabajoGrado = dataTrabajos.data[0]
+                            ctrl.trabajoGrado = dataTrabajos.data.Data[0]
 
                             ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
 

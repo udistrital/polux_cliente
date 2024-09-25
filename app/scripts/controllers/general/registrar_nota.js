@@ -211,8 +211,8 @@ angular.module('poluxClienteApp')
 
         poluxRequest.get("estudiante_vinculacion_trabajo_grado", parametrosTrabajoGrado)
           .then(function(dataTrabajos) {
-            if (Object.keys(dataTrabajos.data[0]).length > 0) {
-              ctrl.trabajosGrado = dataTrabajos.data;
+            if (Object.keys(dataTrabajos.data.Data[0]).length > 0) {
+              ctrl.trabajosGrado = dataTrabajos.data.Data;
               // Se decide qué trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
                 let ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -355,8 +355,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("estudiante_trabajo_grado", parametrosEstudiantes)
           .then(function(responseEstudiantes) {
-            if (Object.keys(responseEstudiantes.data[0]).length > 0) {
-              trabajoGrado.estudiantes = responseEstudiantes.data;
+            if (Object.keys(responseEstudiantes.data.Data[0]).length > 0) {
+              trabajoGrado.estudiantes = responseEstudiantes.data.Data;
               var promesasEstudiante = [];
               angular.forEach(trabajoGrado.estudiantes, function(estudiante) {
                 promesasEstudiante.push(ctrl.getEstudiante(estudiante));
@@ -397,10 +397,10 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("evaluacion_trabajo_grado", parametrosEvaluaciones)
           .then(function(responseEvaluacion) {
-            if (Object.keys(responseEvaluacion.data[0]).length > 0) {
+            if (Object.keys(responseEvaluacion.data.Data[0]).length > 0) {
               //Si no ha registrado ninguna nota
               trabajoGrado.notaRegistrada = true;
-              trabajoGrado.evaluacion = responseEvaluacion.data[0];
+              trabajoGrado.evaluacion = responseEvaluacion.data.Data[0];
             } else {
               //Si ya registro la nota
               trabajoGrado.notaRegistrada = false;
@@ -517,8 +517,8 @@ angular.module('poluxClienteApp')
         // Consultar el documento con el limit 1
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id, tipoDocumentoDGRREV.Id, 1))
         .then(function(respuestaDocumento) {
-          if (respuestaDocumento.data && respuestaDocumento.data.length > 0) {
-            deferred.resolve(respuestaDocumento.data[0]); // Devuelve el documento
+          if (Object.keys(respuestaDocumentoTrabajoGrado.data.Data[0]).length > 0) {
+            deferred.resolve(respuestaDocumentoTrabajoGrado.data.Data[0]); // Devuelve el documento
           } else {
             deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           }
@@ -733,7 +733,8 @@ angular.module('poluxClienteApp')
           .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
             poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function (response) {
-              if (response.data[0] === "Success") {
+              console.log("Comparación Success")
+              if (response.data.Success === true) {
                 var Atributos = {
                   rol: 'ESTUDIANTE',
                 }
@@ -758,7 +759,7 @@ angular.module('poluxClienteApp')
               } else {
                 swal(
                   $translate.instant("REGISTRAR_NOTA.AVISO"),
-                  $translate.instant(response.data[1]),
+                  $translate.instant(response.data.Data[1]),
                   'warning'
                 );
               }
@@ -818,7 +819,8 @@ angular.module('poluxClienteApp')
 
         poluxMidRequest.post("tr_registrar_revision_tg", transaccionRechazo)
           .then(function (response) {
-            if (response.data[0] === "Success") {
+            console.log("Comparación Success")
+            if (response.data.Success === true) {
               var Atributos = {
                 rol: 'ESTUDIANTE',
               }
@@ -843,7 +845,7 @@ angular.module('poluxClienteApp')
             } else {
               swal(
                 $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
-                $translate.instant(response.data[1]),
+                $translate.instant(response.data.Data[1]),
                 'warning'
               );
             }
@@ -892,7 +894,7 @@ angular.module('poluxClienteApp')
             });
             poluxRequest.get('revision_trabajo_grado', parametrosCheckCorreccion)
               .then(function (responseRevisiones) {
-                if (Object.keys(responseRevisiones.data[0]).length > 0) {
+                if (Object.keys(responseRevisiones.data.Data[0]).length > 0) {
                   ctrl.registrarNota = true;
                   ctrl.cargarTrabajo(row);
                 } else {

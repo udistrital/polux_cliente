@@ -37,6 +37,6 @@ angular.module('poluxClienteApp')
             self.estudiantes = response;
         });
         poluxRequest.get("area_conocimiento", "").then(function (response) {
-            self.areas = response.data;
+            self.areas = response.data.Data;
         });
     });

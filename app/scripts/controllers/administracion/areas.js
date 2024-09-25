@@ -154,8 +154,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("area_conocimiento", parametrosAreasConocimiento)
           .then(function(responseAreas) {
-            if (Object.keys(responseAreas.data[0]).length > 0) {
-              ctrl.areasConocimiento = responseAreas.data;
+            if (Object.keys(responseAreas.data.Data[0]).length > 0) {
+              ctrl.areasConocimiento = responseAreas.data.Data;
               ctrl.gridOptions.data = ctrl.areasConocimiento;
             }
             $scope.loadAreasConocimiento = false;
