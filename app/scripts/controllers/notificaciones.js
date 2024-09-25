@@ -32,7 +32,7 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
            
             function traerNoticicaciones() {
                 
-                if($scope.roles.includes('COORDINADOR_PREGRADO') || $scope.roles.includes('COORDINADOR_POSGRADO')){    
+                if($scope.roles.includes('COORDINADOR') || $scope.roles.includes('COORDINADOR_POSGRADO')){    
                     
                     notificacionRequest.traerNotificaciones( $scope.nombreColaCoordinador).then(function (response) {
                   
@@ -97,7 +97,7 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
                 
                 $location.path(url);
                /* var Atributos={
-                    rol:'COORDINADOR_PREGRADO',
+                    rol:'COORDINADOR',
                 }
               notificacionRequest.enviarCorreo('Mensaje de prueba para POLUX',Atributos,['101850341'],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de pruebas para la solicitud.Cuando se desee observar /n el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
                */
