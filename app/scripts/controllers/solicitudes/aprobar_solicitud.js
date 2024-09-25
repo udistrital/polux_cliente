@@ -92,7 +92,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, documentoRequest, sesionesRequest, token_service) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = 0;
@@ -2137,6 +2137,8 @@ angular.module('poluxClienteApp')
             return new Promise((resolve, reject) => {
               if (!errorDocente) {
                 poluxMidRequest.post("tr_respuesta_solicitud", ctrl.dataRespuesta).then(function (response) {
+                  //la coordinación responde a la solicitud
+                  ctrl.EnvioNotificacion()
                   ctrl.mostrarRespuesta(response);
                   resolve();
                 })
@@ -2542,6 +2544,293 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name EnvioNotificacion
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {undefined} undefined No requiere parámetros
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Función que se encarga de enviar la notificación de la respuesta de la solicitud por correo 
+       */
+      ctrl.EnvioNotificacion = async function () {
+
+        console.log(ctrl)
+
+        var titulo_tg, respuesta, usuario, rol_id, docente_id, correos = []
+        var tieneEvaluador = false
+        var correos_falsos = []
+
+        correos.push("ajuanh@udistrital.edu.co")
+
+        //Todas las respuestas de las solicitudes se envían al estudiante
+        var data_auth_mid = {
+          numero : ctrl.detallesSolicitud.solicitantes.toString()
+        }
+
+        await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+          correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+        })
+
+        //Se recupera la información para adjuntar en la plantilla del correo
+        if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX"){//si es solicitud inicial
+          if(ctrl.respuestaSolicitud == "ADD_PLX" || ctrl.respuestaSolicitud == "RDD_PLX"){ //respondió docente director
+            
+            usuario = ctrl.docenteDirector.NOMBRE
+
+            if(ctrl.respuestaSolicitud == "ADD_PLX"){
+              //Se adjunta el correo de la coordinación al aprobar
+              await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(estudiante){//se busca la carrera
+                await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){//se busca el documento del coordinador
+
+                  var data_auth_mid = {
+                    numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                  }
+          
+                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo
+                    correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                  })
+                })
+              })
+            }
+          }
+
+          angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+            if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NPRO") {
+              titulo_tg = detalle.Descripcion;//se obtiene el título del tg
+            }
+          })
+        }
+        else{//demás solicitudes
+          if(ctrl.respuestaSolicitud == "ADD_PLX" || ctrl.respuestaSolicitud == "RDD_PLX"){ //respondió docente director
+            
+            //se busca el nombre del docente con el documento
+            angular.forEach(ctrl.RolTrabajoGrado, function(rol){ 
+              if(rol.CodigoAbreviacion == "DIRECTOR_PLX"){
+                rol_id = rol.Id
+              }
+            })
+    
+            angular.forEach(ctrl.docentesVinculadosTg, function(docente){
+              if(docente.RolTrabajoGrado == rol_id){
+                docente_id = docente.Usuario
+              }
+            })
+    
+            await academicaRequest.get("docente_tg", [docente_id]).then(function(docente){
+              if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                usuario = docente.data.docenteTg.docente[0].nombre
+              }
+            })
+
+            //se preparan los correos a notificar
+            if(ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX" && ctrl.respuestaSolicitud == "ADD_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX'){
+              //si el director aprueba la solicitud de revisión de tg para Pasantía, se notifica a la oficina de pasantías
+              correos_falsos.push("pasantias_ing@udistrital.edu.co")
+            }
+            else if(ctrl.respuestaSolicitud == "ADD_PLX"){
+              //si el director aprueba cualquier otra solicitud, se debe notificar a la coordinación
+
+              await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(estudiante){
+                console.log("estudiante:",estudiante)
+                await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
+                  console.log("carrera:",carrera)
+
+                  var data_auth_mid = {
+                    numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                  }
+          
+                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                    correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                  })
+                })
+              })
+            }
+          }
+
+          titulo_tg = ctrl.dataSolicitud.TrabajoGrado.Titulo
+        }
+
+        if(ctrl.respuestaSolicitud == "ACC_PLX" || ctrl.respuestaSolicitud == "RCC_PLX"){//respondió coordinación
+          usuario = $translate.instant("NOTIFICACION.COORDINACION")
+
+          if(ctrl.respuestaSolicitud == "ACC_PLX" && ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX"){//Cada vez que la coordinación apruebe una solicitud de una pasantía, se debe notificar a la oficina de pasantía
+            correos_falsos.push("pasantias_ing@udistrital.edu.co")
+          }
+
+          if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX' && ctrl.respuestaSolicitud == "ACC_PLX"){//si la solicitud es de revisión tg y fue aprobada, se adjuntan los correos del docente director y evaluador (si tiene)
+
+            angular.forEach(ctrl.RolTrabajoGrado, function(rol){//se busca el rol de director
+              if(rol.CodigoAbreviacion == "DIRECTOR_PLX"){
+                rol_id = rol.Id
+              }
+            })
+    
+            angular.forEach(ctrl.docentesVinculadosTg, function(docente){//se busca el documento del docente con el rol
+              if(docente.RolTrabajoGrado == rol_id){
+                docente_id = docente.Usuario
+              }
+            })
+
+            var data_auth_mid = {
+              numero : docente_id.toString()
+            }
+    
+            await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo con el documento
+              correos_falsos.push(response.data.email)
+            })
+
+            angular.forEach(ctrl.RolTrabajoGrado, function(rol){//se busca el rol de evaluador
+              if(rol.CodigoAbreviacion == "EVALUADOR_PLX"){
+                rol_id = rol.Id
+              }
+            })
+    
+            angular.forEach(ctrl.docentesVinculadosTg, function(docente){//se busca el documento del docente con el rol
+              if(docente.RolTrabajoGrado == rol_id){
+                docente_id = docente.Usuario
+                tieneEvaluador = true
+              }
+            })
+            
+            if(tieneEvaluador){//si el tg tiene evaluador, se adjunta el correo
+              var data_auth_mid = {
+                numero : docente_id.toString()
+              }
+      
+              await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
+                correos_falsos.push(response.data.email)
+              })
+            }
+          }
+          else if((ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') && ctrl.respuestaSolicitud == "ACC_PLX"){
+            //si la solicitud aprobada es de Cambio de Director, Codirector o evaluador, se debe enviar una notificación al nuevo vinculado
+
+            var rol, estudiante, correo_vinculado = [], correo_vinculado_falso = []
+
+            correo_vinculado.push("ajuanh@udistrital.edu.co")
+
+            //Se establece el nombre del rol por medio del tipo de solicitud
+            if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX') {
+              angular.forEach(ctrl.RolTrabajoGrado,function(rolTemp){
+                if(rolTemp.CodigoAbreviacion == "DIRECTOR_PLX"){
+                  rol = rolTemp.Nombre
+                }
+              })
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX') { 
+              angular.forEach(ctrl.RolTrabajoGrado,function(rolTemp){
+                if(rolTemp.CodigoAbreviacion == "EVALUADOR_PLX"){
+                  rol = rolTemp.Nombre
+                }
+              })
+            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') { 
+              angular.forEach(ctrl.RolTrabajoGrado,function(rolTemp){
+                if(rolTemp.CodigoAbreviacion == "CODIRECTOR_PLX"){
+                  rol = rolTemp.Nombre
+                }
+              })
+            }
+
+            //se busca el nombre del estudiante con el codigo
+            await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(function(est){
+              estudiante = est.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre
+            })
+
+            //Se busca el correo del nuevo vinculado por su documento
+            var data_auth_mid = {
+              numero : ctrl.docenteCambio.id
+            }
+    
+            await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
+              correo_vinculado_falso.push(response.data.email)
+            })
+
+            var data_correo = {
+              "Source": "notificacionPolux@udistrital.edu.co",
+              "Template": "POLUX_PLANTILLA_ASIGNACION",
+              "Destinations": [
+                {
+                  "Destination": {
+                    "ToAddresses": correo_vinculado
+                  },
+                  "ReplacementTemplateData": {
+                    "rol": rol,
+                    "nombre_estudiante": estudiante,
+                    "titulo_tg": titulo_tg,
+                    "modalidad": ctrl.modalidadTemp.Nombre
+                  }
+                }
+              ]
+            }
+
+            console.log(correo_vinculado_falso)
+            console.log(data_correo)
+
+            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+              console.log("Envia el correo: ", response)
+            }).catch(function (error) {
+              console.log("Error: ", error)
+            });
+
+          }
+        }
+        else if(ctrl.respuestaSolicitud == "AOP_PLX" || ctrl.respuestaSolicitud == "ROP_PLX"){//respondió la oficina de pasantías
+          //se envía el nombre de la oficina
+          usuario = $translate.instant("NOTIFICACION.PASANTIA")
+
+          if(ctrl.respuestaSolicitud == "AOP_PLX"){
+            await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(estudiante){
+              console.log("estudiante:",estudiante)
+              await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
+                console.log("carrera:",carrera)
+
+                var data_auth_mid = {
+                  numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                }
+        
+                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                  correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                })
+              })
+            })
+          }
+        }
+
+        angular.forEach(ctrl.EstadoSolicitud, function (estado) {
+          if (estado.CodigoAbreviacion == ctrl.respuestaSolicitud) {
+            respuesta = estado.Nombre;//se obtiene el nombre de la respuesta
+          }
+        })
+
+        var data_correo = {
+          "Source": "notificacionPolux@udistrital.edu.co",
+          "Template": "POLUX_PLANTILLA_RESPUESTA_SOL",
+          "Destinations": [
+            {
+              "Destination": {
+                "ToAddresses": correos
+              },
+              "ReplacementTemplateData": {
+                "respuesta": respuesta,
+                "nombre_usuario": usuario,
+                "titulo_tg": titulo_tg,
+                "tipo_solicitud": ctrl.tipoSolicitudTemp.Nombre,
+                "comentario": ctrl.justificacion
+              }
+            }
+          ]
+        }
+
+        console.log(data_correo)
+        console.log(correos_falsos)
+
+        notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+          console.log("Envia el correo: ",response)
+        }).catch(function (error) {
+          console.log("Error: ", error)
+        });
+      }
+
+      /**
+       * @ngdoc method
        * @name modalDocumento
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {undefined} undefined No requiere parámetros
@@ -2614,13 +2903,8 @@ angular.module('poluxClienteApp')
 
                         if (responsesolicitudsolicitud.data !== undefined) {
 
-                          var Atributos = {
-                            rol: 'ESTUDIANTE',
-                          }
-                          notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                          // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
-
+                          //no entra nunca
+                          
                           swal(
                             $translate.instant("RESPUESTA_SOLICITUD"),
                             $translate.instant("SOLICITUD_APROBADA"),
@@ -2705,12 +2989,8 @@ angular.module('poluxClienteApp')
 
                     if (responsesolicitudsolicitud.data !== undefined) {
 
-                      var Atributos = {
-                        rol: 'ESTUDIANTE',
-                      }
-                      notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                      // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+                      //Solicitud inicial aprobada por docente director
+                      ctrl.EnvioNotificacion()
 
                       swal(
                         $translate.instant("RESPUESTA_SOLICITUD"),
@@ -2780,12 +3060,8 @@ angular.module('poluxClienteApp')
 
                       if (responsesolicitudsolicitud.data !== undefined) {
 
-                        var Atributos = {
-                          rol: 'ESTUDIANTE',
-                        }
-                        notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                        // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+                        //el docente director aprobó las solicitudes sin contar Solicitud Inicial
+                        ctrl.EnvioNotificacion()
 
                         swal(
                           $translate.instant("RESPUESTA_SOLICITUD"),
@@ -2912,13 +3188,8 @@ angular.module('poluxClienteApp')
                     poluxRequest.put("respuesta_solicitud", ctrl.solicitud, parametrosRespuestaSolicitud).then(function (responsesolicitudsolicitud) {
 
                       if (responsesolicitudsolicitud.data !== undefined) {
-
-                        var Atributos = {
-                          rol: 'ESTUDIANTE',
-                        }
-                        notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                        // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+                        //Se rechaza la solicitud por el docente
+                        ctrl.EnvioNotificacion()
 
                         swal(
                           $translate.instant("RESPUESTA_SOLICITUD"),
@@ -2990,7 +3261,7 @@ angular.module('poluxClienteApp')
           return est.CodigoAbreviacion == resOriginal
         })
 
-        if (estadoSolRtaNueva.CodigoAbreviacion == "ACC_PLX") {
+        if (estadoSolRtaNueva.CodigoAbreviacion == "AOP_PLX") {
           //aprobar
           if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX" && ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
             var fileBase64;
@@ -3058,12 +3329,8 @@ angular.module('poluxClienteApp')
 
                             if (responsesolicitudsolicitud.data !== undefined) {
 
-                              var Atributos = {
-                                rol: 'ESTUDIANTE',
-                              }
-                              notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                              // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+                              //la oficina de pasantía aprueba la solicitud de revisión
+                              ctrl.EnvioNotificacion()
 
                               swal(
                                 $translate.instant("RESPUESTA_SOLICITUD"),
@@ -3079,8 +3346,6 @@ angular.module('poluxClienteApp')
                                 'warning'
                               );
                             }
-
-
                           });
                         } else {
                         }
@@ -3186,12 +3451,8 @@ angular.module('poluxClienteApp')
                         poluxRequest.put("solicitud_trabajo_grado", ctrl.solicitud, parametrosSolicitud1).then(function (responsesolicitudsolicitud) {//Se envia la solicitud_trabajo_grado actualizado
 
                           if (responsesolicitudsolicitud.data !== undefined) {//Si no falló
-                            var Atributos = {
-                              rol: 'ESTUDIANTE',
-                            }
-                            notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                            // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+                            //la Oficina de Extensión de Pasantía aprueba S.I
+                            ctrl.EnvioNotificacion()
 
                             swal(
                               $translate.instant("RESPUESTA_SOLICITUD"),
@@ -3258,12 +3519,8 @@ angular.module('poluxClienteApp')
 
                   if (responsesolicitudsolicitud.data !== undefined) {
 
-                    var Atributos = {
-                      rol: 'ESTUDIANTE',
-                    }
-                    notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO', Atributos, [ctrl.detallesSolicitud.solicitantes], '', '', 'Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de ' + token_service.getAppPayload().email + ' para la solicitud.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
-
-                    // notificacionRequest.enviarCorreo('Respuesta de solicitud TRABAJO DE GRADO',Atributos,[ctrl.detallesSolicitud.solicitantes],'','','Se ha realizado la respuesta de la solicitud, se ha dado respuesta de parte de '+token_service.getAppPayload().email+' para la solicitud');                        
+                    //rechazo por parte de la oficina de extensión de pasantía
+                    ctrl.EnvioNotificacion()
 
                     swal(
                       $translate.instant("RESPUESTA_SOLICITUD"),
