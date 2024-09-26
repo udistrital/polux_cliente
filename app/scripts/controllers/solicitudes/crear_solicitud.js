@@ -2543,12 +2543,42 @@ angular.module('poluxClienteApp')
                   var nick = token_service.getAppPayload().email.split("@").slice(0);
                   notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');               
                 });
+              });              
+            //   if(ctrl.modalidad == "PAS_PLX"){
+            //     console.log("Modalidad", ctrl.modalidad)
+            //     swal(
+                  
+            //       $translate.instant("AVISO_ARL"),
+            //       'warning'
+            //     );
+            //   }
+            // swal(
+            //   $translate.instant("FORMULARIO_SOLICITUD"),
+            //   $translate.instant("SOLICITUD_REGISTRADA"),
+            //   'success'
+            // );
+            if (ctrl.modalidad == "PAS_PLX") {
+              console.log("Modalidad", ctrl.modalidad);
+              swal(
+                $translate.instant("FORMULARIO_SOLICITUD"),
+                $translate.instant("AVISO_ARL"),
+                'warning'
+              ).then(() => {
+                // Cuando el usuario cierre el aviso de advertencia, se mostrará el siguiente
+                swal(
+                  $translate.instant("FORMULARIO_SOLICITUD"),
+                  $translate.instant("SOLICITUD_REGISTRADA"),
+                  'success'
+                );
               });
-            swal(
-              $translate.instant("FORMULARIO_SOLICITUD"),
-              $translate.instant("SOLICITUD_REGISTRADA"),
-              'success'
-            );
+            } else {
+              // Si no se cumple la condición, solo se muestra el aviso de éxito
+              swal(
+                $translate.instant("FORMULARIO_SOLICITUD"),
+                $translate.instant("SOLICITUD_REGISTRADA"),
+                'success'
+              );
+            }
             if(ctrl.Docente==1)
             {
               $location.path("/#");
