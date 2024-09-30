@@ -115,7 +115,7 @@
         </div>
       </div>
     </div>
-    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR')">
+    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR') && !aprobarSolicitud.roles.includes('CONTRATISTA')">
       <form name="formularioAprobacionDocente" ng-submit="aprobarSolicitud.RespuestaDocente()">
       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
       <div class="col-sm-8">
@@ -145,7 +145,7 @@
     </form>
     </div>
 
-    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS') && !aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR') && !aprobarSolicitud.roles.includes('COORDINADOR_POSGRADO')">
+    <div class="panel-body" ng-if="aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS') && !aprobarSolicitud.roles.includes('DOCENTE') && !aprobarSolicitud.roles.includes('COORDINADOR') && !aprobarSolicitud.roles.includes('COORDINADOR_POSGRADO') && !aprobarSolicitud.roles.includes('CONTRATISTA')">
       <form name="formularioAprobacionExtensionPasantia" ng-submit="aprobarSolicitud.RespuestaExtensionPasantia()">
       <label class="col-sm-4 control-label"> {{'RESPUESTA' | translate}} </label>
       <div class="col-sm-8">
