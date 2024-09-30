@@ -26,8 +26,11 @@
           <label class="col-sm-4 control-label">{{'INDICAR_CARRERA' | translate}}</label>
           <div class="col-sm-8">
             <select class="form-control"  ng-model="d_cargarDocumento.carrera" required>
-              <option  ng-repeat="carrera in carreras" ng-value="carrera">
-              {{carrera.codigo_proyecto_curricular}} - {{carrera.nombre_proyecto_curricular}}
+              <option ng-repeat="carrera in carreras" ng-value="carrera">
+                {{ (userRole.indexOf('CONTRATISTA') !== -1 ? carrera.proyecto : '') }}
+                {{ (userRole.indexOf('COORDINADOR') !== -1 ? carrera.codigo_proyecto_curricular : '') }} - 
+                {{ (userRole.indexOf('CONTRATISTA') !== -1 ? carrera.nombre : '') }}
+                {{ (userRole.indexOf('COORDINADOR') !== -1 ? carrera.nombre_proyecto_curricular : '') }}
               </option>
             </select>
           </div>
