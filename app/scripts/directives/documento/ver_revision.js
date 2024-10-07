@@ -110,13 +110,9 @@ angular.module('poluxClienteApp')
                             
                             //Se prepara la información para la notificación
 
-                            //console.log(response.data)
-
                             var ult_comentario = response.data[response.data.length-1]//Se obtiene el último comentario realizado
 
-                            var respondio_docente, codigo, correos = [], correos_falsos = []
-
-                            correos_falsos.push("ajuanh@udistrital.edu.co")
+                            var respondio_docente, codigo, correos = []
 
                             //Debido a que no se almacenan los documentos del autor del comentario, se busca si el nombre autor corresponde al nombre del docente para determinar el correo del destinatario
                             await academicaRequest.get("docente_tg", [ult_comentario.Correccion.RevisionTrabajoGrado.VinculacionTrabajoGrado.Usuario]).then(function (docente) {
@@ -169,7 +165,7 @@ angular.module('poluxClienteApp')
                                 "Destinations": [
                                     {
                                         "Destination": {
-                                            "ToAddresses": correos_falsos
+                                            "ToAddresses": correos
                                         },
                                         "ReplacementTemplateData": {
                                             "nombre_usuario": ult_comentario.Autor,
@@ -180,14 +176,14 @@ angular.module('poluxClienteApp')
                                 ]
                             }
 
-                            console.log(correos)
-                            console.log(data_correo)
+                            //console.log(correos)
 
-                            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                                 console.log("Envia el correo",response)
                             }).catch(function (error) {
                                 console.log("Error: ", error)
-                            });
+                            });*/
 
                             //Para crear plantillas de correo
                             /*var html = ``

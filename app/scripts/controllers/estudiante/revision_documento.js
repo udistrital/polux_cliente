@@ -815,12 +815,8 @@ angular.module('poluxClienteApp')
                   
                   //correo al docente al solicitar nueva revisión
 
-                  //console.log(ctrl)
+                  var modalidad_tg, correos = []
 
-                  var modalidad_tg, correos = [], correos_falsos = []
-
-                  correos_falsos.push("ajuanh@udistrital.edu.co")
-                  
                   //se obtiene el correo del docente seleccionado
                   var data_auth_mid = {
                     numero : ctrl.docenteRevision.Usuario.toString()
@@ -842,7 +838,7 @@ angular.module('poluxClienteApp')
                     "Destinations": [
                       {
                         "Destination": {
-                          "ToAddresses": correos_falsos
+                          "ToAddresses": correos
                         },
                         "ReplacementTemplateData": {
                           "nombre_estudiante": ctrl.informacionAcademica.nombre,
@@ -853,15 +849,15 @@ angular.module('poluxClienteApp')
                     ]
                   }
                 
-                  console.log(correos)
-                  console.log(data_correo)
+                  //console.log(correos)
 
-                  notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                  //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                  /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                     console.log("Envia el correo")
                     console.log(response)
                   }).catch(function (error) {
                     console.log("Error: ", error)
-                  });
+                  });*/
 
                   swal(
                     $translate.instant("FORMULARIO_SOLICITAR_REVISION.CONFIRMACION"),
@@ -949,11 +945,8 @@ angular.module('poluxClienteApp')
           .then(function(respuestaActualizarAnteproyecto) {
 
             //se notifica a la oficina de pasantía el cargue de la ARL
-            //console.log(ctrl)
+            var correos = []
 
-            var correos = [], correos_falsos = []
-
-            correos_falsos.push("ajuanh@udistrital.edu.co")
             correos.push("pasantias_ing@udistrital.edu.co")
 
             var data_correo = {
@@ -962,7 +955,7 @@ angular.module('poluxClienteApp')
               "Destinations": [
                 {
                   "Destination": {
-                    "ToAddresses": correos_falsos
+                    "ToAddresses": correos
                   },
                   "ReplacementTemplateData": {
                     "nombre_estudiante": ctrl.informacionAcademica.nombre,
@@ -972,14 +965,14 @@ angular.module('poluxClienteApp')
               ]
             }
           
-            console.log(correos)
-            console.log(data_correo)
+            //console.log(correos)
 
-            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
               console.log("Envia el correo",response)
             }).catch(function (error) {
               console.log("Error: ", error)
-            });
+            });*/
 
             deferred.resolve(respuestaActualizarAnteproyecto);
           })

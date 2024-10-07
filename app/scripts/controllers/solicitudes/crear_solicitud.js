@@ -2535,10 +2535,8 @@ angular.module('poluxClienteApp')
           if (response.data[0] === "Success") {
             
             //Se prepara la información para enviar la notificación al siguiente usuario en el flujo
-
-            //console.log(ctrl)
             
-            var titulo_tg, modalidad_tg, correos = [], correos_falsos = []
+            var titulo_tg, modalidad_tg, correos = []
 
             if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//Si es solicitud inicial, los datos de Modalidad y Título se recuperan de una forma distinta a las demás solicitudes
               angular.forEach(ctrl.Modalidades, function (mod) {
@@ -2563,8 +2561,6 @@ angular.module('poluxClienteApp')
               titulo_tg = ctrl.trabajoGrado.Titulo
             }
             
-            correos_falsos.push("ajuanh@udistrital.edu.co")//borrar
-
             if(ctrl.modalidad == "PAS_PLX" && ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial de pasantía
               //se debe enviar a la Oficina de Extensión de Pasantías
               correos.push("pasantias_ing@udistrital.edu.co")
@@ -2604,7 +2600,7 @@ angular.module('poluxClienteApp')
               "Destinations": [
                 {
                   "Destination": {
-                    "ToAddresses": correos_falsos
+                    "ToAddresses": correos
                   },
                   "ReplacementTemplateData": {
                     "tipo_solicitud": ctrl.TipoSolicitud.Nombre,
@@ -2616,15 +2612,15 @@ angular.module('poluxClienteApp')
               ]
             }
 
-            console.log(correos)
-            console.log(data_correo)
+            //console.log(correos)
 
-            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
               console.log("Envia el correo")
               console.log(response)
             }).catch(function (error) {
               console.log("Error: ", error)
-            });
+            });*/
 
             swal(
               $translate.instant("FORMULARIO_SOLICITUD"),

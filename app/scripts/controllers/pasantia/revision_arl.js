@@ -624,11 +624,9 @@ angular.module('poluxClienteApp')
             * Función que se encarga de enviar la notificación de la respuesta de la solicitud
             */
             ctrl.EnvioNotificacion = async function () {
-                //console.log(ctrl)
+                
+                var correos = [], respuesta
 
-                var correos = [], correos_falsos = [], respuesta
-
-                correos_falsos.push("ajuanh@udistrital.edu.co")
 
                 var data_auth_mid = {
                     numero : ctrl.trabajoSeleccionado.estudiantes[0].Estudiante
@@ -650,7 +648,7 @@ angular.module('poluxClienteApp')
                     "Destinations": [
                         {
                             "Destination": {
-                                "ToAddresses": correos_falsos
+                                "ToAddresses": correos
                             },
                             "ReplacementTemplateData": {
                                 "respuesta": respuesta,
@@ -660,15 +658,15 @@ angular.module('poluxClienteApp')
                     ]
                 }
                 
-                console.log(correos)
-                console.log(data_correo)
+                //console.log(correos)
 
-                notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                     console.log("Envia el correo")
                     console.log(response)
                 }).catch(function (error) {
                     console.log("Error: ", error)
-                });
+                });*/
             }
 
             /**

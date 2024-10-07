@@ -341,11 +341,7 @@ angular.module('poluxClienteApp')
                                            
                                             //Se notifica al estudiante cuando el docente responde por primera vez a la revisión
 
-                                            //console.log(ctrl)
-                                            
-                                            var usuario, codigo, comentario, correos = [], correos_falsos = []
-
-                                            correos_falsos.push("ajuanh@udistrital.edu.co")
+                                            var usuario, codigo, comentario, correos = []
 
                                             //Se busca el codigo del estudiante, para obtener el correo
                                             var parametro = $.param({
@@ -392,7 +388,7 @@ angular.module('poluxClienteApp')
                                                 "Destinations": [
                                                     {
                                                         "Destination": {
-                                                            "ToAddresses": correos_falsos
+                                                            "ToAddresses": correos
                                                         },
                                                         "ReplacementTemplateData": {
                                                             "nombre_usuario": usuario,
@@ -403,14 +399,14 @@ angular.module('poluxClienteApp')
                                                 ]
                                             }
 
-                                            console.log(correos)
-                                            console.log(data_correo)
+                                            //console.log(correos)
 
-                                            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                                            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                                            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                                                 console.log("Envia el correo",response)
                                             }).catch(function (error) {
                                                 console.log("Error: ", error)
-                                            });
+                                            });*/
 
                                             swal(
                                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),

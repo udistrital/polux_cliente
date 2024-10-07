@@ -2553,13 +2553,8 @@ angular.module('poluxClienteApp')
        */
       ctrl.EnvioNotificacion = async function () {
 
-        console.log(ctrl)
-
         var titulo_tg, respuesta, usuario, rol_id, docente_id, correos = []
         var tieneEvaluador = false
-        var correos_falsos = []
-
-        correos.push("ajuanh@udistrital.edu.co")
 
         //Todas las respuestas de las solicitudes se envían al estudiante
         var data_auth_mid = {
@@ -2567,7 +2562,7 @@ angular.module('poluxClienteApp')
         }
 
         await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-          correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+          correos.push(response.data.email)//se almacena en los correos destinatarios
         })
 
         //Se recupera la información para adjuntar en la plantilla del correo
@@ -2586,7 +2581,18 @@ angular.module('poluxClienteApp')
                   }
           
                   await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo
-                    correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                    correos.push(response.data.email)//se almacena en los correos destinatarios
+                  })
+                })
+                //se busca el correo del Asistente de Proyecto
+                await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+
+                  var data_auth_mid = {
+                    numero : asistente.data.asistente.proyectos[0].documento_asistente
+                  }
+          
+                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                    correos.push(response.data.email)//se almacena en los correos destinatarios
                   })
                 })
               })
@@ -2624,22 +2630,32 @@ angular.module('poluxClienteApp')
             //se preparan los correos a notificar
             if(ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX" && ctrl.respuestaSolicitud == "ADD_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX'){
               //si el director aprueba la solicitud de revisión de tg para Pasantía, se notifica a la oficina de pasantías
-              correos_falsos.push("pasantias_ing@udistrital.edu.co")
+              correos.push("pasantias_ing@udistrital.edu.co")
             }
             else if(ctrl.respuestaSolicitud == "ADD_PLX"){
               //si el director aprueba cualquier otra solicitud, se debe notificar a la coordinación
 
               await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(estudiante){
-                console.log("estudiante:",estudiante)
                 await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
-                  console.log("carrera:",carrera)
 
                   var data_auth_mid = {
                     numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
                   }
           
                   await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                    correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                    correos.push(response.data.email)//se almacena en los correos destinatarios
+                  })
+                })
+
+                //se busca el correo del Asistente de Proyecto
+                await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+
+                  var data_auth_mid = {
+                    numero : asistente.data.asistente.proyectos[0].documento_asistente
+                  }
+          
+                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                    correos.push(response.data.email)//se almacena en los correos destinatarios
                   })
                 })
               })
@@ -2653,7 +2669,7 @@ angular.module('poluxClienteApp')
           usuario = $translate.instant("NOTIFICACION.COORDINACION")
 
           if(ctrl.respuestaSolicitud == "ACC_PLX" && ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX"){//Cada vez que la coordinación apruebe una solicitud de una pasantía, se debe notificar a la oficina de pasantía
-            correos_falsos.push("pasantias_ing@udistrital.edu.co")
+            correos.push("pasantias_ing@udistrital.edu.co")
           }
 
           if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX' && ctrl.respuestaSolicitud == "ACC_PLX"){//si la solicitud es de revisión tg y fue aprobada, se adjuntan los correos del docente director y evaluador (si tiene)
@@ -2675,7 +2691,7 @@ angular.module('poluxClienteApp')
             }
     
             await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo con el documento
-              correos_falsos.push(response.data.email)
+              correos.push(response.data.email)
             })
 
             angular.forEach(ctrl.RolTrabajoGrado, function(rol){//se busca el rol de evaluador
@@ -2697,16 +2713,14 @@ angular.module('poluxClienteApp')
               }
       
               await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
-                correos_falsos.push(response.data.email)
+                correos.push(response.data.email)
               })
             }
           }
           else if((ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') && ctrl.respuestaSolicitud == "ACC_PLX"){
             //si la solicitud aprobada es de Cambio de Director, Codirector o evaluador, se debe enviar una notificación al nuevo vinculado
 
-            var rol, estudiante, correo_vinculado = [], correo_vinculado_falso = []
-
-            correo_vinculado.push("ajuanh@udistrital.edu.co")
+            var rol, estudiante, correo_vinculado = []
 
             //Se establece el nombre del rol por medio del tipo de solicitud
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX') {
@@ -2740,7 +2754,7 @@ angular.module('poluxClienteApp')
             }
     
             await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
-              correo_vinculado_falso.push(response.data.email)
+              correo_vinculado.push(response.data.email)
             })
 
             var data_correo = {
@@ -2761,14 +2775,14 @@ angular.module('poluxClienteApp')
               ]
             }
 
-            console.log(correo_vinculado_falso)
-            console.log(data_correo)
+            //console.log(correo_vinculado)
 
-            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
               console.log("Envia el correo: ", response)
             }).catch(function (error) {
               console.log("Error: ", error)
-            });
+            });*/
 
           }
         }
@@ -2778,16 +2792,26 @@ angular.module('poluxClienteApp')
 
           if(ctrl.respuestaSolicitud == "AOP_PLX"){
             await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(estudiante){
-              console.log("estudiante:",estudiante)
               await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
-                console.log("carrera:",carrera)
 
                 var data_auth_mid = {
                   numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
                 }
         
                 await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                  correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                  correos.push(response.data.email)//se almacena en los correos destinatarios
+                })
+              })
+
+              //se busca el correo del Asistente de Proyecto
+              await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+
+                var data_auth_mid = {
+                  numero : asistente.data.asistente.proyectos[0].documento_asistente
+                }
+        
+                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                  correos.push(response.data.email)//se almacena en los correos destinatarios
                 })
               })
             })
@@ -2819,14 +2843,14 @@ angular.module('poluxClienteApp')
           ]
         }
 
-        console.log(data_correo)
-        console.log(correos_falsos)
+        //console.log(correos)
 
-        notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+        //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+        /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
           console.log("Envia el correo: ",response)
         }).catch(function (error) {
           console.log("Error: ", error)
-        });
+        });*/
       }
 
       /**

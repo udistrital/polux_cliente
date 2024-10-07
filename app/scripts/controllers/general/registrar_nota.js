@@ -658,9 +658,7 @@ angular.module('poluxClienteApp')
             poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(async function (response) {
               if (response.data[0] === "Success") {
                 
-                //console.log(ctrl)
-
-                var CodigoAbreviacionRol, Modalidad, RolDirectorTemp, correos = [], correos_falsos = []
+                var CodigoAbreviacionRol, Modalidad, RolDirectorTemp, correos = []
 
                 angular.forEach(ctrl.RolesTrabajoGrado, function(rol){
                   if(rol.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado){
@@ -694,10 +692,8 @@ angular.module('poluxClienteApp')
                     }
 
                     await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
-                      correos_falsos.push(response.data.email)//se agrega a los correos destinatarios
+                      correos.push(response.data.email)//se agrega a los correos destinatarios
                     })
-
-                    correos.push("ajuanh@udistrital.edu.co")
 
                     var data_correo = {
                       "Source": "notificacionPolux@udistrital.edu.co",
@@ -717,14 +713,14 @@ angular.module('poluxClienteApp')
                       ]
                     }
 
-                    console.log(data_correo)
-                    console.log(correos_falsos)
+                    //console.log(correos)
 
-                    notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                    //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                    /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                       console.log("Envia el correo: ", response)
                     }).catch(function (error) {
                       console.log("Error: ", error)
-                    });
+                    });*/
                   })
 
                 } else if (CodigoAbreviacionRol == "DIRECTOR_PLX") {
@@ -734,7 +730,7 @@ angular.module('poluxClienteApp')
                   }
 
                   await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
-                    correos_falsos.push(response.data.email)//se agrega a los correos destinatarios
+                    correos.push(response.data.email)//se agrega a los correos destinatarios
                   })
 
                   await academicaRequest.get("datos_basicos_estudiante", [ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo]).then(async function(estudiante){
@@ -747,12 +743,21 @@ angular.module('poluxClienteApp')
                       }
               
                       await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                        correos_falsos.push(response.data.email)//se almacena en los correos destinatarios
+                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      })
+                    })
+
+                    await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+
+                      var data_auth_mid = {
+                        numero : asistente.data.asistente.proyectos[0].documento_asistente
+                      }
+              
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                        correos.push(response.data.email)//se almacena en los correos destinatarios
                       })
                     })
                   })
-
-                  correos.push("ajuanh@udistrital.edu.co")
 
                   var data_correo = {
                     "Source": "notificacionPolux@udistrital.edu.co",
@@ -772,14 +777,14 @@ angular.module('poluxClienteApp')
                     ]
                   }
 
-                  console.log(data_correo)
-                  console.log(correos_falsos)
+                  //console.log(correos)
 
-                  notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                  //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                  /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                     console.log("Envia el correo: ", response)
                   }).catch(function (error) {
                     console.log("Error: ", error)
-                  });
+                  });*/
                 }
                 swal(
                   $translate.instant("REGISTRAR_NOTA.AVISO"),
@@ -861,11 +866,7 @@ angular.module('poluxClienteApp')
           .then(async function (response) {
             if (response.data[0] === "Success") {
 
-              //console.log(ctrl)
-
-              var usuario, correos = [], correos_falsos = []
-
-              correos_falsos.push("ajuanh@udistrital.edu.co")
+              var usuario, correos = []
 
               //se busca el correo del estudiante
               var data_auth_mid = {
@@ -889,7 +890,7 @@ angular.module('poluxClienteApp')
                 "Destinations": [
                   {
                     "Destination": {
-                      "ToAddresses": correos_falsos
+                      "ToAddresses": correos
                     },
                     "ReplacementTemplateData": {
                       "nombre_usuario": usuario,
@@ -900,14 +901,13 @@ angular.module('poluxClienteApp')
                 ]
               }
 
-              console.log(correos)
-              console.log(data_correo)
+              //console.log(correos)
               
-              notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+              /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                 console.log("Envia el correo", response)
               }).catch(function (error) {
                 console.log("Error: ", error)
-              });
+              });*/
               swal(
                 $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
                 $translate.instant("SOLICITAR_CORRECCIONES.CORRECCION_REGISTRADA"),
