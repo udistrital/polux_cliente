@@ -30,7 +30,7 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
         ctrl.generar_reporte_general = function() {   
             poluxMidRequest.post("reporte_general").then(function(response) {
                 //Decodificar el Base64 del archivo
-                var byteCharacters = atob(response.data.file);
+                var byteCharacters = atob(response.data.Data);
                 var byteNumbers = new Array(byteCharacters.length);
                 
                 for (var i = 0; i < byteCharacters.length; i++) {
@@ -43,12 +43,12 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
                 // Crear un enlace temporal y simular el clic para la descarga
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = response.data.filename;
+                link.download = "ReporteGeneral.xlsx";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             }).catch(function(error) {
-                console.error('Error al generar el reporte general: ', error);
+                console.error('Error al generar el Reporte General: ', error);
             });
         }
 
@@ -63,7 +63,7 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
         ctrl.generar_reporte_solicitud = function() {   
             poluxMidRequest.post("reporte_solicitud").then(function(response) {
                 // Decodificar el Base64 del archivo
-                var byteCharacters = atob(response.data.file);
+                var byteCharacters = atob(response.data.Data);
                 var byteNumbers = new Array(byteCharacters.length);
                 
                 for (var i = 0; i < byteCharacters.length; i++) {
@@ -76,7 +76,7 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
                 // Crear un enlace temporal y simular el clic para la descarga
                 var link = document.createElement('a');
                 link.href = window.URL.createObjectURL(blob);
-                link.download = response.data.filename;
+                link.download = "ReporteSolicitud.xlsx";
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
