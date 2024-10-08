@@ -624,22 +624,26 @@ angular.module('poluxClienteApp')
                 promises.push(getExterno(detalle));
               } else if (detalle.Descripcion.includes("JSON-")) {
                 if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ACON") {
-                  ctrl.areas = [];
+                  //areas de conocimiento
+                  ctrl.areas = []
                   var datosAreas = detalle.Descripcion.split("-");
-                  datosAreas.splice(0, 1);
+                  datosAreas.splice(0, 1); //Eliminar la primera parte que es "JSON-"
                   detalle.Descripcion = "";
-                  angular.forEach(datosAreas, async function (area) {
-                    var areaConocimiento
+                  var areaConocimiento = ""; // Inicializamos la variable como una cadena vacía
+                  angular.forEach(datosAreas, async function(area) {
                     var parametroAreaConocimiento = $.param({
                       limit: 0
                     });
                     await parametrosRequest.get("parametro/" + JSON.parse(area).Id + "?", parametroAreaConocimiento).then(function (responseArea) {
-                      areaConocimiento = responseArea.data.Data;
-                    });
+                      var nombreArea = responseArea.data.Data.Nombre; // Obtenemos el nombre del área de conocimiento
+                      if (areaConocimiento.length > 0) {
+                        areaConocimiento += " - "; // Si ya hay un nombre, agregamos una guión para separarlos
+                      }
+                      areaConocimiento += nombreArea; // Concatenamos el nombre del área
+                    })
                     ctrl.areas.push(JSON.parse(area).Id);
-                    detalle.Descripcion = areaConocimiento.Nombre
+                    detalle.Descripcion = areaConocimiento;
                   });
-                  detalle.Descripcion = detalle.Descripcion.substring(2);
                 } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                   //materias
                   var datosMaterias = detalle.Descripcion.split("-");
