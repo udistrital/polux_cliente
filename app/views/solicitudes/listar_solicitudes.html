@@ -12,7 +12,7 @@
           <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
 
           <div ng-if="load!==true && !listarSolicitudes.errorCargarParametros">
-          <div class="row" ng-if="listarSolicitudes.userRole.includes('COORDINADOR_PREGRADO') && listarSolicitudes.carrerasCoordinador.length>1">
+          <div class="row" ng-if="listarSolicitudes.userRole.includes('COORDINADOR') && listarSolicitudes.carrerasCoordinador.length>1">
           <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
             <div class="col-sm-10">
                 <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
@@ -20,6 +20,17 @@
                 </select>
             </div>
           </div>
+
+        <div class="row" ng-if="listarSolicitudes.userRole.includes('CONTRATISTA') && listarSolicitudes.carrerasCoordinador.length>1">
+            <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
+            <div class="col-sm-10">
+                <select class="form-control" ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
+                    <option ng-repeat="carrera in listarSolicitudes.carrerasCoordinador" ng-value="carrera.codigo_proyecto_curricular"> 
+                        {{carrera.proyecto}} - {{carrera.nombre}}
+                    </option>
+                </select>
+            </div>
+        </div>
 
             <br>
             <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRole.includes('ESTUDIANTE')" class="alert alert-danger" >
@@ -29,10 +40,10 @@
                   {{'DIRIGIJASE_SOLICITUD' | translate}} <strong> {{'NUEVA_SOLICITUD' | translate}}</strong>.
                 </p>
             </div>
-            <div ng-if="!listarSolicitudes.conSolicitudes && listarSolicitudes.userRole.includes('COORDINADOR_PREGRADO')" class="alert alert-danger" >
+            <div ng-if="!listarSolicitudes.conSolicitudes && (listarSolicitudes.userRole.includes('COORDINADOR') || listarSolicitudes.userRole.includes('CONTRATISTA'))" class="alert alert-danger" >
                {{'COORDINADOR_SIN_SOLICITUD' | translate}}
             </div>
-            <div ng-if="listarSolicitudes.conSolicitudes && listarSolicitudes.userRole.includes('COORDINADOR_PREGRADO') && listarSolicitudes.gridOptions.data.length==0" class="alert alert-danger" >
+            <div ng-if="listarSolicitudes.conSolicitudes && (listarSolicitudes.userRole.includes('COORDINADOR') || listarSolicitudes.userRole.includes('CONTRATISTA')) && listarSolicitudes.gridOptions.data.length==0" class="alert alert-danger" >
                     {{'COORDINADOR_SIN_SOLICITUD_EN_CARRERA' | translate}}
             </div>
             <div ng-if="listarSolicitudes.conSolicitudes && listarSolicitudes.gridOptions.data.length > 0" class="panel panel-default panel-body col-md-12">
@@ -121,7 +132,7 @@
 
 
                   <div ng-if="detalle.carrera===undefined">
-                    <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
+                    <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DAN_PLX'">
                         <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
                         <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === 'LR'">
                             <a class="col-sm-8" ng-href="{{detalle.Descripcion}}" target="_blank">{{detalle.Descripcion}}</a>
@@ -133,6 +144,10 @@
                     </div>
                     <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='DOC_PLX' || detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='LNUX_PLX'">
                         <label ng-click="listarSolicitudes.getDocumento(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+                    </div>
+                    
+                    <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion==='DAN_PLX'">
+                        <label ng-click="listarSolicitudes.getDocAnyFormat(detalle.Descripcion)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'DESCARGAR_DOCUMENTOS' | translate}} </label>
                     </div>
                   </div>
 

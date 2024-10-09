@@ -1,0 +1,40 @@
+<style>
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 150px;
+    }
+
+    .custom-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        width: 200px;
+        text-align: center;
+    }
+
+    .custom-btn:hover {
+        background-color: #218838;
+    }
+</style>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {{'GENERAR_REPORTE' | translate}}
+    </div>
+
+    <div class="panel-body">
+        <div class="button-container">
+            <button type="button" class="custom-btn" ng-click="generarReporte.generar_reporte_general()">
+                {{'GENERAR_REPORTE_GENERAL' | translate}}
+            </button>
+            <button type="button" class="custom-btn" ng-click="generarReporte.generar_reporte_solicitud()">
+                {{'GENERAR_REPORTE_SOLICITUD' | translate}}
+            </button>
+        </div>
+    </div>
+</div>

@@ -40,12 +40,14 @@ angular.module('poluxClienteApp')
        * @requires services/poluxClienteApp.service:nuxeoService
        * @property {object} documento Documento que se va a cargar
        */
-      controller: function (poluxRequest, $translate, $filter, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest) {
+      controller: function (poluxRequest, $translate, $filter, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest,token_service) {
         var ctrl = this;
         var url;
         ctrl.documento = [];
+        ctrl.userRole = token_service.getAppPayload().appUserRole;
+
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
-        if ($scope.carreras !== []) {
+        if ($scope.carreras.length > 0) {
           if ($scope.carreras.length === 1) {
             $scope.carrera = $scope.carreras[0];
           }
@@ -114,7 +116,12 @@ angular.module('poluxClienteApp')
             //var date = $filter('date')(new Date(), 'dd-MM-yyyy');
             //Ahora la fecha se ingresa desde la vista
             var date = moment(new Date(ctrl.fechaReunion)).format("DD-MM-YYYY");
-            ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.codigo_proyecto_curricular + " Fecha: " + date;
+            if(ctrl.userRole.includes("CONTRATISTA")){
+              ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.proyecto + " Fecha: " + date;
+            }
+            else{
+              ctrl.documento.nombre = $scope.name + " " + ctrl.consecutivo + " Codigo de carrera: " + ctrl.carrera.codigo_proyecto_curricular + " Fecha: " + date;
+            }
             //Se comienza a usar la subida de actas al gestor 
             // ctrl.cargarDocumento();
             let tipoDocumento = $scope.tipodocumento.find(tipoDoc => {
@@ -137,7 +144,7 @@ angular.module('poluxClienteApp')
 
             poluxRequest.post("documento_escrito", documento)
               .then(function (resultado) {
-                $scope.acta.id = resultado.data.Id;
+                $scope.acta.id = resultado.data.Data.Id;
                 $('#modalSeleccionarDocumento').modal('hide');
                 swal(
                   $translate.instant("CONSEJO_CARRERA.ACTA"),

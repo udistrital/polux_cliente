@@ -225,8 +225,8 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(Proyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
-							Proyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
+						if (Object.keys(estudiantesAsociados.data.Data[0]).length > 0) {
+							Proyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data.Data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -270,9 +270,9 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(Proyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (Object.keys(documentoAsociado.data[0]).length > 0) {
-							Proyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
-							Proyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
+						if (Object.keys(documentoAsociado.data.Data[0]).length > 0) {
+							Proyecto.documentoTrabajoGrado = documentoAsociado.data.Data[0].Id;
+							Proyecto.documentoEscrito = documentoAsociado.data.Data[0].DocumentoEscrito;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -347,8 +347,8 @@ angular.module('poluxClienteApp')
 					var deferred = $q.defer();
 					poluxRequest.get("vinculacion_trabajo_grado", parametros)
 						.then(function(responseProyectosPendientes) {
-							if (Object.keys(responseProyectosPendientes.data[0]).length > 0) {
-								deferred.resolve(responseProyectosPendientes.data);
+							if (Object.keys(responseProyectosPendientes.data.Data[0]).length > 0) {
+								deferred.resolve(responseProyectosPendientes.data.Data);
 							} else {
 								deferred.resolve([]);
 							}
@@ -621,7 +621,7 @@ angular.module('poluxClienteApp')
 					// Se reutiliza transacción de revisar anteproyecto
 					.post("tr_revisar_anteproyecto", informacionParaActualizar)
 					.then(function(respuestaRevisarProyecto) {
-						deferred.resolve(respuestaRevisarProyecto);
+						deferred.resolve(respuestaRevisarProyecto.data.Data);
 					})
 					.catch(function(excepcionRevisarProyecto) {
 						deferred.reject(excepcionRevisarProyecto);

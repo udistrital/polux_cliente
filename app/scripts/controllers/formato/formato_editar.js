@@ -31,21 +31,21 @@ angular.module('poluxClienteApp')
       poluxRequest.get("formato", $.param({
         limit: "0"
       })).then(function (response) {
-        ctrl.formatos = response.data;
+        ctrl.formatos = response.data.Data;
       });
 
       //cargar todas las preguntas
       poluxRequest.get("pregunta", $.param({
         limit: "0"
       })).then(function (response) {
-        $scope.preguntas = response.data;
+        $scope.preguntas = response.data.Data;
       });
 
       //cargar todas las respuesta
       poluxRequest.get("respuesta", $.param({
         limit: "0"
       })).then(function (response) {
-        $scope.respuestas = response.data;
+        $scope.respuestas = response.data.Data;
       });
     };
 
@@ -88,8 +88,8 @@ angular.module('poluxClienteApp')
       
       poluxRequest.get("tr_formato/" + $scope.SelectedFormat, '')
         .then(function (response) {
-          ctrl.formato_vista = response.data;
-          $scope.copy_format = fnClone(response.data);
+          ctrl.formato_vista = response.data.Data;
+          $scope.copy_format = fnClone(response.data.Data);
           ctrl.cargar_en_uigrid(ctrl.formato_vista);
         });
     };

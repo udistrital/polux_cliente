@@ -83,7 +83,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("documento_trabajo_grado", parametrosDocumento)
             .then(function (responseDocumento) {
-              if (Object.keys(responseDocumento.data[0]).length > 0) {
+              if (Object.keys(responseDocumento.data.Data[0]).length > 0) {
                 var nombreNodo = "";
                 var nombreHijo = "";
                 switch (tipoDocumento) {
@@ -110,7 +110,7 @@ angular.module('poluxClienteApp')
                 }
                 ctrl.dataForTree.push({
                   name: nombreNodo,
-                  children: responseDocumento.data[0].DocumentoEscrito.Enlace,
+                  children: responseDocumento.data.Data[0].DocumentoEscrito.Enlace,
                 });
                 defer.resolve();
               } else {

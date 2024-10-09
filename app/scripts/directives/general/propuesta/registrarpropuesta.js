@@ -70,7 +70,7 @@ angular.module('poluxClienteApp')
                 self.modSeleccionada = "";
                 self.buttonDirective = "Aceptar";
                 poluxRequest.get("modalidad", "").then(function (response) {
-                    self.modalidad = response.data;
+                    self.modalidad = response.data.Data;
                 });
                 self.estado = false;
                 self.doclimpio = {};
@@ -121,7 +121,7 @@ angular.module('poluxClienteApp')
                         }
                     } catch (Error) {
                         poluxRequest.get("modalidad", "").then(function (response) {
-                            self.modalidad = response.data;
+                            self.modalidad = response.data.Data;
                         });
 
                     }
@@ -178,7 +178,7 @@ angular.module('poluxClienteApp')
                                     self.modalidad = "MATERIAS POSGRADO";
                                     poluxMidRequest.post("verificarRequisitos/Registrar", self.estudiante).then(function (response) {
                                         
-                                        self.validar = response.data;
+                                        self.validar = response.data.Data;
                                     });
                                 });
                             }
@@ -222,7 +222,7 @@ angular.module('poluxClienteApp')
                     poluxRequest.get("modalidad", $.param({
                         query: "Id:" + idModalidad
                     })).then(function (response) {
-                        objModalidad = response.data;
+                        objModalidad = response.data.Data;
                         
 
                         swal({
@@ -300,20 +300,20 @@ angular.module('poluxClienteApp')
                     self.TGregistrado = [];
                     poluxRequest.post("trabajo_grado", data[0]).then(function (responseTG) {
                         
-                        self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Id, estudiante);
+                        self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Data.Id, estudiante);
                         // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]); ***Aún no se utiliza esta variable
                         
-                        self.areas_TG = self.preguardarAreasTG(responseTG.data.Id);
+                        self.areas_TG = self.preguardarAreasTG(responseTG.data.Data.Id);
                         self.asignarAreasTG(self.areas_TG);
                         self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
                         
                         poluxRequest.post("documento", self.docregistrado[0]).then(function (responseDoc) {
                             
-                            self.guardarDocumentoTG(responseDoc.data.Id, responseTG.data.Id);
+                            self.guardarDocumentoTG(responseDoc.data.Data.Id, responseTG.data.Data.Id);
                             poluxRequest.get("documento", $.param({
-                                query: "Id:" + responseDoc.data.Id
+                                query: "Id:" + responseDoc.data.Data.Id
                             })).then(function (response) {
-                                self.registroDocumento = response.data;
+                                self.registroDocumento = response.data.Data;
                             });
                         });
                     });
@@ -405,7 +405,7 @@ angular.module('poluxClienteApp')
                 self.guardarestudianteTG = function (data) {
                     poluxRequest.post("estudiante_tg", data).then(function (response) {
                         
-                        return response.data.Id;
+                        return response.data.Data.Id;
                     });
                 };
 
@@ -434,9 +434,9 @@ angular.module('poluxClienteApp')
                     self.docTGregistrado = {};
                     poluxRequest.post("documento_tg", self.docTG[0]).then(function (response) {
                         poluxRequest.get("documento_tg", $.param({
-                            query: "Id:" + response.data.Id
+                            query: "Id:" + response.data.Data.Id
                         })).then(function (response) {
-                            self.docTGregistrado = response.data;
+                            self.docTGregistrado = response.data.Data;
                         });
                     });
                 };
@@ -454,9 +454,9 @@ angular.module('poluxClienteApp')
                     angular.forEach(parametro, function (valor) {
                         poluxRequest.post("areas_trabajo_grado", valor).then(function (response) {
                             poluxRequest.get("areas_trabajo_grado", $.param({
-                                query: "IdTrabajoGrado:" + response.data.IdTrabajoGrado
+                                query: "IdTrabajoGrado:" + response.data.Data.IdTrabajoGrado
                             })).then(function (response) {
-                                self.areasTG = response.data;
+                                self.areasTG = response.data.Data;
                             });
                         });
                     });
