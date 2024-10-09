@@ -64,7 +64,7 @@ angular.module('poluxClienteApp')
                  */
                 poluxRequest.get("tr_formato/" + $scope.formato, "")
                     .then(function(response) {
-                        ctrl.Formato = response.data;
+                        ctrl.Formato = response.data.Data;
                         angular.forEach(ctrl.Formato.TrPreguntas, function(data) {
                             if (data.Tipo == "cerrado_multiple") {
                                 data.Respuestas = [];

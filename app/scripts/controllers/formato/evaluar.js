@@ -29,7 +29,7 @@ angular.module('poluxClienteApp')
         limit: 0
       });
       poluxRequest.get("vinculacion_trabajo_grado", parametrosTrabajosEvaluador).then(function (responseTrabajosGrado) {
-        ctrl.trabajosEvaluador = responseTrabajosGrado.data;
+        ctrl.trabajosEvaluador = responseTrabajosGrado.data.Data;
         defered.resolve(ctrl.trabajosEvaluador);
       });
       return defered.promise;
@@ -42,7 +42,7 @@ angular.module('poluxClienteApp')
         limit: 0
       });
       poluxRequest.get("distincion_trabajo_grado", parametrosDistinciones).then(function (responseDistinciones) {
-        ctrl.distinciones = responseDistinciones.data;
+        ctrl.distinciones = responseDistinciones.data.Data;
         defered.resolve(ctrl.distinciones);
       });
       return defered.promise;
@@ -79,7 +79,7 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("solicitud_trabajo_grado", parametrosHayDistincion).then(function (responseHayDistincion) {
         var response = true;
-        if (responseHayDistincion.data === null) {
+        if (responseHayDistincion.data.Data === null) {
           response = false;
         }
         defered.resolve(response);
@@ -104,7 +104,7 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function (responseModalidadTipoSolicitud) {
-          var modalidadTipoSolicitud = responseModalidadTipoSolicitud.data[0].Id;
+          var modalidadTipoSolicitud = responseModalidadTipoSolicitud.data.Data[0].Id;
 
           data_solicitud = {
             "Fecha": fecha,
@@ -129,7 +129,7 @@ angular.module('poluxClienteApp')
           limit: 0
         });
         poluxRequest.get("detalle_tipo_solicitud", parametrosDetalles).then(function (responseDetalles) {
-          angular.forEach(responseDetalles.data, function (detalle) {
+          angular.forEach(responseDetalles.data.Data, function (detalle) {
             var desc = "";
             if (detalle.Detalle.Id === 13) {
               desc = ctrl.solicitudDistincion.justificacion;
@@ -216,7 +216,8 @@ angular.module('poluxClienteApp')
 
 
           poluxRequest.post("tr_solicitud", solicitud).then(function (response) {
-            if (response.data[0] === "Success") {
+            console.log("Comparación Success")
+            if (response.data.Success === true) {
               var nick = token_service.getAppPayload().email.split("@").slice(0);
               notificacionRequest.enviarNotificacion('Solicitud de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');
               
@@ -229,7 +230,7 @@ angular.module('poluxClienteApp')
             } else {
               swal(
                 $translate.instant("FORMULARIO_SOLICITUD"),
-                $translate.instant(response.data[1]),
+                $translate.instant(response.data.Data[1]),
                 'warning'
               );
             }

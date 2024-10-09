@@ -128,9 +128,9 @@ angular.module('poluxClienteApp')
             });
           }
           poluxRequest.get("estudiante_trabajo_grado", parametros).then(function (response) {
-            if (Object.keys(response.data[0]).length > 0) {
+            if (Object.keys(response.data.Data[0]).length > 0) {
               //por cada TG, buscar la solicitud asociada al TG
-              angular.forEach(response.data, function (value) {
+              angular.forEach(response.data.Data, function (value) {
                 
                 
                 if ((ctrl.estudiante.Tipo == 'POSGRADO') && (value.IdTrabajoGrado.IdModalidad.Id == 3)) {
@@ -140,7 +140,7 @@ angular.module('poluxClienteApp')
                   //buscar las solicitudes asociadas al TG
                   poluxRequest.get("solicitud_materias", parametros).then(function (response) {
                     
-                    angular.forEach(response.data, function (value) {
+                    angular.forEach(response.data.Data, function (value) {
                       ctrl.solicitud2.push(value);
                       ctrl.carreras.push(value.CodigoCarrera);
                       //buscar nombre de la carrera
@@ -151,7 +151,7 @@ angular.module('poluxClienteApp')
                         });
                         //buscar asignaturas asociadas a la solicitud
                         poluxRequest.get("asignatura_inscrita", parametros).then(function (resp2) {
-                          angular.forEach(resp2.data, function (value) {
+                          angular.forEach(resp2.data.Data, function (value) {
                             //buscar nombre-datos de la asignaturas
                             var parametros = {
                               'codigo': value.IdAsignaturasElegibles.CodigoAsignatura
@@ -163,12 +163,12 @@ angular.module('poluxClienteApp')
                             });
                           });
                           //
-                          ctrl.asignaturas = resp2.data;
-                          var aaa = ctrl.obtenerNombres(resp2.data);
+                          ctrl.asignaturas = resp2.data.Data;
+                          var aaa = ctrl.obtenerNombres(resp2.data.Data);
                           var resultado = {
                             nombre: "",
                           };
-                          if (!angular.isUndefined(resp2.data.carrerasCollection.carrera)) {
+                          if (!angular.isUndefined(resp2.data.Data.carrerasCollection.carrera)) {
                             resultado = response2.data.carrerasCollection.carrera[0];
                           }
                           var sol = {
@@ -194,14 +194,14 @@ angular.module('poluxClienteApp')
                     });
                     //buscar la solicitud asociada al TG
                     poluxRequest.get("solicitud_materias", parametrosSolicitudMaterias).then(function (response) {
-                      academicaRequest.get("carrera", [response.data[0].CodigoCarrera]).then(function (resp) {
+                      academicaRequest.get("carrera", [response.data.Data[0].CodigoCarrera]).then(function (resp) {
                         var parametrosAsignaturaInscrita = $.param({
-                          query: "IdSolicitudMaterias:" + response.data[0].Id,
+                          query: "IdSolicitudMaterias:" + response.data.Data[0].Id,
                           related: "IdAsignaturasElegibles"
                         });
                         //buscar asignaturas asociadas a la solicitud
                         poluxRequest.get("asignatura_inscrita", parametrosAsignaturaInscrita).then(function (resp2) {
-                          angular.forEach(resp2.data, function (value) {
+                          angular.forEach(resp2.data.Data, function (value) {
                             //buscar nombre-datos de la asignaturas
                             var parametrosBuscarAsignaturas = {
                               'codigo': value.IdAsignaturasElegibles.CodigoAsignatura
@@ -213,8 +213,8 @@ angular.module('poluxClienteApp')
                           });
 
                           //
-                          ctrl.asignaturas = resp2.data;
-                          var aaa = ctrl.obtenerNombres(resp2.data);
+                          ctrl.asignaturas = resp2.data.Data;
+                          var aaa = ctrl.obtenerNombres(resp2.data.Data);
 
                           if (!angular.isUndefined(resp.data.carrerasCollection.carrera)) {
                             var carrera = response.data.carrerasCollection.carrera[0].nombre;

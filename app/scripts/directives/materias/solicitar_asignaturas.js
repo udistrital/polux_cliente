@@ -152,9 +152,9 @@ angular.module('poluxClienteApp')
                             var defer = $q.defer();
                             poluxMidRequest.get("creditos_materias/ObtenerCreditos").then(function (responseCreditos) {
                                 if (mod.CodigoAbreviacion == "EAPOS_PLX") {
-                                    ctrl.creditosMinimos = responseCreditos.data.MateriasPosgrado;
+                                    ctrl.creditosMinimos = responseCreditos.data.Data.MateriasPosgrado;
                                 } else {
-                                    ctrl.creditosMinimos = responseCreditos.data.MateriasProfundizacion;
+                                    ctrl.creditosMinimos = responseCreditos.data.Data.MateriasProfundizacion;
                                 }
                                 defer.resolve()
                             })
@@ -186,10 +186,10 @@ angular.module('poluxClienteApp')
                             return defer.promise
                         }
                         promises.push(getCreditos());
-                        if (Object.keys(response.data[0]).length === 0) {
-                            response.data = []
+                        if (Object.keys(response.data.Data[0]).length === 0) {
+                            response.data.Data = []
                         }
-                        angular.forEach(response.data, function (value) {
+                        angular.forEach(response.data.Data, function (value) {
                             //if (value.CodigoCarrera !== $scope.e.Codigo) {
                             if (!$scope.e.includes(value.CodigoCarrera)) {
                                 promises.push(getCarrera(value));
@@ -253,7 +253,7 @@ angular.module('poluxClienteApp')
 
                         //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
                         var parametros = $.param({
-                            query: "CarreraElegible:" + response.data[0].Id + ",Activo:true",
+                            query: "CarreraElegible:" + response.data.Data[0].Id + ",Activo:true",
                             limit: 0
                         });
 
@@ -285,7 +285,7 @@ angular.module('poluxClienteApp')
                                 return defer.promise;
                             }
                             //recorrer data y buscar datos de las asignaturas
-                            angular.forEach(response.data, function (value) {
+                            angular.forEach(response.data.Data, function (value) {
                                 //buscar asignaturas
                                 promises.push(getAsignatura(value));
                             });

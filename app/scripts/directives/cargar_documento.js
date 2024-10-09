@@ -144,7 +144,7 @@ angular.module('poluxClienteApp')
 
             poluxRequest.post("documento_escrito", documento)
               .then(function (resultado) {
-                $scope.acta.id = resultado.data.Id;
+                $scope.acta.id = resultado.data.Data.Id;
                 $('#modalSeleccionarDocumento').modal('hide');
                 swal(
                   $translate.instant("CONSEJO_CARRERA.ACTA"),

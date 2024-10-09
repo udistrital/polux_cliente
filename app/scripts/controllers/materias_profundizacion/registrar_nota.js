@@ -355,9 +355,9 @@ angular.module('poluxClienteApp')
         poluxRequest.get("espacio_academico_inscrito", ctrl.obtenerParametrosEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado.TrabajoGrado.Id))
           .then(function(espaciosAcademicosInscritos) {
             // Se estudia si la información existe
-            if (Object.keys(espaciosAcademicosInscritos.data[0]).length > 0) {
+            if (Object.keys(espaciosAcademicosInscritos.data.Data[0]).length > 0) {
               // Se actualiza el elemento de la colección
-              estudianteConTrabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
+              estudianteConTrabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data.Data;
             }
             // Se resuelve el mensaje correspondiente
             deferred.resolve($translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS"));
@@ -446,14 +446,14 @@ angular.module('poluxClienteApp')
         // Se consulta hacia los estudiantes con trabajos de grados registrados en la base de datos
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudiantesCursandoTrabajoDeGrado) {
-            if (Object.keys(estudiantesCursandoTrabajoDeGrado.data[0]).length > 0) {
-              angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
+            if (Object.keys(estudiantesCursandoTrabajoDeGrado.data.Data[0]).length > 0) {
+              angular.forEach(estudiantesCursandoTrabajoDeGrado.data.Data, function(estudianteConTrabajoDeGrado) {
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(estudianteConTrabajoDeGrado));
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado));
               });
               $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
                 .then(function(resultadoEstudiantesProcesados) {
-                  angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
+                  angular.forEach(estudiantesCursandoTrabajoDeGrado.data.Data, function(estudianteConTrabajoDeGrado) {
                     if (estudianteConTrabajoDeGrado.espaciosAcademicosInscritos &&
                       estudianteConTrabajoDeGrado.informacionAcademica) {
                       ctrl.coleccionEstudiantesParaRegistrarNota.push(estudianteConTrabajoDeGrado);
@@ -811,7 +811,7 @@ angular.module('poluxClienteApp')
               .post("tr_registrar_nota", informacionParaActualizar)
               .then(function(respuestaRegistrarNota) {
          
-                deferred.resolve(respuestaRegistrarNota);
+                deferred.resolve(respuestaRegistrarNota.data.Data);
               })
               .catch(function(excepcionRegistrarNota) {
                 deferred.reject(excepcionRegistrarNota);
@@ -867,9 +867,9 @@ angular.module('poluxClienteApp')
         poluxRequest.get("asignatura_trabajo_grado", ctrl.obtenerParametrosAsignaturaTrabajoGrado(idTrabajoGrado))
           .then(function(asignaturasDeTrabajoDeGrado) {
             // Se estudia si la información existe
-            if (Object.keys(asignaturasDeTrabajoDeGrado.data[0]).length > 0) {
+            if (Object.keys(asignaturasDeTrabajoDeGrado.data.Data[0]).length > 0) {
               // Se resuelve el resultado
-              deferred.resolve(asignaturasDeTrabajoDeGrado.data);
+              deferred.resolve(asignaturasDeTrabajoDeGrado.data.Data);
             } else {
               // Se rechaza el mensaje correspondiente
               deferred.reject($translate.instant("ERROR.SIN_ASIGNATURA_TRABAJO_GRADO"));

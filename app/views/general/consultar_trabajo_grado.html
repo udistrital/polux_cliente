@@ -4,7 +4,7 @@
     </div>
     <div class="panel-body">
         <div class="row">
-            <form ng-if="consultarTrabajoGrado.userRole.includes('COORDINADOR') || consultarTrabajoGrado.userRole.includes('CONTRATISTA')" name="formCodigoEstudiante" ng-submit="consultarTrabajoGrado.consultarTrabajoGrado()">
+            <form ng-if="consultarTrabajoGrado.userRole.includes('COORDINADOR') || consultarTrabajoGrado.userRole.includes('CONTRATISTA') || consultarTrabajoGrado.userRole.includes('EXTENSION_PASANTIAS')" name="formCodigoEstudiante" ng-submit="consultarTrabajoGrado.consultarTrabajoGrado()">
                 <div class="col-sm-3">
                     <label class="control-label"> {{'INPUT.CODIGO_ESTUDIANTE' | translate}} </label>
                 </div>

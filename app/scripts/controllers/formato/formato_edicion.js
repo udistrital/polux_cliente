@@ -34,21 +34,21 @@ angular.module('poluxClienteApp')
             poluxRequest.get("formato", $.param({
                 limit: "0"
             })).then(function (response) {
-                self.formatos = response.data;
+                self.formatos = response.data.Data;
             });
 
             //cargar todas las preguntas
             poluxRequest.get("pregunta", $.param({
                 limit: "0"
             })).then(function (response) {
-                self.preguntas = response.data;
+                self.preguntas = response.data.Data;
             });
 
             //cargar todas las respuesta
             poluxRequest.get("respuesta", $.param({
                 limit: "0"
             })).then(function (response) {
-                self.respuestas = response.data;
+                self.respuestas = response.data.Data;
             });
         };
 
@@ -122,7 +122,7 @@ angular.module('poluxClienteApp')
             self.gridOptions.data = [];
             poluxRequest.get("tr_formato/" + self.SelectedFormat, '')
                 .then(function (response) {
-                    self.formato_vista = response.data;
+                    self.formato_vista = response.data.Data;
                     self.cargar_en_uigrid(self.formato_vista);
                 });
         };
