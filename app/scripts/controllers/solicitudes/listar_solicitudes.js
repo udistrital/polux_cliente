@@ -458,9 +458,7 @@ angular.module('poluxClienteApp')
                       limit: 1,
                     });
                     poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
-                      console.log("Consulta Usuario Solicitud", usuario)
                         ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                          console.log("Obtener Datos Estudiante 1", codigo_estudiante)
                             academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                                 if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                                   var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
