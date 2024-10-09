@@ -75,12 +75,7 @@ angular.module('implicitToken', [])
             };
             //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
             //autenticacionMidRequest.post("token/emailToken", userRol, {
-            autenticacionMidRequest.post("token/userRol", userRol, {
-                headers: {
-                  'Accept': 'application/json',
-                  "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
-                }
-              })
+            autenticacionMidRequest.post("token/userRol", userRol)
               .then(function(respuestaAutenticacion) {
                 //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
                 /*if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.rol.includes("ESTUDIANTE")){

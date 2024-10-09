@@ -66,7 +66,7 @@ angular.module('poluxClienteApp')
           //buscar solicitudes
           poluxRequest.get("solicitud_materias", parametros).then(function(response) {
             
-            angular.forEach(response.data, function(value) {
+            angular.forEach(response.data.Data, function(value) {
               ctrl.buscarEstudianteTg(value);
             });
           });
@@ -81,12 +81,12 @@ angular.module('poluxClienteApp')
         });
         //buscar la solicitudes
         poluxRequest.get("estudiante_tg", parametros).then(function(response) {
-          academicaRequest.get("datos_estudiante", [response.data[0].CodigoEstudiante, ctrl.periodo.anio, ctrl.periodo.periodo]).then(function(response2) {
+          academicaRequest.get("datos_estudiante", [response.data.Data[0].CodigoEstudiante, ctrl.periodo.anio, ctrl.periodo.periodo]).then(function(response2) {
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
               var solicitud = {
                 "solicitud": tg.Id,
                 "fecha": tg.Fecha,
-                "estudiante": response.data[0].CodigoEstudiante,
+                "estudiante": response.data.Data[0].CodigoEstudiante,
                 "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                 "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                 "estado": tg.Estado

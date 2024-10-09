@@ -26,6 +26,12 @@ angular.module('autenticacionMidService', [])
 		 * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
 		 */
 		var path = CONF.GENERAL.AUTENTICATION_MID_SERVICE;
+		var header = {
+			headers: {
+			  'Accept': 'application/json',
+			  "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
+			}
+		  }
 		return {
 			/**
 			 * @ngdoc function
@@ -48,8 +54,8 @@ angular.module('autenticacionMidService', [])
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo POST del servicio
 			 */
-			post: function(tabla, elemento, headers) {
-				return $http.post(path + tabla, elemento,headers);
+			post: function(tabla, elemento) {
+				return $http.post(path + tabla, elemento, header);
 			},
 			/**
 			 * @ngdoc function

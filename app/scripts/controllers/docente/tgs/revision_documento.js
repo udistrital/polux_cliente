@@ -140,8 +140,8 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
           .then(function(respuestaVinculaciones) {
-            if (Object.keys(respuestaVinculaciones.data[0]).length > 0) {
-              deferred.resolve(respuestaVinculaciones.data);
+            if (Object.keys(respuestaVinculaciones.data.Data[0]).length > 0) {
+              deferred.resolve(respuestaVinculaciones.data.Data);
             } else {
               deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
@@ -266,8 +266,8 @@ angular.module('poluxClienteApp')
         })
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id))
           .then(function(respuestaDocumentoTrabajoGrado) {
-            if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
-              deferred.resolve(respuestaDocumentoTrabajoGrado.data[0]);
+            if (Object.keys(respuestaDocumentoTrabajoGrado.data.Data[0]).length > 0) {
+              deferred.resolve(respuestaDocumentoTrabajoGrado.data.Data[0]);
             } else {
               deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
             }
@@ -310,8 +310,8 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())
           .then(function(respuestaRevisionesTrabajoGrado) {
-            if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
-              ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado.data;
+            if (Object.keys(respuestaRevisionesTrabajoGrado.data.Data[0]).length > 0) {
+              ctrl.revisionesTrabajoGrado = respuestaRevisionesTrabajoGrado.data.Data;
               ctrl.revisionesTrabajoGrado.forEach(revision => {
                 revision.EstadoRevisionNombre = ctrl.EstadoRevision.find(estRev => {
                   return estRev.Id == revision.EstadoRevisionTrabajoGrado

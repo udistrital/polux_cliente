@@ -10,52 +10,59 @@
 var text_es = {
     TERMINOS: {
         MONOGRAFIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
-            "<ul>" +
-            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
-            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
-            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<ul>" +                     
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
             "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +
+            "<li>Debe tener copias locales de las versiones del documento de grado, solo será visible la última versión que sube al sistema y estos documentos con el tiempo pueden ser depurados de la base de datos</li>" +
             "</ul>",
         PASANTIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
             "<ul>" +
-            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
-            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
-            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le asignará a cada estudiante un docente director. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
             "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +
+            "<li>Debe tener copias locales de las versiones del documento de grado, solo será visible la última versión que sube al sistema y estos documentos con el tiempo pueden ser depurados de la base de datos</li>" +
             "<li>La pasantía dará inicio una vez se dé aprobación por parte del Consejo Curricular y se verifique por la unidad de extensión la afiliación a ARL.</li>" +
             "</ul>",
         EMPRENDIMIENTO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
-            "<ul>" +
-            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
-            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
-            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<ul>" +                     
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
             "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +
+            "<li>Debe tener copias locales de las versiones del documento de grado, solo será visible la última versión que sube al sistema y estos documentos con el tiempo pueden ser depurados de la base de datos</li>" +
             "</ul>",
         POSGRADO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
             "<ul>" +
-            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
+           "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
             "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +            
             "<li>En caso que el estudiante repruebe un espacio académico de los correspondientes a la modalidad de grado, deberá optar por otra modalidad de grado.</li>" +
             "<li>La duración es de un periodo académico para cursar y aprobar la modalidad de espacios académicos de posgrado.</li>" +
             "<li>La aprobación de esta modalidad está sujeta a que el estudiante cuente con las renovaciones de matrícula mínimas para su desarrollo.</li>" +
             "</ul>",
         INVESTIGACION: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
-            "<ul>" +
-            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
-            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
-            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<ul>" +                     
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
             "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +
+            "<li>Debe tener copias locales de las versiones del documento de grado, solo será visible la última versión que sube al sistema y estos documentos con el tiempo pueden ser depurados de la base de datos</li>" +
             "</ul>",
         ARTICULO: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
             "<ul>" +
-            "<li>Si el trabajo de grado será desarrollado por dos estudiantes, se debe ajustar el formato para tal fin.</li>" +
-            "<li>Para la evaluación de esta modalidad, el estudiante debe ser autor principal del artículo.</li>" +
-            "<li>El artículo científico debe dar crédito a la filiación con la Universidad Distrital Francisco José de Caldas.</li>" +
-            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe estar matriculado.</li>" +
-            "<li>La remisión del artículo a la revista debe ser posterior a la fecha de aprobación de la modalidad.</li>" +
-            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado en el Proyecto Curricular respectivo, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
-            "<li>Para esta modalidad se aceptan dos estudiantes como autores principales (autor 1 y autor 2) y máximo un (1) o dos (2) coautores, según el número de directores en la modalidad.</li>" +
+            "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
             "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +
+            "<li>Debe tener copias locales de las versiones del documento de grado, solo será visible la última versión que sube al sistema y estos documentos con el tiempo pueden ser depurados de la base de datos</li>" +
+            "<li>Para la evaluación de esta modalidad, el estudiante debe ser autor principal del artículo.</li>" +
+            "<li>El artículo científico debe dar crédito a la filiación con la Universidad Distrital Francisco José de Caldas.</li>" +           
+            "<li>La remisión del artículo a la revista debe ser posterior a la fecha de aprobación de la modalidad.</li>" +           
+            "<li>Para esta modalidad se aceptan dos estudiantes como autores principales (autor 1 y autor 2) y máximo un (1) o dos (2) coautores, según el número de directores en la modalidad.</li>" +            
             "</ul>",
     },
     DEBE_SELECCIONAR_UNA_RESPUESTA:"Debe seleccionar una opción de respuesta (Aprobar o Rechazar)",
@@ -76,6 +83,7 @@ var text_es = {
     MODALIDAD: "Modalidad",
     TITULO_PROPUESTA: "Título de la propuesta",
     VER_DOCUMENTO: "Ver documento",
+    ANEXOS: "Anexo",
     DESCARGAR_DOCUMENTOS: "Descargar archivo anexo",
     DOCUMENTO_TG: "Documento del trabajo de grado",
     ESTADO_DOCUMENTO: "Estado Documento",
@@ -264,6 +272,7 @@ var text_es = {
     REGISTRO_PAGO: "Registro del pago",
     REGISTRO_NOTA: "Registro de las notas",
     SOLICITUD_REGISTRADA: "El formulario se registro correctamente",
+    AVISO_ARL: "Sr(a) estudiante, si su pasantía es de caracter externo debe tramitar su ARL lo más pronto posible.",
     APROBACION: "Aprobación",
     ERROR_CARGAR_SOLICITUDES: "Ocurrio un error al intentar cargar la solicitud",
     ERROR_SOLICITUDES_1: "Ocurrió un error al insertar los detalles de la solicitud",
@@ -1016,11 +1025,15 @@ var text_es = {
     ACUERDO: "Acuerdo 038 de 2015",
     ACUERDO_INFO: "A continuación se muestra el acuerdo 038 de 2015 del Consejo Académico  de la Universidad Distrital Francisco Jósé de Caldas por medio del cual se " +
         "reglamenta el trabajo de grado para los estudiantes de pregrado de la Universidad y se dictan otras directrices.",
+    GENERAR_REPORTE: "Generar Reportes",
+    GENERAR_REPORTE_GENERAL: "Generar Reporte General",
+    GENERAR_REPORTE_SOLICITUD: "Generar Reporte de Solicitudes",
     REPORTE_GENERAL_DOCENTES: "Reporte general por docentes",
     NOTIFICACIONES_ELIMINADA: "Eliminación correcta de la notificación",
     NOTIFICACIONES_REALIZADA: "Se completo la petición",
     SIN_NOTIFICACIONES: "No se encuentran notificaciones en espera",
     NOMBRE_REVISTA: "Nombre de la revista",
+    PAIS_REVISTA: "País de la revista",
     LINK_REVISTA: "Link de la revista de aceptación del artículo",
     CLASIFICACION_REVISTA: "Clasificación de la revista dónde fue aceptado el artículo",
     MENSAJE_REVISTA: "Teniendo en cuenta las clasificaciones dispuestas por Publindex, ubique su revista y su respectivo código de clasificación:" +
@@ -1029,7 +1042,11 @@ var text_es = {
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
         "</ul>",
     CERTIFICADO_UNIDAD_EXT_PASANTIA:"Certificado de la unidad de extension de pasantias",
-    DOCUMENTOS_SOLICITUD: "Documentos asociados a la solicitud"
+    DOCUMENTOS_SOLICITUD: "Documentos asociados a la solicitud",
+    NOTIFICACION: {
+        COORDINACION:"COORDINACIÓN PROYECTO CURRICULAR",
+        PASANTIA:"OFICINA DE EXTENSIÓN DE PASANTÍAS"
+    }
 };
 
 /**
@@ -1049,6 +1066,8 @@ var text_en = {
     MODALIDAD: "Modality",
     TITULO_PROPUESTA: "Title of proposal",
     VER_DOCUMENTO: "Show document",
+    ANEXOS: "Annexed",
+    DESCARGAR_DOCUMENTOS: "Download attached file",
     DOCUMENTO_TG: "Degree Work Document",
     ESTADO_DOCUMENTO: "Document Status",
     RESUMEN: "Abstract",
@@ -1223,10 +1242,14 @@ var text_en = {
     NO_PENSUMS: "The curricular project does not have active pensums",
     NO_ASIGNATURAS: "There are no academic spaces belonging to the selected curriculum",
     NOMBRE_EMPRESA: "Enter the name of the company",
+    GENERAR_REPORTE: "Generate Reports",
+    GENERAR_REPORTE_GENERAL: "Generate General Report",
+    GENERAR_REPORTE_SOLICITUD: "Generate Request Report",
     REGISTRO_FORMULARIO: "Form Submit",
     REGISTRO_PAGO: "Payment submit",
     REGISTRO_NOTA: "Grades record",
     SOLICITUD_REGISTRADA: "The form was successfully registered",
+    AVISO_ARL: "Dear student, if your internship is external, you must process your ARL as soon as possible.",
     ERROR_CARGAR_SOLICITUDES: "There was an error loading the request.",
     ERROR_SOLICITUDES_1: "There was an error inserting the details of the request.",
     ERROR_SOLICITUDES_2: "There was an error inserting the users of the request",
@@ -1975,7 +1998,11 @@ var text_en = {
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +
-        "</ul>"
+        "</ul>",
+    NOTIFICACION: {
+            COORDINACION:"CURRICULAR PROJECT COORDINATION",
+            PASANTIA:"INTERNSHIP EXTENSION OFFICE"
+    }
 };
 
 /**

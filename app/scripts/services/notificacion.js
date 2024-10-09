@@ -41,10 +41,10 @@ angular.module('notificacionService', [])
                 self.roles= token_service.getAppPayload().appUserRole;
             }
                     ROL=  self.roles;
-                    if(ROL!=null && ROL.includes('COORDINADOR_PREGRADO'))
+                    if(ROL!=null && ROL.includes('COORDINADOR'))
                   {
                       
-                      ROL =  'COORDINADOR_PREGRADO';
+                      ROL =  'COORDINADOR';
                       no_vistos = 1;
                   }
                   if(ROL!=null && ROL.includes('ESTUDIANTE'))

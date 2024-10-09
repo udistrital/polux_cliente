@@ -325,7 +325,7 @@ angular.module('poluxClienteApp')
         poluxMidRequest.get("cupos/Obtener").then(function(responseCupos) {
             //$scope.cupos_excelencia = response.data.Cupos_excelencia;
             //$scope.cupos_adicionales = response.data.Cupos_adicionales;
-            ctrl.cuposDisponibles = responseCupos.data.Cupos_excelencia + responseCupos.data.Cupos_adicionales;
+            ctrl.cuposDisponibles = responseCupos.data.Data.Cupos_excelencia + responseCupos.data.Data.Cupos_adicionales;
             ctrl.numeroAdmitidos = 0;
             defer.resolve(ctrl.cuposDisponibles);
           })
@@ -420,14 +420,14 @@ angular.module('poluxClienteApp')
           query: "DetalleTipoSolicitud:44" + ",SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
         });
         poluxRequest.get("detalle_solicitud", parametros).then(function(detalleSolicitud) {
-            if (Object.keys(detalleSolicitud.data[0]).length > 0) {
-              var carreraSolicitud = JSON.parse(detalleSolicitud.data[0].Descripcion.split("-")[1]);
+            if (Object.keys(detalleSolicitud.data.Data[0]).length > 0) {
+              var carreraSolicitud = JSON.parse(detalleSolicitud.data.Data[0].Descripcion.split("-")[1]);
               if (ctrl.carrera == carreraSolicitud.Codigo) {
                 var parametros = $.param({
                   query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
                 });
                 poluxRequest.get("usuario_solicitud", parametros).then(function(usuarioSolicitud) {
-                    academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
+                    academicaRequest.get("datos_estudiante", [usuarioSolicitud.data.Data[0].Usuario, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
                         //academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
                         if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                           ctrl.consultarNombreCarrera(response2.data.estudianteCollection.datosEstudiante[0].carrera)
@@ -435,7 +435,7 @@ angular.module('poluxClienteApp')
                               var solicitud = {
                                 "solicitud": value.SolicitudTrabajoGrado.Id,
                                 "fecha": value.Fecha,
-                                "estudiante": usuarioSolicitud.data[0].Usuario,
+                                "estudiante": usuarioSolicitud.data.Data[0].Usuario,
                                 "nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                                 "promedio": response2.data.estudianteCollection.datosEstudiante[0].promedio,
                                 "rendimiento": response2.data.estudianteCollection.datosEstudiante[0].rendimiento,
@@ -513,7 +513,7 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("respuesta_solicitud", parametros).then(function(respuestaSolicitud) {
               var promises = [];
-              angular.forEach(respuestaSolicitud.data, function(value) {
+              angular.forEach(respuestaSolicitud.data.Data, function(value) {
                 if (Object.keys(value).length > 0) {
                   promises.push(ctrl.cargarParametrosSolicitud(value));
                 }
@@ -669,7 +669,8 @@ angular.module('poluxClienteApp')
         poluxRequest.post("tr_registrar_respuestas_solicitudes", dataAdmitidos).then(function(response) {
             $scope.loadRespuestas = false;
             
-            if (response.data[0] === "Success") {
+            console.log("Comparación Success")
+            if (response.data.Success === true) {
               var Atributos={
                 rol:'ESTUDIANTE',
             }
@@ -687,7 +688,7 @@ angular.module('poluxClienteApp')
             } else {
               swal(
                 $translate.instant('ERROR'),
-                $translate.instant(response.data[1]),
+                $translate.instant(response.data.Data[1]),
                 'warning'
               )
             }

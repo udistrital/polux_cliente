@@ -90,13 +90,13 @@ angular.module('poluxClienteApp')
       ctrl.muestra_btn = 0;
       ctrl.carrerasCoordinador = [];
       //token_service.token.documento = "79647592";
-      //token_service.token.role.push("COORDINADOR_PREGRADO");
+      //token_service.token.role.push("COORDINADOR");
       //token_service.token.documento = "20131020002";
       //token_service.token.role.push("ESTUDIANTE");
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      if(ctrl.userRole.includes('COORDINADOR_POSGRADO')||ctrl.userRole.includes('COORDINADOR_PREGRADO')||ctrl.userRole.includes('ADMIN_POLUX'))
+      if(ctrl.userRole.includes('COORDINADOR_POSGRADO')||ctrl.userRole.includes('COORDINADOR')||ctrl.userRole.includes('ADMIN_POLUX'))
       {
         ctrl.muestra_btn ++;
       }
