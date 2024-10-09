@@ -243,24 +243,42 @@ angular.module('poluxClienteApp')
       ctrl.getCarrerasCoordinador = function () {
         var rol = ""
         var defer = $q.defer();
-        if (token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
-          rol = "PREGRADO"
+        if (token_service.getAppPayload().appUserRole.includes("CONTRATISTA")) {
+
+          academicaRequest.get("asistente_proyecto", [$scope.userId]).then(async function (responseAsistente) {
+
+            if (!angular.isUndefined(responseAsistente.data.asistente.proyectos)) {
+              ctrl.carrerasCoordinador = responseAsistente.data.asistente.proyectos;
+              defer.resolve();
+            } else {
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
+              defer.reject("Carreras no definidas");
+            }
+          }).catch(function (error) {
+            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
+            defer.reject(error);
+          });
+
         } else {
-          rol = "POSGRADO"
-        }
-        academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
-          //
-          if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
-            ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
-            defer.resolve();
+          if (token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
+            rol = "PREGRADO"
           } else {
-            ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
-            defer.reject("Carreras no definidas");
+            rol = "POSGRADO"
           }
-        }).catch(function (error) {
-          ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
-          defer.reject(error);
-        });
+          academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
+            //
+            if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
+              ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
+              defer.resolve();
+            } else {
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
+              defer.reject("Carreras no definidas");
+            }
+          }).catch(function (error) {
+            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
+            defer.reject(error);
+          });
+        }
         return defer.promise;
       }
 
@@ -1264,7 +1282,7 @@ angular.module('poluxClienteApp')
                 let estadoRtaNueva = ctrl.EstadoSolicitud.find(estSol => {
                   return estSol.Id == objRtaNueva.EstadoSolicitud
                 })
-                if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR")) {
+                if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
                   let estadoAux = ctrl.EstadoSolicitud.find(est => {
                     return est.CodigoAbreviacion == "ACPR_PLX"
                   })
@@ -2515,7 +2533,12 @@ angular.module('poluxClienteApp')
           return tipoDoc.CodigoAbreviacion == "ACT_PLX"
         })
         angular.forEach(ctrl.carrerasCoordinador, function (carrera) {
-          sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
+          
+          if(token_service.getAppPayload().appUserRole.includes("CONTRATISTA")){
+            sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.proyecto;
+          }else{
+            sql = sql + ",Titulo.contains:Codigo de carrera: " + carrera.codigo_proyecto_curricular;
+          }
 
           var parametrosDocumentos = $.param({
             query: "TipoDocumentoEscrito:" + tipoDocumento.Id + sql,
