@@ -517,8 +517,8 @@ angular.module('poluxClienteApp')
         // Consultar el documento con el limit 1
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id, tipoDocumentoDGRREV.Id, 1))
         .then(function(respuestaDocumento) {
-          if (Object.keys(respuestaDocumentoTrabajoGrado.data.Data[0]).length > 0) {
-            deferred.resolve(respuestaDocumentoTrabajoGrado.data.Data[0]); // Devuelve el documento
+          if (Object.keys(respuestaDocumento.data.Data[0]).length > 0) {
+            deferred.resolve(respuestaDocumento.data.Data[0]); // Devuelve el documento
           } else {
             deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           }
@@ -549,8 +549,8 @@ angular.module('poluxClienteApp')
         // Consultar el documento con el limit 3
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(vinculacionTrabajoGrado.TrabajoGrado.Id, tipoDocumentoANX.Id, 3))
         .then(function(respuestaDocumento) {
-          if (respuestaDocumento.data && respuestaDocumento.data.length > 0) {
-            deferred.resolve(respuestaDocumento.data); // Devuelve los anexos
+          if (respuestaDocumento.data.Success && respuestaDocumento.data.Data.length > 0) {
+            deferred.resolve(respuestaDocumento.data.Data); // Devuelve los anexos
           } else {
             deferred.reject($translate.instant("ERROR.SIN_TRABAJO_GRADO"));
           }
