@@ -1042,7 +1042,11 @@ var text_es = {
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>Revistas Internacionales</a></li>" +
         "</ul>",
     CERTIFICADO_UNIDAD_EXT_PASANTIA:"Certificado de la unidad de extension de pasantias",
-    DOCUMENTOS_SOLICITUD: "Documentos asociados a la solicitud"
+    DOCUMENTOS_SOLICITUD: "Documentos asociados a la solicitud",
+    NOTIFICACION: {
+        COORDINACION:"COORDINACIÓN PROYECTO CURRICULAR",
+        PASANTIA:"OFICINA DE EXTENSIÓN DE PASANTÍAS"
+    }
 };
 
 /**
@@ -1994,7 +1998,11 @@ var text_en = {
         "<ul>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +
-        "</ul>"
+        "</ul>",
+    NOTIFICACION: {
+            COORDINACION:"CURRICULAR PROJECT COORDINATION",
+            PASANTIA:"INTERNSHIP EXTENSION OFFICE"
+    }
 };
 
 /**

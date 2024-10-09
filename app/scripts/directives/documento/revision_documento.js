@@ -16,7 +16,7 @@
  * @param {Object} tipodocumento Arreglo de los tipos de documentos.
  */
 angular.module('poluxClienteApp')
-    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient,notificacionRequest) {
+    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient, notificacionRequest, autenticacionMidRequest) {
         return {
             restrict: "E",
             scope: {
@@ -336,15 +336,78 @@ angular.module('poluxClienteApp')
                                 }
                                 
                                 poluxMidRequest.post("tr_registrar_revision_tg", data_transaccion)
-                                    .then(function (respuestaRegistrarRevisionTg) {
-                                        console.log("Comparación Success", respuestaRegistrarRevisionTg)
-                                        if (respuestaRegistrarRevisionTg.data.Success === true) {
-                                            var Atributos={
-                                                rol:'ESTUDIANTE',
+                                    .then(async function (respuestaRegistrarRevisionTg) {
+                                        if (respuestaRegistrarRevisionTg.data[0] === "Success") {
+                                           
+                                            //Se notifica al estudiante cuando el docente responde por primera vez a la revisión
+
+                                            var usuario, codigo, comentario, correos = []
+
+                                            //Se busca el codigo del estudiante, para obtener el correo
+                                            var parametro = $.param({
+                                                query: "trabajo_grado:"+ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Id,
+                                                limit: 0
+                                            });
+
+                                            await poluxRequest.get("estudiante_trabajo_grado",parametro).then(function(estudiante_tg){
+                                                console.log(estudiante_tg)
+                                                codigo = estudiante_tg.data[0].Estudiante
+                                            })
+
+                                            var data_auth_mid = {
+                                                numero: codigo
                                             }
-                                            notificacionRequest.enviarCorreo('Revision realizada',Atributos,['101850341'],'','','Se ha realizado la revision del trabajo de grado, se ha dado de parte de '+nombreDocente+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
-                                           // notificacionRequest.enviarCorreo('Revision realizada',Atributos,['Documento.estudiante'],'','','Se ha realizado larevision del trabajo de grado, se ha dado de parte de '+nombreDocente+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
-                      
+
+                                            await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                                                correos.push(response.data.email)
+                                            })
+
+                                            if (ctrl.correccion[0] != null) {
+                                                comentario = ctrl.correccion[0].Observacion
+                                            }
+                                            else if (ctrl.correcciones.length >= 2) {
+                                                comentario = ctrl.correcciones[0].Observacion
+                                            } else {
+                                                if (ctrl.correcciones[0].Documento) {
+                                                    comentario = ctrl.correcciones[0].Justificacion
+                                                } else {
+                                                    comentario = ctrl.correcciones[0].Observacion
+                                                }
+                                            }
+
+                                            //Se debe buscar el nombre del docente por medio del documento
+                                            await academicaRequest.get("docente_tg", [ctrl.revision.VinculacionTrabajoGrado.Usuario]).then(function (docente) {
+                                                if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                                    usuario = docente.data.docenteTg.docente[0].nombre
+                                                }
+                                            })
+
+                                            var data_correo = {
+                                                "Source": "notificacionPolux@udistrital.edu.co",
+                                                "Template": "POLUX_PLANTILLA_REVISION_DOC",
+                                                "Destinations": [
+                                                    {
+                                                        "Destination": {
+                                                            "ToAddresses": correos
+                                                        },
+                                                        "ReplacementTemplateData": {
+                                                            "nombre_usuario": usuario,
+                                                            "titulo_tg": ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo,
+                                                            "comentario": comentario
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            //console.log(correos)
+
+                                            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                                            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                                                console.log("Envia el correo",response)
+                                            }).catch(function (error) {
+                                                console.log("Error: ", error)
+                                            });*/
+
                                             swal(
                                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                                 $translate.instant("REGISTRAR_REVISION.REGISTRADA"),

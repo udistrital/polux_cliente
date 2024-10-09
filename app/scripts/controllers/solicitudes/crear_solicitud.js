@@ -86,7 +86,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service, documentoRequest) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -2531,54 +2531,102 @@ angular.module('poluxClienteApp')
           DetallesSolicitud: data_detalles,
           UsuariosSolicitud: data_usuarios
         }
-        poluxMidRequest.post("tr_solicitud", ctrl.solicitud).then(function(response) {
-          console.log("Comparación Success")
+        poluxMidRequest.post("tr_solicitud", ctrl.solicitud).then(async function(response) {
           if (response.data.Success === true) {
-            academicaRequest.get("datos_basicos_estudiante", [ctrl.codigo])
-            .then(function(responseDatosBasicos) {
-                var carrera = responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
-                academicaRequest.get("carrera",[carrera]).then(function(ResponseCarrea){
-                  carrera = ResponseCarrea.data.carrerasCollection.carrera[0].nombre;
+            
+            //Se prepara la información para enviar la notificación al siguiente usuario en el flujo
+            
+            var titulo_tg, modalidad_tg, correos = []
 
-                  var nick = token_service.getAppPayload().email.split("@").slice(0);
-                  notificacionRequest.enviarNotificacion('Solicitud de '+carrera+' de '+nick[0],'PoluxCola','/solicitudes/listar_solicitudes');               
-                });
-              });              
-            //   if(ctrl.modalidad == "PAS_PLX"){
-            //     console.log("Modalidad", ctrl.modalidad)
-            //     swal(
-                  
-            //       $translate.instant("AVISO_ARL"),
-            //       'warning'
-            //     );
-            //   }
-            // swal(
-            //   $translate.instant("FORMULARIO_SOLICITUD"),
-            //   $translate.instant("SOLICITUD_REGISTRADA"),
-            //   'success'
-            // );
-            if (ctrl.modalidad == "PAS_PLX") {
-              console.log("Modalidad", ctrl.modalidad);
-              swal(
-                $translate.instant("FORMULARIO_SOLICITUD"),
-                $translate.instant("AVISO_ARL"),
-                'warning'
-              ).then(() => {
-                // Cuando el usuario cierre el aviso de advertencia, se mostrará el siguiente
-                swal(
-                  $translate.instant("FORMULARIO_SOLICITUD"),
-                  $translate.instant("SOLICITUD_REGISTRADA"),
-                  'success'
-                );
-              });
-            } else {
-              // Si no se cumple la condición, solo se muestra el aviso de éxito
-              swal(
-                $translate.instant("FORMULARIO_SOLICITUD"),
-                $translate.instant("SOLICITUD_REGISTRADA"),
-                'success'
-              );
+            if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//Si es solicitud inicial, los datos de Modalidad y Título se recuperan de una forma distinta a las demás solicitudes
+              angular.forEach(ctrl.Modalidades, function (mod) {
+                if (mod.CodigoAbreviacion == ctrl.modalidad){
+                  modalidad_tg = mod.Nombre
+                }
+              })
+  
+              angular.forEach(ctrl.detalles, function (detalle) {
+                if (detalle.Detalle.CodigoAbreviacion == "NPRO") {
+                  titulo_tg = detalle.respuesta;
+                }
+              })  
             }
+            else{
+              angular.forEach(ctrl.Modalidades, function (mod) {
+                if (mod.Id == ctrl.trabajoGrado.Modalidad){
+                  modalidad_tg = mod.Nombre
+                }
+              })
+
+              titulo_tg = ctrl.trabajoGrado.Titulo
+            }
+            
+            if(ctrl.modalidad == "PAS_PLX" && ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial de pasantía
+              //se debe enviar a la Oficina de Extensión de Pasantías
+              correos.push("pasantias_ing@udistrital.edu.co")
+            } else{
+              //se debe enviar al Docente Director
+              if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial, se busca el documento desde los detalles del formulario
+                angular.forEach(ctrl.detalles,async function(detalle){
+                  if(detalle.Detalle.CodigoAbreviacion == "DAP"){
+  
+                    console.log(detalle.respuesta)
+  
+                    var data_auth_mid = {
+                      numero : detalle.respuesta
+                    }
+            
+                    await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
+                      correos.push(response.data.email)
+                    })
+                  }
+                })
+              }
+              else{//si es otro tipo de solicitud, se busca desde los vinculados
+
+                var data_auth_mid = {
+                  numero : ctrl.solicitud.Respuesta.EnteResponsable.toString()
+                }
+        
+                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
+                  correos.push(response.data.email)
+                })
+              }
+            }
+
+            var data_correo = {
+              "Source": "notificacionPolux@udistrital.edu.co",
+              "Template": "POLUX_PLANTILLA_SOLICITUD",
+              "Destinations": [
+                {
+                  "Destination": {
+                    "ToAddresses": correos
+                  },
+                  "ReplacementTemplateData": {
+                    "tipo_solicitud": ctrl.TipoSolicitud.Nombre,
+                    "nombre_estudiante": ctrl.estudiante.Nombre,
+                    "titulo_tg": titulo_tg,
+                    "modalidad": modalidad_tg
+                  }
+                }
+              ]
+            }
+
+            //console.log(correos)
+
+            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+              console.log("Envia el correo")
+              console.log(response)
+            }).catch(function (error) {
+              console.log("Error: ", error)
+            });*/
+
+            swal(
+              $translate.instant("FORMULARIO_SOLICITUD"),
+              $translate.instant("SOLICITUD_REGISTRADA"),
+              'success'
+            );
             if(ctrl.Docente==1)
             {
               $location.path("/#");

@@ -37,7 +37,7 @@
  */
 angular.module('poluxClienteApp')
     .controller('RevisionArlCtrl',
-        function ($scope, $q, $translate, notificacionRequest, academicaRequest, utils, gestorDocumentalMidRequest, $window, poluxRequest, token_service, documentoRequest, parametrosRequest) {
+        function ($scope, $q, $translate, notificacionRequest, academicaRequest, utils, gestorDocumentalMidRequest, $window, poluxRequest, token_service, documentoRequest, parametrosRequest,autenticacionMidRequest) {
             var ctrl = this;
 
             ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
@@ -164,6 +164,15 @@ angular.module('poluxClienteApp')
 
                     await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseDetallesPasantia) {
                         ctrl.DetallesPasantia = responseDetallesPasantia.data.Data;
+                    });
+
+                    parametrosConsulta = $.param({
+                        query: "TipoParametroId__CodigoAbreviacion:EST_SOL",
+                        limit: 0,
+                    });
+
+                    await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosSolicitudes) {
+                        ctrl.EstadosSolicitud = responseEstadosSolicitudes.data.Data;
                     });
 
                     resolve();
@@ -607,6 +616,61 @@ angular.module('poluxClienteApp')
 
             /**
             * @ngdoc method
+            * @name EnvioNotificacion
+            * @methodOf poluxClienteApp.controller:RevisionArlCtrl
+            * @param {undefined} undefined No requiere parámetros
+            * @returns {undefined} No retorna ningún valor
+            * @description 
+            * Función que se encarga de enviar la notificación de la respuesta de la solicitud
+            */
+            ctrl.EnvioNotificacion = async function () {
+                
+                var correos = [], respuesta
+
+
+                var data_auth_mid = {
+                    numero : ctrl.trabajoSeleccionado.estudiantes[0].Estudiante
+                  }
+          
+                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo con el documento
+                    correos.push(response.data.email)
+                  })
+
+                angular.forEach(ctrl.EstadosSolicitud,function(estadoSolicitud){
+                    if(estadoSolicitud.CodigoAbreviacion == ctrl.respuestaRevision){
+                        respuesta = estadoSolicitud.Nombre
+                    }
+                })
+
+                var data_correo = {
+                    "Source": "notificacionPolux@udistrital.edu.co",
+                    "Template": "POLUX_PLANTILLA_RESPUESTA_ARL",
+                    "Destinations": [
+                        {
+                            "Destination": {
+                                "ToAddresses": correos
+                            },
+                            "ReplacementTemplateData": {
+                                "respuesta": respuesta,
+                                "titulo_tg": ctrl.trabajoSeleccionado.Titulo
+                            }
+                        }
+                    ]
+                }
+                
+                //console.log(correos)
+
+                //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                    console.log("Envia el correo")
+                    console.log(response)
+                }).catch(function (error) {
+                    console.log("Error: ", error)
+                });*/
+            }
+
+            /**
+            * @ngdoc method
             * @name responder
             * @methodOf poluxClienteApp.controller:RevisionArlCtrl
             * @param {undefined} undefined No requiere parámetros
@@ -618,7 +682,7 @@ angular.module('poluxClienteApp')
             ctrl.responder = function () {
                 console.log(ctrl.respuestaRevision)
 
-                if (ctrl.respuestaRevision == "ACC_PLX") {//Se aprueba la ARL
+                if (ctrl.respuestaRevision == "AOP_PLX") {//Se aprueba la ARL
 
                     let EstadoTgTemp = ctrl.EstadosTrabajoGrado.find(data => {//Se busca el estado trabajo grado "En Curso"
                         return data.CodigoAbreviacion == "EC_PLX"
@@ -641,6 +705,9 @@ angular.module('poluxClienteApp')
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
                                 .then(function (dataTrabajos) {
+
+                                    ctrl.EnvioNotificacion()
+
                                     swal(
                                         $translate.instant("REGISTRO_EXITOSO"),
                                         $translate.instant("REVISION_ARL.ARL_APROBADA"),
@@ -686,6 +753,9 @@ angular.module('poluxClienteApp')
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
                                 .then(function (dataTrabajos) {
+
+                                    ctrl.EnvioNotificacion()
+
                                     swal(
                                         $translate.instant("REGISTRO_EXITOSO"),
                                         $translate.instant("REVISION_ARL.ARL_RECHAZADA"),

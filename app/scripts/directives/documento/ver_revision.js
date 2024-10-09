@@ -12,7 +12,7 @@
  * @param {string} autor Nombre del autor que realiza el comentario.
  */
 angular.module('poluxClienteApp')
-    .directive('verRevision', function (poluxRequest, $translate, utils) {
+    .directive('verRevision', function (poluxRequest, $translate, utils, notificacionRequest, academicaRequest, autenticacionMidRequest) {
         return {
             restrict: "E",
             scope: {
@@ -105,12 +105,104 @@ angular.module('poluxClienteApp')
                             query: "Correccion:" + mycomentario.Correccion.Id,
                             sortby: "Id",
                             order: "asc"
-                        })).then(function (response) {
-                            comentarios.push(response.data.Data);
-                            var Atributos={
-                                rol:'ESTUDIANTE',
+                        })).then(async function (response) {
+                            comentarios.push(response.data);
+                            
+                            //Se prepara la información para la notificación
+
+                            var ult_comentario = response.data[response.data.length-1]//Se obtiene el último comentario realizado
+
+                            var respondio_docente, codigo, correos = []
+
+                            //Debido a que no se almacenan los documentos del autor del comentario, se busca si el nombre autor corresponde al nombre del docente para determinar el correo del destinatario
+                            await academicaRequest.get("docente_tg", [ult_comentario.Correccion.RevisionTrabajoGrado.VinculacionTrabajoGrado.Usuario]).then(function (docente) {
+                                if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+
+                                    if(docente.data.docenteTg.docente[0].nombre == ult_comentario.Autor){
+                                        //RESPONDIÓ DOCENTE
+                                        respondio_docente = true
+                                    }
+                                    else{
+                                        //RESPONDIÓ ESTUDIANTE
+                                        respondio_docente = false
+                                    }
+                                }
+                            })
+
+                            if(respondio_docente){//se busca el correo del estudiante
+                                
+                                //Se busca el codigo del estudiante
+                                var parametro = $.param({
+                                    query: "trabajo_grado:"+ult_comentario.Correccion.RevisionTrabajoGrado.DocumentoTrabajoGrado.TrabajoGrado.Id,
+                                    limit: 0
+                                });
+
+                                await poluxRequest.get("estudiante_trabajo_grado",parametro).then(function(estudiante_tg){
+                                    codigo = estudiante_tg.data[0].Estudiante
+                                })
+
+                                var data_auth_mid = {
+                                    numero: codigo
+                                }
+
+                                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                                    correos.push(response.data.email)
+                                })
+
+                            } else{//se busca el correo del docente
+                                var data_auth_mid = {
+                                    numero: ult_comentario.Correccion.RevisionTrabajoGrado.VinculacionTrabajoGrado.Usuario.toString()
+                                }
+
+                                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                                    correos.push(response.data.email)
+                                })
                             }
-                            notificacionRequest.enviarCorreo('Revision realizada',Atributos,['101850341'],'','','Se ha realizado la revision del trabajo de grado, se ha dado de parte de '+token_service.getAppPayload().email+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');                                      
+
+                            var data_correo = {
+                                "Source": "notificacionPolux@udistrital.edu.co",
+                                "Template": "POLUX_PLANTILLA_REVISION_DOC",
+                                "Destinations": [
+                                    {
+                                        "Destination": {
+                                            "ToAddresses": correos
+                                        },
+                                        "ReplacementTemplateData": {
+                                            "nombre_usuario": ult_comentario.Autor,
+                                            "titulo_tg": ult_comentario.Correccion.RevisionTrabajoGrado.VinculacionTrabajoGrado.TrabajoGrado.Titulo,
+                                            "comentario": ult_comentario.Comentario
+                                        }
+                                    }
+                                ]
+                            }
+
+                            //console.log(correos)
+
+                            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                                console.log("Envia el correo",response)
+                            }).catch(function (error) {
+                                console.log("Error: ", error)
+                            });*/
+
+                            //Para crear plantillas de correo
+                            /*var html = ``
+
+                            var data_plantilla = {
+                                "Template": {
+                                    "HtmlPart": html,
+                                    "SubjectPart": "POLUX",
+                                    "TemplateName": "POLUX_PLANTILLA_ASIGNACION",
+                                    "TextPart": ""
+                                }
+                            }
+                            notificacionRequest.post("template_email", data_plantilla).then(function (response) {
+                                console.log("crea plantilla")
+                                console.log(response)
+                            }).catch(function (error) {
+                                console.log("Error: ", error)
+                            });*/
+
                         });
                     }); //.then(function(data){
                     //ctrl.coment = null;

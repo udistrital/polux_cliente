@@ -43,7 +43,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -732,15 +732,136 @@ angular.module('poluxClienteApp')
         crearData()
           .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
-            poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(function (response) {
-              console.log("Comparación Success")
-              if (response.data.Success === true) {
-                var Atributos = {
-                  rol: 'ESTUDIANTE',
-                }
-                notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO ' + ctrl.trabajoSeleccionado.Titulo, Atributos, ['101850341'], '', '', 'Se ha registrado la nota de parte de ' + token_service.getAppPayload().email + ' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+            poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(async function (response) {
+              if (response.data[0] === "Success") {
+                
+                var CodigoAbreviacionRol, Modalidad, RolDirectorTemp, correos = []
 
-                //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              
+                angular.forEach(ctrl.RolesTrabajoGrado, function(rol){
+                  if(rol.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado){
+                    CodigoAbreviacionRol = rol.CodigoAbreviacion
+                  }
+                })
+
+                //se busca el nombre de la modalidad
+                angular.forEach(ctrl.Modalidades, function (modalidad) {
+                  if (modalidad.Id == ctrl.trabajoSeleccionado.Modalidad) {
+                    Modalidad = modalidad.Nombre
+                  }
+                })
+
+                if (CodigoAbreviacionRol == "EVALUADOR_PLX") {
+                  //se debe enviar al docente director
+                  angular.forEach(ctrl.RolesTrabajoGrado, function (rol) {
+                    if (rol.CodigoAbreviacion == "DIRECTOR_PLX") {
+                      RolDirectorTemp = rol
+                    }
+                  })
+
+                  var parametros = $.param({
+                    query: "TrabajoGrado:" + ctrl.trabajoSeleccionado.Id + ",rolTrabajoGrado:" + RolDirectorTemp.Id + ",Activo:True",
+                    limit: 0,
+                  });
+
+                  poluxRequest.get("vinculacion_trabajo_grado", parametros).then(async function (vinculado) {//Se busca al Docente Director
+                    var data_auth_mid = {
+                      numero: vinculado.data[0].Usuario.toString()
+                    }
+
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
+                      correos.push(response.data.email)//se agrega a los correos destinatarios
+                    })
+
+                    var data_correo = {
+                      "Source": "notificacionPolux@udistrital.edu.co",
+                      "Template": "POLUX_PLANTILLA_REGISTRO_NOTA",
+                      "Destinations": [
+                        {
+                          "Destination": {
+                            "ToAddresses": correos
+                          },
+                          "ReplacementTemplateData": {
+                            "nombre_estudiante": ctrl.trabajoSeleccionado.estudiantes[0].datos.nombre,
+                            "codigo_estudiante": ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo,
+                            "titulo_tg": ctrl.trabajoSeleccionado.Titulo,
+                            "modalidad": Modalidad
+                          }
+                        }
+                      ]
+                    }
+
+                    //console.log(correos)
+
+                    //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                    /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                      console.log("Envia el correo: ", response)
+                    }).catch(function (error) {
+                      console.log("Error: ", error)
+                    });*/
+                  })
+
+                } else if (CodigoAbreviacionRol == "DIRECTOR_PLX") {
+
+                  var data_auth_mid = {
+                    numero: ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo.toString()
+                  }
+
+                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
+                    correos.push(response.data.email)//se agrega a los correos destinatarios
+                  })
+
+                  await academicaRequest.get("datos_basicos_estudiante", [ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo]).then(async function(estudiante){
+                    console.log("estudiante:",estudiante)
+                    await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
+                      console.log("carrera:",carrera)
+    
+                      var data_auth_mid = {
+                        numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                      }
+              
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      })
+                    })
+
+                    await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+
+                      var data_auth_mid = {
+                        numero : asistente.data.asistente.proyectos[0].documento_asistente
+                      }
+              
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      })
+                    })
+                  })
+
+                  var data_correo = {
+                    "Source": "notificacionPolux@udistrital.edu.co",
+                    "Template": "POLUX_PLANTILLA_REGISTRO_NOTA",
+                    "Destinations": [
+                      {
+                        "Destination": {
+                          "ToAddresses": correos
+                        },
+                        "ReplacementTemplateData": {
+                          "nombre_estudiante": ctrl.trabajoSeleccionado.estudiantes[0].datos.nombre,
+                          "codigo_estudiante": ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo,
+                          "titulo_tg": ctrl.trabajoSeleccionado.Titulo,
+                          "modalidad": Modalidad
+                        }
+                      }
+                    ]
+                  }
+                  //console.log(correos)
+
+                  //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                  /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                    console.log("Envia el correo: ", response)
+                  }).catch(function (error) {
+                    console.log("Error: ", error)
+                  });*/
+                }
                 swal(
                   $translate.instant("REGISTRAR_NOTA.AVISO"),
                   $translate.instant("REGISTRAR_NOTA.NOTA_REGISTRADA"),
@@ -821,12 +942,41 @@ angular.module('poluxClienteApp')
           .then(function (response) {
             console.log("Comparación Success")
             if (response.data.Success === true) {
-              var Atributos = {
-                rol: 'ESTUDIANTE',
-              }
-              notificacionRequest.enviarCorreo('Mensaje de solicitud de correcciones de TRABAJO DE GRADO ' + ctrl.trabajoSeleccionado.Titulo, Atributos, ['101850341'], '', '', 'Se ha registrado la nota de parte de ' + token_service.getAppPayload().email + ' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');
+              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                correos.push(response.data.email)
+              })
 
-              //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');
+              //Se busca el nombre del docente que realiza el comentario
+              await academicaRequest.get("docente_tg", [ctrl.documento]).then(function(docente){
+                if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                  usuario = docente.data.docenteTg.docente[0].nombre
+                }
+              })
+
+              var data_correo = {
+                "Source": "notificacionPolux@udistrital.edu.co",
+                "Template": "POLUX_PLANTILLA_REVISION_DOC",
+                "Destinations": [
+                  {
+                    "Destination": {
+                      "ToAddresses": correos
+                    },
+                    "ReplacementTemplateData": {
+                      "nombre_usuario": usuario,
+                      "titulo_tg": ctrl.trabajoSeleccionado.Titulo,
+                      "comentario": ctrl.observaciones
+                    }
+                  }
+                ]
+              }
+
+              //console.log(correos)
+              
+              /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                console.log("Envia el correo", response)
+              }).catch(function (error) {
+                console.log("Error: ", error)
+              });*/
               swal(
                 $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
                 $translate.instant("SOLICITAR_CORRECCIONES.CORRECCION_REGISTRADA"),
