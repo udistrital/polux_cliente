@@ -72,7 +72,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("areas_docente", self.parametros)
             .then(function (response) {
               
-              self.areas_docente = response.data;
+              self.areas_docente = response.data.Data;
               $scope.idareaParam = self.generarIdAreas(self.areas_docente);
               
               self.codDocenteActual = Id;
@@ -113,7 +113,7 @@ angular.module('poluxClienteApp')
             query: "Id:" + IdAreaDocente
           });
           poluxRequest.get("areas_docente", self.parametros).then(function (response) {
-            self.codDocenteActual = response.data[0].Docente;
+            self.codDocenteActual = response.data.Data[0].Docente;
             
             poluxRequest.delete("areas_docente", IdAreaDocente)
               .then(function (response) {

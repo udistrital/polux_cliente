@@ -20,7 +20,7 @@ angular.module('poluxClienteApp')
       poluxRequest.get("formato", $.param({
         limit: "0"
       })).then(function(response) {
-        ctrl.formatos = response.data;
+        ctrl.formatos = response.data.Data;
         
       });
     };

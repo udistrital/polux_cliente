@@ -347,10 +347,10 @@ angular.module('poluxClienteApp')
         poluxRequest.get("detalle_solicitud", ctrl.obtenerParametrosDetalleSolicitudRespondida(solicitudAprobada.SolicitudTrabajoGrado.Id))
           .then(function(detalleSolicitudRespondida) {
             // Se estudia si la información existe y corresponde al posgrado seleccionado
-            if (Object.keys(detalleSolicitudRespondida.data[0]).length > 0 &&
-              ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data[0].Descripcion).Codigo === Number(ctrl.posgradoSeleccionado)) {
+            if (Object.keys(detalleSolicitudRespondida.data.Data[0]).length > 0 &&
+              ctrl.obtenerDatosDelPosgrado(detalleSolicitudRespondida.data.Data[0].Descripcion).Codigo === Number(ctrl.posgradoSeleccionado)) {
               // Se actualiza el elemento de la colección
-              solicitudAprobada.detalleDeSolicitud = detalleSolicitudRespondida.data[0].Descripcion;
+              solicitudAprobada.detalleDeSolicitud = detalleSolicitudRespondida.data.Data[0].Descripcion;
               deferred.resolve();
             } else {
               // Se resuelve el mensaje correspondiente
@@ -405,9 +405,9 @@ angular.module('poluxClienteApp')
         poluxRequest.get("respuesta_solicitud", ctrl.obtenerParametrosRespuestaDeSolicitud(solicitudAprobada.SolicitudTrabajoGrado.Id))
           .then(function(respuestaDeSolicitud) {
             // Se estudia si la información existe
-            if (Object.keys(respuestaDeSolicitud.data[0]).length > 0) {
+            if (Object.keys(respuestaDeSolicitud.data.Data[0]).length > 0) {
               // Se resuelve la solicitud aprobada con el usuario dentro
-              solicitudAprobada.respuestaDeSolicitud = respuestaDeSolicitud.data[0];
+              solicitudAprobada.respuestaDeSolicitud = respuestaDeSolicitud.Data.data[0];
               deferred.resolve();
             } else {
               // Se resuelve el mensaje correspondiente
@@ -498,8 +498,8 @@ angular.module('poluxClienteApp')
         // Se consulta hacia las solicitudes respondidas en la base de datos
         poluxRequest.get("usuario_solicitud", ctrl.obtenerParametrosUsuarioDeSolicitud())
           .then(function(usuariosConSolicitudes) {
-            if (Object.keys(usuariosConSolicitudes.data[0]).length > 0) {
-              angular.forEach(usuariosConSolicitudes.data, function(solicitudAprobada) {
+            if (Object.keys(usuariosConSolicitudes.data.Data[0]).length > 0) {
+              angular.forEach(usuariosConSolicitudes.data.Data, function(solicitudAprobada) {
                 conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarDetalleSolicitudRespondida(solicitudAprobada));
                 conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarRespuestaDeSolicitud(solicitudAprobada));
                 conjuntoProcesamientoDeSolicitudes.push(ctrl.consultarInformacionAcademicaDelEstudiante(solicitudAprobada));
@@ -507,7 +507,7 @@ angular.module('poluxClienteApp')
               $q.all(conjuntoProcesamientoDeSolicitudes)
                 .then(function(resultadoSolicitudesProcesadas) {
                   // Se filtra el contenido de las solicitudes aprobadas
-                  angular.forEach(usuariosConSolicitudes.data, function(solicitudAprobada) {
+                  angular.forEach(usuariosConSolicitudes.data.Data, function(solicitudAprobada) {
                     if (solicitudAprobada.detalleDeSolicitud &&
                       solicitudAprobada.respuestaDeSolicitud &&
                       solicitudAprobada.informacionAcademica) {
@@ -882,7 +882,7 @@ angular.module('poluxClienteApp')
         poluxRequest
           .post("tr_registrar_materias_posgrado", informacionParaActualizar)
           .then(function(respuestaRegistrarMateriasPosgrado) {
-            deferred.resolve(respuestaRegistrarMateriasPosgrado);
+            deferred.resolve(respuestaRegistrarMateriasPosgrado.data);
           })
           .catch(function(excepcionRegistrarMateriasPosgrado) {
             deferred.reject(excepcionRegistrarMateriasPosgrado);

@@ -60,6 +60,12 @@
                         <label class="control-label col-sm-2"> {{'DOCUMENTO_REVISION' | translate}}: </label>
                         <label ng-click="registrarNotaVinculado.getDocumento()" class="col-sm-10" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
                     </div>
+
+                    <div class="row" ng-repeat="anexo in registrarNotaVinculado.anexosTrabajoGrado">
+                        <label class="control-label col-sm-2"> {{'ANEXOS' | translate}}: </label>
+                        <label ng-click="registrarNotaVinculado.getDocAnyFormat(anexo.DocumentoEscrito.Enlace)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'DESCARGAR_DOCUMENTOS' | translate}} </label>
+                    </div>
+
                     <div ng-repeat="estudiante in registrarNotaVinculado.trabajoSeleccionado.estudiantes">
                         <div class="row">
                             <label class="control-label col-sm-2"> {{'CODIGO' | translate}}: </label>

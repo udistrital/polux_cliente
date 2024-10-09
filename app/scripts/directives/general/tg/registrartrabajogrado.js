@@ -44,7 +44,7 @@ angular.module('poluxClienteApp')
          * Permite cargar las modalidades disponibles del serivicio de {@link services/poluxService.service:poluxRequest poluxService}.
          */
         poluxRequest.get("modalidad", "").then(function (response) {
-          self.modalidad = response.data;
+          self.modalidad = response.data.Data;
         });
         /**
          * @ngdoc method
@@ -66,7 +66,7 @@ angular.module('poluxClienteApp')
           }
           poluxRequest.post("estudiante_tg", data).then(function (response) {
             poluxRequest.get("estudiante_tg", $.param({
-              query: "CodigoEstudiante:" + response.data.CodigoEstudiante
+              query: "CodigoEstudiante:" + response.data.Data.CodigoEstudiante
             }));
           });
           var nick = token_service.getAppPayload().email.split("@").slice(0);
@@ -100,9 +100,9 @@ angular.module('poluxClienteApp')
           };
           poluxRequest.post("trabajo_grado", data).then(function (response) {
             poluxRequest.get("trabajo_grado", $.param({
-              query: "Id:" + response.data.Id
+              query: "Id:" + response.data.Data.Id
             })).then(function (response) {
-              $scope.tgparam = response.data;
+              $scope.tgparam = response.data.Data;
               
               self.agregarRegistroEstudiante($scope.tgparam[0], estudiante);
             });

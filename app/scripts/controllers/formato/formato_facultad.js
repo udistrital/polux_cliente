@@ -22,16 +22,16 @@ angular.module('poluxClienteApp')
             poluxRequest.get("formato", $.param({
                 limit: "0"
             })).then(function (response) {
-                ctrl.formatos = response.data;
+                ctrl.formatos = response.data.Data;
             });
 
             poluxRequest.get("modalidad", $.param({
                 limit: "0"
             })).then(function (response) {
-                ctrl.modalidades = response.data;
+                ctrl.modalidades = response.data.Data;
             });
             academicaRequest.get("carreras", ["PREGRADO"]).then(function (response) {
-                ctrl.carreras = response.data.carrerasCollection;
+                ctrl.carreras = response.data.Data.carrerasCollection;
             });
         };
 
@@ -39,7 +39,7 @@ angular.module('poluxClienteApp')
             //
             poluxRequest.get("tr_formato/" + ctrl.SelectedFormat, '')
                 .then(function (response) {
-                    ctrl.formato_vista = response.data;
+                    ctrl.formato_vista = response.data.Data;
                 });
         };
 
@@ -77,7 +77,7 @@ angular.module('poluxClienteApp')
             
             poluxRequest.post("formato_evaluacion_carrera/TrFormatoEvaluacionCarrera", formato_facultad_carrera)
                 .then(function (response) {
-                    if (response.data === null) {
+                    if (response.data.Data === null) {
                         swal(
                             'Oops...',
                             'se asoció con éxito el formato',

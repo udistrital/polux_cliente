@@ -123,13 +123,13 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("usuario_solicitud", parametrosEstudiante)
           .then(function(responseEstudiante) {
-            if (Object.keys(responseEstudiante.data[0]).length > 0) {
+            if (Object.keys(responseEstudiante.data.Data[0]).length > 0) {
               //Consultar datos del estudiante
               academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
-                  academicaRequest.get("datos_estudiante", [responseEstudiante.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
+                  academicaRequest.get("datos_estudiante", [responseEstudiante.data.Data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
                       if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                         respuestaSolicitud.Estudiante = {
-                          "Codigo": responseEstudiante.data[0].Usuario,
+                          "Codigo": responseEstudiante.data.Data[0].Usuario,
                           "Nombre": response2.data.estudianteCollection.datosEstudiante[0].nombre,
                           "Modalidad": 1, //id modalidad de pasantia
                           "Tipo": "POSGRADO",
@@ -185,8 +185,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("detalle_solicitud", parametrosDetalles)
           .then(function(responseDetalles) {
-            if (Object.keys(responseDetalles.data[0]).length > 0) {
-              angular.forEach(responseDetalles.data, function(detalle) {
+            if (Object.keys(responseDetalles.data.Data[0]).length > 0) {
+              angular.forEach(responseDetalles.data.Data, function(detalle) {
                 if (detalle.DetalleTipoSolicitud.Id === 1) {
                   //Nombre del receptor de la carta
                   respuestaSolicitud.NombreEmpresa = detalle.Descripcion;
@@ -231,7 +231,7 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("respuesta_solicitud", parametrosSolicitudesCarta)
           .then(function(responseSolicitudes) {
-            ctrl.solicitudes = responseSolicitudes.data;
+            ctrl.solicitudes = responseSolicitudes.data.Data;
             if (Object.keys(ctrl.solicitudes[0]).length > 0) {
               //Si hay solicitudes
               var promises = [];
@@ -309,7 +309,8 @@ angular.module('poluxClienteApp')
         poluxRequest.post("tr_registrar_respuestas_solicitudes", dataRegistrarRespuesta)
           .then(function(responseRespuesta) {
             
-            if (responseRespuesta.data[0] === "Success") {
+            console.log("Comparación Success")
+            if (responseRespuesta.data.Success === true) {
               var Atributos={
                 rol:'ESTUDIANTE',
             }
@@ -326,7 +327,7 @@ angular.module('poluxClienteApp')
               ctrl.cargandoSolicitudes = false;
               swal(
                 $translate.instant("MENSAJE_ERROR"),
-                $translate.instant(responseRespuesta.data[1]),
+                $translate.instant(responseRespuesta.data.Data[1]),
                 'warning'
               );
             }

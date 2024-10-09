@@ -154,7 +154,7 @@ angular.module('poluxClienteApp')
             query: "TrabajoGrado:" + trabajoGrado.Id,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responseSolicitudes) {
-            if (Object.keys(responseSolicitudes.data[0]).length > 0) {
+            if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function (solicitud) {
                 var defer = $q.defer();
@@ -177,16 +177,16 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("respuesta_solicitud", parametrosRespuesta)
                   .then(function (responseRespuesta) {
-                    if (Object.keys(responseRespuesta.data[0]).length > 0) {
+                    if (Object.keys(responseRespuesta.data.Data[0]).length > 0) {
                       let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
-                        return data.Id == responseRespuesta.data[0].EstadoSolicitud
+                        return data.Id == responseRespuesta.data.Data[0].EstadoSolicitud
                       });
                       solicitud.data.Estado = EstadoSolicitudTemp.Nombre;
-                      solicitud.data.Respuesta = responseRespuesta.data[0];
+                      solicitud.data.Respuesta = responseRespuesta.data.Data[0];
                       //solicitud.data.Respuesta.Resultado = ctrl.mostrarResultado(responseRespuesta.data[0]);
                       ctrl.gridOptions.data = ctrl.solicitudes;
                     } else {
-                      responseRespuesta.data = [];
+                      responseRespuesta.data.Data = [];
                     }
                     defer.resolve();
                   })
@@ -197,7 +197,7 @@ angular.module('poluxClienteApp')
                 return defer.promise;
               }
 
-              trabajoGrado.Solicitudes = responseSolicitudes.data;
+              trabajoGrado.Solicitudes = responseSolicitudes.data.Data;
               var promises = [];
               angular.forEach(trabajoGrado.Solicitudes, function (solicitud) {
                 promises.push(getDataSolicitud(solicitud));
@@ -208,7 +208,7 @@ angular.module('poluxClienteApp')
                 ctrl.loadingSolicitudes = false;
               })
                 .catch(function (error) {
-
+                  console.log("Es ACÁ")
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargando = true;
                   ctrl.loadingSolicitudes = false;
@@ -221,7 +221,7 @@ angular.module('poluxClienteApp')
             }
           })
             .catch(function (error) {
-
+              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
               ctrl.errorCargando = true;
               ctrl.loadingSolicitudes = false;
@@ -443,8 +443,8 @@ angular.module('poluxClienteApp')
                 limit: 0
               });
               poluxRequest.get("documento_solicitud", parametrosDocumentoSolicitud).then(function(documento) {
-                  if (Object.keys(documento.data[0]).length > 0) {
-                    solicitud.documento = documento.data[0].DocumentoEscrito;
+                  if (Object.keys(documento.data.Data[0]).length > 0) {
+                    solicitud.documento = documento.data.Data[0].DocumentoEscrito;
                   }
                   defer.resolve();
                 })
@@ -459,7 +459,7 @@ angular.module('poluxClienteApp')
 
           poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(async function(responseDetalles) {
             
-            if (Object.keys(responseDetalles.data[0]).length > 0) {
+            if (Object.keys(responseDetalles.data.Data[0]).length > 0) {
               var tipoDetalle = $.param({
                 query: "TipoParametroId__CodigoAbreviacion:TIP_DET", 
                 limit: 0
@@ -467,7 +467,7 @@ angular.module('poluxClienteApp')
               await parametrosRequest.get("parametro/?", tipoDetalle).then(function (responseTipoDetalle) {
                 ctrl.TipoDetalle = responseTipoDetalle.data.Data;
               })
-              ctrl.detallesSolicitud = responseDetalles.data;
+              ctrl.detallesSolicitud = responseDetalles.data.Data;
               ctrl.detallesSolicitud.forEach(detalle => {
                 detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
                   return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
@@ -478,15 +478,15 @@ angular.module('poluxClienteApp')
             }
 
             poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
-                  if (Object.keys(responseDetalles.data[0]).length === 0) {
+                  if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
                     ctrl.solicitudSeleccionada.detallesSolicitud = [];
                   } else {
-                    ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data;
+                    ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data.Data;
                   }
                   var promises = [];
                   var solicitantes = "";
                   promises.push(ctrl.mostrarResultado(ctrl.solicitudSeleccionada));
-                  angular.forEach(responseEstudiantes.data, function(estudiante) {
+                  angular.forEach(responseEstudiantes.data.Data, function(estudiante) {
                     solicitantes += (", " + estudiante.Usuario);
                   });
 
@@ -536,8 +536,8 @@ angular.module('poluxClienteApp')
                     });
                     poluxRequest.get("detalle_pasantia", parametrosVinculado)
                       .then(function(dataExterno) {
-                        if (Object.keys(dataExterno.data[0]).length > 0) {
-                          var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+                        if (Object.keys(dataExterno.data.Data[0]).length > 0) {
+                          var temp = dataExterno.data.Data[0].Observaciones.split(" y dirigida por ");
                           temp = temp[1].split(" con número de identificacion ");
                           detalle.Descripcion = temp[0];
                           defer.resolve();
@@ -702,6 +702,42 @@ angular.module('poluxClienteApp')
               break;
           }
         };
+        
+        /**
+       * @ngdoc method
+       * @name getDocAnyFormat
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       */
+        ctrl.getDocAnyFormat = function (docid) {
+          gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+            console.log("Response GET", response);
+            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)]);
+            var fileURL = URL.createObjectURL(file);
+            
+            var a = document.createElement('a');
+            a.href = fileURL;
+            a.download = response.data["dc:title"]; // Nombre del archivo a descargar
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpieza
+            setTimeout(function() {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(fileURL);
+            }, 100);
+          })
+          .catch(function (error) {
+            swal(
+              $translate.instant("MENSAJE_ERROR"),
+              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+              'warning'
+            );
+          });
+        }
 
         ctrl.consultarSolicitudes(ctrl.trabajoGrado);
 

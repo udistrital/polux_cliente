@@ -85,8 +85,9 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("detalle_pasantia", ctrl.obtenerParametrosDirectorExterno(vinculacionTrabajoGrado.TrabajoGrado.Id))
           .then(function(docenteExterno) {
-            if (Object.keys(docenteExterno.data[0]).length > 0) {
-              var resultadoDocenteExterno = docenteExterno.data[0].Observaciones.split(" y dirigida por ");
+            console.log("Data Externo", docenteExterno)
+            if (Object.keys(docenteExterno.data.Data[0]).length > 0) {
+              var resultadoDocenteExterno = docenteExterno.data.Data[0].Observaciones.split(" y dirigida por ");
               resultadoDocenteExterno = resultadoDocenteExterno[1].split(" con número de identificacion ");
               vinculacionTrabajoGrado.Nombre = resultadoDocenteExterno[0];
             }
@@ -156,8 +157,8 @@ angular.module('poluxClienteApp')
         var conjuntoProcesamientoDocentes = [];
         poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado(trabajoGrado.Id))
           .then(function(respuestaVinculaciones) {
-            if (Object.keys(respuestaVinculaciones.data[0]).length > 0) {
-              angular.forEach(respuestaVinculaciones.data, function(vinculacionTrabajoGrado) {
+            if (Object.keys(respuestaVinculaciones.data.Data[0]).length > 0) {
+              angular.forEach(respuestaVinculaciones.data.Data, function(vinculacionTrabajoGrado) {
                 let rolTrabajoGrado = ctrl.RolTrabajoGrado.find(rolTrGr => {
                   return rolTrGr.Id == vinculacionTrabajoGrado.RolTrabajoGrado
                 })
@@ -170,7 +171,7 @@ angular.module('poluxClienteApp')
               });
               $q.all(conjuntoProcesamientoDocentes)
                 .then(function(resultadoDelProcesamiento) {
-                  trabajoGrado.vinculaciones = respuestaVinculaciones.data.filter(function(vinculacion) { return vinculacion.Nombre });
+                  trabajoGrado.vinculaciones = respuestaVinculaciones.data.Data.filter(function(vinculacion) { return vinculacion.Nombre });
                   deferred.resolve(resultadoDelProcesamiento);
                 })
                 .catch(function(excepcionDelProcesamiento) {
@@ -241,9 +242,9 @@ angular.module('poluxClienteApp')
        
         poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(trabajoGrado))
           .then(function(respuestaDocumentoTrabajoGrado) {
-            if (Object.keys(respuestaDocumentoTrabajoGrado.data[0]).length > 0) {
-              trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data[0].Id;
-              trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data[0].DocumentoEscrito;
+            if (Object.keys(respuestaDocumentoTrabajoGrado.data.Data[0]).length > 0) {
+              trabajoGrado.documentoTrabajoGrado = respuestaDocumentoTrabajoGrado.data.Data[0].Id;
+              trabajoGrado.documentoEscrito = respuestaDocumentoTrabajoGrado.data.Data[0].DocumentoEscrito;
             }
             deferred.resolve($translate.instant("ERROR.CARGAR_DOCUMENTO"));
           })
@@ -399,17 +400,17 @@ angular.module('poluxClienteApp')
         })
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudianteConTrabajoDeGrado) {
-            if (Object.keys(estudianteConTrabajoDeGrado.data[0]).length > 0) {
-              conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));     
-              conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data[0].TrabajoGrado));
+            if (Object.keys(estudianteConTrabajoDeGrado.data.Data[0]).length > 0) {
+              conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarDocumentoTrabajoGrado(estudianteConTrabajoDeGrado.data.Data[0].TrabajoGrado));     
+              conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarVinculacionTrabajoGrado(estudianteConTrabajoDeGrado.data.Data[0].TrabajoGrado));
               conjuntoProcesamientoEstudianteTrabajoGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(ctrl.codigoEstudiante));
               $q.all(conjuntoProcesamientoEstudianteTrabajoGrado)
                 .then(function(resultadoDelProcesamiento) {
-                  if (estudianteConTrabajoDeGrado.data[0].TrabajoGrado.documentoEscrito &&
-                    estudianteConTrabajoDeGrado.data[0].TrabajoGrado.documentoTrabajoGrado &&
-                    estudianteConTrabajoDeGrado.data[0].TrabajoGrado.vinculaciones &&
+                  if (estudianteConTrabajoDeGrado.data.Data[0].TrabajoGrado.documentoEscrito &&
+                    estudianteConTrabajoDeGrado.data.Data[0].TrabajoGrado.documentoTrabajoGrado &&
+                    estudianteConTrabajoDeGrado.data.Data[0].TrabajoGrado.vinculaciones &&
                     ctrl.informacionAcademica) {
-                    deferred.resolve(estudianteConTrabajoDeGrado.data[0].TrabajoGrado);
+                    deferred.resolve(estudianteConTrabajoDeGrado.data.Data[0].TrabajoGrado);
                   } else {
                     deferred.resolve(resultadoDelProcesamiento);
                   }
@@ -510,8 +511,8 @@ angular.module('poluxClienteApp')
         var deferred = $q.defer();
         poluxRequest.get("revision_trabajo_grado", ctrl.obtenerParametrosRevisionTrabajoGrado())        
           .then(function(respuestaRevisionesTrabajoGrado) {
-            if (Object.keys(respuestaRevisionesTrabajoGrado.data[0]).length > 0) {
-              angular.forEach(respuestaRevisionesTrabajoGrado.data, function(revision) {
+            if (Object.keys(respuestaRevisionesTrabajoGrado.data.Data[0]).length > 0) {
+              angular.forEach(respuestaRevisionesTrabajoGrado.data.Data, function(revision) {
                 let estadoRevisionTrabajoGrado = ctrl.EstadoRevisionTrabajoGrado.find(estRevTrGr => {
                   return estRevTrGr.Id == revision.EstadoRevisionTrabajoGrado
                 })
@@ -519,7 +520,7 @@ angular.module('poluxClienteApp')
                   ctrl.revisionSolicitada = true;
                 }
               });
-              deferred.resolve(respuestaRevisionesTrabajoGrado.data);
+              deferred.resolve(respuestaRevisionesTrabajoGrado.data.Data);
             } else {
               deferred.reject($translate.instant("ERROR.SIN_REVISIONES"));
             }
@@ -559,7 +560,7 @@ angular.module('poluxClienteApp')
         poluxRequest
           .put("documento_escrito", ctrl.trabajoGrado.documentoEscrito.Id, ctrl.trabajoGrado.documentoEscrito)
           .then(function(respuestaActualizarAnteproyecto) {
-            deferred.resolve(respuestaActualizarAnteproyecto);
+            deferred.resolve(respuestaActualizarAnteproyecto.data);
           })
           .catch(function(excepcionActualizarAnteproyecto) {
             deferred.reject(excepcionActualizarAnteproyecto);
@@ -677,7 +678,8 @@ angular.module('poluxClienteApp')
                       gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
                       URL =  response.data.res.Enlace
                       ctrl.actualizarTrabajoGrado(URL).then(function(respuestaActualizarTg) {
-                        if (respuestaActualizarTg.statusText === "OK") {
+                        console.log("Actualización Documento", respuestaActualizarTg)
+                        if (respuestaActualizarTg.Success === true ) {
                           ctrl.cargandoTrabajoGrado = false;
                           var nick = token_service.getAppPayload().email.split("@").slice(0);
                           academicaRequest.get("datos_basicos_estudiante", [token_service.getAppPayload().appUserDocument])
@@ -690,7 +692,7 @@ angular.module('poluxClienteApp')
                                   rol:'DOCENTE',
                                 }
                                 notificacionRequest.enviarCorreo('Petición de revisión',Atributos,['101850341'],'','','e ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
-//                              notificacionRequest.enviarCorreo('Petición de revisión',Atributos,[ctrl.docenteRevision.Id],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud');   
+                              //notificacionRequest.enviarCorreo('Petición de revisión',Atributos,[ctrl.docenteRevision.Id],'','','Se ha realizado la solicitud de revision del trabajo de grado, se ha dado la peticion de parte de '+responseDatosBasicos.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre+' para la solicitud');   
                               });
                             });
                             swal(
@@ -884,7 +886,7 @@ angular.module('poluxClienteApp')
         poluxMidRequest
           .post("tr_subir_arl", informacionParaActualizar)
           .then(function(respuestaActualizarAnteproyecto) {
-            deferred.resolve(respuestaActualizarAnteproyecto);
+            deferred.resolve(respuestaActualizarAnteproyecto.data.Data);
           })
           .catch(function(excepcionActualizarAnteproyecto) {
             deferred.reject(excepcionActualizarAnteproyecto);
@@ -951,7 +953,7 @@ angular.module('poluxClienteApp')
         poluxRequest
           .post("tr_actualizar_documento_tg", informacionParaActualizar)
           .then(function(respuestaActualizarAnteproyecto) {
-            deferred.resolve(respuestaActualizarAnteproyecto);
+            deferred.resolve(respuestaActualizarAnteproyecto.data);
           })
           .catch(function(excepcionActualizarAnteproyecto) {
             deferred.reject(excepcionActualizarAnteproyecto);

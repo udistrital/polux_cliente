@@ -67,7 +67,7 @@ angular.module('poluxClienteApp')
             }
             poluxRequest.post("areas_docente", data).then(function (response) {
               self.parametros = $.param({
-                query: "Docente:" + response.data.Docente,
+                query: "Docente:" + response.data.Data.Docente,
                 sortby: "AreaConocimiento",
                 order: "asc",
                 limit: 0
@@ -78,7 +78,7 @@ angular.module('poluxClienteApp')
                 'success'
               );
               poluxRequest.get("areas_docente", self.parametros).then(function (response) {
-                $scope.aredoc = response.data;
+                $scope.aredoc = response.data.Data;
 
               });
             });
