@@ -31,7 +31,7 @@ angular.module('autenticacionMidService', [])
 			  'Accept': 'application/json',
 			  "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
 			}
-		  }
+		};
 		return {
 			/**
 			 * @ngdoc function

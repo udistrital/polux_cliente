@@ -43,7 +43,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest, autenticacionMidRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -939,7 +939,7 @@ angular.module('poluxClienteApp')
         };
 
         poluxMidRequest.post("tr_registrar_revision_tg", transaccionRechazo)
-          .then(function (response) {
+          .then(async function (response) {
             console.log("Comparación Success")
             if (response.data.Success === true) {
               await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
