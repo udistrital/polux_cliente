@@ -20,7 +20,6 @@ angular.module("poluxClienteApp").constant("CONF", {
     //POLUX_MID_SERVICE: "http://localhost:8090/v1/",
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v2/",
     CONFIGURACION_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/configuracion_crud_api/v1/",
-    NUXEO_SERVICE:"https://documental.portaloas.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8092/v1/",
     CORE_AMAZON_CRUD_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8106/v1/",
     OIKOS_SERVICE:"http://pruebasapi.intranetoas.udistrital.edu.co:8087/v2/",
@@ -29,7 +28,6 @@ angular.module("poluxClienteApp").constant("CONF", {
     DOCUMENTO_CRUD_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/documento_crud/v2/",
     GESTION_DOCUMENTAL_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/gestor_documental_mid/v1",
     //GESTION_DOCUMENTAL_SERVICE:"http://pruebasapi2.intranetoas.udistrital.edu.co:8199/v1",
-    NUXEO_MID:"https://autenticacion.portaloas.udistrital.edu.co/apioas/nuxeo_mid/v1/",
     PARAMETROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/parametros/v1/',
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",

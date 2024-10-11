@@ -35,7 +35,6 @@ angular.module('poluxClienteApp')
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/poluxService.service:nuxeoClient
        * @requires services/poluxService.service:gestorDocumentalMidService
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
        * @property {Boolean} showVersiones Booleano para mostrar la directiva
@@ -45,7 +44,7 @@ angular.module('poluxClienteApp')
        * @property {Boolean} errorCargando Booleano para indicar que hubo un error cargando los parametros
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        */
-      controller: function ($scope,gestorDocumentalMidRequest,utils, nuxeoClient, $q, poluxRequest, $translate) {
+      controller: function ($scope,gestorDocumentalMidRequest,utils, $q, poluxRequest, $translate) {
         var ctrl = this;
         ctrl.mensajeCargandoDocumentos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
         $scope.showVersiones = true;
@@ -169,27 +168,6 @@ angular.module('poluxClienteApp')
             });
 
         }
-        /**
-         * @ngdoc method
-         * @name getVersiones
-         * @methodOf poluxClienteApp.directive:versionesDocumentosTg.controller:versionesDocumentosTgCtrl
-         * @description
-         * Permite ver las versiones asociadas a un documento
-         * @param {Object} uid Uid del documento que se consultara
-         * @returns {Promise} Objeto de tipo Promise que se resuelve con las versioens del documento
-         */
-        ctrl.getVersiones = function (uid) {
-          var defer = $q.defer();
-          //Cargar las versiones previas del documento
-          nuxeoClient.getVersions(uid)
-            .then(function (responseVersiones) {
-              defer.resolve(responseVersiones);
-            })
-            .catch(function (error) {
-              defer.reject(error);
-            });
-          return defer.promise;
-        }
 
         /**
          * @ngdoc method
@@ -205,10 +183,6 @@ angular.module('poluxClienteApp')
             ctrl.loadingVersion = true;
             //  obtener un documento por la id
             gestorDocumentalMidRequest.get('/document/'+doc.children).then(function (response) {
-              //nuxeoClient.getDocument(doc.uid)
-              //  .then(function (documento) {
-              //    ctrl.loadingVersion = false;
-              //    window.open(documento.data.res.Enlace);
             var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
               var fileURL = URL.createObjectURL(file);
               ctrl.loadingVersion = false;

@@ -22,9 +22,7 @@
  * @requires services/poluxClienteApp.service:coreAmazonCrudService
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/documentoService.service:documentoRequest
@@ -86,7 +84,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window,nuxeoMidRequest, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -2231,8 +2229,8 @@ angular.module('poluxClienteApp')
        * @name cargarDocumentos
        * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
        * @description
-       * Si los detalles de la solicitud tienen asociados documentos conecta el cliente de nuxeoClient y llama a la función cargarDocumento para cargar todos 
-       * los documentos a {@link services/poluxService.service:nuxeoClient nuxeoClient}, en caso de que no los tenga o que haya terminado de cargarlos llama a la función cargarSolicitudes.
+       * Si los detalles de la solicitud tienen asociados documentos, llama a la función cargarDocumento para cargar todos 
+       * los documentos a {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}, en caso de que no los tenga o que haya terminado de cargarlos llama a la función cargarSolicitudes.
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No retorna nigún valor
        */
@@ -2644,52 +2642,6 @@ angular.module('poluxClienteApp')
         });
       }
 
-      ctrl.getDocumento = function(docid) {
-        nuxeo.header('X-NXDocumentProperties', '*');
-
-        ctrl.obtenerDoc = function() {
-          var defer = $q.defer();
-
-          nuxeo.request('/id/' + docid)
-            .get()
-            .then(function(response) {
-              ctrl.doc = response;
-              //var aux = response.get('file:content');
-              ctrl.document = response;
-              defer.resolve(response);
-            })
-            .catch(function(error) {
-              defer.reject(error)
-            });
-          return defer.promise;
-        };
-
-        ctrl.obtenerFetch = function(doc) {
-          var defer = $q.defer();
-
-          doc.fetchBlob()
-            .then(function(res) {
-              defer.resolve(res.blob());
-
-            })
-            .catch(function(error) {
-              defer.reject(error)
-            });
-          return defer.promise;
-        };
-
-        ctrl.obtenerDoc().then(function() {
-
-          ctrl.obtenerFetch(ctrl.document).then(function(r) {
-            ctrl.blob = r;
-            var fileURL = URL.createObjectURL(ctrl.blob);
-            //
-            ctrl.content = $sce.trustAsResourceUrl(fileURL);
-            $window.open(fileURL);
-          });
-        });
-
-      }
       /**
        * @ngdoc method
        * @name getdatasolicitudDocente

@@ -12,7 +12,6 @@
  * @requires $window
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/poluxMidService.service:poluxMidRequest
- * @requires services/poluxService.service:nuxeoClient
  */
 
 angular.module('poluxClienteApp').controller('GenerarReporteCtrl',

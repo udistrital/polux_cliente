@@ -18,10 +18,7 @@
  * @requires services/academicaService.service:academicaRequest
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
- * @requires services/poluxClienteApp.service:nuxeoService
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/documentoService.service:documentoRequest
@@ -92,7 +89,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, nuxeoMidRequest, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, nuxeo, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
       var ctrl = this;
 
       ctrl.respuestaSolicitud = 0;
@@ -1260,8 +1257,8 @@ angular.module('poluxClienteApp')
                 vinculacion = {
                   "Usuario": $scope.userId,
                   "Activo": true,
-                  "FechaInicio": fechaRespuesta,
-                  //"FechaFin": null,
+                  "FechaInicio": '',
+                  "FechaFin": '',
                   "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
                   "TrabajoGrado": {
                     "Id": 0
@@ -1449,8 +1446,8 @@ angular.module('poluxClienteApp')
                 vinculacion = {
                   "Usuario": Number(ctrl.docenteDirector.id),
                   "Activo": true,
-                  "FechaInicio": fechaRespuesta,
-                  //"FechaFin": null,
+                  "FechaInicio": '',
+                  "FechaFin": '',
                   "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
                   "TrabajoGrado": {
                     "Id": 0
@@ -1470,8 +1467,8 @@ angular.module('poluxClienteApp')
                     data_vinculacion.push({
                       "Usuario": Number(ctrl.docenteCoDirector.id),
                       "Activo": true,
-                      "FechaInicio": fechaRespuesta,
-                      //"FechaFin": null,
+                      "FechaInicio": '',
+                      "FechaFin": '',
                       // Rol de codirector
                       "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
                       "TrabajoGrado": {
@@ -1491,8 +1488,8 @@ angular.module('poluxClienteApp')
                   vinculacion = {
                     "Usuario": Number(docente.docente.id),
                     "Activo": true,
-                    "FechaInicio": fechaRespuesta,
-                    //"FechaFin": null,
+                    "FechaInicio": '',
+                    "FechaFin": '',
                     "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
                     "TrabajoGrado": {
                       "Id": 0
@@ -1613,8 +1610,8 @@ angular.module('poluxClienteApp')
                   data_vinculacion.push({
                     "Usuario": Number(tempTrabajo.DocumentoDirectorExterno),
                     "Activo": true,
-                    "FechaInicio": fechaRespuesta,
-                    //"FechaFin": null,
+                    "FechaInicio": '',
+                    "FechaFin": '',
                     "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
                     "TrabajoGrado": {
                       "Id": 0
@@ -2267,7 +2264,7 @@ angular.module('poluxClienteApp')
        * @param {function} callFunction Funcion que se ejecuta una vez se termina de cargar el documento
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Conecta el cliente de {@link services/poluxClienteApp.service:nuxeoService nuxeo} y crea la data del documento que se va a cargar y llama a la función cargar documento.
+       * Conecta el cliente de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} y crea la data del documento que se va a cargar y llama a la función cargar documento.
        */
       ctrl.cargarJustificacion = function (callFunction) {
         // OK, the returned client is connected
@@ -2304,19 +2301,9 @@ angular.module('poluxClienteApp')
                 URL = response.data.res.Enlace
                 ctrl.urlActa = URL
                 ctrl.cargarRespuesta();
-                nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                  .then(function (response) {
-                  }).catch(function (error) {
-                  })
               })
 
             })
-            //nuxeoClient.createDocument("ActaSolicitud" + ctrl.solicitud, "Acta de evaluación de la solicitud " + ctrl.solicitud, documento, 'actas', function(url) {
-            //   ctrl.urlActa = url;
-            // })
-            //  .then(function() {
-            //    ctrl.cargarRespuesta();
-            //})
             .catch(function (error) {
               ctrl.swalError();
               $scope.loadFormulario = false;
@@ -2382,68 +2369,14 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
-       * @name obtenerDoc
-       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-       * @returns {Promise} Objeto de tipo promesa que se resuelve con el documento o se rechaza con la excepción generada
-       * @description 
-       * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
-       */
-      ctrl.obtenerDoc = function (docid) {
-        var defered = $q.defer();
-
-        nuxeo.request('/id/' + docid)
-          .get()
-          .then(function (response) {
-            ctrl.doc = response;
-            //var aux=response.get('file:content');
-            ctrl.document = response;
-            defered.resolve(response);
-          })
-          .catch(function (error) {
-            defered.reject(error)
-          });
-        return defered.promise;
-      };
-
-      /**
-       * @ngdoc method
-       * @name obtenerFetch
-       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
-       * @param {object} doc Documento de nuxeo al cual se le obtendrá el Blob
-       * @returns {Promise} Objeto de tipo promesa que se resuelve con el Blob del documento o la excepción generada
-       * @description 
-       * Obtiene el blob de un documento
-       */
-      ctrl.obtenerFetch = function (doc) {
-        var defered = $q.defer();
-
-        doc.fetchBlob()
-          .then(function (res) {
-            defered.resolve(res.blob());
-
-          })
-          .catch(function (error) {
-            defered.reject(error)
-          });
-        return defered.promise;
-      };
-
-      /**
-       * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y mostrarlo en una nueva ventana.
+       * Llama al gestor documental para recuperar y mostrar el documento.
        */
       ctrl.getDocumento = function (docid) {
-        /*nuxeoClient.getDocument(docid)
-          .then(function(document) {
-            $window.open(document.url);
-          })
-          */
         //Muestra de documento con el gestor documental
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
           var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], { type: 'application/pdf' });
@@ -2468,7 +2401,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       * Llama al gestor documental para recuperar y mostrar el documento.
        */
       ctrl.getDocAnyFormat = function (docid) {
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
@@ -2508,28 +2441,6 @@ angular.module('poluxClienteApp')
        * actas subidas en las carreras del coordinador.
        */
       ctrl.getDocumentos = function () {
-        // codigo para ejecutar consulta en nuxeo
-
-        /*
-        nuxeo.header('X-NXDocumentProperties', '*');
-        nuxeo.operation('Document.Query')
-            .params({
-              query:"SELECT * FROM Document WHERE dc:title like 'ActasSolicitudes-20-%'",
-            })
-            .execute()
-            .then(function(doc) {
-                angular.forEach(doc.entries, function(documento){
-                    ctrl.obtenerDoc(documento.uid).then(function(doc){
-                        var tempDoc = {
-                          "nombre":doc.get("file:content").name,
-                          "url": doc.uid,
-                          "documento":doc,
-                        }
-                        ctrl.documentos.push(tempDoc);
-                    });
-                });
-            });
-          */
         var sql = "";
         let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
           return tipoDoc.CodigoAbreviacion == "ACT_PLX"

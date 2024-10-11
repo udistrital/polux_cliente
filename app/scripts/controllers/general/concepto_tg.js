@@ -14,11 +14,9 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
 * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
  * @property {Number} idVinculacion Identificador de la vinculación del docente con el trabajo de grado
  * @property {String} userId Documento del usuario en sesión
  * @property {Number} tipoDocumento Tipo de documento escrito sobre el que se está operando
@@ -38,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConceptoTgCtrl',
-    function($location, $q, $routeParams, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function($location, $q, $routeParams, $scope,utils,gestorDocumentalMidRequest, $translate, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
       ctrl.idVinculacion = $routeParams.idVinculacion;
       ctrl.cargando = true;
@@ -390,7 +388,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
        * Permite guardar la revision realizada.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para hacer gestión documental.
        * @param {undefined} undefined No recibe parámetros
        * @returns {undefined} No retorna ningún valor
        */
@@ -465,34 +463,9 @@ swal(
                           );
                         }
                       })
-                    nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                       .then(function (response) {
-                    }).catch(function (error) {
-                    })
                    })
 
                 })
-
-
-
-
-
-
-
-              // nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
-              /*    .then(function(respuestaCrearDocumento) {
-                    
-                 .catch(function(excepcionRevisarTg) {
-                        
-                        ctrl.cargando = false;
-                        swal(
-                          $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
-                          $translate.instant("ERROR.REGISTRANDO_REVISION"),
-                          'warning'
-                        );
-                      });
-                  })
-                  */
                   .catch(function(excepcionCrearDocumento) {
                     
                     ctrl.cargando = false;

@@ -11,11 +11,9 @@
  * @requires $q
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxService.service:documentoService
  * @requires services/poluxService.service:parametrosService
  * @requires services/poluxMidService.service:poluxMidRequest
@@ -43,7 +41,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,utils,gestorDocumentalMidRequest, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -417,16 +415,12 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
-       * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+       * @param {number} docid Identificador del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+       * Se obtiene el documento alojado en el gestor documental para mostrarse en una nueva ventana.
        */
     ctrl.getDocumento = function() {
-      /*nuxeoClient.getDocument(docid)
-        .then(function(document) {
-          $window.open(document.url);
-        })*/
         // Muestra de documento con gestor documental
       gestorDocumentalMidRequest.get('/document/' + ctrl.docTrabajoGrado.DocumentoEscrito.Enlace).then(function (response) {
           var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
@@ -449,7 +443,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión.
        */
       ctrl.getDocAnyFormat = function (docid) {
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
@@ -622,7 +616,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
        * Función que permite guardar la nota que se registra en un trabajo de grado, guarda el acta de sustentación y la asocia a un documento escrito.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para hacer gestión documental.
        * @param {undefined} undefined No recibe ningún parametro
        * @returns {undefined} No hace retorno de resultados
        */
@@ -696,20 +690,10 @@ angular.module('poluxClienteApp')
                   TipoDocumentoEscrito: TipoDocumentoTemp.Id, //Para acta de sustentación
                 };
                 defer.resolve(dataRegistrarNota);
-                nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                  .then(function (response) {
-                    // console.log('nuxeoMid response: ',response) 
-                  }).catch(function (error) {
-                    //  console.log('nuxeoMid error:',error)
-                  })
+                
               })
 
             })
-
-              //nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
-              //  .then(function(urlActa) {
-
-              //  })
               .catch(function (error) {
                 defer.reject(error);
               });
@@ -733,7 +717,7 @@ angular.module('poluxClienteApp')
           .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
             poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(async function (response) {
-              if (response.data[0] === "Success") {
+              if (response.data.Success) {
                 
                 var CodigoAbreviacionRol, Modalidad, RolDirectorTemp, correos = []
 
@@ -765,7 +749,7 @@ angular.module('poluxClienteApp')
 
                   poluxRequest.get("vinculacion_trabajo_grado", parametros).then(async function (vinculado) {//Se busca al Docente Director
                     var data_auth_mid = {
-                      numero: vinculado.data[0].Usuario.toString()
+                      numero: vinculado.data.Data[0].Usuario.toString()
                     }
 
                     await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
@@ -911,7 +895,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
        * Función que permite guardar la nota que se registra en un trabajo de grado, guarda el acta de sustentación y la asocia a un documento escrito.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para hacer gestión documental.
        * @param {undefined} undefined No recibe ningún parametro
        * @returns {undefined} No hace retorno de resultados
        */
@@ -939,7 +923,7 @@ angular.module('poluxClienteApp')
         };
 
         poluxMidRequest.post("tr_registrar_revision_tg", transaccionRechazo)
-          .then(function (response) {
+          .then(async function (response) {
             console.log("Comparación Success")
             if (response.data.Success === true) {
               await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
