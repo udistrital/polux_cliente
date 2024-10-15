@@ -69,6 +69,7 @@ steps:
     event:
     - push
     - pull_request
+
 - name: build_master
   image: node:12.22.1
   commands:
