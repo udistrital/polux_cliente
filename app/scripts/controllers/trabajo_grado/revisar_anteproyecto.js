@@ -16,7 +16,6 @@
  * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
@@ -41,12 +40,12 @@
  * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el anteproyecto (viable, modificable, no viable)
  * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del anteproyecto
  * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el anteproyecto
- * @property {Object} document Almacena la respuesta del documento desde la petición a nuxeo.
+ * @property {Object} document Almacena la respuesta del documento desde la petición al gestor documental.
  * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $translate,notificacionRequest, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
+		function($q, $translate,notificacionRequest, $window, academicaRequest,utils,gestorDocumentalMidRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -620,25 +619,19 @@ angular.module('poluxClienteApp')
 			 * @description
 			 * Función que abre el documento asociado en una ventana emergente.
 			 * Llama a las funciones: obtenerDoc y obtenerFetch
-			 * Consulta el servicio de {@link services/poluxClienteApp.service:nuxeoService nuxeo} para usar la gestión documental.
-			 * @param {String} docid Identificador del documento en del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+			 * Consulta el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para usar la gestión documental.
+			 * @param {String} docid Identificador del documento en del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
 			 * @returns {undefined} No hace retorno de resultados
 			 */
-			ctrl.abrirDocumento = function(docid) {
-				/*nuxeoClient.getDocument(docid)
-					.then(function(document) {
-						$window.open(document.url);
-					})
-				*/
-				  //  obtener un documento por la id 
-				  gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
-					var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+			ctrl.abrirDocumento = function (docid) {
+				//  obtener un documento por la id 
+				gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+					var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], { type: 'application/pdf' });
 					var fileURL = URL.createObjectURL(file);
 					$window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-				
-						 })
-				.catch(function(error) {
-						
+
+				})
+					.catch(function (error) {
 						swal(
 							$translate.instant("MENSAJE_ERROR"),
 							$translate.instant("ERROR.CARGAR_DOCUMENTO"),

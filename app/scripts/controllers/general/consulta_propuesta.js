@@ -11,12 +11,11 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/academicaService.service:academicaRequest
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
- * @requires constantes
  * @requires $window
  * @requires $http
  */
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function (poluxRequest, academicaRequest, $translate, $scope, constantes, $window, $http) {
+    .controller('ConsultaPropuestaCtrl', function (poluxRequest, academicaRequest, $translate, $scope, $window, $http) {
         var ctrl = this;
         ctrl.todos_docentes = false;
         academicaRequest.obtenerDocentes("").then(function (response) {
@@ -214,7 +213,6 @@ angular.module('poluxClienteApp')
                 case "delete":
                     break;
                 case "descargar":
-                    $window.open(constantes.DOWNLOAD_FILE + ctrl.row_entity.IdDocumento.Enlace, "New Window", "width=800,height=600,resizable=1");
                     break;
                 default:
             }

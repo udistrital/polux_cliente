@@ -16,7 +16,6 @@
  * @requires $window
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
@@ -40,12 +39,11 @@
  * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el Proyecto (viable, modificable, no viable)
  * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del Proyecto
  * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el Proyecto
- * @property {Object} document Almacena la respuesta del documento desde la petición a nuxeo. 
  * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarProyectoCtrl',
-		function($q, $sce, $translate, $window,notificacionRequest, academicaRequest, nuxeo, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
+		function($q, $sce, $translate, $window,notificacionRequest, academicaRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -628,106 +626,4 @@ angular.module('poluxClienteApp')
 					});
 				return deferred.promise;
 			}
-
-			/**
-			 * @ngdoc method
-			 * @name verDocumentoProyecto
-			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarProyectoCtrl
-			 * @description
-			 * Función que se dispara al momento de seleccionar la opción de visualización del documento del Proyecto, y permite desplegar el contenido del mismo.
-			 * Llama a la función: abrirDocumento
-			 * @param {Object} filaAsociada El Proyecto de grado que el docente seleccionó
-			 * @returns {undefined} No hace retorno de resultados
-			 */
-			ctrl.verDocumentoProyecto = function(filaAsociada) {
-				ctrl.abrirDocumento(filaAsociada.entity.documentoEscrito.Enlace);
-			}
-
-			/**
-			 * @ngdoc method
-			 * @name abrirDocumento
-			 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarProyectoCtrl
-			 * @description
-			 * Función que abre el documento asociado en una ventana emergente.
-			 * Llama a las funciones: obtenerDoc y obtenerFetch
-			 * Consulta el servicio de {@link services/poluxClienteApp.service:nuxeoService nuxeo} para usar la gestión documental.
-			 * @param {String} docid Identificador del documento en del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
-			 * @returns {undefined} No hace retorno de resultados
-			 */
-			ctrl.abrirDocumento = function(docid) {
-				nuxeo.header('X-NXDocumentProperties', '*');
-
-				/**
-				 * @ngdoc method
-				 * @name obtenerDoc
-				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarProyectoCtrl
-				 * @description 
-				 * Consulta un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo} y responde con el contenido.
-				 * @param {undefined} undefined No requiere parámetros
-				 * @returns {Promise} La respuesta de la petición hacia la gestión documental
-				 */
-				ctrl.obtenerDoc = function() {
-					var defer = $q.defer();
-					nuxeo.request('/id/' + docid)
-						.get()
-						.then(function(response) {
-							ctrl.document = response;
-							defer.resolve(response);
-						})
-						.catch(function(error) {
-							defer.reject(error)
-						});
-					return defer.promise;
-				};
-
-				/**
-				 * @ngdoc method
-				 * @name obtenerFetch
-				 * @methodOf poluxClienteApp.controller:TrabajoGradoRevisarProyectoCtrl
-				 * @description 
-				 * Obtiene el blob de un documento.
-				 * @param {Object} doc Documento de nuxeo al cual se le obtendrá el Blob
-				 * @returns {Promise} La respuesta de obtener el blob del documento asociado
-				 */
-				ctrl.obtenerFetch = function(doc) {
-					var defer = $q.defer();
-					doc.fetchBlob()
-						.then(function(res) {
-							defer.resolve(res.blob());
-						})
-						.catch(function(error) {
-							defer.reject(error)
-						});
-					return defer.promise;
-				};
-
-				ctrl.obtenerDoc()
-					.then(function() {
-						ctrl.obtenerFetch(ctrl.document)
-							.then(function(r) {
-								ctrl.blob = r;
-								var fileURL = URL.createObjectURL(ctrl.blob);
-								
-								ctrl.content = $sce.trustAsResourceUrl(fileURL);
-								$window.open(fileURL);
-							})
-							.catch(function(error) {
-								
-								swal(
-									$translate.instant("MENSAJE_ERROR"),
-									$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-									'warning'
-								);
-							});
-					})
-					.catch(function(error) {
-						
-						swal(
-							$translate.instant("MENSAJE_ERROR"),
-							$translate.instant("ERROR.CARGAR_DOCUMENTO"),
-							'warning'
-						);
-					});
-			}
-
 		});

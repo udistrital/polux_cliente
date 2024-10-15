@@ -16,7 +16,7 @@
  * @param {Object} tipodocumento Arreglo de los tipos de documentos.
  */
 angular.module('poluxClienteApp')
-    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient, notificacionRequest, autenticacionMidRequest) {
+    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, notificacionRequest, autenticacionMidRequest) {
         return {
             restrict: "E",
             scope: {
@@ -41,7 +41,6 @@ angular.module('poluxClienteApp')
              * @requires $filter
              * @requires $route
              * @requires $scope
-             * @requires services/poluxService.service:nuxeoClient
              * @requires services/academicaService.service:academicaRequest
              * @property {string} mensajeCargando Mensaje que se muestra mientras se esta cargando.
              * @property {array} correcciones Arreglo de correcciones de la revisión.
@@ -216,7 +215,7 @@ angular.module('poluxClienteApp')
                      * @returns {undefined} No retorna ningún valor.
                      * @description
                      * Permite guardar la corrección y los comentarios llamando la función registrarRevisión, si es necesario carga
-                     * el documento de revisiones en {@link services/poluxService.service:nuxeoClient nuxeoClient}.
+                     * el documento de revisiones en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}.
                      */
                 ctrl.guardar_revision = function (accion) {
                     switch (accion) {
@@ -271,16 +270,8 @@ angular.module('poluxClienteApp')
                                                         Documento: true
                                                 })
                                                 ctrl.registrarRevision();
-                                                nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                                                   .then(function (response) {
-                                                    console.log('nuxeoMid response: ',response)
-                                                }).catch(function (error) {
-                                                  console.log('nuxeoMid error:',error)
-                                                })
+                                               
                                                })
-                                                //  nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correciones", undefined)
-                                                //.then(function (respuestaCrearDocumento) {
-                                               // })
                                                 .catch(function (excepcionCrearDocumento) {
                                                     ctrl.cargandoRevision = false;
                                                     swal(
@@ -320,7 +311,7 @@ angular.module('poluxClienteApp')
                                   });
                                 ctrl.revision.EstadoRevisionTrabajoGrado = estadoRevTemp.Id;
                                 var fecha = new Date();
-                                ctrl.revision.FechaRevision = fecha;
+                                ctrl.revision.FechaRevision = "";
                                 var comentarios = [];
                                 angular.forEach(ctrl.correcciones, function (correccion) {
                                     comentarios.push({
@@ -337,7 +328,7 @@ angular.module('poluxClienteApp')
                                 
                                 poluxMidRequest.post("tr_registrar_revision_tg", data_transaccion)
                                     .then(async function (respuestaRegistrarRevisionTg) {
-                                        if (respuestaRegistrarRevisionTg.data[0] === "Success") {
+                                        if (respuestaRegistrarRevisionTg.data.Success) {
                                            
                                             //Se notifica al estudiante cuando el docente responde por primera vez a la revisión
 
@@ -351,7 +342,7 @@ angular.module('poluxClienteApp')
 
                                             await poluxRequest.get("estudiante_trabajo_grado",parametro).then(function(estudiante_tg){
                                                 console.log(estudiante_tg)
-                                                codigo = estudiante_tg.data[0].Estudiante
+                                                codigo = estudiante_tg.data.Data[0].Estudiante
                                             })
 
                                             var data_auth_mid = {

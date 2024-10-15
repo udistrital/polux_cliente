@@ -15,8 +15,6 @@
  * @requires $window
  * @requires services/parametrosService.service:parametrosRequest
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService 
  * @requires services/poluxService.service:gestorDocumentalMidService
@@ -36,7 +34,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
-    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, nuxeo, nuxeoClient, poluxRequest, token_service) {
+    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
@@ -1202,14 +1200,9 @@ angular.module('poluxClienteApp')
        * @param {Number} docid Identificador del documento en {@requires services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana
+       * Llama al gestor documental para recuperar y mostrar el documento.
        */
       ctrl.getDocumento = function(docid) {
-          /*nuxeoClient.getDocument(docid)
-          .then(function(document) {
-            $window.open(document.url);
-          })
-          */
         //Muestra el documento desde el gestor documental
         gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
           var varia = utils.base64ToArrayBuffer(response.data.file);   
@@ -1544,7 +1537,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       * Llama al gestor documental para recuperar y mostrar el documento.
        */
       ctrl.getDocAnyFormat = function (docid) {
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {

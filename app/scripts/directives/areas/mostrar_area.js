@@ -5,7 +5,7 @@
  * @name poluxClienteApp.directive:mostrarArea
  * @description
  * # mostrarArea
- * Directiva que permite cargar un documento a nuxeo.
+ * Directiva que permite cargar un documento al gestor documental.
  * Controlador: {@link poluxClienteApp.directive:mostrarArea.controller:mostrarAreaCtrl mostrarAreaCtrl}. Actualmente no se utiliza.
  * @param {number} docenteParam Identificador del docente al que se le asignarán las áreas.
  * @param {number} idareaParam Identificador del área que se agregará

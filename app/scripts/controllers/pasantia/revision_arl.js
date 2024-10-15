@@ -416,10 +416,10 @@ angular.module('poluxClienteApp')
             * @ngdoc method
             * @name getDocumento
             * @methodOf poluxClienteApp.controller:RevisionArlCtrl
-            * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+            * @param {number} docid Identificador del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
             * @returns {undefined} No retorna ningún valor
             * @description 
-            * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+            * Se obtiene el documento alojado en el gestor documental para mostrarse en una nueva ventana.
             */
             ctrl.getDocumento = function () {
                 // Muestra de documento con gestor documental
