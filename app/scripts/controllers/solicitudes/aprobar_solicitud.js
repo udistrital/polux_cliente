@@ -118,6 +118,7 @@ angular.module('poluxClienteApp')
       });
       poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
         ctrl.SolicitudTrabajoGrado = responsesolicitud.data.Data[0];
+        console.log("Data__Solicitud", ctrl.SolicitudTrabajoGrado);
       }).catch(function (error) {
       })
       ctrl.Noaprobardescripcion = "";

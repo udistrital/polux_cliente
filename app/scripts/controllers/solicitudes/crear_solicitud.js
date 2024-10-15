@@ -143,6 +143,16 @@ angular.module('poluxClienteApp')
       ctrl.codigoEstu = 0;
       ctrl.Nota = false;
       ctrl.Cancelacion = false;
+      //Objeto en el que se almacenan los datos personales del estudiante para la modalidad pasantía (interna).
+      ctrl.datosEstudiante = {
+        pasantiaInterna: false,
+        fechaNacimiento: '',
+        ciudadNacimiento: '',
+        direccionResidencia: '',
+        telefono: '',
+        correoPersonal: '',
+        eps: ''
+    };
 
       //SE CONSULTAN LOS PARAMETROS USADOS
       /**
@@ -1416,7 +1426,7 @@ angular.module('poluxClienteApp')
        * @param {Number} modalidad_seleccionada Modalidad seleccionada por el estudiante
        * @returns {undefined} No retorna ningún valor
        */
-      ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {
+      ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {        
         if(ctrl.Docente==1 && ctrl.Docente_trabajos==false){
           ctrl.Docente_trabajos =true;
           ctrl.tipoSolicitud_Docente = tipoSolicitudSeleccionada;
@@ -2400,7 +2410,8 @@ angular.module('poluxClienteApp')
           data_solicitud = {
             "Fecha": fecha,
             "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
-            "PeriodoAcademico": ctrl.periodo
+            "PeriodoAcademico": ctrl.periodo,
+            "DatosPersonalesArl": ctrl.datosEstudiante
           };
           //console.log("DATA ", data_solicitud)
         }
@@ -2531,102 +2542,102 @@ angular.module('poluxClienteApp')
           DetallesSolicitud: data_detalles,
           UsuariosSolicitud: data_usuarios
         }
-        poluxMidRequest.post("tr_solicitud", ctrl.solicitud).then(async function(response) {
+        poluxMidRequest.post("tr_solicitud", ctrl.solicitud).then(async function(response) {          
           if (response.data.Success === true) {
+             //Se prepara la información para enviar la notificación al siguiente usuario en el flujo
             
-            //Se prepara la información para enviar la notificación al siguiente usuario en el flujo
-            
-            var titulo_tg, modalidad_tg, correos = []
+             var titulo_tg, modalidad_tg, correos = []
 
-            if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//Si es solicitud inicial, los datos de Modalidad y Título se recuperan de una forma distinta a las demás solicitudes
-              angular.forEach(ctrl.Modalidades, function (mod) {
-                if (mod.CodigoAbreviacion == ctrl.modalidad){
-                  modalidad_tg = mod.Nombre
-                }
-              })
-  
-              angular.forEach(ctrl.detalles, function (detalle) {
-                if (detalle.Detalle.CodigoAbreviacion == "NPRO") {
-                  titulo_tg = detalle.respuesta;
-                }
-              })  
-            }
-            else{
-              angular.forEach(ctrl.Modalidades, function (mod) {
-                if (mod.Id == ctrl.trabajoGrado.Modalidad){
-                  modalidad_tg = mod.Nombre
-                }
-              })
-
-              titulo_tg = ctrl.trabajoGrado.Titulo
-            }
-            
-            if(ctrl.modalidad == "PAS_PLX" && ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial de pasantía
-              //se debe enviar a la Oficina de Extensión de Pasantías
-              correos.push("pasantias_ing@udistrital.edu.co")
-            } else{
-              //se debe enviar al Docente Director
-              if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial, se busca el documento desde los detalles del formulario
-                angular.forEach(ctrl.detalles,async function(detalle){
-                  if(detalle.Detalle.CodigoAbreviacion == "DAP"){
-  
-                    console.log(detalle.respuesta)
-  
-                    var data_auth_mid = {
-                      numero : detalle.respuesta
-                    }
-            
-                    await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
-                      correos.push(response.data.email)
-                    })
-                  }
-                })
-              }
-              else{//si es otro tipo de solicitud, se busca desde los vinculados
-
-                var data_auth_mid = {
-                  numero : ctrl.solicitud.Respuesta.EnteResponsable.toString()
-                }
-        
-                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
-                  correos.push(response.data.email)
-                })
-              }
-            }
-
-            var data_correo = {
-              "Source": "notificacionPolux@udistrital.edu.co",
-              "Template": "POLUX_PLANTILLA_SOLICITUD",
-              "Destinations": [
-                {
-                  "Destination": {
-                    "ToAddresses": correos
-                  },
-                  "ReplacementTemplateData": {
-                    "tipo_solicitud": ctrl.TipoSolicitud.Nombre,
-                    "nombre_estudiante": ctrl.estudiante.Nombre,
-                    "titulo_tg": titulo_tg,
-                    "modalidad": modalidad_tg
-                  }
-                }
-              ]
-            }
-
-            //console.log(correos)
-
-            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
-            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
-              console.log("Envia el correo")
-              console.log(response)
-            }).catch(function (error) {
-              console.log("Error: ", error)
-            });*/
-
-            swal(
-              $translate.instant("FORMULARIO_SOLICITUD"),
-              $translate.instant("SOLICITUD_REGISTRADA"),
-              'success'
-            );
+             if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//Si es solicitud inicial, los datos de Modalidad y Título se recuperan de una forma distinta a las demás solicitudes
+               angular.forEach(ctrl.Modalidades, function (mod) {
+                 if (mod.CodigoAbreviacion == ctrl.modalidad){
+                   modalidad_tg = mod.Nombre
+                 }
+               })
+   
+               angular.forEach(ctrl.detalles, function (detalle) {
+                 if (detalle.Detalle.CodigoAbreviacion == "NPRO") {
+                   titulo_tg = detalle.respuesta;
+                 }
+               })  
+             }
+             else{
+               angular.forEach(ctrl.Modalidades, function (mod) {
+                 if (mod.Id == ctrl.trabajoGrado.Modalidad){
+                   modalidad_tg = mod.Nombre
+                 }
+               })
+ 
+               titulo_tg = ctrl.trabajoGrado.Titulo
+             }
+             
+             if(ctrl.modalidad == "PAS_PLX" && ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial de pasantía
+               //se debe enviar a la Oficina de Extensión de Pasantías
+               correos.push("pasantias_ing@udistrital.edu.co")
+             } else{
+               //se debe enviar al Docente Director
+               if(ctrl.TipoSolicitud.CodigoAbreviacion == "SI_PLX"){//si es solicitud inicial, se busca el documento desde los detalles del formulario
+                 angular.forEach(ctrl.detalles,async function(detalle){
+                   if(detalle.Detalle.CodigoAbreviacion == "DAP"){
+   
+                     console.log(detalle.respuesta)
+   
+                     var data_auth_mid = {
+                       numero : detalle.respuesta
+                     }
+             
+                     await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
+                       correos.push(response.data.email)
+                     })
+                   }
+                 })
+               }
+               else{//si es otro tipo de solicitud, se busca desde los vinculados
+ 
+                 var data_auth_mid = {
+                   numero : ctrl.solicitud.Respuesta.EnteResponsable.toString()
+                 }
+         
+                 await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
+                   correos.push(response.data.email)
+                 })
+               }
+             }
+ 
+             var data_correo = {
+               "Source": "notificacionPolux@udistrital.edu.co",
+               "Template": "POLUX_PLANTILLA_SOLICITUD",
+               "Destinations": [
+                 {
+                   "Destination": {
+                     "ToAddresses": correos
+                   },
+                   "ReplacementTemplateData": {
+                     "tipo_solicitud": ctrl.TipoSolicitud.Nombre,
+                     "nombre_estudiante": ctrl.estudiante.Nombre,
+                     "titulo_tg": titulo_tg,
+                     "modalidad": modalidad_tg
+                   }
+                 }
+               ]
+             }
+ 
+             //console.log(correos)
+ 
+             //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+             /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+               console.log("Envia el correo")
+               console.log(response)
+             }).catch(function (error) {
+               console.log("Error: ", error)
+             });*/
+                
+                swal(
+                  $translate.instant("FORMULARIO_SOLICITUD"),
+                  $translate.instant("SOLICITUD_REGISTRADA"),
+                  'success'
+                );
+             
             if(ctrl.Docente==1)
             {
               $location.path("/#");
@@ -2690,6 +2701,55 @@ angular.module('poluxClienteApp')
         });
 
       }
+
+      /**
+       * @ngdoc method
+       * @name saveDataEstudianteARL
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description
+       * Cuando el estudiante esté realizando una solicitud inicial de Pasantía (interna) debe cargar datos personales, esta función abre el modal donde los va a ingresar
+       * @param {undefined} undefined No requiere parámetros 
+       */
+
+      ctrl.saveDataEstudianteARL = function () {
+        // Validaciones opcionales antes de procesar los datos
+        if (ctrl.datosEstudiante.fechaNacimiento && ctrl.datosEstudiante.ciudadNacimiento &&
+            ctrl.datosEstudiante.direccionResidencia && ctrl.datosEstudiante.telefono &&
+            ctrl.datosEstudiante.correoPersonal && ctrl.datosEstudiante.eps) {
+            ctrl.datosEstudiante.pasantiaInterna = true;
+            // Datos capturados del formulario
+            console.log('Pasantía Interna:', ctrl.datosEstudiante.pasantiaInterna);
+            console.log('Fecha de Nacimiento:', ctrl.datosEstudiante.fechaNacimiento);
+            console.log('Ciudad de Nacimiento:', ctrl.datosEstudiante.ciudadNacimiento);
+            console.log('Dirección de Residencia:', ctrl.datosEstudiante.direccionResidencia);
+            console.log('Teléfono:', ctrl.datosEstudiante.telefono);
+            console.log('Correo Personal:', ctrl.datosEstudiante.correoPersonal);
+            console.log('EPS:', ctrl.datosEstudiante.eps);
+
+            // Cierra el modal después de guardar los datos
+            $('#modalDataPersonalARL').modal('hide');
+        } else {
+            console.log('Por favor complete todos los campos antes de guardar');
+        }
+    };
+
+
+
+
+      /**
+       * @ngdoc method
+       * @name openModalDataARL
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description
+       * Cuando el estudiante esté realizando una solicitud inicial de Pasantía (interna) debe cargar datos personales, esta función abre el modal donde los va a ingresar
+       * @param {undefined} undefined No requiere parámetros 
+       */
+      ctrl.openModalDataARL = function () {
+      console.log("Si llega la orden!!!")
+      // Mostrar el modal
+        $('#modalDataPersonalARL').modal('show');
+      };
+
       /**
        * @ngdoc method
        * @name getdatasolicitudDocente
@@ -2802,3 +2862,5 @@ angular.module('poluxClienteApp')
               });
       }
     });
+
+    
