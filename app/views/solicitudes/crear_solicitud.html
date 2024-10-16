@@ -92,14 +92,14 @@
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'NIT'">
               <div class="panel-body">
                 <div class="alert-warning">
-                  <b>{{'AVISO_NIT' | translate}}</b>
+                  <strong>{{'AVISO_NIT' | translate}}</strong>
                 </div>
               </div>
             </div>
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'CIIU'">
               <div class="panel-body">
                 <div class="alert-warning">
-                  <b>{{'AVISO_CIIU' | translate}}</b>
+                  <strong>{{'AVISO_CIIU' | translate}}</strong>
                 </div>
               </div>
             </div>
@@ -112,7 +112,7 @@
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DOC_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
-                <b>{{'AVISO_PDF' | translate}}</b>
+                <strong>{{'AVISO_PDF' | translate}}</strong>
               </div>
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
@@ -124,7 +124,7 @@
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DAN_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
-                <b>{{'AVISO_RAR' | translate}}</b>
+                <strong>{{'AVISO_RAR' | translate}}</strong>
               </div>
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
@@ -154,7 +154,8 @@
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado == 'AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>0" class="panel-body alert alert-warning">
              <label class="col-sm-12 control-label" translate="AUTORIZACION_DERECHOS_AUTOR"  translate-values='{ nombre: "{{crearSolicitud.estudiante.Nombre}}", codigo: {{crearSolicitud.estudiante.Codigo}}, tg: "{{crearSolicitud.trabajo_grado_completo.Titulo}}" }'>  </label>
-             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><b>AUTORIZAR</b></input>
+             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><strong
+             >AUTORIZAR</strong></input>
           </div>
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">

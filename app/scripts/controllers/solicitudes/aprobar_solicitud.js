@@ -105,11 +105,11 @@ angular.module('poluxClienteApp')
       ctrl.TipoDocumento = [];
       ctrl.TipoDetalle = [];
       ctrl.RolTrabajoGrado = [];
-      ctrl.tipoSolicitudTemp;
-      ctrl.modalidadTemp;
-      ctrl.estadoSolicitudTemp;
-      ctrl.estadoAsignaturaTrabajoGradoTemp;
-      ctrl.estadoEstudianteTrabajoGradoTemp;
+      ctrl.tipoSolicitudTemp = [];
+      ctrl.modalidadTemp = [];
+      ctrl.estadoSolicitudTemp = [];
+      ctrl.estadoAsignaturaTrabajoGradoTemp = [];
+      ctrl.estadoEstudianteTrabajoGradoTemp = [];
       var parametrosSolicitudes = $.param({
         query: "Id:" + ctrl.solicitud,
       });
@@ -1083,7 +1083,6 @@ angular.module('poluxClienteApp')
           let tipoSolicitud = ctrl.TipoSolicitud.find(tipSol => {
             return tipSol.Id == ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
           })
-          console
           if (modalidad.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitud.CodigoAbreviacion == "SI_PLX"
             && this.roles.includes("COORDINADOR_POSGRADO")) {
             await aprobarPosgrado();

@@ -1,15 +1,11 @@
 <div class="panel panel-primary panel-body">
-  <center>
-    <h3 class="page-header">
-      {{'REVISION_DOCUMENTOS' | translate}}
-    </h3>
-  </center>
+  <h3 class="page-header">
+    {{'REVISION_DOCUMENTOS' | translate}}
+  </h3>
   <loading tam="4" load="estudianteRevisionDoc.cargandoTrabajoGrado" message="estudianteRevisionDoc.mensajeCargandoTrabajoGrado"></loading>
   <div ng-if="!estudianteRevisionDoc.cargandoTrabajoGrado && estudianteRevisionDoc.trabajoGrado.vinculaciones" class="panel panel-default">
     <div class="panel-heading">
-      <center>
-        <h3 class="panel-title">{{'DATOS_TRABAJO_GRADO' | translate}}</h3>
-      </center>
+      <h3 class="panel-title">{{'DATOS_TRABAJO_GRADO' | translate}}</h3>
     </div>
     <div class="panel-body">
       <div class="row">
@@ -39,9 +35,7 @@
     <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
       <div class="panel panel-default" ng-if="estudianteRevisionDoc.revisionesTrabajoGrado">
         <div class="panel-heading">
-          <center>
-            <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
-          </center>
+          <h3 class="panel-title">{{'REVISIONES' | translate}}</h3>
         </div>
 
         <div class="panel-body" style="max-height: 650px; overflow-y:scroll;">

@@ -39,15 +39,13 @@
       <div class="col-sm-12">
       <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true && !errorCargarSolicitudes">
        <div class="mi-grid" id="mi-grid" ui-grid="seleccionAdmitidos.gridOptions" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-auto-resize></div><br>
-       <center>
-        <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
+       <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0 " ng-click="seleccionAdmitidos.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
         <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && seleccionAdmitidos.seleccionAdmitidos.gridOptions.data.length>0" ng-click="seleccionAdmitidos.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>-->
         <button ng-if="seleccionAdmitidos.permitirPrimeraFecha" ng-click="seleccionAdmitidos.admitirPrimeraFecha()" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-if="seleccionAdmitidos.permitirSegundaFecha" ng-click="seleccionAdmitidos.admitirSegundaFecha()" class="btn btn-success">Seleccionar Admitidos </button>
-      </center><br>
-
-    </div>
+        <br>
+      </div>
 
     <div ng-if="sols.length===0 && loadSolicitudes!==true && !errorCargarSolicitudes" class="alert alert-danger control-label" style="margin-top: 20px;">
       {{'NO_SOLICITUDES_PROFUNDIZACION' | translate}}
@@ -111,9 +109,7 @@
 
           <div class="col-md-12">
                <div class="panel panel-default panel-body" style="margin-top: 20px;">
-                 <center>
-                  <div ui-grid="seleccionAdmitidos.gridOptionsAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsAdmitidos.data.length*35)+40}}px" ui-grid-auto-resize></div>
-                </center>
+                <div ui-grid="seleccionAdmitidos.gridOptionsAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsAdmitidos.data.length*35)+40}}px" ui-grid-auto-resize></div>
               </div>
           </div>
           <br>
@@ -125,9 +121,7 @@
           </div>
           <div class="col-md-12">
                <div class="panel panel-default panel-body" style="margin-top: 20px;">
-                 <center>
-                  <div ui-grid="seleccionAdmitidos.gridOptionsOpcionados" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsOpcionados.data.length*35)+40}}px" ui-grid-auto-resize></div>
-                </center>
+                <div ui-grid="seleccionAdmitidos.gridOptionsOpcionados" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsOpcionados.data.length*35)+40}}px" ui-grid-auto-resize></div>
               </div>
           </div>
           <br>
@@ -139,9 +133,7 @@
           </div>
           <div class="col-md-12">
                <div class="panel panel-default panel-body" style="margin-top: 20px;">
-                 <center>
-                  <div ui-grid="seleccionAdmitidos.gridOptionsNoAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsNoAdmitidos.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
-                </center>
+                <div ui-grid="seleccionAdmitidos.gridOptionsNoAdmitidos" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptionsNoAdmitidos.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
               </div>
           </div>
           <br>
@@ -149,8 +141,8 @@
 
 
         <div class="row">
-          <div class="col-md-12"><center>
-            <button class="btn btn-primary" ng-click="seleccionAdmitidos.admitir()">{{'ACEPTAR' | translate}}</button></center>
+          <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="seleccionAdmitidos.admitir()">{{'ACEPTAR' | translate}}</button>
           </div>
         </div>
 
