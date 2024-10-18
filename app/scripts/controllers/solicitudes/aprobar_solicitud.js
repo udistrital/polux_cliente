@@ -110,12 +110,20 @@ angular.module('poluxClienteApp')
       ctrl.estadoSolicitudTemp;
       ctrl.estadoAsignaturaTrabajoGradoTemp;
       ctrl.estadoEstudianteTrabajoGradoTemp;
+      //ctrl.pasantiaInterna = false;
+      //ctrl.dataPersonaArl;
+      //ctrl.SolicitudTrabajoGrado;
       var parametrosSolicitudes = $.param({
         query: "Id:" + ctrl.solicitud,
       });
-      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
-        ctrl.SolicitudTrabajoGrado = responsesolicitud.data.Data[0];
+      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {        
+        ctrl.SolicitudTrabajoGrado = responsesolicitud.data.Data[0];       
+        console.log("CONSULTA 1", ctrl.SolicitudTrabajoGrado); 
+        ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
+        ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;
+        console.log("Data__Solicitud_ARL", ctrl.dataPersonaArl);
         console.log("Data__Solicitud", ctrl.SolicitudTrabajoGrado);
+        console.log("Fecha Nacimiento", ctrl.dataPersonaArl.fechaNacimiento);
       }).catch(function (error) {
       })
       ctrl.Noaprobardescripcion = "";
@@ -184,7 +192,7 @@ angular.module('poluxClienteApp')
           //Solicitud inicial
           if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX") {
             // MODALIDAD DE PASANTÍA
-            if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
+            if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {              
               var parametrosConsulta = $.param({
                 query: "CodigoAbreviacion.in:EMPRZ_PLX|CIIU_PLX|NIT_PLX"
               });
@@ -227,6 +235,18 @@ angular.module('poluxClienteApp')
         })
       }
 
+      /**
+       * @ngdoc method
+       * @name openModalDataARL
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description
+       * Cuando el estudiante esté realizando una solicitud inicial de Pasantía (interna) debe cargar datos personales, esta función abre el modal donde los va a ingresar
+       * @param {undefined} undefined No requiere parámetros 
+       */
+      ctrl.openModalDataARL = function () {        
+        // Mostrar el modal
+          $('#modalVistaDataPersonalARL').modal('show');
+        };
 
       /**
        * @ngdoc method
@@ -428,12 +448,13 @@ angular.module('poluxClienteApp')
 
         await asignarParametros();
         await getParametros();
-
+        console.log("ACA INICIA");
+        console.log("Pasantía Interna", ctrl.pasantiaInterna);
         poluxRequest.get("estado_solicitud", parametrosEstadoSolicitud).then(function (responseEstadoSolicitud) {
           if (Object.keys(responseEstadoSolicitud.data.Data[0]).length > 0) {
             ctrl.estadoSolicitud = responseEstadoSolicitud.data.Data;
           }
-        });
+        });        
         poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
           poluxRequest.get("usuario_solicitud", parametrosDetallesSolicitud).then(async function (responseEstudiantes) {
             poluxRequest.get("documento_solicitud", parametrosDetallesSolicitud).then(function (responseDocumentoSolicitud) {
@@ -922,7 +943,8 @@ angular.module('poluxClienteApp')
         limit: 1
       });
 
-      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitud).then(async function (responseSolicitud) {
+      poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitud).then(async function (responseSolicitud) {   
+        console.log("CONSULTA 2");     
         if (Object.keys(responseSolicitud.data.Data[0]).length > 0) {
           var parametrosDetallesSolicitud = $.param({
             query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
@@ -932,7 +954,7 @@ angular.module('poluxClienteApp')
           ctrl.dataSolicitud = responseSolicitud.data.Data[0];
 
           var promises = [];
-          if (ctrl.Docente === 1 || ctrl.UnidadExtPasantia === 1) {
+          if (ctrl.Docente === 1 || ctrl.UnidadExtPasantia === 1) {            
             var parametro = ({
               "modalidad_tipo_solicitud": responseSolicitud.data.Data[0].ModalidadTipoSolicitud,
             });
@@ -2856,6 +2878,7 @@ angular.module('poluxClienteApp')
             query: "Id:" + ctrl.solicitud,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(async function (responsesolicitud) {
+            console.log("CONSULTA 3");
             var parametro = responsesolicitud.data.Data[0];
             var modalidad = 0;
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX") {
@@ -2970,7 +2993,7 @@ angular.module('poluxClienteApp')
                     });
                   });
                   poluxRequest.put("solicitud_trabajo_grado", ctrl.solicitud, parametrosSolicitud1).then(function (responsesolicitudsolicitud) {
-
+                    console.log("CONSULTA 4");
                     if (responsesolicitudsolicitud.data.Data !== undefined) {
 
                       //Solicitud inicial aprobada por docente director
@@ -3084,6 +3107,7 @@ angular.module('poluxClienteApp')
             query: "Id:" + ctrl.solicitud,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
+            console.log("CONSULTA 5");
             var parametro = responsesolicitud.data.Data[0];
             //Solicitud inicial
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
@@ -3405,6 +3429,7 @@ angular.module('poluxClienteApp')
                         query: "Id:" + ctrl.solicitud,
                       });
                       poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(async function (responsesolicitud) {//Se trae la solicitud_trabajo_grado que cumpla las condiciones
+                        console.log("CONSULTA 6");
                         var parametro = responsesolicitud.data.Data[0];
                         var modalidad = 0;
 
