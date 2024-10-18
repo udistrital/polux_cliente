@@ -8,7 +8,7 @@
  * Controller of the poluxClienteApp
  */
 angular.module('poluxClienteApp')
-    .controller('ReportesCtCtrl', function($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest,uiGridExporterConstants, oikosRequest, token_service,$window) 
+    .controller('ReportesCtCtrl', function($location, $q, $routeParams, $sce, $scope, $translate, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest,uiGridExporterConstants, oikosRequest, token_service,$window) 
     {
        var self = this;
        self.nombreReporte=null;

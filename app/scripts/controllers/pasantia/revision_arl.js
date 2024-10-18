@@ -226,7 +226,7 @@ angular.module('poluxClienteApp')
 
                             angular.forEach(ctrl.trabajosGrado, function (trabajo) {
 
-                                let ModalidadTemp = ctrl.Modalidades.find(data => {
+                                ModalidadTemp = ctrl.Modalidades.find(data => {
                                     return data.Id == trabajo.TrabajoGrado.Modalidad;
                                 });
                                 trabajo.TrabajoGrado.Modalidad = ModalidadTemp;
@@ -416,10 +416,10 @@ angular.module('poluxClienteApp')
             * @ngdoc method
             * @name getDocumento
             * @methodOf poluxClienteApp.controller:RevisionArlCtrl
-            * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+            * @param {number} docid Identificador del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
             * @returns {undefined} No retorna ningún valor
             * @description 
-            * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+            * Se obtiene el documento alojado en el gestor documental para mostrarse en una nueva ventana.
             */
             ctrl.getDocumento = function () {
                 // Muestra de documento con gestor documental
@@ -704,7 +704,7 @@ angular.module('poluxClienteApp')
                             ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
-                                .then(function (dataTrabajos) {
+                                .then(function () {
 
                                     ctrl.EnvioNotificacion()
 
@@ -740,7 +740,7 @@ angular.module('poluxClienteApp')
                         return data.CodigoAbreviacion == "ARC_PLX"
                     });
 
-                    var parametrosTrabajoGrado = $.param({
+                    parametrosTrabajoGrado = $.param({
                         limit: 1,
                         query: "Id:" + ctrl.trabajoSeleccionado.Id,
                     });
@@ -752,7 +752,7 @@ angular.module('poluxClienteApp')
                             ctrl.trabajoGrado.EstadoTrabajoGrado = EstadoTgTemp.Id
 
                             poluxRequest.put("trabajo_grado", ctrl.trabajoGrado.Id, ctrl.trabajoGrado)
-                                .then(function (dataTrabajos) {
+                                .then(function () {
 
                                     ctrl.EnvioNotificacion()
 

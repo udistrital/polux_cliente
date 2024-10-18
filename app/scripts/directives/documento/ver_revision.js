@@ -30,14 +30,13 @@ angular.module('poluxClienteApp')
              * Controlador de la directiva {@link poluxClienteApp.directive:verRevision verRevision}.
              * @requires services/poluxService.service:poluxRequest
              * @requires $scope
-             * @requires services/poluxClienteApp.service:nuxeoClient
             * @requires services/poluxService.service:gestorDocumentalMidService
              * @property {number} pageNum Número de la página en donde se realiza la revisión.
              * @property {object} revision Revisión que se está mostrando.
              * @property {array} correcciones Arreglo de correcciones que se muestren.
              * @property {object} pruebac Comentario temporal que se guarda.
              */
-            controller: function ($scope, nuxeoClient,gestorDocumentalMidRequest) {
+            controller: function ($scope,gestorDocumentalMidRequest) {
                 var ctrl = this;
 
                 /**
@@ -106,11 +105,11 @@ angular.module('poluxClienteApp')
                             sortby: "Id",
                             order: "asc"
                         })).then(async function (response) {
-                            comentarios.push(response.data);
+                            comentarios.push(response.data.Data);
                             
                             //Se prepara la información para la notificación
 
-                            var ult_comentario = response.data[response.data.length-1]//Se obtiene el último comentario realizado
+                            var ult_comentario = response.data.Data[response.data.Data.length-1]//Se obtiene el último comentario realizado
 
                             var respondio_docente, codigo, correos = []
 

@@ -11,11 +11,9 @@
  * @requires $q
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
  * @requires services/poluxService.service:documentoService
  * @requires services/poluxService.service:parametrosService
  * @requires services/poluxMidService.service:poluxMidRequest
@@ -43,7 +41,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
-    function($scope, $q, $translate,notificacionRequest, academicaRequest,nuxeoMidRequest,utils,gestorDocumentalMidRequest, nuxeoClient, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest, autenticacionMidRequest) {
+    function($scope, $q, $translate,notificacionRequest, academicaRequest,utils,gestorDocumentalMidRequest, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "80093200";
@@ -417,16 +415,12 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
-       * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+       * @param {number} docid Identificador del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+       * Se obtiene el documento alojado en el gestor documental para mostrarse en una nueva ventana.
        */
     ctrl.getDocumento = function() {
-      /*nuxeoClient.getDocument(docid)
-        .then(function(document) {
-          $window.open(document.url);
-        })*/
         // Muestra de documento con gestor documental
       gestorDocumentalMidRequest.get('/document/' + ctrl.docTrabajoGrado.DocumentoEscrito.Enlace).then(function (response) {
           var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
@@ -449,7 +443,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión.
        */
       ctrl.getDocAnyFormat = function (docid) {
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
@@ -622,7 +616,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
        * Función que permite guardar la nota que se registra en un trabajo de grado, guarda el acta de sustentación y la asocia a un documento escrito.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para hacer gestión documental.
        * @param {undefined} undefined No recibe ningún parametro
        * @returns {undefined} No hace retorno de resultados
        */
@@ -631,14 +625,14 @@ angular.module('poluxClienteApp')
         var crearData = function () {
           var defer = $q.defer()
 
-          let ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.Id == ctrl.trabajoSeleccionado.Modalidad.Id;
+          let ModalidadTemp = ctrl.Modalidades.find(dataModalidad => {
+            return dataModalidad.Id == ctrl.trabajoSeleccionado.Modalidad.Id;
           });
 
           ctrl.trabajoSeleccionado.Modalidad = ModalidadTemp.Id;
 
-          let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(data => {
-            return data.Id == ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id;
+          let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(dataEstados => {
+            return dataEstados.Id == ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id;
           });
 
           ctrl.trabajoSeleccionado.EstadoTrabajoGrado = EstadoTrabajoGradoTemp.Id;
@@ -655,8 +649,8 @@ angular.module('poluxClienteApp')
             }
           }
           //Si es director se debe subir el acta
-          let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(data => {
-            return data.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
+          let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(dataRol => {
+            return dataRol.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
           });
           if (RolTrabajoGradoTemp.CodigoAbreviacion == "DIRECTOR_PLX") {
             var nombreDocumento = "Acta de sustentación de trabajo id: " + ctrl.trabajoSeleccionado.Id;
@@ -670,8 +664,8 @@ angular.module('poluxClienteApp')
             descripcion = descripcionDocumento;
             utils.getBase64(ctrl.trabajoSeleccionado.actaSustentacion).then(function (base64) {
               fileBase64 = base64;
-              let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-                return data.CodigoAbreviacion == "ACT_PLX";
+              let TipoDocumentoTemp = ctrl.TiposDocumento.find(dataTipoDoc => {
+                return dataTipoDoc.CodigoAbreviacion == "ACT_PLX";
               });
               data = [{
                 IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
@@ -696,20 +690,10 @@ angular.module('poluxClienteApp')
                   TipoDocumentoEscrito: TipoDocumentoTemp.Id, //Para acta de sustentación
                 };
                 defer.resolve(dataRegistrarNota);
-                nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                  .then(function (response) {
-                    // console.log('nuxeoMid response: ',response) 
-                  }).catch(function (error) {
-                    //  console.log('nuxeoMid error:',error)
-                  })
+                
               })
 
             })
-
-              //nuxeoClient.createDocument(nombreDocumento, descripcionDocumento, ctrl.trabajoSeleccionado.actaSustentacion, 'actas_sustentacion', undefined)
-              //  .then(function(urlActa) {
-
-              //  })
               .catch(function (error) {
                 defer.reject(error);
               });
@@ -719,8 +703,8 @@ angular.module('poluxClienteApp')
             defer.resolve(dataRegistrarNota);
           }
 
-          let RolTemp = ctrl.RolesTrabajoGrado.find(data => {
-            return data.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;
+          let RolTemp = ctrl.RolesTrabajoGrado.find(dataRol => {
+            return dataRol.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;
           });
 
           dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado = RolTemp.Id;
@@ -733,7 +717,7 @@ angular.module('poluxClienteApp')
           .then(function (dataRegistrarNota) {
             //Se ejecuta la transacción
             poluxMidRequest.post("tr_vinculado_registrar_nota", dataRegistrarNota).then(async function (response) {
-              if (response.data[0] === "Success") {
+              if (response.data.Success) {
                 
                 var CodigoAbreviacionRol, Modalidad, RolDirectorTemp, correos = []
 
@@ -764,15 +748,15 @@ angular.module('poluxClienteApp')
                   });
 
                   poluxRequest.get("vinculacion_trabajo_grado", parametros).then(async function (vinculado) {//Se busca al Docente Director
-                    var data_auth_mid = {
-                      numero: vinculado.data[0].Usuario.toString()
+                    data_auth_mid = {
+                      numero: vinculado.data.Data[0].Usuario.toString()
                     }
 
-                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
-                      correos.push(response.data.email)//se agrega a los correos destinatarios
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseCorreo) {//se busca el correo con el documento
+                      correos.push(responseCorreo.data.email)//se agrega a los correos destinatarios
                     })
 
-                    var data_correo = {
+                    data_correo = {
                       "Source": "notificacionPolux@udistrital.edu.co",
                       "Template": "POLUX_PLANTILLA_REGISTRO_NOTA",
                       "Destinations": [
@@ -806,8 +790,8 @@ angular.module('poluxClienteApp')
                     numero: ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo.toString()
                   }
 
-                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
-                    correos.push(response.data.email)//se agrega a los correos destinatarios
+                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseCorreoEst) {//se busca el correo con el documento
+                    correos.push(responseCorreoEst.data.email)//se agrega a los correos destinatarios
                   })
 
                   await academicaRequest.get("datos_basicos_estudiante", [ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo]).then(async function(estudiante){
@@ -815,23 +799,23 @@ angular.module('poluxClienteApp')
                     await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
                       console.log("carrera:",carrera)
     
-                      var data_auth_mid = {
+                      data_auth_mid = {
                         numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
                       }
               
-                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(responseCorreoCoord){//se busca el correo del estudiante con el documento
+                        correos.push(responseCorreoCoord.data.email)//se almacena en los correos destinatarios
                       })
                     })
 
                     await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
 
-                      var data_auth_mid = {
+                      data_auth_mid = {
                         numero : asistente.data.asistente.proyectos[0].documento_asistente
                       }
               
-                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(responseCorreoAsis){//se busca el correo del estudiante con el documento
+                        correos.push(responseCorreoAsis.data.email)//se almacena en los correos destinatarios
                       })
                     })
                   })
@@ -911,7 +895,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralRegistrarNotaCtrl
        * @description
        * Función que permite guardar la nota que se registra en un trabajo de grado, guarda el acta de sustentación y la asocia a un documento escrito.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para hacer gestión documental.
        * @param {undefined} undefined No recibe ningún parametro
        * @returns {undefined} No hace retorno de resultados
        */
@@ -942,8 +926,16 @@ angular.module('poluxClienteApp')
           .then(async function (response) {
             console.log("Comparación Success")
             if (response.data.Success === true) {
-              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
-                correos.push(response.data.email)
+
+              var correos = [], usuario = []
+
+              //se busca el correo del estudiante
+              var data_auth_mid = {
+                numero: ctrl.trabajoSeleccionado.estudiantes[0].Estudiante
+              }
+
+              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseEmail) {
+                correos.push(responseEmail.data.email)
               })
 
               //Se busca el nombre del docente que realiza el comentario

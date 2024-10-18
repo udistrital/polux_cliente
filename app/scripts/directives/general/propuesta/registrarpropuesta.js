@@ -43,8 +43,6 @@ angular.module('poluxClienteApp')
              * @requires $scope
              * @requires $q
              * @requires $http
-             * @requires constantes
-             * @requires services/poluxClienteApp.service:nuxeoService
              * @requires services/poluxClienteApp.service:tokenService
              * @property {array} estudiantes Arreglo de estudiantes que registran la propuesta.
              * @property {object} estudianteSeleccionado Estudiante seleccionado de la lisa para registrar propuesta.
@@ -57,7 +55,7 @@ angular.module('poluxClienteApp')
              * @property {object} registro_TG Data para el registro del trabajo de grado.
              * @property {number} modalidad Modalidad en la que se registra el trabajo de grado.
              */
-            controller: function ($scope, $location, $http, token_service, nuxeo, $q, constantes) {
+            controller: function ($scope, $location, $http, token_service, $q) {
                 var self = this;
                 self.validar = false;
                 var parametros = {
@@ -325,7 +323,6 @@ angular.module('poluxClienteApp')
                  * @methodOf poluxClienteApp.directive:registrarPropuesta.controller:registrarPropuestaCtrl
                  * @param {string} titulo Titulo del trabajo de grado.
                  * @param {string} resumen Resumen del documento del trabajo de grado.
-                 * @param {string} enlace Enlace del documento en nuxeo.
                  * @returns {array} Data para el registro del documento.
                  * @description 
                  * Permite crear la data del documento propuesta del trabajo de grado.

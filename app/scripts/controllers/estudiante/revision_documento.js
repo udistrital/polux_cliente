@@ -599,25 +599,20 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:EstudianteRevisionDocumentoCtrl
        * @description
        * Permite ver un documento que sea versión de un trabajo de grado.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para realizar gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para realizar gestión documental.
        * @param {Object} doc Documento que se va a descargar
        * @returns {undefined} No hace retorno de resultados
        */
       ctrl.verDocumento = function(doc) {
         if (doc.uid) {
           ctrl.loadingVersion = true;
-          /*nuxeoClient.getDocument(doc.uid)
-            .then(function(documento) {
-              ctrl.loadingVersion = false;
-              window.open(documento.url);
-            })*/
-            gestorDocumentalMidRequest.get('/document/'+doc.uid).then(function (response) {  
-                var varia = utils.base64ToArrayBuffer(response.data.file);
-                var file = new Blob([varia], {type: 'application/pdf'});
-                var fileURL = URL.createObjectURL(file);
-                $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-             })
-            .catch(function(error) {
+          gestorDocumentalMidRequest.get('/document/' + doc.uid).then(function (response) {
+            var varia = utils.base64ToArrayBuffer(response.data.file);
+            var file = new Blob([varia], { type: 'application/pdf' });
+            var fileURL = URL.createObjectURL(file);
+            $window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
+          })
+            .catch(function (error) {
               ctrl.loadingVersion = false;
               swal(
                 $translate.instant("MENSAJE_ERROR"),
@@ -656,7 +651,7 @@ angular.module('poluxClienteApp')
        * @description
        * Maneja la operación de subir el documento luego de que el usuario selecciona y efectúa click sobre el botón dentro del modal.
        * Funciona con: actualizarTrabajoGrado y actualizarContenidoRevisiones
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para realizar gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para realizar gestión documental.
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
@@ -673,9 +668,6 @@ angular.module('poluxClienteApp')
             if (confirmacionDelUsuario) {
               ctrl.cargandoTrabajoGrado = true;
               $('#modalSubirNuevaVersion').modal('hide');
-              //ctrl.cargarDocumento(ctrl.trabajoGrado.Titulo, "Versión nueva del trabajo de grado", ctrl.nuevaVersionTrabajoGrado)
-             // nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, ctrl.nuevaVersionTrabajoGrado)
-             //   .then(function(respuestaCargarDocumento) {
                   // Upload de nueva version
                   var descripcion;
                   var fileBase64 ;
@@ -802,7 +794,7 @@ angular.module('poluxClienteApp')
               })
               var nuevaRevision = {
                 NumeroRevision: (angular.isUndefined(ctrl.revisionesTrabajoGrado)) ? 1 : ctrl.revisionesTrabajoGrado.length + 1,
-                FechaRecepcion: new Date(),
+                FechaRecepcion: null,
                 EstadoRevisionTrabajoGrado: estadoRevisionTrabajoGrado.Id,
                 DocumentoTrabajoGrado: {
                   Id: ctrl.trabajoGrado.documentoTrabajoGrado
@@ -1002,21 +994,21 @@ angular.module('poluxClienteApp')
           return tipoDoc.CodigoAbreviacion == "DTR_PLX"
         })
         if (estadoTrabajoGrado.CodigoAbreviacion == "AMO_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASMO_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "RVS_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "AVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "PECSPR_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "EC_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "MOD_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "ER_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
@@ -1057,7 +1049,7 @@ angular.module('poluxClienteApp')
        * @description 
        * Pide la confirmación y realiza el registro del documento que va a actualizarse.
        * Funciona con: actualizarDocumentoTrabajoGrado y actualizarContenidoRevisiones
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para realizar gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para realizar gestión documental.
        * @param {undefined} undefined No requiere parámetros
        * @returns {undefined} No hace retorno de resultados
        */
@@ -1120,7 +1112,7 @@ angular.module('poluxClienteApp')
               ctrl.cargandoActualizarTg = true;
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {
                 //Actualiza el documento
-                let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+                estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
                   return estTrGr.Id == estadoTg
                 })
                 var estadosValidos = ["AMO_PLX", "ASMO_PLX", "EC_PLX", "MOD_PLX"]
@@ -1128,8 +1120,6 @@ angular.module('poluxClienteApp')
                   return tipoDoc.CodigoAbreviacion == "DTR_PLX"
                 })
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
-                  //return nuxeoClient.uploadNewVersion(ctrl.trabajoGrado.documentoEscrito.Enlace, fileModel)     
-                  var descripcion;
                   var fileBase64 ;
                   var data = [];
                   var URL = "";
@@ -1155,9 +1145,9 @@ angular.module('poluxClienteApp')
                 estadosValidos = ["AVI_PLX", "ASVI_PLX", "PECSPR_PLX"]
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //Se carga el documento con el gestor documental
-                  var fileBase64 ;
-                  var data = [];
-                  var URL;
+                  fileBase64 = [];
+                  data = [];
+                  URL = [];
                     utils.getBase64(fileModel).then(
                       function (base64) {
                        fileBase64 = base64;
@@ -1188,7 +1178,6 @@ angular.module('poluxClienteApp')
                       return URL
                      })
                   })
-                 // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
                 }
                 //Si se cargó la ARL
                 estadosValidos = ["PAEA_PLX","ARC_PLX"]
@@ -1197,9 +1186,9 @@ angular.module('poluxClienteApp')
                 })
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //Se carga el documento con el gestor documental
-                  var fileBase64 ;
-                  var data = [];
-                  var URL;
+                  fileBase64 = [];
+                  data = [];
+                  URL = [];
                     utils.getBase64(fileModel).then(
                       function (base64) {
                        fileBase64 = base64;
@@ -1230,11 +1219,9 @@ angular.module('poluxClienteApp')
                       return URL
                      })
                   })
-                 // return nuxeoClient.createDocument(titulo, descripcion, fileModel, workspace, undefined)
                 }
               }
               functionDocument(ctrl.trabajoGrado.EstadoTrabajoGrado, ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace)
-                //nuxeoClient.createDocument(ctrl.trabajoGrado.Titulo, descripcionDocumento, ctrl.documentoActualizado, workspace, undefined)
                 .then(function(respuestaCargarDocumento) {
                   ctrl.actualizarDocumentoTrabajoGrado(respuestaCargarDocumento)
                     .then(function(respuestaActualizarTG) {

@@ -5,7 +5,7 @@
  * @name poluxClienteApp.directive:cargarDocumento
  * @description
  * # cargarDocumento
- * Directiva que permite cargar un documento a nuxeo.
+ * Directiva que permite cargar un documento al gestor documental.
  * Controlador: {@link poluxClienteApp.directive:cargarDocumento.controller:cargarDocumentoCtrl cargarDocumentoCtrl}
  * @param {string} name nombre del documento que se va a subir
  * @param {object} carreras carreras asociadas al coordinador que va a subir el documento
@@ -37,10 +37,9 @@ angular.module('poluxClienteApp')
        * @requires $filter
        * @requires $scope
        * @requires $q
-       * @requires services/poluxClienteApp.service:nuxeoService
        * @property {object} documento Documento que se va a cargar
        */
-      controller: function (poluxRequest, $translate, $filter, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest,token_service) {
+      controller: function (poluxRequest, $translate, $filter, $scope,utils,gestorDocumentalMidRequest,token_service) {
         var ctrl = this;
         var url;
         ctrl.documento = [];
@@ -60,7 +59,7 @@ angular.module('poluxClienteApp')
          * @param {undefined} undefined No recibe parametros
          * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el documento.
          * @description 
-         * Permite cargar un documento a {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+         * Permite cargar un documento a {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
          */
         ctrl.cargarDocumento = function(){
           var fileBase64;
@@ -104,7 +103,7 @@ angular.module('poluxClienteApp')
          * @param {undefined} undefined No recibe parametros.
          * @returns {undefined} No retorna ningún valor.
          * @description 
-         * Crea la data del documento, llama a la funcion ara cargar el documento a nuxeo y luego de cargarlo
+         * Crea la data del documento, llama a la funcion para cargar el documento al gestor documental y luego de cargarlo
          * lo registra en {@link services/poluxService.service:poluxRequest poluxRequest}
          */
         ctrl.enviarDocumento = function () {

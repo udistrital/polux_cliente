@@ -28,7 +28,6 @@ angular.module('poluxClienteApp')
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/poluxService.service:nuxeoClient
        * @requires services/poluxService.service:gestorDocumentalMidService
        * @requires services/parametrosService.service:parametrosRequest
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
@@ -38,7 +37,7 @@ angular.module('poluxClienteApp')
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        * @property {String} mensajeCargando Mensaje que se muestra cuando esta cargando
        */
-      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, nuxeoClient,gestorDocumentalMidRequest, $window, parametrosRequest) {
+      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, gestorDocumentalMidRequest, $window, parametrosRequest) {
         var ctrl = this;
         ctrl.trabajoGrado = $scope.tg;
 
@@ -710,7 +709,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión.
        */
         ctrl.getDocAnyFormat = function (docid) {
           gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {

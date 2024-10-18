@@ -11,7 +11,6 @@
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires $window
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @requires services/poluxClienteApp.service:tokenService
@@ -37,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConsultarTrabajoGradoCtrl',
-    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, token_service, parametrosRequest, documentoRequest) {
+    function($q, $translate, $window, academicaRequest,utils,gestorDocumentalMidRequest, poluxRequest, token_service, parametrosRequest, documentoRequest) {
       var ctrl = this;
 
       //token_service.token.documento = "79647592";
@@ -648,18 +647,12 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name getDocumento
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
-       * @param {number} docid Identificador del documento en {@link services/poluxClienteApp.service:nuxeoClient nuxeoClient}
+       * @param {number} docid Identificador del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Se obtiene el documento alojado en nuxeo para mostrarse en una nueva ventana.
+       * Se obtiene el documento alojado en gestor documental para mostrarse en una nueva ventana.
        */
       ctrl.getDocumento = function(docid) {
-        /*nuxeoClient.getDocument(docid)
-          .then(function(document) {
-            $window.open(document.url);
-          })*/
-
-
           // Muestra de documento con gestor documental
           gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
             var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});

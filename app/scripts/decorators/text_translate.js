@@ -129,6 +129,8 @@ var text_es = {
     EMPRESA: "Nombre de la Empresa",
     NIT: "NIT de la empresa",
     DOCUMENTO_ARL: "Documento de la ARL",
+    DATOS_ARL: "Si la pasantía a realizar es interna, presione el botón para ingresar datos personales para diligenciar la ARL.",
+    VER_DATOS_ARL: "La solicitud de pasantía es de caracter interno, por favor seleccione el botón para ver los datos pertinentes para diligenciar la ARL",
     NOMBRE_ESP_ACADEMICO: "Nombre del espacio académico",
     ESP_ACADEMICOS: "Espacios académicos",
     MODALIDAD_ESP_POS: "Modalidad: Espacios académicos de posgrado",
@@ -456,6 +458,12 @@ var text_es = {
     INGRESE_DOCUMENTO_DIRECTOR_EXTERNO: "Ingrese el número de documento del director externo",
     INGRESE_DOCUMENTO_NUEVO_DIRECTOR_EXTERNO: "Ingrese el número de documento del nuevo director externo",
     INGRESAR_PROPUESTA: "Ingrese el nombre de la propuesta",
+    FECHA_NACIMIENTO: "Ingrese su fecha de nacimiento",
+    LUGAR_NACIMIENTO: "Ingrese ciudad o municipio de nacimiento",
+    DIRECCION_RESIDENCIA: "Ingrese su dirección de residencia",
+    TELEFONO_ESTUDIANTE: "Ingrese su número de teléfono celular o fijo",
+    CORREO_PERSONAL_ESTUDIANTE: "Ingrese la dirección de su correo personal",
+    EPS_ESTUDIANTE: "Ingrese el nombre de la EPS a la que está afiliado",
     INGRESE_EMPRESA: "Ingrese el nombre de la empresa o razón social",
     INGRESE_NIT: "Ingrese el NIT de la empresa",
     INGRESE_CIIU: "Ingrese el código CIIU (código de actividad económica cámara y comercio)",
@@ -471,6 +479,7 @@ var text_es = {
     CARGUE_ACUERDO_VOLUNTAD: "Cargue el acuerdo de voluntad, convenio o contrato avalado por la unidad de extensión de la facultad",
     CARGUE_CARTA_DESIGNANDO_PROFESIONAL: "Cargue la carta de la entidad que designa al profesional responsable del acompañamiento",
     ESPACIOS_ACADEMICOS_MISMO_PERIODO: "De acuerdo con lo establecido en el acuerdo N.°012 de 2022, seleccione este campo indicando si desea la inscripción de los espacios académicos correspondientes a Trabajo de Grado I y II en el mismo período académico. Tenga en cuenta que: La decisión sobre dicha inscripción es tomada por su proyecto curricular, examinando el contenido de esta solicitud y su situación académica actual; además, la coordinación de su proyecto curricular será quien se encargue de registrar él(los) espacio(s) académico(s) durante las fechas asignadas en el calendario académico.",
+    SELECCION_TIPO_PASANTIA: "La pasantía que va a realizar es al interior de la Universidad Distrital Francisco José de Caldas?",
     JUSTIFICACION_SOLICITUD: "Escriba la causa con la que justifica la solicitud",
     DIRECTOR_ACTUAL: "Nombre del director actual",
     CODIRECTOR_ACTUAL: "Nombre del codirector actual",
@@ -1999,10 +2008,10 @@ var text_en = {
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasPublindex/clasificacion'>National Magazines</a></li>" +
         "<li><a target='_blank' href='https://scienti.minciencias.gov.co/publindex/#/revistasHomologadas/buscador'>International Magazines</a></li>" +
         "</ul>",
-    NOTIFICACION: {
-            COORDINACION:"CURRICULAR PROJECT COORDINATION",
-            PASANTIA:"INTERNSHIP EXTENSION OFFICE"
-    }
+        NOTIFICACION: {
+                COORDINACION:"CURRICULAR PROJECT COORDINATION",
+                PASANTIA:"INTERNSHIP EXTENSION OFFICE"
+        }
 };
 
 /**

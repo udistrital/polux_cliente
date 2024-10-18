@@ -15,8 +15,6 @@
  * @requires $window
  * @requires services/parametrosService.service:parametrosRequest
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService 
  * @requires services/poluxService.service:gestorDocumentalMidService
@@ -36,7 +34,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
-    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, nuxeo, nuxeoClient, poluxRequest, token_service) {
+    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
@@ -412,14 +410,14 @@ angular.module('poluxClienteApp')
                 });
                 query += ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:"
                 var tiposSolicitud = ["SCM_PLX", "SCDI_PLX", "SCDE_PLX", "SSO_PLX", "SPR_PLX", "SMDTG_PLX", "SCMA_PLX", "SCE_PLX", "SDTG_PLX", "SCCI_PLX", "SRTG_PLX", "SAD_PLX","SCO_PLX"]
-                ctrl.TipoSolicitud.forEach(tipoSolicitud => {
-                  if (tiposSolicitud.includes(tipoSolicitud.CodigoAbreviacion)) {
+                ctrl.TipoSolicitud.forEach(tipo_Solicitud => {
+                  if (tiposSolicitud.includes(tipo_Solicitud.CodigoAbreviacion)) {
                     if (guardaSegundo) {
                       query += "|"
                     } else {
                       guardaSegundo = true
                     }
-                    query += tipoSolicitud.Id.toString()
+                    query += tipo_Solicitud.Id.toString()
                   }
                 });
                 parametrosSolicitudes = $.param({
@@ -566,8 +564,8 @@ angular.module('poluxClienteApp')
                   modalidadTipoSol = responseModalidadTipo.data.Data;
                 })
                 console.log("ESTADOSOLICITUD")
-                var query = "ESTADOSOLICITUD.in:"
-                var guardaPrimero = false;
+                query = "ESTADOSOLICITUD.in:"
+                guardaPrimero = false;
                 ctrl.EstadoSolicitud.forEach(estado => {
                   console.log("ESTADOSOLICITUD", estado.CodigoAbreviacion)
                   if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX") {
@@ -600,7 +598,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 console.log("EXCLUDE", exclude)
-                var parametrosSolicitudes = $.param({
+                parametrosSolicitudes = $.param({
                   query: query + ",Activo:true",
                   exclude: exclude,
                   limit: 0
@@ -850,7 +848,7 @@ angular.module('poluxClienteApp')
                                     limit: 0
                                   });
                                 } else if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                                  var guardaPrimero = false;
+                                  guardaPrimero = false;
                                   ctrl.EstadoSolicitud.forEach(estado => {
                                     if (estado.CodigoAbreviacion == "ACPO2_PLX" || estado.CodigoAbreviacion == "RCPO2_PLX") {
                                       if (guardaPrimero) {
@@ -1097,7 +1095,7 @@ angular.module('poluxClienteApp')
                   exclude += modTipo.Id
                 }
               });
-              var parametrosSolicitudes = $.param({
+              parametrosSolicitudes = $.param({
                 query: query + ",Activo:true",
                 exclude: exclude,
                 limit: 0
@@ -1202,14 +1200,9 @@ angular.module('poluxClienteApp')
        * @param {Number} docid Identificador del documento en {@requires services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un documento de nuxeo y msotrarlo en una nueva ventana
+       * Llama al gestor documental para recuperar y mostrar el documento.
        */
       ctrl.getDocumento = function(docid) {
-          /*nuxeoClient.getDocument(docid)
-          .then(function(document) {
-            $window.open(document.url);
-          })
-          */
         //Muestra el documento desde el gestor documental
         gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
           var varia = utils.base64ToArrayBuffer(response.data.file);   
@@ -1270,7 +1263,7 @@ angular.module('poluxClienteApp')
             console.log("Entra detalle_solicitud", detalles)
             angular.forEach(detalles.data.Data, function(detalle) {
               if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TG") { //buscar el detalle asociado al TG
-                var parametros = $.param({
+                parametros = $.param({
                   query: "TrabajoGrado.Id:" + detalle.Descripcion
                 });
                 poluxRequest.get("estudiante_trabajo_grado", parametros).then(function(estudiantes) {
@@ -1307,14 +1300,14 @@ angular.module('poluxClienteApp')
           limit: 0
         });
 
-        var getDocumentoRespuesta = function(fila, solicitud) {
+        var getDocumentoRespuesta = function(filaRes, solicitudRes) {
           var defer = $q.defer();
           let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
-            return estadoSol.Id == fila.entity.Respuesta.EstadoSolicitud
+            return estadoSol.Id == filaRes.entity.Respuesta.EstadoSolicitud
           })
           if (estadoSolicitudTemp.CodigoAbreviacion != "RDC_PLX") {
             var parametrosDocumentoSolicitud = $.param({
-              query: "SolicitudTrabajoGrado.Id:" + solicitud,
+              query: "SolicitudTrabajoGrado.Id:" + solicitudRes,
               limit: 0
             });
             poluxRequest.get("documento_solicitud", parametrosDocumentoSolicitud).then(function(documento) {
@@ -1343,8 +1336,8 @@ angular.module('poluxClienteApp')
             })
             ctrl.detallesSolicitud = responseDetalles.data.Data;
             ctrl.detallesSolicitud.forEach(detalle => {
-              detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
-                return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
+              detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalleSol => {
+                return tipoDetalleSol.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
               })
             });
           } else {
@@ -1445,7 +1438,6 @@ angular.module('poluxClienteApp')
                     });
                   }
                   detalle.filas = [];
-                  var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                   var codigoAbreviacion = detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion;
                   if (codigoAbreviacion == "TF") {
                     detalle.Descripcion = detalle.Descripcion.split("-")[1];
@@ -1544,7 +1536,7 @@ angular.module('poluxClienteApp')
        * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
        * @returns {undefined} No retorna ningún valor
        * @description 
-       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión de nuxeo.
+       * Llama al gestor documental para recuperar y mostrar el documento.
        */
       ctrl.getDocAnyFormat = function (docid) {
         gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
