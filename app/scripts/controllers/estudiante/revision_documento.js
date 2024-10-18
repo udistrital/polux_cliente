@@ -994,21 +994,21 @@ angular.module('poluxClienteApp')
           return tipoDoc.CodigoAbreviacion == "DTR_PLX"
         })
         if (estadoTrabajoGrado.CodigoAbreviacion == "AMO_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASMO_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "RVS_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "AVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "ASVI_PLX" || estadoTrabajoGrado.CodigoAbreviacion == "PECSPR_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "EC_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
           ctrl.trabajoGrado.documentoEscrito.TipoDocumentoEscrito = tipoDocumento.Id;
         }
         if (estadoTrabajoGrado.CodigoAbreviacion == "MOD_PLX") {
-          let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+          estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
             return estTrGr.CodigoAbreviacion == "ER_PLX"
           })
           ctrl.trabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
@@ -1112,15 +1112,14 @@ angular.module('poluxClienteApp')
               ctrl.cargandoActualizarTg = true;
               var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {
                 //Actualiza el documento
-                let estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
+                estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
                   return estTrGr.Id == estadoTg
                 })
                 var estadosValidos = ["AMO_PLX", "ASMO_PLX", "EC_PLX", "MOD_PLX"]
                 let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
                   return tipoDoc.CodigoAbreviacion == "DTR_PLX"
                 })
-                if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {   
-                  var descripcion;
+                if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   var fileBase64 ;
                   var data = [];
                   var URL = "";
@@ -1146,9 +1145,9 @@ angular.module('poluxClienteApp')
                 estadosValidos = ["AVI_PLX", "ASVI_PLX", "PECSPR_PLX"]
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //Se carga el documento con el gestor documental
-                  var fileBase64 ;
-                  var data = [];
-                  var URL;
+                  fileBase64 = [];
+                  data = [];
+                  URL = [];
                     utils.getBase64(fileModel).then(
                       function (base64) {
                        fileBase64 = base64;
@@ -1187,9 +1186,9 @@ angular.module('poluxClienteApp')
                 })
                 if (estadosValidos.includes(estadoTrabajoGrado.CodigoAbreviacion)) {
                   //Se carga el documento con el gestor documental
-                  var fileBase64 ;
-                  var data = [];
-                  var URL;
+                  fileBase64 = [];
+                  data = [];
+                  URL = [];
                     utils.getBase64(fileModel).then(
                       function (base64) {
                        fileBase64 = base64;

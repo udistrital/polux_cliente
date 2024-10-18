@@ -423,7 +423,7 @@ angular.module('poluxClienteApp')
             if (Object.keys(detalleSolicitud.data.Data[0]).length > 0) {
               var carreraSolicitud = JSON.parse(detalleSolicitud.data.Data[0].Descripcion.split("-")[1]);
               if (ctrl.carrera == carreraSolicitud.Codigo) {
-                var parametros = $.param({
+                parametros = $.param({
                   query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
                 });
                 poluxRequest.get("usuario_solicitud", parametros).then(function(usuarioSolicitud) {

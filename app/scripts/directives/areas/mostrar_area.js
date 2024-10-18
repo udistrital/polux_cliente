@@ -13,7 +13,7 @@
  * @param {array} ardocente Arreglos de áreas del docente.
  */
 angular.module('poluxClienteApp')
-  .directive('mostrarArea', function (poluxRequest, academicaRequest) {
+  .directive('mostrarArea', function (polux_Request, academicaRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -116,7 +116,7 @@ angular.module('poluxClienteApp')
             self.codDocenteActual = response.data.Data[0].Docente;
             
             poluxRequest.delete("areas_docente", IdAreaDocente)
-              .then(function (response) {
+              .then(function () {
                 self.mostrarAreasDocente(self.codDocenteActual);
               });
           });

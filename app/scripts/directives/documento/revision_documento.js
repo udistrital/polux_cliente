@@ -255,8 +255,7 @@ angular.module('poluxClienteApp')
                                                         Tipo: "Archivo",
                                                         Observaciones: "correciones"
                                                     },
-                                                    descripcion:"Correcciones sobre el proyecto",
-                                                    file:  fileBase64,
+                                                    descripcion:"Correcciones sobre el proyecto"
                                                 }]
 
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 

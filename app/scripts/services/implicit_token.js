@@ -33,7 +33,7 @@ if (window.localStorage.getItem('access_token') === null ||
     window.localStorage.clear();
   }
   req.onreadystatechange = function(e) {
-    if (req.readyState === 4) {
+    /*if (req.readyState === 4) {
       if (req.status === 200) {
         //
       } else if (req.status === 400) {
@@ -41,7 +41,7 @@ if (window.localStorage.getItem('access_token') === null ||
       } else {
         
       }
-    }
+    }*/
   };
 }
 

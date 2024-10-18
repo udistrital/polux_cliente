@@ -224,7 +224,7 @@ angular.module('poluxClienteApp')
             verificarParametro = true;
         }});
       }else{
-      var nuevoparam = cambiarFormato(ctrl.nombreValorTabla);
+      nuevoparam = cambiarFormato(ctrl.nombreValorTabla);
       angular.forEach(ctrl.TablasColeccion ,function(tabla) {     
         $scope.loadTablas = true; 
         if (nuevoparam === cambiarFormato(tabla.Nombre)) {
@@ -246,8 +246,7 @@ angular.module('poluxClienteApp')
             'warning'
           );
         } else {  
-          if(ctrl.tablaSeleccionada.name=="pregunta")
-          {
+          if(ctrl.tablaSeleccionada.name=="pregunta"){
             var dataArea = {                 
               Activo: true,   
               CodigoAbreviacion: ctrl.abreviacionTabla,
@@ -256,9 +255,8 @@ angular.module('poluxClienteApp')
               Enunciado: ctrl.nombreEnunciadoTabla
             }
           }
-          if(ctrl.tablaSeleccionada.name=="modalidad")         
-          {           
-            var dataArea = {                 
+          if(ctrl.tablaSeleccionada.name=="modalidad"){           
+            dataArea = {                 
               Activa: true,   
               CodigoAbreviacion: ctrl.abreviacionTabla,
               Descripcion: ctrl.descripcionTabla,
@@ -266,8 +264,7 @@ angular.module('poluxClienteApp')
               Nombre: ctrl.nombreValorTabla
             }
           }else{
-            
-            var dataArea = {                 
+            dataArea = {                 
               Activo: true,   
               CodigoAbreviacion: ctrl.abreviacionTabla,
               Descripcion: ctrl.descripcionTabla,

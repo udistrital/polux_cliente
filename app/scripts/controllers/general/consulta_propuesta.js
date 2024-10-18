@@ -149,8 +149,8 @@ angular.module('poluxClienteApp')
                             
                             angular.forEach(ctrl.vinculacion_docente_tg, function (vd) {
                                 $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
-                                    .then(function (response) {
-                                        var json = response.data.Data.split("<json>");
+                                    .then(function (response2) {
+                                        var json = response2.data.Data.split("<json>");
                                         var jsonObj = JSON.parse(json[1]);
                                         var docente = jsonObj[0];
                                         vd.Docente = docente;
@@ -171,8 +171,8 @@ angular.module('poluxClienteApp')
                             
                             angular.forEach(ctrl.vinculacion_docente_tg, function (vd) {
                                 $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
-                                    .then(function (response) {
-                                        var json = response.data.Data.split("<json>");
+                                    .then(function (response2) {
+                                        var json = response2.data.Data.split("<json>");
                                         var jsonObj = JSON.parse(json[1]);
                                         var docente = jsonObj[0];
                                         vd.Docente = docente;
@@ -190,18 +190,14 @@ angular.module('poluxClienteApp')
                                     limit: -1,
                                     query: "IdAreaConocimiento:" + atg.IdAreaConocimiento.Id
                                 }))
-                                    .then(function (response) {
-                                        ctrl.docentes_areas = response.data.Data;
+                                    .then(function (response2) {
+                                        ctrl.docentes_areas = response2.data.Data;
                                         angular.forEach(ctrl.docentes_areas, function (da) {
                                             $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + da.IdentificacionDocente)
-                                                .then(function (response) {
-                                                    var json = response.data.Data.split("<json>");
+                                                .then(function (response3) {
+                                                    var json = response3.data.Data.split("<json>");
                                                     var jsonObj = JSON.parse(json[1]);
                                                     var docente = jsonObj[0];
-                                                    if (ctrl.DocentesAreaConocimiento.indexOf(docente) == -1) {
-                                                        
-                                                        
-                                                    }
                                                     ctrl.DocentesAreaConocimiento.push(docente);
 
                                                 });

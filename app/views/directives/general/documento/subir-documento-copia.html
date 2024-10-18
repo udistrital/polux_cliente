@@ -21,12 +21,12 @@
                     <div class="col-lg-7 col-sm-7">
                         <!-- The fileinput-button span is used to style the file input field as button -->
                         <span class="btn btn-success fileinput-button" ng-class="{disabled: disabled}">
-                            <i class="glyphicon glyphicon-plus"></i>
+                            <em class="glyphicon glyphicon-plus"></em>
                             <span>Subir documento ...</span>
                             <input type="file" name="files[]" multiple ng-disabled="disabled">
                         </span>
                         <button type="button" class="btn btn-warning cancel" data-ng-click="cancel()">
-                            <i class="glyphicon glyphicon-ban-circle"></i>
+                            <em class="glyphicon glyphicon-ban-circle"></em>
                             <span>Cancelar</span>
                         </button>
                         <!-- The global file processing state -->
@@ -67,15 +67,15 @@
                         </td>
                         <td>
                             <button type="button" class="btn btn-primary start" ng-click="file.$submit(); newdial();" data-ng-hide="!file.$submit || options.autoUpload" data-ng-disabled="file.$state() == 'pending' || file.$state() == 'rejected'">
-                                <i class="glyphicon glyphicon-upload"></i>
+                                <em class="glyphicon glyphicon-upload"></em>
                                 <span>{{'GUARDAR_REGISTRO' | translate}}</span>
                             </button>
                             <button type="button" class="btn btn-warning cancel" data-ng-click="file.$cancel()" data-ng-hide="!file.$cancel">
-                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                <em class="glyphicon glyphicon-ban-circle"></em>
                                 <span>{{'CANCELAR' | translate}}</span>
                             </button>
                             <button  type="button" class="btn btn-danger destroy" data-ng-click="file.$destroy()" data-ng-hide="!file.$destroy">
-                                <i class="glyphicon glyphicon-trash"></i>
+                                <em class="glyphicon glyphicon-trash"></em>
                                 <span>{{'BORRAR' | translate}}</span>
                             </button>
                         </td>

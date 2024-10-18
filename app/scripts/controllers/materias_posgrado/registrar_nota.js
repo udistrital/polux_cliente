@@ -704,9 +704,6 @@ angular.module('poluxClienteApp')
                         // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
                         ctrl.cargandoTrabajosDeGradoCursados = false;
                         ctrl.cargandoEspaciosAcademicos = false;
-                        var Atributos={
-                          rol:'ESTUDIANTE',
-                      }
                       //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
 
                       //  notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              

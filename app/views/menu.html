@@ -22,8 +22,8 @@
       </li>
       <li ng-repeat="nivel_1 in ::my_menu" class="dropdown">
         <a ng-if="nivel_1.Opciones !== null" ng-href="{{actual}}" class="dropdown-toggle" data-toggle="dropdown">
-            {{nivel_1.Nombre}} <b class="caret">
-          </b>
+            {{nivel_1.Nombre}} <strong class="caret">
+          </strong>
         </a>
         <ul class="dropdown-menu">
           <li ng-repeat="nivel_2 in nivel_1.Opciones">
@@ -75,10 +75,10 @@ opcion
           -->
           <div>
           <div>
-          <i class="fa fa-bell fa-fw faa-ring animated" style="color:rgb(223, 115, 115)"  ng-if="!loading && !roles.includes('ESTUDIANTE')"></i>
-          <i class="fa fa-bell fa-fw faa-ring animated" ng-if="loading && !roles.includes('ESTUDIANTE')" ></i>
-          <i style="color: rgb(255, 255, 255);">{{notificaciones.length}}</i></div>           
-          <i class="fa fa-caret-down"></i>
+          <em class="fa fa-bell fa-fw faa-ring animated" style="color:rgb(223, 115, 115)"  ng-if="!loading && !roles.includes('ESTUDIANTE')"></em>
+          <em class="fa fa-bell fa-fw faa-ring animated" ng-if="loading && !roles.includes('ESTUDIANTE')" ></em>
+          <em style="color: rgb(255, 255, 255);">{{notificaciones.length}}</em></div>           
+          <em class="fa fa-caret-down"></em>
           </div>
 
         </a>
@@ -100,25 +100,25 @@ opcion
             <li ng-if="!load">
               <a class="text-center" ng-href="#/notificaciones">
                 <strong >Ver todas las notificaciones</strong>
-                <i class="fa fa-angle-right"></i>
+                <em class="fa fa-angle-right"></em>
               </a>
             </li>
         </ul>
         <!-- /.dropdown -->
         <li class="dropdown" ng-if="token_service.live_token()">
           <a class="dropdown-toggle" data-toggle="dropdown" ng-href="{{menuCtrl.actual}}">
-            <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+            <em class="fa fa-user fa-fw"></em> <em class="fa fa-caret-down"></em>
           </a>
           <ul class="dropdown-menu dropdown-user">
             <li>
               <a ng-click="">
-                <i class="fa fa-sign-in fa-fw"></i> {{token_service.getPayload().email}}</a>
+                <em class="fa fa-sign-in fa-fw"></em> {{token_service.getPayload().email}}</a>
               </a>
             </li>
-            <li><a><i class="fa fa-gear fa-fw"></i> Configuración</a>
+            <li><a><em class="fa fa-gear fa-fw"></em> Configuración</a>
             </li>
             <li class="divider"></li>
-            <li><a ng-click="token_service.logout()"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
+            <li><a ng-click="token_service.logout()"><em class="fa fa-sign-out fa-fw"></em> Cerrar sesión</a>
             </li>
           </ul>
           <!-- /.dropdown-user 
@@ -161,7 +161,7 @@ opcion
     <md-sidenav class="md-sidenav-left" md-component-id="left">
       <md-content>
         <a ng-repeat="app in menu_app" title="{{app.title}}" ng-href="{{app.url}}" target="_blank">
-            <img class="menu-app" id="{{app.id}}"></img>
+            <img alt="menu-app" class="menu-app" id="{{app.id}}"></img>
         </a>
       </md-content>
     </md-sidenav>

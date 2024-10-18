@@ -87,22 +87,17 @@ angular.module('poluxClienteApp')
                             // Confirmar la subcripcion de notificaciones
                  notificacionRequest.verificarSuscripcion().then(function(respuestasub)
                 {
-                    if(respuestasub.data.Data!=false){
-                    }
-                    else
-                    {
-                        notificacionRequest.suscripcion().then(function(respuestasubs)
-                        {
-                            if(respuestasubs.data.Data!=false)
-                            {
-                                console.log(respuestasubs.data.Data+" Se ha registrado el usuario en notificaciones");
-                            }
-                        }).catch(
-                                function (error) {
-                                    console.log(error)
-                                }
-                            );
-                    }
+                     if (respuestasub.data.Data == false) {
+                         notificacionRequest.suscripcion().then(function (respuestasubs) {
+                             if (respuestasubs.data.Data != false) {
+                                 console.log(respuestasubs.data.Data + " Se ha registrado el usuario en notificaciones");
+                             }
+                         }).catch(
+                             function (error) {
+                                 console.log(error)
+                             }
+                         );
+                     }
                   }
                 );
                             roles = rl.toString();
