@@ -98,12 +98,6 @@ angular.module('poluxClienteApp')
           '<div ng-if="!row.entity.Activo"><btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesNoActivo" fila="row"></btn-registro></div>'
       }];
 
-      var parametrosAreas = $.param({
-        query: "Estado:ACTIVO",
-        limit: 0,
-      });
-
-
       ctrl.areasSnies = [
         {Id:1,estado:true,Nombre:'AGRONOMIA VETERINARIA Y AFINES'},
         {Id:2,estado:true,Nombre:'BELLAS ARTES'},
