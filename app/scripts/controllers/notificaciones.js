@@ -81,7 +81,6 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
                                 console.log(error)
                             }
                         );
-                    }else{
                     }
                 }
                  

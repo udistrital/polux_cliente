@@ -50,8 +50,8 @@ angular.module('poluxClienteApp')
                     oikosRequest.get("espacio_fisico", $.param({
                         query: "Codigo:" + social.Lugar,
                         limit: "-1",
-                    })).then(function(response) {
-                        ctrl.lugares = response.data;
+                    })).then(function(Reslugares) {
+                        ctrl.lugares = Reslugares.data;
                         //social.Lugar = response.data[0];
                     });
                 });

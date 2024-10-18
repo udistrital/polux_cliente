@@ -429,7 +429,6 @@ angular.module('poluxClienteApp')
                   }] 
   
                     gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
-                    URL =  response.data.res.Enlace 
                     ctrl.revisionActual.Correcciones.push({
                       Observacion: response,
                       Justificacion: "Por favor descargue el documento de observaciones",

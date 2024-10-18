@@ -105,11 +105,11 @@ angular.module('poluxClienteApp')
                             sortby: "Id",
                             order: "asc"
                         })).then(async function (response) {
-                            comentarios.push(response.data);
+                            comentarios.push(response.data.Data);
                             
                             //Se prepara la información para la notificación
 
-                            var ult_comentario = response.data[response.data.length-1]//Se obtiene el último comentario realizado
+                            var ult_comentario = response.data.Data[response.data.Data.length-1]//Se obtiene el último comentario realizado
 
                             var respondio_docente, codigo, correos = []
 
