@@ -50,9 +50,8 @@
     <div class="panel panel-default" ng-if="aprobarSolicitud.detallesSolicitud.length > 0">
       <div class="panel-heading">
         {{'DETALLES_SOLICITUD' | translate}}
-      </div>
-      <div class="panel-body">
-
+      </div>   
+      <div class="panel-body">     
        <div  class="row" ng-repeat="detalle in aprobarSolicitud.detallesSolicitud">
 
         <label class="col-sm-4 control-label"> {{detalle.DetalleTipoSolicitud.Detalle.Nombre}}:  </label>
@@ -63,7 +62,7 @@
           <div class="panel col-md-12">
             <div ui-grid="detalle.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
           </div>
-        </div>
+        </div>       
         <div ng-if="detalle.carrera===undefined">
           <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DAN_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
             <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
@@ -86,6 +85,16 @@
           
         </div>
 
+      </div>
+      <!-- Mensaje para pasantía interna -->      
+      <div ng-if="aprobarSolicitud.pasantiaInterna == true && aprobarSolicitud.modalidadTemp.CodigoAbreviacion == 'PAS_PLX'" class="panel panel-default">
+        <div class="panel-body">
+          <label class="control-label col-sm-8"> {{'VER_DATOS_ARL' | translate}}: </label>          
+          <!-- <label ng-click="crearSolicitud.openModalDataARL()" class="col-sm-8" -->
+          <div class="row row-centered">
+          <button type="button" class="btn btn-primary" ng-click="aprobarSolicitud.openModalDataARL()">Ver Datos ARL</button> </label>
+          </div>        
+        </div>      
       </div>
     </div>
   </div>
@@ -385,4 +394,57 @@
         </div>
       </div>
     </div>
+</div>
+
+<div id="modalVistaDataPersonalARL" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          {{'INFORMACION_SOLICITUD' | translate}}
+          <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal"
+                ng-click="">&times</button><br>
+        </div>
+          <!-- <h3>Tome nota de los datos personales para ARL</h3> -->
+          
+      </div>
+      <div class="modal-body">
+          <form name="formDatosEstudiante" ng-submit="datosEstudianteCtrl.guardarDatosEstudiante()">
+            <div class="panel-body">
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Fecha de Nacimiento</label>
+                  <!-- <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label> -->
+                  <!-- <input type="date" class="form-control" ng-model="crearSolicitud.datosEstudiante.fechaNacimiento" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.fechaNacimiento}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Ciudad de Nacimiento</label>
+                  <!-- <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.ciudadNacimiento" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.ciudadNacimiento}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Dirección de Residencia</label>
+                  <!-- <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.direccionResidencia" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.direccionResidencia}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Teléfono</label>
+                  <!-- <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.telefono" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.telefono}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Correo Personal</label>
+                  <!-- <input type="email" class="form-control" ng-model="crearSolicitud.datosEstudiante.correoPersonal" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.correoPersonal}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">EPS</label>
+                  <!-- <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.eps" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.eps}}  </label>
+              </div>
+            </div>
+              
+              <!-- <button type="submit" ng-click="crearSolicitud.saveDataEstudianteARL()" class="btn btn-primary">Guardar Datos</button> -->
+          </form>
+      </div>
+  </div>
 </div>
