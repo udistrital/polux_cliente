@@ -1079,7 +1079,7 @@ angular.module('poluxClienteApp')
               });
               var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:"
               guardaPrimero = false;
-              modalidadTipoSol.forEach(modTipo => {
+              modalidadTipoSol.Data.forEach(modTipo => {
                 let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                   return modalidad.Id == modTipo.Modalidad
                 })
@@ -1101,11 +1101,11 @@ angular.module('poluxClienteApp')
                 limit: 0
               });
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function (responseSolicitudes) {
-                if (Object.keys(responseSolicitudes.data[0]).length > 0) {
+                if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
                   ctrl.conSolicitudes = true;
                 }
-                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
-                  responseSolicitudes.data = [];
+                if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
+                  responseSolicitudes.data.Data = [];
                 }
                 var verificarSolicitud = function (solicitud) {
                   var defer = $q.defer();
@@ -1161,7 +1161,7 @@ angular.module('poluxClienteApp')
                     });
                   return defer.promise;
                 }
-                angular.forEach(responseSolicitudes.data, function (solicitud) {
+                angular.forEach(responseSolicitudes.data.Data, function (solicitud) {
                   promiseArr.push(verificarSolicitud(solicitud));
                 });
                 $q.all(promiseArr).then(function () {
