@@ -42,7 +42,7 @@ angular.module('poluxClienteApp')
              * @property {object} gridOptions Opciones del ui-grid donde se muestran las asignaturas
              * @property {object} gridOptions2 Opciones del ui-grid donde se muestran las asignaturas de la opción 2
              */
-            controller: function ($scope, $route, $translate) {
+            controller: function ($scope, $translate) {
                 var ctrl = this;
                 ctrl.dobleSolicitud = true
                 ctrl.cargando = $translate.instant("LOADING.CARGANDO_ASIGNATURAS");
@@ -146,7 +146,7 @@ angular.module('poluxClienteApp')
                         query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo+",Nivel:"+nivelAsignaturas,
                         fields: "CodigoCarrera,CodigoPensum"
                     });
-                    poluxRequest.get("carrera_elegible", parametros).then(function (response) {
+                    poluxRequest.get("carrera_elegible", parametros).then(function (responseCarrera) {
                         var promises = []
                         var getCreditos = function () {
                             var defer = $q.defer();
@@ -186,10 +186,10 @@ angular.module('poluxClienteApp')
                             return defer.promise
                         }
                         promises.push(getCreditos());
-                        if (Object.keys(response.data.Data[0]).length === 0) {
-                            response.data.Data = []
+                        if (Object.keys(responseCarrera.data.Data[0]).length === 0) {
+                            responseCarrera.data.Data = []
                         }
-                        angular.forEach(response.data.Data, function (value) {
+                        angular.forEach(responseCarrera.data.Data, function (value) {
                             //if (value.CodigoCarrera !== $scope.e.Codigo) {
                             if (!$scope.e.includes(value.CodigoCarrera)) {
                                 promises.push(getCarrera(value));
@@ -252,12 +252,12 @@ angular.module('poluxClienteApp')
                     poluxRequest.get("carrera_elegible", parametros).then(function (response) {
 
                         //asignaturas elegibles para ser vistas en la modalidad de espacios académicos de posgrado
-                        var parametros = $.param({
+                        parametros = $.param({
                             query: "CarreraElegible:" + response.data.Data[0].Id + ",Activo:true",
                             limit: 0
                         });
 
-                        poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (response) {
+                        poluxRequest.get("espacios_academicos_elegibles", parametros).then(function (responseEspacios) {
                             var promises = [];
                             var getAsignatura = function (value) {
                                 var defer = $q.defer();
@@ -285,7 +285,7 @@ angular.module('poluxClienteApp')
                                 return defer.promise;
                             }
                             //recorrer data y buscar datos de las asignaturas
-                            angular.forEach(response.data.Data, function (value) {
+                            angular.forEach(responseEspacios.data.Data, function (value) {
                                 //buscar asignaturas
                                 promises.push(getAsignatura(value));
                             });

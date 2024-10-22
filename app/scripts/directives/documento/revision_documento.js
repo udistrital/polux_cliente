@@ -236,10 +236,8 @@ angular.module('poluxClienteApp')
                                         if (ctrl.documentModel) {
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones
                                             //Carga de documento con Gesto Documental
-                                            var descripcion;
                                             var fileBase64 ;
                                             var data = [];
-                                            var URL = "";
                                             let tipoDocumentoAux = $scope.tipodocumento.find(tipoDoc => {
                                                 return tipoDoc.CodigoAbreviacion == "DREV_PLX"
                                             })

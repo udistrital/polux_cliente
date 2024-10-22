@@ -955,9 +955,9 @@ angular.module('poluxClienteApp')
 
           var promises = [];
           if (ctrl.Docente === 1 || ctrl.UnidadExtPasantia === 1) {            
-            var parametro = ({
+            /*var parametro = ({
               "modalidad_tipo_solicitud": responseSolicitud.data.Data[0].ModalidadTipoSolicitud,
-            });
+            });*/
           }
           else {
             promises.push(ctrl.getCarrerasCoordinador());
@@ -1036,7 +1036,6 @@ angular.module('poluxClienteApp')
         var errorDocente = false;
         //se desactiva respuesta anterior
         var objRtaAnterior = ctrl.respuestaActual;
-        var numeroOpcionPosgrado = 0;
         objRtaAnterior.Activo = false;
         var resOriginal = ctrl.respuestaSolicitud
         let estadoSolRtaNueva = ctrl.EstadoSolicitud.find(est => {
@@ -1162,7 +1161,7 @@ angular.module('poluxClienteApp')
             });
 
             //funcion para cambiar vinculaciones
-            var addVinculacion = function (dataVinculaciones, documentoActual, documentoNuevo) {
+            var addVinculacion = function (data_Vinculaciones, documentoActual, documentoNuevo) {
               vinculacionActual = [];
               angular.forEach(ctrl.docentesVinculadosTg, function (docenteVinculado) {
                 if (docenteVinculado.Usuario === Number(documentoActual)) {
@@ -1178,8 +1177,8 @@ angular.module('poluxClienteApp')
               nuevaVinculacion.Usuario = Number(documentoNuevo);
               nuevaVinculacion.FechaInicio = fechaRespuesta;
               //nuevaVinculacion.FechaFin=null;
-              dataVinculaciones.push(vinculacionActual);
-              dataVinculaciones.push(nuevaVinculacion);
+              data_Vinculaciones.push(vinculacionActual);
+              data_Vinculaciones.push(nuevaVinculacion);
             }
             //Se verifica por tipo de solicitud
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
@@ -1957,9 +1956,9 @@ angular.module('poluxClienteApp')
                     }
                   }
                   //buscar si hay algun valor repetido
-                  angular.forEach(dataVinculaciones, function (data_vinculacion) {
+                  angular.forEach(dataVinculaciones, function (data_vinculacion_cambio) {
                     if (dataVinculaciones.filter(function (value) {
-                      return value.Usuario === data_vinculacion.Usuario
+                      return value.Usuario === data_vinculacion_cambio.Usuario
                     }).length > 1) {
                       errorDocente = true;
                     }
@@ -2860,7 +2859,7 @@ angular.module('poluxClienteApp')
           return est.CodigoAbreviacion == resOriginal
         })
         if (estadoSolRtaNueva.CodigoAbreviacion == "ADD_PLX") {
-          var parametrosSolicitudes = $.param({
+          parametrosSolicitudes = $.param({
             query: "Id:" + ctrl.solicitud,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(async function (responsesolicitud) {
@@ -3092,8 +3091,7 @@ angular.module('poluxClienteApp')
           parametrosSolicitudes = $.param({
             query: "Id:" + ctrl.solicitud,
           });
-          poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responsesolicitud) {
-            var parametro = responsesolicitud.data.Data[0];
+          poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function () {
             //Solicitud inicial
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
               var data_documento = {

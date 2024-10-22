@@ -117,15 +117,15 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
             {
                     if(response)
                     {
-                        $translate.instant("Se ha eliminado correctamente"),
+                        $translate.instant("Se ha eliminado correctamente")
                         'warning' 
                 $location.path("/notificaciones");
                 traerNoticicaciones()
                     }
                     else
                     {
-                        $translate.instant("ERROR.NOTIFICACIONES_ELIMINADA"),
-                        $translate.instant("VERIFICAR_CONEXION"),
+                        $translate.instant("ERROR.NOTIFICACIONES_ELIMINADA")
+                        $translate.instant("VERIFICAR_CONEXION")
                         'warning'
                     }
             });

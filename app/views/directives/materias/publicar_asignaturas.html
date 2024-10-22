@@ -19,7 +19,6 @@
         
         <div class="form-group" ng-if="d_publicarAsignaturas.mostrarBotones">
           <div class="row">
-            <!--<input type="submit" ng-click="select.habilitar()" value="Cambiar asignaturas" class="btn btn-primary" ng-model="select.habilitar"/>-->
             <input type="submit" ng-click="d_publicarAsignaturas.add()" value="{{'BTN.GUARDAR_ESPACIOS_ACADEMICOS' | translate }}" class="btn btn-success" ng-disabled="habilitar=d_publicarAsignaturas.habilitar"/>
             <input type="submit" ng-click="d_publicarAsignaturas.cambiar()" value="{{'BTN.CAMBIAR_ESPACIOS_ACADEMICOS' | translate }}" class="btn btn-primary" ng-disabled="habilitar=d_publicarAsignaturas.habilitar2"/>
           </div>

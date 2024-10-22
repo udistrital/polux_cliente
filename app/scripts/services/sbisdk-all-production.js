@@ -334,7 +334,7 @@ Sbi.sdk.apply(Sbi.sdk.ajax, {
                         obj = { conn:http, tId:transactionId };
                         break;
                     }
-                    catch(e) {
+                    catch(error) {
                     }
                 }
             }
@@ -583,9 +583,9 @@ Sbi.sdk.apply(Sbi.sdk.ajax, {
             }
 
             if (this.hasHeaders) {
-                for (var prop in this.headers) {
-                    if (this.headers.hasOwnProperty(prop)) {
-                        o.conn.setRequestHeader(prop, this.headers[prop]);
+                for (var prope in this.headers) {
+                    if (this.headers.hasOwnProperty(prope)) {
+                        o.conn.setRequestHeader(prope, this.headers[prope]);
                     }
                 }
                 this.headers = {};
@@ -817,7 +817,6 @@ Sbi.sdk.apply(Sbi.sdk.services, {
         if(this.services[serviceName] === undefined) {
             swal("", 'ERROR: Service [' + + '] does not exist', 'error');
         } else {
-            urlStr = '';
             urlStr = this.baseUrl.protocol + '://' + this.baseUrl.host + ":" + this.baseUrl.port + '/' + this.baseUrl.contextPath + '/' + this.baseUrl.controllerPath;
             var params;
             if(this.services[serviceName].type === 'PAGE'){
