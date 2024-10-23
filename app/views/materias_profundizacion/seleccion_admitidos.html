@@ -10,7 +10,6 @@
       {{seleccionAdmitidos.mensajeError}}
     </div>
     <div ng-if="!loadRespuestas && !loadParametros && !seleccionAdmitidos.errorCargarParametros">
-      <!--<pre>{{seleccionAdmitidos.sols | json}}</pre>-->
       <div class="row">
       <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}</label>
       <label for="anioSel" class="col-sm-10 control-label">{{seleccionAdmitidos.periodo.anio}}</label>
@@ -39,9 +38,6 @@
       <div class="col-sm-12">
       <div class="panel panel-default panel-body" style="margin-top: 20px;" ng-if="sols.length>0 && loadSolicitudes!==true && !errorCargarSolicitudes">
        <div class="mi-grid" id="mi-grid" ui-grid="seleccionAdmitidos.gridOptions" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-auto-resize></div><br>
-       <!--<button ng-if="fechaActual >= fecha_inicio && fechaActual < segunda_fecha && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0" ng-click="$('#modalCupos').modal('show')" class="btn btn-primary">Seleccionar Admitidos</button>
-        <button ng-if="fechaActual >= segunda_fecha && fechaActual<=fecha_fin && seleccionAdmitidos.carreraSeleccionada != null && seleccionAdmitidos.gridOptions.data.length>0 " ng-click="seleccionAdmitidos.solicitudes2()" class="btn btn-success">Seleccionar Admitidos </button>
-        <button ng-if="fechaActual == fecha_fin && carreraSeleccionada != null && seleccionAdmitidos.seleccionAdmitidos.gridOptions.data.length>0" ng-click="seleccionAdmitidos.solicitudes3()" class="btn btn-info">Seleccionar Admitidos</button>-->
         <button ng-if="seleccionAdmitidos.permitirPrimeraFecha" ng-click="seleccionAdmitidos.admitirPrimeraFecha()" class="btn btn-primary">Seleccionar Admitidos</button>
         <button ng-if="seleccionAdmitidos.permitirSegundaFecha" ng-click="seleccionAdmitidos.admitirSegundaFecha()" class="btn btn-success">Seleccionar Admitidos </button>
         <br>
@@ -57,11 +53,6 @@
   </div>
 
   </div>
-    <!--pre>
-     {{'FECHA_ACTUAL' | translate}}  {{fechaActual| date:'dd-MM-yyyy'}}
-     {{'FECHA_INICIO' | translate}} {{'INICIO' | translate}} {{seleccionAdmitidos.primeraFecha.inicio}} {{'FIN' | translate}} {{seleccionAdmitidos.primeraFecha.fin}}
-     {{'FECHA_INICIO_DOS' | translate}}  {{'INICIO' | translate}} {{seleccionAdmitidos.segundaFecha.inicio}} {{'FIN' | translate}} {{seleccionAdmitidos.segundaFecha.fin}}
-   </pre-->
     <br>
     <div class="panel panel-default" >
       <div class="panel-heading">
@@ -70,7 +61,6 @@
       <div class="panel-body">
         <div class="row" ng-repeat="fecha in seleccionAdmitidos.fechas">
             <label class="col-sm-12"> {{fecha.SesionHijo.Descripcion}} </label>
-            <!--label class="col-sm-5"> {{fecha.SesionHijo.TipoSesion.Nombre}} </label-->
             <label class="col-sm-2">{{'FECHA_INICIO' | translate}}:</label>
             <label class="col-sm-4">{{fecha.inicio}}</label>
             <label class="col-sm-2">{{'FECHA_FIN' | translate}}</label>

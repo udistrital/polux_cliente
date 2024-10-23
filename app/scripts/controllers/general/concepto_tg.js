@@ -410,7 +410,6 @@ angular.module('poluxClienteApp')
                 var descripcion;
                 var fileBase64 ;
                 var data = [];
-                var URL = "";
                   descripcion = "Correcciones sobre el proyecto";
                   utils.getBase64(ctrl.revisionActual.documentModel).then(
                     function (base64) {                   

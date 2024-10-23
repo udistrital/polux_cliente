@@ -112,9 +112,7 @@ angular.module('poluxClienteApp')
                         //self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
                         codigo = parseInt(codigo);
                         
-                        if (isNaN(codigo)) {
-                            
-                        } else {
+                        if (!isNaN(codigo)) {
                             self.verificarRequisitos(parseInt(self.estudianteSeleccionado), codigo);
                         }
                     } catch (Error) {
@@ -145,7 +143,7 @@ angular.module('poluxClienteApp')
                     codigo = "" + codigo;
                     academicaRequest.periodoAnterior().then(function (periodoAnterior) {
 
-                        var parametros = {
+                        parametros = {
                             "codigo": codigo,
                             "ano": periodoAnterior[0].APE_ANO,
                             "periodo": periodoAnterior[0].APE_PER
@@ -232,7 +230,6 @@ angular.module('poluxClienteApp')
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Confirmar'
                         }).then(function () {
-                            var idTrabajoGrado;
                             // codEstudiante = parseInt(estudiante);
                             
                             self.registro_TG = [];
@@ -432,8 +429,8 @@ angular.module('poluxClienteApp')
                     poluxRequest.post("documento_tg", self.docTG[0]).then(function (response) {
                         poluxRequest.get("documento_tg", $.param({
                             query: "Id:" + response.data.Data.Id
-                        })).then(function (response) {
-                            self.docTGregistrado = response.data.Data;
+                        })).then(function (responseDoc) {
+                            self.docTGregistrado = responseDoc.data.Data;
                         });
                     });
                 };
@@ -452,8 +449,8 @@ angular.module('poluxClienteApp')
                         poluxRequest.post("areas_trabajo_grado", valor).then(function (response) {
                             poluxRequest.get("areas_trabajo_grado", $.param({
                                 query: "IdTrabajoGrado:" + response.data.Data.IdTrabajoGrado
-                            })).then(function (response) {
-                                self.areasTG = response.data.Data;
+                            })).then(function (responseAreas) {
+                                self.areasTG = responseAreas.data.Data;
                             });
                         });
                     });

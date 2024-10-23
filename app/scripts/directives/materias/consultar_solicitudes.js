@@ -127,34 +127,34 @@ angular.module('poluxClienteApp')
               related: "TrabajoGrado"
             });
           }
-          poluxRequest.get("estudiante_trabajo_grado", parametros).then(function (response) {
-            if (Object.keys(response.data.Data[0]).length > 0) {
+          poluxRequest.get("estudiante_trabajo_grado", parametros).then(function (responseEst) {
+            if (Object.keys(responseEst.data.Data[0]).length > 0) {
               //por cada TG, buscar la solicitud asociada al TG
-              angular.forEach(response.data.Data, function (value) {
+              angular.forEach(responseEst.data.Data, function (value) {
                 
                 
                 if ((ctrl.estudiante.Tipo == 'POSGRADO') && (value.IdTrabajoGrado.IdModalidad.Id == 3)) {
-                  var parametros = $.param({
+                  parametros = $.param({
                     query: "TrabajoGrado:" + value.IdTrabajoGrado.Id + ",Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER
                   });
                   //buscar las solicitudes asociadas al TG
-                  poluxRequest.get("solicitud_materias", parametros).then(function (response) {
+                  poluxRequest.get("solicitud_materias", parametros).then(function (responseSol) {
                     
-                    angular.forEach(response.data.Data, function (value) {
-                      ctrl.solicitud2.push(value);
-                      ctrl.carreras.push(value.CodigoCarrera);
+                    angular.forEach(responseSol.data.Data, function (valueSol) {
+                      ctrl.solicitud2.push(valueSol);
+                      ctrl.carreras.push(valueSol.CodigoCarrera);
                       //buscar nombre de la carrera
-                      academicaRequest.get("carrera", [value.CodigoCarrera]).then(function (resp) {
-                        var parametros = $.param({
-                          query: "SolicitudMaterias:" + value.Id,
+                      academicaRequest.get("carrera", [valueSol.CodigoCarrera]).then(function (resp) {
+                        parametros = $.param({
+                          query: "SolicitudMaterias:" + valueSol.Id,
                           related: "IdAsignaturasElegibles"
                         });
                         //buscar asignaturas asociadas a la solicitud
                         poluxRequest.get("asignatura_inscrita", parametros).then(function (resp2) {
-                          angular.forEach(resp2.data.Data, function (value) {
+                          angular.forEach(resp2.data.Data, function (valueAsig) {
                             //buscar nombre-datos de la asignaturas
-                            var parametros = {
-                              'codigo': value.IdAsignaturasElegibles.CodigoAsignatura
+                            parametros = {
+                              'codigo': valueAsig.IdAsignaturasElegibles.CodigoAsignatura
                             };
                             academicaRequest.buscarAsignaturas(parametros).then(function (resp3) {
                               var asign = resp3[0];
@@ -172,10 +172,10 @@ angular.module('poluxClienteApp')
                             resultado = response2.data.carrerasCollection.carrera[0];
                           }
                           var sol = {
-                            "Id": value.Id,
-                            "Fecha": value.Fecha,
-                            "Estado": value.Estado,
-                            "Formalizacion": value.Formalizacion,
+                            "Id": valueSol.Id,
+                            "Fecha": valueSol.Fecha,
+                            "Estado": valueSol.Estado,
+                            "Formalizacion": valueSol.Formalizacion,
                             "Carrera": resultado.nombre
                           };
                           var data = {
@@ -193,18 +193,18 @@ angular.module('poluxClienteApp')
                       query: "IdTrabajoGrado:" + value.IdTrabajoGrado.Id + ",Anio:" + ctrl.periodo.APE_ANO + ",Periodo:" + ctrl.periodo.APE_PER
                     });
                     //buscar la solicitud asociada al TG
-                    poluxRequest.get("solicitud_materias", parametrosSolicitudMaterias).then(function (response) {
-                      academicaRequest.get("carrera", [response.data.Data[0].CodigoCarrera]).then(function (resp) {
+                    poluxRequest.get("solicitud_materias", parametrosSolicitudMaterias).then(function (responseSolMat) {
+                      academicaRequest.get("carrera", [responseSolMat.data.Data[0].CodigoCarrera]).then(function (resp) {
                         var parametrosAsignaturaInscrita = $.param({
-                          query: "IdSolicitudMaterias:" + response.data.Data[0].Id,
+                          query: "IdSolicitudMaterias:" + responseSolMat.data.Data[0].Id,
                           related: "IdAsignaturasElegibles"
                         });
                         //buscar asignaturas asociadas a la solicitud
                         poluxRequest.get("asignatura_inscrita", parametrosAsignaturaInscrita).then(function (resp2) {
-                          angular.forEach(resp2.data.Data, function (value) {
+                          angular.forEach(resp2.data.Data, function (valueSolMat) {
                             //buscar nombre-datos de la asignaturas
                             var parametrosBuscarAsignaturas = {
-                              'codigo': value.IdAsignaturasElegibles.CodigoAsignatura
+                              'codigo': valueSolMat.IdAsignaturasElegibles.CodigoAsignatura
                             };
                             academicaRequest.buscarAsignaturas(parametrosBuscarAsignaturas).then(function (resp3) {
                               var asign = resp3[0];
@@ -217,13 +217,13 @@ angular.module('poluxClienteApp')
                           var aaa = ctrl.obtenerNombres(resp2.data.Data);
 
                           if (!angular.isUndefined(resp.data.carrerasCollection.carrera)) {
-                            var carrera = response.data.carrerasCollection.carrera[0].nombre;
+                            var carrera = responseSolMat.data.carrerasCollection.carrera[0].nombre;
                           }
                           var sol = {
-                            "Id": response.data[0].Id,
-                            "Fecha": response.data[0].Fecha,
-                            "Estado": response.data[0].Estado,
-                            "Formalizacion": response.data[0].Formalizacion,
+                            "Id": responseSolMat.data[0].Id,
+                            "Fecha": responseSolMat.data[0].Fecha,
+                            "Estado": responseSolMat.data[0].Estado,
+                            "Formalizacion": responseSolMat.data[0].Formalizacion,
                             "Carrera": carrera
                           };
                           var data = {

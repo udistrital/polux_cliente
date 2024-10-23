@@ -1110,7 +1110,7 @@ angular.module('poluxClienteApp')
             if (confirmacionDelUsuario) {
               ctrl.loadTrabajoGrado = true;
               ctrl.cargandoActualizarTg = true;
-              var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspace) {
+              var functionDocument = function(estadoTg, titulo, descripcion, fileModel, workspaces) {
                 //Actualiza el documento
                 estadoTrabajoGrado = ctrl.EstadoTrabajoGrado.find(estTrGr => {
                   return estTrGr.Id == estadoTg
@@ -1157,7 +1157,7 @@ angular.module('poluxClienteApp')
                      metadatos: {
                        NombreArchivo: titulo,
                        Tipo: "Archivo",
-                       Observaciones: workspace
+                       Observaciones: workspaces
                      },
                      descripcion:descripcion,
                      file:  fileBase64,
@@ -1198,7 +1198,7 @@ angular.module('poluxClienteApp')
                      metadatos: {
                        NombreArchivo: titulo,
                        Tipo: "Archivo",
-                       Observaciones: workspace
+                       Observaciones: workspaces
                      },
                      descripcion:descripcion,
                      file:  fileBase64,

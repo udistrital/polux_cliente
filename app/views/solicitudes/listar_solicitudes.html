@@ -104,11 +104,6 @@
                   <div class="row" ng-if="listarSolicitudes.detallesSolicitud.documento!==undefined">
                     <label class="col-sm-4 control-label"> {{'DOCUMENTO_RESPUESTA_SOLICITUD'|translate}}:  </label>
                     <label class="col-sm-8 control-label">{{listarSolicitudes.detallesSolicitud.documento.Titulo}}  </label>
-                    <!--
-                    Debido a que se respondió al requerimiento de no subir actas de respuesta a las solicitudes, se deshabilita el enlace de visualización y se deja indicado únicamente el nombre del acta, cuyo contenido expresa el consecutivo y fecha
-
-                    <label ng-click="listarSolicitudes.getDocumento(listarSolicitudes.detallesSolicitud.documento.Enlace)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{listarSolicitudes.detallesSolicitud.documento.Titulo}}  </label>
-                    -->
                   </div>
             </div>
         </div>
@@ -133,7 +128,6 @@
 
                   <div ng-if="detalle.carrera===undefined">
                     <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DAN_PLX'">
-                        <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
                         <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === 'LR'">
                             <a class="col-sm-8" ng-href="{{detalle.Descripcion}}" target="_blank">{{detalle.Descripcion}}</a>
                         </div>
