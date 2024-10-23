@@ -318,7 +318,6 @@ angular.module('poluxClienteApp')
               //Solicitd de cambio de materias
               case "SCMA_PLX":
                 angular.forEach(detalles, function(detalle) {
-                  var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                   if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESACAANT") {
                     anterior = detalle.Descripcion.split("-")[1];
                   }
@@ -431,7 +430,7 @@ angular.module('poluxClienteApp')
             limit: 0
           });
 
-          var getDocumentoRespuesta = function(fila, solicitud) {
+          var getDocumentoRespuesta = function(solicitud) {
             var defer = $q.defer();
             let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
               return data.CodigoAbreviacion == "RDC_PLX"
@@ -468,8 +467,8 @@ angular.module('poluxClienteApp')
               })
               ctrl.detallesSolicitud = responseDetalles.data.Data;
               ctrl.detallesSolicitud.forEach(detalle => {
-                detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
-                  return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
+                detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalleTemp => {
+                  return tipoDetalleTemp.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
                 })
               });
             } else {
@@ -566,7 +565,6 @@ angular.module('poluxClienteApp')
                     }
 
                     detalle.filas = [];
-                    var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                     if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TD") {
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if (["DAP", "DANT", "DIRN", "EVANT", "EVNU", "ES", "DDDI", "SDC", "CDA", "CDN"].includes(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion)) {
@@ -621,7 +619,7 @@ angular.module('poluxClienteApp')
                     }
                   });
                   ctrl.solicitudSeleccionada.solicitantes = solicitantes.substring(2) + ".";
-                  promises.push(getDocumentoRespuesta(fila, ctrl.solicitudSeleccionada));
+                  promises.push(getDocumentoRespuesta(ctrl.solicitudSeleccionada));
                   $q.all(promises).then(function() {
                       $('#modalSolicitud').modal('show');
                     })

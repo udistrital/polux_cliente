@@ -57,14 +57,10 @@
     <div ng-if="crearSolicitud.modalidad == 'PAS_PLX'" class="panel panel-default">
       <div class="panel-body">
         <label class="control-label col-sm-8"> {{'DATOS_ARL' | translate}}: </label>
-        <!-- <label ng-click="crearSolicitud.openModalDataARL()" class="col-sm-8" -->
          <div class="row row-centered">
           <button type="button" class="btn btn-primary" ng-click="crearSolicitud.openModalDataARL()">Ingresar Datos ARL</button> </label>
          </div>        
       </div>
-      <!-- <p>Si la pasantía a realizar es interna, presione el botón para ingresar datos personales para diligenciar la ARL.</p>   -->
-      <!-- Botón para abrir el modal -->
-      <!-- <button type="button" class="btn btn-primary" ng-click="crearSolicitud.openModalDataARL()">Ingresar Datos ARL</button> -->
     </div>
 
        <!-- detalles de la solicitud -->
@@ -140,7 +136,6 @@
           </div>
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">
             <div class="panel-body">
-              <!--<input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>-->
               <div class="row">
                 <label class="col-sm-12 control-label" translate="{{detalle.label}}"></label>
               </div>
@@ -193,8 +188,6 @@
 
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
-            <!--<textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
-            -->
             <div class="col-sm-9 ">
                 <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
             </div>
@@ -219,7 +212,6 @@
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
-            <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
              <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
                     <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                     <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">

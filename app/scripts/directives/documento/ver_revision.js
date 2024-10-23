@@ -99,17 +99,17 @@ angular.module('poluxClienteApp')
                     ctrl.pruebac = mycomentario;
                     var comentarios = [];
                     
-                    poluxRequest.post("comentario", mycomentario).then(function (response) {
+                    poluxRequest.post("comentario", mycomentario).then(function () {
                         poluxRequest.get("comentario", $.param({
                             query: "Correccion:" + mycomentario.Correccion.Id,
                             sortby: "Id",
                             order: "asc"
-                        })).then(async function (response) {
-                            comentarios.push(response.data.Data);
+                        })).then(async function (response_comentario) {
+                            comentarios.push(response_comentario.data.Data);
                             
                             //Se prepara la información para la notificación
 
-                            var ult_comentario = response.data.Data[response.data.Data.length-1]//Se obtiene el último comentario realizado
+                            var ult_comentario = response_comentario.data.Data[response_comentario.data.Data.length-1]//Se obtiene el último comentario realizado
 
                             var respondio_docente, codigo, correos = []
 
@@ -144,8 +144,8 @@ angular.module('poluxClienteApp')
                                     numero: codigo
                                 }
 
-                                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
-                                    correos.push(response.data.email)
+                                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseToken) {
+                                    correos.push(responseToken.data.email)
                                 })
 
                             } else{//se busca el correo del docente
@@ -153,8 +153,8 @@ angular.module('poluxClienteApp')
                                     numero: ult_comentario.Correccion.RevisionTrabajoGrado.VinculacionTrabajoGrado.Usuario.toString()
                                 }
 
-                                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
-                                    correos.push(response.data.email)
+                                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseCorreo) {
+                                    correos.push(responseCorreo.data.email)
                                 })
                             }
 

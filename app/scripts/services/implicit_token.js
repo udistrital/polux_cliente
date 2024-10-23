@@ -206,8 +206,8 @@ angular.module('implicitToken', [])
       logoutValid: function() {
         var state;
         var valid = true;
-        var queryString = location.search.substring(1);
-        var regex = /([^&=]+)=([^&]*)/g;
+        queryString = location.search.substring(1);
+        regex = /([^&=]+)=([^&]*)/g;
         var m;
         while (!!(m = regex.exec(queryString))) {
           state = decodeURIComponent(m[2]);

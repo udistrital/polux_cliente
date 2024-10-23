@@ -27,13 +27,11 @@
           {{correccion.Justificacion}}
           <div>
             <div>
-              <!--<PRE>{{correccion.coments[0] | json}}</PRRE>-->
               <blockquote ng-repeat="comentario in correccion.coments[0]">
                 <p><small>{{comentario.Comentario}}</small></p>
                 <h6> {{comentario.Autor}} <cite title="Source Title">{{comentario.Fecha | date:'dd-MMM-yyyy'}}</cite></h6>
               </blockquote>
             </div>
-            <!--{{d_verRevision.pruebac}}-->
 
             <div class="panel-body">
               <form name="comentForm" ng-submit="correccion.coments=d_verRevision.comentarCorreccion(correccion.coment,correccion.Id); correccion.coment = ''">
@@ -50,9 +48,5 @@
         </div>
       </div>
     </div>
-
-    <!--<pre>{{d_verRevision.revision EstadoRevision| json}}</pre>-->
-
-    <!--<button type="button" name="button" ng-click="d_verRevision.postrev()">postera</button>-->
   </div>
 </div>
