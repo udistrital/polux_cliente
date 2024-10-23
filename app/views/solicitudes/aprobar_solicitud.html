@@ -87,7 +87,7 @@
 
       </div>
       <!-- Mensaje para pasantía interna -->      
-      <div ng-if="aprobarSolicitud.pasantiaInterna == true && aprobarSolicitud.modalidadTemp.CodigoAbreviacion == 'PAS_PLX'" class="panel panel-default">
+      <div ng-if="aprobarSolicitud.pasantiaInterna == true && aprobarSolicitud.modalidadTemp.CodigoAbreviacion == 'PAS_PLX' && aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS')" class="panel panel-default">
         <div class="panel-body">
           <label class="control-label col-sm-8"> {{'VER_DATOS_ARL' | translate}}: </label>          
           <!-- <label ng-click="crearSolicitud.openModalDataARL()" class="col-sm-8" -->
@@ -414,7 +414,7 @@
                   <label class="col-sm-4 control-label">Fecha de Nacimiento</label>
                   <!-- <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label> -->
                   <!-- <input type="date" class="form-control" ng-model="crearSolicitud.datosEstudiante.fechaNacimiento" required> -->
-                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.fechaNacimiento}}  </label>
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.fechaNacimiento | date:'dd/MM/yyyy'}}  </label>
               </div>
               <div class="form-group">
                   <label class="col-sm-4 control-label">Ciudad de Nacimiento</label>

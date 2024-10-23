@@ -37,15 +37,32 @@ angular.module('poluxClienteApp')
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        * @property {String} mensajeCargando Mensaje que se muestra cuando esta cargando
        */
-      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, gestorDocumentalMidRequest, $window, parametrosRequest) {
+      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, gestorDocumentalMidRequest, $window, parametrosRequest, token_service) {
         var ctrl = this;
-        ctrl.trabajoGrado = $scope.tg;
-
+        ctrl.trabajoGrado = $scope.tg;   
+        //ctrl.parametrosSolicitudes = [];
+        ctrl.SolicitudTrabajoGrado;
+        ctrl.pasantiaInterna = false;
+        $scope.userId = parseInt(token_service.getAppPayload().appUserDocument);
+        ctrl.roles = token_service.getAppPayload().appUserRole;
+        $scope.UnidadExtPasantia = false;
+        
+        if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+          $scope.UnidadExtPasantia = true;
+        }
+                
         $scope.botones = [{
           clase_color: "ver",
           clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
           titulo: $translate.instant('BTN.VER_DETALLES'),
           operacion: 'ver',
+          estado: true
+        }, ];
+        $scope.personaArl = [{
+          clase_color: "ver",
+          clase_css: "fa fa-user-o  faa-shake animated-hover",
+          titulo: $translate.instant('REVISION_ARL.VER_DATA_ARL'),
+          operacion: 'showData',
           estado: true
         }, ];
 
@@ -79,8 +96,27 @@ angular.module('poluxClienteApp')
           displayName: $translate.instant('DETALLE'),
           width: '15%',
           type: 'boolean',
-          cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro>'
+          cellTemplate: `
+            <div>
+              <btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro> 
+              <btn-registro ng-if="grid.appScope.UnidadExtPasantia && grid.appScope.pasantiaInterna" funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.personaArl" fila="row"></btn-registro>
+            </div>` 
+                   
+
         }];
+
+        // $watch para monitorear cambios en pasantiaInterna
+        $scope.$watch(() => ctrl.pasantiaInterna, function(newValue, oldValue) {
+          if (newValue !== oldValue) {
+            console.log("pasantiaInterna ha cambiado:", newValue);
+            $scope.pasantiaInterna = newValue;
+
+            // Aseguramos que Angular detecte los cambios
+            if (!$scope.$$phase) {
+              $scope.$apply(); // Forzamos la digestión si no está en proceso
+            }
+          }
+        });
 
         //SE CONSULTAN LOS PARAMETROS USADOS
       /**
@@ -144,7 +180,7 @@ angular.module('poluxClienteApp')
          * @param {Object} trabajoGrado trabajo de grado del que se consultan los documentos
          * @returns {undefined} no retorna ningún valor
          */
-        ctrl.consultarSolicitudes = async function (trabajoGrado) {
+        ctrl.consultarSolicitudes = async function (trabajoGrado) {          
           await getconsultarParametros();
           ctrl.loadingSolicitudes = true;
           ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
@@ -153,7 +189,11 @@ angular.module('poluxClienteApp')
             query: "TrabajoGrado:" + trabajoGrado.Id,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responseSolicitudes) {
-            if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
+            if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {              
+              ctrl.SolicitudTrabajoGrado = responseSolicitudes.data.Data[0];    
+              ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
+              ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;                             
+              
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function (solicitud) {
                 var defer = $q.defer();
@@ -206,8 +246,7 @@ angular.module('poluxClienteApp')
 
                 ctrl.loadingSolicitudes = false;
               })
-                .catch(function (error) {
-                  console.log("Es ACÁ")
+                .catch(function (error) {                  
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargando = true;
                   ctrl.loadingSolicitudes = false;
@@ -238,7 +277,7 @@ angular.module('poluxClienteApp')
          * @param {object} solicitud Solicitud que se consulta
          * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el string resultado
          */
-        ctrl.mostrarResultado = function(solicitud) {
+        ctrl.mostrarResultado = function(solicitud) {          
           var defer = $q.defer();
           var promise = defer.promise;
           var detalles = solicitud.detallesSolicitud;
@@ -682,6 +721,20 @@ angular.module('poluxClienteApp')
         }
 
         /**
+       * @ngdoc method
+       * @name openModalDataARL
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description
+       * Cuando el estudiante esté realizando una solicitud inicial de Pasantía (interna) debe cargar datos personales, esta función abre el modal donde los va a ingresar
+       * @param {undefined} undefined No requiere parámetros 
+       */
+        ctrl.openModalDataARL = function () {       
+          // Mostrar el modal
+          $('#modalVistaDataPersonalARL').modal('show');
+        };
+
+
+        /**
          * @ngdoc method
          * @name loadrow
          * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
@@ -697,6 +750,8 @@ angular.module('poluxClienteApp')
               ctrl.cargarDetalles(row)
               //$('#modalVerSolicitud').modal('show');
               break;
+            case "showData":
+            ctrl.openModalDataARL()
             default:
               break;
           }
