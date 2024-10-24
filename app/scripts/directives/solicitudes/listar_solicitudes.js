@@ -43,11 +43,11 @@ angular.module('poluxClienteApp')
         //ctrl.parametrosSolicitudes = [];
         ctrl.SolicitudTrabajoGrado;
         ctrl.pasantiaInterna = false;
+
         $scope.userId = parseInt(token_service.getAppPayload().appUserDocument);
         ctrl.roles = token_service.getAppPayload().appUserRole;
-        $scope.UnidadExtPasantia = false;
-        
-        if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+        $scope.UnidadExtPasantia = false;        
+        if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
           $scope.UnidadExtPasantia = true;
         }
                 
@@ -100,8 +100,7 @@ angular.module('poluxClienteApp')
             <div>
               <btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro> 
               <btn-registro ng-if="grid.appScope.UnidadExtPasantia && grid.appScope.pasantiaInterna" funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.personaArl" fila="row"></btn-registro>
-            </div>` 
-                   
+            </div>`                    
 
         }];
 
