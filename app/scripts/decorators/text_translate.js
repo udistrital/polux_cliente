@@ -847,7 +847,8 @@ var text_es = {
         APROBAR: 'Aprobar ARL',
         RECHAZAR: 'Rechazar ARL',
         ARL_APROBADA: 'ARL aprobada correctamente',
-        ARL_RECHAZADA: 'ARL rechazada correctamente'
+        ARL_RECHAZADA: 'ARL rechazada correctamente',
+        VER_DATA_ARL: 'Ver datos personales para tramite ARL'
     },
     PERIODO_ACADEMICO: "Período académico",
     SOLICITUD_NO_PUEDE_APROBARSE: "La solicitud no puede ser aprobada",

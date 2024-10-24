@@ -2952,6 +2952,7 @@ angular.module('poluxClienteApp')
                     },
                     "TrabajoGrado": null,
                     "PeriodoAcademico": parametro.PeriodoAcademico,
+                    "DatosPersonalesArl": ctrl.SolicitudTrabajoGrado.DatosPersonalesArl
 
                   };
                   ctrl.getRespuestaSolicitud().then(function () {
@@ -3437,6 +3438,7 @@ angular.module('poluxClienteApp')
                           },
                           "TrabajoGrado": null,
                           "PeriodoAcademico": parametro.PeriodoAcademico,
+                          "DatosPersonalesArl": ctrl.SolicitudTrabajoGrado.DatosPersonalesArl
 
                         };
                         poluxRequest.put("solicitud_trabajo_grado", ctrl.solicitud, parametrosSolicitud1).then(function (responseSolicitud_TG) {//Se envia la solicitud_trabajo_grado actualizado
