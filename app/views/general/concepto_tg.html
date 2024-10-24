@@ -17,7 +17,6 @@
       <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
         <label class="text-primary" ng-show="mindoc">{{'DOCUMENTO' | translate}}</label>
         <ver-documento documento="conceptoTg.vinculacion.TrabajoGrado.documentoTg.DocumentoEscrito" minified="mindoc"/>
-        <!--  <pre>{{docenterevision.revisionesd | json}}</pre>-->
       </div>
   
       <div ng-class="{'col-md-6': !mindoc, 'col-md-10 col-md-offset-1':mindoc}">
@@ -90,11 +89,6 @@
                     <fieldset class="form-group">
                       <textarea class="form-control col-md-8 offset-2" title="descripcion" placeholder="{{'DESCRIPCION' | translate}}" ng-model="conceptoTg.correccion.Justificacion" required></textarea>
                     </fieldset>
-                    <!--
-                    <fieldset class="form-group">
-                      <input type="checkbox" class="checkbox checkbox-inline" ng-model="d_revisionDocumento.agregarpag"> Agregar pagina de corrección: {{paginadoc}}</input>
-                    </fieldset>
-                    -->
                     <div class=" pull-right">
                       <button class="btn btn-default" ng-click="showfm =!showfm; conceptoTg.correccion={}" type="button">{{'CANCELAR' | translate}}</button>
                       <input class="btn-primary btn" ng-click="showfm = !showfm" type="submit" value="{{'AGREGAR' | translate}}">

@@ -252,23 +252,23 @@ angular.module('poluxClienteApp')
           poluxRequest.get("carrera_elegible", parametros).then(function(response) {
               if (Object.keys(response.data.Data[0]).length > 0) {
                 ctrl.id = response.data.Data[0].Id
-                var parametros = $.param({
+                parametros = $.param({
                   query: "CarreraElegible:" + ctrl.id + ",CodigoAsignatura:" + asignatura.codigo
                 });
                 var asignaturaActiva = false;
                 poluxRequest.get("espacios_academicos_elegibles", parametros)
-                  .then(function(response) {
-                    if (Object.keys(response.data.Data[0]).length > 0) {
+                  .then(function(responseEspacios) {
+                    if (Object.keys(responseEspacios.data.Data[0]).length > 0) {
                       ctrl.habilitar = true;
                       ctrl.habilitar2 = false;
-                      asignaturaActiva = response.data.Data[0].Activo
+                      asignaturaActiva = responseEspacios.data.Data[0].Activo
                       //si la materia esta activa se suman los creditos
-                      if (response.data.Data[0].Activo) {
+                      if (responseEspacios.data.Data[0].Activo) {
                         var c = parseInt(asignatura.creditos, 10);
                         ctrl.totalCreditos = ctrl.totalCreditos + c;
                       }
                     }
-                    var nuevo = {
+                    nuevo = {
                       carrera: carrera,
                       año: anio,
                       periodo: periodo,

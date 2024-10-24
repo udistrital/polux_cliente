@@ -6,7 +6,6 @@
         placeholder="Seleccione ..." 
         autocomplete="off"></input>
         <datalist class="selector" id="listaAreas">
-          <!--ng-if="idarea.indexOf(a.Id) !== -1"-->
           <option ng-repeat="a in setareas" value="{{a.Nombre}} - {{a.Snies}}"></option>
         </datalist>
         <span class="input-group-btn">
@@ -18,9 +17,6 @@
         <div ng-show="formAsignar.asignado.$invalid ">
           <div ng-messages="formAsignar.asignado.$error" style="color:red"
           class="help-block text-danger" ng-show="formAsignar.asignado.$touched">
-          <!--div ng-message="required"> {{'INGRESE_NUEVA_AREA' | translate}} </div>-->
-          <!--<div ng-message="minlength"> {{'NOMBRE_MUY_CORTO' | translate}} </div>-->
-          <!--<div ng-message="maxlength"> {{'NOMBRE_MUY_LARGO' | translate}} </div>-->
         </div>
       </div>
   </form>
