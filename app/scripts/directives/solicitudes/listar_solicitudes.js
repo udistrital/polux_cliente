@@ -47,7 +47,7 @@ angular.module('poluxClienteApp')
         ctrl.roles = token_service.getAppPayload().appUserRole;
         $scope.UnidadExtPasantia = false;
         
-        if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+        if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
           $scope.UnidadExtPasantia = true;
         }
                 
