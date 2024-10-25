@@ -243,6 +243,19 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna nigún valor. 
        */
       ctrl.actualizarSolicitudes = async function(identificador, lista_roles) {
+        //En caso de que el rol sea COORDINADOR, verificar si es de PREGRADO o POSGRADO
+        if(lista_roles.includes("COORDINADOR")){
+        await academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+          console.log("lista_roles_first", lista_roles)
+          if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
+            lista_roles.push("PREGRADO");
+          } else {
+            lista_roles.push("POSGRADO");
+          }
+        });
+        console.log("lista_roles_last", lista_roles);
+      }
+
         $scope.load = true;
         var promiseArr = [];
 
@@ -380,7 +393,7 @@ angular.module('poluxClienteApp')
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             });
-        } else if (lista_roles.includes("COORDINADOR")||lista_roles.includes("DOCENTE")) {
+        } else if (lista_roles.includes("PREGRADO")||lista_roles.includes("DOCENTE")) {
           $scope.botones.push({
             clase_color: "ver",
             clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
@@ -699,7 +712,7 @@ angular.module('poluxClienteApp')
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             });
-        } else if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+        } else if (lista_roles.includes("POSGRADO")) {
           $scope.botones.push({
             clase_color: "ver",
             clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
@@ -710,8 +723,7 @@ angular.module('poluxClienteApp')
           academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"]).then(function(responseCoordinador) {
             ctrl.carrerasCoordinador = [];
             var carreras = [];
-            console.log("roles ", lista_roles)
-            if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+            if (lista_roles.includes("POSGRADO")) {
               let estSol = ctrl.EstadoSolicitud.find(estadoSol => {
                 return estadoSol.CodigoAbreviacion == "ACPR_PLX"
               })
@@ -767,7 +779,7 @@ angular.module('poluxClienteApp')
                             let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
                               return estadoSol.Id == solicitud.EstadoSolicitud
                             })
-                            if(lista_roles.includes("COORDINADOR_POSGRADO")) {
+                            if(lista_roles.includes("POSGRADO")) {
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
