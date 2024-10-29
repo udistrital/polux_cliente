@@ -172,7 +172,7 @@ angular.module('poluxClienteApp')
         ctrl.Docente = 1;
       }
 
-      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
         ctrl.UnidadExtPasantia = 1;
       }
       ctrl.carrerasCoordinador = [];
@@ -278,24 +278,29 @@ angular.module('poluxClienteApp')
           });
 
         } else {
-          if (token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
-            rol = "PREGRADO"
-          } else {
-            rol = "POSGRADO"
-          }
-          academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
-            //
-            if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
-              ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
-              defer.resolve();
+          academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+            if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
+              rol = "PREGRADO";
             } else {
-              ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
-              defer.reject("Carreras no definidas");
+              rol = "POSGRADO";
             }
+
+            academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
+              if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
+                ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
+                defer.resolve();
+              } else {
+                ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
+                defer.reject("Carreras no definidas");
+              }
+            }).catch(function (error) {
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
+              defer.reject(error);
+            });
+
           }).catch(function (error) {
-            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
             defer.reject(error);
-          });
+          });      
         }
         return defer.promise;
       }
@@ -495,12 +500,12 @@ angular.module('poluxClienteApp')
             })
             angular.forEach(ctrl.detallesSolicitud, function (detalleAux) {
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                var datosMaterias = detalleAux.Descripcion.split("-");
-                var carrera = JSON.parse(datosMaterias[1]);
-                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+                //var datosMaterias = detalleAux.Descripcion.split("-");
+                //var carrera = JSON.parse(datosMaterias[1]);
+                /*if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
                   var index = ctrl.detallesSolicitud.indexOf(detalleAux)
                   ctrl.detallesSolicitud.splice(index, 1)
-                }
+                }*/
               }
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "PEAP") {
                 ctrl.prioridad = parseInt(detalleAux.Descripcion)
@@ -1105,7 +1110,7 @@ angular.module('poluxClienteApp')
             return tipSol.Id == ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
           })
           if (modalidad.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitud.CodigoAbreviacion == "SI_PLX"
-            && this.roles.includes("COORDINADOR_POSGRADO")) {
+            && this.roles.includes("COORDINADOR")) {
             await aprobarPosgrado();
           } else if (ctrl.respuestaSolicitud == "RCC_PLX") {
             enviarTransaccion();
