@@ -26,8 +26,9 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
          * Esta función llama al endpoint de POLUX_MID correspondiente de generar y descargar el Reporte General en un archivo Excel.
          * @returns {undefined} No retorna nigún valor. 
          */
-        ctrl.generar_reporte_general = function() {   
-            poluxMidRequest.post("reporte_general").then(function(response) {
+        ctrl.generar_reporte_general = function() {
+            ctrl.infoReporte = {}
+            poluxMidRequest.post("reporte_general", ctrl.infoReporte).then(function(response) {
                 //Decodificar el Base64 del archivo
                 var byteCharacters = atob(response.data.Data);
                 var byteNumbers = new Array(byteCharacters.length);
@@ -59,8 +60,9 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
          * Esta función llama al endpoint de POLUX_MID correspondiente de generar y descargar el Reporte Solicitud en un archivo Excel.
          * @returns {undefined} No retorna nigún valor. 
          */
-        ctrl.generar_reporte_solicitud = function() {   
-            poluxMidRequest.post("reporte_solicitud").then(function(response) {
+        ctrl.generar_reporte_solicitud = function() {
+            ctrl.infoReporte = {}
+            poluxMidRequest.post("reporte_solicitud", ctrl.infoReporte).then(function(response) {
                 // Decodificar el Base64 del archivo
                 var byteCharacters = atob(response.data.Data);
                 var byteNumbers = new Array(byteCharacters.length);
