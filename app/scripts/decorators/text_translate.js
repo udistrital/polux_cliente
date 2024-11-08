@@ -134,6 +134,7 @@ var text_es = {
     NIT: "NIT de la empresa",
     DOCUMENTO_ARL: "Documento de la ARL",
     DATOS_ARL: "Si la pasantía a realizar es interna, presione el botón para ingresar datos personales para diligenciar la ARL.",
+    VER_DATOS_ARL: "La solicitud de pasantía es de caracter interno, por favor seleccione el botón para ver los datos pertinentes para diligenciar la ARL",
     NOMBRE_ESP_ACADEMICO: "Nombre del espacio académico",
     ESP_ACADEMICOS: "Espacios académicos",
     MODALIDAD_ESP_POS: "Modalidad: Espacios académicos de posgrado",
@@ -850,7 +851,8 @@ var text_es = {
         APROBAR: 'Aprobar ARL',
         RECHAZAR: 'Rechazar ARL',
         ARL_APROBADA: 'ARL aprobada correctamente',
-        ARL_RECHAZADA: 'ARL rechazada correctamente'
+        ARL_RECHAZADA: 'ARL rechazada correctamente',
+        VER_DATA_ARL: 'Ver datos personales para tramite ARL'
     },
     PERIODO_ACADEMICO: "Período académico",
     SOLICITUD_NO_PUEDE_APROBARSE: "La solicitud no puede ser aprobada",

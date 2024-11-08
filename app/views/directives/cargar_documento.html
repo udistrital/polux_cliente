@@ -5,20 +5,6 @@
   <loading tam="4" load="loadDocumento" message="msgCargandoDocumento"> </loading>
   <div class="panel-body" ng-if="!loadDocumento">
       <form method="post" name="formularioCargar" ng-submit="d_cargarDocumento.cargarDocumento()">
-      <!--  <div class="row" ng-if="carrera=== undefined && name===undefined">
-                <label class="col-sm-4 control-label"> {{'DOCUMENTO.INGRESE_NOMBRE' | translate}} </label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" ng-model="d_cargarDocumento.documento.nombre" required></input>
-                </div>
-        </div>
-        <br>
-        <div class="row">
-                <label class="col-sm-4 control-label"> {{'DOCUMENTO.INGRESE_DESCRIPCION' | translate}} </label>
-                <div class="col-sm-8">
-                  <input type="text" class="form-control" ng-model="d_cargarDocumento.documento.descripcion" required></input>
-                </div>
-        </div>
-        <br>-->
         <div class="row" ng-if="carreras.length > 0">
           <label class="col-sm-12">{{'INSTRUCCIONES_ACTA' | translate}}</label>
           <br>
@@ -51,7 +37,6 @@
 
                   -->
                   <input type="date" class="form-control" min="2017-01-01" ng-model="d_cargarDocumento.fechaReunion" required></input>
-                  <!--<md-datepicker ng-model="d_cargarDocumento.fechaReunion" md-placeholder="{{'SELECCIONAR' | translate}}" ng-required="true"></md-datepicker>-->
                
                   <input type="file" class="col-sm-8" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="d_cargarDocumento.documento.fileModel" required> </input>
                  

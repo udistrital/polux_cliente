@@ -243,6 +243,19 @@ angular.module('poluxClienteApp')
        * @returns {undefined} No retorna nigún valor. 
        */
       ctrl.actualizarSolicitudes = async function(identificador, lista_roles) {
+        //En caso de que el rol sea COORDINADOR, verificar si es de PREGRADO o POSGRADO
+        if(lista_roles.includes("COORDINADOR")){
+        await academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+          console.log("lista_roles_first", lista_roles)
+          if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
+            lista_roles.push("PREGRADO");
+          } else {
+            lista_roles.push("POSGRADO");
+          }
+        });
+        console.log("lista_roles_last", lista_roles);
+      }
+
         $scope.load = true;
         var promiseArr = [];
 
@@ -380,7 +393,7 @@ angular.module('poluxClienteApp')
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             });
-        } else if (lista_roles.includes("COORDINADOR")||lista_roles.includes("DOCENTE")) {
+        } else if (lista_roles.includes("PREGRADO")||lista_roles.includes("DOCENTE")) {
           $scope.botones.push({
             clase_color: "ver",
             clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
@@ -410,14 +423,14 @@ angular.module('poluxClienteApp')
                 });
                 query += ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:"
                 var tiposSolicitud = ["SCM_PLX", "SCDI_PLX", "SCDE_PLX", "SSO_PLX", "SPR_PLX", "SMDTG_PLX", "SCMA_PLX", "SCE_PLX", "SDTG_PLX", "SCCI_PLX", "SRTG_PLX", "SAD_PLX","SCO_PLX"]
-                ctrl.TipoSolicitud.forEach(tipoSolicitud => {
-                  if (tiposSolicitud.includes(tipoSolicitud.CodigoAbreviacion)) {
+                ctrl.TipoSolicitud.forEach(tipo_Solicitud => {
+                  if (tiposSolicitud.includes(tipo_Solicitud.CodigoAbreviacion)) {
                     if (guardaSegundo) {
                       query += "|"
                     } else {
                       guardaSegundo = true
                     }
-                    query += tipoSolicitud.Id.toString()
+                    query += tipo_Solicitud.Id.toString()
                   }
                 });
                 parametrosSolicitudes = $.param({
@@ -564,8 +577,8 @@ angular.module('poluxClienteApp')
                   modalidadTipoSol = responseModalidadTipo.data.Data;
                 })
                 console.log("ESTADOSOLICITUD")
-                var query = "ESTADOSOLICITUD.in:"
-                var guardaPrimero = false;
+                query = "ESTADOSOLICITUD.in:"
+                guardaPrimero = false;
                 ctrl.EstadoSolicitud.forEach(estado => {
                   console.log("ESTADOSOLICITUD", estado.CodigoAbreviacion)
                   if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX") {
@@ -598,7 +611,7 @@ angular.module('poluxClienteApp')
                   }
                 });
                 console.log("EXCLUDE", exclude)
-                var parametrosSolicitudes = $.param({
+                parametrosSolicitudes = $.param({
                   query: query + ",Activo:true",
                   exclude: exclude,
                   limit: 0
@@ -699,7 +712,7 @@ angular.module('poluxClienteApp')
               ctrl.errorCargarParametros = true;
               $scope.load = false;
             });
-        } else if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+        } else if (lista_roles.includes("POSGRADO")) {
           $scope.botones.push({
             clase_color: "ver",
             clase_css: "fa fa-check-square-o fa-lg  faa-shake animated-hover",
@@ -710,8 +723,7 @@ angular.module('poluxClienteApp')
           academicaRequest.get("coordinador_carrera", [$scope.userId, "POSGRADO"]).then(function(responseCoordinador) {
             ctrl.carrerasCoordinador = [];
             var carreras = [];
-            console.log("roles ", lista_roles)
-            if (lista_roles.includes("COORDINADOR_POSGRADO")) {
+            if (lista_roles.includes("POSGRADO")) {
               let estSol = ctrl.EstadoSolicitud.find(estadoSol => {
                 return estadoSol.CodigoAbreviacion == "ACPR_PLX"
               })
@@ -767,7 +779,7 @@ angular.module('poluxClienteApp')
                             let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
                               return estadoSol.Id == solicitud.EstadoSolicitud
                             })
-                            if(lista_roles.includes("COORDINADOR_POSGRADO")) {
+                            if(lista_roles.includes("POSGRADO")) {
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
@@ -848,7 +860,7 @@ angular.module('poluxClienteApp')
                                     limit: 0
                                   });
                                 } else if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                                  var guardaPrimero = false;
+                                  guardaPrimero = false;
                                   ctrl.EstadoSolicitud.forEach(estado => {
                                     if (estado.CodigoAbreviacion == "ACPO2_PLX" || estado.CodigoAbreviacion == "RCPO2_PLX") {
                                       if (guardaPrimero) {
@@ -1079,7 +1091,7 @@ angular.module('poluxClienteApp')
               });
               var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:"
               guardaPrimero = false;
-              modalidadTipoSol.forEach(modTipo => {
+              modalidadTipoSol.Data.forEach(modTipo => {
                 let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                   return modalidad.Id == modTipo.Modalidad
                 })
@@ -1095,17 +1107,17 @@ angular.module('poluxClienteApp')
                   exclude += modTipo.Id
                 }
               });
-              var parametrosSolicitudes = $.param({
+              parametrosSolicitudes = $.param({
                 query: query + ",Activo:true",
                 exclude: exclude,
                 limit: 0
               });
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function (responseSolicitudes) {
-                if (Object.keys(responseSolicitudes.data[0]).length > 0) {
+                if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
                   ctrl.conSolicitudes = true;
                 }
-                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
-                  responseSolicitudes.data = [];
+                if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
+                  responseSolicitudes.data.Data = [];
                 }
                 var verificarSolicitud = function (solicitud) {
                   var defer = $q.defer();
@@ -1161,7 +1173,7 @@ angular.module('poluxClienteApp')
                     });
                   return defer.promise;
                 }
-                angular.forEach(responseSolicitudes.data, function (solicitud) {
+                angular.forEach(responseSolicitudes.data.Data, function (solicitud) {
                   promiseArr.push(verificarSolicitud(solicitud));
                 });
                 $q.all(promiseArr).then(function () {
@@ -1263,7 +1275,7 @@ angular.module('poluxClienteApp')
             console.log("Entra detalle_solicitud", detalles)
             angular.forEach(detalles.data.Data, function(detalle) {
               if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TG") { //buscar el detalle asociado al TG
-                var parametros = $.param({
+                parametros = $.param({
                   query: "TrabajoGrado.Id:" + detalle.Descripcion
                 });
                 poluxRequest.get("estudiante_trabajo_grado", parametros).then(function(estudiantes) {
@@ -1300,14 +1312,14 @@ angular.module('poluxClienteApp')
           limit: 0
         });
 
-        var getDocumentoRespuesta = function(fila, solicitud) {
+        var getDocumentoRespuesta = function(filaRes, solicitudRes) {
           var defer = $q.defer();
           let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
-            return estadoSol.Id == fila.entity.Respuesta.EstadoSolicitud
+            return estadoSol.Id == filaRes.entity.Respuesta.EstadoSolicitud
           })
           if (estadoSolicitudTemp.CodigoAbreviacion != "RDC_PLX") {
             var parametrosDocumentoSolicitud = $.param({
-              query: "SolicitudTrabajoGrado.Id:" + solicitud,
+              query: "SolicitudTrabajoGrado.Id:" + solicitudRes,
               limit: 0
             });
             poluxRequest.get("documento_solicitud", parametrosDocumentoSolicitud).then(function(documento) {
@@ -1336,8 +1348,8 @@ angular.module('poluxClienteApp')
             })
             ctrl.detallesSolicitud = responseDetalles.data.Data;
             ctrl.detallesSolicitud.forEach(detalle => {
-              detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
-                return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
+              detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalleSol => {
+                return tipoDetalleSol.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
               })
             });
           } else {
@@ -1438,7 +1450,6 @@ angular.module('poluxClienteApp')
                     });
                   }
                   detalle.filas = [];
-                  var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                   var codigoAbreviacion = detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion;
                   if (codigoAbreviacion == "TF") {
                     detalle.Descripcion = detalle.Descripcion.split("-")[1];

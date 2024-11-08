@@ -410,7 +410,6 @@ angular.module('poluxClienteApp')
                 var descripcion;
                 var fileBase64 ;
                 var data = [];
-                var URL = "";
                   descripcion = "Correcciones sobre el proyecto";
                   utils.getBase64(ctrl.revisionActual.documentModel).then(
                     function (base64) {                   
@@ -429,7 +428,6 @@ angular.module('poluxClienteApp')
                   }] 
   
                     gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
-                    URL =  response.data.res.Enlace 
                     ctrl.revisionActual.Correcciones.push({
                       Observacion: response,
                       Justificacion: "Por favor descargue el documento de observaciones",

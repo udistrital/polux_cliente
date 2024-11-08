@@ -322,8 +322,8 @@ angular.module('poluxClienteApp')
           function (base64) {
             fileBase64 = base64;
 
-            let TipoDocTemp = ctrl.TiposDocumento.find(data => {
-              return data.CodigoAbreviacion == "ASP_PLX";
+            let TipoDocTemp = ctrl.TiposDocumento.find(dataTiposDoc => {
+              return dataTiposDoc.CodigoAbreviacion == "ASP_PLX";
             });
 
             data = [{
@@ -366,9 +366,9 @@ angular.module('poluxClienteApp')
                 "DocumentoTrabajoGrado": dataDocumentoTrabajoGrado
               }
               poluxMidRequest.post("tr_registrar_acta_seguimiento", Acta)
-                .then(function (response) {
+                .then(function (responseTr) {
                   console.log("Comparación Success")
-                  if (response.data.Success === true) {
+                  if (responseTr.data.Success === true) {
                     swal(
                       $translate.instant("PASANTIA.ACTA_REGISTRADA"),
                       $translate.instant("PASANTIA.ACTA_REGISTRADA_CORRECTAMENTE"),

@@ -236,10 +236,8 @@ angular.module('poluxClienteApp')
                                         if (ctrl.documentModel) {
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones
                                             //Carga de documento con Gesto Documental
-                                            var descripcion;
                                             var fileBase64 ;
                                             var data = [];
-                                            var URL = "";
                                             let tipoDocumentoAux = $scope.tipodocumento.find(tipoDoc => {
                                                 return tipoDoc.CodigoAbreviacion == "DREV_PLX"
                                             })
@@ -255,8 +253,7 @@ angular.module('poluxClienteApp')
                                                         Tipo: "Archivo",
                                                         Observaciones: "correciones"
                                                     },
-                                                    descripcion:"Correcciones sobre el proyecto",
-                                                    file:  fileBase64,
+                                                    descripcion:"Correcciones sobre el proyecto"
                                                 }]
 
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 

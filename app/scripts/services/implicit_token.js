@@ -33,7 +33,7 @@ if (window.localStorage.getItem('access_token') === null ||
     window.localStorage.clear();
   }
   req.onreadystatechange = function(e) {
-    if (req.readyState === 4) {
+    /*if (req.readyState === 4) {
       if (req.status === 200) {
         //
       } else if (req.status === 400) {
@@ -41,7 +41,7 @@ if (window.localStorage.getItem('access_token') === null ||
       } else {
         
       }
-    }
+    }*/
   };
 }
 
@@ -206,8 +206,8 @@ angular.module('implicitToken', [])
       logoutValid: function() {
         var state;
         var valid = true;
-        var queryString = location.search.substring(1);
-        var regex = /([^&=]+)=([^&]*)/g;
+        queryString = location.search.substring(1);
+        regex = /([^&=]+)=([^&]*)/g;
         var m;
         while (!!(m = regex.exec(queryString))) {
           state = decodeURIComponent(m[2]);

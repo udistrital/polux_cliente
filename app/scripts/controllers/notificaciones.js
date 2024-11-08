@@ -32,7 +32,7 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
            
             function traerNoticicaciones() {
                 
-                if($scope.roles.includes('COORDINADOR') || $scope.roles.includes('COORDINADOR_POSGRADO')){    
+                if($scope.roles.includes('COORDINADOR')){    
                     
                     notificacionRequest.traerNotificaciones( $scope.nombreColaCoordinador).then(function (response) {
                   
@@ -81,7 +81,6 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
                                 console.log(error)
                             }
                         );
-                    }else{
                     }
                 }
                  
@@ -118,15 +117,15 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
             {
                     if(response)
                     {
-                        $translate.instant("Se ha eliminado correctamente"),
+                        $translate.instant("Se ha eliminado correctamente")
                         'warning' 
                 $location.path("/notificaciones");
                 traerNoticicaciones()
                     }
                     else
                     {
-                        $translate.instant("ERROR.NOTIFICACIONES_ELIMINADA"),
-                        $translate.instant("VERIFICAR_CONEXION"),
+                        $translate.instant("ERROR.NOTIFICACIONES_ELIMINADA")
+                        $translate.instant("VERIFICAR_CONEXION")
                         'warning'
                     }
             });
