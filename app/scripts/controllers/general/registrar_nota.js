@@ -483,7 +483,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado, tipoDocumentoId, limit) {
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado + ",Activo:true",
           sortby: 'id',  // Ordenar por id
           order: 'desc', // Orden descendente
           limit: limit // Ajusta el límite según el código de abreviación
