@@ -20,6 +20,7 @@
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
+ * @property {Object} state Estado del usuario
  * @property {Object} gridOptions Opciones del ui-grid que contiene las solicitudes
  * @property {Array} solicitudes Solicitudes que se muuestran en el ui-grid
  * @property {Object} detallesSolicitud Detalles especificos de una solicitud seleccionada en el ui-grid
@@ -43,8 +44,10 @@ angular.module('poluxClienteApp')
       ctrl.EstadoSolicitud = [];
       ctrl.TipoDetalle = [];
       ctrl.userRole = token_service.getAppPayload().appUserRole;
+      ctrl.state = token_service.getAppPayload().state;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
+      console.log("STATE ", ctrl.state)
 
       /**
        * @ngdoc method
@@ -326,7 +329,7 @@ angular.module('poluxClienteApp')
           ctrl.EstadoSolicitud = responseEstadoSolicitud.data.Data;
         })
 
-        if (lista_roles.includes("ESTUDIANTE")) {
+        if (lista_roles.includes("ESTUDIANTE") && ctrl.state == 'A') {
           parametrosSolicitudes = $.param({
             query: "usuario:" + identificador,
             limit: 0
