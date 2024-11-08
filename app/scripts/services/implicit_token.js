@@ -92,7 +92,7 @@ angular.module('implicitToken', [])
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));*/
 
-                if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
+                if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE") && respuestaAutenticacion.data.Estado == 'A')){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
