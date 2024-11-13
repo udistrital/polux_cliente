@@ -483,7 +483,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado, tipoDocumentoId, limit) {
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado + ",Activo:true",
           sortby: 'id',  // Ordenar por id
           order: 'desc', // Orden descendente
           limit: limit // Ajusta el límite según el código de abreviación
@@ -625,14 +625,14 @@ angular.module('poluxClienteApp')
         var crearData = function () {
           var defer = $q.defer()
 
-          let ModalidadTemp = ctrl.Modalidades.find(data => {
-            return data.Id == ctrl.trabajoSeleccionado.Modalidad.Id;
+          let ModalidadTemp = ctrl.Modalidades.find(dataModalidad => {
+            return dataModalidad.Id == ctrl.trabajoSeleccionado.Modalidad.Id;
           });
 
           ctrl.trabajoSeleccionado.Modalidad = ModalidadTemp.Id;
 
-          let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(data => {
-            return data.Id == ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id;
+          let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(dataEstados => {
+            return dataEstados.Id == ctrl.trabajoSeleccionado.EstadoTrabajoGrado.Id;
           });
 
           ctrl.trabajoSeleccionado.EstadoTrabajoGrado = EstadoTrabajoGradoTemp.Id;
@@ -649,8 +649,8 @@ angular.module('poluxClienteApp')
             }
           }
           //Si es director se debe subir el acta
-          let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(data => {
-            return data.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
+          let RolTrabajoGradoTemp = ctrl.RolesTrabajoGrado.find(dataRol => {
+            return dataRol.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
           });
           if (RolTrabajoGradoTemp.CodigoAbreviacion == "DIRECTOR_PLX") {
             var nombreDocumento = "Acta de sustentación de trabajo id: " + ctrl.trabajoSeleccionado.Id;
@@ -664,8 +664,8 @@ angular.module('poluxClienteApp')
             descripcion = descripcionDocumento;
             utils.getBase64(ctrl.trabajoSeleccionado.actaSustentacion).then(function (base64) {
               fileBase64 = base64;
-              let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
-                return data.CodigoAbreviacion == "ACT_PLX";
+              let TipoDocumentoTemp = ctrl.TiposDocumento.find(dataTipoDoc => {
+                return dataTipoDoc.CodigoAbreviacion == "ACT_PLX";
               });
               data = [{
                 IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
@@ -703,8 +703,8 @@ angular.module('poluxClienteApp')
             defer.resolve(dataRegistrarNota);
           }
 
-          let RolTemp = ctrl.RolesTrabajoGrado.find(data => {
-            return data.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;
+          let RolTemp = ctrl.RolesTrabajoGrado.find(dataRol => {
+            return dataRol.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;
           });
 
           dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado = RolTemp.Id;
@@ -748,15 +748,15 @@ angular.module('poluxClienteApp')
                   });
 
                   poluxRequest.get("vinculacion_trabajo_grado", parametros).then(async function (vinculado) {//Se busca al Docente Director
-                    var data_auth_mid = {
+                    data_auth_mid = {
                       numero: vinculado.data.Data[0].Usuario.toString()
                     }
 
-                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
-                      correos.push(response.data.email)//se agrega a los correos destinatarios
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseCorreo) {//se busca el correo con el documento
+                      correos.push(responseCorreo.data.email)//se agrega a los correos destinatarios
                     })
 
-                    var data_correo = {
+                    data_correo = {
                       "Source": "notificacionPolux@udistrital.edu.co",
                       "Template": "POLUX_PLANTILLA_REGISTRO_NOTA",
                       "Destinations": [
@@ -790,8 +790,8 @@ angular.module('poluxClienteApp')
                     numero: ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo.toString()
                   }
 
-                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
-                    correos.push(response.data.email)//se agrega a los correos destinatarios
+                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseCorreoEst) {//se busca el correo con el documento
+                    correos.push(responseCorreoEst.data.email)//se agrega a los correos destinatarios
                   })
 
                   await academicaRequest.get("datos_basicos_estudiante", [ctrl.trabajoSeleccionado.estudiantes[0].datos.codigo]).then(async function(estudiante){
@@ -799,23 +799,23 @@ angular.module('poluxClienteApp')
                     await academicaRequest.get("consulta_carrera_condor", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
                       console.log("carrera:",carrera)
     
-                      var data_auth_mid = {
+                      data_auth_mid = {
                         numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
                       }
               
-                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(responseCorreoCoord){//se busca el correo del estudiante con el documento
+                        correos.push(responseCorreoCoord.data.email)//se almacena en los correos destinatarios
                       })
                     })
 
                     await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
 
-                      var data_auth_mid = {
+                      data_auth_mid = {
                         numero : asistente.data.asistente.proyectos[0].documento_asistente
                       }
               
-                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(responseCorreoAsis){//se busca el correo del estudiante con el documento
+                        correos.push(responseCorreoAsis.data.email)//se almacena en los correos destinatarios
                       })
                     })
                   })
@@ -926,8 +926,16 @@ angular.module('poluxClienteApp')
           .then(async function (response) {
             console.log("Comparación Success")
             if (response.data.Success === true) {
-              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
-                correos.push(response.data.email)
+
+              var correos = [], usuario = []
+
+              //se busca el correo del estudiante
+              var data_auth_mid = {
+                numero: ctrl.trabajoSeleccionado.estudiantes[0].Estudiante
+              }
+
+              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (responseEmail) {
+                correos.push(responseEmail.data.email)
               })
 
               //Se busca el nombre del docente que realiza el comentario

@@ -91,7 +91,6 @@ angular.module('poluxClienteApp')
                         query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo+",Nivel:"+nivelAsignaturas,
                         fields: "CodigoCarrera,CodigoPensum"
                     });
-
                     poluxRequest.get("carrera_elegible", parametros).then(function (response) {
                         var promises = []
 

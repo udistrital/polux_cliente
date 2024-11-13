@@ -46,9 +46,9 @@ angular.module('poluxClienteApp')
             
             if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
               ctrl.carreras = response.data.coordinadorCollection.coordinador;
-              academicaRequest.get("periodo_academico", "X").then(function(response) {
-                  if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
-                    ctrl.periodo = response.data.periodoAcademicoCollection.periodoAcademico[0];
+              academicaRequest.get("periodo_academico", "X").then(function(perAca) {
+                  if (!angular.isUndefined(perAca.data.periodoAcademicoCollection.periodoAcademico)) {
+                    ctrl.periodo = perAca.data.periodoAcademicoCollection.periodoAcademico[0];
                   } else {
                     ctrl.mensajeErrorCarga = $translate.instant('ERROR.CARGANDO_PERIODO');
                     ctrl.errorCargarParametros = true;

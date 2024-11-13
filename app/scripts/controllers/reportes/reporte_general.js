@@ -95,8 +95,8 @@ angular.module('poluxClienteApp')
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
-      if(ctrl.userRole.includes('COORDINADOR')||ctrl.userRole.includes('ADMIN_POLUX'))
-      {
+  
+      if(ctrl.userRole.includes('COORDINADOR')||ctrl.userRole.includes('ADMIN_POLUX')){
         ctrl.muestra_btn ++;
       }
       ctrl.carreras_oikos = [];
@@ -137,16 +137,11 @@ angular.module('poluxClienteApp')
 
       academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function (responseCoordinador) {
         ctrl.carrerasCoordinador = [];
-        var carreras = [];
         ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
           
         angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function (carrera) {
           ctrl.carreras.push(carrera.codigo_proyecto_curricular);
         });
-        if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
-         
-          
-        }
       }).catch(function (error) {
         
         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");

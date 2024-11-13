@@ -20,6 +20,7 @@
  * @requires services/poluxService.service:gestorDocumentalMidService
  * @property {Number} userId Documento del usuario que ingresa al módulo
  * @property {Object} userRole Listado de roles que tiene el usuairo que ingresa al módulo
+ * @property {Object} state Estado del usuario
  * @property {Object} gridOptions Opciones del ui-grid que contiene las solicitudes
  * @property {Array} solicitudes Solicitudes que se muuestran en el ui-grid
  * @property {Object} detallesSolicitud Detalles especificos de una solicitud seleccionada en el ui-grid
@@ -43,8 +44,10 @@ angular.module('poluxClienteApp')
       ctrl.EstadoSolicitud = [];
       ctrl.TipoDetalle = [];
       ctrl.userRole = token_service.getAppPayload().appUserRole;
+      ctrl.state = token_service.getAppPayload().state;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
+      console.log("STATE ", ctrl.state)
 
       /**
        * @ngdoc method
@@ -326,7 +329,7 @@ angular.module('poluxClienteApp')
           ctrl.EstadoSolicitud = responseEstadoSolicitud.data.Data;
         })
 
-        if (lista_roles.includes("ESTUDIANTE")) {
+        if (lista_roles.includes("ESTUDIANTE") && ctrl.state == 'A') {
           parametrosSolicitudes = $.param({
             query: "usuario:" + identificador,
             limit: 0
@@ -423,14 +426,14 @@ angular.module('poluxClienteApp')
                 });
                 query += ",SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud.in:"
                 var tiposSolicitud = ["SCM_PLX", "SCDI_PLX", "SCDE_PLX", "SSO_PLX", "SPR_PLX", "SMDTG_PLX", "SCMA_PLX", "SCE_PLX", "SDTG_PLX", "SCCI_PLX", "SRTG_PLX", "SAD_PLX","SCO_PLX"]
-                ctrl.TipoSolicitud.forEach(tipoSolicitud => {
-                  if (tiposSolicitud.includes(tipoSolicitud.CodigoAbreviacion)) {
+                ctrl.TipoSolicitud.forEach(tipo_Solicitud => {
+                  if (tiposSolicitud.includes(tipo_Solicitud.CodigoAbreviacion)) {
                     if (guardaSegundo) {
                       query += "|"
                     } else {
                       guardaSegundo = true
                     }
-                    query += tipoSolicitud.Id.toString()
+                    query += tipo_Solicitud.Id.toString()
                   }
                 });
                 parametrosSolicitudes = $.param({
@@ -581,8 +584,8 @@ angular.module('poluxClienteApp')
                   modalidadTipoSol = responseModalidadTipo.data.Data;
                 })
                 console.log("ESTADOSOLICITUD")
-                var query = "ESTADOSOLICITUD.in:"
-                var guardaPrimero = false;
+                query = "ESTADOSOLICITUD.in:"
+                guardaPrimero = false;
                 ctrl.EstadoSolicitud.forEach(estado => {
                   console.log("ESTADOSOLICITUD", estado.CodigoAbreviacion)
                   if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX") {
@@ -722,8 +725,7 @@ angular.module('poluxClienteApp')
                       }
                     });
                   };*/
-                });
-                
+                });               
                 console.log("EXCLUDE", exclude);
                 var parametrosSolicitudes = $.param({
                   query: query + ",Activo:true",
@@ -981,7 +983,7 @@ angular.module('poluxClienteApp')
                                     limit: 0
                                   });
                                 } else if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                                  var guardaPrimero = false;
+                                  guardaPrimero = false;
                                   ctrl.EstadoSolicitud.forEach(estado => {
                                     if (estado.CodigoAbreviacion == "ACPO2_PLX" || estado.CodigoAbreviacion == "RCPO2_PLX") {
                                       if (guardaPrimero) {
@@ -1213,7 +1215,7 @@ angular.module('poluxClienteApp')
               });
               var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:"
               guardaPrimero = false;
-              modalidadTipoSol.forEach(modTipo => {
+              modalidadTipoSol.Data.forEach(modTipo => {
                 let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                   return modalidad.Id == modTipo.Modalidad
                 })
@@ -1229,17 +1231,17 @@ angular.module('poluxClienteApp')
                   exclude += modTipo.Id
                 }
               });
-              var parametrosSolicitudes = $.param({
+              parametrosSolicitudes = $.param({
                 query: query + ",Activo:true",
                 exclude: exclude,
                 limit: 0
               });
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes).then(function (responseSolicitudes) {
-                if (Object.keys(responseSolicitudes.data[0]).length > 0) {
+                if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
                   ctrl.conSolicitudes = true;
                 }
-                if (Object.keys(responseSolicitudes.data[0]).length === 0) {
-                  responseSolicitudes.data = [];
+                if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
+                  responseSolicitudes.data.Data = [];
                 }
                 var verificarSolicitud = function (solicitud) {
                   var defer = $q.defer();
@@ -1295,7 +1297,7 @@ angular.module('poluxClienteApp')
                     });
                   return defer.promise;
                 }
-                angular.forEach(responseSolicitudes.data, function (solicitud) {
+                angular.forEach(responseSolicitudes.data.Data, function (solicitud) {
                   promiseArr.push(verificarSolicitud(solicitud));
                 });
                 $q.all(promiseArr).then(function () {
@@ -1397,7 +1399,7 @@ angular.module('poluxClienteApp')
             console.log("Entra detalle_solicitud", detalles)
             angular.forEach(detalles.data.Data, function(detalle) {
               if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TG") { //buscar el detalle asociado al TG
-                var parametros = $.param({
+                parametros = $.param({
                   query: "TrabajoGrado.Id:" + detalle.Descripcion
                 });
                 poluxRequest.get("estudiante_trabajo_grado", parametros).then(function(estudiantes) {
@@ -1434,14 +1436,14 @@ angular.module('poluxClienteApp')
           limit: 0
         });
 
-        var getDocumentoRespuesta = function(fila, solicitud) {
+        var getDocumentoRespuesta = function(filaRes, solicitudRes) {
           var defer = $q.defer();
           let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
-            return estadoSol.Id == fila.entity.Respuesta.EstadoSolicitud
+            return estadoSol.Id == filaRes.entity.Respuesta.EstadoSolicitud
           })
           if (estadoSolicitudTemp.CodigoAbreviacion != "RDC_PLX") {
             var parametrosDocumentoSolicitud = $.param({
-              query: "SolicitudTrabajoGrado.Id:" + solicitud,
+              query: "SolicitudTrabajoGrado.Id:" + solicitudRes,
               limit: 0
             });
             poluxRequest.get("documento_solicitud", parametrosDocumentoSolicitud).then(function(documento) {
@@ -1470,8 +1472,8 @@ angular.module('poluxClienteApp')
             })
             ctrl.detallesSolicitud = responseDetalles.data.Data;
             ctrl.detallesSolicitud.forEach(detalle => {
-              detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
-                return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
+              detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalleSol => {
+                return tipoDetalleSol.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
               })
             });
           } else {
@@ -1572,7 +1574,6 @@ angular.module('poluxClienteApp')
                     });
                   }
                   detalle.filas = [];
-                  var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                   var codigoAbreviacion = detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion;
                   if (codigoAbreviacion == "TF") {
                     detalle.Descripcion = detalle.Descripcion.split("-")[1];

@@ -33,7 +33,7 @@ if (window.localStorage.getItem('access_token') === null ||
     window.localStorage.clear();
   }
   req.onreadystatechange = function(e) {
-    if (req.readyState === 4) {
+    /*if (req.readyState === 4) {
       if (req.status === 200) {
         //
       } else if (req.status === 400) {
@@ -41,7 +41,7 @@ if (window.localStorage.getItem('access_token') === null ||
       } else {
         
       }
-    }
+    }*/
   };
 }
 
@@ -87,7 +87,7 @@ angular.module('implicitToken', [])
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));*/
 
-                if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.role.includes("ESTUDIANTE")){
+                if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE") && respuestaAutenticacion.data.Estado == 'A')){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
@@ -95,6 +95,7 @@ angular.module('implicitToken', [])
                 appUserRole = respuestaAutenticacion.data.role;
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));
+                window.localStorage.setItem('state', btoa(JSON.stringify(respuestaAutenticacion.data.Estado)));
                 //
                 deferred.resolve(true);
               })
@@ -171,9 +172,11 @@ angular.module('implicitToken', [])
         var id_token = window.localStorage.getItem('id_token').split('.');
         var access_code = window.localStorage.getItem('access_code');
         var access_role = window.localStorage.getItem('access_role');
+        var state = window.localStorage.getItem('state');
         var data = JSON.parse(atob(id_token[1]));
         data.appUserDocument = JSON.parse(atob(access_code));
         data.appUserRole = JSON.parse(atob(access_role));
+        data.state = JSON.parse(atob(state));
         return data;
       },
       logout: function() {
@@ -206,8 +209,8 @@ angular.module('implicitToken', [])
       logoutValid: function() {
         var state;
         var valid = true;
-        var queryString = location.search.substring(1);
-        var regex = /([^&=]+)=([^&]*)/g;
+        queryString = location.search.substring(1);
+        regex = /([^&=]+)=([^&]*)/g;
         var m;
         while (!!(m = regex.exec(queryString))) {
           state = decodeURIComponent(m[2]);

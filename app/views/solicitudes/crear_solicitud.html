@@ -54,23 +54,18 @@
     <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
       
       <div ng-if="!crearSolicitud.soliciudConDetalles" class="row">
-        <label class="col-sm-12 control-label" style="text-align:center" > {{'SOLICITUD_SIN_FORMULARIO' | translate}} </label>
-        <br>
+       <label class="col-sm-12 control-label" style="text-align:center" > {{'SOLICITUD_SIN_FORMULARIO' | translate}} </label>
+       <br>
+     </div>
+     <!-- Mensaje para pasantía interna -->
+    <div ng-if="crearSolicitud.modalidad == 'PAS_PLX'" class="panel panel-default">
+      <div class="panel-body">
+        <label class="control-label col-sm-8"> {{'DATOS_ARL' | translate}}: </label>
+         <div class="row row-centered">
+          <button type="button" class="btn btn-primary" ng-click="crearSolicitud.openModalDataARL()">Ingresar Datos ARL</button> </label>
+         </div>        
       </div>
-     
-      <!-- Mensaje para pasantía interna -->
-      <div ng-if="crearSolicitud.modalidad == 'PAS_PLX'" class="panel panel-default">
-        <div class="panel-body">
-          <label class="control-label col-sm-8"> {{'DATOS_ARL' | translate}}: </label>
-          <!-- <label ng-click="crearSolicitud.openModalDataARL()" class="col-sm-8" -->
-          <div class="row row-centered">
-            <button type="button" class="btn btn-primary" ng-click="crearSolicitud.openModalDataARL()">Ingresar Datos ARL</button> </label>
-          </div>        
-        </div>
-        <!-- <p>Si la pasantía a realizar es interna, presione el botón para ingresar datos personales para diligenciar la ARL.</p>   -->
-        <!-- Botón para abrir el modal -->
-        <!-- <button type="button" class="btn btn-primary" ng-click="crearSolicitud.openModalDataARL()">Ingresar Datos ARL</button> -->
-      </div>
+    </div>
 
       <!-- detalles de la solicitud -->
       <div ng-if="crearSolicitud.soliciudConDetalles">
@@ -100,7 +95,7 @@
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'NIT'">
               <div class="panel-body">
                 <div class="alert-warning">
-                  <b>{{'AVISO_NIT' | translate}}</b>
+                  <strong>{{'AVISO_NIT' | translate}}</strong>
                 </div>
               </div>
             </div>
@@ -108,7 +103,7 @@
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'CIIU'">
               <div class="panel-body">
                 <div class="alert-warning">
-                  <b>{{'AVISO_CIIU' | translate}}</b>
+                  <strong>{{'AVISO_CIIU' | translate}}</strong>
                 </div>
               </div>
             </div>
@@ -121,9 +116,9 @@
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DOC_PLX'" class="row">
             <div class="panel-body">
-                <div class="alert-warning">
-                  <b>{{'AVISO_PDF' | translate}}</b>
-                </div>
+              <div class="alert-warning">
+                <strong>{{'AVISO_PDF' | translate}}</strong>
+              </div>
             </div>
             
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
@@ -137,7 +132,7 @@
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DAN_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
-                <b>{{'AVISO_RAR' | translate}}</b>
+                <strong>{{'AVISO_RAR' | translate}}</strong>
               </div>
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
@@ -154,7 +149,6 @@
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">
             <div class="panel-body">
-              <!--<input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>-->
               <div class="row">
                 <label class="col-sm-12 control-label" translate="{{detalle.label}}"></label>
               </div>
@@ -167,8 +161,9 @@
           </div>
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado == 'AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>0" class="panel-body alert alert-warning">
-            <label class="col-sm-12 control-label" translate="AUTORIZACION_DERECHOS_AUTOR"  translate-values='{ nombre: "{{crearSolicitud.estudiante.Nombre}}", codigo: {{crearSolicitud.estudiante.Codigo}}, tg: "{{crearSolicitud.trabajo_grado_completo.Titulo}}" }'>  </label>
-            <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><b>AUTORIZAR</b></input>
+             <label class="col-sm-12 control-label" translate="AUTORIZACION_DERECHOS_AUTOR"  translate-values='{ nombre: "{{crearSolicitud.estudiante.Nombre}}", codigo: {{crearSolicitud.estudiante.Codigo}}, tg: "{{crearSolicitud.trabajo_grado_completo.Titulo}}" }'>  </label>
+             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><strong
+             >AUTORIZAR</strong></input>
           </div>
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">
@@ -207,6 +202,7 @@
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <!-- <textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea> -->
+
             <div class="col-sm-9 ">
               <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
             </div>
@@ -243,9 +239,23 @@
                 </ui-select-choices>
               </ui-select>
             </div>
-          </div>
-          
-          <br>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LNUX_PLX'" class="row">
+             <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+             <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+         </div>
+         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
+           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+           <div class="col-sm-9">
+             <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
+                    <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                    <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">
+                        <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
+                    </ui-select-choices>
+                </ui-select>
+           </div>
+         </div>
+         <br>
 
         </div>
       </div>
