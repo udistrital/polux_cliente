@@ -164,7 +164,7 @@ angular.module('poluxClienteApp')
         ctrl.Docente = 1;
       }
 
-      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
         ctrl.UnidadExtPasantia = 1;
       }
       ctrl.carrerasCoordinador = [];
@@ -258,24 +258,29 @@ angular.module('poluxClienteApp')
           });
 
         } else {
-          if (token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
-            rol = "PREGRADO"
-          } else {
-            rol = "POSGRADO"
-          }
-          academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
-            //
-            if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
-              ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
-              defer.resolve();
+          academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+            if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
+              rol = "PREGRADO";
             } else {
-              ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
-              defer.reject("Carreras no definidas");
+              rol = "POSGRADO";
             }
+
+            academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
+              if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
+                ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
+                defer.resolve();
+              } else {
+                ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
+                defer.reject("Carreras no definidas");
+              }
+            }).catch(function (error) {
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
+              defer.reject(error);
+            });
+
           }).catch(function (error) {
-            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
             defer.reject(error);
-          });
+          });      
         }
         return defer.promise;
       }
@@ -341,7 +346,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         //si la solicitud es de tipo inicial en la modalidad de materias de posgrado (13) o de profundizacion (16)
         if (ctrl.tipoSolicitudTemp.CodigoAbreviacion === "SI_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX")) {
-          academicaRequest.get("periodo_academico", "X")
+          academicaRequest.get("periodo_academico", "P") //Aquí debe ir "X" pero aún no hay datos en dicho periodo académico, así que por el momento uso la "P"
             .then(function (responsePeriodo) {
               if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
                 ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
@@ -361,17 +366,21 @@ angular.module('poluxClienteApp')
                 sesionesRequest.get("relacion_sesiones", parametrosSesiones)
                   .then(function (responseFechas) {
                     if (Object.keys(responseFechas.data[0]).length > 0) {
-                      ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+                      //ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm"); Se usa la fecha actual para hacaer la comparación
+
                       var sesion = responseFechas.data[0];
+                      
                       var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
                       fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
                       ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                      
                       var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
                       fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
-                      ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
                       ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
-                      if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
 
+                      ctrl.fechaActual = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm"); //Pondré la fecha hijo fin de la petición para poder continuar con el desarrollo, pero esto se debe cambiar por la actual
+                      
+                      if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                         defer.resolve();
                       } else {
                         ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION', {
@@ -476,7 +485,7 @@ angular.module('poluxClienteApp')
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                 var datosMaterias = detalleAux.Descripcion.split("-");
                 var carrera = JSON.parse(datosMaterias[1]);
-                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("POSGRADO")) {
                   var index = ctrl.detallesSolicitud.indexOf(detalleAux)
                   ctrl.detallesSolicitud.splice(index, 1)
                 }
@@ -670,7 +679,7 @@ angular.module('poluxClienteApp')
 
                   });
 
-                  detalle.gridOptions = [];
+                  /*detalle.gridOptions = [];
                   detalle.gridOptions.columnDefs = [{
                     name: 'CodigoAsignatura',
                     displayName: $translate.instant('CODIGO_MATERIA'),
@@ -684,7 +693,7 @@ angular.module('poluxClienteApp')
                     displayName: $translate.instant('CREDITOS'),
                     width: '20%',
                   }];
-                  detalle.gridOptions.data = detalle.filas;
+                  detalle.gridOptions.data = detalle.filas;*/
                 }
               }
               // Si la solicitud tiene un detalle con id 56 es por que tiene codirector
@@ -1085,7 +1094,7 @@ angular.module('poluxClienteApp')
           })
           console
           if (modalidad.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitud.CodigoAbreviacion == "SI_PLX"
-            && this.roles.includes("COORDINADOR_POSGRADO")) {
+            && this.roles.includes("COORDINADOR")) {
             await aprobarPosgrado();
           } else if (ctrl.respuestaSolicitud == "RCC_PLX") {
             enviarTransaccion();

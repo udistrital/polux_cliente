@@ -1,6 +1,3 @@
-
-
-
 <div class="panel panel-default">
     <div class="panel-heading">
         {{'LISTAR_SOLICITUDES' | translate}}
@@ -12,7 +9,7 @@
           <loading tam="4" load="load" message="msgCargandoSolicitudes"> </loading>
 
           <div ng-if="load!==true && !listarSolicitudes.errorCargarParametros">
-          <div class="row" ng-if="listarSolicitudes.userRole.includes('COORDINADOR') && listarSolicitudes.carrerasCoordinador.length>1">
+          <div class="row" ng-if="listarSolicitudes.userRole.includes('PREGRADO') || listarSolicitudes.userRole.includes('POSGRADO') && listarSolicitudes.carrerasCoordinador.length>1">
           <label class="col-sm-2 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
             <div class="col-sm-10">
                 <select class="form-control"  ng-model="carrera_seleccionada" ng-change="listarSolicitudes.filtrarSolicitudes(carrera_seleccionada);">
@@ -40,10 +37,10 @@
                   {{'DIRIGIJASE_SOLICITUD' | translate}} <strong> {{'NUEVA_SOLICITUD' | translate}}</strong>.
                 </p>
             </div>
-            <div ng-if="!listarSolicitudes.conSolicitudes && (listarSolicitudes.userRole.includes('COORDINADOR') || listarSolicitudes.userRole.includes('CONTRATISTA'))" class="alert alert-danger" >
+            <div ng-if="!listarSolicitudes.conSolicitudes && (listarSolicitudes.userRole.includes('PREGRADO') || listarSolicitudes.userRole.includes('POSGRADO') || listarSolicitudes.userRole.includes('CONTRATISTA'))" class="alert alert-danger" >
                {{'COORDINADOR_SIN_SOLICITUD' | translate}}
             </div>
-            <div ng-if="listarSolicitudes.conSolicitudes && (listarSolicitudes.userRole.includes('COORDINADOR') || listarSolicitudes.userRole.includes('CONTRATISTA')) && listarSolicitudes.gridOptions.data.length==0" class="alert alert-danger" >
+            <div ng-if="listarSolicitudes.conSolicitudes && (listarSolicitudes.userRole.includes('PREGRADO') || listarSolicitudes.userRole.includes('POSGRADO') || listarSolicitudes.userRole.includes('CONTRATISTA')) && listarSolicitudes.gridOptions.data.length==0" class="alert alert-danger" >
                     {{'COORDINADOR_SIN_SOLICITUD_EN_CARRERA' | translate}}
             </div>
             <div ng-if="listarSolicitudes.conSolicitudes && listarSolicitudes.gridOptions.data.length > 0" class="panel panel-default panel-body col-md-12">
@@ -126,7 +123,7 @@
                   <div ng-if="detalle.carrera!==undefined" >
                         <label class="col-sm-8 control-label"> {{'CARRERA' | translate}}: {{detalle.carrera.Nombre}}  </label>
                         <div class="panel col-md-12">
-                              <div ui-grid="detalle.gridOptions" class="mi-grid" id="mi-grid"  ui-grid-cellNav ui-grid-auto-resize></div>
+                              <!-- <div ui-grid="detalle.gridOptions" class="mi-grid" id="mi-grid"  ui-grid-cellNav ui-grid-auto-resize></div> -->
                         </div>
                   </div>
 

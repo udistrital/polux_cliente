@@ -32,7 +32,7 @@ angular.module('poluxClienteApp').controller('notificacionesCtrla',
            
             function traerNoticicaciones() {
                 
-                if($scope.roles.includes('COORDINADOR') || $scope.roles.includes('COORDINADOR_POSGRADO')){    
+                if($scope.roles.includes('COORDINADOR')){    
                     
                     notificacionRequest.traerNotificaciones( $scope.nombreColaCoordinador).then(function (response) {
                   
