@@ -95,6 +95,7 @@ angular.module('poluxClienteApp')
       ctrl.userRole = token_service.getAppPayload().appUserRole;
       $scope.userId = token_service.getAppPayload().appUserDocument;
       ctrl.userId = $scope.userId;
+  
       if(ctrl.userRole.includes('COORDINADOR')||ctrl.userRole.includes('ADMIN_POLUX')){
         ctrl.muestra_btn ++;
       }

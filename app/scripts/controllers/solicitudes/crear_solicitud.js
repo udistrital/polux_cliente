@@ -1900,6 +1900,10 @@ angular.module('poluxClienteApp')
                     if(ModalidadTemp.CodigoAbreviacion == "EAPOS_PLX"){
                       detalle.label = $translate.instant("TERMINOS.POSGRADO")
                     }
+                    // PARA MODALIDAD DE MATERIAS DE PROFUNDIZACIÓN
+                    if(ModalidadTemp.CodigoAbreviacion == "EAPRO_PLX"){
+                      detalle.label = $translate.instant("TERMINOS.PROFUNDIZACION")
+                    }
                     // PARA MODALIDAD DE MATERIAS DE INVESTIGACION E INNOVACION
                     if(ModalidadTemp.CodigoAbreviacion == "INV_PLX"){
                       detalle.label = $translate.instant("TERMINOS.INVESTIGACION")
@@ -2308,15 +2312,15 @@ angular.module('poluxClienteApp')
           let ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "EAPRO_PLX"
           });
-          if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
-            TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
+          /*if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
+            let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
-          }
+          }*/
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "MONO_PLX"
