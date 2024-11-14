@@ -244,7 +244,7 @@
              <label class="col-sm-3 control-label"> {{detalle.label}}</label>
              <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
          </div>
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
+         <!-- <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
              <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
@@ -254,7 +254,7 @@
                     </ui-select-choices>
                 </ui-select>
            </div>
-         </div>
+         </div> -->
          <br>
 
         </div>

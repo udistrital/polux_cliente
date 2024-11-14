@@ -386,6 +386,7 @@ angular.module('poluxClienteApp')
                   $scope.load = false;
                 })
                 .catch(function(error) {
+                  console.log("Condole log 1", error)
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargarParametros = true;
                   $scope.load = false;
@@ -558,6 +559,7 @@ angular.module('poluxClienteApp')
                       $scope.load = false;
                     })
                     .catch(function(error) {
+                      console.log("Condole log 2", error)
                       ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                       ctrl.errorCargarParametros = true;
                       $scope.load = false;
@@ -618,6 +620,7 @@ angular.module('poluxClienteApp')
                     }
                     exclude += modTipo.Id                    
                   } 
+                });
                   //El siguiente bloque de código se encuentra en desarrollo para listar la solciitud de Materias de Profundización
                   /*else if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" && modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
                     console.log("EAPRO_PLX 618");
@@ -725,7 +728,7 @@ angular.module('poluxClienteApp')
                       }
                     });
                   };*/
-                });               
+                             
                 console.log("EXCLUDE", exclude);
                 var parametrosSolicitudes = $.param({
                   query: query + ",Activo:true",
@@ -808,6 +811,7 @@ angular.module('poluxClienteApp')
                         $scope.load = false;
                       })
                       .catch(function(error) {
+                        console.log("Condole log 3", error)
                         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                         ctrl.errorCargarParametros = true;
                         $scope.load = false;
@@ -843,24 +847,30 @@ angular.module('poluxClienteApp')
             var carreras = [];
             console.log("roles ", lista_roles)
             if (lista_roles.includes("POSGRADO")) {
+              console.log("ctrl.EstadoSolicitud", ctrl.EstadoSolicitud)
               let estSol = ctrl.EstadoSolicitud.find(estadoSol => {
                 return estadoSol.CodigoAbreviacion == "ACPR_PLX"
-              })
+              })              
               parametrosSolicitudes = $.param({
                 query: "EstadoSolicitud:" + estSol.Id + ",Activo:true",
                 limit: 0
               });
+              console.log("PARAMETROS SOLICITUDES", parametrosSolicitudes)
               if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
                 ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
+                console.log("Carreras Coordinador", ctrl.carrerasCoordinador)
                 angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {
                   carreras.push(carrera.codigo_proyecto_curricular);
                 });
+                console.log("CARRERAS", carreras)
               }
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes). then(function(responseSolicitudes) {
-                if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
+                console.log("Parametro respuesta_solicitud", parametrosSolicitudes)
+                console.log("Response respuesta_solicitud", responseSolicitudes)
+                if (Object.keys(responseSolicitudes.data.Data).length > 0) {
                   ctrl.conSolicitudes = true;
                 }
-                if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
+                if (Object.keys(responseSolicitudes.data.Data).length === 0) {
                   responseSolicitudes.data.Data = [];
 
                   ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
@@ -930,7 +940,7 @@ angular.module('poluxClienteApp')
                     limit: 0
                   });
                   poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(async function(responseDetalles) {
-                    if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
+                    if (Object.keys(responseDetalles.data.Data).length === 0) {
                       //console.log("responseDetalles", responseDetalles);
                       ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
@@ -1030,6 +1040,7 @@ angular.module('poluxClienteApp')
                 })
               })
               .catch(function(error) {
+                console.log("Condole log 4", error)
                 ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                 ctrl.errorCargarParametros = true;
                 $scope.load = false;
@@ -1163,6 +1174,7 @@ angular.module('poluxClienteApp')
                 $scope.load = false;
               })
               .catch(function(error) {
+                console.log("Condole log 5", error)
                 ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                 ctrl.errorCargarParametros = true;
                 $scope.load = false;
@@ -1308,6 +1320,7 @@ angular.module('poluxClienteApp')
                   $scope.load = false;
                 })
                   .catch(function (error) {
+                    console.log("Condole log 6", error)
                     ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                     ctrl.errorCargarParametros = true;
                     $scope.load = false;

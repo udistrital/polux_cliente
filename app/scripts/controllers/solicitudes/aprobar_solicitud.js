@@ -504,12 +504,12 @@ angular.module('poluxClienteApp')
             })
             angular.forEach(ctrl.detallesSolicitud, function (detalleAux) {
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                var datosMaterias = detalleAux.Descripcion.split("-");
-                var carrera = JSON.parse(datosMaterias[1]);
-                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("POSGRADO")) {
-                  var index = ctrl.detallesSolicitud.indexOf(detalleAux)
-                  ctrl.detallesSolicitud.splice(index, 1)
-                }
+                // var datosMaterias = detalleAux.Descripcion.split("-");
+                // var carrera = JSON.parse(datosMaterias[1]);
+                // if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("POSGRADO")) {
+                //   var index = ctrl.detallesSolicitud.indexOf(detalleAux)
+                //   ctrl.detallesSolicitud.splice(index, 1)
+                // }
               }
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "PEAP") {
                 ctrl.prioridad = parseInt(detalleAux.Descripcion)
