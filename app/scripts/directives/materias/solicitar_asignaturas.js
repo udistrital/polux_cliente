@@ -44,7 +44,7 @@ angular.module('poluxClienteApp')
                 $scope.selectsDeshabilitados = false;
                 ctrl.cargando = $translate.instant("LOADING.CARGANDO_ASIGNATURAS");
                 ctrl.loading = true;
-                ctrl.carreras = [];
+                ctrl.carreras = []; //Se agregan todas las carreras traídas por el endpoint de JBPM
                 ctrl.selected = [];
                 ctrl.selected2 = [];
 
@@ -69,7 +69,7 @@ angular.module('poluxClienteApp')
                  * {@link services/academicaService.service:academicaRequest academicaRequest}, consulta en {@link services/poluxMidService.service:poluxMidRequest poluxMidRequest} la cantidad de ccreditos que debe cursarse en la modalidad,
                  *  con esto busca las carreras elegibles  del servicio {@link services/poluxService.service:poluxRequest poluxRequest} y los nombres de {@link services/academicaService.service:academicaRequest academicaRequest}.
                  */
-                academicaRequest.get("periodo_academico", "P").then(function (response) { //Aquí debe ir "A" pero aún no hay datos en dicho periodo académico, así que por el momento uso la "P"
+                academicaRequest.get("periodo_academico", "A").then(function (response) { //Aquí debe ir "A" - Periodo Actual, pero considero que debería ir la "X" - Periodo Futuro, para dado el caso traer todos los proyectos de pregrado o posgrado que se dictarán el siguiente semestre al actual
                     if (!angular.isUndefined(response.data.periodoAcademicoCollection.periodoAcademico)) {
                         ctrl.periodo = response.data.periodoAcademicoCollection.periodoAcademico[0];
                         console.log("ctrl.periodo", ctrl.periodo);
@@ -87,53 +87,19 @@ angular.module('poluxClienteApp')
                         nivelAsignaturas = 'PREGRADO';
                     }
 
-                    var parametros = $.param({
-                        query: "Anio:" + ctrl.periodo.anio + ",Periodo:" + ctrl.periodo.periodo+",Nivel:"+nivelAsignaturas,
-                        fields: "CodigoCarrera,CodigoPensum"
-                    });
-                    poluxRequest.get("carrera_elegible", parametros).then(function (response) {
-                        var promises = []
+                    academicaRequest.get("carreras/" + nivelAsignaturas).then(function (response) { //https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v2/carreras/{nivel}
+                        angular.forEach(response.data.carrerasCollection.carrera, function (value) {
+                            var carrera = {
+                                "Codigo": value.codigo,
+                                "Nombre": value.nombre,
+                                "Pensum": 1 //value.CodigoPensum - Dejaré 1 por el momento pero puede que se necesite crear un endpont en el que además de Código y Nombre de la Carrera, traiga también el Pensum
+                            };
 
-                        var getCarrera = function (value) {
-                            var defer = $q.defer()
-                            academicaRequest.get("carrera_codigo_nivel", [value.CodigoCarrera, ctrl.tipo]).then(function (response2) { 
-                                var resultado = null;
-                                if (!angular.isUndefined(response2.data.carrerasCollection.carrera)) {
-                                    resultado = response2.data.carrerasCollection.carrera[0];
-                                }
-                                if (resultado !== null) {
-                                    var carrera = {
-                                        "Codigo": value.CodigoCarrera,
-                                        "Nombre": resultado.nombre,
-                                        "Pensum": value.CodigoPensum
-                                    };
-                                    ctrl.carreras.push(carrera);
-                                }
-                                defer.resolve();
-                            }).catch(function (error) {
-                                console.log("error 2", error);
-                                defer.reject(error);
-                            });
-                            return defer.promise
-                        }
+                            ctrl.carreras.push(carrera);
+                        })
 
-                        if (Object.keys(response.data[0]).length === 0) {
-                            response.data.Data = []
-                        }
-
-                        angular.forEach(response.data, function (value) {
-                            if (!$scope.e.includes(value.CodigoCarrera)) {
-                                promises.push(getCarrera(value));
-                            }
-                        });
-
-                        $q.all(promises).then(function () {
-                            ctrl.loading = false;
-                        }).catch(function (error) {
-                            console.log("error 3", error);
-                            ctrl.errorCargando = true;
-                            ctrl.loading = false;
-                        });
+                        ctrl.loading = false;
+                        
                     }).catch(function (error) {
                         console.log("error 4", error);
                         ctrl.errorCargando = true;
