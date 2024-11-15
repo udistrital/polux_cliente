@@ -244,17 +244,6 @@
              <label class="col-sm-3 control-label"> {{detalle.label}}</label>
              <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
          </div>
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
-           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-           <div class="col-sm-9">
-             <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
-                    <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                    <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">
-                        <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
-                    </ui-select-choices>
-                </ui-select>
-           </div>
-         </div>
          <br>
 
         </div>

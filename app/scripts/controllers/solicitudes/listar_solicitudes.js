@@ -520,7 +520,7 @@ angular.module('poluxClienteApp')
                       query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id,
                       limit: 0
                     });
-                    poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(async function(responseDetalles) {
+                    poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function(responseDetalles) {
                       if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
@@ -857,10 +857,10 @@ angular.module('poluxClienteApp')
                 });
               }
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes). then(function(responseSolicitudes) {
-                if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {
+                if (Object.keys(responseSolicitudes.data.Data).length > 0) {
                   ctrl.conSolicitudes = true;
                 }
-                if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
+                if (Object.keys(responseSolicitudes.data.Data).length === 0) {
                   responseSolicitudes.data.Data = [];
 
                   ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
@@ -930,7 +930,7 @@ angular.module('poluxClienteApp')
                     limit: 0
                   });
                   poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(async function(responseDetalles) {
-                    if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
+                    if (Object.keys(responseDetalles.data.Data).length === 0) {
                       //console.log("responseDetalles", responseDetalles);
                       ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
