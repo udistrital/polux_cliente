@@ -53,6 +53,16 @@
        <label class="col-sm-12 control-label" style="text-align:center" > {{'SOLICITUD_SIN_FORMULARIO' | translate}} </label>
        <br>
      </div>
+     <!-- Mensaje para pasantía interna -->
+    <div ng-if="crearSolicitud.modalidad == 'PAS_PLX'" class="panel panel-default">
+      <div class="panel-body">
+        <label class="control-label col-sm-8"> {{'DATOS_ARL' | translate}}: </label>
+         <div class="row row-centered">
+          <button type="button" class="btn btn-primary" ng-click="crearSolicitud.openModalDataARL()">Ingresar Datos ARL</button> </label>
+         </div>        
+      </div>
+    </div>
+
        <!-- detalles de la solicitud -->
        <div ng-if="crearSolicitud.soliciudConDetalles">
          <div ng-repeat="detalle in crearSolicitud.detalles">
@@ -73,22 +83,23 @@
              <div class="col-sm-9 ">
                 <input type="number" class="form-control" ng-model="detalle.respuestaNumerica" required></input>
             </div>
-          </div>
+          </div>          
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX' && detalle.Requerido == false" class="row">
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'NIT'">
               <div class="panel-body">
                 <div class="alert-warning">
-                  <b>{{'AVISO_NIT' | translate}}</b>
+                  <strong>{{'AVISO_NIT' | translate}}</strong>
                 </div>
               </div>
             </div>
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'CIIU'">
               <div class="panel-body">
                 <div class="alert-warning">
-                  <b>{{'AVISO_CIIU' | translate}}</b>
+                  <strong>{{'AVISO_CIIU' | translate}}</strong>
                 </div>
               </div>
             </div>
+            
             <label class="col-sm-3 control-label"> {{detalle.label}}</label>
               <div class="col-sm-9 ">
                  <input type="number" class="form-control" ng-model="detalle.respuestaNumerica"></input>
@@ -97,7 +108,7 @@
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DOC_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
-                <b>{{'AVISO_PDF' | translate}}</b>
+                <strong>{{'AVISO_PDF' | translate}}</strong>
               </div>
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
@@ -109,7 +120,7 @@
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DAN_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
-                <b>{{'AVISO_RAR' | translate}}</b>
+                <strong>{{'AVISO_RAR' | translate}}</strong>
               </div>
             </div>
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
@@ -125,7 +136,6 @@
           </div>
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">
             <div class="panel-body">
-              <!--<input type="checkbox" class="col-sm-4" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle.Nombre}}"></input>-->
               <div class="row">
                 <label class="col-sm-12 control-label" translate="{{detalle.label}}"></label>
               </div>
@@ -139,7 +149,8 @@
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado == 'AUTORIZACION_DERECHOS_AUTOR' && crearSolicitud.estudiantesTg.length>0" class="panel-body alert alert-warning">
              <label class="col-sm-12 control-label" translate="AUTORIZACION_DERECHOS_AUTOR"  translate-values='{ nombre: "{{crearSolicitud.estudiante.Nombre}}", codigo: {{crearSolicitud.estudiante.Codigo}}, tg: "{{crearSolicitud.trabajo_grado_completo.Titulo}}" }'>  </label>
-             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><b>AUTORIZAR</b></input>
+             <input type="checkbox" class="col-sm-1 row" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}" required><strong
+             >AUTORIZAR</strong></input>
           </div>
 
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX' && detalle.Detalle.Enunciado=='CLASIFICACION_REVISTA'" class="panel panel-default">
@@ -177,8 +188,6 @@
 
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
-            <!--<textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
-            -->
             <div class="col-sm-9 ">
                 <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
             </div>
@@ -203,7 +212,6 @@
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
            <div class="col-sm-9">
-            <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
              <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
                     <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
                     <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">
@@ -254,5 +262,44 @@
     <div class="alert alert-danger">
       {{crearSolicitud.mensajeCancelacion}}
     </div>
+  </div>
+</div>
+
+<div id="modalDataPersonalARL" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+      <div class="modal-header">
+          <h3>Ingrese los datos a continuación</h3>
+          <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal"
+                ng-click="">&times</button><br>
+      </div>
+      <div class="modal-body">
+          <form name="formDatosEstudiante" ng-submit="datosEstudianteCtrl.guardarDatosEstudiante()">
+              <div class="form-group">
+                  <label>Fecha de Nacimiento</label>
+                  <input type="date" class="form-control" ng-model="crearSolicitud.datosEstudiante.fechaNacimiento" required>
+              </div>
+              <div class="form-group">
+                  <label>Ciudad de Nacimiento</label>
+                  <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.ciudadNacimiento" required>
+              </div>
+              <div class="form-group">
+                  <label>Dirección de Residencia</label>
+                  <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.direccionResidencia" required>
+              </div>
+              <div class="form-group">
+                  <label>Teléfono</label>
+                  <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.telefono" required>
+              </div>
+              <div class="form-group">
+                  <label>Correo Personal</label>
+                  <input type="email" class="form-control" ng-model="crearSolicitud.datosEstudiante.correoPersonal" required>
+              </div>
+              <div class="form-group">
+                  <label>EPS</label>
+                  <input type="text" class="form-control" ng-model="crearSolicitud.datosEstudiante.eps" required>
+              </div>
+              <button type="submit" ng-click="crearSolicitud.saveDataEstudianteARL()" class="btn btn-primary">Guardar Datos</button>
+          </form>
+      </div>
   </div>
 </div>

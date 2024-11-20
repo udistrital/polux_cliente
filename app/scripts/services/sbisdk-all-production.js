@@ -91,7 +91,7 @@ Sbi.sdk.urlEncode = function(o){
     }
     buf.pop();
     return buf.join("");
-},
+};
 
 /**
   * Takes an encoded URL and and converts it to an object. e.g. Ext.urlDecode("foo=1&bar=2"); would return {foo: 1, bar: 2} or Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", true); would return {foo: 1, bar: [2, 3, 4]}.
@@ -124,7 +124,7 @@ Sbi.sdk.urlDecode = function(string, overwrite){
         }
     }
     return obj;
-},
+};
 
 Sbi.sdk.apply(Function.prototype, {
     
@@ -172,7 +172,7 @@ Sbi.sdk.apply(Function.prototype, {
        fn();
        return 0;
    }
-})
+});
 /** SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -334,7 +334,7 @@ Sbi.sdk.apply(Sbi.sdk.ajax, {
                         obj = { conn:http, tId:transactionId };
                         break;
                     }
-                    catch(e) {
+                    catch(error) {
                     }
                 }
             }
@@ -583,9 +583,9 @@ Sbi.sdk.apply(Sbi.sdk.ajax, {
             }
 
             if (this.hasHeaders) {
-                for (var prop in this.headers) {
-                    if (this.headers.hasOwnProperty(prop)) {
-                        o.conn.setRequestHeader(prop, this.headers[prop]);
+                for (var prope in this.headers) {
+                    if (this.headers.hasOwnProperty(prope)) {
+                        o.conn.setRequestHeader(prope, this.headers[prope]);
                     }
                 }
                 this.headers = {};
@@ -817,7 +817,6 @@ Sbi.sdk.apply(Sbi.sdk.services, {
         if(this.services[serviceName] === undefined) {
             swal("", 'ERROR: Service [' + + '] does not exist', 'error');
         } else {
-            urlStr = '';
             urlStr = this.baseUrl.protocol + '://' + this.baseUrl.host + ":" + this.baseUrl.port + '/' + this.baseUrl.contextPath + '/' + this.baseUrl.controllerPath;
             var params;
             if(this.services[serviceName].type === 'PAGE'){

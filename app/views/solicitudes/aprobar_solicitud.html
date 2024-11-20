@@ -50,9 +50,8 @@
     <div class="panel panel-default" ng-if="aprobarSolicitud.detallesSolicitud.length > 0">
       <div class="panel-heading">
         {{'DETALLES_SOLICITUD' | translate}}
-      </div>
-      <div class="panel-body">
-
+      </div>   
+      <div class="panel-body">     
        <div  class="row" ng-repeat="detalle in aprobarSolicitud.detallesSolicitud">
 
         <label class="col-sm-4 control-label"> {{detalle.DetalleTipoSolicitud.Detalle.Nombre}}:  </label>
@@ -63,10 +62,9 @@
           <div class="panel col-md-12">
             <div ui-grid="detalle.gridOptions" class="mi-grid" id="mi-grid" style="height: {{(detalle.gridOptions.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
           </div>
-        </div>
+        </div>       
         <div ng-if="detalle.carrera===undefined">
           <div ng-if="detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DOC_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='DAN_PLX' && detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux.CodigoAbreviacion!=='LNUX_PLX'">
-            <!-- <label class="col-sm-8 "> {{detalle.Descripcion}} </label> -->
             <div ng-if="detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === 'LR'">
               <a class="col-sm-8" ng-href="{{detalle.Descripcion}}" target="_blank">{{detalle.Descripcion}}</a>
             </div>
@@ -87,21 +85,17 @@
         </div>
 
       </div>
-    </div>
-  </div>
-
-  <!--<div class="panel panel-default" ngIf="aprobarSolicitud.modalidad.CodigoAbreviacion == 'ZZZ'">
-    <div class="panel-heading">
-      {{'DOCUMENTOS_SOLICITUD' | translate}}
-    </div>
-    <div class="panel-body">
-      <div class="row" ng-repeat="documento in aprobarSolicitud.documentoSolicitud" >
-        <label class="col-sm-4 control-label"> {{documento.Resumen}}:  </label>
-        <label ng-click="aprobarSolicitud.getDocumento(documento.Enlace)" class="col-sm-8 control-label" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
-                            
+      <!-- Mensaje para pasantía interna -->      
+      <div ng-if="aprobarSolicitud.pasantiaInterna == true && aprobarSolicitud.modalidadTemp.CodigoAbreviacion == 'PAS_PLX' && aprobarSolicitud.roles.includes('EXTENSION_PASANTIAS')" class="panel panel-default">
+        <div class="panel-body">
+          <label class="control-label col-sm-8"> {{'VER_DATOS_ARL' | translate}}: </label>
+          <div class="row row-centered">
+          <button type="button" class="btn btn-primary" ng-click="aprobarSolicitud.openModalDataARL()">Ver Datos ARL</button> </label>
+          </div>        
+        </div>      
       </div>
     </div>
-  </div>-->
+  </div>
 
   <div class="panel panel-default" >
     <div class="panel-heading">
@@ -151,8 +145,8 @@
       <div class="col-sm-8">
         <select class="form-control" ng-model="aprobarSolicitud.respuestaSolicitud" required>
           <option></option>
-          <option value="ACC_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
-          <option value="RCC_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
+          <option value="AOP_PLX"> {{'APROBAR_SOLICITUD' | translate}} </option>
+          <option value="ROP_PLX"> {{'RECHAZAR_SOLICITUD' | translate}} </option>
         </select>
       </div>
       <div class="row">
@@ -161,7 +155,7 @@
           <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="aprobarSolicitud.justificacion" ></textarea>
         </div>
       </div>
-      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'ACC_PLX' && aprobarSolicitud.tipoSolicitudTemp.CodigoAbreviacion=='SRTG_PLX' && aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PAS_PLX'">
+      <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'AOP_PLX' && aprobarSolicitud.tipoSolicitudTemp.CodigoAbreviacion=='SRTG_PLX' && aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PAS_PLX'">
         <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
        <div class="col-sm-9">
         <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>
@@ -297,13 +291,6 @@
             </div>
         </div>
      </div>
-                  <!--<div class="row">
-                      <label class="col-sm-5 control-label"> </label>
-                      <input type="submit" value="{{'BTN.RESPONDER_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success"></input>
-                      <label class="col-sm-5 control-label"> </label>
-                    </div>-->
-
-                    
                     <!--para el cambio de docente evaluador, codirector o director-->
                     <div class="row" ng-if="aprobarSolicitud.isCambio && aprobarSolicitud.respuestaSolicitud=='ACC_PLX'">
                       <label class="col-sm-4 control-label"> {{'SELECT.DOCENTE_CAMBIO' | translate}} </label>
@@ -385,4 +372,49 @@
         </div>
       </div>
     </div>
+</div>
+
+<div id="modalVistaDataPersonalARL" class="modal fade col-md-12" role="dialog" style="padding-top:5%">
+  <div class="modal-content col-md-offset-2 col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          {{'INFORMACION_SOLICITUD' | translate}}
+          <button type="button" class="btn btn-outline btn-danger btn-xs pull-right" data-dismiss="modal"
+                ng-click="">&times</button><br>
+        </div>
+          
+      </div>
+      <div class="modal-body">
+          <form name="formDatosEstudiante" ng-submit="datosEstudianteCtrl.guardarDatosEstudiante()">
+            <div class="panel-body">
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Fecha de Nacimiento</label>
+                  <!-- <label class="col-sm-4 control-label"> {{'NUMERO_RADICADO'|translate}}:  </label> -->
+                  <!-- <input type="date" class="form-control" ng-model="crearSolicitud.datosEstudiante.fechaNacimiento" required> -->
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.fechaNacimiento | date:'dd/MM/yyyy'}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Ciudad de Nacimiento</label>
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.ciudadNacimiento}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Dirección de Residencia</label>
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.direccionResidencia}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Teléfono</label>
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.telefono}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">Correo Personal</label>
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.correoPersonal}}  </label>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-4 control-label">EPS</label>
+                  <label class="col-sm-8 control-label"> {{aprobarSolicitud.dataPersonaArl.eps}}  </label>
+              </div>
+            </div>
+          </form>
+      </div>
+  </div>
 </div>

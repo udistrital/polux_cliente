@@ -9,20 +9,10 @@
  * Controlador que permite ver una propuesta de trabajo de grado. Actualmente no se utiliza y no se utilizará ya que esta función la
  * hace el módulo de revisiones.
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  */
 angular.module('poluxClienteApp')
-    .controller('PropuestaCtrl', function (academicaRequest, poluxRequest, nuxeo) {
-        nuxeo.connect()
-            .then(function (client) {
-                // client.user.id === 'Administrator'
-                
-            })
-            .catch(function (error) {
-                // wrong credentials / auth method / ...
-                throw error;
-            });
+    .controller('PropuestaCtrl', function (academicaRequest, poluxRequest) {
         var self = this;
         self.idAreas = [];
         //cuando se trabaje con el servidor cambiar a:  self.docentes=academicaRequest.obtenerDocentes();
@@ -37,6 +27,6 @@ angular.module('poluxClienteApp')
             self.estudiantes = response;
         });
         poluxRequest.get("area_conocimiento", "").then(function (response) {
-            self.areas = response.data;
+            self.areas = response.data.Data;
         });
     });

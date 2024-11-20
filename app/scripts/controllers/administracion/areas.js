@@ -98,12 +98,6 @@ angular.module('poluxClienteApp')
           '<div ng-if="!row.entity.Activo"><btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botonesNoActivo" fila="row"></btn-registro></div>'
       }];
 
-      var parametrosAreas = $.param({
-        query: "Estado:ACTIVO",
-        limit: 0,
-      });
-
-
       ctrl.areasSnies = [
         {Id:1,estado:true,Nombre:'AGRONOMIA VETERINARIA Y AFINES'},
         {Id:2,estado:true,Nombre:'BELLAS ARTES'},
@@ -154,8 +148,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("area_conocimiento", parametrosAreasConocimiento)
           .then(function(responseAreas) {
-            if (Object.keys(responseAreas.data[0]).length > 0) {
-              ctrl.areasConocimiento = responseAreas.data;
+            if (Object.keys(responseAreas.data.Data[0]).length > 0) {
+              ctrl.areasConocimiento = responseAreas.data.Data;
               ctrl.gridOptions.data = ctrl.areasConocimiento;
             }
             $scope.loadAreasConocimiento = false;

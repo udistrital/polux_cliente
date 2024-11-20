@@ -3,14 +3,6 @@
     <div class="panel-heading">
         {{'PUBLICACION_DE_ESPACIOS' | translate}} </div>
     <div class="panel-body">
-        <!--
-        <div class="row">
-            <div class="col-md-6">
-              <p>Usuario:  <input type="text" name="userId" ng-model="userId" required></input><br></p>
-            </div>
-        </div>
-        -->
-
         <div ng-if="!load && profundizacion_publicarAsignaturas.errorCargarParametros" class="alert alert-danger">
             {{profundizacion_publicarAsignaturas.mensajeErrorCarga}}
         </div>
@@ -25,9 +17,6 @@
             <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}:</label>
             <label for="anioSel" class="col-sm-10 control-label">{{profundizacion_publicarAsignaturas.periodo.periodo}}</label>  
           </div>
-          <!--<pre>{{profundizacion_publicarAsignaturas.pensumSeleccionado}}</pre>
-          <pre>{{profundizacion_publicarAsignaturas.carreraSeleccionada}}</pre>-->
-
           <div class="row">
             <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
             <div class="col-sm-10">

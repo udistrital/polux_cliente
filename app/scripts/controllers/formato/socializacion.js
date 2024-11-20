@@ -25,13 +25,13 @@ angular.module('poluxClienteApp')
                 
                 //ctrl.socializacion = response.data;
 
-                angular.forEach(response.data, function(s) {
+                angular.forEach(response.data.Data, function(s) {
                   
                   //buscar datos tg
                   poluxRequest.get("trabajo_grado", $.param({
                       query: "Id:" + s.TrabajoGrado.Id
                   })).then(function(response2) {
-                      s.TrabajoGrado = response2.data[0];
+                      s.TrabajoGrado = response2.data.Data[0];
                       //buscar lugar
                       oikosRequest.get("espacio_fisico", $.param({
                           query: "Id:" + s.Lugar
@@ -50,8 +50,8 @@ angular.module('poluxClienteApp')
                     oikosRequest.get("espacio_fisico", $.param({
                         query: "Codigo:" + social.Lugar,
                         limit: "-1",
-                    })).then(function(response) {
-                        ctrl.lugares = response.data;
+                    })).then(function(Reslugares) {
+                        ctrl.lugares = Reslugares.data;
                         //social.Lugar = response.data[0];
                     });
                 });
@@ -61,7 +61,7 @@ angular.module('poluxClienteApp')
             poluxRequest.get("trabajo_grado", $.param({
                 limit: "-1"
             })).then(function(response) {
-                ctrl.trabajos_grado = response.data;
+                ctrl.trabajos_grado = response.data.Data;
             });
         };
         ctrl.get_lugares = function() {
@@ -87,7 +87,7 @@ angular.module('poluxClienteApp')
                     $('#add').modal('hide');
                     swal(
                         '',
-                        'Ha Asignado al proyecto ' + response.data.TrabajoGrado.Titulo + ' una socialización',
+                        'Ha Asignado al proyecto ' + response.data.Data.TrabajoGrado.Titulo + ' una socialización',
                         'success'
                     );
                     ctrl.get_socializacion();

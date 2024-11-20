@@ -5,13 +5,13 @@
  * @name poluxClienteApp.directive:verDocumento
  * @description
  * # verDocumento
- * Directiva que permite cargar un documento a nuxeo.
+ * Directiva que permite cargar un documento al gestor documental.
  * Controlador: {@link poluxClienteApp.directive:verDocumento.controller:verDocumentoCtrl verDocumentoCtrl}
  * @param {boolean} minified Booleano que indica si el documento esta minimizado.
  * @param {object} documento Documento que se va a mostrar
  */
 angular.module('poluxClienteApp')
-    .directive('verDocumento', function (poluxRequest, constantes,utils,gestorDocumentalMidRequest, nuxeoClient, $q, $sce, $translate) {
+    .directive('verDocumento', function (poluxRequest,utils,gestorDocumentalMidRequest, $q, $sce, $translate) {
         return {
             restrict: "E",
             scope: {
@@ -28,7 +28,6 @@ angular.module('poluxClienteApp')
              * Controlador de la directiva {@link poluxClienteApp.directive:verDocumento verDocumento}.
              * @requires decorators/poluxClienteApp.decorator:TextTranslate
              * @requires $scope
-             * @requires services/poluxClienteApp.service:nuxeoClient
              * @requires services/poluxService.service:gestorDocumentalMidService
              * @property {string} msgCargandoDocumento Mensaje que se muestra mientras se esta cargando el documento.
              * @property {string} mensajeError Error que se muestra cuando ocurre un error cargando el documento.
@@ -61,7 +60,7 @@ angular.module('poluxClienteApp')
                  * @ngdoc method
                  * @name verDocumento
                  * @methodOf poluxClienteApp.directive:verDocumento.controller:verDocumentoCtrl
-                 * @param {number} docid Uid del documento que se va a traer de nuxeo.
+                 * @param {number} docid Uid del documento que se va a traer del gestor documental.
                  * @returns {undefined} No retorna ningún valor.
                  * @description 
                  * Permite cargar un documento de {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService} para mostrarlo.
@@ -70,17 +69,15 @@ angular.module('poluxClienteApp')
                     $scope.loadDocumento = true;
                     
                     if (docid != null) {
-                      //  nuxeoClient.getDocument(docid)
-                      //      .then(function (documento) {
-                     //  obtener un documento por la id 
-                            gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
-                                //$window.open(fileURL);
+                        //  obtener un documento por la id 
+                        gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+                            //$window.open(fileURL);
                             //})
-                            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+                            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], { type: 'application/pdf' });
                             var fileURL = URL.createObjectURL(file);
                             $scope.pdfUrl = fileURL;
                             $scope.loadDocumento = false;
-                                 })
+                        })
                             .catch(function (error) {
                                 $scope.errorDocumento = true;
                                 $scope.mensajeError = $translate.instant("ERROR.CARGAR_DOCUMENTO");

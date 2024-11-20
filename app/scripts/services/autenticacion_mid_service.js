@@ -26,11 +26,17 @@ angular.module('autenticacionMidService', [])
 		 * Dirección del servicio consumen los servicios proveidos por {@link poluxClienteApp.service:CONF confService}
 		 */
 		var path = CONF.GENERAL.AUTENTICATION_MID_SERVICE;
+		var header = {
+			headers: {
+			  'Accept': 'application/json',
+			  "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
+			}
+		};
 		return {
 			/**
 			 * @ngdoc function
-			 * @name poluxMidService.service:poluxMidRequest#get
-			 * @methodOf poluxMidService.service:poluxMidRequest
+			 * @name autenticacionMidService.service:autenticacionMidRequest#get
+			 * @methodOf autenticacionMidService.service:autenticacionMidRequest
 			 * @param {string} tabla Nombre de la tabla en el API
 			 * @param {string} params parametros para filtrar la busqueda
 			 * @return {array|object} objeto u objetos del get
@@ -41,23 +47,23 @@ angular.module('autenticacionMidService', [])
 			},
 			/**
 			 * @ngdoc function
-			 * @name poluxMidService.service:poluxMidRequest#post
+			 * @name autenticacionMidService.service:autenticacionMidRequest#post
 			 * @param {string} tabla Nombre de la tabla en el API
 			 * @param {object} elemento objeto a ser creado por el API
-			 * @methodOf poluxMidService.service:poluxMidRequest
+			 * @methodOf autenticacionMidService.service:autenticacionMidRequest
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo POST del servicio
 			 */
-			post: function(tabla, elemento, headers) {
-				return $http.post(path + tabla, elemento,headers);
+			post: function(tabla, elemento) {
+				return $http.post(path + tabla, elemento, header);
 			},
 			/**
 			 * @ngdoc function
-			 * @name poluxMidService.service:poluxMidRequest#put
+			 * @name autenticacionMidService.service:autenticacionMidRequest#put
 			 * @param {string} tabla Nombre de la tabla en el API
 			 * @param {string|int} id del elemento en el API
 			 * @param {object} elemento objeto a ser actualizado por el API
-			 * @methodOf poluxMidService.service:poluxMidRequest
+			 * @methodOf autenticacionMidService.service:autenticacionMidRequest
 			 * @return {array|string} mensajes del evento en el servicio
 			 * @description Metodo PUT del servicio
 			 */
@@ -66,8 +72,8 @@ angular.module('autenticacionMidService', [])
 			},
 			/**
 			 * @ngdoc function
-			 * @name poluxMidService.service:poluxMidRequest#delete
-			 * @methodOf poluxMidService.service:poluxMidRequest
+			 * @name autenticacionMidService.service:autenticacionMidRequest#delete
+			 * @methodOf autenticacionMidService.service:autenticacionMidRequest
 			 * @param {string} tabla Nombre de la tabla en el API
 			 * @param {object} elemento objeto a ser eliminado por el API
 			 * @return {array|string} mensajes del evento en el servicio

@@ -16,7 +16,6 @@
  * @requires $location
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxClienteApp.service:nuxeoService
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
@@ -41,12 +40,12 @@
  * @property {Object} respuestaSeleccionada Selección del docente como respuesta del estado que define para el anteproyecto (viable, modificable, no viable)
  * @property {String} respuestaExplicada Contenido de la justificación que brinda el docente para la decisión que tomó sobre la respuesta del anteproyecto
  * @property {Boolean} respuestaHabilitada Indicador que maneja la habilitación de la justificación de la respuesta, una vez se seleeciona una opción para el anteproyecto
- * @property {Object} document Almacena la respuesta del documento desde la petición a nuxeo.
+ * @property {Object} document Almacena la respuesta del documento desde la petición al gestor documental.
  * @property {Object} blob Almacena la respuesta sobre el blob del documento para visualizarlo
  */
 angular.module('poluxClienteApp')
 	.controller('TrabajoGradoRevisarAnteproyectoCtrl',
-		function($q, $translate,notificacionRequest, $window, academicaRequest,utils,gestorDocumentalMidRequest, nuxeoClient, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
+		function($q, $translate,notificacionRequest, $window, academicaRequest,utils,gestorDocumentalMidRequest, poluxRequest, sesionesRequest, token_service, uiGridConstants, $location) {
 			var ctrl = this;
 
 			//El Id del usuario en sesión
@@ -226,8 +225,8 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(estudiantesAsociados) {
-						if (Object.keys(estudiantesAsociados.data[0]).length > 0) {
-							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data;
+						if (Object.keys(estudiantesAsociados.data.Data[0]).length > 0) {
+							anteproyecto.EstudiantesTrabajoGrado = estudiantesAsociados.data.Data;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -271,9 +270,9 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				poluxRequest.get("documento_trabajo_grado", ctrl.obtenerParametrosDocumentoTrabajoGrado(anteproyecto.TrabajoGrado.Id))
 					.then(function(documentoAsociado) {
-						if (Object.keys(documentoAsociado.data[0]).length > 0) {
-							anteproyecto.documentoTrabajoGrado = documentoAsociado.data[0].Id;
-							anteproyecto.documentoEscrito = documentoAsociado.data[0].DocumentoEscrito;
+						if (Object.keys(documentoAsociado.data.Data[0]).length > 0) {
+							anteproyecto.documentoTrabajoGrado = documentoAsociado.data.Data[0].Id;
+							anteproyecto.documentoEscrito = documentoAsociado.data.Data[0].DocumentoEscrito;
 						}
 						deferred.resolve($translate.instant("ERROR.SIN_ESTUDIANTE_TRABAJO_GRADO"));
 					})
@@ -322,14 +321,14 @@ angular.module('poluxClienteApp')
 				ctrl.coleccionAnteproyectos = [];
 				poluxRequest.get("vinculacion_trabajo_grado", ctrl.obtenerParametrosVinculacionTrabajoGrado())
 					.then(function(anteproyectosPendientes) {
-						if (Object.keys(anteproyectosPendientes.data[0]).length > 0) {
-							angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
+						if (Object.keys(anteproyectosPendientes.data.Data[0]).length > 0) {
+							angular.forEach(anteproyectosPendientes.data.Data, function(anteproyecto) {
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarEstudiantesAsociados(anteproyecto));
 								conjuntoProcesamientoDeAnteproyectos.push(ctrl.consultarDocumentoTrabajoGrado(anteproyecto));
 							});
 							$q.all(conjuntoProcesamientoDeAnteproyectos)
 								.then(function(resultadoDelProcesamiento) {
-									angular.forEach(anteproyectosPendientes.data, function(anteproyecto) {
+									angular.forEach(anteproyectosPendientes.data.Data, function(anteproyecto) {
 										if (anteproyecto.EstudiantesTrabajoGrado &&
 											anteproyecto.documentoTrabajoGrado &&
 											anteproyecto.documentoEscrito) {
@@ -591,7 +590,7 @@ angular.module('poluxClienteApp')
 				poluxRequest
 					.post("tr_revisar_anteproyecto", informacionParaActualizar)
 					.then(function(respuestaRevisarAnteproyecto) {
-						deferred.resolve(respuestaRevisarAnteproyecto);
+						deferred.resolve(respuestaRevisarAnteproyecto.data.Data);
 					})
 					.catch(function(excepcionRevisarAnteproyecto) {
 						deferred.reject(excepcionRevisarAnteproyecto);
@@ -620,25 +619,19 @@ angular.module('poluxClienteApp')
 			 * @description
 			 * Función que abre el documento asociado en una ventana emergente.
 			 * Llama a las funciones: obtenerDoc y obtenerFetch
-			 * Consulta el servicio de {@link services/poluxClienteApp.service:nuxeoService nuxeo} para usar la gestión documental.
-			 * @param {String} docid Identificador del documento en del documento en {@link services/poluxClienteApp.service:nuxeoService nuxeo}
+			 * Consulta el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para usar la gestión documental.
+			 * @param {String} docid Identificador del documento en del documento en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}
 			 * @returns {undefined} No hace retorno de resultados
 			 */
-			ctrl.abrirDocumento = function(docid) {
-				/*nuxeoClient.getDocument(docid)
-					.then(function(document) {
-						$window.open(document.url);
-					})
-				*/
-				  //  obtener un documento por la id 
-				  gestorDocumentalMidRequest.get('/document/'+docid).then(function (response) {
-					var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], {type: 'application/pdf'});
+			ctrl.abrirDocumento = function (docid) {
+				//  obtener un documento por la id 
+				gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+					var file = new Blob([utils.base64ToArrayBuffer(response.data.file)], { type: 'application/pdf' });
 					var fileURL = URL.createObjectURL(file);
 					$window.open(fileURL, 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=yes,scrollbars=yes,dependent=no,width=700,height=900');
-				
-						 })
-				.catch(function(error) {
-						
+
+				})
+					.catch(function (error) {
 						swal(
 							$translate.instant("MENSAJE_ERROR"),
 							$translate.instant("ERROR.CARGAR_DOCUMENTO"),

@@ -22,7 +22,6 @@
  * @requires services/poluxClienteApp.service:coreAmazonCrudService
  * @requires services/poluxMidService.service:poluxMidRequest
  * @requires services/poluxService.service:poluxRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/poluxClienteApp.service:oikosRequest
@@ -82,7 +81,7 @@
 
 angular.module('poluxClienteApp')
   .controller('ReportesReporteGeneralCtrl',
-    function ($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, nuxeoClient, sesionesRequest, oikosRequest, token_service) {
+    function ($location, $q, $routeParams, $sce, $scope, $translate, $window, academicaRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, oikosRequest, token_service) {
       $scope.load = true;
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_REPORTES');
@@ -138,16 +137,11 @@ angular.module('poluxClienteApp')
 
       academicaRequest.get("coordinador_carrera", [$scope.userId, "PREGRADO"]).then(function (responseCoordinador) {
         ctrl.carrerasCoordinador = [];
-        var carreras = [];
         ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
           
         angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function (carrera) {
           ctrl.carreras.push(carrera.codigo_proyecto_curricular);
         });
-        if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
-         
-          
-        }
       }).catch(function (error) {
         
         ctrl.mensajeError = $translate.instant("ERROR.CARGAR_CARRERAS");

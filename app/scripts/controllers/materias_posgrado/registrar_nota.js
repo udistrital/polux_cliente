@@ -357,9 +357,9 @@ angular.module('poluxClienteApp')
         poluxRequest.get("espacio_academico_inscrito", ctrl.obtenerParametrosEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado.TrabajoGrado.Id))
           .then(function(espaciosAcademicosInscritos) {
             // Se estudia si la información existe
-            if (Object.keys(espaciosAcademicosInscritos.data[0]).length > 0) {
+            if (Object.keys(espaciosAcademicosInscritos.data.Data[0]).length > 0) {
               // Se actualiza el elemento de la colección
-              estudianteConTrabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data;
+              estudianteConTrabajoDeGrado.espaciosAcademicosInscritos = espaciosAcademicosInscritos.data.Data;
             }
             // Se resuelve el mensaje correspondiente
             deferred.resolve($translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS"));
@@ -448,8 +448,8 @@ angular.module('poluxClienteApp')
         // Se consulta hacia los estudiantes con trabajos de grados registrados en la base de datos
         poluxRequest.get("estudiante_trabajo_grado", ctrl.obtenerParametrosEstudianteTrabajoGrado())
           .then(function(estudiantesCursandoTrabajoDeGrado) {
-            if (Object.keys(estudiantesCursandoTrabajoDeGrado.data[0]).length > 0) {
-              angular.forEach(estudiantesCursandoTrabajoDeGrado.data, function(estudianteConTrabajoDeGrado) {
+            if (Object.keys(estudiantesCursandoTrabajoDeGrado.data.Data[0]).length > 0) {
+              angular.forEach(estudiantesCursandoTrabajoDeGrado.data.Data, function(estudianteConTrabajoDeGrado) {
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarInformacionAcademicaDelEstudiante(estudianteConTrabajoDeGrado));
                 conjuntoProcesamientoDeTrabajosDeGrado.push(ctrl.consultarEspaciosAcademicosInscritos(estudianteConTrabajoDeGrado));
                 var parametros = $.param({
@@ -457,7 +457,8 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("vinculacion_trabajo_grado", parametros)
                   .then(function(vinculacion_trabajo_grado) {
-                    ctrl.vinculacionTrabajoGrado = vinculacion_trabajo_grado
+                    console.log("Vinculación proyecto de grado data.Data")
+                    ctrl.vinculacionTrabajoGrado = vinculacion_trabajo_grado.data.Data
                   });
               });
               $q.all(conjuntoProcesamientoDeTrabajosDeGrado)
@@ -703,9 +704,6 @@ angular.module('poluxClienteApp')
                         // De serlo, se detiene la carga, notifica al usuario y actualizan los resultados
                         ctrl.cargandoTrabajosDeGradoCursados = false;
                         ctrl.cargandoEspaciosAcademicos = false;
-                        var Atributos={
-                          rol:'ESTUDIANTE',
-                      }
                       //notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,['101850341'],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado. .Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
 
                       //  notificacionRequest.enviarCorreo('Mensaje de registro de nota de TRABAJO DE GRADO '+ctrl.trabajoSeleccionado.Titulo,Atributos,[estudiante.Estudiante],'','','Se ha registrado la nota de parte de '+token_service.getAppPayload().email+' para el trabajo de grado asociado.');              
@@ -828,7 +826,7 @@ angular.module('poluxClienteApp')
             poluxRequest
               .post("tr_registrar_nota", informacionParaActualizar)
               .then(function(respuestaRegistrarNota) {
-                deferred.resolve(respuestaRegistrarNota);
+                deferred.resolve(respuestaRegistrarNota.data.Data);
               })
               .catch(function(excepcionRegistrarNota) {
                 deferred.reject(excepcionRegistrarNota);
@@ -884,9 +882,9 @@ angular.module('poluxClienteApp')
         poluxRequest.get("asignatura_trabajo_grado", ctrl.obtenerParametrosAsignaturaTrabajoGrado(idTrabajoGrado))
           .then(function(asignaturasDeTrabajoDeGrado) {
             // Se estudia si la información existe
-            if (Object.keys(asignaturasDeTrabajoDeGrado.data[0]).length > 0) {
+            if (Object.keys(asignaturasDeTrabajoDeGrado.data.Data[0]).length > 0) {
               // Se resuelve el resultado
-              deferred.resolve(asignaturasDeTrabajoDeGrado.data);
+              deferred.resolve(asignaturasDeTrabajoDeGrado.data.Data);
             } else {
               // Se rechaza el mensaje correspondiente
               deferred.reject($translate.instant("ERROR.SIN_ASIGNATURA_TRABAJO_GRADO"));

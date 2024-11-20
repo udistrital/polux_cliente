@@ -11,12 +11,11 @@
  * @requires services/poluxService.service:poluxRequest
  * @requires services/academicaService.service:academicaRequest
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
- * @requires constantes
  * @requires $window
  * @requires $http
  */
 angular.module('poluxClienteApp')
-    .controller('ConsultaPropuestaCtrl', function (poluxRequest, academicaRequest, $translate, $scope, constantes, $window, $http) {
+    .controller('ConsultaPropuestaCtrl', function (poluxRequest, academicaRequest, $translate, $scope, $window, $http) {
         var ctrl = this;
         ctrl.todos_docentes = false;
         academicaRequest.obtenerDocentes("").then(function (response) {
@@ -27,7 +26,7 @@ angular.module('poluxClienteApp')
                 limit: -1
             }))
                 .then(function (response) {
-                    ctrl.tipo_vinculacion = response.data;
+                    ctrl.tipo_vinculacion = response.data.Data;
                 });
         };
         ctrl.asignar_docente = function () {
@@ -42,7 +41,7 @@ angular.module('poluxClienteApp')
                     $('#myModal').modal('hide');
                     swal(
                         '',
-                        'Ha Asignado al proyecto' + response.data.IdTrabajoGradoTitulo + ' El Docente ' + ctrl.profesores.selected.DOC_NOMBRE + " " + ctrl.profesores.selected.DOC_APELLIDO,
+                        'Ha Asignado al proyecto' + response.data.Data.IdTrabajoGradoTitulo + ' El Docente ' + ctrl.profesores.selected.DOC_NOMBRE + " " + ctrl.profesores.selected.DOC_APELLIDO,
                         'success'
                     );
                     ctrl.get_socializacion();
@@ -55,7 +54,7 @@ angular.module('poluxClienteApp')
                 query: "IdentificacionDocente:" + item.DOC_NRO_IDEN
             }))
                 .then(function (response) {
-                    ctrl.materias = response.data;
+                    ctrl.materias = response.data.Data;
                 });
         };
         ctrl.tipos();
@@ -123,8 +122,8 @@ angular.module('poluxClienteApp')
                 order: "asc"
             }))
                 .then(function (response) {
-                    ctrl.gridOptions.data = response.data;
-                    ctrl.documentos = response.data;
+                    ctrl.gridOptions.data = response.data.Data;
+                    ctrl.documentos = response.data.Data;
                 });
 
         };
@@ -146,12 +145,12 @@ angular.module('poluxClienteApp')
                         query: "IdTrabajoGrado:" + ctrl.row_entity.IdTrabajoGrado.Id
                     }))
                         .then(function (response) {
-                            ctrl.vinculacion_docente_tg = response.data;
+                            ctrl.vinculacion_docente_tg = response.data.Data;
                             
                             angular.forEach(ctrl.vinculacion_docente_tg, function (vd) {
                                 $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
-                                    .then(function (response) {
-                                        var json = response.data.split("<json>");
+                                    .then(function (response2) {
+                                        var json = response2.data.Data.split("<json>");
                                         var jsonObj = JSON.parse(json[1]);
                                         var docente = jsonObj[0];
                                         vd.Docente = docente;
@@ -168,12 +167,12 @@ angular.module('poluxClienteApp')
                         query: "IdTrabajoGrado:" + ctrl.row_entity.IdTrabajoGrado.Id
                     }))
                         .then(function (response) {
-                            ctrl.vinculacion_docente_tg = response.data;
+                            ctrl.vinculacion_docente_tg = response.data.Data;
                             
                             angular.forEach(ctrl.vinculacion_docente_tg, function (vd) {
                                 $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + vd.IdentificacionDocente)
-                                    .then(function (response) {
-                                        var json = response.data.split("<json>");
+                                    .then(function (response2) {
+                                        var json = response2.data.Data.split("<json>");
                                         var jsonObj = JSON.parse(json[1]);
                                         var docente = jsonObj[0];
                                         vd.Docente = docente;
@@ -185,24 +184,20 @@ angular.module('poluxClienteApp')
                         query: "IdTrabajoGrado:" + ctrl.row_entity.IdTrabajoGrado.Id
                     }))
                         .then(function (response) {
-                            ctrl.areas_trabajo_grado = response.data;
+                            ctrl.areas_trabajo_grado = response.data.Data;
                             angular.forEach(ctrl.areas_trabajo_grado, function (atg) {
                                 poluxRequest.get("areas_docente", $.param({
                                     limit: -1,
                                     query: "IdAreaConocimiento:" + atg.IdAreaConocimiento.Id
                                 }))
-                                    .then(function (response) {
-                                        ctrl.docentes_areas = response.data;
+                                    .then(function (response2) {
+                                        ctrl.docentes_areas = response2.data.Data;
                                         angular.forEach(ctrl.docentes_areas, function (da) {
                                             $http.get("http://10.20.0.127/polux/index.php?data=sj7574MlJOsg4LjjeAOJP5CBi1dRh84M-gX_Z-i_0OmWhton7vEvfcvwRdSGHCTl2WlcEunFl-15PLUWhzSwdnO0c9_4iv7A6ODAQz8nzk3-L-wp9KXARJdYvqggsPUb&identificacion=" + da.IdentificacionDocente)
-                                                .then(function (response) {
-                                                    var json = response.data.split("<json>");
+                                                .then(function (response3) {
+                                                    var json = response3.data.Data.split("<json>");
                                                     var jsonObj = JSON.parse(json[1]);
                                                     var docente = jsonObj[0];
-                                                    if (ctrl.DocentesAreaConocimiento.indexOf(docente) == -1) {
-                                                        
-                                                        
-                                                    }
                                                     ctrl.DocentesAreaConocimiento.push(docente);
 
                                                 });
@@ -214,7 +209,6 @@ angular.module('poluxClienteApp')
                 case "delete":
                     break;
                 case "descargar":
-                    $window.open(constantes.DOWNLOAD_FILE + ctrl.row_entity.IdDocumento.Enlace, "New Window", "width=800,height=600,resizable=1");
                     break;
                 default:
             }

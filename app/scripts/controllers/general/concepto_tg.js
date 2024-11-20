@@ -14,11 +14,9 @@
  * @requires $scope
  * @requires decorators/poluxClienteApp.decorator:TextTranslate
  * @requires services/academicaService.service:academicaRequest
- * @requires services/poluxService.service:nuxeoClient
  * @requires services/poluxService.service:poluxRequest
  * @requires services/poluxClienteApp.service:tokenService
 * @requires services/poluxService.service:gestorDocumentalMidService
- * @requires services/poluxService.service:nuxeoMidService
  * @property {Number} idVinculacion Identificador de la vinculación del docente con el trabajo de grado
  * @property {String} userId Documento del usuario en sesión
  * @property {Number} tipoDocumento Tipo de documento escrito sobre el que se está operando
@@ -38,7 +36,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('GeneralConceptoTgCtrl',
-    function($location, $q, $routeParams, $scope,nuxeoMidRequest,utils,gestorDocumentalMidRequest, $translate, academicaRequest, nuxeoClient, poluxRequest, token_service) {
+    function($location, $q, $routeParams, $scope,utils,gestorDocumentalMidRequest, $translate, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
       ctrl.idVinculacion = $routeParams.idVinculacion;
       ctrl.cargando = true;
@@ -95,8 +93,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("documento_trabajo_grado", parametrosDocumentoEscrito)
           .then(function(responseDocumento) {
-            if (Object.keys(responseDocumento.data[0]).length > 0) {
-              defer.resolve(responseDocumento.data[0]);
+            if (Object.keys(responseDocumento.data.Data[0]).length > 0) {
+              defer.resolve(responseDocumento.data.Data[0]);
             } else {
               ctrl.mensajeError = $translate.instant("DOCUMENTO.NO_EXISTE_DOCUMENTO");
               defer.reject(ctrl.mensajeError);
@@ -127,8 +125,8 @@ angular.module('poluxClienteApp')
         });
         poluxRequest.get("revision_trabajo_grado", parametrosRevisionesTrabajoGrado)
           .then(function(responseRevisiones) {
-            if (Object.keys(responseRevisiones.data[0]).length > 0) {
-              defer.resolve(responseRevisiones.data);
+            if (Object.keys(responseRevisiones.data.Data[0]).length > 0) {
+              defer.resolve(responseRevisiones.data.Data);
             } else {
               defer.resolve([]);
             }
@@ -219,8 +217,8 @@ angular.module('poluxClienteApp')
           });
           poluxRequest.get("vinculacion_trabajo_grado", parametrosTg)
             .then(function(responseVinculacion) {
-              if (Object.keys(responseVinculacion.data[0]).length > 0) {
-                ctrl.vinculacion = responseVinculacion.data[0];
+              if (Object.keys(responseVinculacion.data.Data[0]).length > 0) {
+                ctrl.vinculacion = responseVinculacion.data.Data[0];
 
                 ctrl.tipoDocumento = 0;
                 var trabajoGrado = ctrl.vinculacion.TrabajoGrado;
@@ -375,7 +373,7 @@ angular.module('poluxClienteApp')
         poluxRequest
           .post("tr_revisar_tg", informacionParaActualizar)
           .then(function(respuestaRevisarTg) {
-            deferred.resolve(respuestaRevisarTg);
+            deferred.resolve(respuestaRevisarTg.data);
           })
           .catch(function(excepcionRevisarTg) {
             
@@ -390,7 +388,7 @@ angular.module('poluxClienteApp')
        * @methodOf poluxClienteApp.controller:GeneralConceptoTgCtrl
        * @description 
        * Permite guardar la revision realizada.
-       * Efectúa el servicio de {@link services/poluxService.service:nuxeoClient nuxeoClient} para hacer gestión documental.
+       * Efectúa el servicio de {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest} para hacer gestión documental.
        * @param {undefined} undefined No recibe parámetros
        * @returns {undefined} No retorna ningún valor
        */
@@ -412,7 +410,6 @@ angular.module('poluxClienteApp')
                 var descripcion;
                 var fileBase64 ;
                 var data = [];
-                var URL = "";
                   descripcion = "Correcciones sobre el proyecto";
                   utils.getBase64(ctrl.revisionActual.documentModel).then(
                     function (base64) {                   
@@ -431,7 +428,6 @@ angular.module('poluxClienteApp')
                   }] 
   
                     gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){
-                    URL =  response.data.res.Enlace 
                     ctrl.revisionActual.Correcciones.push({
                       Observacion: response,
                       Justificacion: "Por favor descargue el documento de observaciones",
@@ -465,34 +461,9 @@ swal(
                           );
                         }
                       })
-                    nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                       .then(function (response) {
-                    }).catch(function (error) {
-                    })
                    })
 
                 })
-
-
-
-
-
-
-
-              // nuxeoClient.createDocument(ctrl.vinculacion.TrabajoGrado.Titulo, "Correcciones sobre el proyecto", ctrl.revisionActual.documentModel, "correcciones", undefined)
-              /*    .then(function(respuestaCrearDocumento) {
-                    
-                 .catch(function(excepcionRevisarTg) {
-                        
-                        ctrl.cargando = false;
-                        swal(
-                          $translate.instant("REVISAR_PROYECTO.CONFIRMACION"),
-                          $translate.instant("ERROR.REGISTRANDO_REVISION"),
-                          'warning'
-                        );
-                      });
-                  })
-                  */
                   .catch(function(excepcionCrearDocumento) {
                     
                     ctrl.cargando = false;

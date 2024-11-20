@@ -47,14 +47,12 @@ angular
         'gestorDocumentalMidService',
         'notificacionService',
         'pdf',
-        'nuxeoMidService',
         'pascalprecht.translate',
         'file-model',
         'angularBootstrapFileinput',
         'infinite-scroll',
         'uiSwitch',
         'configuracionService',
-        'nuxeoService',
         'implicitToken',
         'autenticacionMidService',
         'ngFileUpload'
@@ -315,6 +313,11 @@ angular
               templateUrl: 'views/materias_profundizacion/registrar_nota.html',
               controller: 'MateriasProfundizacionRegistrarNotaCtrl',
               controllerAs: 'profundizacionRegistrarNota'
+            })
+            .when('/reportes/generar_reportes', {
+              templateUrl: 'views/reportes/generar_reportes.html',
+              controller: 'GenerarReporteCtrl',
+              controllerAs: 'generarReporte'
             })
             .when('/reportes/reporte_general', {
               templateUrl: 'views/reportes/reporte_general.html',

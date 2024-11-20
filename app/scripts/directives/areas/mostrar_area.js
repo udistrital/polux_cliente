@@ -5,7 +5,7 @@
  * @name poluxClienteApp.directive:mostrarArea
  * @description
  * # mostrarArea
- * Directiva que permite cargar un documento a nuxeo.
+ * Directiva que permite cargar un documento al gestor documental.
  * Controlador: {@link poluxClienteApp.directive:mostrarArea.controller:mostrarAreaCtrl mostrarAreaCtrl}. Actualmente no se utiliza.
  * @param {number} docenteParam Identificador del docente al que se le asignarán las áreas.
  * @param {number} idareaParam Identificador del área que se agregará
@@ -13,7 +13,7 @@
  * @param {array} ardocente Arreglos de áreas del docente.
  */
 angular.module('poluxClienteApp')
-  .directive('mostrarArea', function (poluxRequest, academicaRequest) {
+  .directive('mostrarArea', function (polux_Request, academicaRequest) {
     return {
       restrict: 'E',
       scope: {
@@ -72,7 +72,7 @@ angular.module('poluxClienteApp')
           poluxRequest.get("areas_docente", self.parametros)
             .then(function (response) {
               
-              self.areas_docente = response.data;
+              self.areas_docente = response.data.Data;
               $scope.idareaParam = self.generarIdAreas(self.areas_docente);
               
               self.codDocenteActual = Id;
@@ -113,10 +113,10 @@ angular.module('poluxClienteApp')
             query: "Id:" + IdAreaDocente
           });
           poluxRequest.get("areas_docente", self.parametros).then(function (response) {
-            self.codDocenteActual = response.data[0].Docente;
+            self.codDocenteActual = response.data.Data[0].Docente;
             
             poluxRequest.delete("areas_docente", IdAreaDocente)
-              .then(function (response) {
+              .then(function () {
                 self.mostrarAreasDocente(self.codDocenteActual);
               });
           });

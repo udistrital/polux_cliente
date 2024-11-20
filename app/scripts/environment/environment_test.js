@@ -13,12 +13,11 @@ angular.module("poluxClienteApp").constant("CONF", {
   APP: "poluxClienteApp", // Nombre de la app, esto cargará el logo.
   APP_MENU: "Polux", // Ingrese valor de la aplicación asociado al menú registrado en wso2
   GENERAL: {
-    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v1",
+    ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v2",
     POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
     POLUX_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_mid/v1/",
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v2/",
     CONFIGURACION_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/configuracion_crud_api/v1/",
-    NUXEO_SERVICE:"https://documental.portaloas.udistrital.edu.co/nuxeo/",
     CORE_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/core_api/v1/",
     CORE_AMAZON_CRUD_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/core_amazon_crud/v1/",
     OIKOS_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/oikos_crud_api/v2/",
@@ -26,7 +25,6 @@ angular.module("poluxClienteApp").constant("CONF", {
     NOTIFICACION_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/notificacion_mid/v1/",
     ARM_AWS_NOTIFICACIONES:"arn:aws:sns:us-east-1:699001025740:test-Polux",
     GESTION_DOCUMENTAL_SERVICE:" https://autenticacion.portaloas.udistrital.edu.co/apioas/gestor_documental_mid/v1",
-    NUXEO_MID: "https://autenticacion.portaloas.udistrital.edu.co/apioas/nuxeo_mid/v1/",
     PARAMETROS_SERVICE: 'https://autenticacion.portaloas.udistrital.edu.co/apioas/parametros/v1/',
     TOKEN: {
         AUTORIZATION_URL: "https://autenticacion.portaloas.udistrital.edu.co/oauth2/authorize",

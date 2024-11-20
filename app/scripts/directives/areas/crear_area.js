@@ -51,13 +51,6 @@ angular.module('poluxClienteApp')
         self.asignarAreasDocente = function (dataArea) {
           self.codigodocente = parseFloat($scope.docactual);
           angular.forEach(dataArea, function (value) {
-            if (value.Id == null) {
-              
-
-            }
-            if (value.Nombre == null) {
-              
-            }
             var data = {
               AreaConocimiento: {
                 Id: value.Id,
@@ -67,7 +60,7 @@ angular.module('poluxClienteApp')
             }
             poluxRequest.post("areas_docente", data).then(function (response) {
               self.parametros = $.param({
-                query: "Docente:" + response.data.Docente,
+                query: "Docente:" + response.data.Data.Docente,
                 sortby: "AreaConocimiento",
                 order: "asc",
                 limit: 0
@@ -77,8 +70,8 @@ angular.module('poluxClienteApp')
                 'Se asignaron las áreas de conocimiento',
                 'success'
               );
-              poluxRequest.get("areas_docente", self.parametros).then(function (response) {
-                $scope.aredoc = response.data;
+              poluxRequest.get("areas_docente", self.parametros).then(function (responseAreas) {
+                $scope.aredoc = responseAreas.data.Data;
 
               });
             });

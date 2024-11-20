@@ -28,7 +28,6 @@ angular.module('poluxClienteApp')
        * @requires decorators/poluxClienteApp.decorator:TextTranslate
        * @requires services/poluxService.service:poluxRequest
        * @requires $scope
-       * @requires services/poluxService.service:nuxeoClient
        * @requires services/poluxService.service:gestorDocumentalMidService
        * @requires services/parametrosService.service:parametrosRequest
        * @property {Object} trabajoGrado Trabajo de grado del qeu se consultarán los documentos
@@ -38,15 +37,32 @@ angular.module('poluxClienteApp')
        * @property {String} mensajeError Mensaje que se muestra cuando ocurre un error cargando
        * @property {String} mensajeCargando Mensaje que se muestra cuando esta cargando
        */
-      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, nuxeoClient,gestorDocumentalMidRequest, $window, parametrosRequest) {
+      controller: function($scope, $translate, poluxRequest, $q, academicaRequest,utils, gestorDocumentalMidRequest, $window, parametrosRequest, token_service) {
         var ctrl = this;
-        ctrl.trabajoGrado = $scope.tg;
+        ctrl.trabajoGrado = $scope.tg;   
+        //ctrl.parametrosSolicitudes = [];
+        ctrl.SolicitudTrabajoGrado;
+        ctrl.pasantiaInterna = false;
 
+        $scope.userId = parseInt(token_service.getAppPayload().appUserDocument);
+        ctrl.roles = token_service.getAppPayload().appUserRole;
+        $scope.UnidadExtPasantia = false;        
+        if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
+          $scope.UnidadExtPasantia = true;
+        }
+                
         $scope.botones = [{
           clase_color: "ver",
           clase_css: "fa fa-eye fa-lg  faa-shake animated-hover",
           titulo: $translate.instant('BTN.VER_DETALLES'),
           operacion: 'ver',
+          estado: true
+        }, ];
+        $scope.personaArl = [{
+          clase_color: "ver",
+          clase_css: "fa fa-user-o  faa-shake animated-hover",
+          titulo: $translate.instant('REVISION_ARL.VER_DATA_ARL'),
+          operacion: 'showData',
           estado: true
         }, ];
 
@@ -80,8 +96,26 @@ angular.module('poluxClienteApp')
           displayName: $translate.instant('DETALLE'),
           width: '15%',
           type: 'boolean',
-          cellTemplate: '<btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro>'
+          cellTemplate: `
+            <div>
+              <btn-registro funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.botones" fila="row"></btn-registro> 
+              <btn-registro ng-if="grid.appScope.UnidadExtPasantia && grid.appScope.pasantiaInterna" funcion="grid.appScope.loadrow(fila,operacion)" grupobotones="grid.appScope.personaArl" fila="row"></btn-registro>
+            </div>`                    
+
         }];
+
+        // $watch para monitorear cambios en pasantiaInterna
+        $scope.$watch(() => ctrl.pasantiaInterna, function(newValue, oldValue) {
+          if (newValue !== oldValue) {
+            console.log("pasantiaInterna ha cambiado:", newValue);
+            $scope.pasantiaInterna = newValue;
+
+            // Aseguramos que Angular detecte los cambios
+            if (!$scope.$$phase) {
+              $scope.$apply(); // Forzamos la digestión si no está en proceso
+            }
+          }
+        });
 
         //SE CONSULTAN LOS PARAMETROS USADOS
       /**
@@ -145,7 +179,7 @@ angular.module('poluxClienteApp')
          * @param {Object} trabajoGrado trabajo de grado del que se consultan los documentos
          * @returns {undefined} no retorna ningún valor
          */
-        ctrl.consultarSolicitudes = async function (trabajoGrado) {
+        ctrl.consultarSolicitudes = async function (trabajoGrado) {          
           await getconsultarParametros();
           ctrl.loadingSolicitudes = true;
           ctrl.mensajeCargando = $translate.instant("LOADING.CARGANDO_SOLICITUDES");
@@ -154,7 +188,10 @@ angular.module('poluxClienteApp')
             query: "TrabajoGrado:" + trabajoGrado.Id,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responseSolicitudes) {
-            if (Object.keys(responseSolicitudes.data[0]).length > 0) {
+            if (Object.keys(responseSolicitudes.data.Data).length > 0) {
+              ctrl.SolicitudTrabajoGrado = responseSolicitudes.data.Data[0];
+              ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
+              ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function (solicitud) {
                 var defer = $q.defer();
@@ -177,16 +214,16 @@ angular.module('poluxClienteApp')
                 });
                 poluxRequest.get("respuesta_solicitud", parametrosRespuesta)
                   .then(function (responseRespuesta) {
-                    if (Object.keys(responseRespuesta.data[0]).length > 0) {
+                    if (Object.keys(responseRespuesta.data.Data[0]).length > 0) {
                       let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
-                        return data.Id == responseRespuesta.data[0].EstadoSolicitud
+                        return data.Id == responseRespuesta.data.Data[0].EstadoSolicitud
                       });
                       solicitud.data.Estado = EstadoSolicitudTemp.Nombre;
-                      solicitud.data.Respuesta = responseRespuesta.data[0];
+                      solicitud.data.Respuesta = responseRespuesta.data.Data[0];
                       //solicitud.data.Respuesta.Resultado = ctrl.mostrarResultado(responseRespuesta.data[0]);
                       ctrl.gridOptions.data = ctrl.solicitudes;
                     } else {
-                      responseRespuesta.data = [];
+                      responseRespuesta.data.Data = [];
                     }
                     defer.resolve();
                   })
@@ -197,7 +234,7 @@ angular.module('poluxClienteApp')
                 return defer.promise;
               }
 
-              trabajoGrado.Solicitudes = responseSolicitudes.data;
+              trabajoGrado.Solicitudes = responseSolicitudes.data.Data;
               var promises = [];
               angular.forEach(trabajoGrado.Solicitudes, function (solicitud) {
                 promises.push(getDataSolicitud(solicitud));
@@ -208,7 +245,6 @@ angular.module('poluxClienteApp')
                 ctrl.loadingSolicitudes = false;
               })
                 .catch(function (error) {
-
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargando = true;
                   ctrl.loadingSolicitudes = false;
@@ -221,7 +257,6 @@ angular.module('poluxClienteApp')
             }
           })
             .catch(function (error) {
-
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
               ctrl.errorCargando = true;
               ctrl.loadingSolicitudes = false;
@@ -239,7 +274,7 @@ angular.module('poluxClienteApp')
          * @param {object} solicitud Solicitud que se consulta
          * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el string resultado
          */
-        ctrl.mostrarResultado = function(solicitud) {
+        ctrl.mostrarResultado = function(solicitud) {          
           var defer = $q.defer();
           var promise = defer.promise;
           var detalles = solicitud.detallesSolicitud;
@@ -319,7 +354,6 @@ angular.module('poluxClienteApp')
               //Solicitd de cambio de materias
               case "SCMA_PLX":
                 angular.forEach(detalles, function(detalle) {
-                  var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                   if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESACAANT") {
                     anterior = detalle.Descripcion.split("-")[1];
                   }
@@ -432,7 +466,7 @@ angular.module('poluxClienteApp')
             limit: 0
           });
 
-          var getDocumentoRespuesta = function(fila, solicitud) {
+          var getDocumentoRespuesta = function(solicitud) {
             var defer = $q.defer();
             let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
               return data.CodigoAbreviacion == "RDC_PLX"
@@ -443,8 +477,8 @@ angular.module('poluxClienteApp')
                 limit: 0
               });
               poluxRequest.get("documento_solicitud", parametrosDocumentoSolicitud).then(function(documento) {
-                  if (Object.keys(documento.data[0]).length > 0) {
-                    solicitud.documento = documento.data[0].DocumentoEscrito;
+                  if (Object.keys(documento.data.Data[0]).length > 0) {
+                    solicitud.documento = documento.data.Data[0].DocumentoEscrito;
                   }
                   defer.resolve();
                 })
@@ -459,7 +493,7 @@ angular.module('poluxClienteApp')
 
           poluxRequest.get("detalle_solicitud", parametrosSolicitud).then(async function(responseDetalles) {
             
-            if (Object.keys(responseDetalles.data[0]).length > 0) {
+            if (Object.keys(responseDetalles.data.Data[0]).length > 0) {
               var tipoDetalle = $.param({
                 query: "TipoParametroId__CodigoAbreviacion:TIP_DET", 
                 limit: 0
@@ -467,10 +501,10 @@ angular.module('poluxClienteApp')
               await parametrosRequest.get("parametro/?", tipoDetalle).then(function (responseTipoDetalle) {
                 ctrl.TipoDetalle = responseTipoDetalle.data.Data;
               })
-              ctrl.detallesSolicitud = responseDetalles.data;
+              ctrl.detallesSolicitud = responseDetalles.data.Data;
               ctrl.detallesSolicitud.forEach(detalle => {
-                detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalle => {
-                  return tipoDetalle.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
+                detalle.DetalleTipoSolicitud.Detalle.TipoDetalleAux = ctrl.TipoDetalle.find(tipoDetalleTemp => {
+                  return tipoDetalleTemp.Id == detalle.DetalleTipoSolicitud.Detalle.TipoDetalle
                 })
               });
             } else {
@@ -478,15 +512,15 @@ angular.module('poluxClienteApp')
             }
 
             poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
-                  if (Object.keys(responseDetalles.data[0]).length === 0) {
+                  if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
                     ctrl.solicitudSeleccionada.detallesSolicitud = [];
                   } else {
-                    ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data;
+                    ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data.Data;
                   }
                   var promises = [];
                   var solicitantes = "";
                   promises.push(ctrl.mostrarResultado(ctrl.solicitudSeleccionada));
-                  angular.forEach(responseEstudiantes.data, function(estudiante) {
+                  angular.forEach(responseEstudiantes.data.Data, function(estudiante) {
                     solicitantes += (", " + estudiante.Usuario);
                   });
 
@@ -536,8 +570,8 @@ angular.module('poluxClienteApp')
                     });
                     poluxRequest.get("detalle_pasantia", parametrosVinculado)
                       .then(function(dataExterno) {
-                        if (Object.keys(dataExterno.data[0]).length > 0) {
-                          var temp = dataExterno.data[0].Observaciones.split(" y dirigida por ");
+                        if (Object.keys(dataExterno.data.Data[0]).length > 0) {
+                          var temp = dataExterno.data.Data[0].Observaciones.split(" y dirigida por ");
                           temp = temp[1].split(" con número de identificacion ");
                           detalle.Descripcion = temp[0];
                           defer.resolve();
@@ -567,7 +601,6 @@ angular.module('poluxClienteApp')
                     }
 
                     detalle.filas = [];
-                    var id = detalle.DetalleTipoSolicitud.Detalle.Id;
                     if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TD") {
                       detalle.Descripcion = detalle.Descripcion.split("-")[1];
                     } else if (["DAP", "DANT", "DIRN", "EVANT", "EVNU", "ES", "DDDI", "SDC", "CDA", "CDN"].includes(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion)) {
@@ -622,7 +655,7 @@ angular.module('poluxClienteApp')
                     }
                   });
                   ctrl.solicitudSeleccionada.solicitantes = solicitantes.substring(2) + ".";
-                  promises.push(getDocumentoRespuesta(fila, ctrl.solicitudSeleccionada));
+                  promises.push(getDocumentoRespuesta(ctrl.solicitudSeleccionada));
                   $q.all(promises).then(function() {
                       $('#modalSolicitud').modal('show');
                     })
@@ -683,6 +716,20 @@ angular.module('poluxClienteApp')
         }
 
         /**
+       * @ngdoc method
+       * @name openModalDataARL
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description
+       * Cuando el estudiante esté realizando una solicitud inicial de Pasantía (interna) debe cargar datos personales, esta función abre el modal donde los va a ingresar
+       * @param {undefined} undefined No requiere parámetros 
+       */
+        ctrl.openModalDataARL = function () {       
+          // Mostrar el modal
+          $('#modalVistaDataPersonalARL').modal('show');
+        };
+
+
+        /**
          * @ngdoc method
          * @name loadrow
          * @methodOf poluxClienteApp.directive:listarSolicitudes.controller:listarSolicitudesCtrl
@@ -698,10 +745,48 @@ angular.module('poluxClienteApp')
               ctrl.cargarDetalles(row)
               //$('#modalVerSolicitud').modal('show');
               break;
+            case "showData":
+            ctrl.openModalDataARL()
             default:
               break;
           }
         };
+        
+        /**
+       * @ngdoc method
+       * @name getDocAnyFormat
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {number} docid Id del documento en {@link services/poluxClienteApp.service:gestorDocumentalMidService gestorDocumentalMidService}
+       * @returns {undefined} No retorna ningún valor
+       * @description 
+       * Llama a la función obtenerDoc y obtenerFetch para descargar un archivo con cualquier extensión.
+       */
+        ctrl.getDocAnyFormat = function (docid) {
+          gestorDocumentalMidRequest.get('/document/' + docid).then(function (response) {
+            console.log("Response GET", response);
+            var file = new Blob([utils.base64ToArrayBuffer(response.data.file)]);
+            var fileURL = URL.createObjectURL(file);
+            
+            var a = document.createElement('a');
+            a.href = fileURL;
+            a.download = response.data["dc:title"]; // Nombre del archivo a descargar
+            document.body.appendChild(a);
+            a.click();
+            
+            // Limpieza
+            setTimeout(function() {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(fileURL);
+            }, 100);
+          })
+          .catch(function (error) {
+            swal(
+              $translate.instant("MENSAJE_ERROR"),
+              $translate.instant("ERROR.CARGAR_DOCUMENTO"),
+              'warning'
+            );
+          });
+        }
 
         ctrl.consultarSolicitudes(ctrl.trabajoGrado);
 

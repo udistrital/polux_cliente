@@ -16,7 +16,7 @@
  * @param {Object} tipodocumento Arreglo de los tipos de documentos.
  */
 angular.module('poluxClienteApp')
-    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest, nuxeoMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, nuxeoClient,notificacionRequest) {
+    .directive('revisionDocumento', function (poluxRequest, poluxMidRequest,utils,gestorDocumentalMidRequest,$translate, $route, academicaRequest, notificacionRequest, autenticacionMidRequest) {
         return {
             restrict: "E",
             scope: {
@@ -41,7 +41,6 @@ angular.module('poluxClienteApp')
              * @requires $filter
              * @requires $route
              * @requires $scope
-             * @requires services/poluxService.service:nuxeoClient
              * @requires services/academicaService.service:academicaRequest
              * @property {string} mensajeCargando Mensaje que se muestra mientras se esta cargando.
              * @property {array} correcciones Arreglo de correcciones de la revisión.
@@ -79,15 +78,15 @@ angular.module('poluxClienteApp')
                 poluxRequest.get("revision_trabajo_grado", $.param({
                     query: "Id:" + $scope.revisionid
                 })).then(function (response) {
-                    ctrl.revision = response.data[0];
+                    ctrl.revision = response.data.Data[0];
                 });
                 poluxRequest.get("correccion", $.param({
                     query: "RevisionTrabajoGrado.Id:" + $scope.revisionid,
                     sortby: "Id",
                     order: "asc"
                 })).then(function (response) {
-                    if (Object.keys(response.data[0]).length > 0) {
-                        ctrl.correcciones = response.data;
+                    if (Object.keys(response.data.Data[0]).length > 0) {
+                        ctrl.correcciones = response.data.Data;
                     } else {
                         ctrl.correcciones = [];
                     }
@@ -199,8 +198,8 @@ angular.module('poluxClienteApp')
                         sortby: "Id",
                         order: "asc"
                     })).then(function (response) {
-                        if (response.data != null) {
-                            ctrl.correcciones = response.data;
+                        if (response.data.Data != null) {
+                            ctrl.correcciones = response.data.Data;
                         } else {
                             ctrl.correcciones = [];
                         }
@@ -216,7 +215,7 @@ angular.module('poluxClienteApp')
                      * @returns {undefined} No retorna ningún valor.
                      * @description
                      * Permite guardar la corrección y los comentarios llamando la función registrarRevisión, si es necesario carga
-                     * el documento de revisiones en {@link services/poluxService.service:nuxeoClient nuxeoClient}.
+                     * el documento de revisiones en {@link services/poluxService.service:gestorDocumentalMidService gestorDocumentalMidRequest}.
                      */
                 ctrl.guardar_revision = function (accion) {
                     switch (accion) {
@@ -237,10 +236,8 @@ angular.module('poluxClienteApp')
                                         if (ctrl.documentModel) {
                                             //SI la revision tiene un documento se carga y se agrega a las correcciones
                                             //Carga de documento con Gesto Documental
-                                            var descripcion;
                                             var fileBase64 ;
                                             var data = [];
-                                            var URL = "";
                                             let tipoDocumentoAux = $scope.tipodocumento.find(tipoDoc => {
                                                 return tipoDoc.CodigoAbreviacion == "DREV_PLX"
                                             })
@@ -256,8 +253,7 @@ angular.module('poluxClienteApp')
                                                         Tipo: "Archivo",
                                                         Observaciones: "correciones"
                                                     },
-                                                    descripcion:"Correcciones sobre el proyecto",
-                                                    file:  fileBase64,
+                                                    descripcion:"Correcciones sobre el proyecto"
                                                 }]
 
                                                 gestorDocumentalMidRequest.post('/document/upload',data).then(function (response){ 
@@ -271,16 +267,8 @@ angular.module('poluxClienteApp')
                                                         Documento: true
                                                 })
                                                 ctrl.registrarRevision();
-                                                nuxeoMidRequest.post('workflow?docID=' + URL, null)
-                                                   .then(function (response) {
-                                                    console.log('nuxeoMid response: ',response)
-                                                }).catch(function (error) {
-                                                  console.log('nuxeoMid error:',error)
-                                                })
+                                               
                                                })
-                                                //  nuxeoClient.createDocument(ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo + " Correcciones", "Correcciones sobre el proyecto", ctrl.documentModel, "correciones", undefined)
-                                                //.then(function (respuestaCrearDocumento) {
-                                               // })
                                                 .catch(function (excepcionCrearDocumento) {
                                                     ctrl.cargandoRevision = false;
                                                     swal(
@@ -320,7 +308,7 @@ angular.module('poluxClienteApp')
                                   });
                                 ctrl.revision.EstadoRevisionTrabajoGrado = estadoRevTemp.Id;
                                 var fecha = new Date();
-                                ctrl.revision.FechaRevision = fecha;
+                                ctrl.revision.FechaRevision = "";
                                 var comentarios = [];
                                 angular.forEach(ctrl.correcciones, function (correccion) {
                                     comentarios.push({
@@ -336,14 +324,78 @@ angular.module('poluxClienteApp')
                                 }
                                 
                                 poluxMidRequest.post("tr_registrar_revision_tg", data_transaccion)
-                                    .then(function (respuestaRegistrarRevisionTg) {
-                                        if (respuestaRegistrarRevisionTg.data[0] === "Success") {
-                                            var Atributos={
-                                                rol:'ESTUDIANTE',
+                                    .then(async function (respuestaRegistrarRevisionTg) {
+                                        if (respuestaRegistrarRevisionTg.data.Success) {
+                                           
+                                            //Se notifica al estudiante cuando el docente responde por primera vez a la revisión
+
+                                            var usuario, codigo, comentario, correos = []
+
+                                            //Se busca el codigo del estudiante, para obtener el correo
+                                            var parametro = $.param({
+                                                query: "trabajo_grado:"+ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Id,
+                                                limit: 0
+                                            });
+
+                                            await poluxRequest.get("estudiante_trabajo_grado",parametro).then(function(estudiante_tg){
+                                                console.log(estudiante_tg)
+                                                codigo = estudiante_tg.data.Data[0].Estudiante
+                                            })
+
+                                            var data_auth_mid = {
+                                                numero: codigo
                                             }
-                                            notificacionRequest.enviarCorreo('Revision realizada',Atributos,['101850341'],'','','Se ha realizado la revision del trabajo de grado, se ha dado de parte de '+nombreDocente+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
-                                           // notificacionRequest.enviarCorreo('Revision realizada',Atributos,['Documento.estudiante'],'','','Se ha realizado larevision del trabajo de grado, se ha dado de parte de '+nombreDocente+'.Cuando se desee observar el msj se puede copiar el siguiente link para acceder https://polux.portaloas.udistrital.edu.co/');              
-                      
+
+                                            await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                                                correos.push(response.data.email)
+                                            })
+
+                                            if (ctrl.correccion[0] != null) {
+                                                comentario = ctrl.correccion[0].Observacion
+                                            }
+                                            else if (ctrl.correcciones.length >= 2) {
+                                                comentario = ctrl.correcciones[0].Observacion
+                                            } else {
+                                                if (ctrl.correcciones[0].Documento) {
+                                                    comentario = ctrl.correcciones[0].Justificacion
+                                                } else {
+                                                    comentario = ctrl.correcciones[0].Observacion
+                                                }
+                                            }
+
+                                            //Se debe buscar el nombre del docente por medio del documento
+                                            await academicaRequest.get("docente_tg", [ctrl.revision.VinculacionTrabajoGrado.Usuario]).then(function (docente) {
+                                                if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                                                    usuario = docente.data.docenteTg.docente[0].nombre
+                                                }
+                                            })
+
+                                            var data_correo = {
+                                                "Source": "notificacionPolux@udistrital.edu.co",
+                                                "Template": "POLUX_PLANTILLA_REVISION_DOC",
+                                                "Destinations": [
+                                                    {
+                                                        "Destination": {
+                                                            "ToAddresses": correos
+                                                        },
+                                                        "ReplacementTemplateData": {
+                                                            "nombre_usuario": usuario,
+                                                            "titulo_tg": ctrl.revision.DocumentoTrabajoGrado.TrabajoGrado.Titulo,
+                                                            "comentario": comentario
+                                                        }
+                                                    }
+                                                ]
+                                            }
+
+                                            //console.log(correos)
+
+                                            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
+                                            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                                                console.log("Envia el correo",response)
+                                            }).catch(function (error) {
+                                                console.log("Error: ", error)
+                                            });*/
+
                                             swal(
                                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
                                                 $translate.instant("REGISTRAR_REVISION.REGISTRADA"),
@@ -354,7 +406,7 @@ angular.module('poluxClienteApp')
                                         } else {
                                             swal(
                                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
-                                                $translate.instant(respuestaRegistrarRevisionTg.data[1]),
+                                                $translate.instant(respuestaRegistrarRevisionTg.data.Data[1]),
                                                 'warning'
                                             );
                                             ctrl.cargandoRevision = false;

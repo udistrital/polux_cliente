@@ -33,7 +33,7 @@ if (window.localStorage.getItem('access_token') === null ||
     window.localStorage.clear();
   }
   req.onreadystatechange = function(e) {
-    if (req.readyState === 4) {
+    /*if (req.readyState === 4) {
       if (req.status === 200) {
         //
       } else if (req.status === 400) {
@@ -41,7 +41,7 @@ if (window.localStorage.getItem('access_token') === null ||
       } else {
         
       }
-    }
+    }*/
   };
 }
 
@@ -75,12 +75,7 @@ angular.module('implicitToken', [])
             };
             //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
             //autenticacionMidRequest.post("token/emailToken", userRol, {
-            autenticacionMidRequest.post("token/userRol", userRol, {
-                headers: {
-                  'Accept': 'application/json',
-                  "Authorization": "Bearer " + window.localStorage.getItem('access_token'),
-                }
-              })
+            autenticacionMidRequest.post("token/userRol", userRol)
               .then(function(respuestaAutenticacion) {
                 //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
                 /*if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.rol.includes("ESTUDIANTE")){
@@ -214,8 +209,8 @@ angular.module('implicitToken', [])
       logoutValid: function() {
         var state;
         var valid = true;
-        var queryString = location.search.substring(1);
-        var regex = /([^&=]+)=([^&]*)/g;
+        queryString = location.search.substring(1);
+        regex = /([^&=]+)=([^&]*)/g;
         var m;
         while (!!(m = regex.exec(queryString))) {
           state = decodeURIComponent(m[2]);

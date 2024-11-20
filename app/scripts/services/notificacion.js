@@ -121,10 +121,6 @@ angular.module('notificacionService', [])
                 return $http.get(path + 'colas/mensajes/espera?nombre='+nombreCola+'&tiempoEspera=5', token_service.getHeader());
             },
             borrarNotificaciones: function(nombreCola,usuarioid) {
-                var elemento={
-                    
-                            Body:usuarioid,
-                }
                 return $http.post(path + 'colas/mensajes/'+nombreCola,usuarioid, token_service.getHeader());
             },
             no_vistos:function(){

@@ -43,8 +43,6 @@ angular.module('poluxClienteApp')
              * @requires $scope
              * @requires $q
              * @requires $http
-             * @requires constantes
-             * @requires services/poluxClienteApp.service:nuxeoService
              * @requires services/poluxClienteApp.service:tokenService
              * @property {array} estudiantes Arreglo de estudiantes que registran la propuesta.
              * @property {object} estudianteSeleccionado Estudiante seleccionado de la lisa para registrar propuesta.
@@ -57,7 +55,7 @@ angular.module('poluxClienteApp')
              * @property {object} registro_TG Data para el registro del trabajo de grado.
              * @property {number} modalidad Modalidad en la que se registra el trabajo de grado.
              */
-            controller: function ($scope, $location, $http, token_service, nuxeo, $q, constantes) {
+            controller: function ($scope, $location, $http, token_service, $q) {
                 var self = this;
                 self.validar = false;
                 var parametros = {
@@ -70,7 +68,7 @@ angular.module('poluxClienteApp')
                 self.modSeleccionada = "";
                 self.buttonDirective = "Aceptar";
                 poluxRequest.get("modalidad", "").then(function (response) {
-                    self.modalidad = response.data;
+                    self.modalidad = response.data.Data;
                 });
                 self.estado = false;
                 self.doclimpio = {};
@@ -114,14 +112,12 @@ angular.module('poluxClienteApp')
                         //self.estudianteSeleccionado = parseInt(self.estudianteSeleccionado);
                         codigo = parseInt(codigo);
                         
-                        if (isNaN(codigo)) {
-                            
-                        } else {
+                        if (!isNaN(codigo)) {
                             self.verificarRequisitos(parseInt(self.estudianteSeleccionado), codigo);
                         }
                     } catch (Error) {
                         poluxRequest.get("modalidad", "").then(function (response) {
-                            self.modalidad = response.data;
+                            self.modalidad = response.data.Data;
                         });
 
                     }
@@ -147,7 +143,7 @@ angular.module('poluxClienteApp')
                     codigo = "" + codigo;
                     academicaRequest.periodoAnterior().then(function (periodoAnterior) {
 
-                        var parametros = {
+                        parametros = {
                             "codigo": codigo,
                             "ano": periodoAnterior[0].APE_ANO,
                             "periodo": periodoAnterior[0].APE_PER
@@ -178,7 +174,7 @@ angular.module('poluxClienteApp')
                                     self.modalidad = "MATERIAS POSGRADO";
                                     poluxMidRequest.post("verificarRequisitos/Registrar", self.estudiante).then(function (response) {
                                         
-                                        self.validar = response.data;
+                                        self.validar = response.data.Data;
                                     });
                                 });
                             }
@@ -222,7 +218,7 @@ angular.module('poluxClienteApp')
                     poluxRequest.get("modalidad", $.param({
                         query: "Id:" + idModalidad
                     })).then(function (response) {
-                        objModalidad = response.data;
+                        objModalidad = response.data.Data;
                         
 
                         swal({
@@ -234,7 +230,6 @@ angular.module('poluxClienteApp')
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Confirmar'
                         }).then(function () {
-                            var idTrabajoGrado;
                             // codEstudiante = parseInt(estudiante);
                             
                             self.registro_TG = [];
@@ -300,20 +295,20 @@ angular.module('poluxClienteApp')
                     self.TGregistrado = [];
                     poluxRequest.post("trabajo_grado", data[0]).then(function (responseTG) {
                         
-                        self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Id, estudiante);
+                        self.estudiante_TG = self.preguardarEstudianteTG(responseTG.data.Data.Id, estudiante);
                         // idEstudianteTG = self.guardarestudianteTG(self.estudiante_TG[0]); ***Aún no se utiliza esta variable
                         
-                        self.areas_TG = self.preguardarAreasTG(responseTG.data.Id);
+                        self.areas_TG = self.preguardarAreasTG(responseTG.data.Data.Id);
                         self.asignarAreasTG(self.areas_TG);
                         self.docregistrado = self.preguardarDocumento(doc.titulo, doc.resumen, doc.enlace);
                         
                         poluxRequest.post("documento", self.docregistrado[0]).then(function (responseDoc) {
                             
-                            self.guardarDocumentoTG(responseDoc.data.Id, responseTG.data.Id);
+                            self.guardarDocumentoTG(responseDoc.data.Data.Id, responseTG.data.Data.Id);
                             poluxRequest.get("documento", $.param({
-                                query: "Id:" + responseDoc.data.Id
+                                query: "Id:" + responseDoc.data.Data.Id
                             })).then(function (response) {
-                                self.registroDocumento = response.data;
+                                self.registroDocumento = response.data.Data;
                             });
                         });
                     });
@@ -325,7 +320,6 @@ angular.module('poluxClienteApp')
                  * @methodOf poluxClienteApp.directive:registrarPropuesta.controller:registrarPropuestaCtrl
                  * @param {string} titulo Titulo del trabajo de grado.
                  * @param {string} resumen Resumen del documento del trabajo de grado.
-                 * @param {string} enlace Enlace del documento en nuxeo.
                  * @returns {array} Data para el registro del documento.
                  * @description 
                  * Permite crear la data del documento propuesta del trabajo de grado.
@@ -405,7 +399,7 @@ angular.module('poluxClienteApp')
                 self.guardarestudianteTG = function (data) {
                     poluxRequest.post("estudiante_tg", data).then(function (response) {
                         
-                        return response.data.Id;
+                        return response.data.Data.Id;
                     });
                 };
 
@@ -434,9 +428,9 @@ angular.module('poluxClienteApp')
                     self.docTGregistrado = {};
                     poluxRequest.post("documento_tg", self.docTG[0]).then(function (response) {
                         poluxRequest.get("documento_tg", $.param({
-                            query: "Id:" + response.data.Id
-                        })).then(function (response) {
-                            self.docTGregistrado = response.data;
+                            query: "Id:" + response.data.Data.Id
+                        })).then(function (responseDoc) {
+                            self.docTGregistrado = responseDoc.data.Data;
                         });
                     });
                 };
@@ -454,9 +448,9 @@ angular.module('poluxClienteApp')
                     angular.forEach(parametro, function (valor) {
                         poluxRequest.post("areas_trabajo_grado", valor).then(function (response) {
                             poluxRequest.get("areas_trabajo_grado", $.param({
-                                query: "IdTrabajoGrado:" + response.data.IdTrabajoGrado
-                            })).then(function (response) {
-                                self.areasTG = response.data;
+                                query: "IdTrabajoGrado:" + response.data.Data.IdTrabajoGrado
+                            })).then(function (responseAreas) {
+                                self.areasTG = responseAreas.data.Data;
                             });
                         });
                     });

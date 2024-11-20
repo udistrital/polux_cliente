@@ -175,7 +175,7 @@ angular.module('poluxClienteApp')
                     $scope.respuestas_vista = [];
                     poluxRequest.get("tr_formato/" + id, '')
                         .then(function (response) {
-                            $scope.formato_vista = response.data;
+                            $scope.formato_vista = response.data.Data;
                             $scope.generar_pdf($scope.formato_vista);
                         });
                 };
