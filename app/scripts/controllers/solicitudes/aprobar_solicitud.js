@@ -100,6 +100,7 @@ angular.module('poluxClienteApp')
       ctrl.Modalidad = [];
       ctrl.EstadoSolicitud = [];
       ctrl.EstadoAsignaturaTrabajoGrado = [];
+      ctrl.EstudianteTg = "";
       ctrl.EstadoEstudianteTrabajoGrado = [];
       ctrl.EstadoEspacioAcademicoInscrito = [];
       ctrl.TipoDocumento = [];
@@ -480,6 +481,7 @@ angular.module('poluxClienteApp')
                 }
               })
             });
+            ctrl.EstudianteTg = responseEstudiantes.data.Data[0].Usuario;
             ctrl.modalidad = responseEstudiantes.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
             if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
               ctrl.detallesSolicitud = [];
@@ -1255,7 +1257,7 @@ angular.module('poluxClienteApp')
                   }
                 })
                 var parametrosConsulta = $.param({
-                  query: "CodigoAbreviacion.in:APR_PLX"
+                  query: "CodigoAbreviacion.in:PR_PLX" //Se dejará en Radicado pero se debe revisar más a fondo 
                 });
                 var estadoTrabajoGradoParametro
                 await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
@@ -1278,7 +1280,7 @@ angular.module('poluxClienteApp')
                   "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico
                 }
                 estudiante = {
-                  "Estudiante": otro.Estudiantes,
+                  "Estudiante": ctrl.EstudianteTg,
                   "TrabajoGrado": {
                     "Id": 0
                   },
@@ -1295,6 +1297,19 @@ angular.module('poluxClienteApp')
                     "Id": 0
                   }
                 };
+                
+                //se agregan las areaSnies
+                var data_areas = [];
+                angular.forEach(ctrl.areas, function (area) {
+                  data_areas.push({
+                    "AreaConocimiento": Number(area),
+                    "TrabajoGrado": {
+                      "Id": 0
+                    },
+                    "Activo": true,
+                  });
+                });
+
                 var data_vinculacion = [];
                 data_vinculacion.push(vinculacion)
                 data_estudiantes.push(estudiante);
@@ -1303,7 +1318,7 @@ angular.module('poluxClienteApp')
                   EstudianteTrabajoGrado: data_estudiantes,
                   DocumentoEscrito: null,
                   DocumentoTrabajoGrado: null,
-                  AreasTrabajoGrado: null,
+                  AreasTrabajoGrado: data_areas,
                   VinculacionTrabajoGrado: data_vinculacion,
                   AsignaturasTrabajoGrado: data_asignaturasTrabajoGrado
                 }
@@ -2115,50 +2130,92 @@ angular.module('poluxClienteApp')
                 index = 0;
                 cambioMateriasPosgrado = false;
                 respuestas = [];
+
+                console.log("ctrl.detallesSolicitud", ctrl.detallesSolicitud);
                 for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
                   if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
                     respuestaRechazo = "";
                     if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
-                      respuestaAprobado = "ACPO2_PLX"
-                      respuestaRechazo = "RCPO2_PLX"
-                    } else {
                       respuestaAprobado = "ACPO1_PLX"
                       respuestaRechazo = "RCPO1_PLX"
+                    } else {
+                      respuestaAprobado = "ACPO2_PLX"
+                      respuestaRechazo = "RCPO2_PLX"
                     }
+
+                    console.log("ctrl.solicitud", ctrl.solicitud);
                     parametrosRespuestaSol = $.param({
                       query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
                       limit: 0
                     });
                     await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
                       respuestas = responseRespuestaSolicitud.data.Data;
-                      angular.forEach(respuestas, async function (respuesta) {
-                        let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.Id == respuesta.EstadoSolicitud
-                        })
+                      console.log("respuestas", respuestas);
+                      console.log("estadoSolicitud", respuestas[0].EstadoSolicitud)
+                      console.log("ctrl.EstadoSolicitud", ctrl.EstadoSolicitud);
+
+                      //Si la solicitud inicial se encuentra en Radicado significa que el Coordinador de Pregrado debe Aprobar o Rechazar la solicitud
+                      var estadoRadicadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RDC_PLX" //4610
+                      });
+
+                      console.log("estadoRadicadoSolicitud", estadoRadicadoSolicitud);
+                      
+                      if(respuestas[0].EstadoSolicitud == estadoRadicadoSolicitud.Id){
+                        respuestaAprobado = "ACPR_PLX"
+                        respuestaRechazo = "RCC_PLX"
+                      }
+
+                      //angular.forEach(respuestas, async function (respuesta) {
+                        if(ctrl.respuestaSolicitud == "ACC_PLX"){
+                          var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaAprobado
+                          });
+                        }
+                        else{
+                          var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaRechazo
+                          });
+                        }
+
+                        console.log("estadoSolicitud", estadoSolicitud);
+                        console.log("respuestaAprobado", respuestaAprobado);
+                        console.log("respuestaRechazo", respuestaRechazo);
+
+                        console.log("click en HTML", ctrl.respuestaSolicitud);
+
+                        //YA ESTÁ ENTRANDO xd
                         if (estadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
                           ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
                           ctrl.respuestaSolicitud = resOriginal;
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == resOriginal
+                            return estSol.CodigoAbreviacion == respuestaRechazo
                           })
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
                           await ModificarRespuestas(respuestas);
+                          cambioMateriasPosgrado = false;
                         } else if (estadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
+                          console.log("entrando a respuestaAprobado");
                           if ((ctrl.prioridad == 1 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") ||
                             (ctrl.prioridad == 2 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2")) {
                             ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
                             ctrl.respuestaSolicitud = resOriginal;
+
                             estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                              return estSol.CodigoAbreviacion == resOriginal
+                              return estSol.CodigoAbreviacion == respuestaAprobado
                             })
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                            
+                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id; // Debe ser 4654 si hay dos coordinadores de posgrado (Aprobado por Coordinador Posgrado Opción 1) 
+                            console.log("ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud", ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud)
                             await ModificarRespuestas(respuestas);
+                            cambioMateriasPosgrado = false;
                           } else {
+                            console.log("por qué estaría entrando en este else");
                             cambioMateriasPosgrado = true;
                             index = ctrl.detallesSolicitud.indexOf(ctrl.detallesSolicitud[i])
                           }
                         }
-                      });
+                      //});
                       if (!cambioMateriasPosgrado) {
                         resolve();
                       }
@@ -2184,7 +2241,7 @@ angular.module('poluxClienteApp')
                   let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                     return estSol.CodigoAbreviacion == resOriginal
                   })
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
+                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id; // Debe ser 4654 si hay dos coordinadores de posgrado (Aprobado por Coordinador Posgrado Opción 1) 
                   ctrl.detallesSolicitud.splice(index, 1);
                   ctrl.detallesSolicitud.push(detalleAux);
                   await ModificarRespuestas(respuestas);
