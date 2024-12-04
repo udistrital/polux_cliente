@@ -254,6 +254,15 @@ var text_es = {
     SELECCIONAR_SOLICITUD: "Seleccione tipo de solicitud",
     FORMULARIO_SOLICITUD: "Formulario de solicitud",
     SELECCIONE_AREAS_CONOCIMIENTO: "Seleccione las áreas del conocimiento de su proyecto",
+    INFO_REPORTES: "Por favor, ingrese los siguientes datos para generar los reportes:",
+    SELECCIONE_ESTADO: "Filtrar por el estado",
+    SELECCIONE_RANGO_FECHAS: "Seleccione intervalo del reporte:",
+    HASTA: "Hasta",
+    REPORTE_GENERAL: "El Reporte General está enfocado en adquirir la información de todos los trabajos de grado",
+    REPORTE_SOLICITUDES: "El Reporte de Solicitudes está enfocado en adquirir la información de las solicitudes realizadas en los trabajos de grado",
+    DESCARGA_COMPLETA: "Descarga Completada",
+    REPORTE_CORRECTO: "Se ha generado el reporte correctamente",
+    REPORTE_INCORRECTO: "No se encontraron registros con los filtros aplicados",
     NOMBRE_CORTO: "Nombre muy corto",
     NOMBRE_LARGO: "Nombre muy largo",
     NUEVA_AREA: "Vincular nueva subárea",
@@ -2030,7 +2039,16 @@ var text_en = {
         NOTIFICACION: {
                 COORDINACION:"CURRICULAR PROJECT COORDINATION",
                 PASANTIA:"INTERNSHIP EXTENSION OFFICE"
-        }
+        },
+    INFO_REPORTES: "Please, enter the following data to generate the reports:",
+    SELECCIONE_ESTADO: "Filter by state",
+    SELECCIONE_RANGO_FECHAS: "Select report range:",
+    HASTA: "To",
+    REPORTE_GENERAL: "The General Report is focused on acquiring the information of all the degree works",
+    REPORTE_SOLICITUDES: "The Request Report is focused on acquiring the information of the requests made in the degree works",
+    DESCARGA_COMPLETA: "Download Completed",
+    REPORTE_CORRECTO: "Report generated correctly",
+    REPORTE_INCORRECTO: "No records found with filters applied",
 };
 
 /**
