@@ -2034,6 +2034,8 @@ angular.module('poluxClienteApp')
 
               if(ctrl.estudiante.asignaturas_elegidas.length > 0) {
                 ctrl.estudiante.asignaturas_elegidas[0].$$hashKey = undefined;
+                //Nuevo campo para Detalles
+                ctrl.estudiante.asignaturas_elegidas[0].Opcion = 1;
                 detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(ctrl.estudiante.asignaturas_elegidas[0]); 
               }
             }
@@ -2043,6 +2045,8 @@ angular.module('poluxClienteApp')
 
               if(ctrl.estudiante.asignaturas_elegidas2.length > 0) {
                 ctrl.estudiante.asignaturas_elegidas2[0].$$hashKey = undefined;
+                //Nueva campo para Detalles
+                ctrl.estudiante.asignaturas_elegidas2[0].Opcion = 2;
                 detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(ctrl.estudiante.asignaturas_elegidas2[0]); 
               }
             }

@@ -846,8 +846,21 @@ angular.module('poluxClienteApp')
               let estSol = ctrl.EstadoSolicitud.find(estadoSol => {
                 return estadoSol.CodigoAbreviacion == "ACPR_PLX"
               })
+              let estSolACPO1 = ctrl.EstadoSolicitud.find(estadoSol => {
+                return estadoSol.CodigoAbreviacion == "ACPO1_PLX"
+              });
+              let estSolACPO2 = ctrl.EstadoSolicitud.find(estadoSol => {
+                return estadoSol.CodigoAbreviacion == "ACPO2_PLX"
+              });
+              let estSolRCPO1 = ctrl.EstadoSolicitud.find(estadoSol => {
+                return estadoSol.CodigoAbreviacion == "RCPO1_PLX"
+              });
+              let estSolRCPO2 = ctrl.EstadoSolicitud.find(estadoSol => {
+                return estadoSol.CodigoAbreviacion == "RCPO2_PLX"
+              });
+
               parametrosSolicitudes = $.param({
-                query: "EstadoSolicitud:" + estSol.Id + ",Activo:true",
+                query: "EstadoSolicitud.in:" + estSol.Id + "|" + estSolACPO1.Id + "|" + estSolACPO2.Id +  "|" + estSolRCPO1.Id + "|" + estSolRCPO2.Id + ",Activo:true",
                 limit: 0
               });
               if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
