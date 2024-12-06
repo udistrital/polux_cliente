@@ -1501,6 +1501,7 @@ angular.module('poluxClienteApp')
                   "FechaInicio": '',
                   "FechaFin": '',
                   "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                  "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                   "TrabajoGrado": {
                     "Id": 0
                   }
@@ -1523,6 +1524,7 @@ angular.module('poluxClienteApp')
                       "FechaFin": '',
                       // Rol de codirector
                       "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                      "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                       "TrabajoGrado": {
                         "Id": 0
                       }
@@ -1543,6 +1545,7 @@ angular.module('poluxClienteApp')
                     "FechaInicio": '',
                     "FechaFin": '',
                     "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                    "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                     "TrabajoGrado": {
                       "Id": 0
                     }
@@ -1665,6 +1668,7 @@ angular.module('poluxClienteApp')
                     "FechaInicio": '',
                     "FechaFin": '',
                     "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                    "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                     "TrabajoGrado": {
                       "Id": 0
                     }
