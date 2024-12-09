@@ -188,11 +188,10 @@ angular.module('poluxClienteApp')
             query: "TrabajoGrado:" + trabajoGrado.Id,
           });
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responseSolicitudes) {
-            if (Object.keys(responseSolicitudes.data.Data[0]).length > 0) {              
-              ctrl.SolicitudTrabajoGrado = responseSolicitudes.data.Data[0];    
+            if (Object.keys(responseSolicitudes.data.Data).length > 0) {
+              ctrl.SolicitudTrabajoGrado = responseSolicitudes.data.Data[0];
               ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
-              ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;                             
-              
+              ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function (solicitud) {
                 var defer = $q.defer();
@@ -245,7 +244,7 @@ angular.module('poluxClienteApp')
 
                 ctrl.loadingSolicitudes = false;
               })
-                .catch(function (error) {                  
+                .catch(function (error) {
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargando = true;
                   ctrl.loadingSolicitudes = false;
@@ -258,7 +257,6 @@ angular.module('poluxClienteApp')
             }
           })
             .catch(function (error) {
-              
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
               ctrl.errorCargando = true;
               ctrl.loadingSolicitudes = false;

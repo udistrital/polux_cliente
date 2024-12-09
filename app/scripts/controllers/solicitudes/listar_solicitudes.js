@@ -570,9 +570,9 @@ angular.module('poluxClienteApp')
                 });
               }
               else{
-              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {                
+              if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
                 ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
-                angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {                  
+                angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {
                   carreras.push(carrera.codigo_proyecto_curricular);
                 });
                 var parametrosModalidadTipo = $.param({

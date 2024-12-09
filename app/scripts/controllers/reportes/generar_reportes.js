@@ -63,8 +63,7 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
          * Esta función llama al endpoint de POLUX_MID correspondiente de generar y descargar el Reporte General en un archivo Excel.
          * @returns {undefined} No retorna nigún valor. 
          */
-        ctrl.generar_reporte_general = function() {
-    
+        ctrl.generar_reporte_general = function() {    
             var data_filtro = {
                 ProyectoCurricular: $scope.carrera_seleccionada,
                 Estado: $scope.estado_seleccionado,
@@ -117,8 +116,7 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
          * Esta función llama al endpoint de POLUX_MID correspondiente de generar y descargar el Reporte Solicitud en un archivo Excel.
          * @returns {undefined} No retorna nigún valor. 
          */
-        ctrl.generar_reporte_solicitud = function() {
-            
+        ctrl.generar_reporte_solicitud = function() {          
             var data_filtro = {
                 ProyectoCurricular: $scope.carrera_seleccionada,
                 Estado: $scope.estado_seleccionado,
