@@ -124,6 +124,7 @@
                     </div>
                     <div class="row">
                         <label class="control-label col-sm-12"> {{'ASIGNATURAS_TRABAJO_GRADO' | translate}}: </label>
+                        <label class="control-label col-sm-12" ng-if="consultarTrabajoGrado.trabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion == 'NTF_PLX'"> {{'DISTRIBUCION_NOTAS' | translate}}: </label>
                         <div class="panel col-md-12">
                             <div ui-grid="consultarTrabajoGrado.gridOptionsAsignaturas" class="mi-grid" id="mi-grid" style="height: {{(consultarTrabajoGrado.gridOptionsAsignaturas.data.length*35)+40}}px" ui-grid-cellNav ui-grid-auto-resize></div>
                         </div>
