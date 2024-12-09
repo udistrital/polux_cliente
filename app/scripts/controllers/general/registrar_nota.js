@@ -43,13 +43,19 @@ angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
     function($scope, $q, $translate,notificacionRequest, academicaRequest,utils,gestorDocumentalMidRequest, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
       var ctrl = this;
-
+      $scope.roles= token_service.getAppPayload().role;
       //token_service.token.documento = "80093200";
       //token_service.token.documento = "79777053";
       //token_service.token.documento = "12237136";
       //ctrl.documento = token_service.token.documento;
 
       ctrl.documento = token_service.getAppPayload().appUserDocument;
+
+      if($scope.roles.includes('COORDINADOR')){
+        ctrl.isCoordinador = true
+      } else {
+        ctrl.isCoordinador = false
+      }
 
       ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
       ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
@@ -211,6 +217,7 @@ angular.module('poluxClienteApp')
           .then(function(dataTrabajos) {
             if (Object.keys(dataTrabajos.data.Data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data.Data;
+              var trabajosPosgrado = []
               // Se decide qué trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
                 let ModalidadTemp = ctrl.Modalidades.find(data => {
@@ -243,6 +250,11 @@ angular.module('poluxClienteApp')
                   trabajo.permitirRegistrar = true;
                 } else if (estado == "LPS_PLX" && rol.includes("DIRECTOR_PLX") && !rol.includes("CODIRECTOR_PLX")) {
                   trabajo.permitirRegistrar = true;
+                } else if (rol.includes("COR_POSGRADO_PLX")){
+                  if(estado == "EC_PLX"){
+                    trabajo.permitirRegistrar = true;
+                    trabajosPosgrado.push(trabajo)
+                  } 
                 }
                 // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
                 /*if( rol === 1 ){
@@ -266,8 +278,22 @@ angular.module('poluxClienteApp')
                 }
                 */
               });
+              
+              //si el rol del usuario el coordinador
+              if($scope.roles.includes('COORDINADOR')){
+                //si no se han encontrado trabajos asociados
+                if (trabajosPosgrado.length <= 0){
+                  //se muestra el mensaje de error
+                  ctrl.mensajeError = $translate.instant('ERROR.SIN_TRABAJOS_ASOCIADOS');
+                  defer.reject("no hay trabajos de grado asociados");
+                } else {
+                  //si encontro trabajos, entonces los lista
+                  ctrl.trabajosGrado = trabajosPosgrado
+                }
+              } 
               ctrl.gridOptions.data = ctrl.trabajosGrado;
               defer.resolve();
+
             } else {
               ctrl.mensajeError = $translate.instant('ERROR.SIN_TRABAJOS_ASOCIADOS');
               defer.reject("no hay trabajos de grado asociados");
@@ -483,7 +509,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado, tipoDocumentoId, limit) {
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado + ",Activo:true",
           sortby: 'id',  // Ordenar por id
           order: 'desc', // Orden descendente
           limit: limit // Ajusta el límite según el código de abreviación
@@ -698,7 +724,7 @@ angular.module('poluxClienteApp')
                 defer.reject(error);
               });
 
-          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "EVALUADOR_PLX") {
+          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "EVALUADOR_PLX" || RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX") {
             //Si no es director se registra la nota
             defer.resolve(dataRegistrarNota);
           }

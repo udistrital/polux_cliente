@@ -612,8 +612,8 @@ angular.module('poluxClienteApp')
                 ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                 defer.reject("datos del estudiante invalidos");
               } else {
-                ctrl.estudiante.asignaturas_elegidas = [];
-                ctrl.estudiante.asignaturas_elegidas2 = [];
+                //ctrl.estudiante.asignaturas_elegidas = [];
+                //ctrl.estudiante.asignaturas_elegidas2 = [];
                 ctrl.estudiante.areas_elegidas = [];
                 ctrl.estudiante.minimoCreditos = false;
                 defer.resolve(ctrl.estudiante);
@@ -1900,6 +1900,10 @@ angular.module('poluxClienteApp')
                     if(ModalidadTemp.CodigoAbreviacion == "EAPOS_PLX"){
                       detalle.label = $translate.instant("TERMINOS.POSGRADO")
                     }
+                    // PARA MODALIDAD DE MATERIAS DE PROFUNDIZACIÓN
+                    if(ModalidadTemp.CodigoAbreviacion == "EAPRO_PLX"){
+                      detalle.label = $translate.instant("TERMINOS.PROFUNDIZACION")
+                    }
                     // PARA MODALIDAD DE MATERIAS DE INVESTIGACION E INNOVACION
                     if(ModalidadTemp.CodigoAbreviacion == "INV_PLX"){
                       detalle.label = $translate.instant("TERMINOS.INVESTIGACION")
@@ -2027,19 +2031,26 @@ angular.module('poluxClienteApp')
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp4.Id) {
             if (detalle.Detalle.Descripcion == 'solicitar-asignaturas') {
               detalle.respuesta = "JSON";
-              angular.forEach(ctrl.estudiante.asignaturas_elegidas, function(asignatura) {
-                asignatura.$$hashKey = undefined;
-                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(asignatura);
-              });
-              //detalle.respuesta = detalle.respuesta.substring(1);
+
+              if(ctrl.estudiante.asignaturas_elegidas.length > 0) {
+                ctrl.estudiante.asignaturas_elegidas[0].$$hashKey = undefined;
+                //Nuevo campo para Detalles
+                ctrl.estudiante.asignaturas_elegidas[0].Opcion = 1;
+                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(ctrl.estudiante.asignaturas_elegidas[0]); 
+              }
             }
+
             if (detalle.Detalle.Descripcion == 'solicitar-asignaturas-2') {
               detalle.respuesta = "JSON";
-              angular.forEach(ctrl.estudiante.asignaturas_elegidas2, function(asignatura) {
-                asignatura.$$hashKey = undefined;
-                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(asignatura);
-              });
+
+              if(ctrl.estudiante.asignaturas_elegidas2.length > 0) {
+                ctrl.estudiante.asignaturas_elegidas2[0].$$hashKey = undefined;
+                //Nueva campo para Detalles
+                ctrl.estudiante.asignaturas_elegidas2[0].Opcion = 2;
+                detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(ctrl.estudiante.asignaturas_elegidas2[0]); 
+              }
             }
+            
             if (detalle.Detalle.Descripcion == 'asignar-estudiantes') {
               detalle.respuesta = (ctrl.estudiantes.length === 0) ? ctrl.codigo : ctrl.codigo + "," + ctrl.estudiantes.toString();
             }
@@ -2101,14 +2112,14 @@ angular.module('poluxClienteApp')
             //
             ctrl.erroresFormulario = true;
           }
-          if (detalle.Detalle.Descripcion == 'solicitar-asignaturas' && !ctrl.estudiante.minimoCreditos) {
+          /*if (detalle.Detalle.Descripcion == 'solicitar-asignaturas' && !ctrl.estudiante.minimoCreditos) {
             swal(
               'Validación del formulario',
               "Debe cumplir con el minimo de creditos.",
               'warning'
             );
             ctrl.erroresFormulario = true;
-          }
+          }*/
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp7.Id || detalle.Detalle.TipoDetalle === TipoDetalleTemp8.Id) {
             var contiene = false;
             //
@@ -2305,15 +2316,15 @@ angular.module('poluxClienteApp')
           let ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "EAPRO_PLX"
           });
-          if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
-            TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
+          /*if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
+            let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
               return data.CodigoAbreviacion == "SAD_PLX"
             });
             let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
               return data.Modalidad == ctrl.modalidad && data.TipoSolicitud == TipoSolicitudTemp.Id
             });
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
-          }
+          }*/
 
           ModalidadTemp = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "MONO_PLX"
@@ -2828,8 +2839,8 @@ angular.module('poluxClienteApp')
                             if (ctrl.estudiante.Nombre === undefined) {
                               ctrl.mensajeErrorCarga = $translate.instant("ERROR.CARGAR_DATOS_ESTUDIANTE");
                             } else {
-                              ctrl.estudiante.asignaturas_elegidas = [];
-                              ctrl.estudiante.asignaturas_elegidas2 = [];
+                              //ctrl.estudiante.asignaturas_elegidas = [];
+                              //ctrl.estudiante.asignaturas_elegidas2 = [];
                               ctrl.estudiante.areas_elegidas = [];
                               ctrl.estudiante.minimoCreditos = false;
                             }

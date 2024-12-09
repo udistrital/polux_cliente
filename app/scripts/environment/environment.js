@@ -15,7 +15,7 @@ angular.module("poluxClienteApp").constant("CONF", {
   GENERAL: {
     ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v2",
     POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
-    // POLUX_SERVICE: "http://localhost:8080/v1/",
+    //POLUX_SERVICE: "http://localhost:8080/v1/",
     POLUX_MID_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_mid/v1/",
     //POLUX_MID_SERVICE: "http://localhost:8090/v1/",
     SESIONES_SERVICE:"https://autenticacion.portaloas.udistrital.edu.co/apioas/sesiones_crud/v2/",
