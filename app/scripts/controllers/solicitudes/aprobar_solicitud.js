@@ -2026,9 +2026,6 @@ angular.module('poluxClienteApp')
 
           async function aprobarPosgrado() {
             return new Promise(async (resolve, reject) => {
-              console.log("ctrl.rol", ctrl.rol);
-              console.log("ctrl.roles", ctrl.roles);
-
               //Trae los registros de la tabla Respuesta_Solicitud con campo Activo True
               var parametrosRespuestaSol = $.param({
                 query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
@@ -2070,6 +2067,18 @@ angular.module('poluxClienteApp')
                   var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                     return estSol.CodigoAbreviacion == respuestaRechazo
                   });
+
+                  //Traer el Estado de Trabajo de Grado en Cancelado
+                  /*let parametrosConsulta = $.param({
+                    query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                  });
+
+                  await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                    estadoTrabajoGrado = parametros.data.Data[0];
+                  });
+                  
+                  //Se coloca en rechazo el trabajo de grado
+                  ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
 
                   //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Rechazada por Consejo de Carrera [Coordinador Pregrado])
                   ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
@@ -2127,12 +2136,12 @@ angular.module('poluxClienteApp')
                       if(ctrl.respuestaSolicitud == "ACC_PLX") {
                         console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
 
-                        //Traer el Estado en que el codigo de abreviación ACP01_PLX
+                        //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes se ponía ACP01_PLX
                         var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == respuestaAprobado
+                          return estSol.CodigoAbreviacion == "ACC_PLX"
                         });
                         
-                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrerra) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1) 
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                         //Traer el Estado de Trabajo de Grado en Curso
@@ -2191,8 +2200,13 @@ angular.module('poluxClienteApp')
                         else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobada por Coordinador de Posgrado Opcion 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACPO2Solicitud.Id;
+                          //Traer el Estado de Solicitud de Aprobado por consejo de carrera
+                          var estadoACCSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == "ACC_PLX" //4612 - Aprobado por consejo de carrera
+                          });
+
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 | Antes era 4656 (Aprobada por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
                           
                           //Traer el Estado de Trabajo de Grado en Curso
                           let parametrosConsulta = $.param({
@@ -2291,12 +2305,12 @@ angular.module('poluxClienteApp')
                         if(ctrl.respuestaSolicitud == "ACC_PLX") {
                           console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
 
-                          //Traer el Estado en que el codigo de abreviación ACP01_PLX
+                          //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaAprobado
+                            return estSol.CodigoAbreviacion == "ACC_PLX"
                           });
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                           //Traer el Estado de Trabajo de Grado en Curso
@@ -2367,14 +2381,14 @@ angular.module('poluxClienteApp')
                       if(ctrl.respuestaSolicitud == "ACC_PLX") {
                         console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
 
-                        //Traer el Estado en que el codigo de abreviación ACP02_PLX
+                        //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP02_PLX
                         var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == respuestaAprobado
+                          return estSol.CodigoAbreviacion == "ACC_PLX"
                         });
       
                         console.log("estadoSolicitud", estadoSolicitud);
                         
-                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                         //Traer el Estado de Trabajo de Grado en Curso
@@ -2432,8 +2446,13 @@ angular.module('poluxClienteApp')
                         else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO1Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobada por Coordinador de Posgrado Opcion 1)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACPO1Solicitud.Id;
+                          //Traer el Estado de Solicitud de Aprobado por consejo de carrera
+                          var estadoACCSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == "ACC_PLX" //4612 - Aprobado por consejo de carrera
+                          });
+
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobada por Coordinador de Posgrado Opcion 1)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
                           
                           //Traer el Estado de Trabajo de Grado en Curso
                           let parametrosConsulta = $.param({
@@ -2532,12 +2551,12 @@ angular.module('poluxClienteApp')
                         if(ctrl.respuestaSolicitud == "ACC_PLX") {
                           console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
 
-                          //Traer el Estado en que el codigo de abreviación ACP01_PLX
+                          //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaAprobado
+                            return estSol.CodigoAbreviacion == "ACC_PLX"
                           });
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                           //Traer el Estado de Trabajo de Grado en Curso
