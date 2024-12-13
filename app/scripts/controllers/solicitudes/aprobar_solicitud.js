@@ -2123,7 +2123,7 @@ angular.module('poluxClienteApp')
 
                 var proyectoCurricularSeleccionado = ctrl.carrerasCoordinador.find(carrera => {
                   //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
-                  return (carrera.nombre_proyecto_curricular == $rootScope.proyectoCurricularPosgrado) && (carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado); 
+                  return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; 
                 });
 
                 console.log("Proyecto Curricular Seleccionado: ", proyectoCurricularSeleccionado);
