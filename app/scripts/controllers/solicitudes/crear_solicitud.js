@@ -2041,13 +2041,14 @@ angular.module('poluxClienteApp')
             }
 
             if (detalle.Detalle.Descripcion == 'solicitar-asignaturas-2') {
-              detalle.respuesta = "JSON";
-
               if(ctrl.estudiante.asignaturas_elegidas2.length > 0) {
+                detalle.respuesta = "JSON";
                 ctrl.estudiante.asignaturas_elegidas2[0].$$hashKey = undefined;
                 //Nueva campo para Detalles
                 ctrl.estudiante.asignaturas_elegidas2[0].Opcion = 2;
                 detalle.respuesta = detalle.respuesta + "-" + JSON.stringify(ctrl.estudiante.asignaturas_elegidas2[0]); 
+              } else {
+                detalle.respuesta = "undefined"
               }
             }
             

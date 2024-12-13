@@ -914,6 +914,8 @@ var text_es = {
     CARGO_RECEPTOR: "Cargo del receptor",
     ACTAS_REGISTRADAS: "Actas registradas",
     ESTUDIANTES: "Estudiantes",
+    ACUERDO_VOLUNTAD: "Acuerdo de Voluntad, Convenio o Contrato",
+    CARTA_UNIDAD_ACADEMICA: "Carta de la Unidad Académica",
     VINCULACIONES_TRABAJO_GRADO: "Personas vinculadas al trabajo de grado",
     REVISAR_ANTEPROYECTO: {
         TITULO: "Revisión de anteproyectos de grado",
@@ -1751,6 +1753,8 @@ var text_en = {
     SIN_AREAS: "Currently there are no sub-areas linked to the selected SNIES area",
     SIN_INFORMACION_TABLA:"Currently there are no data in the table",
     DESCRIPCION: "Description",
+    ACUERDO_VOLUNTAD: "Willingness Agreement, Agreement or Contract",
+    CARTA_UNIDAD_ACADEMICA: "Letter from the Academic Unit",
     NO_SOLICITUDES_POSGRADO: "There are no requests in the graduate academic spaces modality for the selected curricular project",
     NO_SOLICITUDES_PROFUNDIZACION: "There are no requests in the undergraduate academic spaces modality for the selected curricular project",
     SELECCIONAR_PERIODO: "Select academic period",

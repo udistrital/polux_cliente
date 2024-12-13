@@ -786,10 +786,10 @@ angular.module('poluxClienteApp')
                   promises.push(ctrl.cargarAreasConocimiento());
                 }
 
-                //si la modalidad es 2 trae los espacios academicos
+                /*si la modalidad es 2 trae los espacios academicos
                 if (ModalidadTemp.CodigoAbreviacion === "EAPOS_PLX" || ModalidadTemp.CodigoAbreviacion === "EAPRO_PLX") {
                   promises.push(ctrl.getEspaciosAcademicosInscritos());
-                }
+                }*/
                 //Si la modalidad es 1 (Pasantia) se consultan las actas de seguimiento
                 // y el detalel de la pasantia
                 if (ModalidadTemp.CodigoAbreviacion === "PAS_PLX") {
@@ -806,27 +806,31 @@ angular.module('poluxClienteApp')
                           var P = Periodo.data.periodoAcademicoCollection.periodoAcademico[0];
                           //CONSULTA LOS DATOS DEL ESTUDIANTE
                           academicaRequest.get("datos_estudiante", [ctrl.datos_basicos_estudiante.codigo, P.anio, P.periodo]).then(function (data_estudiante) {
-                            if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "PREGRADO") {
-                              //VALIDACIÓN PARA LA MODADLIDAD DE MATERIAS DE PROFUNDIZACIÓN EN PREGRADO
-                              if(ctrl.trabajoGrado.Modalidad.CodigoAbreviacion == "EAPOS"){
+                            if(ctrl.trabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion == "NTF_PLX"){
+                              if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "PREGRADO") {
+                                //VALIDACIÓN PARA LA MODADLIDAD DE MATERIAS DE PROFUNDIZACIÓN EN PREGRADO
+                                if(ctrl.trabajoGrado.Modalidad.CodigoAbreviacion == "EAPOS"){
+                                  if (asignatura.Calificacion >= 3.5) {
+                                    asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                                  } else {
+                                    asignatura.Aprobacion = $translate.instant("REPROBADO");
+                                  }
+                                }else{
+                                  if (asignatura.Calificacion >= 3.0) {
+                                    asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                                  } else {
+                                    asignatura.Aprobacion = $translate.instant("REPROBADO");
+                                  }
+                                }
+                              } else if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "POSGRADO") {
                                 if (asignatura.Calificacion >= 3.5) {
                                   asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
                                 } else {
                                   asignatura.Aprobacion = $translate.instant("REPROBADO");
                                 }
-                              }else{
-                                if (asignatura.Calificacion >= 3.0) {
-                                  asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
-                                } else {
-                                  asignatura.Aprobacion = $translate.instant("REPROBADO");
-                                }
                               }
-                            } else if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "POSGRADO") {
-                              if (asignatura.Calificacion >= 3.5) {
-                                asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
-                              } else {
-                                asignatura.Aprobacion = $translate.instant("REPROBADO");
-                              }
+                            } else {
+                              asignatura.Aprobacion = $translate.instant("ERROR.SIN_CALIFICACION");
                             }
                           });
                         });
