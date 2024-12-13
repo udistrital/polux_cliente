@@ -35,7 +35,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
-    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
+    function($filter, $location, $q, $scope, $rootScope, $translate, utils, gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
@@ -918,7 +918,10 @@ angular.module('poluxClienteApp')
                             if(lista_roles.includes("POSGRADO")) {
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
+                              //Almacenar el nombre de la carrera de posgrado en la solicitud
                               solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
+                              //Almacenar el codigo de la carrera de posgrado en la solicitud
+                              solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                               ctrl.solicitudes.push(solicitud.data);
                               //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
@@ -1756,6 +1759,19 @@ angular.module('poluxClienteApp')
             //$('#modalVerSolicitud').modal('show');
             break;
           case "responder":
+            //Almacena el proyecto curricular de la solicitud seleccionada en $rootScope
+            $rootScope.proyectoCurricularPosgrado = row.entity.CarreraPosgrado;
+            console.log('Carrera seleccionada:', $rootScope.proyectoCurricularPosgrado);
+
+            //Trae todos los datos del proyecto curricular de la solicitud seleccionada
+            var proyectoCurricularSeleccionado = ctrl.solicitudes.find(solicitud => {
+              return solicitud.CarreraPosgrado == row.entity.CarreraPosgrado; //Proyecto Curricular de Posgrado de la Fila seleccionada en el grid
+            });
+
+            //Extraer solo el código del proyecto curricular de la solicitud seleccionada
+            $rootScope.codigoProyectoCurricularPosgrado = proyectoCurricularSeleccionado.CodigoCarreraPosgrado;
+            console.log('Código Carrera seleccionada:', $rootScope.codigoProyectoCurricularPosgrado);
+
             //$('#modalEvaluarSolicitud').modal('show');
             $location.path("solicitudes/aprobar_solicitud/" + row.entity.Id);
             break;
