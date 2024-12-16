@@ -35,7 +35,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
-    function($filter, $location, $q, $scope, $translate,utils,gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
+    function($filter, $location, $q, $scope, $rootScope, $translate, utils, gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
@@ -869,6 +869,8 @@ angular.module('poluxClienteApp')
                   carreras.push(carrera.codigo_proyecto_curricular);
                 });
               }
+              console.log("carreras", carreras);
+
               poluxRequest.get("respuesta_solicitud", parametrosSolicitudes). then(function(responseSolicitudes) {
                 if (Object.keys(responseSolicitudes.data.Data).length > 0) {
                   ctrl.conSolicitudes = true;
@@ -880,7 +882,7 @@ angular.module('poluxClienteApp')
                   ctrl.errorCargarParametros = true;
                 }
 
-                async function verificarSolicitud(solicitud) {
+                async function verificarSolicitud(solicitud, carreraPosgrado) {
                   return new Promise((resolve, reject) => {
                     let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                       return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
@@ -905,19 +907,34 @@ angular.module('poluxClienteApp')
 
                     poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
                       ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                        console.log("Obtener Datos Estudiante 3", codigo_estudiante)
+                        console.log("Obtener Datos Estudiante", codigo_estudiante)
                         academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
                           if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                             var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                            console.log("carreraEstudiante", carreraEstudiante);
                             let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
                               return estadoSol.Id == solicitud.EstadoSolicitud
                             })
                             if(lista_roles.includes("POSGRADO")) {
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
+                              //Almacenar el nombre de la carrera de posgrado en la solicitud
+                              solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
+                              //Almacenar el codigo de la carrera de posgrado en la solicitud
+                              solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                               ctrl.solicitudes.push(solicitud.data);
+                              //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
+                              ctrl.gridOptions.columnDefs[1].width = '20%';
+                              //Crear la nueva columna (en segundo lugar después de 'Número de Radicado') para colocar el nombre del Proyecto Curricular de Posgrado
+                              ctrl.gridOptions.columnDefs.push({
+                                name: 'CarreraPosgrado',
+                                displayName: $translate.instant('CARRERA'),
+                                width: '20%',
+                              })
                               ctrl.gridOptions.data = ctrl.solicitudes;
+
+                              console.log("solicitud.data", solicitud.data);
                             }
                             if (carreras.includes(carreraEstudiante)) {
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
@@ -952,10 +969,14 @@ angular.module('poluxClienteApp')
                       let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                         return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
                       })
+                      console.log("tipoSolicitudTemp", tipoSolicitudTemp);
+
                       let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                         return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
                       })
-                      //console.log("TipoSolicitudTemp 828", tipoSolicitudTemp);
+                      console.log("modalidadTemp", modalidadTemp);
+
+                      //Probablemente en este primer if (SAD_PLX = Solicitud Director Trabajo de Grado) nunca entre porque para Posgrado no existe esa solicitud
                       if (tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX") {
                         //console.log("Línea 829", tipoSolicitudTemp);
                         for (var i = 0; i < responseDetalles.data.Data.length; i++) {
@@ -973,9 +994,10 @@ angular.module('poluxClienteApp')
                             solPosgrado = true;
                             var datosMaterias = responseDetalles.data.Data[i].Descripcion.split("-");
                             var carrera = JSON.parse(datosMaterias[1]);
+                            console.log("carreraDetalles", carrera);
                             if (carreras.includes((carrera.Codigo).toString())) {
                               responseAux = responseDetalles.data.Data[i]
-                              await verificarSolicitud(solicitud)
+                              await verificarSolicitud(solicitud, carrera);
                               if (solPosgrado) {
                                 var parametrosRespuesta = "";
                                 var query = ",EstadoSolicitud.in:"
@@ -991,6 +1013,8 @@ angular.module('poluxClienteApp')
                                       query += estado.Id.toString()
                                     }
                                   });
+                                  console.log("query ESPELE", query);
+
                                   parametrosRespuesta = $.param({
                                     query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + query,
                                     limit: 0
@@ -1007,6 +1031,8 @@ angular.module('poluxClienteApp')
                                       query += estado.Id.toString()
                                     }
                                   });
+                                  console.log("query ESPELE2", query);
+
                                   parametrosRespuesta = $.param({
                                     query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + query,
                                     limit: 0
@@ -1023,6 +1049,8 @@ angular.module('poluxClienteApp')
                             }
                           }
                         }
+
+                      console.log("ctrl.solicitudes", ctrl.solicitudes);
                       } else {
                         await verificarSolicitud(solicitud)
                         UserExiste = true;
@@ -1731,6 +1759,19 @@ angular.module('poluxClienteApp')
             //$('#modalVerSolicitud').modal('show');
             break;
           case "responder":
+            //Almacena el proyecto curricular de la solicitud seleccionada en $rootScope
+            $rootScope.proyectoCurricularPosgrado = row.entity.CarreraPosgrado;
+            console.log('Carrera seleccionada:', $rootScope.proyectoCurricularPosgrado);
+
+            //Trae todos los datos del proyecto curricular de la solicitud seleccionada
+            var proyectoCurricularSeleccionado = ctrl.solicitudes.find(solicitud => {
+              return solicitud.CarreraPosgrado == row.entity.CarreraPosgrado; //Proyecto Curricular de Posgrado de la Fila seleccionada en el grid
+            });
+
+            //Extraer solo el código del proyecto curricular de la solicitud seleccionada
+            $rootScope.codigoProyectoCurricularPosgrado = proyectoCurricularSeleccionado.CodigoCarreraPosgrado;
+            console.log('Código Carrera seleccionada:', $rootScope.codigoProyectoCurricularPosgrado);
+
             //$('#modalEvaluarSolicitud').modal('show');
             $location.path("solicitudes/aprobar_solicitud/" + row.entity.Id);
             break;

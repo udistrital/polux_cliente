@@ -89,7 +89,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, $rootScope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
       var ctrl = this;
 
       ctrl.rol = "";
@@ -728,6 +728,7 @@ angular.module('poluxClienteApp')
                 ctrl.tieneCoDirector = true;
               }
             });
+            console.log("ctrl.detallesSolicitud", ctrl.detallesSolicitud)
             $q.all(promises).then(function () {
               //CAMBIO DE VISUALIZACIÓN DE PARAMETRO
               angular.forEach(ctrl.detallesSolicitud, function (data_detalle) {
@@ -2100,9 +2101,6 @@ angular.module('poluxClienteApp')
 
           async function aprobarPosgrado() {
             return new Promise(async (resolve, reject) => {
-              console.log("ctrl.rol", ctrl.rol);
-              console.log("ctrl.roles", ctrl.roles);
-
               //Trae los registros de la tabla Respuesta_Solicitud con campo Activo True
               var parametrosRespuestaSol = $.param({
                 query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
@@ -2145,6 +2143,18 @@ angular.module('poluxClienteApp')
                     return estSol.CodigoAbreviacion == respuestaRechazo
                   });
 
+                  //Traer el Estado de Trabajo de Grado en Cancelado
+                  /*let parametrosConsulta = $.param({
+                    query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                  });
+
+                  await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                    estadoTrabajoGrado = parametros.data.Data[0];
+                  });
+                  
+                  //Se coloca en rechazo el trabajo de grado
+                  ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
+
                   //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Rechazada por Consejo de Carrera [Coordinador Pregrado])
                   ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                 }
@@ -2185,28 +2195,199 @@ angular.module('poluxClienteApp')
 
                 console.log("ctrl.carrerasCoordinador", ctrl.carrerasCoordinador);
 
-                angular.forEach(ctrl.carrerasCoordinador, async function (carrera) {
-                  var contadorCarrerasCoordinador = 0;
+                var proyectoCurricularSeleccionado = ctrl.carrerasCoordinador.find(carrera => {
+                  //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
+                  return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; 
+                });
 
-                  //Va a responder el Coordinador del Proyecto Curricular 1
-                  if(carrera.codigo_proyecto_curricular == infoESPELE.Codigo) {
-                    contadorCarrerasCoordinador += 1;
+                console.log("Proyecto Curricular Seleccionado: ", proyectoCurricularSeleccionado);
 
-                    respuestaAprobado = "ACPO1_PLX" //Aprobado por Coordinador de Posgrado Opcion 1
-                    respuestaRechazo = "RCPO1_PLX" //Rechazado por Coordinador de Posgrado Opcion 1
-                    
-                    //Si es Coordinador Posgrado de Proyecto Curricular 1 y la Opción Prioritaria también es la 1
-                    if(infoESPELE.Opcion == opcionPrioridad) {
+                //Va a responder el Coordinador del Proyecto Curricular 1
+                if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE.Codigo) {
+                  respuestaAprobado = "ACPO1_PLX" //Aprobado por Coordinador de Posgrado Opcion 1
+                  respuestaRechazo = "RCPO1_PLX" //Rechazado por Coordinador de Posgrado Opcion 1
+                  
+                  //Si es Coordinador Posgrado de Proyecto Curricular 1 y la Opción Prioritaria también es la 1
+                  if(infoESPELE.Opcion == opcionPrioridad) {
+                    //Si en el Select se elige Aprobar Solicitud
+                    if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                      console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+
+                      //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes se ponía ACP01_PLX
+                      var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACC_PLX"
+                      });
+                      
+                      //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrerra) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1) 
+                      ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                      //Traer el Estado de Trabajo de Grado en Curso
+                      let parametrosConsulta = $.param({
+                        query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                      });
+
+                      var estadoTrabajoGrado;
+                      await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                        estadoTrabajoGrado = parametros.data.Data[0];
+                      });
+
+                      //Se coloca en curso el trabajo de grado
+                      ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                      //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                      ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                      //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                      ctrl.dataRespuesta.MateriasProPos = true;
+                    }
+                    //Si en el Select se elige Rechazar Solicitud
+                    else {
+                      //Si la solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
+                      });
+                      console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
+
+                      //O si la solicitud inicial se encuentra en Aceptado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoACPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACPO2_PLX" //4656 - Aceptado por Coordinador de Posgrado Opción 2
+                      });
+
+                      //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                      //Si la respuesta anterior es rechazado por Coordinador de Posgrado 2
+                      if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
+
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                      } 
+                      //Si la respuesta anterior es aprobado por Coordinador de Posgrado 2
+                      else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
+
+                        //Traer el Estado de Solicitud de Aprobado por consejo de carrera
+                        var estadoACCSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX" //4612 - Aprobado por consejo de carrera
+                        });
+
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 | Antes era 4656 (Aprobada por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
+                        
+                        //Traer el Estado de Trabajo de Grado en Curso
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se coloca En Curso el estado del trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se coloca en Vinculación Trabajo Grado al Usuario de la respuesta anterior (Coordinador Posgrado Opción 2).
+                        ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                        //Poner el campo de la respuesta anterior en False
+                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                        //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                        ctrl.dataRespuesta.MateriasProPos = true;
+                        
+                        //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                        resolve();
+                      }
+
+                      estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == respuestaRechazo
+                      });
+    
+                      console.log("estadoSolicitud", estadoSolicitud);
+
+                      //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
+                      ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                    }
+
+                    //Poner el campo de la respuesta anterior en False
+                    ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                    //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                    resolve();
+                  }
+                  //Si es Coordinador de Proyecto Curricular 1 y es la Opción NO Prioritaria
+                  else {
+                    //Solicitud inicial se encuentra en Aprobado por Consejo de Carrera significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                    var estadoACPRSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
+                    });
+                    console.log("estadoACPRSolicitud", estadoACPRSolicitud);
+
+                    //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                    var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
+                    });
+                    console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
+
+                    //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                    //Si la respuesta anterior es de Coordinador de Pregrado
+                    if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
                       //Si en el Select se elige Aprobar Solicitud
                       if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                        console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+                        console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
 
                         //Traer el Estado en que el codigo de abreviación ACP01_PLX
-                        var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == respuestaAprobado
                         });
-                        
+
                         //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
+                      //Si en el Select se elige Rechazar Solicitud
+                      else {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
+
+                      //Poner el campo de la respuesta anterior en False
+                      ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                      //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                      resolve();
+                    }
+                    //Si la respuesa anterior es Rechazada por Coordinador de Posgrado Opción 2 (PRIORITARIA)
+                    else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                      //Si en el Select se elige Aprobar Solicitud
+                      if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                        console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
+
+                        //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX"
+                        });
+
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                         //Traer el Estado de Trabajo de Grado en Curso
@@ -2214,10 +2395,11 @@ angular.module('poluxClienteApp')
                           query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
                         });
 
-                        var estadoTrabajoGrado;
                         await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
                           estadoTrabajoGrado = parametros.data.Data[0];
                         });
+
+                        console.log("estadoTrabajoGrado", estadoTrabajoGrado);
 
                         //Se coloca en curso el trabajo de grado
                         ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
@@ -2230,80 +2412,29 @@ angular.module('poluxClienteApp')
                       }
                       //Si en el Select se elige Rechazar Solicitud
                       else {
-                        //Si la solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                        var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
-                        });
-                        console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
-
-                        //O si la solicitud inicial se encuentra en Aceptado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                        var estadoACPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == "ACPO2_PLX" //4656 - Aceptado por Coordinador de Posgrado Opción 2
-                        });
-
-                        //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
-                        //Si la respuesta anterior es rechazado por Coordinador de Posgrado 2
-                        if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
-                          console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
-
-                          //Traer el Estado de Trabajo de Grado en Cancelado
-                          let parametrosConsulta = $.param({
-                            query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
-                          });
-
-                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                            estadoTrabajoGrado = parametros.data.Data[0];
-                          });
-
-                          //Se coloca en rechazo el trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-                        } 
-                        //Si la respuesta anterior es aprobado por Coordinador de Posgrado 2
-                        else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
-                          console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
-
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobada por Coordinador de Posgrado Opcion 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACPO2Solicitud.Id;
-                          
-                          //Traer el Estado de Trabajo de Grado en Curso
-                          let parametrosConsulta = $.param({
-                            query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
-                          });
-
-                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                            estadoTrabajoGrado = parametros.data.Data[0];
-                          });
-
-                          //Se coloca En Curso el estado del trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-
-                          //Se coloca en Vinculación Trabajo Grado al Usuario de la respuesta anterior (Coordinador Posgrado Opción 2).
-                          ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
-
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                          //Poner el campo de la respuesta anterior en False
-                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-
-                          //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
-                          ctrl.dataRespuesta.MateriasProPos = true;
-                          
-                          //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                          resolve();
-                        }
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
 
                         estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == respuestaRechazo
                         });
       
-                        console.log("estadoSolicitud", estadoSolicitud);
-
                         //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
                       }
 
                       //Poner el campo de la respuesta anterior en False
@@ -2312,366 +2443,253 @@ angular.module('poluxClienteApp')
                       //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                       resolve();
                     }
-                    //Si es Coordinador de Proyecto Curricular 1 y es la Opción NO Prioritaria
-                    else {
-                      //Solicitud inicial se encuentra en Aprobado por Consejo de Carrera significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                      var estadoACPRSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                        return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
-                      });
-                      console.log("estadoACPRSolicitud", estadoACPRSolicitud);
+                  }
+                }
+                //Va a responder el Coordinador del Proyecto Curricular 2
+                else if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE2.Codigo) {
+                  respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
+                  respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
+                  
+                  //Si es Coordinador Posgrado de Proyecto Curricular 2 y la Opción Prioritaria también es la 2
+                  if(infoESPELE2.Opcion == opcionPrioridad) {
+                    //Si en el Select se elige Aprobar Solicitud
+                    if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                      console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
 
-                      //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                      var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                        return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
+                      //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP02_PLX
+                      var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACC_PLX"
                       });
-                      console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
+    
+                      console.log("estadoSolicitud", estadoSolicitud);
+                      
+                      //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                      ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                      //Traer el Estado de Trabajo de Grado en Curso
+                      let parametrosConsulta = $.param({
+                        query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                      });
+
+                      await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                        estadoTrabajoGrado = parametros.data.Data[0];
+                      });
+
+                      //Se coloca en curso el trabajo de grado
+                      ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                      //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                      ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                      //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                      ctrl.dataRespuesta.MateriasProPos = true;
+                    }
+                    //Si en el Select se elige Rechazar Solicitud
+                    else {
+                      //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
+                      });
+                      console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
+
+                      //Solicitud inicial se encuentra en Aprobado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoACPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACPO1_PLX" //4654 - Aprobado por Coordinador de Posgrado Opción 1
+                      });
 
                       //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
-                      //Si la respuesta anterior es de Coordinador de Pregrado
-                      if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
-                        //Si en el Select se elige Aprobar Solicitud
-                        if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                          console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+                      //Si la respuesta anterior es rechazado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
+                      if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
 
-                          //Traer el Estado en que el codigo de abreviación ACP01_PLX
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaAprobado
-                          });
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
+                        });
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                        }
-                        //Si en el Select se elige Rechazar Solicitud
-                        else {
-                          console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
 
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaRechazo
-                          });
-        
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                        }
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
 
-                        //Poner el campo de la respuesta anterior en False
-                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                      } 
+                      //Si la respuesta anterior es aprobado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
+                      else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO1Solicitud.Id) {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
 
-                        //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                        resolve();
-                      }
-                      //Si la respuesa anterior es Rechazada por Coordinador de Posgrado Opción 2 (PRIORITARIA)
-                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
-                        //Si en el Select se elige Aprobar Solicitud
-                        if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                          console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
+                        //Traer el Estado de Solicitud de Aprobado por consejo de carrera
+                        var estadoACCSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX" //4612 - Aprobado por consejo de carrera
+                        });
 
-                          //Traer el Estado en que el codigo de abreviación ACP01_PLX
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaAprobado
-                          });
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobada por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
+                        
+                        //Traer el Estado de Trabajo de Grado en Curso
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                        });
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
 
-                          //Traer el Estado de Trabajo de Grado en Curso
-                          let parametrosConsulta = $.param({
-                            query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
-                          });
+                        //Se coloca En Curso el estado del trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
 
-                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                            estadoTrabajoGrado = parametros.data.Data[0];
-                          });
-
-                          console.log("estadoTrabajoGrado", estadoTrabajoGrado);
-
-                          //Se coloca en curso el trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                          //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
-                          ctrl.dataRespuesta.MateriasProPos = true;
-                        }
-                        //Si en el Select se elige Rechazar Solicitud
-                        else {
-                          console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
-
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaRechazo
-                          });
-        
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-
-                          //Traer el Estado de Trabajo de Grado en Cancelado
-                          let parametrosConsulta = $.param({
-                            query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
-                          });
-
-                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                            estadoTrabajoGrado = parametros.data.Data[0];
-                          });
-
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                          //Se coloca en rechazo el trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-                        }
+                        //Se coloca en Vinculación Trabajo Grado al Usuario de la respuesta anterior (Coordinador Posgrado Opción 1).
+                        ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
 
                         //Poner el campo de la respuesta anterior en False
                         ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
 
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                        //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                        ctrl.dataRespuesta.MateriasProPos = true;
+                        
                         //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                         resolve();
                       }
+
+                      estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == respuestaRechazo
+                      });
+    
+                      console.log("estadoSolicitud", estadoSolicitud);
+
+                      //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                      ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                     }
+                    //Poner el campo de la respuesta anterior en False
+                    ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                    //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                    resolve();
                   }
-                  //Va a responder el Coordinador del Proyecto Curricular 2
-                  else if (infoESPELE2 != undefined) {
-                    if (carrera.codigo_proyecto_curricular == infoESPELE2.Codigo) {
-                      contadorCarrerasCoordinador += 1;
+                  //Cuando la opción prioritaria y el Proyecto Curricular no coinciden
+                  else {
+                    //Solicitud inicial se encuentra en Aprobado por Consejo de Carrera significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                    var estadoACPRSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
+                    });
+                    console.log("estadoACPRSolicitud", estadoACPRSolicitud);
 
-                      respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
-                      respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
+                    //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                    var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
+                    });
+                    console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
 
-                      //Si es Coordinador Posgrado de Proyecto Curricular 2 y la Opción Prioritaria también es la 2
-                      if(infoESPELE2.Opcion == opcionPrioridad) {
-                        //Si en el Select se elige Aprobar Solicitud
-                        if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                          console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
+                    //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                    //Si la respuesta anterior fue el Coordinador de Pregrado
+                    if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
+                      //Si en el Select se elige Aprobar Solicitud
+                      if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                        console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
-                          //Traer el Estado en que el codigo de abreviación ACP02_PLX
-                          var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaAprobado
-                          });
+                        //Traer el Estado en que el codigo de abreviación ACP02_PLX
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaAprobado
+                        });
 
-                          console.log("estadoSolicitud", estadoSolicitud);
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
+                      //Si en el Select se elige Rechazar Solicitud
+                      else {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-
-                          //Traer el Estado de Trabajo de Grado en Curso
-                          let parametrosConsulta = $.param({
-                            query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
-                          });
-
-                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                            estadoTrabajoGrado = parametros.data.Data[0];
-                          });
-
-                          //Se coloca en curso el trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                          //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
-                          ctrl.dataRespuesta.MateriasProPos = true;
-                        }
-                        //Si en el Select se elige Rechazar Solicitud
-                        else {
-                          //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                          var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
-                          });
-                          console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
-
-                          //Solicitud inicial se encuentra en Aprobado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                          var estadoACPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == "ACPO1_PLX" //4654 - Aprobado por Coordinador de Posgrado Opción 1
-                          });
-
-                          //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
-                          //Si la respuesta anterior es rechazado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
-                          if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
-                            console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
 
                             //Traer el Estado de Trabajo de Grado en Cancelado
                             let parametrosConsulta = $.param({
                               query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
                             });
 
-                            await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                              estadoTrabajoGrado = parametros.data.Data[0];
-                            });
-
-                            //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                            ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                            //Se coloca en rechazo el trabajo de grado
-                            ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-                          }
-                          //Si la respuesta anterior es aprobado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
-                          else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO1Solicitud.Id) {
-                            console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
-
-                            //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobada por Coordinador de Posgrado Opcion 1)
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACPO1Solicitud.Id;
-
-                            //Traer el Estado de Trabajo de Grado en Curso
-                            let parametrosConsulta = $.param({
-                              query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
-                            });
-
-                            await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                              estadoTrabajoGrado = parametros.data.Data[0];
-                            });
-
-                            //Se coloca En Curso el estado del trabajo de grado
-                            ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-
-                            //Se coloca en Vinculación Trabajo Grado al Usuario de la respuesta anterior (Coordinador Posgrado Opción 1).
-                            ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
-
-                            //Poner el campo de la respuesta anterior en False
-                            ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-
-                            //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                            ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                            //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
-                            ctrl.dataRespuesta.MateriasProPos = true;
-
-                            //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                            resolve();
-                          }
-
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaRechazo
-                          });
-
-                          console.log("estadoSolicitud", estadoSolicitud);
-
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                        }
-
-                        //Poner el campo de la respuesta anterior en False
-                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-
-                        //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                        resolve();
-                      }
-                      //Cuando la opción prioritaria y el Proyecto Curricular no coinciden
-                      else {
-                        //Solicitud inicial se encuentra en Aprobado por Consejo de Carrera significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                        var estadoACPRSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
-                        });
-                        console.log("estadoACPRSolicitud", estadoACPRSolicitud);
-
-                        //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                        var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
-                        });
-                        console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
-
-                        //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
-                        //Si la respuesta anterior fue el Coordinador de Pregrado
-                        if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
-                          //Si en el Select se elige Aprobar Solicitud
-                          if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                            console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
-
-                            //Traer el Estado en que el codigo de abreviación ACP02_PLX
-                            estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                              return estSol.CodigoAbreviacion == respuestaAprobado
-                            });
-
-                            //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                          }
-                          //Si en el Select se elige Rechazar Solicitud
-                          else {
-                            console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
-
-                            estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                              return estSol.CodigoAbreviacion == respuestaRechazo
-                            });
-
-                            //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                          }
-
-                          //Poner el campo de la respuesta anterior en False
-                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-
-                          //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                          resolve();
-                        }
-                        //Si la respuesta anterior fue Rechazado por Coordinador de Posgrado Opción 1 (Opción PRIORITARIA)
-                        else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
-                          //Si en el Select se elige Aprobar Solicitud
-                          if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                            console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
-
-                            //Traer el Estado en que el codigo de abreviación ACP01_PLX
-                            estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                              return estSol.CodigoAbreviacion == respuestaAprobado
-                            });
-
-                            //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-
-                            //Traer el Estado de Trabajo de Grado en Curso
-                            let parametrosConsulta = $.param({
-                              query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
-                            });
-
-                            await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                              estadoTrabajoGrado = parametros.data.Data[0];
-                            });
-
-                            console.log("estadoTrabajoGrado", estadoTrabajoGrado);
-
-                            //Se coloca en curso el trabajo de grado
-                            ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-
-                            //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                            ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                            //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
-                            ctrl.dataRespuesta.MateriasProPos = true;
-                          }
-                          //Si en el Select se elige Rechazar Solicitud
-                          else {
-                            console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
-
-                            estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                              return estSol.CodigoAbreviacion == respuestaRechazo
-                            });
-
-                            //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-
-                            //Traer el Estado de Trabajo de Grado en Cancelado
-                            let parametrosConsulta = $.param({
-                              query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
-                            });
-
-                            await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                              estadoTrabajoGrado = parametros.data.Data[0];
-                            });
-
-                            //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                            ctrl.dataRespuesta.RespuestaNueva.Activo = false;
-
-                            //Se coloca en rechazo el trabajo de grado
-                            ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-                          }
-
-                          //Poner el campo de la respuesta anterior en False
-                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-
-                          //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                          resolve();
-                        }
-                      }
+                      //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                      resolve();
                     }
-                  }                 
-                })
+                    //Si la respuesta anterior fue Rechazado por Coordinador de Posgrado Opción 1 (Opción PRIORITARIA)
+                    else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
+                      //Si en el Select se elige Aprobar Solicitud
+                      if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                        console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+
+                        //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX"
+                        });
+
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                        //Traer el Estado de Trabajo de Grado en Curso
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        console.log("estadoTrabajoGrado", estadoTrabajoGrado);
+
+                        //Se coloca en curso el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                        //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                        ctrl.dataRespuesta.MateriasProPos = true;
+                      }
+                      //Si en el Select se elige Rechazar Solicitud
+                      else {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                      }
+
+                      //Poner el campo de la respuesta anterior en False
+                      ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                      //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                      resolve();
+                    }
+                  }
+                }                 
               }
             })
           }
