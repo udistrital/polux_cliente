@@ -1830,7 +1830,7 @@ angular.module('poluxClienteApp')
                 });
                 ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id 
               }
-              console.log("Sale de los condicionales");
+              //console.log("Sale de los condicionales");
               // let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
               //   return estEspacioAcademico.CodigoAbreviacion == "ESP_CAN_PLX"
               // })

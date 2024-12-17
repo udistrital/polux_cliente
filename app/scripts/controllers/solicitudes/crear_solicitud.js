@@ -2800,7 +2800,7 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros 
        */
       ctrl.openModalDataARL = function () {
-      console.log("Si llega la orden!!!")
+      //console.log("Si llega la orden!!!")
       // Mostrar el modal
         $('#modalDataPersonalARL').modal('show');
       };
