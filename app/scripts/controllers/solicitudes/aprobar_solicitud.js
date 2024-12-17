@@ -1771,6 +1771,7 @@ angular.module('poluxClienteApp')
                 }
               }
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
+              console.log("Entra a SCM 1774")
               //solicitud de cancelacion de modalidad
               //se crea data del estudiante
               let estadoEstudianteTrabajoGradoTemp = ctrl.EstadoEstudianteTrabajoGrado.find(estEstud => {
@@ -1788,6 +1789,24 @@ angular.module('poluxClienteApp')
 
               ctrl.dataRespuesta.VinculacionesCancelacion = ctrl.docentesVinculadosTg;
               ctrl.dataRespuesta.EstudianteTrabajoGrado = dataEstudianteTg;
+              console.log("Modalidad", ctrl.detallesSolicitud.tipoSolicitud.Modalidad);
+              console.log("Modalidades", ctrl.Modalidad);
+              let ModalidadTemp = ctrl.Modalidad.find(data => {
+                return data.CodigoAbreviacion == "EAPOS_PLX"
+              });
+              if(ctrl.detallesSolicitud.tipoSolicitud.Modalidad == ModalidadTemp.Id && ctrl.rol == "PREGRADO") {
+                console.log("Es por acá parcero");
+                let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
+                return data.CodigoAbreviacion == "ACPR_PLX"                
+                });
+                ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id
+
+                let estadoEstudianteTrabajoGradoTemp = ctrl.EstadoEstudianteTrabajoGrado.find(estEstud => {
+                return estEstud.CodigoAbreviacion == "EST_ACT_PLX"
+                });
+                ctrl.dataRespuesta.EstudianteTrabajoGrado.EstadoEstudianteTrabajoGrado = estadoEstudianteTrabajoGradoTemp.Id
+              }
+
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SMDTG_PLX") {
               //solicitud de cambio titulo de trabajo de grado
               var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
@@ -1795,35 +1814,52 @@ angular.module('poluxClienteApp')
               tgTemp.Titulo = ctrl.tituloNuevo;
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") {
-              let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
-                return estEspacioAcademico.CodigoAbreviacion == "ESP_CAN_PLX"
-              })
-              //solicitud de cambio de materia
-              var espacios = [];
-              //Asignatura vieja
-              espacios.push({
-                "Nota": 0,
-                "EspaciosAcademicosElegibles": {
-                  "Id": 0,
-                  "CodigoAsignatura": ctrl.asignaturaActual,
-                },
-                "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
-                "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+              let ModalidadTemp = ctrl.Modalidad.find(data => {
+                return data.CodigoAbreviacion == "EAPOS_PLX"
               });
-              //Asignatura Nueva
-              estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
-                return estEspacioAcademico.CodigoAbreviacion == "ESP_ACT_PLX"
-              })
-              espacios.push({
-                "Nota": 0,
-                "EspaciosAcademicosElegibles": {
-                  "Id": 0,
-                  "CodigoAsignatura": ctrl.asignaturaNueva,
-                },
-                "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
-                "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
-              });
-              ctrl.dataRespuesta.EspaciosAcademicos = espacios;
+              if(ctrl.detallesSolicitud.tipoSolicitud.Modalidad == ModalidadTemp.Id && ctrl.rol == "PREGRADO") {
+                
+                let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
+                return data.CodigoAbreviacion == "ACPR_PLX"                
+                });
+                ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id               
+                
+              } else if (ctrl.rol == "POSGRADO") {
+                let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
+                return data.CodigoAbreviacion == "ACC_PLX"
+                });
+                ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id 
+              }
+              console.log("Sale de los condicionales");
+              // let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
+              //   return estEspacioAcademico.CodigoAbreviacion == "ESP_CAN_PLX"
+              // })
+              // //solicitud de cambio de materia
+              // var espacios = [];
+              // //Asignatura vieja
+              // espacios.push({
+              //   "Nota": 0,
+              //   "EspaciosAcademicosElegibles": {
+              //     "Id": 0,
+              //     "CodigoAsignatura": ctrl.asignaturaActual,
+              //   },
+              //   "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
+              //   "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+              // });
+              // //Asignatura Nueva
+              // estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
+              //   return estEspacioAcademico.CodigoAbreviacion == "ESP_ACT_PLX"
+              // })
+              // espacios.push({
+              //   "Nota": 0,
+              //   "EspaciosAcademicosElegibles": {
+              //     "Id": 0,
+              //     "CodigoAsignatura": ctrl.asignaturaNueva,
+              //   },
+              //   "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
+              //   "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+              // });
+              // ctrl.dataRespuesta.EspaciosAcademicos = espacios;
 
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX") {
               //Solicitud de revisión de tg
@@ -2044,6 +2080,7 @@ angular.module('poluxClienteApp')
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de PREGRADO
               if (ctrl.rol == "PREGRADO") {
+                console.log("Pasa por responder PREGRADO");
                 //Si la solicitud inicial se encuentra en Radicado significa que el Coordinador de Pregrado debe Aprobar o Rechazar la solicitud
                 var estadoRadicadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                   return estSol.CodigoAbreviacion == "RDC_PLX" //4610 - Radicado
