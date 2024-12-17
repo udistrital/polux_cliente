@@ -501,10 +501,32 @@ angular.module('poluxClienteApp')
             return data.CodigoAbreviacion == "ACPR_PLX"
           });
 
+          let EstadoSolicitudTemp8 = ctrl.EstadosSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "ACPO1_PLX"
+          });
+
+          let EstadoSolicitudTemp9 = ctrl.EstadosSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "RCPO1_PLX"
+          });
+
+          let EstadoSolicitudTemp10 = ctrl.EstadosSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "ACPO2_PLX"
+          });
+
+          let EstadoSolicitudTemp11 = ctrl.EstadosSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "RCPO2_PLX"
+          });
+
           var parametrosSolicitudesActuales = $.param({
-            query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + "|" + EstadoSolicitudTemp3.Id + "|" + EstadoSolicitudTemp4.Id + "|" + EstadoSolicitudTemp5.Id + "|" + EstadoSolicitudTemp6.Id + "|" + EstadoSolicitudTemp7.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
+            query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + "|" + EstadoSolicitudTemp3.Id + "|" + EstadoSolicitudTemp4.Id + "|" + EstadoSolicitudTemp5.Id + "|" + EstadoSolicitudTemp6.Id + "|" + EstadoSolicitudTemp7.Id + "|" + EstadoSolicitudTemp8.Id + "|" + EstadoSolicitudTemp9.Id + "|" + EstadoSolicitudTemp10.Id + "|" + EstadoSolicitudTemp11.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
             limit: 1,
           });
+
+          // var parametrosSolicitudesActuales = $.param({
+          //   query: "EstadoSolicitud.in:" + EstadoSolicitudTemp1.Id + "|" + EstadoSolicitudTemp2.Id + "|" + EstadoSolicitudTemp3.Id + "|" + EstadoSolicitudTemp4.Id + "|" + EstadoSolicitudTemp5.Id + "|" + EstadoSolicitudTemp6.Id + "|" + EstadoSolicitudTemp7.Id + ",activo:TRUE,SolicitudTrabajoGrado:" + id,
+          //   limit: 1,
+          // });
+
           poluxRequest.get("respuesta_solicitud", parametrosSolicitudesActuales).then(function(responseSolicitudesActuales) {
               if (Object.keys(responseSolicitudesActuales.data.Data[0]).length > 0) {
                 solicitudesActuales.push(responseSolicitudesActuales.data.Data[0]);
@@ -897,6 +919,7 @@ angular.module('poluxClienteApp')
             limit: 0
           });
           poluxRequest.get("vinculacion_trabajo_grado", parametrosVinculacion).then(function(responseVinculacion) {
+              console.log("Vinculación Trabajo Grado", responseVinculacion);
               ctrl.Trabajo.evaluadores = [];
               if (Object.keys(responseVinculacion.data.Data[0]).length === 0) {
                 responseVinculacion.data.Data = [];
@@ -918,6 +941,10 @@ angular.module('poluxClienteApp')
                 return data.CodigoAbreviacion == "CODIRECTOR_PLX"
               });
 
+              let RolTrabajoGradoTemp5 = ctrl.RolesTrabajoGrado.find(data => {
+                return data.CodigoAbreviacion == "COR_POSGRADO_PLX"
+              });
+
               angular.forEach(responseVinculacion.data.Data, function(vinculado) {
                 if (vinculado.RolTrabajoGrado == RolTrabajoGradoTemp1.Id) {
                   ctrl.Trabajo.directorInterno = vinculado;
@@ -930,6 +957,9 @@ angular.module('poluxClienteApp')
                 }
                 if (vinculado.RolTrabajoGrado == RolTrabajoGradoTemp4.Id) {
                   ctrl.Trabajo.codirector = vinculado;
+                }
+                if (vinculado.RolTrabajoGrado == RolTrabajoGradoTemp5.Id) {
+                  ctrl.Trabajo.coordinadorPosgrado = vinculado;
                 }
               });
               //
@@ -1058,6 +1088,7 @@ angular.module('poluxClienteApp')
             });
 
             if (Object.keys(responseTrabajoEstudiante.data.Data[0]).length > 0) {
+              console.log("response TrabajoEstudiante", responseTrabajoEstudiante.data.Data[0]);
               ctrl.Trabajo = responseTrabajoEstudiante.data.Data[0];
               ctrl.modalidad = responseTrabajoEstudiante.data.Data[0].TrabajoGrado.Modalidad;
               console.log("MODALIDAD 1", ctrl.modalidad)
@@ -1424,7 +1455,8 @@ angular.module('poluxClienteApp')
        * @param {Number} modalidad_seleccionada Modalidad seleccionada por el estudiante
        * @returns {undefined} No retorna ningún valor
        */
-      ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {        
+      ctrl.cargarDetalles = function(tipoSolicitudSeleccionada, modalidad_seleccionada) {   
+        console.log("Tipo Solicitud Seleccionada", tipoSolicitudSeleccionada);     
         if(ctrl.Docente==1 && ctrl.Docente_trabajos==false){
           ctrl.Docente_trabajos =true;
           ctrl.tipoSolicitud_Docente = tipoSolicitudSeleccionada;
@@ -1484,6 +1516,7 @@ angular.module('poluxClienteApp')
                 query: "TipoSolicitud:"+ ctrl.TipoSolicitud.Id +",Modalidad:" + ctrl.Trabajo.TrabajoGrado.Modalidad,
                 limit: 1,
               });
+              console.log("Modalidad", ctrl.Trabajo);
               poluxRequest.get("modalidad_tipo_solicitud", parametrosModalidadTipoSolicitud).then(function(responseModalidadTipoSolicitud) {
                 ctrl.ModalidadTipoSolicitud = responseModalidadTipoSolicitud.data.Data[0];
                   defer.resolve();
@@ -2410,6 +2443,20 @@ angular.module('poluxClienteApp')
             ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
           }
 
+          // ModalidadTemp = ctrl.Modalidades.find(data => {
+          //   return data.CodigoAbreviacion == "EAPOS_PLX"
+          // });
+          // console.log("revisa modalidad EAPOS")
+          // if((ctrl.TipoSolicitud.Id == TipoSolicitudTemp.Id) && (ctrl.modalidad == ModalidadTemp.CodigoAbreviacion)){
+          //   TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
+          //     return data.CodigoAbreviacion == "SAD_PLX"
+          //   });
+          //   let ModalidadesTipoSolicitudTemp = ctrl.ModalidadesTiposSolicitudes.find(data => {
+          //     return data.Modalidad == ModalidadTemp.Id && data.TipoSolicitud == TipoSolicitudTemp.Id
+          //   });
+          //   ctrl.ModalidadTipoSolicitud = ModalidadesTipoSolicitudTemp;
+          // }
+
           data_solicitud = {
             "Fecha": fecha,
             "ModalidadTipoSolicitud": ctrl.ModalidadTipoSolicitud,
@@ -2493,7 +2540,13 @@ angular.module('poluxClienteApp')
             },
             "Activo": true
           }
-          if (ctrl.Trabajo.TrabajoGrado.Modalidad.CodigoAbreviacion != "EAPOS") {
+
+          let ModalidadTemp1 = ctrl.Modalidades.find(data => {
+            return data.CodigoAbreviacion == "EAPOS_PLX"
+          });
+
+          if (ctrl.Trabajo.TrabajoGrado.Modalidad != ModalidadTemp1.Id) {
+            console.log("Entró al if != EAPOS", ctrl.Trabajo.TrabajoGrado.Modalidad)
             data_respuesta.EnteResponsable = ctrl.Trabajo.directorInterno.Usuario
           } else {
             EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
@@ -2748,7 +2801,7 @@ angular.module('poluxClienteApp')
        * @param {undefined} undefined No requiere parámetros 
        */
       ctrl.openModalDataARL = function () {
-      console.log("Si llega la orden!!!")
+      //console.log("Si llega la orden!!!")
       // Mostrar el modal
         $('#modalDataPersonalARL').modal('show');
       };
@@ -2763,6 +2816,7 @@ angular.module('poluxClienteApp')
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplió la petición y se resuelve con el objeto tieneProrrogas
        */
        ctrl.getdatasolicitudDocente = function(responseTrabajoEstudiante) {
+              console.log("Respuesta consulta dataSolicitudEstudiante", responseTrabajoEstudiante);
               ctrl.Trabajo = responseTrabajoEstudiante;
               ctrl.modalidad = responseTrabajoEstudiante.TrabajoGrado.Modalidad.Id;
               console.log("MODALIDAD 6", ctrl.modalidad)
