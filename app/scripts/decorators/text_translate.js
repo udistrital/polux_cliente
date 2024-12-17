@@ -124,6 +124,7 @@ var text_es = {
     PERIODO: "Periodo",
     CARRERA: "Proyecto curricular",
     POSGRADO: "Posgrado",
+    NOMBRE_POSGRADO: "Proyecto Curricular admitido",
     SOLICITUD_MATERIAS: "Solicitud escrita de las materias",
     JUSTIFICACION: "Justificación",
     CARTA_ACEPTACION_INSCRIPCION: "Carta de aceptación de inscripción",
