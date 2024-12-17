@@ -1223,7 +1223,7 @@ angular.module('poluxClienteApp')
                       "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id
                     })
                   });
-                  ctrl.dataRespuesta.EspaciosAcademicosInscritos = materiasAux
+                  //ctrl.dataRespuesta.EspaciosAcademicosInscritos = materiasAux
                 }
               }
             })
@@ -1383,6 +1383,15 @@ angular.module('poluxClienteApp')
               "Id": 0
             }
 
+            console.log("codigo posgrado: ",$rootScope.codigoProyectoCurricularPosgrado)
+
+            var data_espacio_academico = {
+              "TrabajoGrado": {
+                "Id": 0
+              },
+              "ProyectoCurricularTg": parseInt($rootScope.codigoProyectoCurricularPosgrado)
+            }
+
             ctrl.dataRespuesta.RespuestaAnterior = ctrl.rtaSol.RespuestaAnterior
             ctrl.dataRespuesta.RespuestaNueva = ctrl.rtaSol.RespuestaNueva
             ctrl.dataRespuesta.DocumentoSolicitud = ctrl.rtaSol.DocumentoSolicitud
@@ -1390,6 +1399,7 @@ angular.module('poluxClienteApp')
             ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
             ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
             ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
+            ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
 
             console.log("ctrl.dataRespuesta", ctrl.dataRespuesta);
 
