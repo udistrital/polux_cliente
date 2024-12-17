@@ -521,6 +521,47 @@ angular.module('poluxClienteApp')
                 ctrl.prioridad = parseInt(detalleAux.Descripcion)
               }
             });
+            
+            console.log("ctrl.detallesSolicitud", ctrl.detallesSolicitud);
+
+            let deleteDetalle;
+
+            //Recorrer los detalles con Codigo de Abreviación ESPELE y ESPELE2
+            for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
+              if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {                    
+                //Quitar el primer fragmento del string 'JSON-'
+                var detalleString = ctrl.detallesSolicitud[i].Descripcion.replace("JSON-", "");
+                
+                if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                  console.log("Entre a ESPELE");
+
+                  //Convertir el JSON en objeto si es ESPELE (Proyecto Curricular 1)
+                  var infoESPELE = JSON.parse(detalleString);
+
+                  if(infoESPELE.Codigo == $rootScope.codigoProyectoCurricularPosgrado) {
+                    deleteDetalle = "ESPELE2";
+                    break;
+                  }
+                }
+                else {
+                  console.log("Entre a ESPELE2");
+                  //Convertir el JSON en objeto si es ESPELE2 (Proyecto Curricular 2)
+                  var infoESPELE2 = JSON.parse(detalleString);
+
+                  if(infoESPELE2.Codigo == $rootScope.codigoProyectoCurricularPosgrado) {
+                    deleteDetalle = "ESPELE";
+                    break;
+                  }
+                }
+              }
+            }
+            console.log("deleteDetalle", deleteDetalle);
+
+            //Eliminar el detalle del proyecto curricular del cuál actualmente no se tiene seleccionado
+            ctrl.detallesSolicitud = ctrl.detallesSolicitud.filter(detalle => {
+              const codigoAbreviacion = detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion;
+              return codigoAbreviacion !== deleteDetalle;
+            })
 
             ctrl.detallesSolicitud.id = ctrl.solicitud;
             ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
