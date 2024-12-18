@@ -1,14 +1,16 @@
 <br>
 <div class="panel panel-default">
     <div class="panel-heading">
-
         {{'SOLICITAR_ASIGNATURAS' | translate}}
     </div>
+
     <div class="panel-body">
         <loading tam="3" load="d_solicitarAsignaturas.loading" message="d_solicitarAsignaturas.cargando"> </loading>
+        
         <div class="panel-body alert alert-danger" ng-if="!d_solicitarAsignaturas.loading && d_solicitarAsignaturas.errorCargando">
             {{'ERROR.CARGAR_ASIGNATURAS_SOLICITUD'|translate}}
         </div>
+
         <div ng-if="!d_solicitarAsignaturas.loading && !d_solicitarAsignaturas.errorCargando">
           <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}:</label>
           <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.anio}}</label>
@@ -20,47 +22,32 @@
           <div class="col-sm-10" ng-if="!d_solicitarAsignaturas.carreras.length>0">
               <label for="periodo" class="col-sm-10 control-label">{{'SIN_CARRERAS_SOLICITUDES' | translate}}.</label>
           </div>
+
           <div class="col-sm-10" ng-if="d_solicitarAsignaturas.carreras.length>0">
-            <select ng-model="carreraSeleccionada" name="carrera" class="form-control"
-            ng-change="d_solicitarAsignaturas.cargarMaterias(carreraSeleccionada, 1)">
+            <select ng-model="carreraSeleccionada" name="carrera" class="form-control" ng-change="d_solicitarAsignaturas.cargarMaterias(carreraSeleccionada, 1)" ng-disabled="selectsDeshabilitados">
               <option ng-repeat="p in d_solicitarAsignaturas.carreras" ng-value="p">{{p.Nombre}} </option>
-            </select><br>
+            </select><br> 
           </div>
-          <div class="panel-body" ng-if="d_solicitarAsignaturas.loadingAsignaturas">
-            <loading tam="3" load="d_solicitarAsignaturas.loadingAsignaturas" message="d_solicitarAsignaturas.cargando"> </loading>
-          </div>
-          <div class="col-sm-12">
-            <div class="panel-body alert alert-danger" ng-if="!d_solicitarAsignaturas.loadingAsignaturas && d_solicitarAsignaturas.errorCargandoAsignaturas">
-                {{'ERROR.CARGAR_ASIGNATURAS_SOLICITUD'|translate}}
-            </div>
-          </div>
-          <div class="panel panel-default panel-body col-md-12" ng-if="!d_solicitarAsignaturas.errorCargandoAsignaturas && !d_solicitarAsignaturas.loadingAsignaturas && d_solicitarAsignaturas.gridOptions.data.length > 0">
-            <div class="mi-grid" id="mi-grid" ui-grid="d_solicitarAsignaturas.gridOptions" ui-grid-pagination ui-grid-auto-resize  style="height: {{d_solicitarAsignaturas.desiredTableHeight + 'px'}}; width: {{d_solicitarAsignaturas.desiredTableWidth + 'px'}};"></div>
-          </div>
+
           <div class="col-sm-12" style="padding-bottom: 2%;">
             <label class="col-sm-4 control-label">{{'MATERIAS_POSGRADO.DOBLE_SOLICITUD' | translate}}</label>
             <switch class="col-sm-8 control-label" ng-model="d_solicitarAsignaturas.dobleSolicitud" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
           </div>
+
           <label for="carrera" ng-if="d_solicitarAsignaturas.dobleSolicitud" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
           <div class="col-sm-10" ng-if="!d_solicitarAsignaturas.carreras.length>0">
               <label for="periodo" class="col-sm-10 control-label">{{'SIN_CARRERAS_SOLICITUDES' | translate}}.</label>
           </div>
+
           <div class="col-sm-10" ng-if="d_solicitarAsignaturas.carreras.length>0 && d_solicitarAsignaturas.dobleSolicitud">
-            <select ng-model="carreraSeleccionada2" name="carrera2" class="form-control"
-            ng-change="d_solicitarAsignaturas.cargarMaterias(carreraSeleccionada2, 2)">
-              <option ng-repeat="p in d_solicitarAsignaturas.carreras" ng-value="p">{{p.Nombre}} </option>
+            <select ng-model="carreraSeleccionada2" name="carrera2" class="form-control" ng-change="d_solicitarAsignaturas.cargarMaterias(carreraSeleccionada2, 2)" ng-disabled="selectsDeshabilitados">
+              <option ng-repeat="p in d_solicitarAsignaturas.carreras" ng-value="p">{{p.Nombre}} </option> 
             </select><br>
           </div>
-          <div class="panel-body" ng-if="d_solicitarAsignaturas.loadingAsignaturas2">
-            <loading tam="3" load="d_solicitarAsignaturas.loadingAsignaturas" message="d_solicitarAsignaturas.cargando"> </loading>
-          </div>
-          <div class="col-sm-12">
-            <div class="panel-body alert alert-danger" ng-if="!d_solicitarAsignaturas.loadingAsignaturas2 && d_solicitarAsignaturas.errorCargandoAsignaturas2">
-                {{'ERROR.CARGAR_ASIGNATURAS_SOLICITUD'|translate}}
-            </div>
-          </div>
-          <div class="panel panel-default panel-body col-md-12" ng-if="!d_solicitarAsignaturas.errorCargandoAsignaturas2 && !d_solicitarAsignaturas.loadingAsignaturas2 && d_solicitarAsignaturas.gridOptions2.data.length > 0">
-            <div class="mi-grid" id="mi-grid" ui-grid="d_solicitarAsignaturas.gridOptions2" ui-grid-pagination ui-grid-auto-resize  style="height: {{d_solicitarAsignaturas.desiredTableHeight + 'px'}}; width: {{d_solicitarAsignaturas.desiredTableWidth + 'px'}};"></div>
+
+          <!-- Botón Confirmar -->
+          <div class="col-sm-12 text-right">
+            <button type="button" ng-click="confirmarSeleccion()" class="btn btn-success">Confirmar</button>
           </div>
         </div>
     </div>

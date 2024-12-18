@@ -28,13 +28,55 @@
     </div>
 
     <div class="panel-body">
-        <div class="button-container">
-            <button type="button" class="custom-btn" ng-click="generarReporte.generar_reporte_general()">
+        <label>{{'INFO_REPORTES' | translate}} </label>
+        <br>
+        <br>
+        <form name="formFiltrosReporte">
+            <label class="col-sm-1 control-label"> {{'SELECCIONAR_CARRERA' | translate}} </label>
+            <div class="col-sm-3">
+                <select class="form-control" ng-model="carrera_seleccionada" required>
+                    <option ng-repeat="carrera in generarReporte.carrerasFacultad" ng-value="carrera.codigo">
+                        {{carrera.codigo}} - {{carrera.nombre}} </option>
+                </select>
+            </div>
+            <label class="col-sm-1 control-label"> {{'SELECCIONE_ESTADO' | translate}} </label>
+            <div class="col-sm-2">
+                <select class="form-control" ng-model="estado_seleccionado" required>
+                    <option ng-repeat="estado in generarReporte.EstadosFiltro" ng-value="estado.nombre"> {{estado.nombre}}
+                    </option>
+                </select>
+            </div>
+    
+            <label class="col-sm-1" for="fecha"> {{'SELECCIONE_RANGO_FECHAS' | translate}} </label>
+            <input class="col-sm-1" type="date" id="fecha" ng-model="f_inicial" required>
+            <label class="col-sm-1" for="fecha"> {{'HASTA' | translate}} </label>
+            <input class="col-sm-1" type="date" id="fecha" ng-model="f_final" required>
+        </form>
+    </div>
+
+    <br>
+    <div ng-if="formFiltrosReporte.$valid">
+        <div class ="row">
+            <label class="col-sm-2 control-label"> </label>
+            <label class="col-sm-4 control-label">  {{'REPORTE_GENERAL' | translate}} </label>
+            <button type="button" class="col-sm-2 btn btn-success" ng-click="generarReporte.generar_reporte_general()">
                 {{'GENERAR_REPORTE_GENERAL' | translate}}
             </button>
-            <button type="button" class="custom-btn" ng-click="generarReporte.generar_reporte_solicitud()">
+            <label class="col-sm-5 control-label"> </label>
+        </div>
+    
+        <br>
+        <br>
+    
+        <div class ="row">
+            <label class="col-sm-2 control-label"> </label>
+            <label class="col-sm-4 control-label"> {{'REPORTE_SOLICITUDES' | translate}} </label>
+            <button type="button" class="col-sm-2 btn btn-success" ng-click="generarReporte.generar_reporte_solicitud()">
                 {{'GENERAR_REPORTE_SOLICITUD' | translate}}
             </button>
+            <label class="col-sm-5 control-label"> </label>
         </div>
     </div>
+    
+    <br>
 </div>
