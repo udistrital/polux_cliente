@@ -896,7 +896,6 @@ angular.module('poluxClienteApp')
                       'ModalidadTipoSolicitud': tipoSolicitudTemp.Nombre,
                       'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
                     }
-                    //console.log("modalidadTemp 768", modalidadTemp);
 
                     var parametrosUsuario = $.param({
                       query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
@@ -915,13 +914,18 @@ angular.module('poluxClienteApp')
                             let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
                               return estadoSol.Id == solicitud.EstadoSolicitud
                             })
-                            if(lista_roles.includes("POSGRADO")) {
+                            let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSolicitud => {
+                              return tipoSolicitud.Id == usuario.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                            })
+                            if(lista_roles.includes("POSGRADO")){
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
-                              //Almacenar el nombre de la carrera de posgrado en la solicitud
-                              solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
-                              //Almacenar el codigo de la carrera de posgrado en la solicitud
-                              solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
+                              if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX"){
+                                //Almacenar el nombre de la carrera de posgrado en la solicitud
+                                solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
+                                //Almacenar el codigo de la carrera de posgrado en la solicitud
+                                solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
+                              }
                               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                               ctrl.solicitudes.push(solicitud.data);
                               //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
