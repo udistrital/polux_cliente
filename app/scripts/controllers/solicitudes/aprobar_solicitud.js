@@ -521,7 +521,7 @@ angular.module('poluxClienteApp')
                 ctrl.prioridad = parseInt(detalleAux.Descripcion)
               }
             });
-            
+            /*
             console.log("ctrl.detallesSolicitud", ctrl.detallesSolicitud);
 
             let deleteDetalle;
@@ -561,7 +561,7 @@ angular.module('poluxClienteApp')
             ctrl.detallesSolicitud = ctrl.detallesSolicitud.filter(detalle => {
               const codigoAbreviacion = detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion;
               return codigoAbreviacion !== deleteDetalle;
-            })
+            })*/
 
             ctrl.detallesSolicitud.id = ctrl.solicitud;
             ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
