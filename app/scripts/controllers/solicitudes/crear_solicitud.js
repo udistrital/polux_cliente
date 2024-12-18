@@ -987,8 +987,7 @@ angular.module('poluxClienteApp')
                 angular.forEach(responseEspacios.data.Data, function(espacio) {
                   ctrl.espaciosElegidos.push(espacio.EspaciosAcademicosElegibles);
                 });
-                //
-                ctrl.carreraElegida = responseEspacios.data.Data[0].EspaciosAcademicosElegibles.CarreraElegible.Id;
+                // ctrl.carreraElegida = responseEspacios.data.Data[0].EspaciosAcademicosElegibles.CarreraElegible.Id;
               }
               defer.resolve();
             })
@@ -2919,5 +2918,3 @@ angular.module('poluxClienteApp')
               });
       }
     });
-
-    
