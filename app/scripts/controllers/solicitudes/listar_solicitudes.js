@@ -1235,6 +1235,7 @@ angular.module('poluxClienteApp')
               angular.forEach(responseAsistente.data.asistente.proyectos, function (carrera) {
                 carreras.push(carrera.proyecto);
               });
+
               var parametrosModalidadTipo = $.param({
                 limit: 0
               });
@@ -1245,7 +1246,7 @@ angular.module('poluxClienteApp')
               var query = "ESTADOSOLICITUD.in:"
               var guardaPrimero = false;
               ctrl.EstadoSolicitud.forEach(estado => {
-                if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX") {
+                if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX" || estado.CodigoAbreviacion == "ACPR_PLX" || estado.CodigoAbreviacion == "ACPO1_PLX" || estado.CodigoAbreviacion == "ACPO2_PLX" || estado.CodigoAbreviacion == "RCPO1_PLX" || estado.CodigoAbreviacion == "RCPO2_PLX") {
                   if (guardaPrimero) {
                     query += "|"
                   } else {
@@ -1254,6 +1255,7 @@ angular.module('poluxClienteApp')
                   query += estado.Id.toString()
                 }
               });
+
               var exclude = "SolicitudTrabajoGrado.ModalidadTipoSolicitud.Id.in:"
               guardaPrimero = false;
               modalidadTipoSol.Data.forEach(modTipo => {
@@ -1284,14 +1286,18 @@ angular.module('poluxClienteApp')
                 if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
                   responseSolicitudes.data.Data = [];
                 }
-                var verificarSolicitud = function (solicitud) {
-                  var defer = $q.defer();
+
+                async function verificarSolicitud(solicitud, carreraPosgrado) {
+                //var verificarSolicitud = function (solicitud, carreraPosgrado) {
+                  //var defer = $q.defer();
+                  return new Promise((resolve, reject) => {
                   let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                     return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
                   })
                   let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                     return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
                   })
+
                   solicitud.data = {
                     'Id': solicitud.SolicitudTrabajoGrado.Id,
                     'Modalidad': modalidadTemp.Nombre,
@@ -1309,37 +1315,161 @@ angular.module('poluxClienteApp')
                       academicaRequest.get("datos_basicos_estudiante", [codigo_estudiante]).then(function (response2) {
                         if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
                           var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
-                          if (carreras.includes(carreraEstudiante)) {
-                            let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
-                              return estadoSol.Id == solicitud.EstadoSolicitud
+                          let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
+                            return estadoSol.Id == solicitud.EstadoSolicitud
+                          })
+
+                          //La modalidad es Espacios Académicos de Posgrado
+                          if(modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                            solicitud.data.Respuesta = solicitud;
+                            solicitud.data.Carrera = carreraEstudiante;
+                            //Almacenar el nombre de la carrera de posgrado en la solicitud
+                            solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
+                            //Almacenar el codigo de la carrera de posgrado en la solicitud
+                            solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
+                            solicitud.data.Estado = estadoSolicitudTemp.Nombre;
+                            ctrl.solicitudes.push(solicitud.data);
+                            //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
+                            ctrl.gridOptions.columnDefs[1].width = '20%';
+                            //Crear la nueva columna (en segundo lugar después de 'Número de Radicado') para colocar el nombre del Proyecto Curricular de Posgrado
+                            ctrl.gridOptions.columnDefs.push({
+                              name: 'CarreraPosgrado',
+                              displayName: $translate.instant('CARRERA'),
+                              width: '20%',
                             })
+                            ctrl.gridOptions.data = ctrl.solicitudes;
+
+                            console.log("solicitud.data", solicitud.data);
+                          }
+
+                          if (carreras.includes(carreraEstudiante)) {
                             solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                             solicitud.data.Respuesta = solicitud;
                             // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
                             solicitud.data.Carrera = carreraEstudiante;
                             ctrl.solicitudes.push(solicitud.data);
-                            defer.resolve(solicitud.data);
                             ctrl.gridOptions.data = ctrl.solicitudes;
+                            resolve();
+                            //defer.resolve(solicitud.data);
                           } else {
-                            defer.resolve(carreraEstudiante);
+                            resolve();
+                            //defer.resolve(carreraEstudiante);
                           }
                         }
                       })
-                        .catch(function (error) {
+                        /*.catch(function (error) {
                           defer.reject(error);
-                        });
+                        });*/
                     })
-                      .catch(function (error) {
+                      /*.catch(function (error) {
                         defer.reject(error);
-                      });
+                      });*/
                   })
-                    .catch(function (error) {
+                    /*.catch(function (error) {
                       defer.reject(error);
-                    });
-                  return defer.promise;
-                }
+                    });*/
+                  //return defer.promise;
+                })
+              }
+
                 angular.forEach(responseSolicitudes.data.Data, function (solicitud) {
-                  promiseArr.push(verificarSolicitud(solicitud));
+                  var parametrosDetallesSolicitud = $.param({
+                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id,
+                    limit: 0
+                  });
+
+                  poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(async function(responseDetalles) {
+                    if (Object.keys(responseDetalles.data.Data).length === 0) {
+                      //console.log("responseDetalles", responseDetalles);
+                      ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
+                        ctrl.errorCargarParametros = true;
+                    } else {
+                      var UserExiste = false;
+                      let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
+                        return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                      })
+
+                      let modalidadTemp = ctrl.Modalidad.find(modalidad => {
+                        return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
+                      })
+
+                      //Solicitud Inicial y Materias de Posgrado
+                      if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                        var responseAux;
+                        for (var i = 0; i < responseDetalles.data.Data.length; i++) {
+                          if (responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || 
+                          responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                            solPosgrado = true;
+                            var datosMaterias = responseDetalles.data.Data[i].Descripcion.split("-");
+                            var carrera = JSON.parse(datosMaterias[1]);
+                            console.log("carreraDetalles", carrera);
+                            if (carreras.includes((carrera.Codigo).toString())) {
+                              responseAux = responseDetalles.data.Data[i]
+                              await verificarSolicitud(solicitud, carrera);
+                              //promiseArr.push(verificarSolicitud(solicitud, carrera));
+                              if (solPosgrado) {
+                                var parametrosRespuesta = "";
+                                var query = ",EstadoSolicitud.in:"
+                                if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                                  var guardaPrimero = false;
+                                  ctrl.EstadoSolicitud.forEach(estado => {
+                                    if (estado.CodigoAbreviacion == "ACPO1_PLX" || estado.CodigoAbreviacion == "RCPO1_PLX") {
+                                      if (guardaPrimero) {
+                                        query += "|"
+                                      } else {
+                                        guardaPrimero = true
+                                      }
+                                      query += estado.Id.toString()
+                                    }
+                                  });
+
+                                  parametrosRespuesta = $.param({
+                                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + query,
+                                    limit: 0
+                                  });
+                                } else if (responseAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                                  guardaPrimero = false;
+                                  ctrl.EstadoSolicitud.forEach(estado => {
+                                    if (estado.CodigoAbreviacion == "ACPO2_PLX" || estado.CodigoAbreviacion == "RCPO2_PLX") {
+                                      if (guardaPrimero) {
+                                        query += "|"
+                                      } else {
+                                        guardaPrimero = true
+                                      }
+                                      query += estado.Id.toString()
+                                    }
+                                  });
+
+                                  parametrosRespuesta = $.param({
+                                    query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id + query,
+                                    limit: 0
+                                  });
+                                }
+                                poluxRequest.get("respuesta_solicitud", parametrosRespuesta).then(function (responseEstadoSolicitud) {
+                                  if (Object.keys(responseEstadoSolicitud.data.Data[0]).length > 0) {
+                                    ctrl.solicitudes.pop();
+                                    ctrl.gridOptions.data = ctrl.solicitudes;
+                                  }
+                                });
+                              }
+                              UserExiste = true;
+                            }
+                          }
+                        }
+
+                        console.log("ctrl.solicitudes", ctrl.solicitudes);
+                      }
+                      else {
+                        await verificarSolicitud(solicitud)
+                        //promiseArr.push(verificarSolicitud(solicitud));
+                        UserExiste = true;
+                      }
+                      if (UserExiste == false) {
+                        ctrl.mensajeError = $translate.instant("Señor/a asistente, no tiene solicitudes pendientes");
+                          ctrl.errorCargarParametros = true;
+                      }
+                    }
+                  })
                 });
                 $q.all(promiseArr).then(function () {
                   if (ctrl.solicitudes.length != 0) {

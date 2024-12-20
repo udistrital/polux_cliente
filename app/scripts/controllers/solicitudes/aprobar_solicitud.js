@@ -1352,7 +1352,7 @@ angular.module('poluxClienteApp')
 
             console.log("ctrl.dataRespuesta", ctrl.dataRespuesta);
 
-            if (this.roles.includes("COORDINADOR")) {
+            if (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
               await aprobarPosgrado();
             }
           }
@@ -2167,7 +2167,7 @@ angular.module('poluxClienteApp')
               }
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de POSGRADO
-              if (ctrl.rol == "POSGRADO") {
+              if (ctrl.rol == "POSGRADO" || ctrl.roles.includes("CONTRATISTA")) {
                 //Recorrer los detalles con Codigo de Abreviación ESPELE y ESPELE2
                 for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
                   if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {                    
@@ -2196,9 +2196,28 @@ angular.module('poluxClienteApp')
                 console.log("ctrl.carrerasCoordinador", ctrl.carrerasCoordinador);
 
                 var proyectoCurricularSeleccionado = ctrl.carrerasCoordinador.find(carrera => {
-                  //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
-                  return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; 
+                  if(ctrl.roles.includes("CONTRATISTA")) {
+                    return carrera.proyecto == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
+                  } else {
+                    return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
+                  }
                 });
+
+                if(ctrl.roles.includes("CONTRATISTA")) {
+                  //Obtener el usuario del Coordinador del Proyecto Curricular seleccionado
+                  await academicaRequest.get("consulta_carrera_condor", [$rootScope.codigoProyectoCurricularPosgrado]).then(function(responseCoordinador) {
+                    // Convertir numero_documento_coordinador a entero
+                    const numeroDocumentoCoordinador = parseInt(responseCoordinador.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador, 10);
+                    //Asignar el usuario del Coordinador del Proyecto Curricular seleccionado y no el del Contratista en la Respuesta Nueva
+                    ctrl.dataRespuesta.RespuestaNueva.Usuario = numeroDocumentoCoordinador;
+                    //Asignar el usuario del Coordinador del Proyecto Curricular seleccionado y no el del Contratista en la Vinculacion del Trabajo de Grado
+                    ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = numeroDocumentoCoordinador;
+                  });
+
+                  //Renombrar el atributo "proyecto" por "codigo_proyecto_curricular" del objeto
+                  proyectoCurricularSeleccionado["codigo_proyecto_curricular"] = proyectoCurricularSeleccionado["proyecto"];
+                  delete proyectoCurricularSeleccionado["proyecto"];
+                }
 
                 console.log("Proyecto Curricular Seleccionado: ", proyectoCurricularSeleccionado);
 
@@ -2446,7 +2465,7 @@ angular.module('poluxClienteApp')
                   }
                 }
                 //Va a responder el Coordinador del Proyecto Curricular 2
-                else if(infoESPELE2 != undefined){//se verifica si el estudiante seleccionó 2 proyectos curriculares
+                else if(infoESPELE2 != undefined) { //Se verifica si el estudiante escogió 2 proyectos curriculares
                   if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE2.Codigo) {
                     respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
                     respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
