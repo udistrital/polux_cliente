@@ -920,7 +920,7 @@ angular.module('poluxClienteApp')
                             if(lista_roles.includes("POSGRADO")){
                               solicitud.data.Respuesta = solicitud;
                               solicitud.data.Carrera = carreraEstudiante;
-                              if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX"){
+                              if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
                                 //Almacenar el nombre de la carrera de posgrado en la solicitud
                                 solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
                                 //Almacenar el codigo de la carrera de posgrado en la solicitud
@@ -1055,7 +1055,42 @@ angular.module('poluxClienteApp')
                         }
 
                       console.log("ctrl.solicitudes", ctrl.solicitudes);
-                      } else {
+                      } //Si la solicitud es cambio de materias de posgrado o cancelación, en la modalidad de Materias de Posgrado 
+                      else if (((tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") || (tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX")) && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                        //Guardar el Id del Trabajo de Grado
+                        var idTrabajoGrado = solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id;
+                        console.log("idTrabajoGrado", idTrabajoGrado);
+
+                        var parametrosEspaciosAcademicosInscritos = $.param({
+                          query: "TrabajoGrado:" + idTrabajoGrado,
+                          limit: 1,
+                        });
+                        
+                        var carrera;
+                        await poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos).then(async function(responseProyectoCurricular) {
+                          console.log("responseProyectoCurricular", responseProyectoCurricular);
+
+                          await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
+                            console.log("carreraPosgrado", carreraPosgrado);
+
+                            //Armar objeto carrera con el código y nombre del proyecto curricular
+                            carrera = {
+                              "Codigo": carreraPosgrado.data.carrerasCollection.carrera[0].codigo,
+                              "Nombre": carreraPosgrado.data.carrerasCollection.carrera[0].nombre,
+                            }
+                          }).catch(function(error) {
+                            console.log("Error carrera: ", error);
+                          });
+                        }).catch(function(error2) {
+                          console.log("Error espacio academico: ", error2);
+                        });
+
+                        console.log("carrera: ", carrera);
+
+                        await verificarSolicitud(solicitud, carrera);
+                        UserExiste = true;
+                      } 
+                      else {
                         await verificarSolicitud(solicitud)
                         UserExiste = true;
                       }
