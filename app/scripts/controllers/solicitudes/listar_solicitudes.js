@@ -1096,7 +1096,7 @@ angular.module('poluxClienteApp')
                       }
                       if (UserExiste == false) {
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
-                          ctrl.errorCargarParametros = true;
+                          //ctrl.errorCargarParametros = true;
                       }
                     }
                   });

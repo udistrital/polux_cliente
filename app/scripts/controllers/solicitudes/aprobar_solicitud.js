@@ -2342,7 +2342,7 @@ angular.module('poluxClienteApp')
                       ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
 
                       //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                      ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                      ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
                       //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                       ctrl.dataRespuesta.MateriasProPos = true;
@@ -2408,7 +2408,7 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
 
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
                         //Poner el campo de la respuesta anterior en False
                         ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
@@ -2418,16 +2418,16 @@ angular.module('poluxClienteApp')
                         
                         //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                         resolve();
+                      } else{
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        console.log("estadoSolicitud", estadoSolicitud);
+  
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                       }
-
-                      estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                        return estSol.CodigoAbreviacion == respuestaRechazo
-                      });
-    
-                      console.log("estadoSolicitud", estadoSolicitud);
-
-                      //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
-                      ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                     }
 
                     //Poner el campo de la respuesta anterior en False
@@ -2477,8 +2477,8 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                       }
 
-                      //Poner el campo de la respuesta anterior en False
-                      ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+                        //Poner el campo de la respuesta anterior en False
+                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
 
                       //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                       resolve();
@@ -2512,7 +2512,7 @@ angular.module('poluxClienteApp')
                         ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
 
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
@@ -2587,7 +2587,7 @@ angular.module('poluxClienteApp')
                         ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
   
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
@@ -2656,23 +2656,24 @@ angular.module('poluxClienteApp')
                           ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
   
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
                           
                           //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                           resolve();
+                        } else{
+                          
+                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaRechazo
+                          });
+        
+                          console.log("estadoSolicitud", estadoSolicitud);
+    
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
-  
-                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == respuestaRechazo
-                        });
-      
-                        console.log("estadoSolicitud", estadoSolicitud);
-  
-                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
-                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                       }
                       //Poner el campo de la respuesta anterior en False
                       ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
@@ -2758,7 +2759,7 @@ angular.module('poluxClienteApp')
                           ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
   
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
