@@ -133,7 +133,16 @@ angular.module('poluxClienteApp')
                 };
 
                 // Método para confirmar la selección y deshabilitar los selects
-                $scope.confirmarSeleccion = function () {
+                $scope.confirmarSeleccion = function () {                    
+                    if (!$scope.estudiante.asignaturas_elegidas || $scope.estudiante.asignaturas_elegidas.length === 0) {
+                        // Notificación de error si no hay asignaturas elegidas
+                        swal(
+                            $translate.instant("ERROR.CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO"),
+                            $translate.instant("VERIFICAR_SELECCION_ASIGNATURAS_POSGRADO"),
+                            'warning'
+                        );
+                        return;
+                    }
                     if ($scope.d_solicitarAsignaturas.dobleSolicitud == false) {
                         ctrl.selected2 = [];
                         $scope.estudiante.asignaturas_elegidas2 = [];
@@ -142,6 +151,11 @@ angular.module('poluxClienteApp')
                     console.log("scope.estudiante.asignaturas_elegidas2", $scope.estudiante.asignaturas_elegidas2);
                     
                     $scope.selectsDeshabilitados = true;
+                    swal(
+                        $translate.instant("CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO"),
+                        $translate.instant("SOLICITUD_APROBADA"),
+                        'success'
+                      );
                 };
 
                 console.log("ctrl.carreras", ctrl.carreras);

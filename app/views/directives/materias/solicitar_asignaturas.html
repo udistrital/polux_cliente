@@ -12,13 +12,19 @@
         </div>
 
         <div ng-if="!d_solicitarAsignaturas.loading && !d_solicitarAsignaturas.errorCargando">
-          <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}:</label>
+          <!-- <label for="anio" class="col-sm-2 control-label">{{'ANO' | translate}}:</label>
           <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.anio}}</label>
 
           <label for="periodo" class="col-sm-2 control-label">{{'PERIODO' | translate}}:</label>
-          <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.periodo}}</label>
+          <label for="anioSel" class="col-sm-10 control-label">{{d_solicitarAsignaturas.periodo.periodo}}</label> -->
+          <div class="panel-body">
+            <div class="alert-warning">
+              <strong>{{'TEXTO_INFO_SELECCION_ASIGNATURAS_POSGRADO' | translate}}</strong>
+            </div>
+          </div>
+          <!-- <label for="" class=" control-label">{{'TEXTO_INFO_SELECCION_ASIGNATURAS_POSGRADO' | translate}}:</label> -->
 
-          <label for="carrera" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
+          <label for="carrera" class="col-sm-2 control-label">{{'SELECCIONE_ESPACIOS_ACADEMICOS' | translate}}:</label>
           <div class="col-sm-10" ng-if="!d_solicitarAsignaturas.carreras.length>0">
               <label for="periodo" class="col-sm-10 control-label">{{'SIN_CARRERAS_SOLICITUDES' | translate}}.</label>
           </div>
@@ -34,7 +40,7 @@
             <switch class="col-sm-8 control-label" ng-model="d_solicitarAsignaturas.dobleSolicitud" on="{{'SWITCH.SI'|translate}}" off="{{'SWITCH.NO'|translate}}"></switch>
           </div>
 
-          <label for="carrera" ng-if="d_solicitarAsignaturas.dobleSolicitud" class="col-sm-2 control-label">{{'CARRERA' | translate}}:</label>
+          <label for="carrera" ng-if="d_solicitarAsignaturas.dobleSolicitud" class="col-sm-2 control-label">{{'SELECCIONE_ESPACIOS_ACADEMICOS_2' | translate}}:</label>
           <div class="col-sm-10" ng-if="!d_solicitarAsignaturas.carreras.length>0">
               <label for="periodo" class="col-sm-10 control-label">{{'SIN_CARRERAS_SOLICITUDES' | translate}}.</label>
           </div>

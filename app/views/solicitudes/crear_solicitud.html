@@ -194,8 +194,13 @@
               {{detalle.label | translate}}
             </div>
             <div class="panel-body">
-              <input class="col-sm-3" type="radio" name="opcion" value="1">Opción 1<br>
-              <input class="col-sm-3" type="radio" name="opcion" value="2">Opción 2<br>
+              <input class="col-sm-3" type="radio" name="opcion" value="1">Primera opción de materia para proyecto curricular<br>
+              <input class="col-sm-3" type="radio" name="opcion" value="2">Segunda opción de materia para proyecto curricular<br>
+            </div>
+            <div class="panel-body">
+              <div class="alert-warning">
+                <strong>{{'TEXTO_INFO_PRIORIDAD_CARRERA_POSGRADO' | translate}}</strong>
+              </div>
             </div>
           </div>
 
@@ -215,7 +220,11 @@
               <div class="panel-heading">
                 {{'AREAS_CONOCIMIENTO' | translate}}
               </div>
-                  
+              <div class="panel-body">
+                <div class="alert-warning">
+                  <strong>{{'TEXTO_INFO_AREAS_CONOCIMIENTO_POSGRADO' | translate}}</strong>
+                </div>
+              </div>
               <div class="panel-body">
                 <label class="col-sm-5 control-label">{{'SELECCIONE_AREAS_CONOCIMIENTO' | translate}}</label>
                 <asignar-area class="col-sm-7 control-label" setareas="crearSolicitud.areas" newarea="crearSolicitud.estudiante.areas_elegidas"></asignar-area>
