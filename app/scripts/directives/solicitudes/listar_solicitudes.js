@@ -274,7 +274,7 @@ angular.module('poluxClienteApp')
          * @param {object} solicitud Solicitud que se consulta
          * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición y se resuleve con el string resultado
          */
-        ctrl.mostrarResultado = function(solicitud) {          
+        ctrl.mostrarResultado = function(solicitud) {
           var defer = $q.defer();
           var promise = defer.promise;
           var detalles = solicitud.detallesSolicitud;
@@ -510,172 +510,174 @@ angular.module('poluxClienteApp')
             } else {
               ctrl.detallesSolicitud = [];
             }
+            
+            poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function (responseEstudiantes) {
+              
+              if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
+                ctrl.solicitudSeleccionada.detallesSolicitud = [];
+              } else {
+                ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data.Data;
+              }
 
-            poluxRequest.get("usuario_solicitud", parametrosSolicitud).then(function(responseEstudiantes) {
-                  if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
-                    ctrl.solicitudSeleccionada.detallesSolicitud = [];
-                  } else {
-                    ctrl.solicitudSeleccionada.detallesSolicitud = responseDetalles.data.Data;
+              var promises = [];
+              var solicitantes = "";
+              promises.push(ctrl.mostrarResultado(ctrl.solicitudSeleccionada));
+              angular.forEach(responseEstudiantes.data.Data, function (estudiante) {
+                solicitantes += (", " + estudiante.Usuario);
+              });
+
+              var getDocente = function (detalle) {
+                var defer = $q.defer();
+                academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function (docente) {
+                  if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                    detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
+                    defer.resolve();
                   }
-                  var promises = [];
-                  var solicitantes = "";
-                  promises.push(ctrl.mostrarResultado(ctrl.solicitudSeleccionada));
-                  angular.forEach(responseEstudiantes.data.Data, function(estudiante) {
-                    solicitantes += (", " + estudiante.Usuario);
-                  });
-
-                  var getDocente = function(detalle) {
-                    var defer = $q.defer();
-                    academicaRequest.get("docente_tg", [detalle.Descripcion]).then(function(docente) {
-                        if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                          detalle.Descripcion = docente.data.docenteTg.docente[0].nombre;
-                          defer.resolve();
-                        }
-                      })
-                      .catch(function(error) {
-                        defer.reject(error);
-                      });
-                    return defer.promise;
-                  }
-
-                  var getDocentes = function(detalle) {
-                    var defer = $q.defer();
-                    var promesasDocentes = [];
-                    var detallesTemporales = [];
-                    angular.forEach(detalle.Descripcion.split(","), function(docDocente) {
-                      var detalleTemp = {
-                        Descripcion: docDocente,
-                      }
-                      detallesTemporales.push(detalleTemp);
-                      promesasDocentes.push(getDocente(detalleTemp));
-                    })
-                    $q.all(promesasDocentes)
-                      .then(function() {
-                        detalle.Descripcion = detallesTemporales.map(function(detalleTemp) {
-                          return detalleTemp.Descripcion
-                        }).join(", ");
-                        defer.resolve();
-                      })
-                      .catch(function(error) {
-                        defer.reject(error);
-                      });
-                    return defer.promise;
-                  }
-
-                  var getExterno = function(detalle) {
-                    var defer = $q.defer();
-                    var parametrosVinculado = $.param({
-                      query: "TrabajoGrado:" + detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
-                      limit: 0
-                    });
-                    poluxRequest.get("detalle_pasantia", parametrosVinculado)
-                      .then(function(dataExterno) {
-                        if (Object.keys(dataExterno.data.Data[0]).length > 0) {
-                          var temp = dataExterno.data.Data[0].Observaciones.split(" y dirigida por ");
-                          temp = temp[1].split(" con número de identificacion ");
-                          detalle.Descripcion = temp[0];
-                          defer.resolve();
-                        } else {
-                          defer.reject("No hay datos relacionados al director externo");
-                        }
-                      })
-                      .catch(function(error) {
-                        defer.reject(error);
-                      });
-                    return defer.promise;
-                  }
-
-                  angular.forEach(ctrl.solicitudSeleccionada.detallesSolicitud, function(detalle) {
-                    if(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR"){
-                      var parametrosConsulta = $.param({
-                        query:"CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX" 
-                      });
-  
-                      parametrosRequest.get("parametro/?", parametrosConsulta).then(function(parametros){
-                        angular.forEach(parametros.data.Data, function(parametro){
-                          if(detalle.Descripcion == String(parametro.Id)){
-                            detalle.Descripcion = parametro.Nombre;
-                          }
-                        });
-                      });
-                    }
-
-                    detalle.filas = [];
-                    if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TD") {
-                      detalle.Descripcion = detalle.Descripcion.split("-")[1];
-                    } else if (["DAP", "DANT", "DIRN", "EVANT", "EVNU", "ES", "DDDI", "SDC", "CDA", "CDN"].includes(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion)) {
-                      if (detalle.Descripcion != "No solicita") {
-                        promises.push(getDocente(detalle));
-                      }
-                    } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NEA") {
-                      promises.push(getDocentes(detalle));
-                    } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NADE") {
-                      //detalle de director externo anterior
-                      promises.push(getExterno(detalle));
-                    } else if (detalle.Descripcion.includes("JSON-")) {
-                      if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ACON") {
-                        //areas de conocimiento
-                        var datosAreas = detalle.Descripcion.split("-");
-                        datosAreas.splice(0, 1);
-                        detalle.Descripcion = "";
-                        angular.forEach(datosAreas, function(area) {
-                          var dato = JSON.parse(area)
-                          let AreaConocimientoTemp = ctrl.AreasConocimiento.find(data => {
-                            return data.Id == dato.Id
-                          });
-                          detalle.Descripcion = detalle.Descripcion + ", " + AreaConocimientoTemp.Nombre;
-                        });
-                        detalle.Descripcion = detalle.Descripcion.substring(2);
-                      } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
-                        //materias
-                        var datosMaterias = detalle.Descripcion.split("-");
-                        detalle.carrera = JSON.parse(datosMaterias[1]);
-                        datosMaterias.splice(0, 2);
-                        angular.forEach(datosMaterias, function(materia) {
-                          detalle.filas.push(JSON.parse(materia));
-                        });
-
-                        detalle.gridOptions = [];
-                        detalle.gridOptions.columnDefs = [{
-                          name: 'CodigoAsignatura',
-                          displayName: $translate.instant('CODIGO_MATERIA'),
-                          width: '30%',
-                        }, {
-                          name: 'Nombre',
-                          displayName: $translate.instant('NOMBRE'),
-                          width: '50%',
-                        }, {
-                          name: 'Creditos',
-                          displayName: $translate.instant('CREDITOS'),
-                          width: '20%',
-                        }];
-                        detalle.gridOptions.data = detalle.filas;
-                      }
-
-                    }
-                  });
-                  ctrl.solicitudSeleccionada.solicitantes = solicitantes.substring(2) + ".";
-                  promises.push(getDocumentoRespuesta(ctrl.solicitudSeleccionada));
-                  $q.all(promises).then(function() {
-                      $('#modalSolicitud').modal('show');
-                    })
-                    .catch(function(error) {
-                      
-                      swal(
-                        $translate.instant('ERROR'),
-                        $translate.instant('ERROR.CARGAR_DETALLES_SOLICITUD'),
-                        'warning'
-                      );
-                    });
                 })
-                .catch(function(error) {
-                  
+                  .catch(function (error) {
+                    defer.reject(error);
+                  });
+                return defer.promise;
+              }
+
+              var getDocentes = function (detalle) {
+                var defer = $q.defer();
+                var promesasDocentes = [];
+                var detallesTemporales = [];
+                angular.forEach(detalle.Descripcion.split(","), function (docDocente) {
+                  var detalleTemp = {
+                    Descripcion: docDocente,
+                  }
+                  detallesTemporales.push(detalleTemp);
+                  promesasDocentes.push(getDocente(detalleTemp));
+                })
+                $q.all(promesasDocentes)
+                  .then(function () {
+                    detalle.Descripcion = detallesTemporales.map(function (detalleTemp) {
+                      return detalleTemp.Descripcion
+                    }).join(", ");
+                    defer.resolve();
+                  })
+                  .catch(function (error) {
+                    defer.reject(error);
+                  });
+                return defer.promise;
+              }
+
+              var getExterno = function (detalle) {
+                var defer = $q.defer();
+                var parametrosVinculado = $.param({
+                  query: "TrabajoGrado:" + detalle.SolicitudTrabajoGrado.TrabajoGrado.Id,
+                  limit: 0
+                });
+                poluxRequest.get("detalle_pasantia", parametrosVinculado)
+                  .then(function (dataExterno) {
+                    if (Object.keys(dataExterno.data.Data[0]).length > 0) {
+                      var temp = dataExterno.data.Data[0].Observaciones.split(" y dirigida por ");
+                      temp = temp[1].split(" con número de identificacion ");
+                      detalle.Descripcion = temp[0];
+                      defer.resolve();
+                    } else {
+                      defer.reject("No hay datos relacionados al director externo");
+                    }
+                  })
+                  .catch(function (error) {
+                    defer.reject(error);
+                  });
+                return defer.promise;
+              }
+
+              angular.forEach(ctrl.solicitudSeleccionada.detallesSolicitud, function (detalle) {
+                if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CR") {
+                  var parametrosConsulta = $.param({
+                    query: "CodigoAbreviacion.in:A1_PLX|A2_PLX|B_PLX|C_PLX"
+                  });
+
+                  parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                    angular.forEach(parametros.data.Data, function (parametro) {
+                      if (detalle.Descripcion == String(parametro.Id)) {
+                        detalle.Descripcion = parametro.Nombre;
+                      }
+                    });
+                  });
+                }
+
+                detalle.filas = [];
+                if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "TD") {
+                  detalle.Descripcion = detalle.Descripcion.split("-")[1];
+                } else if (["DAP", "DANT", "DIRN", "EVANT", "EVNU", "ES", "DDDI", "SDC", "CDA", "CDN"].includes(detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion)) {
+                  if (detalle.Descripcion != "No solicita") {
+                    promises.push(getDocente(detalle));
+                  }
+                } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NEA") {
+                  promises.push(getDocentes(detalle));
+                } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NADE") {
+                  //detalle de director externo anterior
+                  promises.push(getExterno(detalle));
+                } else if (detalle.Descripcion.includes("JSON-")) {
+                  if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ACON") {
+                    //areas de conocimiento
+                    var datosAreas = detalle.Descripcion.split("-");
+                    datosAreas.splice(0, 1);
+                    detalle.Descripcion = "";
+                    angular.forEach(datosAreas, function (area) {
+                      var dato = JSON.parse(area)
+                      let AreaConocimientoTemp = ctrl.AreasConocimiento.find(data => {
+                        return data.Id == dato.Id
+                      });
+                      detalle.Descripcion = detalle.Descripcion + ", " + AreaConocimientoTemp.Nombre;
+                    });
+                    detalle.Descripcion = detalle.Descripcion.substring(2);
+                  } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                    //materias
+                    var datosMaterias = detalle.Descripcion.split("-");
+                    detalle.carrera = JSON.parse(datosMaterias[1]);
+                    datosMaterias.splice(0, 2);
+                    angular.forEach(datosMaterias, function (materia) {
+                      detalle.filas.push(JSON.parse(materia));
+                    });
+
+                    detalle.gridOptions = [];
+                    detalle.gridOptions.columnDefs = [{
+                      name: 'CodigoAsignatura',
+                      displayName: $translate.instant('CODIGO_MATERIA'),
+                      width: '30%',
+                    }, {
+                      name: 'Nombre',
+                      displayName: $translate.instant('NOMBRE'),
+                      width: '50%',
+                    }, {
+                      name: 'Creditos',
+                      displayName: $translate.instant('CREDITOS'),
+                      width: '20%',
+                    }];
+                    detalle.gridOptions.data = detalle.filas;
+                  }
+
+                }
+              });
+              ctrl.solicitudSeleccionada.solicitantes = solicitantes.substring(2) + ".";
+              promises.push(getDocumentoRespuesta(ctrl.solicitudSeleccionada));
+              $q.all(promises).then(function () {
+                $('#modalSolicitud').modal('show');
+              })
+                .catch(function (error) {
+
                   swal(
                     $translate.instant('ERROR'),
-                    $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTES'),
+                    $translate.instant('ERROR.CARGAR_DETALLES_SOLICITUD'),
                     'warning'
                   );
                 });
+            })
+              .catch(function (error) {
+
+                swal(
+                  $translate.instant('ERROR'),
+                  $translate.instant('ERROR.CARGAR_DATOS_ESTUDIANTES'),
+                  'warning'
+                );
+              });
             })
             .catch(function(error) {
               
