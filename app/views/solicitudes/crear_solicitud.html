@@ -189,12 +189,12 @@
             <label class="col-sm-9 control-label"> {{detalle.label}}</label>
           </div>
 
-          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion == 'PEAP'" class="panel panel-default">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion == 'PEAP' && crearSolicitud.estudiante.dobleSolicitud" class="panel panel-default">
             <div class="panel-heading">
               {{detalle.label | translate}}
             </div>
             <div class="panel-body">
-              <input class="col-sm-3" type="radio" name="opcion" value="1">Primera opción de materia para proyecto curricular<br>
+              <input class="col-sm-3" type="radio" name="opcion" value="1" checked>Primera opción de materia para proyecto curricular<br>
               <input class="col-sm-3" type="radio" name="opcion" value="2">Segunda opción de materia para proyecto curricular<br>
             </div>
             <div class="panel-body">

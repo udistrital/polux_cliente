@@ -146,11 +146,21 @@ angular.module('poluxClienteApp')
                     if ($scope.d_solicitarAsignaturas.dobleSolicitud == false) {
                         ctrl.selected2 = [];
                         $scope.estudiante.asignaturas_elegidas2 = [];
+                    } else if($scope.estudiante.asignaturas_elegidas2 == undefined){
+                        swal(
+                            $translate.instant("ERROR.CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO"),
+                            $translate.instant("VERIFICAR_SELECCION_ASIGNATURAS_POSGRADO"),
+                            'warning'
+                        );
+                        return;
                     }
                     console.log("scope.estudiante.asignaturas_elegidas", $scope.estudiante.asignaturas_elegidas);
                     console.log("scope.estudiante.asignaturas_elegidas2", $scope.estudiante.asignaturas_elegidas2);
                     
                     $scope.selectsDeshabilitados = true;
+                    $scope.estudiante.selectsDeshabilitados = true;
+                    $scope.estudiante.dobleSolicitud = $scope.d_solicitarAsignaturas.dobleSolicitud
+
                     swal(
                         $translate.instant("CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO"),
                         $translate.instant("SOLICITUD_APROBADA"),

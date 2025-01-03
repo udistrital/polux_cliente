@@ -2360,9 +2360,26 @@ angular.module('poluxClienteApp')
                         return estSol.CodigoAbreviacion == "ACPO2_PLX" //4656 - Aceptado por Coordinador de Posgrado Opción 2
                       });
 
-                      //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                      //se verifica si solo se tiene una opción de materias
+                      if (infoESPELE2 == undefined) {
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se pone la respuesta nueva en True
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+                      }
+                      //Si tiene más de una opción. Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                       //Si la respuesta anterior es rechazado por Coordinador de Posgrado 2
-                      if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
                         console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
                         //Traer el Estado de Trabajo de Grado en Cancelado
