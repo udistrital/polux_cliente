@@ -2099,8 +2099,15 @@ angular.module('poluxClienteApp')
           }
           if (detalle.Detalle.TipoDetalle === TipoDetalleTemp5.Id || detalle.Detalle.TipoDetalle === TipoDetalleTemp6.Id) {
             if (detalle.Detalle.CodigoAbreviacion == "PEAP") {
+
               var valueRadio = getValueRadio();
-              detalle.respuesta = valueRadio
+
+              if(ctrl.estudiante.dobleSolicitud){
+                detalle.respuesta = valueRadio
+              } else{
+                detalle.respuesta = "1"
+              }
+
             } else {
               if (detalle.bool === undefined) {
                 detalle.bool = false;
@@ -2210,6 +2217,16 @@ angular.module('poluxClienteApp')
                 );
                 ctrl.erroresFormulario = true;
               }
+            }
+          }
+          if(detalle.Detalle.CodigoAbreviacion == "ESPELE" || detalle.Detalle.CodigoAbreviacion == "ESPELE"){
+            if(ctrl.estudiante.selectsDeshabilitados == undefined){
+              swal(
+                'Validación del formulario',
+                "Debe confirmar la selección de los proyectos curriculares",
+                'warning'
+              );
+              ctrl.erroresFormulario = true;
             }
           }
         });
