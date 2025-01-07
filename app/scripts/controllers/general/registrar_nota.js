@@ -209,9 +209,36 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         ctrl.cargandoTrabajos = true;
 
-        var parametrosTrabajoGrado = $.param({
-          usuario: ctrl.documento,
-        });
+        var parametrosTrabajoGrado;
+        var proyectos = "";
+
+        //Si es Contratista traer los proyectos curriculares a cargo y enviarlos como parámetro
+        if($scope.roles.includes('CONTRATISTA')) {
+          //Consulta para traer todos los proyectos curriculares del Contratista
+          await academicaRequest.get("asistente_proyecto", [ctrl.documento]).then(function(responseAsistente) {
+            if (Object.keys(responseAsistente.data.asistente.proyectos).length > 0) {
+              angular.forEach(responseAsistente.data.asistente.proyectos, function(carrera) {
+                //Concatenar los proyectos curriculares de la consulta en un solo string
+                proyectos += carrera.proyecto + ",";
+              });
+                //Eliminar la última coma
+                proyectos = proyectos.slice(0, -1);
+            }
+          }).catch(function(error) {
+            ctrl.mensajeError = 'ERROR CARGANDO PROYECTOS CURRICULARES';
+            defer.reject(error);
+          });
+
+          parametrosTrabajoGrado = $.param({
+            proyectos: proyectos,
+          });
+        } else {
+          parametrosTrabajoGrado = $.param({
+            usuario: ctrl.documento,
+          });
+        }
+
+        console.log("parametrosTrabajoGrado", parametrosTrabajoGrado);
 
         poluxRequest.get("estudiante_vinculacion_trabajo_grado", parametrosTrabajoGrado)
           .then(function(dataTrabajos) {
