@@ -370,6 +370,41 @@ angular.module('poluxClienteApp')
         return defer.promise;
       }
 
+      
+      /**
+       * @ngdoc method
+       * @name cargarReporteNotasPosgrado
+       * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+       * @description 
+       * Consulta el reporte de notas de un trabajo de grado de modalidad de espacios académicos de posgrado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * @param {undefined} undefined no requiere parametros
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición
+       */
+      ctrl.cargarReporteNotasPosgrado = function() {
+        var defer = $q.defer();
+        //Se consulta el tipo de documento 189 que es el reporte de notas de posgrado
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "RNP_PLX"
+        });
+
+        var parametrosReporteNotasPosgrado = $.param({
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          limit: 1,
+        });
+        poluxRequest.get("documento_trabajo_grado", parametrosReporteNotasPosgrado)
+          .then(function(responseReporteNotasPosgrado) {
+            if (Object.keys(responseReporteNotasPosgrado.data.Data[0]).length > 0) {
+              ctrl.trabajoGrado.reporteNotasPosgrado = responseReporteNotasPosgrado.data.Data[0];
+            }
+            defer.resolve();
+          })
+          .catch(function(error) {
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_REPORTE_NOTAS_POSGRADO");
+            defer.reject(error);
+          });
+        return defer.promise;
+      }
+
       /**
        * @ngdoc method
        * @name getEspaciosAcademicosInscritos
@@ -741,6 +776,7 @@ angular.module('poluxClienteApp')
                 promises.push(ctrl.cargarAsignaturasTrabajoGrado());
                 promises.push(ctrl.cargarActaSocializacion());
                 promises.push(ctrl.cargarCertificadoARL());
+                promises.push(ctrl.cargarReporteNotasPosgrado());
                 promises.push(ctrl.getEstudiantesTg());
 
                 //Consulta las vinculaciones y las áreas de conocimiento

@@ -188,12 +188,13 @@ angular.module('poluxClienteApp')
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
             ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
-          });
+          });        
 
           resolve();
         });
       }
 
+      
       /**
        * @ngdoc method
        * @name cargarTrabajos
@@ -251,6 +252,7 @@ angular.module('poluxClienteApp')
                   return data.Id == trabajo.TrabajoGrado.Modalidad;
                 });
                 trabajo.TrabajoGrado.Modalidad = ModalidadTemp;
+                //console.log("Modalidad", ModalidadTemp);
 
                 let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(data => {
                   return data.Id == trabajo.TrabajoGrado.EstadoTrabajoGrado;
@@ -643,8 +645,12 @@ angular.module('poluxClienteApp')
           return data.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
         });
 
+        console.log("ROL TRABAJO Grado", RolTrabajoGradoTemp.CodigoAbreviacion);
+
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
         ctrl.trabajoSeleccionado.pedirActaSustentacion = (RolTrabajoGradoTemp.CodigoAbreviacion == "DIRECTOR_PLX");
+        //Se verifica si se tiene que pedir reporte de notas de modalidad de posgrado segun el tipo de vinculación, para este caso si el rol es coordinador
+        ctrl.trabajoSeleccionado.pedirReporteNotasPosgrado = (RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX");
         //Promesas del tg
         var promesasTrabajo = [];
         promesasTrabajo.push(ctrl.getEstudiantes(ctrl.trabajoSeleccionado));
@@ -751,10 +757,56 @@ angular.module('poluxClienteApp')
                 defer.reject(error);
               });
 
+          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX") {
+            var nombreDocumento = "Reporte de Notas: " + ctrl.trabajoSeleccionado.Id;
+            var descripcionDocumento = "Reporte de notas de modalidad de espacios académicos de posgrado: " + ctrl.trabajoSeleccionado.Id + ", nombre:" + ctrl.trabajoSeleccionado.Titulo + ".";
+            //Se carga el documento
+            // Se carga el documento por medio del gestor documental
+            var descripcion;
+            var fileBase64;
+            var data = [];
+            var URL = "";
+            descripcion = descripcionDocumento;
+            utils.getBase64(ctrl.trabajoSeleccionado.reporteNotasPosgrado).then(function (base64) {
+              fileBase64 = base64;
+              let TipoDocumentoTemp = ctrl.TiposDocumento.find(dataTipoDoc => {
+                return dataTipoDoc.CodigoAbreviacion == "RNP_PLX";
+              });
+              data = [{
+                IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
+                nombre: nombreDocumento,// nombre formado por el acta del trabajo y el id de trabajo
+
+                metadatos: {
+                  NombreArchivo: nombreDocumento,
+                  Tipo: "Archivo",
+                  Observaciones: "reporte_notas_posgrado"
+                },
+                descripcion: descripcion,
+                file: fileBase64,
+              }]
+
+              gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                URL = response.data.res.Enlace
+                dataRegistrarNota.DocumentoEscrito = {
+                  Id: 0,
+                  Titulo: nombreDocumento,
+                  Resumen: descripcionDocumento,
+                  Enlace: URL,
+                  TipoDocumentoEscrito: TipoDocumentoTemp.Id, //Para acta de sustentación
+                };
+                defer.resolve(dataRegistrarNota);
+                
+              })
+
+            })
+              .catch(function (error) {
+                defer.reject(error);
+              });         
+
           } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "EVALUADOR_PLX" || RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX") {
             //Si no es director se registra la nota
             defer.resolve(dataRegistrarNota);
-          }
+          } 
 
           let RolTemp = ctrl.RolesTrabajoGrado.find(dataRol => {
             return dataRol.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;
