@@ -456,6 +456,7 @@ var text_es = {
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
         NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
+        CARGAR_REPORTE_NOTAS_POSGRADO:"Ocurrió un error cargando el reporte de notas de posgrado. Por favor verifique su conexión e intente de nuevo",
         CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones.",
         CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez.",
         DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación.",
@@ -860,6 +861,7 @@ var text_es = {
         AVISO: "Registro de calificaciones",
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
         DESCRIPCION: "Descripción del trabajo de grado seleccionado",
+        REPORTE_NOTAS_POSGRADO: "Subir reporte de notas de posgrado:",
         INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro.",
         ERROR: {
             REGISTRANDO_NOTA: "Ocurrio un error registrando la nota, por favor intente de nuevo.",
@@ -1039,6 +1041,7 @@ var text_es = {
         TRABAJO_GRADO_NUMERO: "Versión del trabajo de grado número ",
         ANTEPROYECTO: "Versión del anteproyecto número ",
         VERSION_REVISION: "Versión del trabajo de grado para revisión número ",
+        REPORTE_NOTAS_POSGRADO: "Reporte de notas de posgrado",
     },
     NO_HAY_DOCUMENTOS: "No hay documentos para mostrar.",
     INDIQUE_FECHA_REUNION: "Indique la fecha de reunión correspondiente",
@@ -1049,6 +1052,7 @@ var text_es = {
     DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
     QUITAR_DOCUMENTO: "Quitar",
     ACTA_SOCIALIZACION: "Acta de socialización",
+    REPORTE_NOTAS_POSGRADO: "Reporte de notas de posgrado",
     ABOUT: "Acerca de Polux",
     ABOUT_INFO: "Sistema de Gestión de Trabajos de Grado para estudiantes de Pregrado de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el acuerdo 038 de 2015 del Consejo Académico de la Universidad, las modalidades son las siguientes: " +
         "<ul>" +

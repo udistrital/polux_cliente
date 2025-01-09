@@ -122,6 +122,10 @@ angular.module('poluxClienteApp')
                     nombreNodo = $translate.instant('SABANA_NOTAS');
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
                     break;
+                  case "RNP_PLX":                    
+                    nombreNodo = $translate.instant('REPORTE_NOTAS_POSGRADO');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
+                    break;
                 }
                 ctrl.dataForTree.push({
                   name: nombreNodo,
@@ -174,6 +178,7 @@ angular.module('poluxClienteApp')
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "JMP_PLX"));
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "CAI_PLX"));
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "SN_PLX"));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "RNP_PLX"));
             
           }
           $q.all(promesasDocumentos)
