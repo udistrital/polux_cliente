@@ -1089,6 +1089,9 @@ angular.module('poluxClienteApp')
        * {@link services/poluxMidService.service/poluxMidRequest poluxMidRequest} para realizar la transacción correspondiente.
        */
       ctrl.responder = async function () {
+        //únicamente validar si ya se ejecuto una vez la función enviartransaccion()
+        var rechazadoUnaVez = false;
+
         var fechaRespuesta = new Date();
         var errorDocente = false;
         //se desactiva respuesta anterior
@@ -1156,8 +1159,12 @@ angular.module('poluxClienteApp')
             await aprobarPosgrado();
           } else*/ 
           
+          console.log("ctrl.respuestaActual", ctrl.respuestaActual);
+
           //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
           if (tipoSolicitud.CodigoAbreviacion == "SI_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX")) {
+            console.log("Entre al flujo de materias posgrado");
+            
             //La solicitud solo se aprueba para que siga el curso
             var data_trabajo_grado = {};
             var data_estudiantes = [];
@@ -1403,13 +1410,15 @@ angular.module('poluxClienteApp')
 
             console.log("ctrl.dataRespuesta", ctrl.dataRespuesta);
 
-            if (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
+            //Primero se debe analizar si se está rechazando la solicitud (con el fin de que en Posgrado no ingrese a la función de aprobarPosgrado)
+            if (ctrl.respuestaSolicitud == "RCC_PLX" && ctrl.respuestaActual.Usuario == 0 && (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA"))) {
+              console.log("Entre a rechazar la solicitud, contratista pregrado");
+              rechazadoUnaVez = true;
+              enviarTransaccion();
+            }
+            else if (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
               await aprobarPosgrado();
             }
-          }
-
-          if (ctrl.respuestaSolicitud == "RCC_PLX") {
-            enviarTransaccion();
           }
 
           //solicitud aprobada
@@ -2186,6 +2195,11 @@ angular.module('poluxClienteApp')
             enviarTransaccion();
           }
 
+          if (ctrl.respuestaSolicitud == "RCC_PLX" && rechazadoUnaVez == false) {
+            console.log("Entre a rechazar la solicitud");
+            enviarTransaccion();
+          }
+
           async function aprobarPosgrado() {
             return new Promise(async (resolve, reject) => {
               //Trae los registros de la tabla Respuesta_Solicitud con campo Activo True
@@ -2202,56 +2216,67 @@ angular.module('poluxClienteApp')
               console.log("respuesta_solicitud", respuesta_solicitud);
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de PREGRADO
-              if (ctrl.rol == "PREGRADO") {
+              if (ctrl.rol == "PREGRADO" || ctrl.roles.includes("CONTRATISTA")) {
                 console.log("Pasa por responder PREGRADO");
-                //Si la solicitud inicial se encuentra en Radicado significa que el Coordinador de Pregrado debe Aprobar o Rechazar la solicitud
-                var estadoRadicadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                  return estSol.CodigoAbreviacion == "RDC_PLX" //4610 - Radicado
-                });
+                //Saber si es la primera vez que se dará respuesta a la solicitud (enfoque para el Asistente de Pregrado)
+                var primeraRespuesta = true;
 
-                if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRadicadoSolicitud.Id){
-                  var respuestaAprobado = "ACPR_PLX" //Aprobado por Consejo de Carrera [Coordinador Pregrado]
-                  var respuestaRechazo = "RCC_PLX" //Rechazado por Consejo de Carrera [Coordinador Pregrado]
+                //Si no va a responder por primera vez y el rol es Contratista
+                if (respuesta_solicitud.data.Data[0].Usuario != 0 && ctrl.roles.includes("CONTRATISTA")) {
+                  primeraRespuesta = false;
                 }
+                console.log("primeraRespuesta", primeraRespuesta);
 
-                if(ctrl.respuestaSolicitud == "ACC_PLX") {
-                  console.log("Aprobar Coordinador Pregrado");
-
-                  var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                    return estSol.CodigoAbreviacion == respuestaAprobado
+                if(primeraRespuesta) {
+                  //Si la solicitud inicial se encuentra en Radicado significa que el Coordinador de Pregrado o Asintente debe Aprobar o Rechazar la solicitud
+                  var estadoRadicadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                    return estSol.CodigoAbreviacion == "RDC_PLX" //4610 - Radicado
                   });
-                  
-                  //Poner el campo Estado Solicitud de la Respuesta Nueva en 4631 (Aprobado por Consejo de Carrera [Coordinador Pregrado])
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                  if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRadicadoSolicitud.Id){
+                    var respuestaAprobado = "ACPR_PLX" //Aprobado por Consejo de Carrera [Coordinador Pregrado]
+                    var respuestaRechazo = "RCC_PLX" //Rechazado por Consejo de Carrera [Coordinador Pregrado]
+                  }
+
+                  if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                    console.log("Aprobar Coordinador Pregrado");
+
+                    var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == respuestaAprobado
+                    });
+                    
+                    //Poner el campo Estado Solicitud de la Respuesta Nueva en 4631 (Aprobado por Consejo de Carrera [Coordinador Pregrado])
+                    ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                  }
+                  else {
+                    console.log("Rechazar Coordinador Pregrado");
+
+                    var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == respuestaRechazo
+                    });
+
+                    //Traer el Estado de Trabajo de Grado en Cancelado
+                    /*let parametrosConsulta = $.param({
+                      query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                    });
+
+                    await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                      estadoTrabajoGrado = parametros.data.Data[0];
+                    });
+                    
+                    //Se coloca en rechazo el trabajo de grado
+                    ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
+
+                    //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Rechazada por Consejo de Carrera [Coordinador Pregrado])
+                    ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                  }
+
+                  //Poner el campo de la respuesta anterior en False
+                  ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                  //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                  resolve();
                 }
-                else {
-                  console.log("Rechazar Coordinador Pregrado");
-
-                  var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                    return estSol.CodigoAbreviacion == respuestaRechazo
-                  });
-
-                  //Traer el Estado de Trabajo de Grado en Cancelado
-                  /*let parametrosConsulta = $.param({
-                    query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
-                  });
-
-                  await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                    estadoTrabajoGrado = parametros.data.Data[0];
-                  });
-                  
-                  //Se coloca en rechazo el trabajo de grado
-                  ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
-
-                  //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Rechazada por Consejo de Carrera [Coordinador Pregrado])
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                }
-
-                //Poner el campo de la respuesta anterior en False
-                ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-
-                //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
-                resolve();
               }
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de POSGRADO
