@@ -1334,6 +1334,7 @@ angular.module('poluxClienteApp')
                 if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
                   responseSolicitudes.data.Data = [];
                 }
+                console.log("ctrl.conSolicitudes", ctrl.conSolicitudes);
 
                 async function verificarSolicitud(solicitud, carreraPosgrado) {
                 //var verificarSolicitud = function (solicitud, carreraPosgrado) {
@@ -1345,6 +1346,8 @@ angular.module('poluxClienteApp')
                   let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                     return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
                   })
+                  console.log("modalidadTemp", modalidadTemp);
+                  console.log("tipoSoliciutdTemp", tipoSolicitudTemp);
 
                   solicitud.data = {
                     'Id': solicitud.SolicitudTrabajoGrado.Id,
@@ -1352,6 +1355,8 @@ angular.module('poluxClienteApp')
                     'ModalidadTipoSolicitud': tipoSolicitudTemp.Nombre,
                     'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
                   }
+                  console.log("solicitud.data", solicitud.data);
+
                   var parametrosUsuario = $.param({
                     query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
                     sortby: "Usuario",
@@ -1368,7 +1373,9 @@ angular.module('poluxClienteApp')
                           })
 
                           //La modalidad es Espacios Académicos de Posgrado
-                          if(modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                          if(modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && solicitud.Usuario != 0) {
+                            console.log("Colocar nuevas columnas para Posgrado");
+
                             solicitud.data.Respuesta = solicitud;
                             solicitud.data.Carrera = carreraEstudiante;
                             //Almacenar el nombre de la carrera de posgrado en la solicitud
@@ -1391,6 +1398,8 @@ angular.module('poluxClienteApp')
                           }
 
                           if (carreras.includes(carreraEstudiante)) {
+                            console.log("Colocar las columnas normales");
+
                             solicitud.data.Estado = estadoSolicitudTemp.Nombre;
                             solicitud.data.Respuesta = solicitud;
                             // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
@@ -1421,6 +1430,15 @@ angular.module('poluxClienteApp')
               }
 
                 angular.forEach(responseSolicitudes.data.Data, function (solicitud) {
+                  console.log("soliciutd", solicitud);
+                  //Saber si es la primera vez que se dará respuesta a la solicitud (Coordinador o Asistente de Pregrado)
+                  var primeraRespuesta = true;
+
+                  if(solicitud.Usuario != 0) {
+                    primeraRespuesta = false;
+                  }
+                  console.log("primeraRespuesta", primeraRespuesta);
+
                   var parametrosDetallesSolicitud = $.param({
                     query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id,
                     limit: 0
@@ -1436,27 +1454,35 @@ angular.module('poluxClienteApp')
                       let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                         return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
                       })
+                      console.log("tipoSolicitudTemp", tipoSolicitudTemp);
 
                       let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                         return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
                       })
+                      console.log("modalidadTemp", modalidadTemp);
 
                       //Variable para saber si colocar en la vista una solicitud o no
                       var addVista = true;
 
+                      console.log("solicitud.Justificacion", solicitud.Justificacion);
                       //Para la modalidad de Espacios Académicos de Posgrado
                       //Si la respuesta anterior fue aprobado por Coordinador de Pregrado y es una solicitud de Cambio de Materias de Posgrado o Cancelación de la Modalidad
-                      if((solicitud.Justificacion == "Su solicitud fue radicada" || solicitud.Justificacion == "Su solicitud esta pendiente a la revision del docente") && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                      if((solicitud.Justificacion == "Su solicitud fue radicada" || solicitud.Justificacion == "Su solicitud esta pendiente a la revision del docente") && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitudTemp.CodigoAbreviacion != "SI_PLX" && primeraRespuesta == false) {
                         addVista = false;
                       }
+                      console.log("addVista", addVista);
 
                       if(addVista) {
                         //Solicitud Inicial y Materias de Posgrado
-                        if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                        if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && primeraRespuesta == false) {
+                          console.log("Solicitud Inicial y Materias de Posgrado");
+
                           var responseAux;
                           for (var i = 0; i < responseDetalles.data.Data.length; i++) {
                             if (responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || 
                             responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+                              console.log("responseDetallesESPELE", responseDetalles.data.Data[i]);
+
                               solPosgrado = true;
                               var datosMaterias = responseDetalles.data.Data[i].Descripcion.split("-");
                               var carrera = JSON.parse(datosMaterias[1]);
@@ -1518,7 +1544,9 @@ angular.module('poluxClienteApp')
                           console.log("ctrl.solicitudes", ctrl.solicitudes);
                         } 
                         //Si la solicitud es cambio de materias de posgrado o cancelación, en la modalidad de Materias de Posgrado 
-                        else if (((tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") || (tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX")) && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                        else if (((tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") || (tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX")) && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && primeraRespuesta == false) {
+                          console.log("Cambio de materias o cancelación de posgrado");
+                          
                           //Guardar el Id del Trabajo de Grado
                           var idTrabajoGrado = solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id;
                           console.log("idTrabajoGrado", idTrabajoGrado);
@@ -1561,6 +1589,7 @@ angular.module('poluxClienteApp')
                           }
                         }
                         else {
+                          console.log("Flujo de un asistente de pregrado");
                           await verificarSolicitud(solicitud)
                           //promiseArr.push(verificarSolicitud(solicitud));
                           UserExiste = true;
