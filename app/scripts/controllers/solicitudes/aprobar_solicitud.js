@@ -89,9 +89,10 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, $rootScope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
       var ctrl = this;
 
+      ctrl.rol = "";
       ctrl.respuestaSolicitud = 0;
       ctrl.justificacion = "";
       ctrl.solicitud = $routeParams.idSolicitud;
@@ -100,6 +101,7 @@ angular.module('poluxClienteApp')
       ctrl.Modalidad = [];
       ctrl.EstadoSolicitud = [];
       ctrl.EstadoAsignaturaTrabajoGrado = [];
+      ctrl.EstudianteTg = "";
       ctrl.EstadoEstudianteTrabajoGrado = [];
       ctrl.EstadoEspacioAcademicoInscrito = [];
       ctrl.TipoDocumento = [];
@@ -110,6 +112,7 @@ angular.module('poluxClienteApp')
       ctrl.estadoSolicitudTemp = [];
       ctrl.estadoAsignaturaTrabajoGradoTemp = [];
       ctrl.estadoEstudianteTrabajoGradoTemp = [];
+      ctrl.detallesJson = "";
       //ctrl.pasantiaInterna = false;
       //ctrl.dataPersonaArl;
       //ctrl.SolicitudTrabajoGrado;
@@ -172,7 +175,7 @@ angular.module('poluxClienteApp')
         ctrl.Docente = 1;
       }
 
-      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+      if (token_service.getAppPayload().appUserRole.includes("EXTENSION_PASANTIAS") && !token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
         ctrl.UnidadExtPasantia = 1;
       }
       ctrl.carrerasCoordinador = [];
@@ -278,24 +281,31 @@ angular.module('poluxClienteApp')
           });
 
         } else {
-          if (token_service.getAppPayload().appUserRole.includes("COORDINADOR")) {
-            rol = "PREGRADO"
-          } else {
-            rol = "POSGRADO"
-          }
-          academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
-            //
-            if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
-              ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
-              defer.resolve();
+          academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+            if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
+              rol = "PREGRADO";
+              ctrl.rol = "PREGRADO";
             } else {
-              ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
-              defer.reject("Carreras no definidas");
+              rol = "POSGRADO";
+              ctrl.rol = "POSGRADO";
             }
+
+            academicaRequest.get("coordinador_carrera", [$scope.userId, rol]).then(function (response) {
+              if (!angular.isUndefined(response.data.coordinadorCollection.coordinador)) {
+                ctrl.carrerasCoordinador = response.data.coordinadorCollection.coordinador;
+                defer.resolve();
+              } else {
+                ctrl.mensajeErrorCargaSolicitud = $translate.instant("NO_CARRERAS_PREGRADO");
+                defer.reject("Carreras no definidas");
+              }
+            }).catch(function (error) {
+              ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
+              defer.reject(error);
+            });
+
           }).catch(function (error) {
-            ctrl.mensajeErrorCargaSolicitud = $translate.instant("ERROR.CARGAR_CARRERAS");
             defer.reject(error);
-          });
+          });      
         }
         return defer.promise;
       }
@@ -361,7 +371,7 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         //si la solicitud es de tipo inicial en la modalidad de materias de posgrado (13) o de profundizacion (16)
         if (ctrl.tipoSolicitudTemp.CodigoAbreviacion === "SI_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX")) {
-          academicaRequest.get("periodo_academico", "X")
+          academicaRequest.get("periodo_academico", "P") //Aquí debe ir "X" pero aún no hay datos en dicho periodo académico, así que por el momento uso la "P"
             .then(function (responsePeriodo) {
               if (!angular.isUndefined(responsePeriodo.data.periodoAcademicoCollection.periodoAcademico)) {
                 ctrl.periodoSiguiente = responsePeriodo.data.periodoAcademicoCollection.periodoAcademico[0];
@@ -381,17 +391,21 @@ angular.module('poluxClienteApp')
                 sesionesRequest.get("relacion_sesiones", parametrosSesiones)
                   .then(function (responseFechas) {
                     if (Object.keys(responseFechas.data[0]).length > 0) {
-                      ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm");
+                      //ctrl.fechaActual = moment(new Date()).format("YYYY-MM-DD HH:mm"); Se usa la fecha actual para hacaer la comparación
+
                       var sesion = responseFechas.data[0];
+                      
                       var fechaHijoInicio = new Date(sesion.SesionHijo.FechaInicio);
                       fechaHijoInicio.setTime(fechaHijoInicio.getTime() + fechaHijoInicio.getTimezoneOffset() * 60 * 1000);
                       ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
+                      
                       var fechaHijoFin = new Date(sesion.SesionHijo.FechaFin);
                       fechaHijoFin.setTime(fechaHijoFin.getTime() + fechaHijoFin.getTimezoneOffset() * 60 * 1000);
-                      ctrl.fechaInicio = moment(fechaHijoInicio).format("YYYY-MM-DD HH:mm");
                       ctrl.fechaFin = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm");
-                      if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
 
+                      ctrl.fechaActual = moment(fechaHijoFin).format("YYYY-MM-DD HH:mm"); //Pondré la fecha hijo fin de la petición para poder continuar con el desarrollo, pero esto se debe cambiar por la actual
+                      
+                      if (ctrl.fechaInicio <= ctrl.fechaActual && ctrl.fechaActual <= ctrl.fechaFin) {
                         defer.resolve();
                       } else {
                         ctrl.mensajeNoAprobar += ' ' + $translate.instant('ERROR.NO_EN_FECHAS_APROBACION', {
@@ -471,6 +485,7 @@ angular.module('poluxClienteApp')
                 }
               })
             });
+            ctrl.EstudianteTg = responseEstudiantes.data.Data[0].Usuario;
             ctrl.modalidad = responseEstudiantes.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad;
             if (Object.keys(responseDetalles.data.Data[0]).length === 0) {
               ctrl.detallesSolicitud = [];
@@ -495,17 +510,58 @@ angular.module('poluxClienteApp')
             })
             angular.forEach(ctrl.detallesSolicitud, function (detalleAux) {
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                var datosMaterias = detalleAux.Descripcion.split("-");
+                /*var datosMaterias = detalleAux.Descripcion.split("-");
                 var carrera = JSON.parse(datosMaterias[1]);
-                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("COORDINADOR_POSGRADO")) {
+                if (!carrerasAux.includes(carrera.Codigo) && token_service.getAppPayload().appUserRole.includes("POSGRADO")) {
                   var index = ctrl.detallesSolicitud.indexOf(detalleAux)
                   ctrl.detallesSolicitud.splice(index, 1)
-                }
+                }*/
               }
               if (detalleAux.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "PEAP") {
                 ctrl.prioridad = parseInt(detalleAux.Descripcion)
               }
             });
+            /*
+            console.log("ctrl.detallesSolicitud", ctrl.detallesSolicitud);
+
+            let deleteDetalle;
+
+            //Recorrer los detalles con Codigo de Abreviación ESPELE y ESPELE2
+            for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
+              if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {                    
+                //Quitar el primer fragmento del string 'JSON-'
+                var detalleString = ctrl.detallesSolicitud[i].Descripcion.replace("JSON-", "");
+                
+                if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
+                  console.log("Entre a ESPELE");
+
+                  //Convertir el JSON en objeto si es ESPELE (Proyecto Curricular 1)
+                  var infoESPELE = JSON.parse(detalleString);
+
+                  if(infoESPELE.Codigo == $rootScope.codigoProyectoCurricularPosgrado) {
+                    deleteDetalle = "ESPELE2";
+                    break;
+                  }
+                }
+                else {
+                  console.log("Entre a ESPELE2");
+                  //Convertir el JSON en objeto si es ESPELE2 (Proyecto Curricular 2)
+                  var infoESPELE2 = JSON.parse(detalleString);
+
+                  if(infoESPELE2.Codigo == $rootScope.codigoProyectoCurricularPosgrado) {
+                    deleteDetalle = "ESPELE";
+                    break;
+                  }
+                }
+              }
+            }
+            console.log("deleteDetalle", deleteDetalle);
+
+            //Eliminar el detalle del proyecto curricular del cuál actualmente no se tiene seleccionado
+            ctrl.detallesSolicitud = ctrl.detallesSolicitud.filter(detalle => {
+              const codigoAbreviacion = detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion;
+              return codigoAbreviacion !== deleteDetalle;
+            })*/
 
             ctrl.detallesSolicitud.id = ctrl.solicitud;
             ctrl.detallesSolicitud.tipoSolicitud = ctrl.dataSolicitud.ModalidadTipoSolicitud;
@@ -691,7 +747,7 @@ angular.module('poluxClienteApp')
 
                   });
 
-                  detalle.gridOptions = [];
+                  /*detalle.gridOptions = [];
                   detalle.gridOptions.columnDefs = [{
                     name: 'CodigoAsignatura',
                     displayName: $translate.instant('CODIGO_MATERIA'),
@@ -705,7 +761,7 @@ angular.module('poluxClienteApp')
                     displayName: $translate.instant('CREDITOS'),
                     width: '20%',
                   }];
-                  detalle.gridOptions.data = detalle.filas;
+                  detalle.gridOptions.data = detalle.filas;*/
                 }
               }
               // Si la solicitud tiene un detalle con id 56 es por que tiene codirector
@@ -713,6 +769,7 @@ angular.module('poluxClienteApp')
                 ctrl.tieneCoDirector = true;
               }
             });
+            console.log("ctrl.detallesSolicitud", ctrl.detallesSolicitud)
             $q.all(promises).then(function () {
               //CAMBIO DE VISUALIZACIÓN DE PARAMETRO
               angular.forEach(ctrl.detallesSolicitud, function (data_detalle) {
@@ -1032,6 +1089,9 @@ angular.module('poluxClienteApp')
        * {@link services/poluxMidService.service/poluxMidRequest poluxMidRequest} para realizar la transacción correspondiente.
        */
       ctrl.responder = async function () {
+        //únicamente validar si ya se ejecuto una vez la función enviartransaccion()
+        var rechazadoUnaVez = false;
+
         var fechaRespuesta = new Date();
         var errorDocente = false;
         //se desactiva respuesta anterior
@@ -1057,17 +1117,6 @@ angular.module('poluxClienteApp')
 
         var anio = ctrl.detallesSolicitud.PeriodoAcademico.split('-')[0];
         var periodo = ctrl.detallesSolicitud.PeriodoAcademico.split('-')[1];
-
-        async function ModificarRespuestas(respuestas) {
-          return new Promise((resolve, reject) => {
-            angular.forEach(respuestas, function (resp) {
-              resp.Activo = false
-              poluxRequest.put("respuesta_solicitud", resp.Id, resp).then(function (responseRespuestaPut) {
-              });
-            });
-            resolve();
-          })
-        }
 
         if (ctrl.acta.id != null) {
           var data_documento = {
@@ -1097,6 +1146,7 @@ angular.module('poluxClienteApp')
             DetallesPasantia: null,
             TrRevision: null,
             EspaciosAcademicosInscritos: null,
+            MateriasProPos: false,
           };
           let modalidad = ctrl.Modalidad.find(mod => {
             return mod.Id == ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
@@ -1104,12 +1154,273 @@ angular.module('poluxClienteApp')
           let tipoSolicitud = ctrl.TipoSolicitud.find(tipSol => {
             return tipSol.Id == ctrl.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
           })
-          if (modalidad.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitud.CodigoAbreviacion == "SI_PLX"
-            && this.roles.includes("COORDINADOR_POSGRADO")) {
+          /*if (modalidad.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitud.CodigoAbreviacion == "SI_PLX"
+            && this.roles.includes("COORDINADOR")) {
             await aprobarPosgrado();
-          } else if (ctrl.respuestaSolicitud == "RCC_PLX") {
-            enviarTransaccion();
+          } else*/ 
+          
+          console.log("ctrl.respuestaActual", ctrl.respuestaActual);
+
+          //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
+          if (tipoSolicitud.CodigoAbreviacion == "SI_PLX" && (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX")) {
+            console.log("Entre al flujo de materias posgrado");
+            
+            //La solicitud solo se aprueba para que siga el curso
+            var data_trabajo_grado = {};
+            var data_estudiantes = [];
+            var otro = {};
+            var estudiante = {};
+            var solicitudInicial = {};
+            var data_documentos = {};
+            angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+              if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "AE") {
+                otro.Estudiantes = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "SEM") {
+                data_documentos.SolicitudEscrita = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "JUST") {
+                data_documentos.Justificacion = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "CAI") {
+                data_documentos.CartaAceptacion = detalle.Descripcion;
+              } else if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "SN") {
+                data_documentos.SabanaNotas = detalle.Descripcion;
+              }
+            });
+
+            var data_asignaturasTrabajoGrado = [];
+            //Para asignatura tg1
+            data_asignaturasTrabajoGrado.push({
+              "CodigoAsignatura": 1,
+              "Periodo": parseInt(periodo),
+              "Anio": parseInt(anio),
+              "Calificacion": 0,
+              "TrabajoGrado": {
+                "Id": 0
+              },
+              "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
+            });
+            //Para asignatura tg2
+            data_asignaturasTrabajoGrado.push({
+              "CodigoAsignatura": 2,
+              "Periodo": parseInt(periodo),
+              "Anio": parseInt(anio),
+              "Calificacion": 0,
+              "TrabajoGrado": {
+                "Id": 0
+              },
+              "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
+            });
+            let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
+              return estEspacioAcademico.CodigoAbreviacion == "ESP_ACT_PLX"
+            })
+            angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+              if (detalle.Descripcion.includes("JSON-")) {
+                if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESPELE2") {
+                  var datosMaterias = detalle.Descripcion.split("-");
+                  datosMaterias.splice(0, 2);
+                  var materiasAux = []
+                  angular.forEach(datosMaterias, function (materia) {
+                    var aux = JSON.parse(materia)
+                    materiasAux.push({
+                      "TrabajoGrado": {
+                        "Id": null
+                      },
+                      "EspaciosAcademicosElegibles": {
+                        "Id": aux.Id
+                      },
+                      "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id
+                    })
+                  });
+                  //ctrl.dataRespuesta.EspaciosAcademicosInscritos = materiasAux
+                }
+              }
+            })
+            var parametrosConsulta = $.param({
+              query: "CodigoAbreviacion.in:PR_PLX" //Se dejará en Radicado pero se debe revisar más a fondo 
+            });
+            var estadoTrabajoGradoParametro
+            await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+              estadoTrabajoGradoParametro = parametros;
+            });
+            let estadoEstudianteTrabajoGradoTemp = ctrl.EstadoEstudianteTrabajoGrado.find(estEstud => {
+              return estEstud.CodigoAbreviacion == "EST_ACT_PLX"
+            })
+            let rolTrabajoGradoTemp = ctrl.RolTrabajoGrado.find(rolTrGr => {
+              return rolTrGr.CodigoAbreviacion == "COR_POSGRADO_PLX"
+            })
+            modalidad = ctrl.Modalidad.find(mod => {
+              return mod.Id == ctrl.detallesSolicitud.tipoSolicitud.Modalidad
+            })
+            data_trabajo_grado = {
+              "Titulo": modalidad.Nombre,
+              "Modalidad": ctrl.detallesSolicitud.tipoSolicitud.Modalidad,
+              "EstadoTrabajoGrado": estadoTrabajoGradoParametro.data.Data[0].Id,
+              "DistincionTrabajoGrado": null,
+              "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico
+            }
+            estudiante = {
+              "Estudiante": ctrl.EstudianteTg,
+              "TrabajoGrado": {
+                "Id": 0
+              },
+              "EstadoEstudianteTrabajoGrado": estadoEstudianteTrabajoGradoTemp.Id
+            }
+            vinculacion = {
+              "Usuario": $scope.userId,
+              "Activo": true,
+              "FechaInicio": '',
+              "FechaFin": '',
+              "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+              "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
+              "TrabajoGrado": {
+                "Id": 0
+              }
+            };
+            
+            //se agregan las areaSnies
+            var data_areas = [];
+            angular.forEach(ctrl.areas, function (area) {
+              data_areas.push({
+                "AreaConocimiento": Number(area),
+                "TrabajoGrado": {
+                  "Id": 0
+                },
+                "Activo": true,
+              });
+            });
+
+            //Se almacenan los documentos de la S.I
+            let tipoDocumento = ctrl.TipoDocumento.find(tipoDoc => {
+              return tipoDoc.CodigoAbreviacion == "SEM_PLX"
+            })
+
+            var data_sol_esc = {
+              "Titulo": "Solicitud Escrita",
+              "Enlace": data_documentos.SolicitudEscrita,
+              "Resumen": "Solicitud escrita de las materias solicitadas por el estudiante",
+              "TipoDocumentoEscrito": tipoDocumento.Id
+            }
+
+            let tipoDocumento2 = ctrl.TipoDocumento.find(tipoDoc => {
+              return tipoDoc.CodigoAbreviacion == "JMP_PLX"
+            })
+
+            var data_justificacion = {
+              "Titulo": "Justificación",
+              "Enlace": data_documentos.Justificacion,
+              "Resumen": "Justificación de la selección de materias solicitadas por el estudiante",
+              "TipoDocumentoEscrito": tipoDocumento2.Id
+            }
+
+            let tipoDocumento3 = ctrl.TipoDocumento.find(tipoDoc => {
+              return tipoDoc.CodigoAbreviacion == "CAI_PLX"
+            })
+
+            var data_carta_aceptacion = {
+              "Titulo": "Carta de aceptación de inscripción",
+              "Enlace": data_documentos.CartaAceptacion,
+              "Resumen": "Carta de aceptación de inscripción por parte de la coordinación de posgrado",
+              "TipoDocumentoEscrito": tipoDocumento3.Id
+            }
+
+            let tipoDocumento4 = ctrl.TipoDocumento.find(tipoDoc => {
+              return tipoDoc.CodigoAbreviacion == "SN_PLX"
+            })
+
+            var data_sabana_notas = {
+              "Titulo": "Sábana de notas",
+              "Enlace": data_documentos.SabanaNotas,
+              "Resumen": "Sábana de notas del estudiante",
+              "TipoDocumentoEscrito": tipoDocumento4.Id
+            }
+
+            var data_documento_tg = {
+              "TrabajoGrado": {
+                "Id": 0
+              },
+              "DocumentoEscrito": {
+                "Id": 0
+              }
+            }
+
+            var data_vinculacion = [];
+            data_vinculacion.push(vinculacion)
+            data_estudiantes.push(estudiante);
+            ctrl.trabajo_grado = {
+              TrabajoGrado: data_trabajo_grado,
+              EstudianteTrabajoGrado: data_estudiantes,
+              DocumentoEscrito: null,
+              DocumentoTrabajoGrado: null,
+              AreasTrabajoGrado: data_areas,
+              VinculacionTrabajoGrado: data_vinculacion,
+              AsignaturasTrabajoGrado: data_asignaturasTrabajoGrado,
+              DocumentosMaterias : {
+                SolicitudEscrita : data_sol_esc,
+                Justificacion : data_justificacion,
+                CartaAceptacion : data_carta_aceptacion,
+                SabanaNotas : data_sabana_notas,
+                DTG_SolicitudEscrita : data_documento_tg,
+                DTG_Justificacion : data_documento_tg,
+                DTG_CartaAceptacion : data_documento_tg,
+                DTG_SabanaNotas : data_documento_tg
+              }
+            }
+            let estadoRtaNueva = ctrl.EstadoSolicitud.find(estSol => {
+              return estSol.Id == objRtaNueva.EstadoSolicitud
+            })
+            if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
+              let estadoAux = ctrl.EstadoSolicitud.find(est => {
+                return est.CodigoAbreviacion == "ACPR_PLX"
+              })
+              objRtaNueva.EstadoSolicitud = estadoAux.Id
+            }
+            ctrl.rtaSol = {
+              RespuestaAnterior: objRtaAnterior,
+              RespuestaNueva: objRtaNueva,
+              DocumentoSolicitud: data_documento,
+              TipoSolicitud: {
+                "Id": ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+              },
+              Vinculaciones: null,
+              EstudianteTrabajoGrado: null,
+              TrTrabajoGrado: ctrl.trabajo_grado,
+              ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
+              SolicitudTrabajoGrado: ctrl.respuestaActual.SolicitudTrabajoGrado
+            };
+            ctrl.rtaSol.SolicitudTrabajoGrado.TrabajoGrado = {
+              "Id": 0
+            }
+
+            console.log("codigo posgrado: ",$rootScope.codigoProyectoCurricularPosgrado)
+
+            var data_espacio_academico = {
+              "TrabajoGrado": {
+                "Id": 0
+              },
+              "ProyectoCurricularTg": parseInt($rootScope.codigoProyectoCurricularPosgrado)
+            }
+
+            ctrl.dataRespuesta.RespuestaAnterior = ctrl.rtaSol.RespuestaAnterior
+            ctrl.dataRespuesta.RespuestaNueva = ctrl.rtaSol.RespuestaNueva
+            ctrl.dataRespuesta.DocumentoSolicitud = ctrl.rtaSol.DocumentoSolicitud
+            ctrl.dataRespuesta.TipoSolicitud = ctrl.rtaSol.TipoSolicitud
+            ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
+            ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
+            ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
+            ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
+            console.log("ctrl.dataRespuesta", ctrl.dataRespuesta);
+
+            //Primero se debe analizar si se está rechazando la solicitud (con el fin de que en Posgrado no ingrese a la función de aprobarPosgrado)
+            if (ctrl.respuestaSolicitud == "RCC_PLX" && ctrl.respuestaActual.Usuario == 0 && (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA"))) {
+              console.log("Entre a rechazar la solicitud, contratista pregrado");
+              rechazadoUnaVez = true;
+              enviarTransaccion();
+            }
+            else if (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
+              await aprobarPosgrado();
+            }
           }
+
           //solicitud aprobada
           if (ctrl.respuestaSolicitud == "ACC_PLX") {
             //solicitud aprobada
@@ -1180,157 +1491,13 @@ angular.module('poluxClienteApp')
               data_Vinculaciones.push(vinculacionActual);
               data_Vinculaciones.push(nuevaVinculacion);
             }
+
+            console.log("ctrl.tipoSolicitudTemp", ctrl.tipoSolicitudTemp);
+            
             //Se verifica por tipo de solicitud
             if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX") {
               //solicitud inicial
-              //solicitud espacios académicos de posgrado o solicitud espacios académicos de profundización
-              if (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
-                //La solicitud solo se aprueba para que siga el curso
-                var data_trabajo_grado = {};
-                var data_estudiantes = [];
-                var otro = {};
-                var estudiante = {};
-                var solicitudInicial = {};
-                angular.forEach(ctrl.detallesSolicitud, function (detalle) {
-                  if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "AE") {
-                    otro.Estudiantes = detalle.Descripcion;
-                  }
-                });
-
-                var data_asignaturasTrabajoGrado = [];
-                //Para asignatura tg1
-                data_asignaturasTrabajoGrado.push({
-                  "CodigoAsignatura": 1,
-                  "Periodo": parseInt(periodo),
-                  "Anio": parseInt(anio),
-                  "Calificacion": 0,
-                  "TrabajoGrado": {
-                    "Id": 0
-                  },
-                  "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
-                });
-                //Para asignatura tg2
-                data_asignaturasTrabajoGrado.push({
-                  "CodigoAsignatura": 2,
-                  "Periodo": parseInt(periodo),
-                  "Anio": parseInt(anio),
-                  "Calificacion": 0,
-                  "TrabajoGrado": {
-                    "Id": 0
-                  },
-                  "EstadoAsignaturaTrabajoGrado": ctrl.estadoAsignaturaTrabajoGradoTemp.Id
-                });
-                let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
-                  return estEspacioAcademico.CodigoAbreviacion == "ESP_ACT_PLX"
-                })
-                angular.forEach(ctrl.detallesSolicitud, function (detalle) {
-                  if (detalle.Descripcion.includes("JSON-")) {
-                    if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion === "ESPELE2") {
-                      var datosMaterias = detalle.Descripcion.split("-");
-                      datosMaterias.splice(0, 2);
-                      var materiasAux = []
-                      angular.forEach(datosMaterias, function (materia) {
-                        var aux = JSON.parse(materia)
-                        materiasAux.push({
-                          "TrabajoGrado": {
-                            "Id": null
-                          },
-                          "EspaciosAcademicosElegibles": {
-                            "Id": aux.Id
-                          },
-                          "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id
-                        })
-                      });
-                      ctrl.dataRespuesta.EspaciosAcademicosInscritos = materiasAux
-                    }
-                  }
-                })
-                var parametrosConsulta = $.param({
-                  query: "CodigoAbreviacion.in:APR_PLX"
-                });
-                var estadoTrabajoGradoParametro
-                await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
-                  estadoTrabajoGradoParametro = parametros;
-                });
-                let estadoEstudianteTrabajoGradoTemp = ctrl.EstadoEstudianteTrabajoGrado.find(estEstud => {
-                  return estEstud.CodigoAbreviacion == "EST_ACT_PLX"
-                })
-                let rolTrabajoGradoTemp = ctrl.RolTrabajoGrado.find(rolTrGr => {
-                  return rolTrGr.CodigoAbreviacion == "COR_POSGRADO_PLX"
-                })
-                modalidad = ctrl.Modalidad.find(mod => {
-                  return mod.Id == ctrl.detallesSolicitud.tipoSolicitud.Modalidad
-                })
-                data_trabajo_grado = {
-                  "Titulo": modalidad.Nombre,
-                  "Modalidad": ctrl.detallesSolicitud.tipoSolicitud.Modalidad,
-                  "EstadoTrabajoGrado": estadoTrabajoGradoParametro.data.Data[0].Id,
-                  "DistincionTrabajoGrado": null,
-                  "PeriodoAcademico": ctrl.detallesSolicitud.PeriodoAcademico
-                }
-                estudiante = {
-                  "Estudiante": otro.Estudiantes,
-                  "TrabajoGrado": {
-                    "Id": 0
-                  },
-                  "EstadoEstudianteTrabajoGrado": estadoEstudianteTrabajoGradoTemp.Id
-                }
-                vinculacion = {
-                  "Usuario": $scope.userId,
-                  "Activo": true,
-                  "FechaInicio": '',
-                  "FechaFin": '',
-                  "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
-                  "TrabajoGrado": {
-                    "Id": 0
-                  }
-                };
-                var data_vinculacion = [];
-                data_vinculacion.push(vinculacion)
-                data_estudiantes.push(estudiante);
-                ctrl.trabajo_grado = {
-                  TrabajoGrado: data_trabajo_grado,
-                  EstudianteTrabajoGrado: data_estudiantes,
-                  DocumentoEscrito: null,
-                  DocumentoTrabajoGrado: null,
-                  AreasTrabajoGrado: null,
-                  VinculacionTrabajoGrado: data_vinculacion,
-                  AsignaturasTrabajoGrado: data_asignaturasTrabajoGrado
-                }
-                let estadoRtaNueva = ctrl.EstadoSolicitud.find(estSol => {
-                  return estSol.Id == objRtaNueva.EstadoSolicitud
-                })
-                if (estadoRtaNueva.CodigoAbreviacion == "ACC_PLX" && this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
-                  let estadoAux = ctrl.EstadoSolicitud.find(est => {
-                    return est.CodigoAbreviacion == "ACPR_PLX"
-                  })
-                  objRtaNueva.EstadoSolicitud = estadoAux.Id
-                }
-                ctrl.rtaSol = {
-                  RespuestaAnterior: objRtaAnterior,
-                  RespuestaNueva: objRtaNueva,
-                  DocumentoSolicitud: data_documento,
-                  TipoSolicitud: {
-                    "Id": ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
-                  },
-                  Vinculaciones: null,
-                  EstudianteTrabajoGrado: null,
-                  TrTrabajoGrado: ctrl.trabajo_grado,
-                  ModalidadTipoSolicitud: ctrl.detallesSolicitud.tipoSolicitud,
-                  SolicitudTrabajoGrado: ctrl.respuestaActual.SolicitudTrabajoGrado
-                };
-                ctrl.rtaSol.SolicitudTrabajoGrado.TrabajoGrado = {
-                  "Id": 0
-                }
-
-                ctrl.dataRespuesta.RespuestaAnterior = ctrl.rtaSol.RespuestaAnterior
-                ctrl.dataRespuesta.RespuestaNueva = ctrl.rtaSol.RespuestaNueva
-                ctrl.dataRespuesta.DocumentoSolicitud = ctrl.rtaSol.DocumentoSolicitud
-                ctrl.dataRespuesta.TipoSolicitud = ctrl.rtaSol.TipoSolicitud
-                ctrl.dataRespuesta.TrTrabajoGrado = ctrl.rtaSol.TrTrabajoGrado
-                ctrl.dataRespuesta.SolicitudTrabajoGrado = ctrl.rtaSol.SolicitudTrabajoGrado
-                ctrl.dataRespuesta.ModalidadTipoSolicitud = ctrl.rtaSol.ModalidadTipoSolicitud
-              } else if (ctrl.modalidadTemp.CodigoAbreviacion == "MONO_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PEMP_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "INV_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
+              if (ctrl.modalidadTemp.CodigoAbreviacion == "MONO_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PEMP_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "CRE_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PACAD_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "INV_PLX" || ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {
                 //Pasantia, Monografia, Proyecto de emprendimento, Creación e Interpretación, Producción académica
                 //se obtienen datos para crear el trabajo
                 console.log("ENTRA MONOGRAFIA")
@@ -1469,6 +1636,7 @@ angular.module('poluxClienteApp')
                   "FechaInicio": '',
                   "FechaFin": '',
                   "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                  "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                   "TrabajoGrado": {
                     "Id": 0
                   }
@@ -1491,6 +1659,7 @@ angular.module('poluxClienteApp')
                       "FechaFin": '',
                       // Rol de codirector
                       "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                      "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                       "TrabajoGrado": {
                         "Id": 0
                       }
@@ -1511,6 +1680,7 @@ angular.module('poluxClienteApp')
                     "FechaInicio": '',
                     "FechaFin": '',
                     "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                    "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                     "TrabajoGrado": {
                       "Id": 0
                     }
@@ -1633,6 +1803,7 @@ angular.module('poluxClienteApp')
                     "FechaInicio": '',
                     "FechaFin": '',
                     "RolTrabajoGrado": rolTrabajoGradoTemp.Id,
+                    "CodigoAbreviacion": rolTrabajoGradoTemp.CodigoAbreviacion,
                     "TrabajoGrado": {
                       "Id": 0
                     }
@@ -1735,6 +1906,7 @@ angular.module('poluxClienteApp')
                 }
               }
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
+              console.log("Entra a SCM 1774")
               //solicitud de cancelacion de modalidad
               //se crea data del estudiante
               let estadoEstudianteTrabajoGradoTemp = ctrl.EstadoEstudianteTrabajoGrado.find(estEstud => {
@@ -1752,6 +1924,24 @@ angular.module('poluxClienteApp')
 
               ctrl.dataRespuesta.VinculacionesCancelacion = ctrl.docentesVinculadosTg;
               ctrl.dataRespuesta.EstudianteTrabajoGrado = dataEstudianteTg;
+              console.log("Modalidad", ctrl.detallesSolicitud.tipoSolicitud.Modalidad);
+              console.log("Modalidades", ctrl.Modalidad);
+              let ModalidadTemp = ctrl.Modalidad.find(data => {
+                return data.CodigoAbreviacion == "EAPOS_PLX"
+              });
+              if(ctrl.detallesSolicitud.tipoSolicitud.Modalidad == ModalidadTemp.Id && ctrl.rol == "PREGRADO") {
+                console.log("Es por acá parcero");
+                let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
+                return data.CodigoAbreviacion == "ACPR_PLX"                
+                });
+                ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id
+
+                let estadoEstudianteTrabajoGradoTemp = ctrl.EstadoEstudianteTrabajoGrado.find(estEstud => {
+                return estEstud.CodigoAbreviacion == "EST_ACT_PLX"
+                });
+                ctrl.dataRespuesta.EstudianteTrabajoGrado.EstadoEstudianteTrabajoGrado = estadoEstudianteTrabajoGradoTemp.Id
+              }
+
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SMDTG_PLX") {
               //solicitud de cambio titulo de trabajo de grado
               var tgTemp = ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado;
@@ -1759,35 +1949,52 @@ angular.module('poluxClienteApp')
               tgTemp.Titulo = ctrl.tituloNuevo;
               ctrl.dataRespuesta.TrabajoGrado = tgTemp;
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") {
-              let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
-                return estEspacioAcademico.CodigoAbreviacion == "ESP_CAN_PLX"
-              })
-              //solicitud de cambio de materia
-              var espacios = [];
-              //Asignatura vieja
-              espacios.push({
-                "Nota": 0,
-                "EspaciosAcademicosElegibles": {
-                  "Id": 0,
-                  "CodigoAsignatura": ctrl.asignaturaActual,
-                },
-                "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
-                "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+              let ModalidadTemp = ctrl.Modalidad.find(data => {
+                return data.CodigoAbreviacion == "EAPOS_PLX"
               });
-              //Asignatura Nueva
-              estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
-                return estEspacioAcademico.CodigoAbreviacion == "ESP_ACT_PLX"
-              })
-              espacios.push({
-                "Nota": 0,
-                "EspaciosAcademicosElegibles": {
-                  "Id": 0,
-                  "CodigoAsignatura": ctrl.asignaturaNueva,
-                },
-                "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
-                "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
-              });
-              ctrl.dataRespuesta.EspaciosAcademicos = espacios;
+              if(ctrl.detallesSolicitud.tipoSolicitud.Modalidad == ModalidadTemp.Id && ctrl.rol == "PREGRADO") {
+                
+                let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
+                return data.CodigoAbreviacion == "ACPR_PLX"                
+                });
+                ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id               
+                
+              } else if (ctrl.rol == "POSGRADO") {
+                let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
+                return data.CodigoAbreviacion == "ACC_PLX"
+                });
+                ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = EstadoSolicitudTemp.Id 
+              }
+              //console.log("Sale de los condicionales");
+              // let estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
+              //   return estEspacioAcademico.CodigoAbreviacion == "ESP_CAN_PLX"
+              // })
+              // //solicitud de cambio de materia
+              // var espacios = [];
+              // //Asignatura vieja
+              // espacios.push({
+              //   "Nota": 0,
+              //   "EspaciosAcademicosElegibles": {
+              //     "Id": 0,
+              //     "CodigoAsignatura": ctrl.asignaturaActual,
+              //   },
+              //   "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
+              //   "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+              // });
+              // //Asignatura Nueva
+              // estadoEspacioAcademicoInscrito = ctrl.EstadoEspacioAcademicoInscrito.find(estEspacioAcademico => {
+              //   return estEspacioAcademico.CodigoAbreviacion == "ESP_ACT_PLX"
+              // })
+              // espacios.push({
+              //   "Nota": 0,
+              //   "EspaciosAcademicosElegibles": {
+              //     "Id": 0,
+              //     "CodigoAsignatura": ctrl.asignaturaNueva,
+              //   },
+              //   "EstadoEspacioAcademicoInscrito": estadoEspacioAcademicoInscrito.Id,
+              //   "TrabajoGrado": ctrl.respuestaActual.SolicitudTrabajoGrado.TrabajoGrado,
+              // });
+              // ctrl.dataRespuesta.EspaciosAcademicos = espacios;
 
             } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SRTG_PLX") {
               //Solicitud de revisión de tg
@@ -1988,194 +2195,653 @@ angular.module('poluxClienteApp')
             enviarTransaccion();
           }
 
+          if (ctrl.respuestaSolicitud == "RCC_PLX" && rechazadoUnaVez == false) {
+            console.log("Entre a rechazar la solicitud");
+            enviarTransaccion();
+          }
+
           async function aprobarPosgrado() {
             return new Promise(async (resolve, reject) => {
-              //Aprobación individual materias posgrado 
-              var strCodAbr = "";
-              if (ctrl.respuestaSolicitud == "ACC_PLX") {
-                strCodAbr += "ACPO"
-              } else if (ctrl.respuestaSolicitud == "RCC_PLX") {
-                strCodAbr += "RCPO"
-              }
-              angular.forEach(ctrl.detallesSolicitud, function (detalles_solicitud) {
-                if (detalles_solicitud.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
-                  strCodAbr += "1_PLX"
-                } else if (detalles_solicitud.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                  strCodAbr += "2_PLX"
-                }
+              //Trae los registros de la tabla Respuesta_Solicitud con campo Activo True
+              var parametrosRespuestaSol = $.param({
+                query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
+                limit: 0
               });
 
-              for (let i = 0; i < ctrl.EstadoSolicitud.length; i++) {
-                if (ctrl.EstadoSolicitud[i].CodigoAbreviacion == strCodAbr) {
-                  ctrl.respuestaSolicitud = ctrl.EstadoSolicitud[i].CodigoAbreviacion;
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = ctrl.EstadoSolicitud[i].Id;
-                  ctrl.dataRespuesta.RespuestaAnterior.Activo = true;
+              //Almacena lo que traiga de Respuesta_Solicitud
+              var respuesta_solicitud;
+              await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
+                respuesta_solicitud = responseRespuestaSolicitud;
+              })
+              console.log("respuesta_solicitud", respuesta_solicitud);
+
+              //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de PREGRADO
+              if (ctrl.rol == "PREGRADO" || ctrl.roles.includes("CONTRATISTA")) {
+                console.log("Pasa por responder PREGRADO");
+                //Saber si es la primera vez que se dará respuesta a la solicitud (enfoque para el Asistente de Pregrado)
+                var primeraRespuesta = true;
+
+                //Si no va a responder por primera vez y el rol es Contratista
+                if (respuesta_solicitud.data.Data[0].Usuario != 0 && ctrl.roles.includes("CONTRATISTA")) {
+                  primeraRespuesta = false;
+                }
+                console.log("primeraRespuesta", primeraRespuesta);
+
+                if(primeraRespuesta) {
+                  //Si la solicitud inicial se encuentra en Radicado significa que el Coordinador de Pregrado o Asintente debe Aprobar o Rechazar la solicitud
+                  var estadoRadicadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                    return estSol.CodigoAbreviacion == "RDC_PLX" //4610 - Radicado
+                  });
+
+                  if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRadicadoSolicitud.Id){
+                    var respuestaAprobado = "ACPR_PLX" //Aprobado por Consejo de Carrera [Coordinador Pregrado]
+                    var respuestaRechazo = "RCC_PLX" //Rechazado por Consejo de Carrera [Coordinador Pregrado]
+                  }
+
+                  if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                    console.log("Aprobar Coordinador Pregrado");
+
+                    var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == respuestaAprobado
+                    });
+                    
+                    //Poner el campo Estado Solicitud de la Respuesta Nueva en 4631 (Aprobado por Consejo de Carrera [Coordinador Pregrado])
+                    ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                  }
+                  else {
+                    console.log("Rechazar Coordinador Pregrado");
+
+                    var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == respuestaRechazo
+                    });
+
+                    //Traer el Estado de Trabajo de Grado en Cancelado
+                    /*let parametrosConsulta = $.param({
+                      query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                    });
+
+                    await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                      estadoTrabajoGrado = parametros.data.Data[0];
+                    });
+                    
+                    //Se coloca en rechazo el trabajo de grado
+                    ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
+
+                    //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Rechazada por Consejo de Carrera [Coordinador Pregrado])
+                    ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                  }
+
+                  //Poner el campo de la respuesta anterior en False
+                  ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                  //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                  resolve();
                 }
               }
-              if (strCodAbr.includes("RCPO")) {
-                var parametrosDetallesSolicitud = $.param({
-                  query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
-                  limit: 0
-                });
-                await poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
-                  ctrl.detallesOriginal = responseDetalles.data.Data
-                });
-                var index = 0;
-                var cambioMateriasPosgrado = false;
-                var respuestas = [];
-                var actual = 0;
+
+              //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de POSGRADO
+              if (ctrl.rol == "POSGRADO" || ctrl.roles.includes("CONTRATISTA")) {
+                //Recorrer los detalles con Codigo de Abreviación ESPELE y ESPELE2
                 for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
-                  if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                    var respuestaAprobado, respuestaRechazo = "";
-                    if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
-                      actual = 1;
-                      respuestaAprobado = "ACPO2_PLX";
-                      respuestaRechazo = "RCPO2_PLX";
-                    } else {
-                      actual = 2;
-                      respuestaAprobado = "ACPO1_PLX";
-                      respuestaRechazo = "RCPO1_PLX";
+                  if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {                    
+                    //Quitar el primer fragmento del string 'JSON-'
+                    var detalleString = ctrl.detallesSolicitud[i].Descripcion.replace("JSON-", "");
+                    
+                    if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE")
+                    {
+                      //Convertir el JSON en objeto si es ESPELE (Proyecto Curricular 1)
+                      var infoESPELE = JSON.parse(detalleString);
                     }
-                    var parametrosRespuestaSol = $.param({
-                      query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
-                      limit: 0
-                    });
-                    respuestas = [];
-                    await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
-                      respuestas = responseRespuestaSolicitud.data.Data;
-                      angular.forEach(respuestas, async function (respuesta) {
-                        if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
-                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-                          let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == resOriginal
-                          })
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
-                          await ModificarRespuestas(respuestas);
-                        } else if (respuesta.EstadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
-                          cambioMateriasPosgrado = true;
-                          index = ctrl.detallesSolicitud.indexOf(ctrl.detallesSolicitud[i])
-                        }
-                      })
-                      if (!cambioMateriasPosgrado) {
-                        await enviarTransaccion();
-                        resolve();
-                      }
-                    });
-                  }
-                }
-                if (cambioMateriasPosgrado) {
-                  var detalleNuevo = "";
-                  if (actual == 1) {
-                    detalleNuevo = "ESPELE2";
-                  } else if (actual == 2) {
-                    detalleNuevo = "ESPELE";
-                  }
-                  for (let i = 0; i < ctrl.detallesOriginal.length; i++) {
-                    var detalleAux;
-                    if (ctrl.detallesOriginal[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == detalleNuevo) {
-                      detalleAux = ctrl.detallesOriginal[i]
-                      break;
+                    else {
+                      //Convertir el JSON en objeto si es ESPELE2 (Proyecto Curricular 2)
+                      var infoESPELE2 = JSON.parse(detalleString);
                     }
                   }
-                  ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-                  resOriginal = 3;
-                  ctrl.respuestaSolicitud = resOriginal;
-                  let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                    return estSol.CodigoAbreviacion == resOriginal
-                  })
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
-                  ctrl.detallesSolicitud.splice(index, 1);
-                  ctrl.detallesSolicitud.push(detalleAux);
-                  await ModificarRespuestas(respuestas);
-                  resolve();
+
+                  if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "PEAP") {
+                    var opcionPrioridad = parseInt(ctrl.detallesSolicitud[i].Descripcion);
+                  }
                 }
-              } else if (strCodAbr.includes("ACPO")) {
-                parametrosDetallesSolicitud = $.param({
-                  query: "SolicitudTrabajoGrado.Id:" + ctrl.solicitud,
-                  limit: 0
-                });
-                await poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(function (responseDetalles) {
-                  ctrl.detallesOriginal = responseDetalles.data.Data
+                
+                console.log("infoESPELE", infoESPELE);
+                console.log("infoESPELE2", infoESPELE2);
+
+                console.log("ctrl.carrerasCoordinador", ctrl.carrerasCoordinador);
+
+                var proyectoCurricularSeleccionado = ctrl.carrerasCoordinador.find(carrera => {
+                  if(ctrl.roles.includes("CONTRATISTA")) {
+                    return carrera.proyecto == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
+                  } else {
+                    return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
+                  }
                 });
 
-                index = 0;
-                cambioMateriasPosgrado = false;
-                respuestas = [];
-                for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
-                  if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                    respuestaRechazo = "";
-                    if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") {
-                      respuestaAprobado = "ACPO2_PLX"
-                      respuestaRechazo = "RCPO2_PLX"
-                    } else {
-                      respuestaAprobado = "ACPO1_PLX"
-                      respuestaRechazo = "RCPO1_PLX"
-                    }
-                    parametrosRespuestaSol = $.param({
-                      query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
-                      limit: 0
-                    });
-                    await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
-                      respuestas = responseRespuestaSolicitud.data.Data;
-                      angular.forEach(respuestas, async function (respuesta) {
-                        let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.Id == respuesta.EstadoSolicitud
-                        })
-                        if (estadoSolicitud.CodigoAbreviacion == respuestaRechazo) {
-                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-                          ctrl.respuestaSolicitud = resOriginal;
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == resOriginal
-                          })
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
-                          await ModificarRespuestas(respuestas);
-                        } else if (estadoSolicitud.CodigoAbreviacion == respuestaAprobado) {
-                          if ((ctrl.prioridad == 1 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE") ||
-                            (ctrl.prioridad == 2 && ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2")) {
-                            ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-                            ctrl.respuestaSolicitud = resOriginal;
-                            estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                              return estSol.CodigoAbreviacion == resOriginal
-                            })
-                            ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-                            await ModificarRespuestas(respuestas);
-                          } else {
-                            cambioMateriasPosgrado = true;
-                            index = ctrl.detallesSolicitud.indexOf(ctrl.detallesSolicitud[i])
-                          }
-                        }
+                if(ctrl.roles.includes("CONTRATISTA")) {
+                  //Obtener el usuario del Coordinador del Proyecto Curricular seleccionado
+                  await academicaRequest.get("consulta_carrera_condor", [$rootScope.codigoProyectoCurricularPosgrado]).then(function(responseCoordinador) {
+                    // Convertir numero_documento_coordinador a entero
+                    const numeroDocumentoCoordinador = parseInt(responseCoordinador.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador, 10);
+                    //Asignar el usuario del Coordinador del Proyecto Curricular seleccionado y no el del Contratista en la Respuesta Nueva
+                    ctrl.dataRespuesta.RespuestaNueva.Usuario = numeroDocumentoCoordinador;
+                    //Asignar el usuario del Coordinador del Proyecto Curricular seleccionado y no el del Contratista en la Vinculacion del Trabajo de Grado
+                    ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = numeroDocumentoCoordinador;
+                  });
+
+                  //Renombrar el atributo "proyecto" por "codigo_proyecto_curricular" del objeto
+                  proyectoCurricularSeleccionado["codigo_proyecto_curricular"] = proyectoCurricularSeleccionado["proyecto"];
+                  delete proyectoCurricularSeleccionado["proyecto"];
+                }
+
+                console.log("Proyecto Curricular Seleccionado: ", proyectoCurricularSeleccionado);
+
+                //Va a responder el Coordinador del Proyecto Curricular 1
+                if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE.Codigo) {
+                  respuestaAprobado = "ACPO1_PLX" //Aprobado por Coordinador de Posgrado Opcion 1
+                  respuestaRechazo = "RCPO1_PLX" //Rechazado por Coordinador de Posgrado Opcion 1
+                  
+                  //Si es Coordinador Posgrado de Proyecto Curricular 1 y la Opción Prioritaria también es la 1
+                  if(infoESPELE.Opcion == opcionPrioridad) {
+                    //Si en el Select se elige Aprobar Solicitud
+                    if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                      console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+
+                      //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes se ponía ACP01_PLX
+                      var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACC_PLX"
                       });
-                      if (!cambioMateriasPosgrado) {
+                      
+                      //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrerra) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1) 
+                      ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                      //Traer el Estado de Trabajo de Grado en Curso
+                      let parametrosConsulta = $.param({
+                        query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                      });
+
+                      var estadoTrabajoGrado;
+                      await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                        estadoTrabajoGrado = parametros.data.Data[0];
+                      });
+
+                      //Se coloca en curso el trabajo de grado
+                      ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                      //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                      ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+
+                      //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                      ctrl.dataRespuesta.MateriasProPos = true;
+                    }
+                    //Si en el Select se elige Rechazar Solicitud
+                    else {
+                      //Si la solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
+                      });
+                      console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
+
+                      //O si la solicitud inicial se encuentra en Aceptado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoACPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACPO2_PLX" //4656 - Aceptado por Coordinador de Posgrado Opción 2
+                      });
+
+                      //se verifica si solo se tiene una opción de materias
+                      if (infoESPELE2 == undefined) {
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se pone la respuesta nueva en True
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+                      }
+                      //Si tiene más de una opción. Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                      //Si la respuesta anterior es rechazado por Coordinador de Posgrado 2
+                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
+
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                      } 
+                      //Si la respuesta anterior es aprobado por Coordinador de Posgrado 2
+                      else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
+
+                        //Traer el Estado de Solicitud de Aprobado por consejo de carrera
+                        var estadoACCSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX" //4612 - Aprobado por consejo de carrera
+                        });
+
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 | Antes era 4656 (Aprobada por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
+                        
+                        //Traer el Estado de Trabajo de Grado en Curso
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se coloca En Curso el estado del trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se coloca en Vinculación Trabajo Grado al Usuario de la respuesta anterior (Coordinador Posgrado Opción 2).
+                        ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+
+                        //Poner el campo de la respuesta anterior en False
+                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                        //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                        ctrl.dataRespuesta.MateriasProPos = true;
+                        
+                        //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                        resolve();
+                      } else{
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        console.log("estadoSolicitud", estadoSolicitud);
+  
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
+                    }
+
+                    //Poner el campo de la respuesta anterior en False
+                    ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                    //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                    resolve();
+                  }
+                  //Si es Coordinador de Proyecto Curricular 1 y es la Opción NO Prioritaria
+                  else {
+                    //Solicitud inicial se encuentra en Aprobado por Consejo de Carrera significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                    var estadoACPRSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
+                    });
+                    console.log("estadoACPRSolicitud", estadoACPRSolicitud);
+
+                    //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                    var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
+                    });
+                    console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
+
+                    //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                    //Si la respuesta anterior es de Coordinador de Pregrado
+                    if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
+                      //Si en el Select se elige Aprobar Solicitud
+                      if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                        console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+
+                        //Traer el Estado en que el codigo de abreviación ACP01_PLX
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaAprobado
+                        });
+
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
+                      //Si en el Select se elige Rechazar Solicitud
+                      else {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                      }
+
+                        //Poner el campo de la respuesta anterior en False
+                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                      //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                      resolve();
+                    }
+                    //Si la respuesa anterior es Rechazada por Coordinador de Posgrado Opción 2 (PRIORITARIA)
+                    else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                      //Si en el Select se elige Aprobar Solicitud
+                      if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                        console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
+
+                        //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX"
+                        });
+
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                        //Traer el Estado de Trabajo de Grado en Curso
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        console.log("estadoTrabajoGrado", estadoTrabajoGrado);
+
+                        //Se coloca en curso el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+
+                        //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                        ctrl.dataRespuesta.MateriasProPos = true;
+                      }
+                      //Si en el Select se elige Rechazar Solicitud
+                      else {
+                        console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
+
+                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == respuestaRechazo
+                        });
+      
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
+                        //Traer el Estado de Trabajo de Grado en Cancelado
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                        });
+
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+
+                        //Se coloca en rechazo el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                      }
+
+                      //Poner el campo de la respuesta anterior en False
+                      ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                      //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                      resolve();
+                    }
+                  }
+                }
+                //Va a responder el Coordinador del Proyecto Curricular 2
+                else if(infoESPELE2 != undefined) { //Se verifica si el estudiante escogió 2 proyectos curriculares
+                  if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE2.Codigo) {
+                    respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
+                    respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
+                    
+                    //Si es Coordinador Posgrado de Proyecto Curricular 2 y la Opción Prioritaria también es la 2
+                    if(infoESPELE2.Opcion == opcionPrioridad) {
+                      //Si en el Select se elige Aprobar Solicitud
+                      if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                        console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
+  
+                        //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP02_PLX
+                        var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACC_PLX"
+                        });
+      
+                        console.log("estadoSolicitud", estadoSolicitud);
+                        
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+  
+                        //Traer el Estado de Trabajo de Grado en Curso
+                        let parametrosConsulta = $.param({
+                          query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                        });
+  
+                        await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                          estadoTrabajoGrado = parametros.data.Data[0];
+                        });
+  
+                        //Se coloca en curso el trabajo de grado
+                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+  
+                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+  
+                        //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                        ctrl.dataRespuesta.MateriasProPos = true;
+                      }
+                      //Si en el Select se elige Rechazar Solicitud
+                      else {
+                        //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                        var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
+                        });
+                        console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
+  
+                        //Solicitud inicial se encuentra en Aprobado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                        var estadoACPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACPO1_PLX" //4654 - Aprobado por Coordinador de Posgrado Opción 1
+                        });
+  
+                        //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                        //Si la respuesta anterior es rechazado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
+                        if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
+                          console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+  
+                          //Traer el Estado de Trabajo de Grado en Cancelado
+                          let parametrosConsulta = $.param({
+                            query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
+                          });
+  
+                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                            estadoTrabajoGrado = parametros.data.Data[0];
+                          });
+  
+                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+  
+                          //Se coloca en rechazo el trabajo de grado
+                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                        } 
+                        //Si la respuesta anterior es aprobado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
+                        else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO1Solicitud.Id) {
+                          console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
+  
+                          //Traer el Estado de Solicitud de Aprobado por consejo de carrera
+                          var estadoACCSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == "ACC_PLX" //4612 - Aprobado por consejo de carrera
+                          });
+  
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobada por Coordinador de Posgrado Opcion 1)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
+                          
+                          //Traer el Estado de Trabajo de Grado en Curso
+                          let parametrosConsulta = $.param({
+                            query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                          });
+  
+                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                            estadoTrabajoGrado = parametros.data.Data[0];
+                          });
+  
+                          //Se coloca En Curso el estado del trabajo de grado
+                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+  
+                          //Se coloca en Vinculación Trabajo Grado al Usuario de la respuesta anterior (Coordinador Posgrado Opción 1).
+                          ctrl.dataRespuesta.TrTrabajoGrado.VinculacionTrabajoGrado[0].Usuario = respuesta_solicitud.data.Data[0].Usuario;
+  
+                          //Poner el campo de la respuesta anterior en False
+                          ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+  
+                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+  
+                          //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                          ctrl.dataRespuesta.MateriasProPos = true;
+                          
+                          //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                          resolve();
+                        } else{
+                          
+                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaRechazo
+                          });
+        
+                          console.log("estadoSolicitud", estadoSolicitud);
+    
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                        }
+                      }
+                      //Poner el campo de la respuesta anterior en False
+                      ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+  
+                      //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                      resolve();
+                    }
+                    //Cuando la opción prioritaria y el Proyecto Curricular no coinciden
+                    else {
+                      //Solicitud inicial se encuentra en Aprobado por Consejo de Carrera significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoACPRSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
+                      });
+                      console.log("estadoACPRSolicitud", estadoACPRSolicitud);
+  
+                      //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
+                      });
+                      console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
+  
+                      //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
+                      //Si la respuesta anterior fue el Coordinador de Pregrado
+                      if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
+                        //Si en el Select se elige Aprobar Solicitud
+                        if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                          console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
+  
+                          //Traer el Estado en que el codigo de abreviación ACP02_PLX
+                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaAprobado
+                          });
+  
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                        }
+                        //Si en el Select se elige Rechazar Solicitud
+                        else {
+                          console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
+  
+                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaRechazo
+                          });
+        
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                        }
+  
+                              //Traer el Estado de Trabajo de Grado en Cancelado
+                              let parametrosConsulta = $.param({
+                                query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
+                              });
+  
+                        //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                         resolve();
                       }
-                    });
-                  }
-                }
-                // Prioridad contraria a la revisión actual (Ejemplo revisión materia 2, prioridad 1)
-                if (cambioMateriasPosgrado) {
-                  detalleNuevo = ""
-                  if (ctrl.prioridad == 1) {
-                    detalleNuevo = "ESPELE"
-                  } else if (ctrl.prioridad == 2) {
-                    detalleNuevo = "ESPELE2"
-                  }
-                  for (let i = 0; i < ctrl.detallesOriginal.length; i++) {
-                    if (ctrl.detallesOriginal[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == detalleNuevo) {
-                      detalleAux = ctrl.detallesOriginal[i]
-                      break;
+                      //Si la respuesta anterior fue Rechazado por Coordinador de Posgrado Opción 1 (Opción PRIORITARIA)
+                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
+                        //Si en el Select se elige Aprobar Solicitud
+                        if(ctrl.respuestaSolicitud == "ACC_PLX") {
+                          console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+  
+                          //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
+                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == "ACC_PLX"
+                          });
+  
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+  
+                          //Traer el Estado de Trabajo de Grado en Curso
+                          let parametrosConsulta = $.param({
+                            query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
+                          });
+  
+                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                            estadoTrabajoGrado = parametros.data.Data[0];
+                          });
+  
+                          console.log("estadoTrabajoGrado", estadoTrabajoGrado);
+  
+                          //Se coloca en curso el trabajo de grado
+                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+  
+                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
+  
+                          //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
+                          ctrl.dataRespuesta.MateriasProPos = true;
+                        }
+                        //Si en el Select se elige Rechazar Solicitud
+                        else {
+                          console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
+  
+                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == respuestaRechazo
+                          });
+        
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+  
+                          //Traer el Estado de Trabajo de Grado en Cancelado
+                          let parametrosConsulta = $.param({
+                            query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
+                          });
+  
+                          await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
+                            estadoTrabajoGrado = parametros.data.Data[0];
+                          });
+  
+                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+  
+                          //Se coloca en rechazo el trabajo de grado
+                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                        }
+  
+                        //Poner el campo de la respuesta anterior en False
+                        ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+  
+                        //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
+                        resolve();
+                      }
                     }
                   }
-                  ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-                  ctrl.respuestaSolicitud = resOriginal;
-                  let estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                    return estSol.CodigoAbreviacion == resOriginal
-                  })
-                  ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud.Id = estadoSolicitud.Id;
-                  ctrl.detallesSolicitud.splice(index, 1);
-                  ctrl.detallesSolicitud.push(detalleAux);
-                  await ModificarRespuestas(respuestas);
-                  resolve();
-                }
+                }                 
               }
             })
           }
@@ -3131,7 +3797,7 @@ angular.module('poluxClienteApp')
                   TipoSolicitud: ctrl.respuestaActual.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud,
                   TrTrabajoGrado: null,
                   TrabajoGrado: null,
-
+                  MateriasProPos: false
                 };
                 //console.log(ctrl.dataRespuesta);
 

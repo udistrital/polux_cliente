@@ -370,12 +370,47 @@ angular.module('poluxClienteApp')
         return defer.promise;
       }
 
+      
+      /**
+       * @ngdoc method
+       * @name cargarReporteNotasPosgrado
+       * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
+       * @description 
+       * Consulta el reporte de notas de un trabajo de grado de modalidad de espacios académicos de posgrado el servicio de {@link services/poluxService.service:poluxRequest poluxRequest}.
+       * @param {undefined} undefined no requiere parametros
+       * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición
+       */
+      ctrl.cargarReporteNotasPosgrado = function() {
+        var defer = $q.defer();
+        //Se consulta el tipo de documento 189 que es el reporte de notas de posgrado
+        let TipoDocumentoTemp = ctrl.TiposDocumento.find(data => {
+          return data.CodigoAbreviacion == "RNP_PLX"
+        });
+
+        var parametrosReporteNotasPosgrado = $.param({
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + TipoDocumentoTemp.Id + ",TrabajoGrado:" + ctrl.trabajoGrado.Id,
+          limit: 1,
+        });
+        poluxRequest.get("documento_trabajo_grado", parametrosReporteNotasPosgrado)
+          .then(function(responseReporteNotasPosgrado) {
+            if (Object.keys(responseReporteNotasPosgrado.data.Data[0]).length > 0) {
+              ctrl.trabajoGrado.reporteNotasPosgrado = responseReporteNotasPosgrado.data.Data[0];
+            }
+            defer.resolve();
+          })
+          .catch(function(error) {
+            ctrl.mensajeError = $translate.instant("ERROR.CARGAR_REPORTE_NOTAS_POSGRADO");
+            defer.reject(error);
+          });
+        return defer.promise;
+      }
+
       /**
        * @ngdoc method
        * @name getEspaciosAcademicosInscritos
        * @methodOf poluxClienteApp.controller:GeneralConsultarTrabajoGradoCtrl
        * @description 
-       * Consulta los espacios academicos inscritos en modalidad de materias de posgrado del servicio de {@link services/poluxService.service:poluxRequest poluxRequest},
+       * Consulta el proyecto curricular de posgrado inscrito en modalidad de materias de posgrado del servicio de {@link services/poluxService.service:poluxRequest poluxRequest},
        * Consulta el nombre desde el servicio de {@link services/academicaService.service:academicaRequest academicaRequest}.
        * @param {undefined} undefined No requiere parámetros
        * @returns {Promise} Objeto de tipo promesa que indica si ya se cumplio la petición o la excepción generada
@@ -387,44 +422,13 @@ angular.module('poluxClienteApp')
           limit: 0,
         });
 
-        var getDataEspacio = function(espacio) {
-          var defer = $q.defer();
-          academicaRequest.get("asignatura_pensum", [espacio.EspaciosAcademicosElegibles.CodigoAsignatura, espacio.EspaciosAcademicosElegibles.CarreraElegible.CodigoPensum])
-            .then(function(responseEspacio) {
-              if (responseEspacio.data.asignatura.datosAsignatura) {
-                espacio.NombreEspacio = responseEspacio.data.asignatura.datosAsignatura[0].nombre;
-                defer.resolve();
-              } else {
-                // Se rechaza la petición en caso de no encontrar datos
-                defer.reject("No se encuentran datos de la materia");
-              }
-            }).catch(function(error) {
-              defer.reject(error);
-            });
-          return defer.promise;
-        }
-
         poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos)
           .then(function(responseEspacios) {
-            if (Object.keys(responseEspacios.data.Data[0]).length > 0) {
-              ctrl.trabajoGrado.espacios = responseEspacios.data.Data;
-              var promises = [];
-              //Consultar nombres de los espacios
-              angular.forEach(ctrl.trabajoGrado.espacios, function(espacio) {
-                promises.push(getDataEspacio(espacio));
-              });
-              $q.all(promises)
-                .then(function() {
-                  defer.resolve();
-                })
-                .catch(function(error) {
-                  ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_ASIGNATURAS");
-                  defer.reject(error);
-                });
-            } else {
-              ctrl.mensajeError = $translate.instant("ERROR.SIN_ESPACIOS_ACADEMICOS_INSCRITOS");
-              defer.reject("sin espacios académicos inscritos");
-            }
+            academicaRequest.get("carrera", [responseEspacios.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado){
+              console.log(carreraPosgrado.data.carrerasCollection.carrera[0].nombre)
+              ctrl.trabajoGrado.ProyectoCurricularTg = carreraPosgrado.data.carrerasCollection.carrera[0].nombre
+            })
+            defer.resolve();
           })
           .catch(function(error) {
             ctrl.mensajeError = $translate.instant("ERROR.CARGANDO_ESPACIOS_ACADEMICOS_INSCRITOS");
@@ -772,6 +776,7 @@ angular.module('poluxClienteApp')
                 promises.push(ctrl.cargarAsignaturasTrabajoGrado());
                 promises.push(ctrl.cargarActaSocializacion());
                 promises.push(ctrl.cargarCertificadoARL());
+                promises.push(ctrl.cargarReporteNotasPosgrado());
                 promises.push(ctrl.getEstudiantesTg());
 
                 //Consulta las vinculaciones y las áreas de conocimiento
@@ -786,7 +791,7 @@ angular.module('poluxClienteApp')
                   promises.push(ctrl.cargarAreasConocimiento());
                 }
 
-                //si la modalidad es 2 trae los espacios academicos
+                //si la modalidad es materias de posgrado trae los espacios academicos
                 if (ModalidadTemp.CodigoAbreviacion === "EAPOS_PLX" || ModalidadTemp.CodigoAbreviacion === "EAPRO_PLX") {
                   promises.push(ctrl.getEspaciosAcademicosInscritos());
                 }
@@ -806,27 +811,31 @@ angular.module('poluxClienteApp')
                           var P = Periodo.data.periodoAcademicoCollection.periodoAcademico[0];
                           //CONSULTA LOS DATOS DEL ESTUDIANTE
                           academicaRequest.get("datos_estudiante", [ctrl.datos_basicos_estudiante.codigo, P.anio, P.periodo]).then(function (data_estudiante) {
-                            if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "PREGRADO") {
-                              //VALIDACIÓN PARA LA MODADLIDAD DE MATERIAS DE PROFUNDIZACIÓN EN PREGRADO
-                              if(ctrl.trabajoGrado.Modalidad.CodigoAbreviacion == "EAPOS"){
+                            if(ctrl.trabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion == "NTF_PLX"){
+                              if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "PREGRADO") {
+                                //VALIDACIÓN PARA LA MODADLIDAD DE MATERIAS DE PROFUNDIZACIÓN EN PREGRADO
+                                if(ctrl.trabajoGrado.Modalidad.CodigoAbreviacion == "EAPOS"){
+                                  if (asignatura.Calificacion >= 3.5) {
+                                    asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                                  } else {
+                                    asignatura.Aprobacion = $translate.instant("REPROBADO");
+                                  }
+                                }else{
+                                  if (asignatura.Calificacion >= 3.0) {
+                                    asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
+                                  } else {
+                                    asignatura.Aprobacion = $translate.instant("REPROBADO");
+                                  }
+                                }
+                              } else if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "POSGRADO") {
                                 if (asignatura.Calificacion >= 3.5) {
                                   asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
                                 } else {
                                   asignatura.Aprobacion = $translate.instant("REPROBADO");
                                 }
-                              }else{
-                                if (asignatura.Calificacion >= 3.0) {
-                                  asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
-                                } else {
-                                  asignatura.Aprobacion = $translate.instant("REPROBADO");
-                                }
                               }
-                            } else if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "POSGRADO") {
-                              if (asignatura.Calificacion >= 3.5) {
-                                asignatura.Aprobacion = $translate.instant("APROBADO.ASIGNATURA");
-                              } else {
-                                asignatura.Aprobacion = $translate.instant("REPROBADO");
-                              }
+                            } else {
+                              asignatura.Aprobacion = $translate.instant("ERROR.SIN_CALIFICACION");
                             }
                           });
                         });

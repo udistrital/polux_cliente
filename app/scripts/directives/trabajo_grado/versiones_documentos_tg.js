@@ -99,12 +99,32 @@ angular.module('poluxClienteApp')
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.VERSION_REVISION')
                     break;
                   case "AVCC_PLX":
-                    nombreNodo = $translate.instant('Acuerdo de Voluntad, Convenio o Contrato');
+                    nombreNodo = $translate.instant('ACUERDO_VOLUNTAD');
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.PASANTIA')
                     break;
                   case "CUA_PLX":
-                    nombreNodo = $translate.instant('Carta de la Unidad Académica');
+                    nombreNodo = $translate.instant('CARTA_UNIDAD_ACADEMICA');
                     nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.PASANTIA')
+                    break;
+                  case "SEM_PLX":
+                    nombreNodo = $translate.instant('SOLICITUD_MATERIAS');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
+                    break;
+                  case "JMP_PLX":
+                    nombreNodo = $translate.instant('JUSTIFICACION');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
+                    break;
+                  case "CAI_PLX":
+                    nombreNodo = $translate.instant('CARTA_ACEPTACION_INSCRIPCION');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
+                    break;
+                  case "SN_PLX":
+                    nombreNodo = $translate.instant('SABANA_NOTAS');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
+                    break;
+                  case "RNP_PLX":                    
+                    nombreNodo = $translate.instant('REPORTE_NOTAS_POSGRADO');
+                    nombreHijo = $translate.instant('DOCUMENTOS_ASOCIADOS.TRABAJO_GRADO_NUMERO')
                     break;
                 }
                 ctrl.dataForTree.push({
@@ -151,6 +171,14 @@ angular.module('poluxClienteApp')
             //Tipo de documento Contrato y Carta Aval Pasantia
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "AVCC_PLX"));
             promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "CUA_PLX"));
+            
+          }
+          if(trabajoGrado.Modalidad.CodigoAbreviacion == "EAPOS_PLX"){
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "SEM_PLX"));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "JMP_PLX"));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "CAI_PLX"));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "SN_PLX"));
+            promesasDocumentos.push(ctrl.getDocumentos(trabajoGrado, "RNP_PLX"));
             
           }
           $q.all(promesasDocumentos)

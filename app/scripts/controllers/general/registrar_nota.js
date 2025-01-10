@@ -43,13 +43,19 @@ angular.module('poluxClienteApp')
   .controller('GeneralRegistrarNotaCtrl',
     function($scope, $q, $translate,notificacionRequest, academicaRequest,utils,gestorDocumentalMidRequest, $window ,poluxRequest, token_service, documentoRequest, parametrosRequest, poluxMidRequest,autenticacionMidRequest) {
       var ctrl = this;
-
+      $scope.roles= token_service.getAppPayload().role;
       //token_service.token.documento = "80093200";
       //token_service.token.documento = "79777053";
       //token_service.token.documento = "12237136";
       //ctrl.documento = token_service.token.documento;
 
       ctrl.documento = token_service.getAppPayload().appUserDocument;
+
+      if($scope.roles.includes('COORDINADOR')){
+        ctrl.isCoordinador = true
+      } else {
+        ctrl.isCoordinador = false
+      }
 
       ctrl.mensajeTrabajos = $translate.instant('LOADING.CARGANDO_TRABAJOS_DE_GRADO_ASOCIADOS');
       ctrl.mensajeTrabajo = $translate.instant('LOADING.CARGANDO_DATOS_TRABAJO_GRADO');
@@ -182,12 +188,13 @@ angular.module('poluxClienteApp')
 
           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (responseEstadosEstudianteTrabajoGrado){
             ctrl.EstadosEstudianteTrabajoGrado = responseEstadosEstudianteTrabajoGrado.data.Data;
-          });
+          });        
 
           resolve();
         });
       }
 
+      
       /**
        * @ngdoc method
        * @name cargarTrabajos
@@ -203,20 +210,49 @@ angular.module('poluxClienteApp')
         var defer = $q.defer();
         ctrl.cargandoTrabajos = true;
 
-        var parametrosTrabajoGrado = $.param({
-          usuario: ctrl.documento,
-        });
+        var parametrosTrabajoGrado;
+        var proyectos = "";
+
+        //Si es Contratista traer los proyectos curriculares a cargo y enviarlos como parámetro
+        if($scope.roles.includes('CONTRATISTA')) {
+          //Consulta para traer todos los proyectos curriculares del Contratista
+          await academicaRequest.get("asistente_proyecto", [ctrl.documento]).then(function(responseAsistente) {
+            if (Object.keys(responseAsistente.data.asistente.proyectos).length > 0) {
+              angular.forEach(responseAsistente.data.asistente.proyectos, function(carrera) {
+                //Concatenar los proyectos curriculares de la consulta en un solo string
+                proyectos += carrera.proyecto + ",";
+              });
+                //Eliminar la última coma
+                proyectos = proyectos.slice(0, -1);
+            }
+          }).catch(function(error) {
+            ctrl.mensajeError = 'ERROR CARGANDO PROYECTOS CURRICULARES';
+            defer.reject(error);
+          });
+
+          parametrosTrabajoGrado = $.param({
+            proyectos: proyectos,
+          });
+        } else {
+          parametrosTrabajoGrado = $.param({
+            usuario: ctrl.documento,
+          });
+        }
+
+        console.log("parametrosTrabajoGrado", parametrosTrabajoGrado);
 
         poluxRequest.get("estudiante_vinculacion_trabajo_grado", parametrosTrabajoGrado)
           .then(function(dataTrabajos) {
             if (Object.keys(dataTrabajos.data.Data[0]).length > 0) {
               ctrl.trabajosGrado = dataTrabajos.data.Data;
+              var trabajosPosgrado = []
               // Se decide qué trabajos puede ver y en cuales puede registrar nota
               angular.forEach(ctrl.trabajosGrado, function(trabajo) {
                 let ModalidadTemp = ctrl.Modalidades.find(data => {
                   return data.Id == trabajo.TrabajoGrado.Modalidad;
                 });
                 trabajo.TrabajoGrado.Modalidad = ModalidadTemp;
+                //console.log("Modalidad", ModalidadTemp);
 
                 let EstadoTrabajoGradoTemp = ctrl.EstadosTrabajoGrado.find(data => {
                   return data.Id == trabajo.TrabajoGrado.EstadoTrabajoGrado;
@@ -243,6 +279,11 @@ angular.module('poluxClienteApp')
                   trabajo.permitirRegistrar = true;
                 } else if (estado == "LPS_PLX" && rol.includes("DIRECTOR_PLX") && !rol.includes("CODIRECTOR_PLX")) {
                   trabajo.permitirRegistrar = true;
+                } else if (rol.includes("COR_POSGRADO_PLX")){
+                  if(estado == "EC_PLX"){
+                    trabajo.permitirRegistrar = true;
+                    trabajosPosgrado.push(trabajo)
+                  } 
                 }
                 // var modalidad = trabajo.TrabajoGrado.Modalidad.Id; ***Aún no se usa esta variable
                 /*if( rol === 1 ){
@@ -266,8 +307,22 @@ angular.module('poluxClienteApp')
                 }
                 */
               });
+              
+              //si el rol del usuario el coordinador
+              if($scope.roles.includes('COORDINADOR')){
+                //si no se han encontrado trabajos asociados
+                if (trabajosPosgrado.length <= 0){
+                  //se muestra el mensaje de error
+                  ctrl.mensajeError = $translate.instant('ERROR.SIN_TRABAJOS_ASOCIADOS');
+                  defer.reject("no hay trabajos de grado asociados");
+                } else {
+                  //si encontro trabajos, entonces los lista
+                  ctrl.trabajosGrado = trabajosPosgrado
+                }
+              } 
               ctrl.gridOptions.data = ctrl.trabajosGrado;
               defer.resolve();
+
             } else {
               ctrl.mensajeError = $translate.instant('ERROR.SIN_TRABAJOS_ASOCIADOS');
               defer.reject("no hay trabajos de grado asociados");
@@ -483,7 +538,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerParametrosDocumentoTrabajoGrado = function(idTrabajoGrado, tipoDocumentoId, limit) {
         return $.param({
-          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado,
+          query: "DocumentoEscrito.TipoDocumentoEscrito:" + tipoDocumentoId + "," + "TrabajoGrado.Id:" + idTrabajoGrado + ",Activo:true",
           sortby: 'id',  // Ordenar por id
           order: 'desc', // Orden descendente
           limit: limit // Ajusta el límite según el código de abreviación
@@ -590,8 +645,12 @@ angular.module('poluxClienteApp')
           return data.Id == ctrl.trabajoSeleccionado.vinculacion.RolTrabajoGrado.Id;
         });
 
+        console.log("ROL TRABAJO Grado", RolTrabajoGradoTemp.CodigoAbreviacion);
+
         //Se verifica si se tiene que pedir acta segun el tipo de vinculación, solo se pide si es el director
         ctrl.trabajoSeleccionado.pedirActaSustentacion = (RolTrabajoGradoTemp.CodigoAbreviacion == "DIRECTOR_PLX");
+        //Se verifica si se tiene que pedir reporte de notas de modalidad de posgrado segun el tipo de vinculación, para este caso si el rol es coordinador
+        ctrl.trabajoSeleccionado.pedirReporteNotasPosgrado = (RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX");
         //Promesas del tg
         var promesasTrabajo = [];
         promesasTrabajo.push(ctrl.getEstudiantes(ctrl.trabajoSeleccionado));
@@ -698,10 +757,56 @@ angular.module('poluxClienteApp')
                 defer.reject(error);
               });
 
-          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "EVALUADOR_PLX") {
+          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX") {
+            var nombreDocumento = "Reporte de Notas: " + ctrl.trabajoSeleccionado.Id;
+            var descripcionDocumento = "Reporte de notas de modalidad de espacios académicos de posgrado: " + ctrl.trabajoSeleccionado.Id + ", nombre:" + ctrl.trabajoSeleccionado.Titulo + ".";
+            //Se carga el documento
+            // Se carga el documento por medio del gestor documental
+            var descripcion;
+            var fileBase64;
+            var data = [];
+            var URL = "";
+            descripcion = descripcionDocumento;
+            utils.getBase64(ctrl.trabajoSeleccionado.reporteNotasPosgrado).then(function (base64) {
+              fileBase64 = base64;
+              let TipoDocumentoTemp = ctrl.TiposDocumento.find(dataTipoDoc => {
+                return dataTipoDoc.CodigoAbreviacion == "RNP_PLX";
+              });
+              data = [{
+                IdTipoDocumento: TipoDocumentoTemp.Id, //id tipo documento de documentos_crud
+                nombre: nombreDocumento,// nombre formado por el acta del trabajo y el id de trabajo
+
+                metadatos: {
+                  NombreArchivo: nombreDocumento,
+                  Tipo: "Archivo",
+                  Observaciones: "reporte_notas_posgrado"
+                },
+                descripcion: descripcion,
+                file: fileBase64,
+              }]
+
+              gestorDocumentalMidRequest.post('/document/upload', data).then(function (response) {
+                URL = response.data.res.Enlace
+                dataRegistrarNota.DocumentoEscrito = {
+                  Id: 0,
+                  Titulo: nombreDocumento,
+                  Resumen: descripcionDocumento,
+                  Enlace: URL,
+                  TipoDocumentoEscrito: TipoDocumentoTemp.Id, //Para acta de sustentación
+                };
+                defer.resolve(dataRegistrarNota);
+                
+              })
+
+            })
+              .catch(function (error) {
+                defer.reject(error);
+              });         
+
+          } else if (RolTrabajoGradoTemp.CodigoAbreviacion == "EVALUADOR_PLX" || RolTrabajoGradoTemp.CodigoAbreviacion == "COR_POSGRADO_PLX") {
             //Si no es director se registra la nota
             defer.resolve(dataRegistrarNota);
-          }
+          } 
 
           let RolTemp = ctrl.RolesTrabajoGrado.find(dataRol => {
             return dataRol.Id == dataRegistrarNota.EvaluacionTrabajoGrado.VinculacionTrabajoGrado.RolTrabajoGrado.Id;

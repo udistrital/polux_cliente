@@ -44,6 +44,16 @@ var text_es = {
             "<li>La duración es de un periodo académico para cursar y aprobar la modalidad de espacios académicos de posgrado.</li>" +
             "<li>La aprobación de esta modalidad está sujeta a que el estudiante cuente con las renovaciones de matrícula mínimas para su desarrollo.</li>" +
             "</ul>",
+        PROFUNDIZACION: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
+            "<ul>" +
+           "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
+            "<li>Para que el trabajo de grado pueda ser desarrollado, el estudiante debe contar con mínimo el 70% de su plan de estudios cursado y aprobado.</li>" +
+            "<li>Los plazos de entrega son controlados por el proyecto curricular, tenga en cuenta que Pólux no le notificará sobre esas fechas límites</li>" +
+            "<li>Debe ser muy riguroso con la documentación requerida por las diferentes modalidades de grado y ser muy claro con la información brindada</li>" +            
+            "<li>En caso que el estudiante repruebe un espacio académico de los correspondientes a la modalidad de grado, deberá optar por otra modalidad de grado.</li>" +
+            "<li>La duración es de un periodo académico para cursar y aprobar la modalidad de espacios académicos de posgrado.</li>" +
+            "<li>La aprobación de esta modalidad está sujeta a que el estudiante cuente con las renovaciones de matrícula mínimas para su desarrollo.</li>" +
+            "</ul>",
         INVESTIGACION: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br>" + 
             "<ul>" +                     
             "<li>Si los estudiantes son de diferentes Proyectos Curriculares, este formato debe ser radicado por separado en el sistema, donde se le se asignará a cada estudiante un docente director y un docente evaluador. La propuesta de trabajo de grado se considera aprobada únicamente si hay aprobación por parte de los dos Consejos Curriculares.</li>" +
@@ -114,6 +124,12 @@ var text_es = {
     PERIODO: "Periodo",
     CARRERA: "Proyecto curricular",
     POSGRADO: "Posgrado",
+    NOMBRE_POSGRADO: "Proyecto Curricular admitido",
+    SOLICITUD_MATERIAS: "Solicitud escrita de las materias",
+    JUSTIFICACION: "Justificación",
+    CARTA_ACEPTACION_INSCRIPCION: "Carta de aceptación de inscripción",
+    SABANA_NOTAS: "Sábana de notas",
+    SOLICITUD_CAMBIO_MATERIAS: "Solicitud escrita de cambio de materias",
     CODIGO_POSGRADO: "Código del posgrado",
     CODIGO_PROYECTO: "Código del proyecto",
     CODIGO_ESP_ACADEMICO: "Código del espacio académico",
@@ -240,6 +256,15 @@ var text_es = {
     SELECCIONAR_SOLICITUD: "Seleccione tipo de solicitud",
     FORMULARIO_SOLICITUD: "Formulario de solicitud",
     SELECCIONE_AREAS_CONOCIMIENTO: "Seleccione las áreas del conocimiento de su proyecto",
+    INFO_REPORTES: "Por favor, ingrese los siguientes datos para generar los reportes:",
+    SELECCIONE_ESTADO: "Filtrar por el estado",
+    SELECCIONE_RANGO_FECHAS: "Seleccione intervalo del reporte:",
+    HASTA: "Hasta",
+    REPORTE_GENERAL: "El Reporte General está enfocado en adquirir la información de todos los trabajos de grado",
+    REPORTE_SOLICITUDES: "El Reporte de Solicitudes está enfocado en adquirir la información de las solicitudes realizadas en los trabajos de grado",
+    DESCARGA_COMPLETA: "Descarga Completada",
+    REPORTE_CORRECTO: "Se ha generado el reporte correctamente",
+    REPORTE_INCORRECTO: "No se encontraron registros con los filtros aplicados",
     NOMBRE_CORTO: "Nombre muy corto",
     NOMBRE_LARGO: "Nombre muy largo",
     NUEVA_AREA: "Vincular nueva subárea",
@@ -262,6 +287,11 @@ var text_es = {
     FALTAN_DATOS_ESTUDIANTE: "Error: No se encontraron datos del estudiante.",
     CANTIDAD_EXCEDIDA: "Error: Se excede la cantidad de estudiantes para la modalidad solicitada.",
     SOLICITAR_ASIGNATURAS: "Solicitar Asignaturas",
+    TEXTO_INFO_SELECCION_ASIGNATURAS_POSGRADO: "Seleccione los proyectos curriculares a los cuales corresponde sus materias seleccionadas",
+    TEXTO_INFO_AREAS_CONOCIMIENTO_POSGRADO: "Las áreas de conocimiento son aquellas las cuales están involucradas las materias",
+    TEXTO_INFO_PRIORIDAD_CARRERA_POSGRADO: "En caso de que se acepten las dos opciones se determinará por comenzar a la cual se dio prioridad",
+    CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO: "Se ha cargado las materias con éxito",
+    VERIFICAR_SELECCION_ASIGNATURAS_POSGRADO: "Verificar su selección de proyecto curricular",
     PRIORIDAD_ESPACIOS_ACADEMICOS: "Prioridad de espacios academicos.",
     CONFIRMAR: "¿Confirmar?",
     MENSAJE_ERROR: "ERROR",
@@ -431,10 +461,12 @@ var text_es = {
         SIN_MODALIDADES: "No existen modalidades registradas por el momento",
         CARGAR_CERTIFICADO_ARL:"Ocurrió un error cargando la certificación de afiliación a la ARL. Por favor verifique su conexión e intente de nuevo",
         NOTIFICACIONES_ELIMINADA:"No se pudo eliminar la notificación",
+        CARGAR_REPORTE_NOTAS_POSGRADO:"Ocurrió un error cargando el reporte de notas de posgrado. Por favor verifique su conexión e intente de nuevo",
         CALIFICADO:"El trabajo de grado ya se encuentra calificado, por lo cual no puede realizar más modificaciones.",
         CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez.",
         DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación.",
-        SIN_REVISIONES_ARL: "No existen revisiones de ARL pendientes o activas"
+        SIN_REVISIONES_ARL: "No existen revisiones de ARL pendientes o activas",
+        CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO: "No se pudo cargar las materias con exito!"
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión o el tipo de documento y tamaño en cada campo requerido .",
@@ -489,7 +521,8 @@ var text_es = {
     EVALUADOR_NUEVO: "Seleccione el docente que sugiere como nuevo evaluador",
     HOJA_VIDA_DIRECTOR_EXTERNO_NUEVO: "Cargue la hoja de vida del nuevo director externo",
     SELECCIONE_TIPO_PRORROGA: "Seleccione el tipo de prórroga que va a solicitar",
-    SELECCIONE_ESPACIOS_ACADEMICOS: "Seleccione los espacios academicos que desea solicitar",
+    SELECCIONE_ESPACIOS_ACADEMICOS: "Primera opción de materia para proyecto curricular",
+    SELECCIONE_ESPACIOS_ACADEMICOS_2: "Segunda opción de materia para proyecto curricular",
     CANCELAR_ESPACIOS_ACADEMICOS: "Seleccione el espacio academico que desea cancelar",
     SELECCIONE_ESPACIO_SOLICITADO: "Seleccione el espacio academico que solicita",
     NOMBRE_ANTERIOR_PROPUESTA: "Nombre actual de la propuesta",
@@ -835,6 +868,7 @@ var text_es = {
         AVISO: "Registro de calificaciones",
         NOTA_REGISTRADA: "Las calificaciones ingresadas han sido registradas con éxito.",
         DESCRIPCION: "Descripción del trabajo de grado seleccionado",
+        REPORTE_NOTAS_POSGRADO: "Subir reporte de notas de posgrado:",
         INSTRUCCIONES: "Ingrese las calificaciones obtenidas por el estudiante haciendo click sobre la celda correspondiente. Tenga en cuenta que las calificaciones válidas van desde 0.0 hasta 5.0, y se tomarán dos (2) decimales de precisión para el registro.",
         ERROR: {
             REGISTRANDO_NOTA: "Ocurrio un error registrando la nota, por favor intente de nuevo.",
@@ -893,6 +927,8 @@ var text_es = {
     CARGO_RECEPTOR: "Cargo del receptor",
     ACTAS_REGISTRADAS: "Actas registradas",
     ESTUDIANTES: "Estudiantes",
+    ACUERDO_VOLUNTAD: "Acuerdo de Voluntad, Convenio o Contrato",
+    CARTA_UNIDAD_ACADEMICA: "Carta de la Unidad Académica",
     VINCULACIONES_TRABAJO_GRADO: "Personas vinculadas al trabajo de grado",
     REVISAR_ANTEPROYECTO: {
         TITULO: "Revisión de anteproyectos de grado",
@@ -1012,6 +1048,7 @@ var text_es = {
         TRABAJO_GRADO_NUMERO: "Versión del trabajo de grado número ",
         ANTEPROYECTO: "Versión del anteproyecto número ",
         VERSION_REVISION: "Versión del trabajo de grado para revisión número ",
+        REPORTE_NOTAS_POSGRADO: "Reporte de notas de posgrado",
     },
     NO_HAY_DOCUMENTOS: "No hay documentos para mostrar.",
     INDIQUE_FECHA_REUNION: "Indique la fecha de reunión correspondiente",
@@ -1022,6 +1059,7 @@ var text_es = {
     DESEA_INCLUIR_DOCUMENTO: "¿Desea incluir documento a la revisión?",
     QUITAR_DOCUMENTO: "Quitar",
     ACTA_SOCIALIZACION: "Acta de socialización",
+    REPORTE_NOTAS_POSGRADO: "Reporte de notas de posgrado",
     ABOUT: "Acerca de Polux",
     ABOUT_INFO: "Sistema de Gestión de Trabajos de Grado para estudiantes de Pregrado de la Universidad Distrital Francisco José de Caldas. Este sistema contempla cada una de las modalidades de trabajo de grado disponibles para los estudiantes de pregrado según el acuerdo 038 de 2015 del Consejo Académico de la Universidad, las modalidades son las siguientes: " +
         "<ul>" +
@@ -1097,6 +1135,11 @@ var text_en = {
     PERIODO: "Period",
     CARRERA: "Curricular project",
     POSGRADO: "Postgraduate",
+    SOLICITUD_MATERIAS: "Written application for the subjects",
+    JUSTIFICACION: "Justification",
+    CARTA_ACEPTACION_INSCRIPCION: "Registration acceptance letter",
+    SABANA_NOTAS: "Sheet of notes",
+    SOLICITUD_CAMBIO_MATERIAS: "Written request for change of subjects",
     CODIGO_POSGRADO: "Postgraduate code",
     CODIGO_PROYECTO: "Project code",
     CODIGO_ESP_ACADEMICO: "Subject's code",
@@ -1726,6 +1769,8 @@ var text_en = {
     SIN_AREAS: "Currently there are no sub-areas linked to the selected SNIES area",
     SIN_INFORMACION_TABLA:"Currently there are no data in the table",
     DESCRIPCION: "Description",
+    ACUERDO_VOLUNTAD: "Willingness Agreement, Agreement or Contract",
+    CARTA_UNIDAD_ACADEMICA: "Letter from the Academic Unit",
     NO_SOLICITUDES_POSGRADO: "There are no requests in the graduate academic spaces modality for the selected curricular project",
     NO_SOLICITUDES_PROFUNDIZACION: "There are no requests in the undergraduate academic spaces modality for the selected curricular project",
     SELECCIONAR_PERIODO: "Select academic period",
@@ -2016,7 +2061,16 @@ var text_en = {
         NOTIFICACION: {
                 COORDINACION:"CURRICULAR PROJECT COORDINATION",
                 PASANTIA:"INTERNSHIP EXTENSION OFFICE"
-        }
+        },
+    INFO_REPORTES: "Please, enter the following data to generate the reports:",
+    SELECCIONE_ESTADO: "Filter by state",
+    SELECCIONE_RANGO_FECHAS: "Select report range:",
+    HASTA: "To",
+    REPORTE_GENERAL: "The General Report is focused on acquiring the information of all the degree works",
+    REPORTE_SOLICITUDES: "The Request Report is focused on acquiring the information of the requests made in the degree works",
+    DESCARGA_COMPLETA: "Download Completed",
+    REPORTE_CORRECTO: "Report generated correctly",
+    REPORTE_INCORRECTO: "No records found with filters applied",
 };
 
 /**

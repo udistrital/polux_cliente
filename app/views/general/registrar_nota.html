@@ -55,12 +55,12 @@
                         <label class="control-label col-sm-2"> {{'ESTADO' | translate}}: </label>
                         <label class="control-label col-sm-10"> {{registrarNotaVinculado.trabajoSeleccionado.EstadoTrabajoGrado.Nombre}} </label>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="!registrarNotaVinculado.isCoordinador">
                         <label class="control-label col-sm-2"> {{'DOCUMENTO_REVISION' | translate}}: </label>
                         <label ng-click="registrarNotaVinculado.getDocumento()" class="col-sm-10" style="color:blue; text-decoration: underline;"> {{'VER_DOCUMENTO' | translate}}  </label>
                     </div>
 
-                    <div class="row" ng-repeat="anexo in registrarNotaVinculado.anexosTrabajoGrado">
+                    <div class="row" ng-repeat="anexo in registrarNotaVinculado.anexosTrabajoGrado" ng-if="!registrarNotaVinculado.isCoordinador">
                         <label class="control-label col-sm-2"> {{'ANEXOS' | translate}}: </label>
                         <label ng-click="registrarNotaVinculado.getDocAnyFormat(anexo.DocumentoEscrito.Enlace)" class="col-sm-8 " style="color:blue; text-decoration: underline;"> {{ 'DESCARGAR_DOCUMENTOS' | translate}} </label>
                     </div>
@@ -84,6 +84,22 @@
                 <div ng-if="!registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">
                     <div ng-if="!registrarNotaVinculado.trabajoSeleccionado.notaRegistrada">
                         <loading tam="4" load="registrarNotaVinculado.registrandoNotaTG" message="registrarNotaVinculado.mensajeRegistrandoNota"> </loading>
+                        <div class="row" ng-if="registrarNotaVinculado.trabajoSeleccionado.pedirReporteNotasPosgrado">
+                            <div class="panel-body">
+                              <div class="alert-warning">
+                                <strong>{{'AVISO_PDF' | translate}}</strong>
+                              </div>
+                            </div>
+                            
+                            <label class="col-sm-3 control-label">{{'REGISTRAR_NOTA.REPORTE_NOTAS_POSGRADO' | translate}}</label>
+                            <div class="col-sm-9">
+                              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="registrarNotaVinculado.trabajoSeleccionado.reporteNotasPosgrado" required> </input>
+                            </div>
+                              
+                            <br>
+                        </div>
+                        <br>
+                        <br>
                         <div ng-if="!registrarNotaVinculado.registrandoNotaTG">
                             <form  method="post" name="formularioNota" ng-submit="registrarNotaVinculado.registrarNotaTG()">
                                 <div class="row">
@@ -118,7 +134,7 @@
                             <label class="control-label col-sm-8"> {{registrarNotaVinculado.trabajoSeleccionado.evaluacion.Nota}} </label>
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
         <div class="panel panel-default" ng-if="registrarNotaVinculado.devolver && !registrarNotaVinculado.errorCargandoTrabajo && !registrarNotaVinculado.cargandoTrabajo">

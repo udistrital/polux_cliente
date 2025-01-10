@@ -3,10 +3,12 @@
     <loading tam="4" load="loadParametros" message="cargandoParametros"> </loading>
   </div>
 </div>
+
 <div class="panel panel-default"  ng-if="!crearSolicitud.errorCarga && !loadParametros">
   <div class="panel-heading">
     {{'NUEVA_SOLICITUD' | translate}}
   </div>
+
   <div class="panel-body">
     <div class="row" ng-if="!crearSolicitud.siModalidad">
       <label class="col-sm-2 control-label"> {{'SELECCIONAR_MODALIDAD' | translate}}</label>
@@ -26,6 +28,7 @@
     </div>
   </div>
 </div>
+
 <div class="row" ng-if="crearSolicitud.Docente_trabajos">
   <label class="col-sm-2 control-label"> Seleccion la materia a la cual realizar la solicitud </label>
   <div class="col-sm-10">
@@ -34,21 +37,22 @@
     </select>
   </div>
 </div>
+
 <loading tam="4" load="loadFormulario" message="enviandoFormulario"> </loading>
 <loading tam="4" load="loadDetalles"  message="cargandoDetalles"> </loading>
-
 
 <div class="panel-body alert alert-danger" ng-if="crearSolicitud.errorParametros">
   <p class="col-sm-12 control-label" translate="{{crearSolicitud.mensajeError}}"></p>
 </div>
-<div class="panel panel-default" ng-if="!crearSolicitud.errorParametros && crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario && !crearSolicitud.Nota && !crearSolicitud.Cancelacion">
-    <div class="panel-heading">
-        {{'FORMULARIO_SOLICITUD' | translate}}
-    </div>
-    <div class="panel-body">
 
-       <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
+<div class="panel panel-default" ng-if="!crearSolicitud.errorParametros && crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario && !crearSolicitud.Nota && !crearSolicitud.Cancelacion"> 
+  <div class="panel-heading">
+      {{'FORMULARIO_SOLICITUD' | translate}}
+  </div>
 
+  <div class="panel-body">
+    <form method="post" name="formularioEstudiantes" ng-submit="crearSolicitud.validarFormularioSolicitud()">
+      
       <div ng-if="!crearSolicitud.soliciudConDetalles" class="row">
        <label class="col-sm-12 control-label" style="text-align:center" > {{'SOLICITUD_SIN_FORMULARIO' | translate}} </label>
        <br>
@@ -63,27 +67,30 @@
       </div>
     </div>
 
-       <!-- detalles de la solicitud -->
-       <div ng-if="crearSolicitud.soliciudConDetalles">
-         <div ng-repeat="detalle in crearSolicitud.detalles">
-           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LBL_PLX'" class="row" >
-              <label class="col-sm-3 control-label"> {{ detalle.label}}</label>
-              <div class="col-sm-9 ">
-                <label class="control-label">{{detalle.opciones[0].NOMBRE}}</label>
-            </div>
-          </div>
-          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXT_PLX'" class="row">
+      <!-- detalles de la solicitud -->
+      <div ng-if="crearSolicitud.soliciudConDetalles">
+        <div ng-repeat="detalle in crearSolicitud.detalles">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LBL_PLX'" class="row">
             <label class="col-sm-3 control-label"> {{detalle.label}}</label>
             <div class="col-sm-9 ">
-                <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
+              <label class="control-label">{{detalle.opciones[0].NOMBRE}}</label>
             </div>
           </div>
-          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX' && detalle.Requerido == true" class="row">
-           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-             <div class="col-sm-9 ">
-                <input type="number" class="form-control" ng-model="detalle.respuestaNumerica" required></input>
+          
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXT_PLX'" class="row">
+            <label class="col-sm-3 control-label">{{detalle.label}}</label>
+            <div class="col-sm-9 ">
+              <input type="text" class="form-control" ng-model="detalle.respuesta" required></input>
             </div>
-          </div>          
+          </div>
+
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX' && detalle.Requerido == true" class="row">
+            <label class="col-sm-3 control-label">{{detalle.label}}</label>
+            <div class="col-sm-9 ">
+              <input type="number" class="form-control" ng-model="detalle.respuestaNumerica" required></input>
+            </div>
+          </div>
+
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'NUM_PLX' && detalle.Requerido == false" class="row">
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'NIT'">
               <div class="panel-body">
@@ -92,6 +99,7 @@
                 </div>
               </div>
             </div>
+
             <div ng-if="detalle.Detalle.CodigoAbreviacion == 'CIIU'">
               <div class="panel-body">
                 <div class="alert-warning">
@@ -99,24 +107,28 @@
                 </div>
               </div>
             </div>
-            
+              
             <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-              <div class="col-sm-9 ">
-                 <input type="number" class="form-control" ng-model="detalle.respuestaNumerica"></input>
-             </div>
-           </div>
+            <div class="col-sm-9 ">
+              <input type="number" class="form-control" ng-model="detalle.respuestaNumerica"></input>
+            </div>
+          </div>
+
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DOC_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
                 <strong>{{'AVISO_PDF' | translate}}</strong>
               </div>
             </div>
+            
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <div class="col-sm-9">
               <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>
             </div>
+              
             <br>
           </div>
+
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DAN_PLX'" class="row">
             <div class="panel-body">
               <div class="alert-warning">
@@ -134,6 +146,7 @@
             </div>
             <br>
           </div>
+
           <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'CHECK_PLX' && detalle.Detalle.Enunciado!='AUTORIZACION_DERECHOS_AUTOR'" class="panel panel-default">
             <div class="panel-body">
               <div class="row">
@@ -161,77 +174,100 @@
             </div>
           </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX'" class = "row">
-           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-           <div class="col-sm-9">
-               <select class="form-control" ng-model="detalle.respuesta" required>
-                    <option ng-if="detalle.opciones.length == 0" value="" selected disabled hidden>{{'NO_OPCIONES_DISPONIBLES' | translate}}</option> 
-                    <option  ng-repeat="opcion in detalle.opciones" value="{{opcion.bd}}"> {{opcion.NOMBRE}} </option>
-               </select>
-           </div>
-         </div>
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LIST_PLX'" class = "row">
+            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+            <div class="col-sm-9">
+              <select class="form-control" ng-model="detalle.respuesta" required>
+                <option ng-if="detalle.opciones.length == 0" value="" selected disabled hidden>{{'NO_OPCIONES_DISPONIBLES' | translate}}</option> 
+                <option  ng-repeat="opcion in detalle.opciones" value="{{opcion.bd}}"> {{opcion.NOMBRE}} </option>
+              </select>
+            </div>
+          </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion != 'PEAP'" class = "row">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion != 'PEAP'" class = "row">
             <input type="radio" class="col-sm-3" ng-model="detalle.bool" value="{{detalle.Detalle.TipoDetalle}}"></input>
             <label class="col-sm-9 control-label"> {{detalle.label}}</label>
-         </div>
-
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion == 'PEAP'" class="panel panel-default">
-          <div class="panel-heading">
-            {{detalle.label | translate}}
           </div>
-          <div class="panel-body">
-            <input class="col-sm-3" type="radio" name="opcion" value="1">Opción 1<br>
-            <input class="col-sm-3" type="radio" name="opcion" value="2">Opción 2<br>
-          </div>
-       </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
-            <label class="col-sm-3 control-label">{{detalle.label}}</label>
-            <div class="col-sm-9 ">
-                <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'RBTN_PLX' && detalle.Detalle.CodigoAbreviacion == 'PEAP' && crearSolicitud.estudiante.dobleSolicitud" class="panel panel-default">
+            <div class="panel-heading">
+              {{detalle.label | translate}}
             </div>
-         </div>
+            <div class="panel-body">
+              <input class="col-sm-3" type="radio" name="opcion" value="1" checked>Primera opción de materia para proyecto curricular<br>
+              <input class="col-sm-3" type="radio" name="opcion" value="2">Segunda opción de materia para proyecto curricular<br>
+            </div>
+            <div class="panel-body">
+              <div class="alert-warning">
+                <strong>{{'TEXTO_INFO_PRIORIDAD_CARRERA_POSGRADO' | translate}}</strong>
+              </div>
+            </div>
+          </div>
 
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DRT_PLX'">
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'TXTA_PLX'" class = "row">
+            <label class="col-sm-3 control-label">{{detalle.label}}</label>
+            <!-- <textarea class="col-sm-11" style="resize: none; left: 50px; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea> -->
+
+            <div class="col-sm-9 ">
+              <textarea class="form-control" style="resize: none; " rows="8" cols="100" ng-model="detalle.respuesta" required></textarea>
+            </div>
+          </div>
+
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'DRT_PLX'">
             <solicitar-asignaturas e="crearSolicitud.carrerasElegidas" modalidades="crearSolicitud.Modalidades" estudiante="crearSolicitud.estudiante" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='solicitar-asignaturas'"></solicitar-asignaturas>
-            <asignar-estudiantes estudiante="crearSolicitud.codigo" estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPOS' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPRO'"></asignar-estudiantes><div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
-                <div class="panel-heading">
-                    {{'AREAS_CONOCIMIENTO' | translate}}
+            <asignar-estudiantes estudiante="crearSolicitud.codigo" estudiantes="crearSolicitud.estudiantes" modalidad="crearSolicitud.modalidad" ng-if="detalle.Detalle.Descripcion=='asignar-estudiantes' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPOS' && crearSolicitud.ModalidadTemp.CodigoAbreviacion !='EAPRO'"></asignar-estudiantes> 
+            <div class="panel panel-default" ng-if="detalle.Detalle.Descripcion=='asignar-area'">
+              <div class="panel-heading">
+                {{'AREAS_CONOCIMIENTO' | translate}}
+              </div>
+              <div class="panel-body">
+                <div class="alert-warning">
+                  <strong>{{'TEXTO_INFO_AREAS_CONOCIMIENTO_POSGRADO' | translate}}</strong>
                 </div>
-                <div class="panel-body">
-                  <label class="col-sm-5 control-label">{{'SELECCIONE_AREAS_CONOCIMIENTO' | translate}}</label>
-                  <asignar-area class="col-sm-7 control-label" setareas="crearSolicitud.areas" newarea="crearSolicitud.estudiante.areas_elegidas"></asignar-area>
-                </div>
+              </div>
+              <div class="panel-body">
+                <label class="col-sm-5 control-label">{{'SELECCIONE_AREAS_CONOCIMIENTO' | translate}}</label>
+                <asignar-area class="col-sm-7 control-label" setareas="crearSolicitud.areas" newarea="crearSolicitud.estudiante.areas_elegidas"></asignar-area>
+              </div>
+            </div>
+          </div>
+          
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LNUX_PLX'" class="row">
+            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+            <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
+          </div>
+          
+          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
+            <label class="col-sm-3 control-label"> {{detalle.label}}</label>
+            <div class="col-sm-9">
+              <!-- <ui-select refresh-delay="0" ng-model="detalle.respuesta" theme="select2" style="width:100%;">-->
+              <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
+                <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
+                <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">
+                    <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
+                </ui-select-choices>
+              </ui-select>
             </div>
          </div>
          <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'LNUX_PLX'" class="row">
              <label class="col-sm-3 control-label"> {{detalle.label}}</label>
              <label ng-click="crearSolicitud.getDocumento(detalle.respuesta)"  class="col-sm-9 " style="color:blue; text-decoration: underline;"> {{ 'VER_DOCUMENTO' | translate}} </label>
          </div>
-         <div ng-if="detalle.Detalle.TipoDetalleAux.CodigoAbreviacion == 'SLCT_PLX'" class = "row">
-           <label class="col-sm-3 control-label"> {{detalle.label}}</label>
-           <div class="col-sm-9">
-             <ui-select refresh-delay="400" on-select="aprobarSolicitud.reloadScroll()" ng-model="detalle.respuesta" theme="bootstrap" reset-search-input="false" style="width:95%;">
-                    <ui-select-match  placeholder="{{'SELECT.SELECCIONE' | translate}}">{{$select.selected.NOMBRE}} </ui-select-match>
-                    <ui-select-choices infinite-scroll-container="'#demoScroll'" id="demoScroll" infinite-scroll="addMoreItems()"  infinite-scroll-distance="10" repeat="opcion.bd as opcion in detalle.opciones | filter: $select.search | limitTo:infiniteScroll.currentItems">
-                        <span ng-bind-html="opcion.NOMBRE | highlight: $select.search"></span>
-                    </ui-select-choices>
-                </ui-select>
-           </div>
-         </div>
          <br>
 
         </div>
-       </div>
-       <div class ="row">
-         <label class="col-sm-5 control-label"> </label>
-         <input type="submit" value="{{'ENVIAR_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success" type="submit"></input>
-         <label class="col-sm-5 control-label"> </label>
-       </div>
-     </form>
-    </div>
+      </div>
+
+      <div class ="row">
+        <label class="col-sm-5 control-label"> </label>
+        <input type="submit" value="{{'ENVIAR_SOLICITUD' | translate}}"  class="col-sm-2 btn btn-success" type="submit"></input>
+        <label class="col-sm-5 control-label"> </label>
+      </div>
+
+    </form>
+  </div>
 </div>
+
 <div class="panel panel-default" ng-if="(crearSolicitud.errorCarga && !loadParametros)">
     <div class="panel-heading">
         {{'ERROR' | translate}}
