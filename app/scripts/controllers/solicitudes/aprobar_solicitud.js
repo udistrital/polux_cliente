@@ -2419,8 +2419,8 @@ angular.module('poluxClienteApp')
                         //Se coloca en rechazo el trabajo de grado
                         ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
 
-                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        //Se pone la respuesta nueva en True debido a que es la última respuesta de la solicitud inicial
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
                       } 
                       //Si la respuesta anterior es aprobado por Coordinador de Posgrado 2
                       else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
@@ -2563,13 +2563,6 @@ angular.module('poluxClienteApp')
                       else {
                         console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
 
-                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == respuestaRechazo
-                        });
-      
-                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
-                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-
                         //Traer el Estado de Trabajo de Grado en Cancelado
                         let parametrosConsulta = $.param({
                           query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
@@ -2579,11 +2572,11 @@ angular.module('poluxClienteApp')
                           estadoTrabajoGrado = parametros.data.Data[0];
                         });
 
-                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        //Se pone la respuesta nueva en true debido a que es la última respuesta del flujo
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
-                        //Se coloca en rechazo el trabajo de grado
-                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Anteproyecto rechazado por consejo de carrera)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoTrabajoGrado.Id;
                       }
 
                       //Poner el campo de la respuesta anterior en False
@@ -2662,7 +2655,7 @@ angular.module('poluxClienteApp')
                           });
   
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
                           //Se coloca en rechazo el trabajo de grado
                           ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
@@ -2810,13 +2803,6 @@ angular.module('poluxClienteApp')
                         else {
                           console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
   
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaRechazo
-                          });
-        
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-  
                           //Traer el Estado de Trabajo de Grado en Cancelado
                           let parametrosConsulta = $.param({
                             query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
@@ -2826,11 +2812,11 @@ angular.module('poluxClienteApp')
                             estadoTrabajoGrado = parametros.data.Data[0];
                           });
   
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                          //Se pone la respuesta nueva en True debido a que es la última respuesta del flujo
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
-                          //Se coloca en rechazo el trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Anteproyecto rechazado por consejo de carrera)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoTrabajoGrado.Id;
                         }
   
                         //Poner el campo de la respuesta anterior en False
