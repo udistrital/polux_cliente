@@ -425,8 +425,8 @@ angular.module('poluxClienteApp')
                   query: "SolicitudTrabajoGrado:" + value.SolicitudTrabajoGrado.Id
                 });
                 poluxRequest.get("usuario_solicitud", parametros).then(function(usuarioSolicitud) {
-                    academicaRequest.get("datos_estudiante", [usuarioSolicitud.data.Data[0].Usuario, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
-                        //academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
+                    academicaRequest.get("datos_estudiante", [usuarioSolicitud.data.Data[0].Usuario]).then(function(response2) {
+                        //academicaRequest.get("datos_estudiante", [usuarioSolicitud.data[0].Usuario]).then(function (response2) {
                         if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                           ctrl.consultarNombreCarrera(response2.data.estudianteCollection.datosEstudiante[0].carrera)
                             .then(function(nombreCarrera) {

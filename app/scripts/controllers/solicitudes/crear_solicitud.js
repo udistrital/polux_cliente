@@ -614,7 +614,7 @@ angular.module('poluxClienteApp')
        */
       ctrl.obtenerDatosEstudiante = function() {
         var defer = $q.defer();
-        academicaRequest.get("datos_estudiante", [ctrl.codigo, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {  
+        academicaRequest.get("datos_estudiante", [ctrl.codigo]).then(function(response2) {  
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
               ctrl.estudiante = {
                 "Codigo": ctrl.codigo,
@@ -2891,7 +2891,7 @@ angular.module('poluxClienteApp')
                             ctrl.Trabajo.codirector = vinculado;
                           }
                         });
-                        academicaRequest.get("datos_estudiante", [ctrl.codigoEstu, ctrl.periodoAnterior.anio, ctrl.periodoAnterior.periodo]).then(function(response2) {
+                        academicaRequest.get("datos_estudiante", [ctrl.codigoEstu]).then(function(response2) {
                           if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                             ctrl.estudiante = {
                               "Codigo": ctrl.codigo,
