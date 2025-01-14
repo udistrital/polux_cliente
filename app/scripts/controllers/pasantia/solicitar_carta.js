@@ -60,7 +60,7 @@ angular.module('poluxClienteApp')
         ctrl.mensajeError = "";
         ctrl.errorCargar = false;
         academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
-          academicaRequest.get("datos_estudiante", [ctrl.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
+          academicaRequest.get("datos_estudiante", [ctrl.codigo]).then(function(response2) {
             
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
              

@@ -30,7 +30,7 @@ angular.module('poluxClienteApp')
        */
       $scope.$watch("codigo", function() {
         academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
-          academicaRequest.get("datos_estudiante", [$scope.codigo, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
+          academicaRequest.get("datos_estudiante", [$scope.codigo]).then(function(response2) {
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
               if (response2) {
                 ctrl.estudiante = {

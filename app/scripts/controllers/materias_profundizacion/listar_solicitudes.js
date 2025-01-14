@@ -81,7 +81,7 @@ angular.module('poluxClienteApp')
         });
         //buscar la solicitudes
         poluxRequest.get("estudiante_tg", parametros).then(function(response) {
-          academicaRequest.get("datos_estudiante", [response.data.Data[0].CodigoEstudiante, ctrl.periodo.anio, ctrl.periodo.periodo]).then(function(response2) {
+          academicaRequest.get("datos_estudiante", [response.data.Data[0].CodigoEstudiante]).then(function(response2) {
             if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
               var solicitud = {
                 "solicitud": tg.Id,
