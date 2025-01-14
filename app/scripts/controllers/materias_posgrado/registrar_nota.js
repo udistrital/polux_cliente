@@ -386,7 +386,7 @@ angular.module('poluxClienteApp')
         // Se trae el diferido desde el servicio para manejar las promesas
         var deferred = $q.defer();
         // Se consulta hacia los datos del estudiante desde el servicio de académica
-        academicaRequest.get("datos_estudiante", [estudianteConTrabajoDeGrado.Estudiante, ctrl.periodoAcademicoPrevio.anio, ctrl.periodoAcademicoPrevio.periodo])
+        academicaRequest.get("datos_estudiante", [estudianteConTrabajoDeGrado.Estudiante])
           .then(function(estudianteConsultado) {
             // Se estudia si los resultados de la consulta son válidos
             if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {

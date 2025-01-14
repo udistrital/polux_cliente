@@ -810,7 +810,7 @@ angular.module('poluxClienteApp')
                         academicaRequest.get("periodo_academico", "P").then(function (Periodo) {
                           var P = Periodo.data.periodoAcademicoCollection.periodoAcademico[0];
                           //CONSULTA LOS DATOS DEL ESTUDIANTE
-                          academicaRequest.get("datos_estudiante", [ctrl.datos_basicos_estudiante.codigo, P.anio, P.periodo]).then(function (data_estudiante) {
+                          academicaRequest.get("datos_estudiante", [ctrl.datos_basicos_estudiante.codigo]).then(function (data_estudiante) {
                             if(ctrl.trabajoGrado.EstadoTrabajoGrado.CodigoAbreviacion == "NTF_PLX"){
                               if (data_estudiante.data.estudianteCollection.datosEstudiante[0].nivel == "PREGRADO") {
                                 //VALIDACIÓN PARA LA MODADLIDAD DE MATERIAS DE PROFUNDIZACIÓN EN PREGRADO

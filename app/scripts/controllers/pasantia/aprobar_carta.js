@@ -126,7 +126,7 @@ angular.module('poluxClienteApp')
             if (Object.keys(responseEstudiante.data.Data[0]).length > 0) {
               //Consultar datos del estudiante
               academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
-                  academicaRequest.get("datos_estudiante", [responseEstudiante.data.Data[0].Usuario, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function(response2) {
+                  academicaRequest.get("datos_estudiante", [responseEstudiante.data.Data[0].Usuario]).then(function(response2) {
                       if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                         respuestaSolicitud.Estudiante = {
                           "Codigo": responseEstudiante.data.Data[0].Usuario,
