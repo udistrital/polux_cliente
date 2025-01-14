@@ -174,7 +174,7 @@ angular.module('poluxClienteApp')
 				var deferred = $q.defer();
 				ctrl.consultarPeriodoAcademicoPrevio()
 					.then(function(periodoAcademicoPrevio) {
-						academicaRequest.get("datos_estudiante", [estudianteAsociado.Estudiante, periodoAcademicoPrevio.anio, periodoAcademicoPrevio.periodo])
+						academicaRequest.get("datos_estudiante", [estudianteAsociado.Estudiante])
 							.then(function(estudianteConsultado) {
 								if (!angular.isUndefined(estudianteConsultado.data.estudianteCollection.datosEstudiante)) {
 									estudianteAsociado.informacionAcademica = estudianteConsultado.data.estudianteCollection.datosEstudiante[0];
