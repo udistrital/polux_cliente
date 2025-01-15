@@ -108,7 +108,7 @@ angular.module('poluxClienteApp')
           angular.forEach(ctrl.codigo_estudiantes, function(codigo) {
             var promise = academicaRequest.get("periodo_academico", "P").then(function(periodoAnterior) {
               var P = periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0];
-              return academicaRequest.get("datos_estudiante", [codigo, P.anio, P.periodo]).then(function(data_estudiante) {
+              return academicaRequest.get("datos_estudiante", [codigo]).then(function(data_estudiante) {
                 var E = data_estudiante.data.estudianteCollection.datosEstudiante[0];
                 ctrl.estudiantes.push(E);
               });
@@ -152,7 +152,7 @@ angular.module('poluxClienteApp')
         ctrl.verificarEstudiante = function () {
           ctrl.loading = true;
           academicaRequest.get("periodo_academico", "P").then(function (periodoAnterior) {
-            academicaRequest.get("datos_estudiante", [ctrl.codigoEstudiante, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].anio, periodoAnterior.data.periodoAcademicoCollection.periodoAcademico[0].periodo]).then(function (response2) {
+            academicaRequest.get("datos_estudiante", [ctrl.codigoEstudiante]).then(function (response2) {
               if (!angular.isUndefined(response2.data.estudianteCollection.datosEstudiante)) {
                 ctrl.estudiante = {
                   "Codigo": ctrl.codigoEstudiante,
