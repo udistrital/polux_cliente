@@ -2371,6 +2371,17 @@ angular.module('poluxClienteApp')
                       //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                       ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
+                      //Se prepara la información del proyecto curricular aprobado
+                      var data_espacio_academico = {
+                        "TrabajoGrado": {
+                          "Id": 0
+                        },
+                        "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(true))
+                      }
+                      
+                      //Se almacena la informacion del espacio academico aprobado
+                      ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                       //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                       ctrl.dataRespuesta.MateriasProPos = true;
                     }
@@ -2461,6 +2472,17 @@ angular.module('poluxClienteApp')
 
                         //Poner el campo de la respuesta anterior en False
                         ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                        //Se prepara la información del proyecto curricular aprobado
+                        var data_espacio_academico = {
+                          "TrabajoGrado": {
+                            "Id": 0
+                          },
+                          "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                        }
+
+                        //Se almacena la informacion del espacio academico aprobado
+                        ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
 
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
@@ -2563,6 +2585,17 @@ angular.module('poluxClienteApp')
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
+                        //Se prepara la información del proyecto curricular aprobado
+                        var data_espacio_academico = {
+                          "TrabajoGrado": {
+                            "Id": 0
+                          },
+                          "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                        }
+
+                        //Se almacena la informacion del espacio academico aprobado
+                        ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
                       }
@@ -2631,6 +2664,17 @@ angular.module('poluxClienteApp')
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
+                        //Se prepara la información del proyecto curricular aprobado
+                        var data_espacio_academico = {
+                          "TrabajoGrado": {
+                            "Id": 0
+                          },
+                          "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(true))
+                        }
+
+                        //Se almacena la informacion del espacio academico aprobado
+                        ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
                       }
@@ -2708,6 +2752,17 @@ angular.module('poluxClienteApp')
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                           ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
+                          //Se prepara la información del proyecto curricular aprobado
+                          var data_espacio_academico = {
+                            "TrabajoGrado": {
+                              "Id": 0
+                            },
+                            "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                          }
+
+                          //Se almacena la informacion del espacio academico aprobado
+                          ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
                           
@@ -2811,6 +2866,17 @@ angular.module('poluxClienteApp')
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                           ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
+                          //Se prepara la información del proyecto curricular aprobado
+                          var data_espacio_academico = {
+                            "TrabajoGrado": {
+                              "Id": 0
+                            },
+                            "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                          }
+
+                          //Se almacena la informacion del espacio academico aprobado
+                          ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
                         }
@@ -2880,6 +2946,37 @@ angular.module('poluxClienteApp')
           ctrl.mostrarRespuesta("SELECCIONE_ACTA");
           resolve();
         }
+      }
+
+      /**
+       * @ngdoc method
+       * @name getCarreraPosgrado
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {boolean} esPrioridad Número de prioridad del proyecto curricular de posgrado
+       * @returns {string} ID del proyecto curricular según la prioridad ingresada
+       * @description 
+       * Función que se encarga de retornar el ID de uno de los proyectos curriculares de posgrado seleccionado por el estudiante según el número de prioridad ingresado
+       */
+      ctrl.getCarreraPosgrado = function (esPrioridad) {
+
+        var idProyecto
+        
+        //Se recorren los detalles de la solicitud
+        ctrl.detallesSolicitud.forEach(function(detalle){
+
+          //Se buscan únicamente los detalles de los proyectos curriculares seleccionados
+          if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2"){
+
+            //Si el detalle encontrado es la carrera prioritaria y se desea recuperar el id prioritario O Si el detalle no es prioridad y se desea recuperar el id no prioritario
+            if((detalle.carrera.Opcion == ctrl.prioridad && esPrioridad) || (detalle.carrera.Opcion != ctrl.prioridad && !esPrioridad)){
+
+              //Se retorna el código del proyecto curricular
+              idProyecto = detalle.carrera.Codigo
+            }
+          }
+        })
+        
+        return idProyecto
       }
 
       /**
