@@ -1376,7 +1376,6 @@ angular.module('poluxClienteApp')
         var promesas = [];
         if(!ctrl.siModalidad){
           promesas.push(verificarRequisitosModalidad());
-          promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
         }
         if (!angular.isUndefined(tipoSolicitud.TipoSolicitud)) {
           promesas.push(verificarRequisitosModalidad());
@@ -2664,8 +2663,16 @@ angular.module('poluxClienteApp')
                    }
                  })
                }
+               else if (ctrl.TipoSolicitud.CodigoAbreviacion == "SCMA_PLX") {
+                var data_auth_mid = {
+                  numero : "0" //Siempre el ente responsable es 0, este tema de autenticación esta por desarrollar
+                }
+        
+                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(responseEmail){
+                  correos.push(responseEmail.data.email)
+                })
+               }
                else{//si es otro tipo de solicitud, se busca desde los vinculados
- 
                  var data_auth_mid = {
                    numero : ctrl.solicitud.Respuesta.EnteResponsable.toString()
                  }

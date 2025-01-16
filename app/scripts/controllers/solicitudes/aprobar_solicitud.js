@@ -1024,7 +1024,6 @@ angular.module('poluxClienteApp')
           promises.push(await ctrl.evaluarSolicitud());
           promises.push(ctrl.getEvaluadores(ctrl.dataSolicitud.ModalidadTipoSolicitud.Modalidad));
           //obtener fechas de aprobación para la solicitud
-          promises.push(ctrl.getFechasAprobacion());
           $q.all(promises).then(function () {
             if (ctrl.dataSolicitud.TrabajoGrado !== null) {
               var parametrosVinculacion = $.param({
