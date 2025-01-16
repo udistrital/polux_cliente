@@ -1376,7 +1376,6 @@ angular.module('poluxClienteApp')
         var promesas = [];
         if(!ctrl.siModalidad){
           promesas.push(verificarRequisitosModalidad());
-          promesas.push(verificarFechas(tipoSolicitud, modalidad, ctrl.periodoSiguiente));
         }
         if (!angular.isUndefined(tipoSolicitud.TipoSolicitud)) {
           promesas.push(verificarRequisitosModalidad());
