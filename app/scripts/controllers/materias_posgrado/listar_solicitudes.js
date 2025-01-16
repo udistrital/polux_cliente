@@ -346,34 +346,25 @@ angular.module('poluxClienteApp')
       ctrl.cargarParametros = function() {
         ctrl.getPeriodoActual()
           .then(function(periodo) {
-            
             if (!angular.isUndefined(periodo)) {
               var promises = [];
               promises.push(ctrl.getPeriodoAnterior());
-              promises.push(ctrl.getFechas(periodo));
               promises.push(ctrl.getCarrerasCoordinador());
               promises.push(ctrl.getCupos());
               $q.all(promises)
                 .then(function() {
-                  
-                  
-                  
-                  
                   $scope.loadParametros = false;
                 })
                 .catch(function(error) {
-                  
                   ctrl.errorCargarParametros = true;
                   $scope.loadParametros = false;
                 });
             } else {
-              
               ctrl.errorCargarParametros = true;
               $scope.loadParametros = false;
             }
           })
           .catch(function(error) {
-            
             ctrl.errorCargarParametros = true;
             $scope.loadParametros = false;
           });
@@ -385,7 +376,7 @@ angular.module('poluxClienteApp')
        * @ngdoc method
        * @name consultarNombreCarrera
        * @methodOf poluxClienteApp.controller:MateriasPosgradoListarSolicitudesCtrl
-       * @description 
+       * @description
        * Consula el servicio de {@link services/academicaService.service:academicaRequest academicaRequest} para obtener la información sobre la carrera de acuerdo al código ingresado.
        * @param {Integer} codigoCarrera Identificador de la carrera del estudiante 
        * @returns {Promise} Objeto de tipo promesa que arroja el resultado de consultar el nombre de la carrera del estudiante
