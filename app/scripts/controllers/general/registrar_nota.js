@@ -892,11 +892,11 @@ angular.module('poluxClienteApp')
                         //console.log(correos)
 
                         //DESCOMENTAR AL SUBIR A PRODUCCIÓN
-                        /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                        notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                           console.log("Envia el correo: ", response)
                         }).catch(function (error) {
                           console.log("Error: ", error)
-                        });*/
+                        });
                       })
 
                     } else if (CodigoAbreviacionRol == "DIRECTOR_PLX") {
@@ -955,11 +955,11 @@ angular.module('poluxClienteApp')
                       //console.log(correos)
 
                       //DESCOMENTAR AL SUBIR A PRODUCCIÓN
-                      /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                      notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                         console.log("Envia el correo: ", response)
                       }).catch(function (error) {
                         console.log("Error: ", error)
-                      });*/
+                      });
                     }
                     swal(
                       $translate.instant("REGISTRAR_NOTA.AVISO"),
@@ -1083,11 +1083,11 @@ angular.module('poluxClienteApp')
 
               //console.log(correos)
               
-              /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+              notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                 console.log("Envia el correo", response)
               }).catch(function (error) {
                 console.log("Error: ", error)
-              });*/
+              });
               swal(
                 $translate.instant("SOLICITAR_CORRECCIONES.AVISO"),
                 $translate.instant("SOLICITAR_CORRECCIONES.CORRECCION_REGISTRADA"),

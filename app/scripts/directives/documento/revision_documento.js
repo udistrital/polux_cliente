@@ -390,11 +390,11 @@ angular.module('poluxClienteApp')
                                             //console.log(correos)
 
                                             //DESCOMENTAR AL SUBIR A PRODUCCIÓN
-                                            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                                            notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
                                                 console.log("Envia el correo",response)
                                             }).catch(function (error) {
                                                 console.log("Error: ", error)
-                                            });*/
+                                            });
 
                                             swal(
                                                 $translate.instant("REGISTRAR_REVISION.CONFIRMACION"),
