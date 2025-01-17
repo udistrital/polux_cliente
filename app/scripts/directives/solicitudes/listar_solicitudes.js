@@ -190,7 +190,14 @@ angular.module('poluxClienteApp')
           poluxRequest.get("solicitud_trabajo_grado", parametrosSolicitudes).then(function (responseSolicitudes) {
             if (Object.keys(responseSolicitudes.data.Data).length > 0) {
               ctrl.SolicitudTrabajoGrado = responseSolicitudes.data.Data[0];
-              ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
+              
+              if(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl != "") {
+                ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
+              } else {
+                ctrl.dataPersonaArl = '{"ciudadNacimiento":"","correoPersonal":"","direccionResidencia":"","eps":"","fechaNacimiento":"","pasantiaInterna":false,"telefono":""}';
+                ctrl.dataPersonaArl = JSON.parse(ctrl.dataPersonaArl);
+              }
+              
               ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;
               //Funcion para traer la respuesta de la solicitud
               var getDataSolicitud = function (solicitud) {
@@ -245,6 +252,7 @@ angular.module('poluxClienteApp')
                 ctrl.loadingSolicitudes = false;
               })
                 .catch(function (error) {
+                  console.log("error Cargar_Datos_Solicitudes", error);
                   ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
                   ctrl.errorCargando = true;
                   ctrl.loadingSolicitudes = false;
@@ -257,6 +265,7 @@ angular.module('poluxClienteApp')
             }
           })
             .catch(function (error) {
+              console.log("error 2 Cargar_Datos_Solicitudes", error);
               ctrl.mensajeError = $translate.instant("ERROR.CARGAR_DATOS_SOLICITUDES");
               ctrl.errorCargando = true;
               ctrl.loadingSolicitudes = false;
