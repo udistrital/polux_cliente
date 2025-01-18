@@ -49,6 +49,25 @@ angular.module('poluxClienteApp')
       ctrl.userId = $scope.userId;
       console.log("STATE ", ctrl.state)
 
+      ctrl.obtenerNombreCarrera = async function(carreraCodigo) {
+        try {
+          const carreraPosgrado = await academicaRequest.get("carrera", [carreraCodigo]);
+          if (
+            carreraPosgrado.data &&
+            carreraPosgrado.data.carrerasCollection &&
+            carreraPosgrado.data.carrerasCollection.carrera &&
+            carreraPosgrado.data.carrerasCollection.carrera.length > 0
+          ) {
+            return carreraPosgrado.data.carrerasCollection.carrera[0].nombre;
+          }
+          return null;
+        } catch (error) {
+          console.error("Error obteniendo el nombre de la carrera:", error);
+          return null;
+        }
+      };
+
+
       /**
        * @ngdoc method
        * @name mostrarResultado
@@ -882,81 +901,81 @@ angular.module('poluxClienteApp')
                   ctrl.errorCargarParametros = true;
                 }
 
-                async function verificarSolicitud(solicitud, carreraPosgrado) {
-                  return new Promise((resolve, reject) => {
-                    let modalidadTemp = ctrl.Modalidad.find(modalidad => {
-                      return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
-                    })
-                    let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
-                      return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
-                    })
-                    solicitud.data = {
-                      'Id': solicitud.SolicitudTrabajoGrado.Id,
-                      'Modalidad': modalidadTemp.Nombre,
-                      'ModalidadTipoSolicitud': tipoSolicitudTemp.Nombre,
-                      'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
-                    }
+                // async function verificarSolicitud(solicitud, carreraPosgrado) {
+                //   return new Promise((resolve, reject) => {
+                //     let modalidadTemp = ctrl.Modalidad.find(modalidad => {
+                //       return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
+                //     })
+                //     let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
+                //       return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                //     })
+                //     solicitud.data = {
+                //       'Id': solicitud.SolicitudTrabajoGrado.Id,
+                //       'Modalidad': modalidadTemp.Nombre,
+                //       'ModalidadTipoSolicitud': tipoSolicitudTemp.Nombre,
+                //       'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
+                //     }
 
-                    var parametrosUsuario = $.param({
-                      query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
-                      sortby: "Usuario",
-                      order: "asc",
-                      limit: 1
-                    });
+                //     var parametrosUsuario = $.param({
+                //       query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
+                //       sortby: "Usuario",
+                //       order: "asc",
+                //       limit: 1
+                //     });
 
-                    poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
-                      ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
-                        console.log("Obtener Datos Estudiante", codigo_estudiante)
-                        academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
-                          if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
-                            var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
-                            console.log("carreraEstudiante", carreraEstudiante);
-                            let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
-                              return estadoSol.Id == solicitud.EstadoSolicitud
-                            })
-                            let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSolicitud => {
-                              return tipoSolicitud.Id == usuario.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
-                            })
-                            if(lista_roles.includes("POSGRADO")){
-                              solicitud.data.Respuesta = solicitud;
-                              solicitud.data.Carrera = carreraEstudiante;
-                              if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
-                                //Almacenar el nombre de la carrera de posgrado en la solicitud
-                                solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
-                                //Almacenar el codigo de la carrera de posgrado en la solicitud
-                                solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
-                              }
-                              solicitud.data.Estado = estadoSolicitudTemp.Nombre;
-                              ctrl.solicitudes.push(solicitud.data);
-                              //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
-                              ctrl.gridOptions.columnDefs[1].width = '20%';
-                              //Crear la nueva columna (en segundo lugar después de 'Número de Radicado') para colocar el nombre del Proyecto Curricular de Posgrado
-                              ctrl.gridOptions.columnDefs.push({
-                                name: 'CarreraPosgrado',
-                                displayName: $translate.instant('CARRERA'),
-                                width: '20%',
-                              })
-                              ctrl.gridOptions.data = ctrl.solicitudes;
+                //     poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+                //       ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                //         console.log("Obtener Datos Estudiante", codigo_estudiante)
+                //         academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
+                //           if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+                //             var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                //             console.log("carreraEstudiante", carreraEstudiante);
+                //             let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
+                //               return estadoSol.Id == solicitud.EstadoSolicitud
+                //             })
+                //             let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSolicitud => {
+                //               return tipoSolicitud.Id == usuario.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                //             })
+                //             if(lista_roles.includes("POSGRADO")){
+                //               solicitud.data.Respuesta = solicitud;
+                //               solicitud.data.Carrera = carreraEstudiante;
+                //               if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
+                //                 //Almacenar el nombre de la carrera de posgrado en la solicitud
+                //                 solicitud.data.CarreraPosgrado = carreraPosgrado.Nombre;
+                //                 //Almacenar el codigo de la carrera de posgrado en la solicitud
+                //                 solicitud.data.CodigoCarreraPosgrado = carreraPosgrado.Codigo;
+                //               }
+                //               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
+                //               ctrl.solicitudes.push(solicitud.data);
+                //               //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
+                //               ctrl.gridOptions.columnDefs[1].width = '20%';
+                //               //Crear la nueva columna (en segundo lugar después de 'Número de Radicado') para colocar el nombre del Proyecto Curricular de Posgrado
+                //               ctrl.gridOptions.columnDefs.push({
+                //                 name: 'CarreraPosgrado',
+                //                 displayName: $translate.instant('CARRERA'),
+                //                 width: '20%',
+                //               })
+                //               ctrl.gridOptions.data = ctrl.solicitudes;
 
-                              console.log("solicitud.data", solicitud.data);
-                            }
-                            if (carreras.includes(carreraEstudiante)) {
-                              solicitud.data.Estado = estadoSolicitudTemp.Nombre;
-                              solicitud.data.Respuesta = solicitud;
-                              // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
-                              solicitud.data.Carrera = carreraEstudiante;
-                              ctrl.solicitudes.push(solicitud.data);
-                              ctrl.gridOptions.data = ctrl.solicitudes;
-                              resolve();
-                            }else {
-                              resolve();
-                            }
-                          }
-                        })
-                      })
-                    })
-                  })
-                }
+                //               console.log("solicitud.data", solicitud.data);
+                //             }
+                //             if (carreras.includes(carreraEstudiante)) {
+                //               solicitud.data.Estado = estadoSolicitudTemp.Nombre;
+                //               solicitud.data.Respuesta = solicitud;
+                //               // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
+                //               solicitud.data.Carrera = carreraEstudiante;
+                //               ctrl.solicitudes.push(solicitud.data);
+                //               ctrl.gridOptions.data = ctrl.solicitudes;
+                //               resolve();
+                //             }else {
+                //               resolve();
+                //             }
+                //           }
+                //         })
+                //       })
+                //     })
+                //   })
+                // }
 
                 angular.forEach(responseSolicitudes.data.Data, function(solicitud) {
                   var parametrosDetallesSolicitud = $.param({
@@ -1066,17 +1085,17 @@ angular.module('poluxClienteApp')
                           limit: 1,
                         });
                         
-                        var carrera;
+                        ctrl.Carrera = {};
                         await poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos).then(async function(responseProyectoCurricular) {
                           console.log("responseProyectoCurricular", responseProyectoCurricular);
 
                           await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
                             console.log("carreraPosgrado", carreraPosgrado);
-
-                            ctrl.carrerasCoordinador.find(proyectoCurricular => {
-                              if(proyectoCurricular.proyecto == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
+                            
+                            ctrl.carrerasCoordinador.find(proyectoCurricular => {                              
+                              if(proyectoCurricular.codigo_proyecto_curricular == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {                                
                                 //Armar objeto carrera con el código y nombre del proyecto curricular
-                                return carrera = {
+                                return ctrl.Carrera = {
                                   "Codigo": carreraPosgrado.data.carrerasCollection.carrera[0].codigo,
                                   "Nombre": carreraPosgrado.data.carrerasCollection.carrera[0].nombre,
                                 }
@@ -1091,8 +1110,83 @@ angular.module('poluxClienteApp')
                           console.log("Error espacio academico: ", error2);
                         });
 
-                        console.log("carrera: ", carrera);
+                        console.log("carrera: ", ctrl.Carrera);
 
+                        async function verificarSolicitud(solicitud, carreraPosgrado) {
+                          return new Promise((resolve, reject) => {
+                            let modalidadTemp = ctrl.Modalidad.find(modalidad => {
+                              return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
+                            })
+                            let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
+                              return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                            })
+                            solicitud.data = {
+                              'Id': solicitud.SolicitudTrabajoGrado.Id,
+                              'Modalidad': modalidadTemp.Nombre,
+                              'ModalidadTipoSolicitud': tipoSolicitudTemp.Nombre,
+                              'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
+                            }
+        
+                            var parametrosUsuario = $.param({
+                              query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
+                              sortby: "Usuario",
+                              order: "asc",
+                              limit: 1
+                            });
+        
+                            poluxRequest.get("usuario_solicitud", parametrosUsuario).then(function(usuario) {
+                              ctrl.obtenerEstudiantes(solicitud, usuario).then(function(codigo_estudiante) {
+                                console.log("Obtener Datos Estudiante", codigo_estudiante)
+                                academicaRequest.get("datos_basicos_estudiante",[codigo_estudiante]).then(function(response2) {
+                                  if (!angular.isUndefined(response2.data.datosEstudianteCollection.datosBasicosEstudiante)) {
+                                    var carreraEstudiante = response2.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera;
+                                    console.log("carreraEstudiante", carreraEstudiante);
+                                    let estadoSolicitudTemp = ctrl.EstadoSolicitud.find(estadoSol => {
+                                      return estadoSol.Id == solicitud.EstadoSolicitud
+                                    })
+                                    let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSolicitud => {
+                                      return tipoSolicitud.Id == usuario.data.Data[0].SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
+                                    })
+                                    if(lista_roles.includes("POSGRADO")){
+                                      solicitud.data.Respuesta = solicitud;
+                                      solicitud.data.Carrera = carreraEstudiante;
+                                      if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX" || tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX") {
+                                        //Almacenar el nombre de la carrera de posgrado en la solicitud
+                                        solicitud.data.CarreraPosgrado = ctrl.Carrera.Nombre;
+                                        //Almacenar el codigo de la carrera de posgrado en la solicitud
+                                        solicitud.data.CodigoCarreraPosgrado = ctrl.Carrera.Codigo;
+                                      }
+                                      solicitud.data.Estado = estadoSolicitudTemp.Nombre;
+                                      ctrl.solicitudes.push(solicitud.data);
+                                      //Cambiar el tamaño de la segunda columna (Tipo de Solicitud) a 20%
+                                      ctrl.gridOptions.columnDefs[1].width = '20%';
+                                      //Crear la nueva columna (en segundo lugar después de 'Número de Radicado') para colocar el nombre del Proyecto Curricular de Posgrado
+                                      ctrl.gridOptions.columnDefs.push({
+                                        name: 'CarreraPosgrado',
+                                        displayName: $translate.instant('CARRERA'),
+                                        width: '20%',
+                                      })
+                                      ctrl.gridOptions.data = ctrl.solicitudes;
+        
+                                      console.log("solicitud.data", solicitud.data);
+                                    }
+                                    if (carreras.includes(carreraEstudiante)) {
+                                      solicitud.data.Estado = estadoSolicitudTemp.Nombre;
+                                      solicitud.data.Respuesta = solicitud;
+                                      // solicitud.data.Respuesta.Resultado = $translate.instant('SOLICITUD_SIN_RESPUESTA');
+                                      solicitud.data.Carrera = carreraEstudiante;
+                                      ctrl.solicitudes.push(solicitud.data);
+                                      ctrl.gridOptions.data = ctrl.solicitudes;
+                                      resolve();
+                                    }else {
+                                      resolve();
+                                    }
+                                  }
+                                })
+                              })
+                            })
+                          })
+                        }
                         await verificarSolicitud(solicitud, carrera);
                         UserExiste = true;
                       } 
@@ -1556,30 +1650,30 @@ angular.module('poluxClienteApp')
                             limit: 1,
                           });
                           
-                          var carrera;
-                          await poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos).then(async function(responseProyectoCurricular) {
-                            console.log("responseProyectoCurricular", responseProyectoCurricular);
+                          // var carrera;
+                          // await poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos).then(async function(responseProyectoCurricular) {
+                          //   console.log("responseProyectoCurricular", responseProyectoCurricular);
 
-                            await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
-                              console.log("carreraPosgrado", carreraPosgrado);
+                          //   await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
+                          //     console.log("carreraPosgrado", carreraPosgrado);
                               
-                              ctrl.carrerasCoordinador.find(proyectoCurricular => {
-                                if(proyectoCurricular.proyecto == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
-                                  //Armar objeto carrera con el código y nombre del proyecto curricular
-                                  return carrera = {
-                                    "Codigo": carreraPosgrado.data.carrerasCollection.carrera[0].codigo,
-                                    "Nombre": carreraPosgrado.data.carrerasCollection.carrera[0].nombre,
-                                  }
-                                } else {
-                                  return carrera = undefined;
-                                }
-                              });
-                            }).catch(function(error) {
-                              console.log("Error carrera: ", error);
-                            });
-                          }).catch(function(error2) {
-                            console.log("Error espacio academico: ", error2);
-                          });
+                          //     ctrl.carrerasCoordinador.find(proyectoCurricular => {
+                          //       if(proyectoCurricular.proyecto == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
+                          //         //Armar objeto carrera con el código y nombre del proyecto curricular
+                          //         return carrera = {
+                          //           "Codigo": carreraPosgrado.data.carrerasCollection.carrera[0].codigo,
+                          //           "Nombre": carreraPosgrado.data.carrerasCollection.carrera[0].nombre,
+                          //         }
+                          //       } else {
+                          //         return carrera = undefined;
+                          //       }
+                          //     });
+                          //   }).catch(function(error) {
+                          //     console.log("Error carrera: ", error);
+                          //   });
+                          // }).catch(function(error2) {
+                          //   console.log("Error espacio academico: ", error2);
+                          // });
 
                           console.log("carrera: ", carrera);
 
