@@ -1102,10 +1102,10 @@ angular.module('poluxClienteApp')
                         await verificarSolicitud(solicitud)
                         UserExiste = true;
                       }
-                      if (UserExiste == false) {
+                      /*if (UserExiste == false) {
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no tiene solicitudes pendientes");
                           //ctrl.errorCargarParametros = true;
-                      }
+                      }*/
                     }
                   });
                 });
@@ -1284,8 +1284,6 @@ angular.module('poluxClienteApp')
                 carreras.push(carrera.proyecto);
               });
 
-              console.log("ctrl.carrerasCoordinador", ctrl.carrerasCoordinador);
-              console.log("carreras", carreras);
 
               var parametrosModalidadTipo = $.param({
                 limit: 0
@@ -1337,7 +1335,6 @@ angular.module('poluxClienteApp')
                 if (Object.keys(responseSolicitudes.data.Data[0]).length === 0) {
                   responseSolicitudes.data.Data = [];
                 }
-                console.log("ctrl.conSolicitudes", ctrl.conSolicitudes);
 
                 async function verificarSolicitud(solicitud, carreraPosgrado) {
                 //var verificarSolicitud = function (solicitud, carreraPosgrado) {
@@ -1349,8 +1346,6 @@ angular.module('poluxClienteApp')
                   let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                     return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
                   })
-                  console.log("modalidadTemp", modalidadTemp);
-                  console.log("tipoSoliciutdTemp", tipoSolicitudTemp);
 
                   solicitud.data = {
                     'Id': solicitud.SolicitudTrabajoGrado.Id,
@@ -1358,7 +1353,6 @@ angular.module('poluxClienteApp')
                     'ModalidadTipoSolicitud': tipoSolicitudTemp.Nombre,
                     'Fecha': solicitud.SolicitudTrabajoGrado.Fecha.toString().substring(0, 10),
                   }
-                  console.log("solicitud.data", solicitud.data);
 
                   var parametrosUsuario = $.param({
                     query: "SolicitudTrabajoGrado:" + solicitud.SolicitudTrabajoGrado.Id,
@@ -1376,7 +1370,7 @@ angular.module('poluxClienteApp')
                           })
 
                           //La modalidad es Espacios Académicos de Posgrado
-                          if(modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && solicitud.Usuario != 0) {
+                          if (modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && solicitud.Usuario != 0) {
                             console.log("Colocar nuevas columnas para Posgrado");
 
                             solicitud.data.Respuesta = solicitud;
@@ -1433,14 +1427,12 @@ angular.module('poluxClienteApp')
               }
 
                 angular.forEach(responseSolicitudes.data.Data, function (solicitud) {
-                  console.log("soliciutd", solicitud);
                   //Saber si es la primera vez que se dará respuesta a la solicitud (Coordinador o Asistente de Pregrado)
                   var primeraRespuesta = true;
 
                   if(solicitud.Usuario != 0) {
                     primeraRespuesta = false;
                   }
-                  console.log("primeraRespuesta", primeraRespuesta);
 
                   var parametrosDetallesSolicitud = $.param({
                     query: "SolicitudTrabajoGrado.Id:" + solicitud.SolicitudTrabajoGrado.Id,
@@ -1449,11 +1441,9 @@ angular.module('poluxClienteApp')
 
                   poluxRequest.get("detalle_solicitud", parametrosDetallesSolicitud).then(async function(responseDetalles) {
                     if (Object.keys(responseDetalles.data.Data).length === 0) {
-                      //console.log("responseDetalles", responseDetalles);
                       ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                     } else {
-                      console.log("lo pone false 4")
                       var UserExiste = false;
                       let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                         return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
@@ -1475,7 +1465,6 @@ angular.module('poluxClienteApp')
                       if(addVista) {
                         //Solicitud Inicial y Materias de Posgrado
                         if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && primeraRespuesta == false) {
-
                           var responseAux;
                           for (var i = 0; i < responseDetalles.data.Data.length; i++) {
                             if (responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || 
@@ -1585,10 +1574,11 @@ angular.module('poluxClienteApp')
                         }
                       }
 
-                      if (UserExiste == false) {
+                     /* if (UserExiste == false) {
+                        console.log("+++++++++++++++++++++")
                         ctrl.mensajeError = $translate.instant("Señor/a asistente, no tiene solicitudes pendientes");
                           ctrl.errorCargarParametros = true;
-                      }
+                      } */
                     }
                   })
                 });
