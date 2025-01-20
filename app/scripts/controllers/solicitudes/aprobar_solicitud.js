@@ -1416,6 +1416,7 @@ angular.module('poluxClienteApp')
               enviarTransaccion();
             }
             else if (this.roles.includes("COORDINADOR") || this.roles.includes("CONTRATISTA")) {
+              console.log("Entro a la función de aprobarPosgrado()");
               await aprobarPosgrado();
             }
           }
@@ -2194,6 +2195,7 @@ angular.module('poluxClienteApp')
             enviarTransaccion();
           }
 
+          console.log("rechazadoUnaVez", rechazadoUnaVez);
           if (ctrl.respuestaSolicitud == "RCC_PLX" && rechazadoUnaVez == false) {
             console.log("Entre a rechazar la solicitud");
             enviarTransaccion();
@@ -2368,6 +2370,17 @@ angular.module('poluxClienteApp')
                       //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                       ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
+                      //Se prepara la información del proyecto curricular aprobado
+                      var data_espacio_academico = {
+                        "TrabajoGrado": {
+                          "Id": 0
+                        },
+                        "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(true))
+                      }
+                      
+                      //Se almacena la informacion del espacio academico aprobado
+                      ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                       //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                       ctrl.dataRespuesta.MateriasProPos = true;
                     }
@@ -2406,6 +2419,11 @@ angular.module('poluxClienteApp')
                       else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
                         console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
+                        //Traer el Estado en que el codigo de abreviación RCC_PLX | Antes era RCP02_PLX
+                        var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "RCPO1_PLX"
+                        });
+                        
                         //Traer el Estado de Trabajo de Grado en Cancelado
                         let parametrosConsulta = $.param({
                           query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
@@ -2418,8 +2436,8 @@ angular.module('poluxClienteApp')
                         //Se coloca en rechazo el trabajo de grado
                         ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
 
-                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        //Se pone la respuesta nueva en True debido a que es la última respuesta de la solicitud inicial
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
                       } 
                       //Si la respuesta anterior es aprobado por Coordinador de Posgrado 2
                       else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
@@ -2453,6 +2471,17 @@ angular.module('poluxClienteApp')
 
                         //Poner el campo de la respuesta anterior en False
                         ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
+
+                        //Se prepara la información del proyecto curricular aprobado
+                        var data_espacio_academico = {
+                          "TrabajoGrado": {
+                            "Id": 0
+                          },
+                          "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                        }
+
+                        //Se almacena la informacion del espacio academico aprobado
+                        ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
 
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
@@ -2555,19 +2584,23 @@ angular.module('poluxClienteApp')
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
+                        //Se prepara la información del proyecto curricular aprobado
+                        var data_espacio_academico = {
+                          "TrabajoGrado": {
+                            "Id": 0
+                          },
+                          "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                        }
+
+                        //Se almacena la informacion del espacio academico aprobado
+                        ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
                       }
                       //Si en el Select se elige Rechazar Solicitud
                       else {
                         console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
-
-                        estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == respuestaRechazo
-                        });
-      
-                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
-                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                         //Traer el Estado de Trabajo de Grado en Cancelado
                         let parametrosConsulta = $.param({
@@ -2578,11 +2611,11 @@ angular.module('poluxClienteApp')
                           estadoTrabajoGrado = parametros.data.Data[0];
                         });
 
-                        //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                        ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                        //Se pone la respuesta nueva en true debido a que es la última respuesta del flujo
+                        ctrl.dataRespuesta.RespuestaNueva.Activo = true;
 
-                        //Se coloca en rechazo el trabajo de grado
-                        ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                        //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Anteproyecto rechazado por consejo de carrera)
+                        ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoTrabajoGrado.Id;
                       }
 
                       //Poner el campo de la respuesta anterior en False
@@ -2630,6 +2663,17 @@ angular.module('poluxClienteApp')
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
+                        //Se prepara la información del proyecto curricular aprobado
+                        var data_espacio_academico = {
+                          "TrabajoGrado": {
+                            "Id": 0
+                          },
+                          "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(true))
+                        }
+
+                        //Se almacena la informacion del espacio academico aprobado
+                        ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
                       }
@@ -2650,7 +2694,12 @@ angular.module('poluxClienteApp')
                         //Si la respuesta anterior es rechazado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
                         if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
-  
+                          
+                          //Traer el Estado en que el codigo de abreviación RCC_PLX | Antes era RCP02_PLX
+                          var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
+                            return estSol.CodigoAbreviacion == "RCPO2_PLX"
+                          });
+
                           //Traer el Estado de Trabajo de Grado en Cancelado
                           let parametrosConsulta = $.param({
                             query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
@@ -2660,8 +2709,11 @@ angular.module('poluxClienteApp')
                             estadoTrabajoGrado = parametros.data.Data[0];
                           });
   
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador Posgrado 2)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
                           //Se coloca en rechazo el trabajo de grado
                           ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
@@ -2699,6 +2751,17 @@ angular.module('poluxClienteApp')
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                           ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
+                          //Se prepara la información del proyecto curricular aprobado
+                          var data_espacio_academico = {
+                            "TrabajoGrado": {
+                              "Id": 0
+                            },
+                            "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                          }
+
+                          //Se almacena la informacion del espacio academico aprobado
+                          ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
                           
@@ -2802,19 +2865,23 @@ angular.module('poluxClienteApp')
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                           ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
+                          //Se prepara la información del proyecto curricular aprobado
+                          var data_espacio_academico = {
+                            "TrabajoGrado": {
+                              "Id": 0
+                            },
+                            "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(false))
+                          }
+
+                          //Se almacena la informacion del espacio academico aprobado
+                          ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
+
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
                         }
                         //Si en el Select se elige Rechazar Solicitud
                         else {
                           console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
-  
-                          estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == respuestaRechazo
-                          });
-        
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
   
                           //Traer el Estado de Trabajo de Grado en Cancelado
                           let parametrosConsulta = $.param({
@@ -2825,11 +2892,11 @@ angular.module('poluxClienteApp')
                             estadoTrabajoGrado = parametros.data.Data[0];
                           });
   
-                          //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
-                          ctrl.dataRespuesta.RespuestaNueva.Activo = false;
+                          //Se pone la respuesta nueva en True debido a que es la última respuesta del flujo
+                          ctrl.dataRespuesta.RespuestaNueva.Activo = true;
   
-                          //Se coloca en rechazo el trabajo de grado
-                          ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4611 (Anteproyecto rechazado por consejo de carrera)
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoTrabajoGrado.Id;
                         }
   
                         //Poner el campo de la respuesta anterior en False
@@ -2878,6 +2945,37 @@ angular.module('poluxClienteApp')
           ctrl.mostrarRespuesta("SELECCIONE_ACTA");
           resolve();
         }
+      }
+
+      /**
+       * @ngdoc method
+       * @name getCarreraPosgrado
+       * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
+       * @param {boolean} esPrioridad Número de prioridad del proyecto curricular de posgrado
+       * @returns {string} ID del proyecto curricular según la prioridad ingresada
+       * @description 
+       * Función que se encarga de retornar el ID de uno de los proyectos curriculares de posgrado seleccionado por el estudiante según el número de prioridad ingresado
+       */
+      ctrl.getCarreraPosgrado = function (esPrioridad) {
+
+        var idProyecto
+        
+        //Se recorren los detalles de la solicitud
+        ctrl.detallesSolicitud.forEach(function(detalle){
+
+          //Se buscan únicamente los detalles de los proyectos curriculares seleccionados
+          if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2"){
+
+            //Si el detalle encontrado es la carrera prioritaria y se desea recuperar el id prioritario O Si el detalle no es prioridad y se desea recuperar el id no prioritario
+            if((detalle.carrera.Opcion == ctrl.prioridad && esPrioridad) || (detalle.carrera.Opcion != ctrl.prioridad && !esPrioridad)){
+
+              //Se retorna el código del proyecto curricular
+              idProyecto = detalle.carrera.Codigo
+            }
+          }
+        })
+        
+        return idProyecto
       }
 
       /**
