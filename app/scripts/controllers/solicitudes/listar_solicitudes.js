@@ -525,6 +525,7 @@ angular.module('poluxClienteApp')
                         ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                       } else {
+                        console.log("lo pone false 1")
                         var UserExiste = false;
                         let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                           return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
@@ -969,6 +970,7 @@ angular.module('poluxClienteApp')
                       ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                     } else {
+                      console.log("lo pone false 2")
                       var UserExiste = false;
                       let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                         return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
@@ -1214,6 +1216,7 @@ angular.module('poluxClienteApp')
                   ctrl.mensajeError = $translate.instant("No hay solicitudes pendientes");
                   ctrl.errorCargarParametros = true;
                 } else {
+                  console.log("lo pone false 3")
                   var UserExiste = false;
 
                  // let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
@@ -1450,43 +1453,37 @@ angular.module('poluxClienteApp')
                       ctrl.mensajeError = $translate.instant("Señor/a director/a , no hay solicitudes pendientes");
                         ctrl.errorCargarParametros = true;
                     } else {
+                      console.log("lo pone false 4")
                       var UserExiste = false;
                       let tipoSolicitudTemp = ctrl.TipoSolicitud.find(tipoSol => {
                         return tipoSol.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud
                       })
-                      console.log("tipoSolicitudTemp", tipoSolicitudTemp);
 
                       let modalidadTemp = ctrl.Modalidad.find(modalidad => {
                         return modalidad.Id == solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad
                       })
-                      console.log("modalidadTemp", modalidadTemp);
 
                       //Variable para saber si colocar en la vista una solicitud o no
                       var addVista = true;
 
-                      console.log("solicitud.Justificacion", solicitud.Justificacion);
                       //Para la modalidad de Espacios Académicos de Posgrado
                       //Si la respuesta anterior fue aprobado por Coordinador de Pregrado y es una solicitud de Cambio de Materias de Posgrado o Cancelación de la Modalidad
                       if((solicitud.Justificacion == "Su solicitud fue radicada" || solicitud.Justificacion == "Su solicitud esta pendiente a la revision del docente") && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && tipoSolicitudTemp.CodigoAbreviacion != "SI_PLX" && primeraRespuesta == false) {
                         addVista = false;
                       }
-                      console.log("addVista", addVista);
 
                       if(addVista) {
                         //Solicitud Inicial y Materias de Posgrado
                         if (tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && primeraRespuesta == false) {
-                          console.log("Solicitud Inicial y Materias de Posgrado");
 
                           var responseAux;
                           for (var i = 0; i < responseDetalles.data.Data.length; i++) {
                             if (responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || 
                             responseDetalles.data.Data[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
-                              console.log("responseDetallesESPELE", responseDetalles.data.Data[i]);
 
                               solPosgrado = true;
                               var datosMaterias = responseDetalles.data.Data[i].Descripcion.split("-");
                               var carrera = JSON.parse(datosMaterias[1]);
-                              console.log("carreraDetalles", carrera);
                               if (carreras.includes((carrera.Codigo).toString())) {
                                 responseAux = responseDetalles.data.Data[i]
                                 await verificarSolicitud(solicitud, carrera);
@@ -1540,29 +1537,21 @@ angular.module('poluxClienteApp')
                               }
                             }
                           }
-
-                          console.log("ctrl.solicitudes", ctrl.solicitudes);
                         } 
                         //Si la solicitud es cambio de materias de posgrado o cancelación, en la modalidad de Materias de Posgrado 
                         else if (((tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") || (tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX")) && modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && primeraRespuesta == false) {
                           console.log("Cambio de materias o cancelación de posgrado");
-                          
                           //Guardar el Id del Trabajo de Grado
                           var idTrabajoGrado = solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id;
-                          console.log("idTrabajoGrado", idTrabajoGrado);
 
                           var parametrosEspaciosAcademicosInscritos = $.param({
                             query: "TrabajoGrado:" + idTrabajoGrado,
                             limit: 1,
                           });
-                          
                           var carrera;
                           await poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos).then(async function(responseProyectoCurricular) {
-                            console.log("responseProyectoCurricular", responseProyectoCurricular);
 
                             await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
-                              console.log("carreraPosgrado", carreraPosgrado);
-                              
                               ctrl.carrerasCoordinador.find(proyectoCurricular => {
                                 if(proyectoCurricular.proyecto == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
                                   //Armar objeto carrera con el código y nombre del proyecto curricular
