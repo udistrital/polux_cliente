@@ -20,25 +20,46 @@ angular.module('poluxClienteApp').controller('GenerarReporteCtrl',
         ctrl.carrerasFacultad = []
 
         var documento = token_service.getAppPayload().appUserDocument;
+        var roles = token_service.getAppPayload().appUserRole;
 
-        //se recupera el código de la facultad por medio del documento de coordinador
-        academicaRequest.get("coordinador_carrera", [documento, "PREGRADO"]).then(function (responseCoordinador) {
 
-            var cod_facultad = responseCoordinador.data.coordinadorCollection.coordinador[0].codigo_facultad
+        //Para un Coordinador de Pregrado
+        if (roles.includes("COORDINADOR")) {
+            //se recupera el código de la facultad por medio del documento de coordinador
+            academicaRequest.get("coordinador_carrera", [documento, "PREGRADO"]).then(function (responseCoordinador) {
+                var cod_facultad = responseCoordinador.data.coordinadorCollection.coordinador[0].codigo_facultad
 
-            //se recuperan los proyectos curriculares de la facultad por medio del código de la facultad
-            academicaRequest.get("proyectos_facultad", [cod_facultad, "PREGRADO"]).then(function (responseProyectos) {
+                //se recuperan los proyectos curriculares de la facultad por medio del código de la facultad
+                academicaRequest.get("proyectos_facultad", [cod_facultad, "PREGRADO"]).then(function (responseProyectos) {
 
-                //se almacenan los proyectos para mostrarlos en el formulario
-                responseProyectos.data.proyectos.proyecto.forEach(proyecto => {
-                    ctrl.carrerasFacultad.push(
-                        {
-                            codigo : proyecto.codigo_proyecto_curricular,
-                            nombre : proyecto.nombre_proyecto_curricular
-                        })
-                });
+                    //se almacenan los proyectos para mostrarlos en el formulario
+                    responseProyectos.data.proyectos.proyecto.forEach(proyecto => {
+                        ctrl.carrerasFacultad.push(
+                            {
+                                codigo : proyecto.codigo_proyecto_curricular,
+                                nombre : proyecto.nombre_proyecto_curricular
+                            })
+                    });
+                })
+            })    
+        } else if (roles.includes("CONTRATISTA")) {
+            academicaRequest.get("asistente_proyecto", [documento]).then(async function (responseAsistente) {
+                ctrl.carrerasCoordinador = [];
+                var carreras = [];
+
+                if (!angular.isUndefined(responseAsistente.data.asistente.proyectos)) {
+                    ctrl.carrerasCoordinador = responseAsistente.data.asistente.proyectos;
+                    angular.forEach(responseAsistente.data.asistente.proyectos, function (carrera) {
+                        ctrl.carrerasFacultad.push(
+                            {
+                                codigo : carrera.proyecto,
+                                nombre : carrera.nombre
+                            }
+                        )
+                    });
+                }
             })
-        })
+        }
 
         ctrl.EstadosFiltro = [
             {
