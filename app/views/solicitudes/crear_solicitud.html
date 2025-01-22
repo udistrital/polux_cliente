@@ -45,7 +45,7 @@
   <p class="col-sm-12 control-label" translate="{{crearSolicitud.mensajeError}}"></p>
 </div>
 
-<div class="panel panel-default" ng-if="!crearSolicitud.errorParametros && crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario && !crearSolicitud.Nota && !crearSolicitud.Cancelacion"> 
+<div class="panel panel-default" ng-if="!crearSolicitud.errorParametros && crearSolicitud.detallesCargados && !loadDetalles && !loadFormulario && !crearSolicitud.Nota && !crearSolicitud.Cancelacion && !crearSolicitud.ModalidadCancelada"> 
   <div class="panel-heading">
       {{'FORMULARIO_SOLICITUD' | translate}}
   </div>
@@ -297,6 +297,17 @@
   <div class="panel-body">
     <div class="alert alert-danger">
       {{crearSolicitud.mensajeCancelacion}}
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" ng-if="crearSolicitud.ModalidadCancelada">
+  <div class="panel-heading">
+      {{'ERROR' | translate}}
+  </div>
+  <div class="panel-body">
+    <div class="alert alert-danger">
+      {{crearSolicitud.mensajeModalidadCancelada}}
     </div>
   </div>
 </div>
