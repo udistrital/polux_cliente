@@ -12,7 +12,7 @@
 angular.module("poluxClienteApp").constant("CONF", {
   APP: "poluxClienteApp", // Nombre de la app, esto cargará el logo.
   APP_MENU: "Polux", // Ingrese valor de la aplicación asociado al menú registrado en wso2
-  PRODUCCION: true,//  Evalua si se ejecuta en ambiente de producción
+  PRODUCCION: false,//  Evalua si se ejecuta en ambiente de producción
   GENERAL: {
     ACADEMICA_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/academica_jbpm/v2",
     POLUX_SERVICE: "https://autenticacion.portaloas.udistrital.edu.co/apioas/polux_crud/v1/",
