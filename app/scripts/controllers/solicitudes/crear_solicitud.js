@@ -84,7 +84,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest,CONF) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -302,7 +302,6 @@ angular.module('poluxClienteApp')
         }).then(function (evaluacion_trabajo_grado_results) {
           for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
             if (evaluacion_trabajo_grado_results[i].data.Data[0].Nota >= 0) {
-              //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
               return true;
             }
           }
@@ -351,7 +350,6 @@ angular.module('poluxClienteApp')
 
               promises.push(poluxRequest.get("respuesta_solicitud", parametrosConsulta).then(function (respuesta_solicitud) {
                 if (respuesta_solicitud.data.Data[0].EstadoSolicitud == ctrl.EstadosSolicitudes[2].Id) {
-                  //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
                   return true;
                 }
                 return false;
@@ -402,7 +400,6 @@ angular.module('poluxClienteApp')
 
               promises.push(poluxRequest.get("respuesta_solicitud", parametrosConsulta).then(function (respuesta_solicitud) {
                 if (respuesta_solicitud.data.Data[0].EstadoSolicitud == ctrl.EstadosSolicitudes[2].Id) {
-                  //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
                   return true;
                 }
                 return false;
@@ -1524,29 +1521,32 @@ angular.module('poluxClienteApp')
           ctrl.modalidad = modalidad_seleccionada;
           console.log("MODALIDAD 4", ctrl.modalidad)
         }
-        if(tipoSolicitudSeleccionada.CodigoAbreviacion != "SI_PLX"  && tipoSolicitudSeleccionada.CodigoAbreviacion == "SCM_PLX"){
-          // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
-          ctrl.getCancelacionModalidad().then(function (cancelado) {
-            ctrl.Cancelacion = cancelado;
-            ctrl.mensajeCancelacion = $translate.instant("ERROR.CANCELACIONES");
+        
+        if(CONF.PRODUCCION){//Si se ejecuta desde ambiente de producción, se evaluan las restricciones
+          if(tipoSolicitudSeleccionada.CodigoAbreviacion != "SI_PLX"  && tipoSolicitudSeleccionada.CodigoAbreviacion == "SCM_PLX"){
+            // SE LLAMA A LA FUNCION PARA MIRAR SI TIENE UNA SOLICITUD
+            ctrl.getCancelacionModalidad().then(function (cancelado) {
+              ctrl.Cancelacion = cancelado;
+              ctrl.mensajeCancelacion = $translate.instant("ERROR.CANCELACIONES");
+            });
+          }else{
+            ctrl.Cancelacion = false;
+          }
+  
+          //SE LLAMA A LA FUNCION PARA VERIFICAR SI LA MODALIDAD SELECCIONADA FUE CANCELADA ANTERIORMENTE
+          if(tipoSolicitudSeleccionada.CodigoAbreviacion == "SI_PLX"){
+            ctrl.getModalidadCancelada(modalidad_seleccionada).then(function(cancelado){
+              ctrl.ModalidadCancelada = cancelado
+              ctrl.mensajeModalidadCancelada = $translate.instant("ERROR.MODALIDAD_CANCELADA");
+            })
+          }
+  
+          //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS NOVEDADES
+          ctrl.getNotaTrabajoGrado().then(function (resultado) {
+            ctrl.Nota = resultado;
+            ctrl.mensajeCalificado = $translate.instant("ERROR.CALIFICADO");
           });
-        }else{
-          ctrl.Cancelacion = false;
         }
-
-        //SE LLAMA A LA FUNCION PARA VERIFICAR SI LA MODALIDAD SELECCIONADA FUE CANCELADA ANTERIORMENTE
-        if(tipoSolicitudSeleccionada.CodigoAbreviacion == "SI_PLX"){
-          ctrl.getModalidadCancelada(modalidad_seleccionada).then(function(cancelado){
-            ctrl.ModalidadCancelada = cancelado
-            ctrl.mensajeModalidadCancelada = $translate.instant("ERROR.MODALIDAD_CANCELADA");
-          })
-        }
-
-        //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS NOVEDADES
-        ctrl.getNotaTrabajoGrado().then(function (resultado) {
-          ctrl.Nota = resultado;
-          ctrl.mensajeCalificado = $translate.instant("ERROR.CALIFICADO");
-        });
 
         ctrl.verificarRequisitos(tipoSolicitudSeleccionada, modalidad_seleccionada).then(function() {
           ctrl.soliciudConDetalles = true;
