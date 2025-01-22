@@ -466,7 +466,8 @@ var text_es = {
         CANCELACIONES: "Usted solo puede realizar un cambio de modalidad solo una vez.",
         DIFERENCIA_NIVEL: "Los estudiantes tienen que estar en el mismo nivel de formación.",
         SIN_REVISIONES_ARL: "No existen revisiones de ARL pendientes o activas",
-        CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO: "No se pudo cargar las materias con exito!"
+        CONFIRMAR_ASIGNATURAS_SELECCIONADAS_POSGRADO: "No se pudo cargar las materias con exito!",
+        MODALIDAD_CANCELADA: "No puede volver a seleccionar una modalidad de grado cancelada previamente."
     },
     VERIFICAR_CONEXION:"Verifique su conexión",
     VERIFICAR_DOCUMENTO: "Ocurrió un error al intentar cargar un documento. Verifique su conexión o el tipo de documento y tamaño en cada campo requerido .",
@@ -1459,7 +1460,8 @@ var text_en = {
         CARGAR_CERTIFICADO_ARL:"An error occurred loading the ARL affilation certificate, please check your connection and try again.",
         CALIFICADO:"The degree work is already graded, so you cannot make any further changes.",
         DIFERENCIA_NIVEL: "Students have to be at the same training level.",
-        SIN_REVISIONES_ARL: "There are no pending or active ARL reviews"
+        SIN_REVISIONES_ARL: "There are no pending or active ARL reviews",
+        MODALIDAD_CANCELADA: "You cannot reselect a previously cancelled degree mode."
     },
     VERIFICAR_DOCUMENTO: "An error occurred while trying to load a document. Check your connection and document type (.pdf) and the size. ",
     BTN: {
