@@ -141,6 +141,7 @@ angular.module('poluxClienteApp')
       ctrl.codigoEstu = 0;
       ctrl.Nota = false;
       ctrl.Cancelacion = false;
+      ctrl.ModalidadCancelada = false
       //Objeto en el que se almacenan los datos personales del estudiante para la modalidad pasantía (interna).
       ctrl.datosEstudiante = {
         pasantiaInterna: false,
@@ -299,10 +300,10 @@ angular.module('poluxClienteApp')
 
           return $q.all(promises);
         }).then(function (evaluacion_trabajo_grado_results) {
-          for (var i = 0; i < evaluacion_trabajo_grado_results.data.Data.length; i++) {
+          for (var i = 0; i < evaluacion_trabajo_grado_results.length; i++) {
             if (evaluacion_trabajo_grado_results[i].data.Data[0].Nota >= 0) {
               //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
-              return false;
+              return true;
             }
           }
           return false;
@@ -351,7 +352,7 @@ angular.module('poluxClienteApp')
               promises.push(poluxRequest.get("respuesta_solicitud", parametrosConsulta).then(function (respuesta_solicitud) {
                 if (respuesta_solicitud.data.Data[0].EstadoSolicitud == ctrl.EstadosSolicitudes[2].Id) {
                   //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
-                  return false;
+                  return true;
                 }
                 return false;
               }));
@@ -363,6 +364,58 @@ angular.module('poluxClienteApp')
           });
         });
       }
+
+      /**
+       * @ngdoc method
+       * @name getModalidadCancelada
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta el servicio de {@link services/poluxService.service:poluxRequest poluxRequest} para saber si el estudiante ya ha cancelado la modalidad seleccionada
+       * @param {number} modalidadSeleccionada ID de la modalidad seleccionada
+       * @returns {boolean} Boleano que indica si el la modalidad fue cancelada o no
+       */
+
+      ctrl.getModalidadCancelada = function (modalidadSeleccionada) {
+        var parametrosConsulta = $.param({
+          query: "usuario:" + ctrl.codigo,
+          limit: 0,
+        });
+
+        return poluxRequest.get("usuario_solicitud", parametrosConsulta).then(function (usuario_solicitud) {
+          var promises = [];
+
+          let TipoSolicitudTemp = ctrl.TiposSolicitudes.find(data => {
+            return data.CodigoAbreviacion == "SCM_PLX"
+          });
+
+          usuario_solicitud.data.Data.forEach(function (solicitud) {
+            if (solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.TipoSolicitud == TipoSolicitudTemp.Id && solicitud.SolicitudTrabajoGrado.ModalidadTipoSolicitud.Modalidad == modalidadSeleccionada) {
+
+              let EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
+                return data.CodigoAbreviacion == "ACC_PLX"
+              });
+
+              parametrosConsulta = $.param({
+                query: "solicitud_trabajo_grado:" + solicitud.SolicitudTrabajoGrado.Id + ",estado_solicitud:" + EstadoSolicitudTemp.Id,
+                limit: 0,
+              });
+
+              promises.push(poluxRequest.get("respuesta_solicitud", parametrosConsulta).then(function (respuesta_solicitud) {
+                if (respuesta_solicitud.data.Data[0].EstadoSolicitud == ctrl.EstadosSolicitudes[2].Id) {
+                  //CAMBIAR CUANDO SE VAYA A SUBIR A PRODUCCIÓN
+                  return true;
+                }
+                return false;
+              }));
+            }
+          });
+
+          return Promise.all(promises).then(function (cancelados) {
+            return cancelados.includes(true);
+          });
+        });
+      }
+
       /**
        * @ngdoc method
        * @name getProrroga
@@ -1479,6 +1532,14 @@ angular.module('poluxClienteApp')
           });
         }else{
           ctrl.Cancelacion = false;
+        }
+
+        //SE LLAMA A LA FUNCION PARA VERIFICAR SI LA MODALIDAD SELECCIONADA FUE CANCELADA ANTERIORMENTE
+        if(tipoSolicitudSeleccionada.CodigoAbreviacion == "SI_PLX"){
+          ctrl.getModalidadCancelada(modalidad_seleccionada).then(function(cancelado){
+            ctrl.ModalidadCancelada = cancelado
+            ctrl.mensajeModalidadCancelada = $translate.instant("ERROR.MODALIDAD_CANCELADA");
+          })
         }
 
         //SE LLAMA LA FUNCIÓN POR CADA UNA DE LAS NOVEDADES
