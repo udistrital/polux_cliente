@@ -340,7 +340,7 @@ angular.module('poluxClienteApp')
               return est.Id == ctrl.respuestaActual.EstadoSolicitud
             })
             ctrl.estadoSolicitudTemp = estadoSolicitudTemp
-            var respuestas = ["RDC_PLX", "ADD_PLX", "APEP_PLX", "ACPR_PLX", "ACPO1_PLX", "ACPO2_PLX", "RCPO1_PLX", "RCPO2_PLX"]
+            var respuestas = ["RDC_PLX", "ADD_PLX", "APEP_PLX", "ACPR_PLX", "ACPO1_PLX", "ACPO2_PLX", "RCPO1_PLX", "RCPO2_PLX", "ACPR1_PLX", "RCPR1_PLX", "ACPR2_PLX", "RCPR2_PLX"]
             if (!respuestas.includes(ctrl.estadoSolicitudTemp.CodigoAbreviacion)) {
               ctrl.mensajeNoAprobar += ' ' + $translate.instant('SOLICITUD_CON_RESPUESTA');
               ctrl.noAprobar = true;
@@ -2744,7 +2744,6 @@ angular.module('poluxClienteApp')
                           var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == respuestaRechazo
                           });
-                          console.log("Estado Solicitud 2749", estadoRechazoOpcion2Solicitud.CodigoAbreviacion);
 
                           //Traer el Estado de Trabajo de Grado en Cancelado
                           let parametrosConsulta = $.param({
