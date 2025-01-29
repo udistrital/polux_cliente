@@ -89,7 +89,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesAprobarSolicitudCtrl',
-    function ($location, $q, $routeParams, notificacionRequest, $scope, $rootScope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest) {
+    function ($location, $q, $routeParams, notificacionRequest, $scope, $rootScope, utils, gestorDocumentalMidRequest, $translate, $window, parametrosRequest, academicaRequest, poluxRequest, poluxMidRequest, documentoRequest, sesionesRequest, token_service, autenticacionMidRequest, CONF) {
       var ctrl = this;
 
       ctrl.rol = "";
@@ -113,6 +113,7 @@ angular.module('poluxClienteApp')
       ctrl.estadoAsignaturaTrabajoGradoTemp = [];
       ctrl.estadoEstudianteTrabajoGradoTemp = [];
       ctrl.detallesJson = "";
+      ctrl.nombreNivelProyecto = "";
       //ctrl.pasantiaInterna = false;
       //ctrl.dataPersonaArl;
       //ctrl.SolicitudTrabajoGrado;
@@ -124,9 +125,9 @@ angular.module('poluxClienteApp')
         console.log("CONSULTA 1", ctrl.SolicitudTrabajoGrado); 
         ctrl.dataPersonaArl = JSON.parse(ctrl.SolicitudTrabajoGrado.DatosPersonalesArl);
         ctrl.pasantiaInterna = ctrl.dataPersonaArl.pasantiaInterna;
-        console.log("Data__Solicitud_ARL", ctrl.dataPersonaArl);
-        console.log("Data__Solicitud", ctrl.SolicitudTrabajoGrado);
-        console.log("Fecha Nacimiento", ctrl.dataPersonaArl.fechaNacimiento);
+        // console.log("Data__Solicitud_ARL", ctrl.dataPersonaArl);
+        // console.log("Data__Solicitud", ctrl.SolicitudTrabajoGrado);
+        // console.log("Fecha Nacimiento", ctrl.dataPersonaArl.fechaNacimiento);
       }).catch(function (error) {
       })
       ctrl.Noaprobardescripcion = "";
@@ -281,7 +282,8 @@ angular.module('poluxClienteApp')
           });
 
         } else {
-          academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+          academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {            
+            ctrl.nombreNivelProyecto = response.data.coordinadorCollection.coordinador[0].nombre_nivel_proyecto;
             if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
               rol = "PREGRADO";
               ctrl.rol = "PREGRADO";
@@ -338,7 +340,7 @@ angular.module('poluxClienteApp')
               return est.Id == ctrl.respuestaActual.EstadoSolicitud
             })
             ctrl.estadoSolicitudTemp = estadoSolicitudTemp
-            var respuestas = ["RDC_PLX", "ADD_PLX", "APEP_PLX", "ACPR_PLX", "ACPO1_PLX", "ACPO2_PLX", "RCPO1_PLX", "RCPO2_PLX"]
+            var respuestas = ["RDC_PLX", "ADD_PLX", "APEP_PLX", "ACPR_PLX", "ACPO1_PLX", "ACPO2_PLX", "RCPO1_PLX", "RCPO2_PLX", "ACPR1_PLX", "RCPR1_PLX", "ACPR2_PLX", "RCPR2_PLX"]
             if (!respuestas.includes(ctrl.estadoSolicitudTemp.CodigoAbreviacion)) {
               ctrl.mensajeNoAprobar += ' ' + $translate.instant('SOLICITUD_CON_RESPUESTA');
               ctrl.noAprobar = true;
@@ -2207,17 +2209,17 @@ angular.module('poluxClienteApp')
               var parametrosRespuestaSol = $.param({
                 query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
                 limit: 0
-              });
+              });        
 
               //Almacena lo que traiga de Respuesta_Solicitud
               var respuesta_solicitud;
               await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
                 respuesta_solicitud = responseRespuestaSolicitud;
               })
-              console.log("respuesta_solicitud", respuesta_solicitud);
+              console.log("respuesta_solicitud", respuesta_solicitud);             
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de PREGRADO
-              if (ctrl.rol == "PREGRADO" || ctrl.roles.includes("CONTRATISTA")) {
+              if ((ctrl.rol == "PREGRADO" && ctrl.nombreNivelProyecto != "TECNOLOGIA" && ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") || ctrl.roles.includes("CONTRATISTA") || ctrl.nombreNivelProyecto == "TECNOLOGIA") {
                 console.log("Pasa por responder PREGRADO");
                 //Saber si es la primera vez que se dará respuesta a la solicitud (enfoque para el Asistente de Pregrado)
                 var primeraRespuesta = true;
@@ -2281,7 +2283,7 @@ angular.module('poluxClienteApp')
               }
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de POSGRADO
-              if (ctrl.rol == "POSGRADO" || ctrl.roles.includes("CONTRATISTA")) {
+              if ((ctrl.rol == "POSGRADO" || ctrl.roles.includes("CONTRATISTA")) || (ctrl.rol == "PREGRADO" && ctrl.nombreNivelProyecto != "TECNOLOGIA" && ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX")) {
                 //Recorrer los detalles con Codigo de Abreviación ESPELE y ESPELE2
                 for (let i = 0; i < ctrl.detallesSolicitud.length; i++) {
                   if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {                    
@@ -2314,9 +2316,9 @@ angular.module('poluxClienteApp')
                     return carrera.proyecto == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
                   } else {
                     return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
-                  }
+                  }                                             
                 });
-
+                console.log("Proyecto Curricular Seleccionado: ", proyectoCurricularSeleccionado);
                 if(ctrl.roles.includes("CONTRATISTA")) {
                   //Obtener el usuario del Coordinador del Proyecto Curricular seleccionado
                   await academicaRequest.get("consulta_carrera_condor", [$rootScope.codigoProyectoCurricularPosgrado]).then(function(responseCoordinador) {
@@ -2337,9 +2339,14 @@ angular.module('poluxClienteApp')
 
                 //Va a responder el Coordinador del Proyecto Curricular 1
                 if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE.Codigo) {
-                  respuestaAprobado = "ACPO1_PLX" //Aprobado por Coordinador de Posgrado Opcion 1
-                  respuestaRechazo = "RCPO1_PLX" //Rechazado por Coordinador de Posgrado Opcion 1
-                  
+                  if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                    respuestaAprobado = "ACPR1_PLX" //Aprobado por Coordinador Profundización Opcion 1
+                    respuestaRechazo = "RCPR1_PLX" //Rechazado por Coordinador Profundización Opcion 1
+                  } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                    respuestaAprobado = "ACPO1_PLX" //Aprobado por Coordinador de Posgrado Opcion 1
+                    respuestaRechazo = "RCPO1_PLX" //Rechazado por Coordinador de Posgrado Opcion 1
+                  }
+                                    
                   //Si es Coordinador Posgrado de Proyecto Curricular 1 y la Opción Prioritaria también es la 1
                   if(infoESPELE.Opcion == opcionPrioridad) {
                     //Si en el Select se elige Aprobar Solicitud
@@ -2386,16 +2393,29 @@ angular.module('poluxClienteApp')
                     }
                     //Si en el Select se elige Rechazar Solicitud
                     else {
-                      //Si la solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                      var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                        return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
-                      });
-                      console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
+                      if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                        //Si la solicitud inicial se encuentra en Rechazado por Coordinador Profundización Opcion 2 significa que el Coordinador Opción 1 debe Aprobar o Rechazar la solicitud
+                        var estadoRechazoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RCPR2_PLX" //6836 - Rechazado por Coordinador Profundización Opción 2
+                        });
+                        console.log("estadoRechazoOpcion2Solicitud", estadoRechazoOpcion2Solicitud);
 
-                      //O si la solicitud inicial se encuentra en Aceptado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                      var estadoACPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        //O si la solicitud inicial se encuentra en Aceptado por Coordinador Profundización Opcion 2 significa que el Coordinador Opción 1 debe Aprobar o Rechazar la solicitud
+                        var estadoAceptadoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "ACPR2_PLX" //6835 - Aceptado por Coordinador Profundización Opción 2
+                        });
+                      } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                        //Si la solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                        var estadoRechazoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                        return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
+                        });
+                        console.log("estadoRechazoOpcion2Solicitud", estadoRechazoOpcion2Solicitud);
+
+                        //O si la solicitud inicial se encuentra en Aceptado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                        var estadoAceptadoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                         return estSol.CodigoAbreviacion == "ACPO2_PLX" //4656 - Aceptado por Coordinador de Posgrado Opción 2
-                      });
+                        });
+                      };                    
 
                       //se verifica si solo se tiene una opción de materias
                       if (infoESPELE2 == undefined) {
@@ -2415,13 +2435,13 @@ angular.module('poluxClienteApp')
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
                       }
                       //Si tiene más de una opción. Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
-                      //Si la respuesta anterior es rechazado por Coordinador de Posgrado 2
-                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                      //Si la respuesta anterior es rechazado por Coordinador Opción 2
+                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRechazoOpcion2Solicitud.Id) {
                         console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
                         //Traer el Estado en que el codigo de abreviación RCC_PLX | Antes era RCP02_PLX
                         var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == "RCPO1_PLX"
+                          return estSol.CodigoAbreviacion == respuestaRechazo //"RCPO1_PLX"
                         });
                         
                         //Traer el Estado de Trabajo de Grado en Cancelado
@@ -2439,8 +2459,8 @@ angular.module('poluxClienteApp')
                         //Se pone la respuesta nueva en True debido a que es la última respuesta de la solicitud inicial
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
                       } 
-                      //Si la respuesta anterior es aprobado por Coordinador de Posgrado 2
-                      else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO2Solicitud.Id) {
+                      //Si la respuesta anterior es aprobado por Coordinador de Opción 2
+                      else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoAceptadoOpcion2Solicitud.Id) {
                         console.log("Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
 
                         //Traer el Estado de Solicitud de Aprobado por consejo de carrera
@@ -2514,12 +2534,19 @@ angular.module('poluxClienteApp')
                     });
                     console.log("estadoACPRSolicitud", estadoACPRSolicitud);
 
-                    //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                    var estadoRCPO2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                    if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                      //Si la solicitud inicial se encuentra en Rechazado por Coordinador Profundización Opcion 2 significa que el Coordinador Opción 1 debe Aprobar o Rechazar la solicitud
+                      var estadoRechazoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                      return estSol.CodigoAbreviacion == "RCPR2_PLX" //6836 - Rechazado por Coordinador Profundización Opción 2
+                      });                      
+                    } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                      //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                      var estadoRechazoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                       return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
-                    });
-                    console.log("estadoRCPO2Solicitud", estadoRCPO2Solicitud);
-
+                      });                    
+                    }
+                    
+                    console.log("estadoRechazoOpcion2Solicitud", estadoRechazoOpcion2Solicitud);
                     //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                     //Si la respuesta anterior es de Coordinador de Pregrado
                     if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
@@ -2553,8 +2580,8 @@ angular.module('poluxClienteApp')
                       //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                       resolve();
                     }
-                    //Si la respuesa anterior es Rechazada por Coordinador de Posgrado Opción 2 (PRIORITARIA)
-                    else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO2Solicitud.Id) {
+                    //Si la respuesa anterior es Rechazada por Coordinador Opción 2 (PRIORITARIA)
+                    else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRechazoOpcion2Solicitud.Id) {
                       //Si en el Select se elige Aprobar Solicitud
                       if(ctrl.respuestaSolicitud == "ACC_PLX") {
                         console.log("Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
@@ -2629,9 +2656,14 @@ angular.module('poluxClienteApp')
                 //Va a responder el Coordinador del Proyecto Curricular 2
                 else if(infoESPELE2 != undefined) { //Se verifica si el estudiante escogió 2 proyectos curriculares
                   if(proyectoCurricularSeleccionado.codigo_proyecto_curricular == infoESPELE2.Codigo) {
-                    respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
-                    respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
-                    
+                    if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                      respuestaAprobado = "ACPR2_PLX" //Aprobado por Coordinador Profundización Opcion 2 6835
+                      respuestaRechazo = "RCPR2_PLX" //Rechazado por Coordinador Profundización Opcion 2 6836
+                    } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                      respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
+                      respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
+                    }
+                                      
                     //Si es Coordinador Posgrado de Proyecto Curricular 2 y la Opción Prioritaria también es la 2
                     if(infoESPELE2.Opcion == opcionPrioridad) {
                       //Si en el Select se elige Aprobar Solicitud
@@ -2679,25 +2711,38 @@ angular.module('poluxClienteApp')
                       }
                       //Si en el Select se elige Rechazar Solicitud
                       else {
-                        //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                        var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                          return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
-                        });
-                        console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
+                        if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                          //Si la solicitud inicial se encuentra en Rechazado por Coordinador Profundización Opcion 1 significa que el Coordinador Opción 2 debe Aprobar o Rechazar la solicitud
+                          var estadoRechazoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "RCPR1_PLX" //6834 - Rechazado por Coordinador Profundización Opción 1
+                          });
+                          console.log("estadoRechazoOpcion1Solicitud", estadoRechazoOpcion1Solicitud);
   
-                        //Solicitud inicial se encuentra en Aprobado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                        var estadoACPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          //O si la solicitud inicial se encuentra en Aceptado por Coordinador Profundización Opcion 1 significa que el Coordinador Opción 2 debe Aprobar o Rechazar la solicitud
+                          var estadoAceptadoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "ACPR1_PLX" //6833 - Aceptado por Coordinador Profundización Opción 1
+                          });
+                        } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                          //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                          var estadoRechazoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
+                          });
+                          console.log("estadoRechazoOpcion1Solicitud", estadoRechazoOpcion1Solicitud);
+  
+                          //Solicitud inicial se encuentra en Aprobado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
+                          var estadoAceptadoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == "ACPO1_PLX" //4654 - Aprobado por Coordinador de Posgrado Opción 1
                         });
+                        };                       
   
                         //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                         //Si la respuesta anterior es rechazado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
-                        if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
+                        if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRechazoOpcion1Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
                           
                           //Traer el Estado en que el codigo de abreviación RCC_PLX | Antes era RCP02_PLX
                           var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
-                            return estSol.CodigoAbreviacion == "RCPO2_PLX"
+                            return estSol.CodigoAbreviacion == respuestaRechazo
                           });
 
                           //Traer el Estado de Trabajo de Grado en Cancelado
@@ -2709,7 +2754,7 @@ angular.module('poluxClienteApp')
                             estadoTrabajoGrado = parametros.data.Data[0];
                           });
   
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador Posgrado 2)
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador Posgrado 2) | 6836 (Rechazada por Coordinador Profundización 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
@@ -2719,7 +2764,7 @@ angular.module('poluxClienteApp')
                           ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
                         } 
                         //Si la respuesta anterior es aprobado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
-                        else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPO1Solicitud.Id) {
+                        else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoAceptadoOpcion1Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
   
                           //Traer el Estado de Solicitud de Aprobado por consejo de carrera
@@ -2775,7 +2820,7 @@ angular.module('poluxClienteApp')
         
                           console.log("estadoSolicitud", estadoSolicitud);
     
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2) | 6836 (Rechazada por Coordinador Profundización 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
                       }
@@ -2793,11 +2838,17 @@ angular.module('poluxClienteApp')
                       });
                       console.log("estadoACPRSolicitud", estadoACPRSolicitud);
   
-                      //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
-                      var estadoRCPO1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
-                        return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
-                      });
-                      console.log("estadoRCPO1Solicitud", estadoRCPO1Solicitud);
+                      //Solicitud inicial se encuentra en Rechazado por Coordinador Opcion 1 significa que el Coordinador Opción 2 debe Aprobar o Rechazar la solicitud
+                      if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                        var estadoRechazoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "RCPR1_PLX" //6834 - Rechazado por Coordinador Profundización Opción 1 
+                        });
+                      } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
+                        var estadoRechazoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
+                          return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1 
+                        });
+                      }                      
+                      console.log("estadoRechazoOpcion1Solicitud", estadoRechazoOpcion1Solicitud);
   
                       //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                       //Si la respuesta anterior fue el Coordinador de Pregrado
@@ -2806,12 +2857,12 @@ angular.module('poluxClienteApp')
                         if(ctrl.respuestaSolicitud == "ACC_PLX") {
                           console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
   
-                          //Traer el Estado en que el codigo de abreviación ACP02_PLX
+                          //Traer el Estado en que el codigo de abreviación ACP02_PLX | ACPR2_PLX
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == respuestaAprobado
                           });
   
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2) | 6835 (Aprobado por Coordinador Profundización Opcion 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
                         //Si en el Select se elige Rechazar Solicitud
@@ -2822,7 +2873,7 @@ angular.module('poluxClienteApp')
                             return estSol.CodigoAbreviacion == respuestaRechazo
                           });
         
-                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2)
+                          //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2) | 6836 (Rechazada por Coordinador Profundización Opcion 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
   
@@ -2834,8 +2885,8 @@ angular.module('poluxClienteApp')
                         //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                         resolve();
                       }
-                      //Si la respuesta anterior fue Rechazado por Coordinador de Posgrado Opción 1 (Opción PRIORITARIA)
-                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRCPO1Solicitud.Id) {
+                      //Si la respuesta anterior fue Rechazado por Coordinador Opción 1 (Opción PRIORITARIA)
+                      else if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRechazoOpcion1Solicitud.Id) {
                         //Si en el Select se elige Aprobar Solicitud
                         if(ctrl.respuestaSolicitud == "ACC_PLX") {
                           console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
@@ -3283,304 +3334,378 @@ angular.module('poluxClienteApp')
        */
       ctrl.EnvioNotificacion = async function () {
 
-        var titulo_tg, respuesta, usuario, rol_id, docente_id, correos = []
-        var tieneEvaluador = false
+        if (CONF.PRODUCCION) {
+          var titulo_tg, respuesta, usuario, rol_id, docente_id, correos = []
+          var tieneEvaluador = false
 
-        //Todas las respuestas de las solicitudes se envían al estudiante
-        var data_auth_mid = {
-          numero : ctrl.detallesSolicitud.solicitantes.toString()
-        }
+          //Todas las respuestas de las solicitudes se envían al estudiante
+          var data_auth_mid = {
+            numero: ctrl.detallesSolicitud.solicitantes.toString()
+          }
 
-        await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-          correos.push(response.data.email)//se almacena en los correos destinatarios
-        })
+          await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del estudiante con el documento
+            correos.push(response.data.email)//se almacena en los correos destinatarios
+          })
 
-        //Se recupera la información para adjuntar en la plantilla del correo
-        if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX"){//si es solicitud inicial
-          if(ctrl.respuestaSolicitud == "ADD_PLX" || ctrl.respuestaSolicitud == "RDD_PLX"){ //respondió docente director
-            
-            usuario = ctrl.docenteDirector.NOMBRE
+          //Se recupera la información para adjuntar en la plantilla del correo
+          if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SI_PLX" || ctrl.tipoSolicitudTemp.CodigoAbreviacion == "SAD_PLX") {//si es solicitud inicial
+            if (ctrl.respuestaSolicitud == "ADD_PLX" || ctrl.respuestaSolicitud == "RDD_PLX") { //respondió docente director
 
-            if(ctrl.respuestaSolicitud == "ADD_PLX"){
-              //Se adjunta el correo de la coordinación al aprobar
-              await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(datosEstudiante){//se busca la carrera
-                await academicaRequest.get("consulta_carrera_condor", [datosEstudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){//se busca el documento del coordinador
+              usuario = ctrl.docenteDirector.NOMBRE
 
-                  data_auth_mid = {
-                    numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
-                  }
-          
-                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo
-                    correos.push(response.data.email)//se almacena en los correos destinatarios
+              if (ctrl.respuestaSolicitud == "ADD_PLX") {
+                //Se adjunta el correo de la coordinación al aprobar
+                await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function (datosEstudiante) {//se busca la carrera
+                  await academicaRequest.get("consulta_carrera_condor", [datosEstudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function (carrera) {//se busca el documento del coordinador
+
+                    data_auth_mid = {
+                      numero: carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                    }
+
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo
+                      correos.push(response.data.email)//se almacena en los correos destinatarios
+                    })
+                  })
+                  //se busca el correo del Asistente de Proyecto
+                  await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function (asistente) {
+
+                    data_auth_mid = {
+                      numero: asistente.data.asistente.proyectos[0].documento_asistente
+                    }
+
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del estudiante con el documento
+                      correos.push(response.data.email)//se almacena en los correos destinatarios
+                    })
                   })
                 })
-                //se busca el correo del Asistente de Proyecto
-                await academicaRequest.get("obtener_asistente", [estudiante.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+              }
+            }
 
-                  data_auth_mid = {
-                    numero : asistente.data.asistente.proyectos[0].documento_asistente
-                  }
-          
-                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                    correos.push(response.data.email)//se almacena en los correos destinatarios
-                  })
-                })
+            if (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") { //Si el tg es Materias de Posgrado, se ingresa el título de forma manual
+              titulo_tg = "Espacios Académicos de Posgrado"
+            }
+            else { //Para las demás modalidades se recupera el título en los detalles
+              angular.forEach(ctrl.detallesSolicitud, function (detalle) {
+                if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NPRO") {
+                  titulo_tg = detalle.Descripcion;//se obtiene el título del tg
+                }
               })
             }
           }
+          else {//demás solicitudes
+            if (ctrl.respuestaSolicitud == "ADD_PLX" || ctrl.respuestaSolicitud == "RDD_PLX") { //respondió docente director
 
-          angular.forEach(ctrl.detallesSolicitud, function (detalle) {
-            if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "NPRO") {
-              titulo_tg = detalle.Descripcion;//se obtiene el título del tg
+              //se busca el nombre del docente con el documento
+              angular.forEach(ctrl.RolTrabajoGrado, function (dataRol) {
+                if (dataRol.CodigoAbreviacion == "DIRECTOR_PLX") {
+                  rol_id = rol.Id
+                }
+              })
+
+              angular.forEach(ctrl.docentesVinculadosTg, function (docente) {
+                if (docente.RolTrabajoGrado == rol_id) {
+                  docente_id = docente.Usuario
+                }
+              })
+
+              await academicaRequest.get("docente_tg", [docente_id]).then(function (docente) {
+                if (!angular.isUndefined(docente.data.docenteTg.docente)) {
+                  usuario = docente.data.docenteTg.docente[0].nombre
+                }
+              })
+
+              //se preparan los correos a notificar
+              if (ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX" && ctrl.respuestaSolicitud == "ADD_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX') {
+                //si el director aprueba la solicitud de revisión de tg para Pasantía, se notifica a la oficina de pasantías
+                correos.push("pasantias_ing@udistrital.edu.co")
+              }
+              else if (ctrl.respuestaSolicitud == "ADD_PLX") {
+                //si el director aprueba cualquier otra solicitud, se debe notificar a la coordinación
+
+                await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function (estudianteTemp) {
+                  await academicaRequest.get("consulta_carrera_condor", [estudianteTemp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function (carrera) {
+
+                    data_auth_mid = {
+                      numero: carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                    }
+
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del estudiante con el documento
+                      correos.push(response.data.email)//se almacena en los correos destinatarios
+                    })
+                  })
+
+                  //se busca el correo del Asistente de Proyecto
+                  await academicaRequest.get("obtener_asistente", [estudianteTemp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function (asistente) {
+
+                    data_auth_mid = {
+                      numero: asistente.data.asistente.proyectos[0].documento_asistente
+                    }
+
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del estudiante con el documento
+                      correos.push(response.data.email)//se almacena en los correos destinatarios
+                    })
+                  })
+                })
+              }
             }
-          })
-        }
-        else{//demás solicitudes
-          if(ctrl.respuestaSolicitud == "ADD_PLX" || ctrl.respuestaSolicitud == "RDD_PLX"){ //respondió docente director
-            
-            //se busca el nombre del docente con el documento
-            angular.forEach(ctrl.RolTrabajoGrado, function(dataRol){ 
-              if(dataRol.CodigoAbreviacion == "DIRECTOR_PLX"){
-                rol_id = rol.Id
-              }
-            })
-    
-            angular.forEach(ctrl.docentesVinculadosTg, function(docente){
-              if(docente.RolTrabajoGrado == rol_id){
-                docente_id = docente.Usuario
-              }
-            })
-    
-            await academicaRequest.get("docente_tg", [docente_id]).then(function(docente){
-              if (!angular.isUndefined(docente.data.docenteTg.docente)) {
-                usuario = docente.data.docenteTg.docente[0].nombre
-              }
-            })
 
-            //se preparan los correos a notificar
-            if(ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX" && ctrl.respuestaSolicitud == "ADD_PLX" && ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX'){
-              //si el director aprueba la solicitud de revisión de tg para Pasantía, se notifica a la oficina de pasantías
+            titulo_tg = ctrl.dataSolicitud.TrabajoGrado.Titulo
+          }
+
+          if ((ctrl.respuestaSolicitud == "ACC_PLX" || ctrl.respuestaSolicitud == "RCC_PLX") && ctrl.rol == "PREGRADO") {//respondió coordinación pregrado
+
+            usuario = $translate.instant("NOTIFICACION.COORDINACION")
+
+            if (ctrl.respuestaSolicitud == "ACC_PLX" && ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX") {//Cada vez que la coordinación apruebe una solicitud de una pasantía, se debe notificar a la oficina de pasantía
               correos.push("pasantias_ing@udistrital.edu.co")
             }
-            else if(ctrl.respuestaSolicitud == "ADD_PLX"){
-              //si el director aprueba cualquier otra solicitud, se debe notificar a la coordinación
 
-              await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(estudianteTemp){
-                await academicaRequest.get("consulta_carrera_condor", [estudianteTemp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
+            if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX' && ctrl.respuestaSolicitud == "ACC_PLX") {//si la solicitud es de revisión tg y fue aprobada, se adjuntan los correos del docente director y evaluador (si tiene)
+
+              angular.forEach(ctrl.RolTrabajoGrado, function (rolTemp) {//se busca el rol de director
+                if (rolTemp.CodigoAbreviacion == "DIRECTOR_PLX") {
+                  rol_id = rol.Id
+                }
+              })
+
+              angular.forEach(ctrl.docentesVinculadosTg, function (docente) {//se busca el documento del docente con el rol
+                if (docente.RolTrabajoGrado == rol_id) {
+                  docente_id = docente.Usuario
+                }
+              })
+
+              data_auth_mid = {
+                numero: docente_id.toString()
+              }
+
+              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo con el documento
+                correos.push(response.data.email)
+              })
+
+              angular.forEach(ctrl.RolTrabajoGrado, function (rolTemp2) {//se busca el rol de evaluador
+                if (rolTemp2.CodigoAbreviacion == "EVALUADOR_PLX") {
+                  rol_id = rol.Id
+                }
+              })
+
+              angular.forEach(ctrl.docentesVinculadosTg, function (docente) {//se busca el documento del docente con el rol
+                if (docente.RolTrabajoGrado == rol_id) {
+                  docente_id = docente.Usuario
+                  tieneEvaluador = true
+                }
+              })
+
+              if (tieneEvaluador) {//si el tg tiene evaluador, se adjunta el correo
+                data_auth_mid = {
+                  numero: docente_id.toString()
+                }
+
+                await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                  correos.push(response.data.email)
+                })
+              }
+            }
+            else if ((ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') && ctrl.respuestaSolicitud == "ACC_PLX") {
+              //si la solicitud aprobada es de Cambio de Director, Codirector o evaluador, se debe enviar una notificación al nuevo vinculado
+
+              var rol, estudiante, correo_vinculado = []
+
+              //Se establece el nombre del rol por medio del tipo de solicitud
+              if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX') {
+                angular.forEach(ctrl.RolTrabajoGrado, function (rolTemp) {
+                  if (rolTemp.CodigoAbreviacion == "DIRECTOR_PLX") {
+                    rol = rolTemp.Nombre
+                  }
+                })
+              } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX') {
+                angular.forEach(ctrl.RolTrabajoGrado, function (rolTemp) {
+                  if (rolTemp.CodigoAbreviacion == "EVALUADOR_PLX") {
+                    rol = rolTemp.Nombre
+                  }
+                })
+              } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') {
+                angular.forEach(ctrl.RolTrabajoGrado, function (rolTemp) {
+                  if (rolTemp.CodigoAbreviacion == "CODIRECTOR_PLX") {
+                    rol = rolTemp.Nombre
+                  }
+                })
+              }
+
+              //se busca el nombre del estudiante con el codigo
+              await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(function (est) {
+                estudiante = est.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre
+              })
+
+              //Se busca el correo del nuevo vinculado por su documento
+              data_auth_mid = {
+                numero: ctrl.docenteCambio.id
+              }
+
+              await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {
+                correo_vinculado.push(response.data.email)
+              })
+
+              var data_correo = {
+                "Source": "notificacionPolux@udistrital.edu.co",
+                "Template": "POLUX_PLANTILLA_ASIGNACION",
+                "Destinations": [
+                  {
+                    "Destination": {
+                      "ToAddresses": correo_vinculado
+                    },
+                    "ReplacementTemplateData": {
+                      "rol": rol,
+                      "nombre_estudiante": estudiante,
+                      "titulo_tg": titulo_tg,
+                      "modalidad": ctrl.modalidadTemp.Nombre
+                    }
+                  }
+                ]
+              }
+
+              notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+                console.log("Envia el correo: ", response)
+              }).catch(function (error) {
+                console.log("Error: ", error)
+              });
+
+            } else if (ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX" && ctrl.respuestaSolicitud == "ACC_PLX") {//Si la modalidad es Materias de posgrado y la solicitud fue aprobada por el coordinador de pregrado, se debe notificar a los coordinadores de posgrado
+
+              if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SI_PLX') {//Para la solicitud inicial se buscan los correos de las coordinaciones en los detalles
+                angular.forEach(ctrl.detallesSolicitud, async function (detalle) {
+                  if (detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || detalle.DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {
+
+                    //Se busca el documento del coordinador de posgrado
+                    await academicaRequest.get("consulta_carrera_condor", [detalle.carrera.Codigo]).then(async function (carrera) {
+                      var data_auth_mid = {
+                        numero: carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                      }
+
+                      await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del coordinador posgrado
+                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      })
+                    })
+
+                    //Funcionalidad para recuperar el correo del asistente de una carrera de posgrado
+                    //Queda pendiente modificar el endpoint obtener_asistente o crear nuevo script para recuperar documento de asistente dado el código de un proyecto de posgrado
+                    /*
+                    await academicaRequest.get("obtener_asistente", [detalle.carrera.Codigo]).then(async function (asistente) {
+                      var data_auth_mid = {
+                        numero: asistente.data.asistente.proyectos[0].documento_asistente
+                      }
+    
+                      await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del asistente con el documento
+                        correos.push(response.data.email)//se almacena en los correos destinatarios
+                      })
+                    })
+                    */
+                  }
+                })
+              } else { //Para las demás solicitudes de Materias de Posgrado, se busca el código de la carrera de posgrado en la tabla espacio_academico_inscrito
+
+                var parametrosSolicitudes = $.param({
+                  query: "TrabajoGrado:" + ctrl.dataSolicitud.TrabajoGrado.Id,
+                });
+
+                poluxRequest.get("espacio_academico_inscrito", parametrosSolicitudes).then(async function (carreraPosgrado) {
+
+                  //Se busca el documento del coordinador de posgrado
+                  await academicaRequest.get("consulta_carrera_condor", [carreraPosgrado.data.Data[0].ProyectoCurricularTg]).then(async function (carrera) {
+                    var data_auth_mid = {
+                      numero: carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                    }
+
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del coordinador posgrado
+                      correos.push(response.data.email)//se almacena en los correos destinatarios
+                    })
+                  })
+
+                  //Funcionalidad para recuperar el correo del asistente de una carrera de posgrado
+                  //Queda pendiente modificar el endpoint obtener_asistente o crear nuevo script para recuperar documento de asistente dado el código de un proyecto de posgrado
+                  /*
+                  await academicaRequest.get("obtener_asistente", [detalle.carrera.Codigo]).then(async function (asistente) {
+                    var data_auth_mid = {
+                      numero: asistente.data.asistente.proyectos[0].documento_asistente
+                    }
+  
+                    await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del asistente con el documento
+                      correos.push(response.data.email)//se almacena en los correos destinatarios
+                    })
+                  })
+                  */
+                })
+              }
+            }
+          }
+          else if (ctrl.respuestaSolicitud == "AOP_PLX" || ctrl.respuestaSolicitud == "ROP_PLX") {//respondió la oficina de pasantías
+            //se envía el nombre de la oficina
+            usuario = $translate.instant("NOTIFICACION.PASANTIA")
+
+            if (ctrl.respuestaSolicitud == "AOP_PLX") {
+              await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function (data_estudiante_temp) {
+                await academicaRequest.get("consulta_carrera_condor", [data_estudiante_temp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function (carrera) {
 
                   data_auth_mid = {
-                    numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
+                    numero: carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
                   }
-          
-                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+
+                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del estudiante con el documento
                     correos.push(response.data.email)//se almacena en los correos destinatarios
                   })
                 })
 
                 //se busca el correo del Asistente de Proyecto
-                await academicaRequest.get("obtener_asistente", [estudianteTemp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
+                await academicaRequest.get("obtener_asistente", [data_estudiante_temp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function (asistente) {
 
                   data_auth_mid = {
-                    numero : asistente.data.asistente.proyectos[0].documento_asistente
+                    numero: asistente.data.asistente.proyectos[0].documento_asistente
                   }
-          
-                  await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
+
+                  await autenticacionMidRequest.post("token/documentoToken", data_auth_mid).then(function (response) {//se busca el correo del estudiante con el documento
                     correos.push(response.data.email)//se almacena en los correos destinatarios
                   })
                 })
               })
             }
           }
+          else if ((ctrl.respuestaSolicitud == "ACC_PLX" || ctrl.respuestaSolicitud == "RCC_PLX") && ctrl.rol == "POSGRADO") {
 
-          titulo_tg = ctrl.dataSolicitud.TrabajoGrado.Titulo
+            //Se almacena el nombre del proyecto curricular como usuario que responde la solicitud
+            usuario = $rootScope.proyectoCurricularPosgrado
+
+          }
+
+          angular.forEach(ctrl.EstadoSolicitud, function (estado) {
+            if (estado.CodigoAbreviacion == ctrl.respuestaSolicitud) {
+              respuesta = estado.Nombre;//se obtiene el nombre de la respuesta
+            }
+          })
+
+          data_correo = {
+            "Source": "notificacionPolux@udistrital.edu.co",
+            "Template": "POLUX_PLANTILLA_RESPUESTA_SOL",
+            "Destinations": [
+              {
+                "Destination": {
+                  "ToAddresses": correos
+                },
+                "ReplacementTemplateData": {
+                  "respuesta": respuesta,
+                  "nombre_usuario": usuario,
+                  "titulo_tg": titulo_tg,
+                  "tipo_solicitud": ctrl.tipoSolicitudTemp.Nombre,
+                  "comentario": ctrl.justificacion
+                }
+              }
+            ]
+          }
+
+          notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
+            console.log("Envia el correo: ", response)
+          }).catch(function (error) {
+            console.log("Error: ", error)
+          });
         }
-
-        if(ctrl.respuestaSolicitud == "ACC_PLX" || ctrl.respuestaSolicitud == "RCC_PLX"){//respondió coordinación
-          usuario = $translate.instant("NOTIFICACION.COORDINACION")
-
-          if(ctrl.respuestaSolicitud == "ACC_PLX" && ctrl.modalidadTemp.CodigoAbreviacion == "PAS_PLX"){//Cada vez que la coordinación apruebe una solicitud de una pasantía, se debe notificar a la oficina de pasantía
-            correos.push("pasantias_ing@udistrital.edu.co")
-          }
-
-          if(ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SRTG_PLX' && ctrl.respuestaSolicitud == "ACC_PLX"){//si la solicitud es de revisión tg y fue aprobada, se adjuntan los correos del docente director y evaluador (si tiene)
-
-            angular.forEach(ctrl.RolTrabajoGrado, function(rolTemp){//se busca el rol de director
-              if(rolTemp.CodigoAbreviacion == "DIRECTOR_PLX"){
-                rol_id = rol.Id
-              }
-            })
-    
-            angular.forEach(ctrl.docentesVinculadosTg, function(docente){//se busca el documento del docente con el rol
-              if(docente.RolTrabajoGrado == rol_id){
-                docente_id = docente.Usuario
-              }
-            })
-
-            data_auth_mid = {
-              numero : docente_id.toString()
-            }
-    
-            await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo con el documento
-              correos.push(response.data.email)
-            })
-
-            angular.forEach(ctrl.RolTrabajoGrado, function(rolTemp2){//se busca el rol de evaluador
-              if(rolTemp2.CodigoAbreviacion == "EVALUADOR_PLX"){
-                rol_id = rol.Id
-              }
-            })
-    
-            angular.forEach(ctrl.docentesVinculadosTg, function(docente){//se busca el documento del docente con el rol
-              if(docente.RolTrabajoGrado == rol_id){
-                docente_id = docente.Usuario
-                tieneEvaluador = true
-              }
-            })
-            
-            if(tieneEvaluador){//si el tg tiene evaluador, se adjunta el correo
-              data_auth_mid = {
-                numero : docente_id.toString()
-              }
-      
-              await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
-                correos.push(response.data.email)
-              })
-            }
-          }
-          else if((ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX' || ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') && ctrl.respuestaSolicitud == "ACC_PLX"){
-            //si la solicitud aprobada es de Cambio de Director, Codirector o evaluador, se debe enviar una notificación al nuevo vinculado
-
-            var rol, estudiante, correo_vinculado = []
-
-            //Se establece el nombre del rol por medio del tipo de solicitud
-            if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCDI_PLX') {
-              angular.forEach(ctrl.RolTrabajoGrado,function(rolTemp){
-                if(rolTemp.CodigoAbreviacion == "DIRECTOR_PLX"){
-                  rol = rolTemp.Nombre
-                }
-              })
-            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCE_PLX') { 
-              angular.forEach(ctrl.RolTrabajoGrado,function(rolTemp){
-                if(rolTemp.CodigoAbreviacion == "EVALUADOR_PLX"){
-                  rol = rolTemp.Nombre
-                }
-              })
-            } else if (ctrl.tipoSolicitudTemp.CodigoAbreviacion == 'SCCI_PLX') { 
-              angular.forEach(ctrl.RolTrabajoGrado,function(rolTemp){
-                if(rolTemp.CodigoAbreviacion == "CODIRECTOR_PLX"){
-                  rol = rolTemp.Nombre
-                }
-              })
-            }
-
-            //se busca el nombre del estudiante con el codigo
-            await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(function(est){
-              estudiante = est.data.datosEstudianteCollection.datosBasicosEstudiante[0].nombre
-            })
-
-            //Se busca el correo del nuevo vinculado por su documento
-            data_auth_mid = {
-              numero : ctrl.docenteCambio.id
-            }
-    
-            await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){
-              correo_vinculado.push(response.data.email)
-            })
-
-            var data_correo = {
-              "Source": "notificacionPolux@udistrital.edu.co",
-              "Template": "POLUX_PLANTILLA_ASIGNACION",
-              "Destinations": [
-                {
-                  "Destination": {
-                    "ToAddresses": correo_vinculado
-                  },
-                  "ReplacementTemplateData": {
-                    "rol": rol,
-                    "nombre_estudiante": estudiante,
-                    "titulo_tg": titulo_tg,
-                    "modalidad": ctrl.modalidadTemp.Nombre
-                  }
-                }
-              ]
-            }
-
-            //console.log(correo_vinculado)
-
-            //DESCOMENTAR AL SUBIR A PRODUCCIÓN
-            /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
-              console.log("Envia el correo: ", response)
-            }).catch(function (error) {
-              console.log("Error: ", error)
-            });*/
-
-          }
-        }
-        else if(ctrl.respuestaSolicitud == "AOP_PLX" || ctrl.respuestaSolicitud == "ROP_PLX"){//respondió la oficina de pasantías
-          //se envía el nombre de la oficina
-          usuario = $translate.instant("NOTIFICACION.PASANTIA")
-
-          if(ctrl.respuestaSolicitud == "AOP_PLX"){
-            await academicaRequest.get("datos_basicos_estudiante", [ctrl.detallesSolicitud.solicitantes]).then(async function(data_estudiante_temp){
-              await academicaRequest.get("consulta_carrera_condor", [data_estudiante_temp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(carrera){
-
-                data_auth_mid = {
-                  numero : carrera.data.carreraCondorCollection.carreraCondor[0].numero_documento_coordinador
-                }
-        
-                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                  correos.push(response.data.email)//se almacena en los correos destinatarios
-                })
-              })
-
-              //se busca el correo del Asistente de Proyecto
-              await academicaRequest.get("obtener_asistente", [data_estudiante_temp.data.datosEstudianteCollection.datosBasicosEstudiante[0].carrera]).then(async function(asistente){
-
-                data_auth_mid = {
-                  numero : asistente.data.asistente.proyectos[0].documento_asistente
-                }
-        
-                await autenticacionMidRequest.post("token/documentoToken",data_auth_mid).then(function(response){//se busca el correo del estudiante con el documento
-                  correos.push(response.data.email)//se almacena en los correos destinatarios
-                })
-              })
-            })
-          }
-        }
-
-        angular.forEach(ctrl.EstadoSolicitud, function (estado) {
-          if (estado.CodigoAbreviacion == ctrl.respuestaSolicitud) {
-            respuesta = estado.Nombre;//se obtiene el nombre de la respuesta
-          }
-        })
-
-        data_correo = {
-          "Source": "notificacionPolux@udistrital.edu.co",
-          "Template": "POLUX_PLANTILLA_RESPUESTA_SOL",
-          "Destinations": [
-            {
-              "Destination": {
-                "ToAddresses": correos
-              },
-              "ReplacementTemplateData": {
-                "respuesta": respuesta,
-                "nombre_usuario": usuario,
-                "titulo_tg": titulo_tg,
-                "tipo_solicitud": ctrl.tipoSolicitudTemp.Nombre,
-                "comentario": ctrl.justificacion
-              }
-            }
-          ]
-        }
-
-        //console.log(correos)
-
-        //DESCOMENTAR AL SUBIR A PRODUCCIÓN
-        /*notificacionRequest.post("email/enviar_templated_email", data_correo).then(function (response) {
-          console.log("Envia el correo: ",response)
-        }).catch(function (error) {
-          console.log("Error: ", error)
-        });*/
       }
 
       /**
