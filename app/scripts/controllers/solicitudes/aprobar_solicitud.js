@@ -2209,14 +2209,14 @@ angular.module('poluxClienteApp')
               var parametrosRespuestaSol = $.param({
                 query: "Activo:true,SolicitudTrabajoGrado:" + ctrl.solicitud,
                 limit: 0
-              });        
+              });
 
               //Almacena lo que traiga de Respuesta_Solicitud
               var respuesta_solicitud;
               await poluxRequest.get("respuesta_solicitud", parametrosRespuestaSol).then(async function (responseRespuestaSolicitud) {
                 respuesta_solicitud = responseRespuestaSolicitud;
               })
-              console.log("respuesta_solicitud", respuesta_solicitud);             
+              console.log("respuesta_solicitud", respuesta_solicitud);
 
               //Si se elige Aprobar o Rechazar Solicitud y es Coordinador de PREGRADO
               if ((ctrl.rol == "PREGRADO" && ctrl.nombreNivelProyecto != "TECNOLOGIA" && ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") || ctrl.roles.includes("CONTRATISTA") || ctrl.nombreNivelProyecto == "TECNOLOGIA") {
@@ -2243,11 +2243,10 @@ angular.module('poluxClienteApp')
 
                   if(ctrl.respuestaSolicitud == "ACC_PLX") {
                     console.log("Aprobar Coordinador Pregrado");
-
                     var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                       return estSol.CodigoAbreviacion == respuestaAprobado
                     });
-                    
+
                     //Poner el campo Estado Solicitud de la Respuesta Nueva en 4631 (Aprobado por Consejo de Carrera [Coordinador Pregrado])
                     ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                   }
@@ -2266,7 +2265,7 @@ angular.module('poluxClienteApp')
                     await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
                       estadoTrabajoGrado = parametros.data.Data[0];
                     });
-                    
+
                     //Se coloca en rechazo el trabajo de grado
                     ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;*/
 
@@ -2289,7 +2288,7 @@ angular.module('poluxClienteApp')
                   if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE" || ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE2") {                    
                     //Quitar el primer fragmento del string 'JSON-'
                     var detalleString = ctrl.detallesSolicitud[i].Descripcion.replace("JSON-", "");
-                    
+
                     if (ctrl.detallesSolicitud[i].DetalleTipoSolicitud.Detalle.CodigoAbreviacion == "ESPELE")
                     {
                       //Convertir el JSON en objeto si es ESPELE (Proyecto Curricular 1)
@@ -2305,7 +2304,7 @@ angular.module('poluxClienteApp')
                     var opcionPrioridad = parseInt(ctrl.detallesSolicitud[i].Descripcion);
                   }
                 }
-                
+
                 console.log("infoESPELE", infoESPELE);
                 console.log("infoESPELE2", infoESPELE2);
 
@@ -2316,7 +2315,7 @@ angular.module('poluxClienteApp')
                     return carrera.proyecto == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
                   } else {
                     return carrera.codigo_proyecto_curricular == $rootScope.codigoProyectoCurricularPosgrado; //Proyecto Curricular y Código de Posgrado traído de la Fila seleccionada en el grid de listar_solicitudes
-                  }                                             
+                  }
                 });
                 console.log("Proyecto Curricular Seleccionado: ", proyectoCurricularSeleccionado);
                 if(ctrl.roles.includes("CONTRATISTA")) {
@@ -2342,11 +2341,11 @@ angular.module('poluxClienteApp')
                   if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
                     respuestaAprobado = "ACPR1_PLX" //Aprobado por Coordinador Profundización Opcion 1
                     respuestaRechazo = "RCPR1_PLX" //Rechazado por Coordinador Profundización Opcion 1
-                  } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                  } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
                     respuestaAprobado = "ACPO1_PLX" //Aprobado por Coordinador de Posgrado Opcion 1
                     respuestaRechazo = "RCPO1_PLX" //Rechazado por Coordinador de Posgrado Opcion 1
                   }
-                                    
+
                   //Si es Coordinador Posgrado de Proyecto Curricular 1 y la Opción Prioritaria también es la 1
                   if(infoESPELE.Opcion == opcionPrioridad) {
                     //Si en el Select se elige Aprobar Solicitud
@@ -2357,7 +2356,7 @@ angular.module('poluxClienteApp')
                       var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                         return estSol.CodigoAbreviacion == "ACC_PLX"
                       });
-                      
+
                       //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrerra) | Antes era 4654 (Aprobado por Coordinador de Posgrado Opcion 1) 
                       ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
@@ -2384,7 +2383,7 @@ angular.module('poluxClienteApp')
                         },
                         "ProyectoCurricularTg": parseInt(ctrl.getCarreraPosgrado(true))
                       }
-                      
+
                       //Se almacena la informacion del espacio academico aprobado
                       ctrl.dataRespuesta.EspacioAcademicoInscrito = data_espacio_academico
 
@@ -2415,7 +2414,7 @@ angular.module('poluxClienteApp')
                         var estadoAceptadoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                         return estSol.CodigoAbreviacion == "ACPO2_PLX" //4656 - Aceptado por Coordinador de Posgrado Opción 2
                         });
-                      };                    
+                      };
 
                       //se verifica si solo se tiene una opción de materias
                       if (infoESPELE2 == undefined) {
@@ -2443,7 +2442,7 @@ angular.module('poluxClienteApp')
                         var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == respuestaRechazo //"RCPO1_PLX"
                         });
-                        
+
                         //Traer el Estado de Trabajo de Grado en Cancelado
                         let parametrosConsulta = $.param({
                           query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera 
@@ -2470,7 +2469,7 @@ angular.module('poluxClienteApp')
 
                         //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 | Antes era 4656 (Aprobada por Coordinador de Posgrado Opcion 2)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
-                        
+
                         //Traer el Estado de Trabajo de Grado en Curso
                         let parametrosConsulta = $.param({
                           query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
@@ -2505,16 +2504,16 @@ angular.module('poluxClienteApp')
 
                         //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                         ctrl.dataRespuesta.MateriasProPos = true;
-                        
+
                         //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                         resolve();
                       } else{
                         estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == respuestaRechazo
                         });
-      
+
                         console.log("estadoSolicitud", estadoSolicitud);
-  
+
                         //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                       }
@@ -2538,14 +2537,14 @@ angular.module('poluxClienteApp')
                       //Si la solicitud inicial se encuentra en Rechazado por Coordinador Profundización Opcion 2 significa que el Coordinador Opción 1 debe Aprobar o Rechazar la solicitud
                       var estadoRechazoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                       return estSol.CodigoAbreviacion == "RCPR2_PLX" //6836 - Rechazado por Coordinador Profundización Opción 2
-                      });                      
+                      });
                     } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
                       //Solicitud inicial se encuentra en Rechazado por Coordinador de Posgrado Opcion 2 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
                       var estadoRechazoOpcion2Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                       return estSol.CodigoAbreviacion == "RCPO2_PLX" //4657 - Rechazado por Coordinador de Posgrado Opción 2
-                      });                    
+                      });
                     }
-                    
+
                     console.log("estadoRechazoOpcion2Solicitud", estadoRechazoOpcion2Solicitud);
                     //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                     //Si la respuesta anterior es de Coordinador de Pregrado
@@ -2569,7 +2568,7 @@ angular.module('poluxClienteApp')
                         estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == respuestaRechazo
                         });
-      
+
                         //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador de Posgrado Opcion 1)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                       }
@@ -2659,42 +2658,42 @@ angular.module('poluxClienteApp')
                     if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
                       respuestaAprobado = "ACPR2_PLX" //Aprobado por Coordinador Profundización Opcion 2 6835
                       respuestaRechazo = "RCPR2_PLX" //Rechazado por Coordinador Profundización Opcion 2 6836
-                    } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                    } else if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPOS_PLX") {
                       respuestaAprobado = "ACPO2_PLX" //Aprobado por Coordinador de Posgrado Opcion 2 4656
                       respuestaRechazo = "RCPO2_PLX" //Rechazado por Coordinador de Posgrado Opcion 2 4657
                     }
-                                      
+
                     //Si es Coordinador Posgrado de Proyecto Curricular 2 y la Opción Prioritaria también es la 2
                     if(infoESPELE2.Opcion == opcionPrioridad) {
                       //Si en el Select se elige Aprobar Solicitud
                       if(ctrl.respuestaSolicitud == "ACC_PLX") {
                         console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA");
-  
+
                         //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP02_PLX
                         var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == "ACC_PLX"
                         });
-      
+
                         console.log("estadoSolicitud", estadoSolicitud);
-                        
+
                         //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
                         ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-  
+
                         //Traer el Estado de Trabajo de Grado en Curso
                         let parametrosConsulta = $.param({
                           query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
                         });
-  
+
                         await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
                           estadoTrabajoGrado = parametros.data.Data[0];
                         });
-  
+
                         //Se coloca en curso el trabajo de grado
                         ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-  
+
                         //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                         ctrl.dataRespuesta.RespuestaNueva.Activo = true;
-  
+
                         //Se prepara la información del proyecto curricular aprobado
                         var data_espacio_academico = {
                           "TrabajoGrado": {
@@ -2717,7 +2716,7 @@ angular.module('poluxClienteApp')
                           return estSol.CodigoAbreviacion == "RCPR1_PLX" //6834 - Rechazado por Coordinador Profundización Opción 1
                           });
                           console.log("estadoRechazoOpcion1Solicitud", estadoRechazoOpcion1Solicitud);
-  
+
                           //O si la solicitud inicial se encuentra en Aceptado por Coordinador Profundización Opcion 1 significa que el Coordinador Opción 2 debe Aprobar o Rechazar la solicitud
                           var estadoAceptadoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == "ACPR1_PLX" //6833 - Aceptado por Coordinador Profundización Opción 1
@@ -2728,18 +2727,18 @@ angular.module('poluxClienteApp')
                           return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1
                           });
                           console.log("estadoRechazoOpcion1Solicitud", estadoRechazoOpcion1Solicitud);
-  
+
                           //Solicitud inicial se encuentra en Aprobado por Coordinador de Posgrado Opcion 1 significa que el Coordinador de Posgrado debe Aprobar o Rechazar la solicitud
                           var estadoAceptadoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == "ACPO1_PLX" //4654 - Aprobado por Coordinador de Posgrado Opción 1
                         });
-                        };                       
-  
+                        };
+
                         //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                         //Si la respuesta anterior es rechazado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
                         if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoRechazoOpcion1Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
-                          
+
                           //Traer el Estado en que el codigo de abreviación RCC_PLX | Antes era RCP02_PLX
                           var estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == respuestaRechazo
@@ -2749,20 +2748,20 @@ angular.module('poluxClienteApp')
                           let parametrosConsulta = $.param({
                             query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
                           });
-  
+
                           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
                             estadoTrabajoGrado = parametros.data.Data[0];
                           });
-  
+
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador Posgrado 2) | 6836 (Rechazada por Coordinador Profundización 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
 
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                           ctrl.dataRespuesta.RespuestaNueva.Activo = true;
-  
+
                           //Se coloca en rechazo el trabajo de grado
                           ctrl.trabajo_grado.TrabajoGrado.EstadoTrabajoGrado = estadoTrabajoGrado.Id;
-                        } 
+                        }
                         //Si la respuesta anterior es aprobado por Coordinador de Posgrado 1 (Opción NO Prioritaria)
                         else if (respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoAceptadoOpcion1Solicitud.Id) {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción PRIORITARIA y Aprobado por Coordinador Proyecto Curricular 1 Opción NO PRIORITARIA");
@@ -2774,7 +2773,7 @@ angular.module('poluxClienteApp')
   
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4654 (Aprobada por Coordinador de Posgrado Opcion 1)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoACCSolicitud.Id;
-                          
+
                           //Traer el Estado de Trabajo de Grado en Curso
                           let parametrosConsulta = $.param({
                             query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
@@ -2809,24 +2808,24 @@ angular.module('poluxClienteApp')
 
                           //Poner el campo de MateriasProPos en True para crear el Proyecto de Grado
                           ctrl.dataRespuesta.MateriasProPos = true;
-                          
+
                           //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                           resolve();
                         } else{
-                          
+
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == respuestaRechazo
                           });
-        
+
                           console.log("estadoSolicitud", estadoSolicitud);
-    
+
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2) | 6836 (Rechazada por Coordinador Profundización 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
                       }
                       //Poner el campo de la respuesta anterior en False
                       ctrl.dataRespuesta.RespuestaAnterior.Activo = false;
-  
+
                       //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                       resolve();
                     }
@@ -2837,7 +2836,7 @@ angular.module('poluxClienteApp')
                         return estSol.CodigoAbreviacion == "ACPR_PLX" //4631 - Aprobado por Consejo de Carrera [Coordinador Pregrado]
                       });
                       console.log("estadoACPRSolicitud", estadoACPRSolicitud);
-  
+
                       //Solicitud inicial se encuentra en Rechazado por Coordinador Opcion 1 significa que el Coordinador Opción 2 debe Aprobar o Rechazar la solicitud
                       if(ctrl.modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
                         var estadoRechazoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
@@ -2847,41 +2846,40 @@ angular.module('poluxClienteApp')
                         var estadoRechazoOpcion1Solicitud = ctrl.EstadoSolicitud.find(estSol => {
                           return estSol.CodigoAbreviacion == "RCPO1_PLX" //4655 - Rechazado por Coordinador de Posgrado Opción 1 
                         });
-                      }                      
+                      }
                       console.log("estadoRechazoOpcion1Solicitud", estadoRechazoOpcion1Solicitud);
-  
+
                       //Comparar con la respuesta anterior a cuál de los dos Estados anteriores está siendo equivalente
                       //Si la respuesta anterior fue el Coordinador de Pregrado
                       if(respuesta_solicitud.data.Data[0].EstadoSolicitud == estadoACPRSolicitud.Id) {
                         //Si en el Select se elige Aprobar Solicitud
                         if(ctrl.respuestaSolicitud == "ACC_PLX") {
                           console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
-  
                           //Traer el Estado en que el codigo de abreviación ACP02_PLX | ACPR2_PLX
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == respuestaAprobado
                           });
-  
+
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4656 (Aprobado por Coordinador de Posgrado Opcion 2) | 6835 (Aprobado por Coordinador Profundización Opcion 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
                         //Si en el Select se elige Rechazar Solicitud
                         else {
                           console.log("Rechazado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA");
-  
+
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == respuestaRechazo
                           });
-        
+
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4657 (Rechazada por Coordinador de Posgrado Opcion 2) | 6836 (Rechazada por Coordinador Profundización Opcion 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
                         }
-  
+
                               //Traer el Estado de Trabajo de Grado en Cancelado
                               let parametrosConsulta = $.param({
                                 query: "CodigoAbreviacion.in:RCC_PLX" //4611 - Anteproyecto rechazado por consejo de carrera
                               });
-  
+
                         //Resolver la promesa, actualizar el campo Activo de las Respuestas Anteriores en False y crear el nuevo registro de Respuesta Nueva
                         resolve();
                       }
@@ -2890,20 +2888,20 @@ angular.module('poluxClienteApp')
                         //Si en el Select se elige Aprobar Solicitud
                         if(ctrl.respuestaSolicitud == "ACC_PLX") {
                           console.log("Aprobado por Coordinador Proyecto Curricular 2 Opción NO PRIORITARIA y Rechazado por Coordinador Proyecto Curricular 1 Opción PRIORITARIA");
-  
+
                           //Traer el Estado en que el codigo de abreviación ACC_PLX | Antes era ACP01_PLX
                           estadoSolicitud = ctrl.EstadoSolicitud.find(estSol => {
                             return estSol.CodigoAbreviacion == "ACC_PLX"
                           });
-  
+
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4612 (Aprobado por consejo de carrera) | Antes era 4656 (Aprobado por Coordinador de Posgrado Opcion 2)
                           ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
-  
+
                           //Traer el Estado de Trabajo de Grado en Curso
                           let parametrosConsulta = $.param({
                             query: "CodigoAbreviacion.in:EC_PLX" //4582 - El estudiante recibe la aprobación del anteproyecto y el trabajo de grado entra en desarrollo 
                           });
-  
+
                           await parametrosRequest.get("parametro/?", parametrosConsulta).then(function (parametros) {
                             estadoTrabajoGrado = parametros.data.Data[0];
                           });
@@ -2958,7 +2956,7 @@ angular.module('poluxClienteApp')
                       }
                     }
                   }
-                }                 
+                }
               }
             })
           }
@@ -3010,7 +3008,7 @@ angular.module('poluxClienteApp')
       ctrl.getCarreraPosgrado = function (esPrioridad) {
 
         var idProyecto
-        
+
         //Se recorren los detalles de la solicitud
         ctrl.detallesSolicitud.forEach(function(detalle){
 
@@ -3025,7 +3023,6 @@ angular.module('poluxClienteApp')
             }
           }
         })
-        
         return idProyecto
       }
 

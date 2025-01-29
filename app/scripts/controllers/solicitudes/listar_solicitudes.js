@@ -1374,9 +1374,8 @@ angular.module('poluxClienteApp')
 
                           await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
                             console.log("carreraPosgrado", carreraPosgrado);
-
                             ctrl.carrerasCoordinador.find(proyectoCurricular => {
-                              if(proyectoCurricular.proyecto == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
+                              if(proyectoCurricular.codigo_proyecto_curricular == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
                                 //Armar objeto carrera con el código y nombre del proyecto curricular
                                 return carrera = {
                                   "Codigo": carreraPosgrado.data.carrerasCollection.carrera[0].codigo,
