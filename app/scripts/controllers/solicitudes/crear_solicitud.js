@@ -1035,9 +1035,11 @@ angular.module('poluxClienteApp')
           poluxRequest.get("espacio_academico_inscrito", parametrosEspacios).then(function(responseEspacios) {
               if (Object.keys(responseEspacios.data.Data[0]).length > 0) {
                 angular.forEach(responseEspacios.data.Data, function(espacio) {
-                  ctrl.espaciosElegidos.push(espacio.EspaciosAcademicosElegibles);
-                });
-                // ctrl.carreraElegida = responseEspacios.data.Data[0].EspaciosAcademicosElegibles.CarreraElegible.Id;
+                  console.log("ctrl.espaciosElegidos", espacio);
+                  ctrl.espaciosElegidos.push(espacio.ProyectoCurricularTg);
+                  console.log("ctrl.espaciosElegidos", ctrl.espaciosElegidos);
+                });                
+                //ctrl.carreraElegida = responseEspacios.data.Data[0].EspaciosAcademicosElegibles.CarreraElegible.Id;
               }
               defer.resolve();
             })
@@ -1655,7 +1657,7 @@ angular.module('poluxClienteApp')
                                 parametro = parametro + ":" + ctrl.trabajo_grado;
                               }
                               if (parametro == "carrera_elegible") {
-                                parametro = parametro + ":" + ctrl.carreraElegida;
+                                parametro = parametro + ":" + ctrl.espaciosElegidos[0]; //ctrl.carreraElegida;
                               }
                               /* //Si el parametro es activo se deja tal y como esta en la bd
                               if (parametro == "activo") {
@@ -2620,9 +2622,12 @@ angular.module('poluxClienteApp')
           let ModalidadTemp1 = ctrl.Modalidades.find(data => {
             return data.CodigoAbreviacion == "EAPOS_PLX"
           });
+          let ModalidadTemp2 = ctrl.Modalidades.find(data => {
+            return data.CodigoAbreviacion == "EAPRO_PLX"
+          });
 
-          if (ctrl.Trabajo.TrabajoGrado.Modalidad != ModalidadTemp1.Id) {
-            console.log("Entró al if != EAPOS", ctrl.Trabajo.TrabajoGrado.Modalidad)
+          if (ctrl.Trabajo.TrabajoGrado.Modalidad != ModalidadTemp1.Id && ctrl.Trabajo.TrabajoGrado.Modalidad != ModalidadTemp2.Id) {
+            console.log("Entró al if != EAPOS", ctrl.Trabajo.TrabajoGrado.Modalidad, ModalidadTemp2.Id)
             data_respuesta.EnteResponsable = ctrl.Trabajo.directorInterno.Usuario
           } else {
             EstadoSolicitudTemp = ctrl.EstadosSolicitudes.find(data => {
