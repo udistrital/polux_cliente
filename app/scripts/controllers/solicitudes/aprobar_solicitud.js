@@ -2761,7 +2761,7 @@ angular.module('poluxClienteApp')
                           });
 
                           //Poner el campo Estado Solicitud de la Respuesta Nueva en 4655 (Rechazada por Coordinador Posgrado 2) | 6836 (Rechazada por Coordinador Profundización 2)
-                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoSolicitud.Id;
+                          ctrl.dataRespuesta.RespuestaNueva.EstadoSolicitud = estadoTrabajoGrado.Id;
 
                           //Se pone la respuesta nueva en False para que ya no aparezca al momento de listar solicitud
                           ctrl.dataRespuesta.RespuestaNueva.Activo = true;
