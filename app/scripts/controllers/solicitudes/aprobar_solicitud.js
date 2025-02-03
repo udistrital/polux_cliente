@@ -1936,7 +1936,7 @@ angular.module('poluxClienteApp')
               });
               if((ctrl.detallesSolicitud.tipoSolicitud.Modalidad == ModalidadTemp.Id && ctrl.rol == "PREGRADO") || 
                 (ctrl.detallesSolicitud.tipoSolicitud.Modalidad == ModalidadTemp1.Id && ctrl.nombreNivelProyecto == "TECNOLOGIA")) {  //Condicional para cancelación de EAPRO Y EAPOS
-                console.log("Es por acá parcero");
+                
                 let EstadoSolicitudTemp = ctrl.EstadoSolicitud.find(data => {
                 return data.CodigoAbreviacion == "ACPR_PLX"                
                 });

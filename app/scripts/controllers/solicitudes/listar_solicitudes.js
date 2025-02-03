@@ -249,6 +249,7 @@ angular.module('poluxClienteApp')
         //En caso de que el rol sea COORDINADOR, verificar si es de PREGRADO o POSGRADO
         if(lista_roles.includes("COORDINADOR")) {
           await academicaRequest.get("coordinador_carrera_snies", [$scope.userId]).then(function (response) {
+            ctrl.nombreNivelProyecto = response.data.coordinadorCollection.coordinador[0].nombre_nivel_proyecto;
             console.log("lista_roles_first", lista_roles)
             if (response.data.coordinadorCollection.coordinador[0].nivel == "PREGRADO") {
               lista_roles.push("PREGRADO");
@@ -570,7 +571,7 @@ angular.module('poluxClienteApp')
                   $scope.load = false;
                 });
             }
-            else{
+            else{              
               if (!angular.isUndefined(responseCoordinador.data.coordinadorCollection.coordinador)) {
                 ctrl.carrerasCoordinador = responseCoordinador.data.coordinadorCollection.coordinador;
                 angular.forEach(responseCoordinador.data.coordinadorCollection.coordinador, function(carrera) {
@@ -588,16 +589,30 @@ angular.module('poluxClienteApp')
 
                 query = "ESTADOSOLICITUD.in:"
                 guardaPrimero = false;
-                ctrl.EstadoSolicitud.forEach(estado => {
-                  if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX" || estado.CodigoAbreviacion == "ACPR_PLX" || estado.CodigoAbreviacion == "ACPR1_PLX" || estado.CodigoAbreviacion == "ACPR2_PLX" || estado.CodigoAbreviacion == "RCPR1_PLX" || estado.CodigoAbreviacion == "RCPR2_PLX") {
-                    if (guardaPrimero) {
-                      query += "|"
-                    } else {
-                      guardaPrimero = true
+                if(ctrl.nombreNivelProyecto == "INGENIERIA") {
+                  ctrl.EstadoSolicitud.forEach(estado => {
+                    if (estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX" || estado.CodigoAbreviacion == "ACPR_PLX" || estado.CodigoAbreviacion == "ACPR1_PLX" || estado.CodigoAbreviacion == "ACPR2_PLX" || estado.CodigoAbreviacion == "RCPR1_PLX" || estado.CodigoAbreviacion == "RCPR2_PLX") {
+                      if (guardaPrimero) {
+                        query += "|"
+                      } else {
+                        guardaPrimero = true
+                      }
+                      query += estado.Id.toString()
                     }
-                    query += estado.Id.toString()
-                  }
-                });
+                  });
+                } else if(ctrl.nombreNivelProyecto == "TECNOLOGIA") {
+                  ctrl.EstadoSolicitud.forEach(estado => {
+                    if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX") {
+                      if (guardaPrimero) {
+                        query += "|"
+                      } else {
+                        guardaPrimero = true
+                      }
+                      query += estado.Id.toString()
+                    }
+                  });
+                }
+                
 
                 var parametrosSolicitudes = $.param({
                   query: query + ",Activo:true",
@@ -852,9 +867,58 @@ angular.module('poluxClienteApp')
 
                           console.log("ctrl.solicitudes", ctrl.solicitudes);
                         } //Bloque para "Espacios Académicos de Profundización" (EAPRO_PLX) en Cambio de Materias de Posgrado o Cancelación de Modalidad
-                        /*else if (((tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") || (tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX")) && modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
+                        else if (((tipoSolicitudTemp.CodigoAbreviacion == "SCMA_PLX") || (tipoSolicitudTemp.CodigoAbreviacion == "SCM_PLX")) && modalidadTemp.CodigoAbreviacion == "EAPRO_PLX") {
                           //Desarrollar ...
-                        }*/ //Bloque para demas Modalidades de Grado
+                          console.log("Cambio de materias o cancelación de posgrado");
+
+                          //Guardar el Id del Trabajo de Grado
+                          var idTrabajoGrado = solicitud.SolicitudTrabajoGrado.TrabajoGrado.Id;
+                          console.log("idTrabajoGrado", idTrabajoGrado);
+
+                          var parametrosEspaciosAcademicosInscritos = $.param({
+                            query: "TrabajoGrado:" + idTrabajoGrado,
+                            limit: 1,
+                          });
+
+                          if(ctrl.nombreNivelProyecto == "INGENIERIA") {
+                            var carrera;
+                          await poluxRequest.get("espacio_academico_inscrito", parametrosEspaciosAcademicosInscritos).then(async function(responseProyectoCurricular) {
+                            console.log("responseProyectoCurricular", responseProyectoCurricular);
+
+                            await academicaRequest.get("carrera", [responseProyectoCurricular.data.Data[0].ProyectoCurricularTg]).then(function(carreraPosgrado) {
+                              console.log("carreraPosgrado", carreraPosgrado);
+                              console.log("Carreras Coordinador", ctrl.carrerasCoordinador);
+                              
+                              ctrl.carrerasCoordinador.find(proyectoCurricular => {
+                                if(proyectoCurricular.codigo_proyecto_curricular == carreraPosgrado.data.carrerasCollection.carrera[0].codigo) {
+                                  //Armar objeto carrera con el código y nombre del proyecto curricular
+                                  return carrera = {
+                                    "Codigo": carreraPosgrado.data.carrerasCollection.carrera[0].codigo,
+                                    "Nombre": carreraPosgrado.data.carrerasCollection.carrera[0].nombre,
+                                  }
+                                } else {
+                                  return carrera = undefined;
+                                }
+                              });
+                            }).catch(function(error) {
+                              console.log("Error carrera: ", error);
+                            });
+                          }).catch(function(error2) {
+                            console.log("Error espacio academico: ", error2);
+                          });
+
+                          console.log("carrera: ", carrera);
+
+                          if(carrera != undefined) {
+                            await verificarSolicitud(solicitud, carrera);
+                            UserExiste = true;
+                          }
+                          } else {
+                            await verificarSolicitud(solicitud)
+                            UserExiste = true;
+                          }
+                          
+                        } //Bloque para demas Modalidades de Grado
                         else {
                           console.log("Demas solicitudes restantes");
                           await verificarSolicitud(solicitud)
