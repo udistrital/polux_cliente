@@ -591,7 +591,7 @@ angular.module('poluxClienteApp')
                 guardaPrimero = false;
                 if(ctrl.nombreNivelProyecto == "INGENIERIA") {
                   ctrl.EstadoSolicitud.forEach(estado => {
-                    if (estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX" || estado.CodigoAbreviacion == "ACPR_PLX" || estado.CodigoAbreviacion == "ACPR1_PLX" || estado.CodigoAbreviacion == "ACPR2_PLX" || estado.CodigoAbreviacion == "RCPR1_PLX" || estado.CodigoAbreviacion == "RCPR2_PLX") {
+                    if (estado.CodigoAbreviacion == "RDC_PLX" || estado.CodigoAbreviacion == "ADD_PLX" || estado.CodigoAbreviacion == "APEP_PLX" || estado.CodigoAbreviacion == "ACPR1_PLX" || estado.CodigoAbreviacion == "ACPR2_PLX" || estado.CodigoAbreviacion == "RCPR1_PLX" || estado.CodigoAbreviacion == "RCPR2_PLX") {
                       if (guardaPrimero) {
                         query += "|"
                       } else {
