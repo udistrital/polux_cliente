@@ -37,6 +37,7 @@ angular.module('poluxClienteApp')
   .controller('SolicitudesListarSolicitudesCtrl',
     function($filter, $location, $q, $scope, $rootScope, $translate, utils, gestorDocumentalMidRequest, $window, parametrosRequest, academicaRequest, poluxRequest, token_service) {
       var ctrl = this;
+      const estadosValidosList = ['A','B','Q','O','V'];
       $scope.msgCargandoSolicitudes = $translate.instant('LOADING.CARGANDO_SOLICITUDES');
       ctrl.solicitudes = [];
       ctrl.carrerasCoordinador = [];
@@ -329,7 +330,8 @@ angular.module('poluxClienteApp')
           ctrl.EstadoSolicitud = responseEstadoSolicitud.data.Data;
         })
 
-        if (lista_roles.includes("ESTUDIANTE") && ctrl.state == 'A') {
+        //if (lista_roles.includes("ESTUDIANTE") && ctrl.state == 'A') {
+        if (lista_roles.includes("ESTUDIANTE") &&  estadosValidosList.includes(ctrl.state)) {
           parametrosSolicitudes = $.param({
             query: "usuario:" + identificador,
             limit: 0
