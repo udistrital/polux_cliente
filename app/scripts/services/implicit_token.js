@@ -77,6 +77,7 @@ angular.module('implicitToken', [])
             //autenticacionMidRequest.post("token/emailToken", userRol, {
             autenticacionMidRequest.post("token/userRol", userRol)
               .then(function(respuestaAutenticacion) {
+
                 //---------------------Descomentarear cuando se pase a producción y borrar la linea de abajo
                 /*if(respuestaAutenticacion.data.Codigo!=="" && respuestaAutenticacion.data.rol.includes("ESTUDIANTE")){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
@@ -86,10 +87,28 @@ angular.module('implicitToken', [])
                 appUserRole = respuestaAutenticacion.data.rol;
                 window.localStorage.setItem('access_code', btoa(JSON.stringify(appUserDocument)));
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));*/
-
-                if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE") && (respuestaAutenticacion.data.Estado == 'A' || respuestaAutenticacion.data.Estado == 'B'))){
+                
+                /* fix: para colocar el codigo de estudiante al rol estudiante y no el numero de identificacion*/
+                
+                /*if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE"))){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                 }else{
+                  appUserDocument = respuestaAutenticacion.data.documento;
+                }*/
+                
+                if((respuestaAutenticacion.data.role.includes("ESTUDIANTE"))){
+                  appUserDocument = respuestaAutenticacion.data.Codigo;
+                  if(respuestaAutenticacion.data.Codigo!==""){
+                    appUserDocument = respuestaAutenticacion.data.Codigo;
+                  } else {
+                    appUserDocument = "Error";
+                    swal(
+                      "Error",
+                      "Su usuario no tiene el código de estudiante asociado. Por favor comuníquese con la oficina OATI para solucionar el inconveniente.",
+                      "error"
+                    );
+                  }
+                } else{
                   appUserDocument = respuestaAutenticacion.data.documento;
                 }
                 appUserRole = respuestaAutenticacion.data.role;
@@ -227,3 +246,6 @@ angular.module('implicitToken', [])
     service.timer();
     return service;
   });
+
+
+  
