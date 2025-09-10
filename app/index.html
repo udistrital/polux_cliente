@@ -102,7 +102,6 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="scripts/environment/environment.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <!-- endbuild -->
@@ -110,7 +109,7 @@
 </body>
 
 <!-- build:js({.tmp,app}) scripts/extras.js -->
-<!--<script src="scripts/environment/environment.js"></script>-->
+<script src="scripts/environment/environment.js"></script>
 <script src="scripts/services/token.js"></script>
 <script src="scripts/services/notificacion.js"></script>
 <script src="scripts/services/polux_service.js"></script>
@@ -210,6 +209,7 @@
 
 <script src = "scripts/services/autenticacion_mid_service.js"> </script>
 <!-- Auditoría -->
+<script src = "scripts/services/init_auditoria.js"> </script>
 <script src="scripts/directives/auditoria_mf_loader.js"></script>
 
 <!-- endbuild -->
