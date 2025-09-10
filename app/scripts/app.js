@@ -58,7 +58,8 @@ angular
         'ngFileUpload'
         
     ])
-    .run(function(amMoment, CONF) {
+    //.run(function(amMoment, CONF) {
+    .run(['amMoment', 'CONF', function(amMoment, CONF) {
         amMoment.changeLocale('es');
 
         const urlAuditoria = CONF.GENERAL.AUDITORIA;
@@ -66,7 +67,7 @@ angular
         script.src = urlAuditoria;
         script.setAttribute('data-mf', 'auditoria');
         document.body.appendChild(script);
-    })
+    }])
     .config(['cfpLoadingBarProvider', 'uiSelectConfig', function(cfpLoadingBarProvider, uiSelectConfig) {
         uiSelectConfig.theme = 'select2';
         uiSelectConfig.resetSearchInput = true;
