@@ -1,4 +1,4 @@
-/*
+
 (function () {
   angular.element(document).ready(function () {
     try {
@@ -15,8 +15,8 @@
     }
   });
 })();
-*/
 
+/*
 angular.module('poluxClienteApp')
   .run(['CONF', function(CONF) {
     var script = document.createElement("script");
@@ -24,3 +24,4 @@ angular.module('poluxClienteApp')
     script.setAttribute("data-mf", "auditoria");
     document.body.appendChild(script);
   }]);
+  */
