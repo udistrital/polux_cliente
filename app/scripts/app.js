@@ -58,8 +58,14 @@ angular
         'ngFileUpload'
         
     ])
-    .run(function(amMoment) {
+    .run(function(amMoment, CONF) {
         amMoment.changeLocale('es');
+
+        const urlAuditoria = CONF.GENERAL.AUDITORIA;
+        const script = document.createElement('script');
+        script.src = urlAuditoria;
+        script.setAttribute('data-mf', 'auditoria');
+        document.body.appendChild(script);
     })
     .config(['cfpLoadingBarProvider', 'uiSelectConfig', function(cfpLoadingBarProvider, uiSelectConfig) {
         uiSelectConfig.theme = 'select2';
@@ -329,7 +335,12 @@ angular
               controller: 'AdministrarTablasCTRL',
               controllerAs: 'Parametrizacion'
             })
+            .when('/auditoria', {
+              templateUrl: 'views/general/auditoria.html',
+              controller: function($scope) {}
+            })
             .otherwise({
                 redirectTo: '/'
             });
     }]);
+
