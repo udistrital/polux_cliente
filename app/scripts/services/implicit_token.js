@@ -89,25 +89,17 @@ angular.module('implicitToken', [])
                 window.localStorage.setItem('access_role', btoa(JSON.stringify(appUserRole)));*/
                 
                 /* fix: para colocar el codigo de estudiante al rol estudiante y no el numero de identificacion*/
-                
-                /*if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE"))){
+                /*
+                if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE") && (respuestaAutenticacion.data.Estado == 'A' || respuestaAutenticacion.data.Estado == 'B'))){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
                 }else{
                   appUserDocument = respuestaAutenticacion.data.documento;
-                }*/
-                
-                if((respuestaAutenticacion.data.role.includes("ESTUDIANTE"))){
+                }
+                */
+                if(respuestaAutenticacion.data.Codigo!=="" && (respuestaAutenticacion.data.role.includes("ESTUDIANTE"))){
                   appUserDocument = respuestaAutenticacion.data.Codigo;
-                  if(respuestaAutenticacion.data.Codigo!==""){
-                    appUserDocument = respuestaAutenticacion.data.Codigo;
-                  } else {
-                    appUserDocument = "Error";
-                    swal(
-                      "Error",
-                      "Su usuario no tiene el código de estudiante asociado. Por favor comuníquese con la oficina OATI para solucionar el inconveniente.",
-                      "error"
-                    );
-                  }
+                } else if(!respuestaAutenticacion.data.Codigo && (respuestaAutenticacion.data.role.includes("ESTUDIANTE"))){
+                  window.alert("Su usuario no tiene el código de estudiante asociado. Por favor comuníquese con la oficina OATI para solucionar el inconveniente.");
                 } else{
                   appUserDocument = respuestaAutenticacion.data.documento;
                 }
