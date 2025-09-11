@@ -58,7 +58,7 @@ angular
         'ngFileUpload'
         
     ])
-    .run(function(amMoment) {
+    .run(function(amMoment, CONF) {
         amMoment.changeLocale('es');
     })
     .config(['cfpLoadingBarProvider', 'uiSelectConfig', function(cfpLoadingBarProvider, uiSelectConfig) {
