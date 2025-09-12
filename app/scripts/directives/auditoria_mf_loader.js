@@ -5,25 +5,23 @@ angular.module('poluxClienteApp')
     return {
       restrict: 'E',
       link: function (scope, element) {
-        let clienteId = CONF.GENERAL.TOKEN.CLIENTE_ID;
+        var clienteId = CONF.GENERAL.TOKEN.CLIENTE_ID; // usar var en lugar de let
 
         window.__AUDITORIA_CLIENTE_ID__ = clienteId;
 
-        if (!element[0].hasChildNodes() && window.auditoriaMf?.mount) {
+        if (!element[0].hasChildNodes() && window.auditoriaMf && window.auditoriaMf.mount) {
           window.auditoriaMf.mount({ domElement: element[0] });
 
-          if ($location.path().startsWith('/auditoria')) {
+          if ($location.path().indexOf('/auditoria') === 0) { // usar indexOf en vez de startsWith
             $timeout(function () {
               window.dispatchEvent(new CustomEvent('infoRoot', {
                 detail: {
-                  clienteId,
+                  clienteId: clienteId,
                   appName: '@udistrital/auditoria-mf'
                 }
               }));
-            }, 2000); 
+            }, 2000);
           }
-        } else {
-
         }
       }
     };
