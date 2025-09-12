@@ -62,6 +62,8 @@ steps:
   - npm install
   - bower install --allow-root
   - cp -f app/scripts/environment/environment_test.js app/scripts/environment/environment.js
+  - ls -l app/scripts/services/init_auditoria.js
+  - ls -l app/scripts/directives/auditoria_mf_loader.js
   - grunt build --force
   when:
     branch:
