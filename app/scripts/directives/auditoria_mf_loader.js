@@ -5,14 +5,14 @@ angular.module('poluxClienteApp')
     return {
       restrict: 'E',
       link: function (scope, element) {
-        var clienteId = CONF.GENERAL.TOKEN.CLIENTE_ID; // usar var en lugar de let
+        var clienteId = CONF.GENERAL.TOKEN.CLIENTE_ID;
 
         window.__AUDITORIA_CLIENTE_ID__ = clienteId;
 
         if (!element[0].hasChildNodes() && window.auditoriaMf && window.auditoriaMf.mount) {
           window.auditoriaMf.mount({ domElement: element[0] });
 
-          if ($location.path().indexOf('/auditoria') === 0) { // usar indexOf en vez de startsWith
+          if ($location.path().indexOf('/auditoria') === 0) { 
             $timeout(function () {
               window.dispatchEvent(new CustomEvent('infoRoot', {
                 detail: {
