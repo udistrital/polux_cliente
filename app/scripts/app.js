@@ -329,7 +329,12 @@ angular
               controller: 'AdministrarTablasCTRL',
               controllerAs: 'Parametrizacion'
             })
+            .when('/auditoria', {
+              templateUrl: 'views/general/auditoria.html',
+              controller: function($scope) {}
+            })
             .otherwise({
                 redirectTo: '/'
             });
     }]);
+

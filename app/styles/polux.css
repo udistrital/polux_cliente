@@ -86,3 +86,8 @@ md-checkbox.md-checked.blue .md-icon {
 .ui-grid-pager-control .ui-grid-pager-max-pages-number {
     vertical-align: middle;
 }
+
+footer.driver-popover-footer{
+    background-color: #ffffff00 !important;
+    min-height: auto !important;
+}
