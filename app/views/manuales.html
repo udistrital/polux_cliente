@@ -1,0 +1,53 @@
+<div class="panel panel-default" ng-controller="ManualesCtrl">
+
+    <div class="panel-heading">
+        <h3 class="manual-header">{{'MANUALES.TITULO' | translate}}</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="manual-panel">
+
+            <div class="manual-toolbar">
+                <input type="text" ng-model="searchText" class="form-control manual-search"
+                    placeholder="{{'MANUALES.BUSQUEDA_PLACE_HOLDER' | translate}}">
+
+                <div class="btn-group manual-filtros" role="group" aria-label="Filtros">
+                    <button type="button" class="btn"
+                        ng-class="{'btn-primary': filtro==='all','btn-default': filtro!=='all'}"
+                        ng-click="filtro='all'">{{'MANUALES.BUSQUEDA_TODOS' | translate}}</button>
+                    <button type="button" class="btn"
+                        ng-class="{'btn-primary': filtro==='pdf','btn-default': filtro!=='pdf'}"
+                        ng-click="filtro='pdf'">{{'MANUALES.BUSQUEDA_PDF' | translate}}</button>
+                    <button type="button" class="btn"
+                        ng-class="{'btn-primary': filtro==='video','btn-default': filtro!=='video'}"
+                        ng-click="filtro='video'">{{'MANUALES.BUSQUEDA_VIDEO' | translate}}</button>
+                </div>
+            </div>
+
+            <div class="manual-grid">
+                <div class="manual-grupo" ng-repeat="grupo in recursos">
+                    <div class="manual-grupo-titulo">{{grupo.grupo}}</div>
+
+                    <div class="manual-recurso" ng-repeat="item in grupo.items | filter:buscar"
+                        ng-show="filtro==='all' || filtro===item.tipo" ng-attr-data-tipo="{{item.tipo}}">
+
+                        <div class="manual-icono" ng-class="item.tipo">
+                            <i class="fa"
+                                ng-class="{'fa-file-pdf-o': item.tipo==='pdf', 'fa-play-circle': item.tipo==='video'}"></i>
+                        </div>
+
+                        <div class="manual-contenido">
+                            <div class="manual-titulo">
+                                <a ng-href="{{item.url}}" target="_blank" rel="noopener noreferrer">
+                                    {{item.titulo}}
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
