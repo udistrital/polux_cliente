@@ -75,6 +75,52 @@ var text_es = {
             "<li>Para esta modalidad se aceptan dos estudiantes como autores principales (autor 1 y autor 2) y máximo un (1) o dos (2) coautores, según el número de directores en la modalidad.</li>" +            
             "</ul>",
     },
+    MANUALES: {
+        TITULO: "Manuales y videos para el uso del aplicativo",
+        BUSQUEDA_PLACE_HOLDER: "Buscar manual o video...",
+        BUSQUEDA_TODOS: "Todos",
+        BUSQUEDA_PDF: "Pdf",
+        BUSQUEDA_VIDEO: "Video",
+        ROL_GENERAL: "General - introducción",
+        ITEMS_GENERAL: {
+            TITULO_UNO:  "Video tutorial",
+            TIPO_UNO: "video",
+            URL_UNO: "https://www.youtube.com/watch?v=1t58Kta4mnM"
+        },
+        ROL_ESTUDIANTE: "Estudiante",
+        ITEMS_ESTUDIANTE: {
+            TITULO_UNO:  "Gestión Pasantía",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/yMaURP",
+            TITULO_DOS:  "Gestión monografía, emprendimiento, investigación",
+            TIPO_DOS: "pdf",
+            URL_DOS: "https://acortar.link/NAqhO3",
+        },
+        ROL_DIRECTOR: "Docente director - codirector",
+        ITEMS_DIRECTOR: {
+            TITULO_UNO:  "Gestión Pasantía (Director)",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/UDtG3W",
+            TITULO_DOS:  "Gestión monografía, emprendimiento, investigación (Director - Codirector)",
+            TIPO_DOS: "pdf",
+            URL_DOS: "https://acortar.link/ro7ehx",
+        },
+        ROL_COORDINADOR: "Coordinador",
+        ITEMS_COORDINADOR: {
+            TITULO_UNO:  "Gestión Pasantía",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/ggmpLi",
+            TITULO_DOS:  "Gestión monografía, emprendimiento, investigación",
+            TIPO_DOS: "pdf",
+            URL_DOS: "https://acortar.link/wescDN",
+        },
+        ROL_OFICINA_EXTENSION: "Oficina de extensión",
+        ITEMS_OFICINA_EXTENSION: {
+            TITULO_UNO:  "Gestión Pasantía",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/VtPPOU"
+        }
+    },
     DEBE_SELECCIONAR_UNA_RESPUESTA:"Debe seleccionar una opción de respuesta (Aprobar o Rechazar)",
     INGRESE_NOMBRE_DIRECTOR_INTERNO: "Ingrese el nombre del director interno:",
     INGRESE_DOCUMENTO_DIRECTOR_INTERNO: "Ingrese el número de documento del director interno:",
@@ -1108,6 +1154,52 @@ var text_es = {
  * Contiene las variables del servicio de internacionalización en ingles
  */
 var text_en = {
+    MANUALES: {
+        TITULO: "Manuals and videos for using the application",
+        BUSQUEDA_PLACE_HOLDER: "Search for manual or video...",
+        BUSQUEDA_TODOS: "All",
+        BUSQUEDA_PDF: "Pdf",
+        BUSQUEDA_VIDEO: "Video",
+        ROL_GENERAL: "General - introduction",
+        ITEMS_GENERAL: {
+            TITULO_UNO:  "Video tutorial",
+            TIPO_UNO: "video",
+            URL_UNO: "https://www.youtube.com/watch?v=1t58Kta4mnM"
+        },
+        ROL_ESTUDIANTE: "Student",
+        ITEMS_ESTUDIANTE: {
+            TITULO_UNO:  "Internship Management",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/yMaURP",
+            TITULO_DOS:  "Management monograph, entrepreneurship, research",
+            TIPO_DOS: "pdf",
+            URL_DOS: "https://acortar.link/NAqhO3",
+        },
+        ROL_DIRECTOR: "Teacher director - co-director",
+        ITEMS_DIRECTOR: {
+            TITULO_UNO:  "Internship Management (Director)",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/UDtG3W",
+            TITULO_DOS:  "Monograph management, entrepreneurship, research (Director - Co-director)",
+            TIPO_DOS: "pdf",
+            URL_DOS: "https://acortar.link/ro7ehx",
+        },
+        ROL_COORDINADOR: "Coordinator",
+        ITEMS_COORDINADOR: {
+            TITULO_UNO:  "Internship Management",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/ggmpLi",
+            TITULO_DOS:  "Management monograph, entrepreneurship, research",
+            TIPO_DOS: "pdf",
+            URL_DOS: "https://acortar.link/wescDN",
+        },
+        ROL_OFICINA_EXTENSION: "Extension Office",
+        ITEMS_OFICINA_EXTENSION: {
+            TITULO_UNO:  "Internship Management",
+            TIPO_UNO: "pdf",
+            URL_UNO: "https://acortar.link/VtPPOU"
+        }
+    },
     OBJETIVO_NUEVO: "Enter the new proposal objectives",
     OBJETIVO_ACTUAL: "Current objectives of the proposal",
     INGRESAR_OBJETIVO: "Enter the objectives of the proposal",
