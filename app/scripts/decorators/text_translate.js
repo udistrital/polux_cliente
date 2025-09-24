@@ -8,6 +8,15 @@
  * Contiene las variables del servicio de internacionalización en español
  */
 var text_es = {
+    LOGIN: {
+        MENSAJE_CARGA: "Estamos iniciando el sistema, por favor espera",
+        ICONO_ERROR: "error",
+        TITULO_ERROR: "Error",
+        ERROR_NOTIFICACION_SUSCRIPCION: "Se genero un error en la verificación de notificaciones",
+        ERROR_NOTIFICACION_VERIFICACION: "Se genero un error en la verificación de notificaciones",
+        ERROR_MENU: "Se genero un error en la carga del menú",
+        ERROR_DATA_LOGIN: "Se genero un error al obtener la información de inicio de sesión",
+    },
     TERMINOS: {
         MONOGRAFIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
             "<ul>" +                     
@@ -1154,6 +1163,15 @@ var text_es = {
  * Contiene las variables del servicio de internacionalización en ingles
  */
 var text_en = {
+    LOGIN: {
+        MENSAJE_CARGA: "We are starting the system, please wait",
+        ICONO_ERROR: "error",
+        TITULO_ERROR: "Error",
+        ERROR_NOTIFICACION_SUSCRIPCION: "An error occurred while verifying notifications",
+        ERROR_NOTIFICACION_VERIFICACION: "An error occurred while verifying notifications",
+        ERROR_MENU: "An error occurred while loading the menu",
+        ERROR_DATA_LOGIN: "An error occurred while retrieving login information",
+    },
     MANUALES: {
         TITULO: "Manuals and videos for using the application",
         BUSQUEDA_PLACE_HOLDER: "Search for manual or video...",
