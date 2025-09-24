@@ -69,6 +69,14 @@ angular.module('poluxClienteApp')
             token_service.logout();
         };
         if (token_service.live_token()) {
+
+            swal({
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                html: '<div class="my-spinner"></div><p>'+$translate.instant("LOGIN.MENSAJE_CARGA")+'</p>'
+            });
+            
             token_service.getLoginData()
                 .then(function() {
                     $scope.token = token_service.getAppPayload();
@@ -79,41 +87,54 @@ angular.module('poluxClienteApp')
                             $scope.token.appUserRole = $scope.token.appUserRole.concat( $scope.token.role);
                             for (var index = 0; index < $scope.token.appUserRole.length; index++) {
                                 if($scope.token.appUserRole[index]!= undefined){
-                                if ($scope.token.appUserRole[index].indexOf("/") < 0) {
-                                    rl.push($scope.token.appUserRole[index]);
+                                    if ($scope.token.appUserRole[index].indexOf("/") < 0) {
+                                        rl.push($scope.token.appUserRole[index]);
+                                    }
                                 }
                             }
-                            }
                             // Confirmar la subcripcion de notificaciones
-                 notificacionRequest.verificarSuscripcion().then(function(respuestasub)
-                {
-                     if (respuestasub.data.Data == false) {
-                         notificacionRequest.suscripcion().then(function (respuestasubs) {
-                             if (respuestasubs.data.Data != false) {
-                                 console.log(respuestasubs.data.Data + " Se ha registrado el usuario en notificaciones");
-                             }
-                         }).catch(
-                             function (error) {
-                                 console.log(error)
-                             }
-                         );
-                     }
-                  }
-                );
+                            notificacionRequest.verificarSuscripcion().then(function(respuestasub){
+                                if (respuestasub.data.Data == false) {
+                                    notificacionRequest.suscripcion().then(function (respuestasubs) {
+                                        if (respuestasubs.data.Data != false) {
+                                            console.log(respuestasubs.data.Data + " Se ha registrado el usuario en notificaciones");
+                                        }
+                                    }).catch(
+                                        function (error) {
+                                            console.log(error);
+                                            swal($translate.instant("LOGIN.TITULO_ERROR"), $translate.instant("LOGIN.ERROR_NOTIFICACION_SUSCRIPCION"), $translate.instant("LOGIN.ICONO_ERROR"));
+                                        }
+                                    );
+                                }
+                            });/*.catch(
+                                function (error) {
+                                    console.log(error);
+                                    swal($translate.instant("LOGIN.TITULO_ERROR"), $translate.instant("LOGIN.ERROR_NOTIFICACION_VERIFICACION"), $translate.instant("LOGIN.ICONO_ERROR"));
+                                }
+                            );*/
                             roles = rl.toString();
                         } else {
                             roles = $scope.token.appUserRole;
                         }
                         roles = roles.replace(/,/g, '%2C');
+                        swal.close();
                         configuracionRequest.get('menu_opcion_padre/ArbolMenus/' + roles + '/Polux', '').then(function(response) {
                                 $rootScope.my_menu = response.data;
-                            })
-                            .catch(
-                                function(response) {
-                                    $rootScope.my_menu = response.data;
-
-                                });
+                                //swal($translate.instant("LOGIN.TITULO_ERROR"), $translate.instant("LOGIN.ERROR_DATA_LOGIN"), $translate.instant("LOGIN.ICONO_ERROR"));
+                        }).catch(
+                            function(response) {
+                                $rootScope.my_menu = response.data;
+                                swal($translate.instant("LOGIN.TITULO_ERROR"), $translate.instant("LOGIN.ERROR_MENU"), $translate.instant("LOGIN.ICONO_ERROR"));
+                            }
+                        );
                     }
+                })
+                .catch(function (err) {
+                    swal.close();
+                    swal($translate.instant("LOGIN.TITULO_ERROR"), $translate.instant("LOGIN.ERROR_DATA_LOGIN"), $translate.instant("LOGIN.ICONO_ERROR"));
+                })
+                .finally(function () {
+                    //console.log("finalizo menu");
                 });
         }
 
