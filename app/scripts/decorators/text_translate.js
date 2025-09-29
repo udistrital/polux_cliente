@@ -17,6 +17,7 @@ var text_es = {
         ERROR_MENU: "Se genero un error en la carga del menú",
         ERROR_DATA_LOGIN: "Se genero un error al obtener la información de inicio de sesión",
     },
+    IRIS_TEXTO: "¿Tienes un error con el sistema? Da click",
     TERMINOS: {
         MONOGRAFIA: " Tengo conocimiento que para el presente trámite cumplo con los siguientes ítems: <br><br>" + 
             "<ul>" +                     
@@ -1172,6 +1173,7 @@ var text_en = {
         ERROR_MENU: "An error occurred while loading the menu",
         ERROR_DATA_LOGIN: "An error occurred while retrieving login information",
     },
+    IRIS_TEXTO: "Are you experiencing a system error? Click here",
     MANUALES: {
         TITULO: "Manuals and videos for using the application",
         BUSQUEDA_PLACE_HOLDER: "Search for manual or video...",

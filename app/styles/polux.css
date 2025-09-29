@@ -111,3 +111,64 @@ footer.driver-popover-footer{
     background-color: #ffffff00 !important;
     min-height: auto !important;
 }
+
+/* Inicio icono iris */
+
+.icono-fijo {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 9999;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.icono-fijo img {
+  width: 40px;
+  height: 40px;
+}
+
+.icono-fijo .tooltip-text {
+  visibility: hidden;
+  max-width: 220px;
+  background-color: #333;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  padding: 6px 10px;
+  border-radius: 6px;
+  position: absolute;
+  bottom: 75px;
+  left: 0;
+  z-index: 10000;
+
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: normal;
+}
+
+.icono-fijo .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 20px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.icono-fijo:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Fin icono iris */
