@@ -90,10 +90,8 @@ angular.module('utilsService', [])
                 }
             },
             verificarArchivoGeneral: async function (input) {
-                console.log("input", input);
                 try {
                     var file = input.files[0];
-                    console.log("file", file);
                     if (!file) {
                         swal(
                             $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),

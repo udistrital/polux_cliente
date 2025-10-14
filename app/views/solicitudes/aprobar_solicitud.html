@@ -157,9 +157,10 @@
       </div>
       <div class="row" ng-if="aprobarSolicitud.respuestaSolicitud == 'AOP_PLX' && aprobarSolicitud.tipoSolicitudTemp.CodigoAbreviacion=='SRTG_PLX' && aprobarSolicitud.modalidadTemp.CodigoAbreviacion=='PAS_PLX'">
         <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
-       <div class="col-sm-9">
-        <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input>
-       </div>
+        <div class="col-sm-9">
+          <!-- <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input> -->
+          <input type="file" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es', 'maxFileSize': 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
+        </div>
       </div>
       <div class="row" ng-if="formularioAprobacionExtensionPasantia.$valid  ">
         <label class="col-sm-5 control-label"> </label>

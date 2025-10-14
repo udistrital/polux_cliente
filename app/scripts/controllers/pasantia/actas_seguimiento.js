@@ -40,6 +40,22 @@ angular.module('poluxClienteApp')
       //ctrl.userDocument = token_service.token.documento;
       ctrl.userDocument = token_service.getAppPayload().appUserDocument;
 
+      /**
+       * @ngdoc method
+       * @name verificarArchivo
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta la función general de utils para verificar si el archivo contiene virus
+       * @param {any} input El campo input file del formulario
+       */
+      $scope.verificarArchivo = async function (input) {
+        var resultado = await utils.verificarArchivoGeneral(input);
+        if (!resultado.limpio) {
+            input.value = "";
+            $scope.$applyAsync(() => { input.value = null; });
+        }
+      };
+
       $scope.botones = [{
         clase_color: "ver",
         clase_css: "fa fa-edit fa-lg  faa-shake animated-hover",
