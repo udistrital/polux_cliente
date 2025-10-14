@@ -26,6 +26,7 @@
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/documentoService.service:documentoRequest
+ * @requires services/validarArchivoVirusService.service:validarArchivoVirusRequest
  * @property {Array} modalidades Modalidades disponibles para la elección del estudiante.
  * @property {Object} estudiante Datos del estudiante que esta realizando la solicitud.
  * @property {Object} periodoAnterior Periodo academico anterior.
@@ -84,7 +85,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest,CONF) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest,CONF, validarArchivoVirusRequest) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
@@ -152,6 +153,84 @@ angular.module('poluxClienteApp')
         correoPersonal: '',
         eps: ''
     };
+
+      /*
+      inicio prueba archivo
+      */
+
+      /**
+       * @ngdoc method
+       * @name verificarArchivo
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta la función general de utils para verificar si el archivo contiene virus
+       * @param {any} input El campo input file del formulario
+       */
+      $scope.verificarArchivo = async function (input) {
+        var resultado = await utils.verificarArchivoGeneral(input);
+        if (!resultado.limpio) {
+            input.value = "";
+            $scope.$applyAsync(() => { input.value = null; });
+        }
+        /*try {
+          console.log("input111", input);
+          var file = input.files[0];
+          console.log("file111", file);
+          if (!file) {
+            swal(
+              $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),
+              $translate.instant("VALIDACION_ARCHIVO.NO_SELECCIONO_ARCHIVO"),
+              "warning"
+            );
+            return;
+          }
+
+          swal({
+            title: $translate.instant("VALIDACION_ARCHIVO.TITULO_VERIFICANDO"),
+            text: $translate.instant("VALIDACION_ARCHIVO.ESPERE"),
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            html: '<div class="my-spinner"></div><p>Verificando archivo...</p>'
+          });
+
+          var base64 = await utils.getBase64(file);
+
+          var data = [{
+            pdf_base64: base64,
+            urlFileUp: file.name || "archivo_sin_nombre"
+          }];
+
+          var response = await validarArchivoVirusRequest.post("verificar_base64", data);
+
+          swal.close(); 
+
+          if (!response.limpio) {
+            swal(
+              $translate.instant("VALIDACION_ARCHIVO.TITULO_ARCHIVO_INFECTADO"),
+              $translate.instant("VALIDACION_ARCHIVO.ARCHIVO_INFECTADO"),
+              "error"
+            );
+            input.value = "";
+            $scope.$applyAsync(() => { input.value = null; });
+          } 
+        } catch (error) {
+          swal.close();
+
+          swal(
+            $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),
+            $translate.instant("VALIDACION_ARCHIVO.ERROR_VERIFICACION"),
+            "error"
+          );
+
+          input.value = "";
+          $scope.$applyAsync(() => { input.value = null; });
+        }*/
+      };
+
+      /*
+      fin prueba archivo      
+      */
 
       //SE CONSULTAN LOS PARAMETROS USADOS
       /**
@@ -2308,6 +2387,9 @@ angular.module('poluxClienteApp')
         });
         descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
         utils.getBase64(detalle.fileModel).then(
+          //probar aqui el colocar el base64 para validar si tiene virus
+          console.log("Archivo a cargar: ", detalle.fileModel),
+          console.log("base64: ", base64),
           async function (base64) {
             fileBase64 = base64;
 
