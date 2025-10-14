@@ -120,12 +120,14 @@
                 <strong>{{'AVISO_PDF' | translate}}</strong>
               </div>
             </div>
-            
+
             <label class="col-sm-3 control-label">{{detalle.label}}</label>
             <div class="col-sm-9">
-              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" required> </input>
+              <!--<input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input> -->
+              <input type="file" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es', 'maxFileSize': detalle.Detalle.Descripcion.split(';')[1]}" file-model="detalle.fileModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
+
             </div>
-              
+
             <br>
           </div>
 

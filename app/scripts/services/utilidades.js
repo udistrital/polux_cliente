@@ -6,9 +6,10 @@
  * @description 
  * # poluxRequest
  * Factory in the poluxcrud.
+ * @requires services/validarArchivoVirusService.service:validarArchivoVirusRequest
  */
 angular.module('utilsService', [])
-    .factory('utils', function ($http, CONF, $translate) {
+    .factory('utils', function ($http, CONF, $translate, validarArchivoVirusRequest) {
           // Public API here
         
 
@@ -86,6 +87,61 @@ angular.module('utilsService', [])
                 }else{
                     mes_anterior= mes-1;
                     anio_anterior=anio;
+                }
+            },
+            verificarArchivoGeneral: async function (input) {
+                console.log("input", input);
+                try {
+                    var file = input.files[0];
+                    console.log("file", file);
+                    if (!file) {
+                        swal(
+                            $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),
+                            $translate.instant("VALIDACION_ARCHIVO.NO_SELECCIONO_ARCHIVO"),
+                            "warning"
+                            );
+                        return;
+                    }
+
+                    swal({
+                        title: $translate.instant("VALIDACION_ARCHIVO.TITULO_VERIFICANDO"),
+                        text: $translate.instant("VALIDACION_ARCHIVO.ESPERE"),
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        html: '<div class="my-spinner"></div><p>Verificando archivo...</p>'
+                    });
+
+                    var base64 = await this.getBase64(file);
+
+                    var data = [{
+                        pdf_base64: base64,
+                        urlFileUp: file.name || "archivo_sin_nombre"
+                    }];
+
+                    var response = await validarArchivoVirusRequest.post("verificar_base64", data);
+
+                    swal.close(); 
+
+                    if (!response.limpio) {
+                        swal(
+                            $translate.instant("VALIDACION_ARCHIVO.TITULO_ARCHIVO_INFECTADO"),
+                            $translate.instant("VALIDACION_ARCHIVO.ARCHIVO_INFECTADO"),
+                            "error"
+                        );
+                        return { limpio: false };
+                    }
+                    return { limpio: true };
+                } catch (error) {
+                    swal.close();
+
+                    swal(
+                        $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),
+                        $translate.instant("VALIDACION_ARCHIVO.ERROR_VERIFICACION"),
+                        "error"
+                    );
+
+                    return { limpio: false };
                 }
             }
         };
