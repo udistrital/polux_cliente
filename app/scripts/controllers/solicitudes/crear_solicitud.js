@@ -26,7 +26,6 @@
  * @requires services/poluxClienteApp.service:sesionesService
  * @requires services/poluxClienteApp.service:tokenService
  * @requires services/documentoService.service:documentoRequest
- * @requires services/validarArchivoVirusService.service:validarArchivoVirusRequest
  * @property {Array} modalidades Modalidades disponibles para la elección del estudiante.
  * @property {Object} estudiante Datos del estudiante que esta realizando la solicitud.
  * @property {Object} periodoAnterior Periodo academico anterior.
@@ -85,7 +84,7 @@
  */
 angular.module('poluxClienteApp')
   .controller('SolicitudesCrearSolicitudCtrl',
-    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest,CONF, validarArchivoVirusRequest) {
+    function($location,notificacionRequest ,$q, $routeParams, $sce, $scope, $translate, $window, parametrosRequest,academicaRequest,utils,gestorDocumentalMidRequest, cidcRequest, coreAmazonCrudService, poluxMidRequest, poluxRequest, sesionesRequest, token_service, documentoRequest,autenticacionMidRequest,CONF) {
       $scope.cargandoParametros = $translate.instant('LOADING.CARGANDO_PARAMETROS');
       $scope.enviandoFormulario = $translate.instant('LOADING.ENVIANDO_FORLMULARIO');
       $scope.cargandoDetalles = $translate.instant('LOADING.CARGANDO_DETALLES');
