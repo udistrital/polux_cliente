@@ -9,9 +9,7 @@ angular.module('validarArchivoVirusService', [])
     /**
      * @ngdoc service
      * @name validarArchivoVirusService.service:validarArchivoVirusRequest
-     * @requires CONF
      * @requires $http
-     * @param {injector} CONF Enrutador para la configuración del servicio
      * @param {injector} $http Protocolo para peticiones desde angular
      * @description
      * # validarArchivoVirusRequest

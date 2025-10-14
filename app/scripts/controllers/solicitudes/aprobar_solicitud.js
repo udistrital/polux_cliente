@@ -182,6 +182,22 @@ angular.module('poluxClienteApp')
 
       /**
        * @ngdoc method
+       * @name verificarArchivo
+       * @methodOf poluxClienteApp.controller:SolicitudesCrearSolicitudCtrl
+       * @description 
+       * Consulta la función general de utils para verificar si el archivo contiene virus
+       * @param {any} input El campo input file del formulario
+       */
+      $scope.verificarArchivo = async function (input) {
+        var resultado = await utils.verificarArchivoGeneral(input);
+        if (!resultado.limpio) {
+            input.value = "";
+            $scope.$applyAsync(() => { input.value = null; });
+        }
+      };
+
+      /**
+       * @ngdoc method
        * @name getParametros
        * @methodOf poluxClienteApp.controller:SolicitudesAprobarSolicitudCtrl
        * @param {undefined} undefined No recibe ningún parámetro
