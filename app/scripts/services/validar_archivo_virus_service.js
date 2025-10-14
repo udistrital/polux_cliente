@@ -50,7 +50,7 @@ angular.module('validarArchivoVirusService', [])
 					const limpio = msg.includes('limpio') || msg.includes('clean');
 					return { limpio, mensaje: msg };
 				} else {
-					const msg = response.data?.Message || 'Error desconocido';
+					const msg = (response.data && response.data.Message) ? response.data.Message : 'Error desconocido';
 					return { limpio: false, mensaje: msg };
 				}
 			} catch (error) {
