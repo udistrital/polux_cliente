@@ -306,7 +306,19 @@ options: {
         // concat: {
         //   dist: {}
         // },
-
+        uglify: {
+            options: {
+                sourceMap: true,
+                sourceMapIncludeSources: true
+            },
+            dist: {
+                files: {
+                '<%= yeoman.dist %>/scripts/vendor.js': [
+                    '<%= yeoman.dist %>/scripts/vendor.js'
+                ]
+                }
+            }
+        },
         imagemin: {
             dist: {
                 files: [{
