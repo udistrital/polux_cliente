@@ -1161,7 +1161,9 @@ var text_es = {
         ESPERE: "Por favor, espera mientras se valida el archivo con el antivirus.",
         TITULO_ARCHIVO_INFECTADO: "Error al subir el archivo",
         ARCHIVO_INFECTADO: "El archivo tiene un posible virus, por favor cargue un archivo diferente.",
-        ERROR_VERIFICACION: "Error al verificar el archivo. Intenta nuevamente."
+        ERROR_VERIFICACION: "Error al verificar el archivo. Intenta nuevamente.",
+        TITULO_ARCHIVO_PDF: "Archivo inválido",
+        ARCHIVO_PDF: "Solo se permiten archivos PDF."
     }
 };
 
@@ -2201,7 +2203,9 @@ var text_en = {
         ESPERE: "Please wait while the file is validated with the antivirus.",
         TITULO_ARCHIVO_INFECTADO: "Error uploading file",
         ARCHIVO_INFECTADO: "The file may have a virus, please upload a different file.",
-        ERROR_VERIFICACION: "Error verifying file. Please try again."
+        ERROR_VERIFICACION: "Error verifying file. Please try again.",
+        TITULO_ARCHIVO_PDF: "Invalid file",
+        ARCHIVO_PDF: "Only PDF files are allowed."
     }
 };
 

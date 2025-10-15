@@ -153,10 +153,6 @@ angular.module('poluxClienteApp')
         eps: ''
     };
 
-      /*
-      inicio prueba archivo
-      */
-
       /**
        * @ngdoc method
        * @name verificarArchivo
@@ -166,70 +162,27 @@ angular.module('poluxClienteApp')
        * @param {any} input El campo input file del formulario
        */
       $scope.verificarArchivo = async function (input) {
+        var file = input.files[0];
+        if (!file) return;
+
+        var esPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        if (!esPDF) {
+          swal(
+              $translate.instant("VALIDACION_ARCHIVO.TITULO_ARCHIVO_PDF"),
+              $translate.instant("VALIDACION_ARCHIVO.ARCHIVO_PDF"),
+              "error"
+            );
+          input.value = "";
+          $scope.$applyAsync(() => { input.value = null; });
+          return;
+        }
+
         var resultado = await utils.verificarArchivoGeneral(input);
         if (!resultado.limpio) {
             input.value = "";
             $scope.$applyAsync(() => { input.value = null; });
         }
-        /*try {
-          console.log("input111", input);
-          var file = input.files[0];
-          console.log("file111", file);
-          if (!file) {
-            swal(
-              $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),
-              $translate.instant("VALIDACION_ARCHIVO.NO_SELECCIONO_ARCHIVO"),
-              "warning"
-            );
-            return;
-          }
-
-          swal({
-            title: $translate.instant("VALIDACION_ARCHIVO.TITULO_VERIFICANDO"),
-            text: $translate.instant("VALIDACION_ARCHIVO.ESPERE"),
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            html: '<div class="my-spinner"></div><p>Verificando archivo...</p>'
-          });
-
-          var base64 = await utils.getBase64(file);
-
-          var data = [{
-            pdf_base64: base64,
-            urlFileUp: file.name || "archivo_sin_nombre"
-          }];
-
-          var response = await validarArchivoVirusRequest.post("verificar_base64", data);
-
-          swal.close(); 
-
-          if (!response.limpio) {
-            swal(
-              $translate.instant("VALIDACION_ARCHIVO.TITULO_ARCHIVO_INFECTADO"),
-              $translate.instant("VALIDACION_ARCHIVO.ARCHIVO_INFECTADO"),
-              "error"
-            );
-            input.value = "";
-            $scope.$applyAsync(() => { input.value = null; });
-          } 
-        } catch (error) {
-          swal.close();
-
-          swal(
-            $translate.instant("VALIDACION_ARCHIVO.TITULO_ERROR"),
-            $translate.instant("VALIDACION_ARCHIVO.ERROR_VERIFICACION"),
-            "error"
-          );
-
-          input.value = "";
-          $scope.$applyAsync(() => { input.value = null; });
-        }*/
       };
-
-      /*
-      fin prueba archivo      
-      */
 
       //SE CONSULTAN LOS PARAMETROS USADOS
       /**
