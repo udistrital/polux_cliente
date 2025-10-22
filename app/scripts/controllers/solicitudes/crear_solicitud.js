@@ -2339,9 +2339,6 @@ angular.module('poluxClienteApp')
         });
         descripcion = detalle.Detalle.Nombre + ":" + ctrl.codigo;
         utils.getBase64(detalle.fileModel).then(
-          //probar aqui el colocar el base64 para validar si tiene virus
-          console.log("Archivo a cargar: ", detalle.fileModel),
-          console.log("base64: ", base64),
           async function (base64) {
             fileBase64 = base64;
 
