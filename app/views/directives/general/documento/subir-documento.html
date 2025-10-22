@@ -22,7 +22,8 @@
             <label for="input_resumen" class="col-form-label">{{'SELECCIONE_EL_DOCUMENTO' | translate}}</label>
         </div>
         <div class="col-md-9">
-            <input type='file' class="form-control" file-model='d_subirDocumento.fileModel'>
+            <!-- <input type='file' class="form-control" file-model='d_subirDocumento.fileModel'> -->
+            <input type="file" class="form-control" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es'}" file-model='d_subirDocumento.fileModel' onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
         </div>
     </div>
     <br><br>

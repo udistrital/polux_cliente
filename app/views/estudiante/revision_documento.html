@@ -140,7 +140,7 @@
             </div>
             <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
             <div class="col-sm-9 ">
-                <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 20000}" file-model="estudianteRevisionDoc.nuevaVersionTrabajoGrado" required></input>
+                <input type="file" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es'}" file-model="estudianteRevisionDoc.nuevaVersionTrabajoGrado" onchange="angular.element(this).scope().verificarArchivo(this)" required></input>
             </div>
             <br>
           </div>
@@ -252,7 +252,7 @@
           <div class="row">
             <label class="col-sm-3 control-label"> {{'SELECCIONE_EL_DOCUMENTO' | translate}} </label>
             <div class="col-sm-9 ">
-              <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 20000}" file-model="estudianteRevisionDoc.documentoActualizado" required>
+              <input type="file" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es'}" file-model="estudianteRevisionDoc.documentoActualizado" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
             </div>
             <br>
           </div>
