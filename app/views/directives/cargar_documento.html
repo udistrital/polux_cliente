@@ -38,7 +38,8 @@
                   -->
                   <input type="date" class="form-control" min="2017-01-01" ng-model="d_cargarDocumento.fechaReunion" required></input>
                
-                  <input type="file" class="col-sm-8" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="d_cargarDocumento.documento.fileModel" required> </input>
+                  <!-- <input type="file" class="col-sm-8" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="d_cargarDocumento.documento.fileModel" required> </input>  -->
+                  <input type="file" class="col-sm-8" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es'}" file-model="d_cargarDocumento.documento.fileModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
                  
                 </div>
         </div>

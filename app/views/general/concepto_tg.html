@@ -111,7 +111,7 @@
                     <div class="row">
                       <p class="col-sm-3 control-label">{{'SELECCIONE_EL_DOCUMENTO' | translate}}</p>
                       <div class="col-sm-6">
-                        <input id="inputdocumento" type="file" angular-bfi="{'showUpload':false, 'showRemove': false, 'showClose': false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 20000}" file-model="conceptoTg.revisionActual.documentModel" required>
+                        <input id="inputdocumento" type="file" fileinput="{'showUpload':false, 'showRemove': false, 'showClose': false, 'allowedFileExtensions':['pdf'], language:'es'}" file-model="conceptoTg.revisionActual.documentModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
                       </div>
                       <div class="col-sm-3">
                         <button class="btn btn-primary" ng-click="conceptoTg.revisionActual.documentModel = undefined; showDocumento = !showDocumento;" type="reset">

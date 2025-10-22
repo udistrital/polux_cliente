@@ -55,7 +55,8 @@ angular
         'configuracionService',
         'implicitToken',
         'autenticacionMidService',
-        'ngFileUpload'
+        'ngFileUpload',
+        'validarArchivoVirusService'
         
     ])
     .run(function(amMoment) {
