@@ -45,6 +45,38 @@ angular.module('poluxClienteApp')
         ctrl.documento = [];
         ctrl.userRole = token_service.getAppPayload().appUserRole;
 
+        /**
+         * @ngdoc method
+         * @name verificarArchivo
+         * @methodOf poluxClienteApp.controller:cargarDocumentoCtrl
+         * @description 
+         * Consulta la función general de utils para verificar si el archivo contiene virus
+         * @param {any} input El campo input file del formulario
+        */
+        $scope.verificarArchivo = async function (input) {
+          var file = input.files[0];
+          if (!file) return;
+
+          var esPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          if (!esPDF) {
+            swal(
+              $translate.instant("VALIDACION_ARCHIVO.TITULO_ARCHIVO_PDF"),
+              $translate.instant("VALIDACION_ARCHIVO.ARCHIVO_PDF"),
+              "error"
+            );
+            input.value = "";
+            $scope.$applyAsync(() => { input.value = null; });
+            return;
+          }
+
+          var resultado = await utils.verificarArchivoGeneral(input);
+          if (!resultado.limpio) {
+            input.value = "";
+            $scope.$applyAsync(() => { input.value = null; });
+          }
+        };
+
+
         $scope.msgCargandoDocumento = $translate.instant("LOADING.CARGANDO_DOCUMENTO");
         if ($scope.carreras.length > 0) {
           if ($scope.carreras.length === 1) {
@@ -95,6 +127,7 @@ angular.module('poluxClienteApp')
             });
             return url;
         }
+
 
         /**
          * @ngdoc method

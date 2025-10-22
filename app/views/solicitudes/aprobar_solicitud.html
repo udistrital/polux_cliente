@@ -159,7 +159,7 @@
         <label class="col-sm-4 control-label">{{'CERTIFICADO_UNIDAD_EXT_PASANTIA' | translate}} </label>
         <div class="col-sm-9">
           <!-- <input type="file" angular-bfi="{'showUpload':false, allowedFileExtensions:['pdf'], language:'es', maxFileSize: 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" required> </input> -->
-          <input type="file" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es', 'maxFileSize': 5000}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
+          <input type="file" fileinput="{'showUpload':false, 'allowedFileExtensions':['pdf'], 'language':'es'}" file-model="aprobarSolicitud.docCertificadoUnidadExt.fileModel" onchange="angular.element(this).scope().verificarArchivo(this)" required> </input>
         </div>
       </div>
       <div class="row" ng-if="formularioAprobacionExtensionPasantia.$valid  ">
